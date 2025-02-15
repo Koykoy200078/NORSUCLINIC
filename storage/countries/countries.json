@@ -1,0 +1,10 @@
+{
+    "countries": [
+        {
+            "id": 1,
+            "short_code": "PH",
+            "name": "Philippines",
+            "phone_code": 63
+        }
+    ]
+}
