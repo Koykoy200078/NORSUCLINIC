@@ -1,12 +1,12 @@
 @extends('fronts.layouts.app')
 @section('front-title')
-    {{ __('messages.web.medical') }}
+{{ __('messages.web.medical') }}
 @endsection
 @section('front-content')
-    @php
-        $styleCss = 'style';
-    @endphp
-    <div class="home-page">
+@php
+$styleCss = 'style';
+@endphp
+<div class="home-page">
     <!-- start hero section -->
     <section class="hero-section p-t-100 p-b-100">
         <div class="container p-t-100">
@@ -18,8 +18,8 @@
                             {{ $sliders->short_description }}
                         </h1>
                         @if(!getLogInUser())
-                            <a href="{{ route('register') }}"
-                               class="btn btn-primary" >{{ __('messages.web.sign_up') }}</a>
+                        <a href="{{ route('register') }}"
+                            class="btn btn-primary">{{ __('messages.web.sign_up') }}</a>
                         @endif
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-xl-6 col-md-3 about-block">
                             <div
-                                    class="about-content-box rounded-20 bg-white d-flex align-items-center justify-content-center h-100">
+                                class="about-content-box rounded-20 bg-white d-flex align-items-center justify-content-center h-100">
                                 <div class="text-center">
                                     <h2 class="number-big text-primary">{{ $aboutExperience->value }}</h2>
                                     <p class="mb-0">{{ __('messages.web.year_experience') }}</p>
@@ -77,17 +77,17 @@
                             <li class="mb-2">{{__('messages.web.medical_treatment')}}</li>
                         </ul>
                         <a href="{{ route('medicalContact') }}"
-                           class="btn btn-primary " >{{__('messages.web.contact_us')}}</a>
+                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-        <!-- end about section -->
+    <!-- end about section -->
 
-        <!-- start how-it-work section -->
-        <section class="how-work-section p-t-100 p-b-100">
-            <div class="container">
+    <!-- start how-it-work section -->
+    <section class="how-work-section p-t-100 p-b-100">
+        <div class="container">
             <div class="text-center mb-lg-5 mb-4">
                 <h5 class="text-primary top-heading fs-6 mb-3">{{__('messages.web.working_process')}}</h5>
                 <h2 class="pb-2">{{__('messages.web.how_we_works')}}?</h2>
@@ -159,19 +159,19 @@
                                 <div class="col-lg-6">
                                     <div class="contact-form__input-block">
                                         <input name="first_name" type="text" class="form-control required form-control-transparent"
-                                               placeholder="{{ __('messages.doctor.first_name') }}" required>
+                                            placeholder="{{ __('messages.doctor.first_name') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="contact-form__input-block">
                                         <input type="text" name="last_name" class="form-control required form-control-transparent"
-                                               placeholder="{{ __('messages.doctor.last_name') }}" required>
+                                            placeholder="{{ __('messages.doctor.last_name') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="contact-form__input-block">
                                         <input type="email" name="email" class="form-control required form-control-transparent"
-                                               placeholder="{{ __('messages.web.email') }}" required>
+                                            placeholder="{{ __('messages.web.email') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -182,12 +182,12 @@
                                 <div class="col-lg-6">
                                     <div class="contact-form__input-block position-relative">
                                         <input type="text" name="date" id="frontAppointmentDate"
-                                               class="form-control form-control-transparent appointment-calendar" placeholder="{{ __('messages.doctor.select_date') }}"
-                                               autocomplete="true" required readonly>
+                                            class="form-control form-control-transparent appointment-calendar" placeholder="{{ __('messages.doctor.select_date') }}"
+                                            autocomplete="true" required readonly>
                                         <span
-                                                class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4">
-                                                <i class="fa-solid fa-calendar-days text-white post"></i>
-                                            </span>
+                                            class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4">
+                                            <i class="fa-solid fa-calendar-days text-white post"></i>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 text-center mt-4">
@@ -214,12 +214,12 @@
                             {{__('messages.web.we_provide_the_special_tips___')}}
                         </p>
                         <a href="{{ route('medicalServices') }}"
-                           class="btn btn-primary">{{__('messages.web.all_services')}}</a>
+                            class="btn btn-primary">{{__('messages.web.all_services')}}</a>
                     </div>
                 </div>
                 <div class="col-xxl-8 after-rectangle-shape position-relative right-shape mt-lg-5 mt-xxl-0">
                     <div class="services-carousel z-index-1">
-                            @foreach($frontMedicalServices as $frontMedicalService)
+                        @foreach($frontMedicalServices as $frontMedicalService)
                         <div class="services-block">
                             <div class="row position-relative z-index-1">
                                 @if(isset($frontMedicalService[0]))
@@ -233,7 +233,7 @@
                                     </p>
                                 </div>
                                 @endif
-                                    @if(isset($frontMedicalService[1]))
+                                @if(isset($frontMedicalService[1]))
                                 <div class="col-md-6 text-center services-innner-block">
                                     <div class="icon-box mx-auto d-flex align-items-center justify-content-center">
                                         <img src="{{ $frontMedicalService[1]['icon'] }}" alt="Emergency" class="img-fluid object-image-cover" loading="lazy" />
@@ -246,16 +246,16 @@
                                 </div>
                             </div>
                         </div>
-                            @endforeach
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
-        <!-- end services section -->
+    <!-- end services section -->
 
-        <!-- start testimonial section -->
+    <!-- start testimonial section -->
     @include('fronts.patient_testimonial')
     <!-- end testimonial section -->
-    </div>
+</div>
 @endsection

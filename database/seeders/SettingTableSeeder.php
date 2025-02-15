@@ -16,8 +16,8 @@ class SettingTableSeeder extends Seeder
         $favicon = ('assets/image/norsu_favicon.ico');
 
         Setting::create(['key' => 'clinic_name', 'value' => 'Norsu Clinic']);
-        Setting::create(['key' => 'contact_no', 'value' => '1234567890']);
-        Setting::create(['key' => 'email', 'value' => 'infycare@email.com']);
+        Setting::create(['key' => 'contact_no', 'value' => '522-5050 (1149)']);
+        Setting::create(['key' => 'email', 'value' => 'norsuclinicforconsult@gmail.com']);
         Setting::create(['key' => 'specialities', 'value' => '1']);
         Setting::create(['key' => 'currency', 'value' => '1']);
         Setting::create([

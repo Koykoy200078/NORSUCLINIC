@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Mariuzzo\LaravelJsLocalization\Commands\LangJsCommand;
 use Mariuzzo\LaravelJsLocalization\Generators\LangJsGenerator;
@@ -14,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
+
         // Bind the Laravel JS Localization command into the app IOC.
         $this->app->singleton('localization.js', function ($app) {
             $app = $this->app;
@@ -22,9 +27,9 @@ class AppServiceProvider extends ServiceProvider
             $files = $app['files'];
 
             if ($laravelMajorVersion === 4) {
-                $langs = $app['path.base'].'/app/lang';
+                $langs = $app['path.base'] . '/app/lang';
             } elseif ($laravelMajorVersion >= 5 && $laravelMajorVersion < 9) {
-                $langs = $app['path.base'].'/resources/lang';
+                $langs = $app['path.base'] . '/resources/lang';
             } elseif ($laravelMajorVersion >= 9) {
                 $langs = app()->langPath();
             }
