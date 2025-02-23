@@ -10,32 +10,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-/**
- * App\Models\Slider
- *
- * @property int $id
- * @property string $title
- * @property string $short_description
- * @property int $is_default
- * @property-read string $slider_image
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read MediaCollection|Media[] $media
- * @property-read int|null $media_count
- *
- * @method static \Illuminate\Database\Eloquent\Builder|Slider newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Slider newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Slider query()
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereShortDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereIsDefault($value)
- */
 class Slider extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
@@ -86,10 +60,14 @@ class Slider extends Model implements HasMedia
     {
         /** @var Media $media */
         $media = $this->getMedia(self::SLIDER_IMAGE)->first();
-        if (! empty($media)) {
-            return $media->getFullUrl();
+        if (!empty($media)) {
+            $fullUrl = $media->getFullUrl();
+            if (strpos($fullUrl, 'http://localhost') === 0) {
+                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+            }
+            return $fullUrl;
         }
 
-        return asset('assets/front/images/home/home-page-image.png');
+        return asset('assets/image/norsu_logo.png');
     }
 }

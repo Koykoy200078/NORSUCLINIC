@@ -157,7 +157,7 @@ if (! function_exists('getDashboardURL')) {
                 return 'admin/settings';
             }
 
-            if (in_array('manage_specialities', $permissions, true)) {
+            if (in_array('manage_specialties', $permissions, true)) {
                 return 'admin/specializations';
             }
 

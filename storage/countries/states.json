@@ -2,127 +2,412 @@
     "states": [
         {
             "id": "1",
-            "name": "Batangas",
+            "name": "Abra",
             "country_id": "1"
         },
         {
             "id": "2",
-            "name": "Bicol",
+            "name": "Agusan del Norte",
             "country_id": "1"
         },
         {
             "id": "3",
-            "name": "Bulacan",
+            "name": "Agusan del Sur",
             "country_id": "1"
         },
         {
             "id": "4",
-            "name": "Cagayan",
+            "name": "Aklan",
             "country_id": "1"
         },
         {
             "id": "5",
-            "name": "Caraga",
+            "name": "Albay",
             "country_id": "1"
         },
         {
             "id": "6",
-            "name": "Central Luzon",
+            "name": "Antique",
             "country_id": "1"
         },
         {
             "id": "7",
-            "name": "Central Mindanao",
+            "name": "Apayao",
             "country_id": "1"
         },
         {
             "id": "8",
-            "name": "Central Visayas",
+            "name": "Aurora",
             "country_id": "1"
         },
         {
             "id": "9",
-            "name": "Cordillera",
+            "name": "Basilan",
             "country_id": "1"
         },
         {
             "id": "10",
-            "name": "Davao",
+            "name": "Bataan",
             "country_id": "1"
         },
         {
             "id": "11",
-            "name": "Eastern Visayas",
+            "name": "Batanes",
             "country_id": "1"
         },
         {
             "id": "12",
-            "name": "Greater Metropolitan Area",
+            "name": "Batangas",
             "country_id": "1"
         },
         {
             "id": "13",
-            "name": "Ilocos",
+            "name": "Benguet",
             "country_id": "1"
         },
         {
             "id": "14",
-            "name": "Laguna",
+            "name": "Biliran",
             "country_id": "1"
         },
         {
             "id": "15",
-            "name": "Luzon",
+            "name": "Bohol",
             "country_id": "1"
         },
         {
             "id": "16",
-            "name": "Mactan",
+            "name": "Bukidnon",
             "country_id": "1"
         },
         {
             "id": "17",
-            "name": "Metropolitan Manila Area",
+            "name": "Bulacan",
             "country_id": "1"
         },
         {
             "id": "18",
-            "name": "Muslim Mindanao",
+            "name": "Cagayan",
             "country_id": "1"
         },
         {
             "id": "19",
-            "name": "Northern Mindanao",
+            "name": "Camarines Norte",
             "country_id": "1"
         },
         {
             "id": "20",
-            "name": "Southern Mindanao",
+            "name": "Camarines Sur",
             "country_id": "1"
         },
         {
             "id": "21",
-            "name": "Southern Tagalog",
+            "name": "Camiguin",
             "country_id": "1"
         },
         {
             "id": "22",
-            "name": "Western Mindanao",
+            "name": "Capiz",
             "country_id": "1"
         },
         {
             "id": "23",
-            "name": "Western Visayas",
+            "name": "Catanduanes",
             "country_id": "1"
         },
         {
             "id": "24",
-            "name": "Zamboanga Peninsula",
+            "name": "Cavite",
             "country_id": "1"
         },
         {
             "id": "25",
-            "name": "Negros Island Region",
+            "name": "Cebu",
+            "country_id": "1"
+        },
+        {
+            "id": "26",
+            "name": "Cotabato",
+            "country_id": "1"
+        },
+        {
+            "id": "27",
+            "name": "Davao de Oro",
+            "country_id": "1"
+        },
+        {
+            "id": "28",
+            "name": "Davao del Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "29",
+            "name": "Davao del Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "30",
+            "name": "Davao Occidental",
+            "country_id": "1"
+        },
+        {
+            "id": "31",
+            "name": "Davao Oriental",
+            "country_id": "1"
+        },
+        {
+            "id": "32",
+            "name": "Dinagat Islands",
+            "country_id": "1"
+        },
+        {
+            "id": "33",
+            "name": "Eastern Samar",
+            "country_id": "1"
+        },
+        {
+            "id": "34",
+            "name": "Guimaras",
+            "country_id": "1"
+        },
+        {
+            "id": "35",
+            "name": "Ifugao",
+            "country_id": "1"
+        },
+        {
+            "id": "36",
+            "name": "Ilocos Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "37",
+            "name": "Ilocos Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "38",
+            "name": "Iloilo",
+            "country_id": "1"
+        },
+        {
+            "id": "39",
+            "name": "Isabela",
+            "country_id": "1"
+        },
+        {
+            "id": "40",
+            "name": "Kalinga",
+            "country_id": "1"
+        },
+        {
+            "id": "41",
+            "name": "La Union",
+            "country_id": "1"
+        },
+        {
+            "id": "42",
+            "name": "Laguna",
+            "country_id": "1"
+        },
+        {
+            "id": "43",
+            "name": "Lanao del Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "44",
+            "name": "Lanao del Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "45",
+            "name": "Leyte",
+            "country_id": "1"
+        },
+        {
+            "id": "46",
+            "name": "Maguindanao del Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "47",
+            "name": "Maguindanao del Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "48",
+            "name": "Marinduque",
+            "country_id": "1"
+        },
+        {
+            "id": "49",
+            "name": "Masbate",
+            "country_id": "1"
+        },
+        {
+            "id": "50",
+            "name": "Misamis Occidental",
+            "country_id": "1"
+        },
+        {
+            "id": "51",
+            "name": "Misamis Oriental",
+            "country_id": "1"
+        },
+        {
+            "id": "52",
+            "name": "Mountain Province",
+            "country_id": "1"
+        },
+        {
+            "id": "53",
+            "name": "Negros Occidental",
+            "country_id": "1"
+        },
+        {
+            "id": "54",
+            "name": "Negros Oriental",
+            "country_id": "1"
+        },
+        {
+            "id": "55",
+            "name": "Northern Samar",
+            "country_id": "1"
+        },
+        {
+            "id": "56",
+            "name": "Nueva Ecija",
+            "country_id": "1"
+        },
+        {
+            "id": "57",
+            "name": "Nueva Vizcaya",
+            "country_id": "1"
+        },
+        {
+            "id": "58",
+            "name": "Occidental Mindoro",
+            "country_id": "1"
+        },
+        {
+            "id": "59",
+            "name": "Oriental Mindoro",
+            "country_id": "1"
+        },
+        {
+            "id": "60",
+            "name": "Palawan",
+            "country_id": "1"
+        },
+        {
+            "id": "61",
+            "name": "Pampanga",
+            "country_id": "1"
+        },
+        {
+            "id": "62",
+            "name": "Pangasinan",
+            "country_id": "1"
+        },
+        {
+            "id": "63",
+            "name": "Quezon",
+            "country_id": "1"
+        },
+        {
+            "id": "64",
+            "name": "Quirino",
+            "country_id": "1"
+        },
+        {
+            "id": "65",
+            "name": "Rizal",
+            "country_id": "1"
+        },
+        {
+            "id": "66",
+            "name": "Romblon",
+            "country_id": "1"
+        },
+        {
+            "id": "67",
+            "name": "Samar",
+            "country_id": "1"
+        },
+        {
+            "id": "68",
+            "name": "Sarangani",
+            "country_id": "1"
+        },
+        {
+            "id": "69",
+            "name": "Siquijor",
+            "country_id": "1"
+        },
+        {
+            "id": "70",
+            "name": "Sorsogon",
+            "country_id": "1"
+        },
+        {
+            "id": "71",
+            "name": "South Cotabato",
+            "country_id": "1"
+        },
+        {
+            "id": "72",
+            "name": "Southern Leyte",
+            "country_id": "1"
+        },
+        {
+            "id": "73",
+            "name": "Sultan Kudarat",
+            "country_id": "1"
+        },
+        {
+            "id": "74",
+            "name": "Sulu",
+            "country_id": "1"
+        },
+        {
+            "id": "75",
+            "name": "Surigao del Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "76",
+            "name": "Surigao del Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "77",
+            "name": "Tarlac",
+            "country_id": "1"
+        },
+        {
+            "id": "78",
+            "name": "Tawi-Tawi",
+            "country_id": "1"
+        },
+        {
+            "id": "79",
+            "name": "Zambales",
+            "country_id": "1"
+        },
+        {
+            "id": "80",
+            "name": "Zamboanga del Norte",
+            "country_id": "1"
+        },
+        {
+            "id": "81",
+            "name": "Zamboanga del Sur",
+            "country_id": "1"
+        },
+        {
+            "id": "82",
+            "name": "Zamboanga Sibugay",
             "country_id": "1"
         }
     ]

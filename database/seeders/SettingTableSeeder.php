@@ -16,21 +16,21 @@ class SettingTableSeeder extends Seeder
         $favicon = ('assets/image/norsu_favicon.ico');
 
         Setting::create(['key' => 'clinic_name', 'value' => 'Norsu Clinic']);
-        Setting::create(['key' => 'contact_no', 'value' => '522-5050 (1149)']);
-        Setting::create(['key' => 'email', 'value' => 'norsuclinicforconsult@gmail.com']);
-        Setting::create(['key' => 'specialities', 'value' => '1']);
+        Setting::create(['key' => 'contact_no', 'value' => '']);
+        Setting::create(['key' => 'email', 'value' => 'norsumedicalclinic@gmail.com']);
+        Setting::create(['key' => 'specialties', 'value' => '1']);
         Setting::create(['key' => 'currency', 'value' => '1']);
         Setting::create([
             'key' => 'address_one',
-            'value' => 'Capitol Area, Kagawasan Avenue, Dumaguete, 6200 Negros Oriental',
+            'value' => 'Kagawasan Avenue, Capitol Area, Dumaguete City, Negros Oriental, Philippines 6200',
         ]);
         Setting::create([
             'key' => 'address_two',
-            'value' => 'Capitol Area, Kagawasan Avenue, Dumaguete, 6200 Negros Oriental',
+            'value' => '',
         ]);
         Setting::create(['key' => 'country_id', 'value' => '1']);
-        Setting::create(['key' => 'state_id', 'value' => '25']);
-        Setting::create(['key' => 'city_id', 'value' => '87']);
+        Setting::create(['key' => 'state_id', 'value' => '54']);
+        Setting::create(['key' => 'city_id', 'value' => '66']);
         Setting::create(['key' => 'postal_code', 'value' => '6200']);
         Setting::create(['key' => 'logo', 'value' => $logoUrl]);
         Setting::create(['key' => 'favicon', 'value' => $favicon]);

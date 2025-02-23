@@ -38,9 +38,16 @@ class FrontController extends AppBaseController
         $frontPatientTestimonials = FrontPatientTestimonial::with('media')->latest()->take(6)->get();
         $aboutExperience = Setting::where('key', 'about_experience')->first();
 
-        return view('fronts.medicals.index',
-            compact('doctors', 'sliders', 'frontMedicalServices', 'frontPatientTestimonials',
-                'aboutExperience'));
+        return view(
+            'fronts.medicals.index',
+            compact(
+                'doctors',
+                'sliders',
+                'frontMedicalServices',
+                'frontPatientTestimonials',
+                'aboutExperience'
+            )
+        );
     }
 
     /**
@@ -60,8 +67,10 @@ class FrontController extends AppBaseController
             $query->where('status', User::ACTIVE);
         })->withCount('appointments')->orderBy('appointments_count', 'desc')->take(3)->get();
 
-        return view('fronts.medical_about_us',
-            compact('doctors', 'data', 'setting', 'clinicSchedules', 'frontPatientTestimonials'));
+        return view(
+            'fronts.medical_about_us',
+            compact('doctors', 'data', 'setting', 'clinicSchedules', 'frontPatientTestimonials')
+        );
     }
 
     /**
@@ -88,9 +97,13 @@ class FrontController extends AppBaseController
     {
         $faqs = Faq::latest()->get();
 
-        $appointmentDoctors = Doctor::with('user')->whereIn('id',
-            DoctorSession::pluck('doctor_id')->toArray())->get()->where('user.status',
-                User::ACTIVE)->pluck('user.full_name', 'id');
+        $appointmentDoctors = Doctor::with('user')->whereIn(
+            'id',
+            DoctorSession::pluck('doctor_id')->toArray()
+        )->get()->where(
+            'user.status',
+            User::ACTIVE
+        )->pluck('user.full_name', 'id');
 
         return view('fronts.medical_appointment', compact('faqs', 'appointmentDoctors'));
     }

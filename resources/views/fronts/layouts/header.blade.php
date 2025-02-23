@@ -3,7 +3,7 @@
         <div class="row align-items-center">
             <div class="col-lg-1 col-4">
                 <a href="#!" class="header-logo">
-                    <img src="{{ asset(getAppLogo()) }}" alt="Infy Care" class="object-cover front-app-logo" loading="lazy" />
+                    <img src="{{ asset(getAppLogo()) }}" alt="NORSU CLINIC" class="object-cover front-app-logo" loading="lazy" />
                 </a>
             </div>
             <div class="col-lg-11 col-8">

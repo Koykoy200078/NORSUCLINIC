@@ -45,7 +45,7 @@ class SettingRepository extends BaseRepository
             $inputArr['clinic_name'] = (empty($inputArr['clinic_name'])) ? '' : $inputArr['clinic_name'];
             $inputArr['contact_no'] = (empty($inputArr['contact_no'])) ? '' : $inputArr['contact_no'];
             $inputArr['email'] = (empty($inputArr['email'])) ? '' : $inputArr['email'];
-            $inputArr['specialities'] = (empty($inputArr['specialities'])) ? '1' : json_encode($inputArr['specialities']);
+            $inputArr['specialties'] = (empty($inputArr['specialties'])) ? '1' : json_encode($inputArr['specialties']);
             $inputArr['currency'] = (empty($inputArr['currency'])) ? '1' : $inputArr['currency'];
             $inputArr['prefix'] = (empty($inputArr['prefix'])) ? '' : $inputArr['prefix'];
             $inputArr['country_code'] = (empty($inputArr['country_code'])) ? '' : $inputArr['country_code'];

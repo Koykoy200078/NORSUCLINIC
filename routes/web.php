@@ -89,7 +89,7 @@ Route::middleware('setLanguage')->group(function () {
     Route::get('/terms-conditions', [FrontController::class, 'termsCondition'])->name('terms.conditions');
     Route::get('/privacy-policy', [FrontController::class, 'privacyPolicy'])->name('privacy.policy');
     Route::get('/faqs', [FrontController::class, 'faq'])->name('front.faqs');
-    Route::get('qr-code/p/{id?}', [PatientQrCodeController::class,'show'])->name('patient_show');
+    Route::get('qr-code/p/{id?}', [PatientQrCodeController::class, 'show'])->name('patient_show');
 });
 //Change language
 Route::post('/change-language', [FrontController::class, 'changeLanguage'])->name('front.change.language');
@@ -276,7 +276,7 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
     Route::resource('generate-patient-smart-cards', GeneratePatientSmartCardsController::class);
     Route::get('card-detail/{id}', [GeneratePatientSmartCardsController::class, 'cardDelail'])->name('card.detail');
     Route::get('card-qr-code/{id}', [GeneratePatientSmartCardsController::class, 'cardQr'])->name('card.qr');
-    Route::get('smart_card-pdf/{id}',[GeneratePatientSmartCardsController::class, 'smartCardPdf'])->name('admin.smartCardPdf');
+    Route::get('smart_card-pdf/{id}', [GeneratePatientSmartCardsController::class, 'smartCardPdf'])->name('admin.smartCardPdf');
 
 
     // Doctor Schedule Routes
@@ -286,7 +286,7 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
     });
 
     // Specialization routes
-    Route::middleware('permission:manage_specialities')->group(function () {
+    Route::middleware('permission:manage_specialties')->group(function () {
         Route::resource('specializations', SpecializationController::class);
     });
 
@@ -384,7 +384,7 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
 });
 
 Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus')->group(function () {
-   // Manage medicine route
+    // Manage medicine route
     Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post(
@@ -420,10 +420,10 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus')->group(func
 Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']);
 
 
-require __DIR__.'/auth.php';
-require __DIR__.'/doctor.php';
-require __DIR__.'/patient.php';
-require __DIR__.'/upgrade.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/doctor.php';
+require __DIR__ . '/patient.php';
+require __DIR__ . '/upgrade.php';
 
 Route::any('zoom/callback', [LiveConsultationController::class, 'zoomCallback']);
 Route::get('zoom/connect', [LiveConsultationController::class, 'connectWithZoom'])->name('zoom.connect');

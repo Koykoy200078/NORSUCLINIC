@@ -100,7 +100,7 @@ class Service extends Model implements HasMedia
     public static $rules = [
         'name' => 'required|unique:services,name',
         'category_id' => 'required',
-        'charges' => 'required|min:0|not_in:0',
+        'charges' => 'required|min:0',
         'doctors' => 'required',
         'short_description' => 'required|max:60',
         'icon' => 'required|mimes:svg,jpeg,png,jpg',
@@ -121,7 +121,11 @@ class Service extends Model implements HasMedia
         /** @var Media $media */
         $media = $this->getMedia(self::ICON)->first();
         if (! empty($media)) {
-            return $media->getFullUrl();
+            $fullUrl = $media->getFullUrl();
+            if (strpos($fullUrl, 'http://localhost') === 0) {
+                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+            }
+            return $fullUrl;
         }
 
         return asset('web/media/avatars/male.png');

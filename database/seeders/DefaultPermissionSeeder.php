@@ -46,8 +46,8 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Services',
             ],
             [
-                'name' => 'manage_specialities',
-                'display_name' => 'Manage Specialities',
+                'name' => 'manage_specialties',
+                'display_name' => 'Manage Specialties',
             ],
             [
                 'name' => 'manage_countries',

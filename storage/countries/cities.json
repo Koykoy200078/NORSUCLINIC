@@ -2,438 +2,513 @@
     "cities": [
         {
             "id": "1",
-            "name": "Manila",
-            "state_id": "17"
+            "name": "Legazpi City",
+            "state_id": "5"
         },
         {
             "id": "2",
-            "name": "Quezon City",
-            "state_id": "17"
+            "name": "Ligao City",
+            "state_id": "5"
         },
         {
             "id": "3",
-            "name": "Caloocan",
-            "state_id": "17"
+            "name": "Tabaco City",
+            "state_id": "5"
         },
         {
             "id": "4",
-            "name": "Davao City",
-            "state_id": "10"
+            "name": "San Jose de Buenavista",
+            "state_id": "6"
         },
         {
             "id": "5",
-            "name": "Cebu City",
+            "name": "Baler",
             "state_id": "8"
         },
         {
             "id": "6",
-            "name": "Zamboanga City",
-            "state_id": "22"
+            "name": "Isabela City",
+            "state_id": "9"
         },
         {
             "id": "7",
-            "name": "Taguig",
-            "state_id": "17"
+            "name": "Balanga City",
+            "state_id": "10"
         },
         {
             "id": "8",
-            "name": "Antipolo",
-            "state_id": "21"
+            "name": "Basco",
+            "state_id": "11"
         },
         {
             "id": "9",
-            "name": "Pasig",
-            "state_id": "17"
+            "name": "Batangas City",
+            "state_id": "12"
         },
         {
             "id": "10",
-            "name": "Cagayan de Oro",
-            "state_id": "19"
+            "name": "Lipa City",
+            "state_id": "12"
         },
         {
             "id": "11",
-            "name": "Parañaque",
-            "state_id": "17"
+            "name": "Tanauan City",
+            "state_id": "12"
         },
         {
             "id": "12",
-            "name": "Dasmariñas",
-            "state_id": "7"
+            "name": "Baguio City",
+            "state_id": "13"
         },
         {
             "id": "13",
-            "name": "Valenzuela",
-            "state_id": "17"
+            "name": "Naval",
+            "state_id": "14"
         },
         {
             "id": "14",
-            "name": "Las Piñas",
-            "state_id": "17"
+            "name": "Tagbilaran City",
+            "state_id": "15"
         },
         {
             "id": "15",
-            "name": "General Santos",
-            "state_id": "20"
+            "name": "Malaybalay City",
+            "state_id": "16"
         },
         {
             "id": "16",
-            "name": "Makati",
-            "state_id": "17"
+            "name": "Valencia City",
+            "state_id": "16"
         },
         {
             "id": "17",
-            "name": "Bacolod",
-            "state_id": "25"
+            "name": "Malolos City",
+            "state_id": "17"
         },
         {
             "id": "18",
-            "name": "Muntinlupa",
+            "name": "Meycauayan City",
             "state_id": "17"
         },
         {
             "id": "19",
-            "name": "San Jose del Monte",
-            "state_id": "3"
+            "name": "San Jose del Monte City",
+            "state_id": "17"
         },
         {
             "id": "20",
-            "name": "Iloilo City",
-            "state_id": "23"
+            "name": "Tuguegarao City",
+            "state_id": "18"
         },
         {
             "id": "21",
-            "name": "Pasay",
-            "state_id": "17"
-        },
-        {
-            "id": "22",
-            "name": "Malabon",
-            "state_id": "17"
-        },
-        {
-            "id": "23",
-            "name": "Mandaluyong",
-            "state_id": "17"
-        },
-        {
-            "id": "24",
-            "name": "Lapu-Lapu",
-            "state_id": "16"
-        },
-        {
-            "id": "25",
-            "name": "Baguio",
-            "state_id": "9"
-        },
-        {
-            "id": "26",
-            "name": "Butuan",
-            "state_id": "5"
-        },
-        {
-            "id": "27",
-            "name": "Biñan",
-            "state_id": "14"
-        },
-        {
-            "id": "28",
-            "name": "Imus",
-            "state_id": "7"
-        },
-        {
-            "id": "29",
-            "name": "Iligan",
-            "state_id": "19"
-        },
-        {
-            "id": "30",
-            "name": "Tarlac City",
-            "state_id": "6"
-        },
-        {
-            "id": "31",
-            "name": "Lucena",
-            "state_id": "21"
-        },
-        {
-            "id": "32",
-            "name": "Mandaue",
-            "state_id": "8"
-        },
-        {
-            "id": "33",
-            "name": "Santa Rosa",
-            "state_id": "14"
-        },
-        {
-            "id": "34",
-            "name": "Cabanatuan",
-            "state_id": "6"
-        },
-        {
-            "id": "35",
-            "name": "San Fernando",
-            "state_id": "6"
-        },
-        {
-            "id": "36",
-            "name": "Olongapo",
-            "state_id": "6"
-        },
-        {
-            "id": "37",
-            "name": "Cotabato City",
-            "state_id": "7"
-        },
-        {
-            "id": "38",
-            "name": "Tacloban",
-            "state_id": "11"
-        },
-        {
-            "id": "39",
-            "name": "Santiago",
-            "state_id": "4"
-        },
-        {
-            "id": "40",
-            "name": "Dagupan",
-            "state_id": "13"
-        },
-        {
-            "id": "41",
-            "name": "Navotas",
-            "state_id": "17"
-        },
-        {
-            "id": "42",
-            "name": "Marikina",
-            "state_id": "17"
-        },
-        {
-            "id": "43",
-            "name": "Angeles",
-            "state_id": "6"
-        },
-        {
-            "id": "44",
-            "name": "Bacoor",
-            "state_id": "7"
-        },
-        {
-            "id": "45",
-            "name": "Calamba",
-            "state_id": "14"
-        },
-        {
-            "id": "46",
-            "name": "San Pablo",
-            "state_id": "14"
-        },
-        {
-            "id": "47",
-            "name": "Tuguegarao",
-            "state_id": "4"
-        },
-        {
-            "id": "48",
-            "name": "Ormoc",
-            "state_id": "11"
-        },
-        {
-            "id": "49",
-            "name": "San Carlos",
-            "state_id": "25"
-        },
-        {
-            "id": "50",
-            "name": "Kabankalan",
-            "state_id": "25"
-        },
-        {
-            "id": "51",
-            "name": "Malaybalay",
-            "state_id": "19"
-        },
-        {
-            "id": "52",
-            "name": "Roxas",
-            "state_id": "25"
-        },
-        {
-            "id": "53",
-            "name": "Panabo",
-            "state_id": "10"
-        },
-        {
-            "id": "54",
-            "name": "Dipolog",
-            "state_id": "22"
-        },
-        {
-            "id": "55",
-            "name": "Pagadian",
-            "state_id": "22"
-        },
-        {
-            "id": "56",
-            "name": "Legazpi",
-            "state_id": "2"
-        },
-        {
-            "id": "57",
-            "name": "Naga",
-            "state_id": "2"
-        },
-        {
-            "id": "58",
-            "name": "Tagum",
-            "state_id": "10"
-        },
-        {
-            "id": "59",
-            "name": "Surigao",
-            "state_id": "5"
-        },
-        {
-            "id": "60",
-            "name": "Kidapawan",
-            "state_id": "7"
-        },
-        {
-            "id": "61",
-            "name": "Koronadal",
+            "name": "Naga City",
             "state_id": "20"
         },
         {
-            "id": "62",
-            "name": "Baybay",
-            "state_id": "11"
+            "id": "22",
+            "name": "Iriga City",
+            "state_id": "20"
         },
         {
-            "id": "63",
-            "name": "Talisay",
-            "state_id": "8"
-        },
-        {
-            "id": "64",
-            "name": "Valencia",
-            "state_id": "19"
-        },
-        {
-            "id": "65",
-            "name": "Gapan",
-            "state_id": "6"
-        },
-        {
-            "id": "66",
-            "name": "San Pedro",
-            "state_id": "14"
-        },
-        {
-            "id": "67",
-            "name": "Silay",
-            "state_id": "25"
-        },
-        {
-            "id": "68",
-            "name": "Cauayan",
-            "state_id": "4"
-        },
-        {
-            "id": "69",
-            "name": "Calapan",
-            "state_id": "21"
-        },
-        {
-            "id": "70",
-            "name": "Ligao",
-            "state_id": "2"
-        },
-        {
-            "id": "71",
-            "name": "Sorsogon",
-            "state_id": "2"
-        },
-        {
-            "id": "72",
-            "name": "Tabaco",
-            "state_id": "2"
-        },
-        {
-            "id": "73",
-            "name": "Urdaneta",
-            "state_id": "13"
-        },
-        {
-            "id": "74",
-            "name": "Vigan",
-            "state_id": "13"
-        },
-        {
-            "id": "75",
-            "name": "Puerto Princesa",
-            "state_id": "21"
-        },
-        {
-            "id": "76",
-            "name": "Sagay",
-            "state_id": "25"
-        },
-        {
-            "id": "77",
-            "name": "Sorsogon City",
-            "state_id": "2"
-        },
-        {
-            "id": "78",
-            "name": "Tayabas",
-            "state_id": "21"
-        },
-        {
-            "id": "79",
-            "name": "Trece Martires",
-            "state_id": "7"
-        },
-        {
-            "id": "80",
-            "name": "Tuguegarao City",
-            "state_id": "4"
-        },
-        {
-            "id": "81",
-            "name": "Urdaneta City",
-            "state_id": "13"
-        },
-        {
-            "id": "82",
-            "name": "Valencia City",
-            "state_id": "19"
-        },
-        {
-            "id": "83",
-            "name": "Victorias",
-            "state_id": "25"
-        },
-        {
-            "id": "84",
-            "name": "Vigan City",
-            "state_id": "13"
-        },
-        {
-            "id": "85",
-            "name": "Zamboanga City",
+            "id": "23",
+            "name": "Roxas City",
             "state_id": "22"
         },
         {
-            "id": "86",
-            "name": "Guihulngan City",
+            "id": "24",
+            "name": "Virac",
+            "state_id": "23"
+        },
+        {
+            "id": "25",
+            "name": "Cavite City",
+            "state_id": "24"
+        },
+        {
+            "id": "26",
+            "name": "Tagaytay City",
+            "state_id": "24"
+        },
+        {
+            "id": "27",
+            "name": "Trece Martires City",
+            "state_id": "24"
+        },
+        {
+            "id": "28",
+            "name": "General Trias City",
+            "state_id": "24"
+        },
+        {
+            "id": "29",
+            "name": "Imus City",
+            "state_id": "24"
+        },
+        {
+            "id": "30",
+            "name": "Bacoor City",
+            "state_id": "24"
+        },
+        {
+            "id": "31",
+            "name": "Cebu City",
             "state_id": "25"
         },
         {
-            "id": "87",
-            "name": "Dumaguete City",
+            "id": "32",
+            "name": "Mandaue City",
             "state_id": "25"
+        },
+        {
+            "id": "33",
+            "name": "Lapu-Lapu City",
+            "state_id": "25"
+        },
+        {
+            "id": "34",
+            "name": "Talisay City",
+            "state_id": "25"
+        },
+        {
+            "id": "35",
+            "name": "Kidapawan City",
+            "state_id": "26"
+        },
+        {
+            "id": "36",
+            "name": "Tagum City",
+            "state_id": "28"
+        },
+        {
+            "id": "37",
+            "name": "Panabo City",
+            "state_id": "28"
+        },
+        {
+            "id": "38",
+            "name": "Digos City",
+            "state_id": "29"
+        },
+        {
+            "id": "39",
+            "name": "Mati City",
+            "state_id": "31"
+        },
+        {
+            "id": "40",
+            "name": "Borongan City",
+            "state_id": "33"
+        },
+        {
+            "id": "41",
+            "name": "Laoag City",
+            "state_id": "36"
+        },
+        {
+            "id": "42",
+            "name": "Batac City",
+            "state_id": "36"
+        },
+        {
+            "id": "43",
+            "name": "Vigan City",
+            "state_id": "37"
+        },
+        {
+            "id": "44",
+            "name": "Iloilo City",
+            "state_id": "38"
+        },
+        {
+            "id": "45",
+            "name": "Passi City",
+            "state_id": "38"
+        },
+        {
+            "id": "46",
+            "name": "Cauayan City",
+            "state_id": "39"
+        },
+        {
+            "id": "47",
+            "name": "Ilagan City",
+            "state_id": "39"
+        },
+        {
+            "id": "48",
+            "name": "San Fernando City",
+            "state_id": "41"
+        },
+        {
+            "id": "49",
+            "name": "Santa Rosa City",
+            "state_id": "42"
+        },
+        {
+            "id": "50",
+            "name": "Calamba City",
+            "state_id": "42"
+        },
+        {
+            "id": "51",
+            "name": "San Pablo City",
+            "state_id": "42"
+        },
+        {
+            "id": "52",
+            "name": "Iligan City",
+            "state_id": "43"
+        },
+        {
+            "id": "53",
+            "name": "Marawi City",
+            "state_id": "44"
+        },
+        {
+            "id": "54",
+            "name": "Tacloban City",
+            "state_id": "45"
+        },
+        {
+            "id": "55",
+            "name": "Ormoc City",
+            "state_id": "45"
+        },
+        {
+            "id": "56",
+            "name": "Masbate City",
+            "state_id": "49"
+        },
+        {
+            "id": "57",
+            "name": "Oroquieta City",
+            "state_id": "50"
+        },
+        {
+            "id": "58",
+            "name": "Cagayan de Oro City",
+            "state_id": "51"
+        },
+        {
+            "id": "59",
+            "name": "Gingoog City",
+            "state_id": "51"
+        },
+        {
+            "id": "60",
+            "name": "Bacolod City",
+            "state_id": "53"
+        },
+        {
+            "id": "61",
+            "name": "Bago City",
+            "state_id": "53"
+        },
+        {
+            "id": "62",
+            "name": "La Carlota City",
+            "state_id": "53"
+        },
+        {
+            "id": "63",
+            "name": "Silay City",
+            "state_id": "53"
+        },
+        {
+            "id": "64",
+            "name": "Cadiz City",
+            "state_id": "53"
+        },
+        {
+            "id": "65",
+            "name": "Victorias City",
+            "state_id": "53"
+        },
+        {
+            "id": "66",
+            "name": "Dumaguete City",
+            "state_id": "54"
+        },
+        {
+            "id": "67",
+            "name": "Canlaon City",
+            "state_id": "54"
+        },
+        {
+            "id": "68",
+            "name": "Guihulngan City",
+            "state_id": "54"
+        },
+        {
+            "id": "69",
+            "name": "Catarman",
+            "state_id": "55"
+        },
+        {
+            "id": "70",
+            "name": "Cabanatuan City",
+            "state_id": "56"
+        },
+        {
+            "id": "71",
+            "name": "Gapan City",
+            "state_id": "56"
+        },
+        {
+            "id": "72",
+            "name": "San Jose City",
+            "state_id": "56"
+        },
+        {
+            "id": "73",
+            "name": "Palayan City",
+            "state_id": "56"
+        },
+        {
+            "id": "74",
+            "name": "Science City of Muñoz",
+            "state_id": "56"
+        },
+        {
+            "id": "75",
+            "name": "Calapan City",
+            "state_id": "59"
+        },
+        {
+            "id": "76",
+            "name": "Puerto Princesa City",
+            "state_id": "60"
+        },
+        {
+            "id": "77",
+            "name": "San Fernando City",
+            "state_id": "61"
+        },
+        {
+            "id": "78",
+            "name": "Angeles City",
+            "state_id": "61"
+        },
+        {
+            "id": "79",
+            "name": "Mabalacat City",
+            "state_id": "61"
+        },
+        {
+            "id": "80",
+            "name": "Lingayen",
+            "state_id": "62"
+        },
+        {
+            "id": "81",
+            "name": "Dagupan City",
+            "state_id": "62"
+        },
+        {
+            "id": "82",
+            "name": "Urdaneta City",
+            "state_id": "62"
+        },
+        {
+            "id": "83",
+            "name": "San Carlos City",
+            "state_id": "62"
+        },
+        {
+            "id": "84",
+            "name": "Lucena City",
+            "state_id": "63"
+        },
+        {
+            "id": "85",
+            "name": "Antipolo City",
+            "state_id": "65"
+        },
+        {
+            "id": "86",
+            "name": "Catbalogan City",
+            "state_id": "67"
+        },
+        {
+            "id": "87",
+            "name": "Sorsogon City",
+            "state_id": "70"
+        },
+        {
+            "id": "88",
+            "name": "General Santos City",
+            "state_id": "71"
+        },
+        {
+            "id": "89",
+            "name": "Koronadal City",
+            "state_id": "71"
+        },
+        {
+            "id": "90",
+            "name": "Maasin City",
+            "state_id": "72"
+        },
+        {
+            "id": "91",
+            "name": "Tacurong City",
+            "state_id": "73"
+        },
+        {
+            "id": "92",
+            "name": "Surigao City",
+            "state_id": "75"
+        },
+        {
+            "id": "93",
+            "name": "Tandag City",
+            "state_id": "76"
+        },
+        {
+            "id": "94",
+            "name": "Tarlac City",
+            "state_id": "77"
+        },
+        {
+            "id": "95",
+            "name": "Bongao",
+            "state_id": "78"
+        },
+        {
+            "id": "96",
+            "name": "Iba",
+            "state_id": "79"
+        },
+        {
+            "id": "97",
+            "name": "Dipolog City",
+            "state_id": "80"
+        },
+        {
+            "id": "98",
+            "name": "Dapitan City",
+            "state_id": "80"
+        },
+        {
+            "id": "99",
+            "name": "Pagadian City",
+            "state_id": "81"
+        },
+        {
+            "id": "100",
+            "name": "Ipil",
+            "state_id": "82"
+        },
+        {
+            "id": "101",
+            "name": "Candon City",
+            "state_id": "37"
+        },
+        {
+            "id": "102",
+            "name": "El Salvador City",
+            "state_id": "51"
         }
     ]
 }

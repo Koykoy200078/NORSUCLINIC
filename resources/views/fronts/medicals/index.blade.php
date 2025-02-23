@@ -24,7 +24,7 @@ $styleCss = 'style';
                     </div>
                 </div>
                 <div class="col-lg-6 text-lg-end text-center">
-                    <img src="{{ $sliders->slider_image }}" alt="Infy Care" class="img-fluid object-image-cover" loading="lazy" />
+                    <img src="{{ $sliders->slider_image }}" alt="NORSU CLINIC" class="img-fluid object-image-cover" loading="lazy" />
                 </div>
             </div>
         </div>

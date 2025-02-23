@@ -49,10 +49,10 @@
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('specialities',__('messages.setting.specialities').':',
+                    {{ Form::label('specialties',__('messages.setting.specialties').':',
                                      ['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::select('specialities[]', $specialities, json_decode($setting['specialities']), ['multiple',
+                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties']), ['multiple',
                          'class' => 'form-select', 'aria-label'=>"Select a Country",
                          'data-control'=>'select2','required']) }}
                     </div>

@@ -16,52 +16,20 @@ class DefaultServicesSeeder extends Seeder
         $input = [
             [
                 'category_id' => '1',
-                'name' => 'Diagnostics',
-                'charges' => '500',
+                'name' => 'General Checkup',
+                'charges' => '0',
                 'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/Diagnostics.png'),
+                'short_description' => 'Routine medical checkup for students.',
+                'icon' => asset('assets/front/images/services_images/GeneralCheckup.png'),
             ],
             [
                 'category_id' => '2',
-                'name' => 'Treatment',
-                'charges' => '500',
+                'name' => 'Dental Cleaning',
+                'charges' => '400',
                 'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/Treatment.png'),
-            ],
-            [
-                'category_id' => '1',
-                'name' => 'Surgery',
-                'charges' => '500',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/Surgery.png'),
-            ],
-            [
-                'category_id' => '4',
-                'name' => 'Emergency',
-                'charges' => '500',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/Emergency.png'),
-            ],
-            [
-                'category_id' => '4',
-                'name' => 'Vaccine',
-                'charges' => '500',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/Vaccine.png'),
-            ],
-            [
-                'category_id' => '1',
-                'name' => 'Qualified Doctors',
-                'charges' => '500',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Phasellus venenatis porta rhoncus. Integer et viverra felis.',
-                'icon' => asset('assets/front/images/services_images/qualified_doctors.png'),
-            ],
+                'short_description' => 'Professional dental cleaning service.',
+                'icon' => asset('assets/front/images/services_images/DentalCleaning.png'),
+            ]
         ];
 
         $doctor = Doctor::firstOrfail();

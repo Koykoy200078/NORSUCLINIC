@@ -53,32 +53,33 @@ class SettingController extends AppBaseController
             $cities = getCities($states);
         }
         $countries = Country::toBase()->pluck('name', 'id');
-        $specialities = Specialization::orderBy('name', 'asc')->pluck('name', 'id');
+        $specialties = Specialization::orderBy('name', 'asc')->pluck('name', 'id');
         $currencies = Currency::toBase()->pluck('currency_name', 'id');
         $paymentGateways = Appointment::PAYMENT_METHOD;
         $languages = User::LANGUAGES;
-        $courentlanguage = Setting::where('key','language')->get()->toArray()[0]['value'];
+        $courentlanguage = Setting::where('key', 'language')->get()->toArray()[0]['value'];
         $selectedPaymentGateways = PaymentGateway::pluck('payment_gateway')->toArray();
 
-        return view("setting.$sectionName",
-            compact('sectionName', 'setting', 'countries', 'specialities', 'states', 'cities', 'currencies','languages','courentlanguage', 'paymentGateways', 'selectedPaymentGateways'));
+        return view(
+            "setting.$sectionName",
+            compact('sectionName', 'setting', 'countries', 'specialties', 'states', 'cities', 'currencies', 'languages', 'courentlanguage', 'paymentGateways', 'selectedPaymentGateways')
+        );
     }
 
     public function update(UpdateSettingRequest $request): RedirectResponse
     {
         $language = $request->language;
-        if(!empty($language)){
-            Setting::where('key','language')->update([
+        if (!empty($language)) {
+            Setting::where('key', 'language')->update([
                 'value' => $language,
             ]);
-            $appointment = user::whereNot('type',User::ADMIN)->get();
+            $appointment = user::whereNot('type', User::ADMIN)->get();
             foreach ($appointment as $appointment) {
-                if($language == null)
-                {
+                if ($language == null) {
                     $appointment->update([
                         'language' => 'en',
                     ]);
-                }else{
+                } else {
                     $appointment->update([
                         'language' => $language,
                     ]);
@@ -93,10 +94,12 @@ class SettingController extends AppBaseController
 
         if (isset($paymentGateways)) {
             foreach ($paymentGateways as $paymentGateway) {
-                PaymentGateway::updateOrCreate(['payment_gateway_id' => $paymentGateway],
+                PaymentGateway::updateOrCreate(
+                    ['payment_gateway_id' => $paymentGateway],
                     [
                         'payment_gateway' => Appointment::PAYMENT_METHOD[$paymentGateway],
-                    ]);
+                    ]
+                );
             }
         }
 
@@ -104,9 +107,9 @@ class SettingController extends AppBaseController
 
         if ($request->recaptcha == 1 &&  empty($request->googleCaptchaKey)) {
             Flash::error(__('messages.common.google_captcha_key_required'));
-        }elseif($request->recaptcha == 1 &&  empty($request->googleCaptchaSecret)){
+        } elseif ($request->recaptcha == 1 &&  empty($request->googleCaptchaSecret)) {
             Flash::error(__('messages.common.google_captcha_secret_required'));
-        }else{
+        } else {
             $this->settingRepository->update($request->all(), $id);
             Flash::success(__('messages.flash.setting_update'));
         }

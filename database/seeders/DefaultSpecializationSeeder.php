@@ -14,41 +14,11 @@ class DefaultSpecializationSeeder extends Seeder
     {
         $input = [
             [
-                'name' => 'Marine Medicine',
+                'name' => 'Medical',
             ],
             [
-                'name' => 'Medical Genetics',
-            ],
-            [
-                'name' => 'Microbiology',
-            ],
-            [
-                'name' => 'Nuclear Medicine',
-            ],
-            [
-                'name' => 'Paediatrics',
-            ],
-            [
-                'name' => 'Palliative Medicine',
-            ],
-            [
-                'name' => 'Pathology',
-            ],
-            [
-                'name' => 'Pharmacology',
-            ],
-            [
-                'name' => 'Psychiatry',
-            ],
-            [
-                'name' => 'Physiology',
-            ],
-            [
-                'name' => 'Physical Medicine',
-            ],
-            [
-                'name' => 'Radiotherapy',
-            ],
+                'name' => 'Dental',
+            ]
         ];
 
         foreach ($input as $data) {

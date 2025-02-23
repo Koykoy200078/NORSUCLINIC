@@ -14,8 +14,8 @@ class DefaultSliderSeeder extends Seeder
     {
         $inputs = [
             [
-                'title' => 'We Provide All Health Care Solution',
-                'short_description' => 'Protect Your Health And Take Care To Of Your Health',
+                'title' => 'Your Campus Health Care',
+                'short_description' => 'Prioritizing your wellness at NORSU Clinic.',
                 'image' => ('assets/front/images/home/home-page-image.png'),
                 'is_default' => true,
             ],
