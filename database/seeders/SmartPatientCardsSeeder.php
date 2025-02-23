@@ -16,7 +16,7 @@ class SmartPatientCardsSeeder extends Seeder
         $input = [
             'template_name' => 'demo temp',
             'address' => 'Guihulngan City, Negros Oriental',
-            'header_color' => '#ffffff',
+            'header_color' => '#007fff',
             'show_email' => 1,
             'show_phone' => 1,
             'show_dob' => 1,
@@ -25,6 +25,6 @@ class SmartPatientCardsSeeder extends Seeder
             'show_patient_unique_id' => 1,
         ];
 
-        $user = SmartPatientCards::create($input);
+        SmartPatientCards::create($input);
     }
 }

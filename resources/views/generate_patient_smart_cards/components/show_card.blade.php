@@ -4,18 +4,17 @@
         <div class="modal-content patient-modal-content w-75">
             <div class="modal-body p-0">
                 <div class="alert alert-danger d-none hide" id="medicineCategoryErrorsBox"></div>
-                <div class="card patient-smart-card-card" id="card">
+                <div class="card patient-smart-card-card" style="background-color: #E3E9EB;" id="card">
                     <div class="card-header patient-card-header smart-card-header d-flex align-items-center">
-                        <div class="flex-1 d-flex align-items-center me-3">
+                        <div class="flex-1 d-flex align-items-center justify-content-center me-3">
                             <div class="logo me-4">
-                                <img src="{{ url($logo[0]) }}" alt="logo" class="h-100 img-fluid" />
+                                <img src="{{ url($logo[0]) }}" alt="logo" style="height: 45px; width: 45px;" />
                             </div>
-                            <h4 class="mb-0 fw-bold clinic_name">Royal Hospital</h4>
+                            <h4 class="mb-0 fw-bold text-white text-left">Negros Oriental State University</h4>
                         </div>
                         <div class="flex-1 text-end">
                             <address class="fs-12 mb-0 clinic_address">
                                 <p class="mb-0">
-                                    Nr Loyala Ashram,A 69,Shahpura Rd, Manisha Market,Sector Bhopal
                                 </p>
                             </address>
                         </div>
@@ -27,29 +26,29 @@
                                     <div class="card-img me-3">
                                         <img src="{{ !empty($smart_patient_cards->profile_image) ? $smart_patient_cards->profile_image : asset('web/media/avatars/male.png') }}"
                                             alt="profile-img" class="object-fit-cover" id="card_profilePicture"
-                                            width="110px" />
+                                            width="108px" />
                                     </div>
 
                                     <div class="patient-smart-card-user-detail">
                                         <table class="table table-borderless patient-desc mb-0">
                                             <tr>
-                                                <td class="">{{ __('messages.web.name') . ':' }}</td>
-                                                <td class="card_name">James Bond</td>
+                                                <td class="">{{ __('messages.web.name') .':' }}</td>
+                                                <td class="card_name"></td>
                                             </tr>
-                                            <tr id="card_show_email">
-                                                <td class="pe-3">{{ __('messages.web.email') . ':' }}</td>
-                                                <td class="patient_email">Marie     </td>
+                                            <tr id="">
+                                                <td class="">{{ __('messages.web.email') .':' }}</td>
+                                                <td class="patient_email"></td>
                                             </tr>
-                                            <tr id="patient_card_show_phone">
-                                                <td class="pe-3">{{ __('messages.web.contact') . ':' }}</td>
+                                            <tr id="">
+                                                <td class="">{{ __('messages.web.contact') .':' }}</td>
                                                 <td class="patient_contact"></td>
                                             </tr>
-                                            <tr id="patient_card_show_dob">
-                                                <td class="pe-3">{{ __('messages.patient.dob') . ':' }}</td>
+                                            <tr id="">
+                                                <td class="">DOB</td>
                                                 <td class="patient_dob"></td>
                                             </tr>
-                                            <tr id="patient_card_show_blood_group">
-                                                <td class="blood_group">{{ __('messages.patient.blood_group') . ':' }}</td>
+                                            <tr id="">
+                                                <td class="blood_group">{{ __('messages.patient.blood_group') .':' }}</td>
                                                 <td class="patient_blood_group"></td>
                                             </tr>
                                         </table>

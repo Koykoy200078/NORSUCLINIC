@@ -1,5 +1,23 @@
     <!-- Account Information -->
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.account_information') }}</div>
+    <div class="col-lg-6 mt-5">
+        <div class="mb-3" io-image-input="true">
+            <label for="exampleInputImage" class="form-label">{{__('messages.patient.profile')}}:</label>
+            <div class="d-block">
+                <div class="image-picker">
+                    <div class="image previewImage" id="exampleInputImage" style="background-image: url({{ !empty($patient->profile) ? $patient->profile : asset('web/media/avatars/male.png') }})">
+                    </div>
+                    <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
+                        data-placement="top" data-bs-original-title="{{ __('messages.user.edit_profile') }}">
+                        <label>
+                            <i class="fa-solid fa-pen" id="profileImageIcon"></i>
+                            <input type="file" name="profile" id="profilePicture" class="image-upload d-none profile-validation" accept="image/*" />
+                        </label>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6 mb-5 d-none">
             {{ Form::label('patientUniqueId',__('messages.patient.patient_unique_id').':' ,['class' => 'form-label required']) }}
@@ -92,24 +110,6 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 mt-5">
-            <div class="mb-3" io-image-input="true">
-                <label for="exampleInputImage" class="form-label">{{__('messages.patient.profile')}}:</label>
-                <div class="d-block">
-                    <div class="image-picker">
-                        <div class="image previewImage" id="exampleInputImage" style="background-image: url({{ !empty($patient->profile) ? $patient->profile : asset('web/media/avatars/male.png') }})">
-                        </div>
-                        <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
-                            data-placement="top" data-bs-original-title="{{ __('messages.user.edit_profile') }}">
-                            <label>
-                                <i class="fa-solid fa-pen" id="profileImageIcon"></i>
-                                <input type="file" name="profile" id="profilePicture" class="image-upload d-none profile-validation" accept="image/*" />
-                            </label>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.address_information') }}
         </div>
         <div class="col-md-6 mb-7">
@@ -137,9 +137,34 @@
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}
             {{ Form::text('postal_code',!empty($patient->address) ? $patient->address->postal_code : null,['class' => 'form-control','placeholder' => __('messages.patient.postal_code')]) }}
         </div>
-        <div>
-            {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
-            <a href="{{route('patients.index')}}" type="reset"
-                class="btn btn-secondary">{{__('messages.common.discard')}}</a>
+
+    </div>
+
+    <!-- Student Information -->
+    <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.student.student_information') }}</div>
+    <div class="row">
+        <div class="col-md-6 mb-7">
+            {{ Form::label('campus_id',__('messages.student.campus').':',['class'=>'form-label']) }}
+            {{ Form::select('campus_id', $data['campuses'] ,!empty($patient->user) ? $patient->user->campus_id : null, ['placeholder' => __('messages.student.select_campus'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Campus",'data-control'=>'select2']) }}
         </div>
+
+        <div class="col-md-6 mb-7">
+            {{ Form::label('college_id',__('messages.student.college').':',['class'=>'form-label']) }}
+            {{ Form::select('college_id', $data['colleges'] ,!empty($patient->user) ? $patient->user->college_id : null, ['placeholder' => __('messages.student.select_college'),'class' => 'form-select io-select2', 'aria-label'=>"Select a College",'data-control'=>'select2']) }}
+        </div>
+
+        <div class="col-md-6 mb-7">
+            {{ Form::label('course_id',__('messages.student.course').':',['class'=>'form-label']) }}
+            {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2']) }}
+        </div>
+        <div class="col-md-6 mb-7">
+            {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label']) }}
+            {{ Form::select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null, ['placeholder' => __('messages.student.select_year_level'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level",'data-control'=>'select2']) }}
+        </div>
+    </div>
+
+    <div>
+        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
+        <a href="{{route('patients.index')}}" type="reset"
+            class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

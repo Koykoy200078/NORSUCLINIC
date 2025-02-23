@@ -2,8 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Models\Campus;
 use App\Models\City;
+use App\Models\College;
 use App\Models\Country;
+use App\Models\Course;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Support\Arr;
@@ -14,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting;
 use App\Models\State;
+use App\Models\YearLevel;
 
 /**
  * Class PatientRepository
@@ -50,6 +54,11 @@ class PatientRepository extends BaseRepository
         $data['bloodGroupList'] = Patient::BLOOD_GROUP_ARRAY;
         $data['provinces'] = State::toBase()->pluck('name', 'id');
         $data['cities'] = City::toBase()->pluck('name', 'id');
+
+        $data['campuses'] = Campus::toBase()->pluck('campus_name', 'id');
+        $data['colleges'] = College::toBase()->pluck('college_name', 'id');
+        $data['courses'] = Course::toBase()->pluck('course_name', 'id');
+        $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
 
         return $data;
     }

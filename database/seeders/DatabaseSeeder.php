@@ -34,5 +34,10 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultMedicinePermissionSeeder::class);
         $this->call(DefaultAssignPermissionSeeder::class);
         $this->call(SmartPatientCardsSeeder::class);
+
+        $this->call(CollegeSeeder::class);
+        $this->call(CampusSeeder::class);
+        $this->call(CourseSeeder::class);
+        $this->call(YearLevelSeeder::class);
     }
 }

@@ -51,6 +51,10 @@ class User extends Authenticatable implements HasMedia
         'email_notification',
         'time_zone',
         'dark_mode',
+        'campus_id',
+        'college_id',
+        'course_id',
+        'year_level_id',
     ];
 
     const LANGUAGES = [
@@ -133,6 +137,11 @@ class User extends Authenticatable implements HasMedia
         'status' => 'nullable',
         'postal_code' => 'nullable',
         'profile' => 'nullable|mimes:jpeg,png,jpg|max:2000',
+
+        'campus_id' => 'nullable',
+        'college_id' => 'nullable',
+        'course_id' => 'nullable',
+        'year_level_id' => 'nullable',
     ];
 
     /**
@@ -160,6 +169,11 @@ class User extends Authenticatable implements HasMedia
         'email_notification' => 'boolean',
         'time_zone' => 'string',
         'dark_mode' => 'boolean',
+
+        'campus_id' => 'integer',
+        'college_id' => 'integer',
+        'course_id' => 'integer',
+        'year_level_id' => 'integer',
     ];
 
     public function getProfileImageAttribute(): string

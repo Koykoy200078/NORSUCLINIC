@@ -29,6 +29,10 @@ return new class extends Migration
             $table->integer('type')->nullable();
             $table->string('blood_group')->nullable();
             $table->string('country_code')->nullable();
+            $table->integer('campus_id')->nullable();
+            $table->integer('college_id')->nullable();
+            $table->integer('course_id')->nullable();
+            $table->integer('year_level_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

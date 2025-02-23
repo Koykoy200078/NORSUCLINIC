@@ -468,6 +468,18 @@ return [
         'emailverified' => 'Email Verified',
     ],
 
+    'student' => [
+        'student_information' => 'Student Information',
+        'college' => 'College',
+        'select_college' => 'Select College',
+        'course' => 'Course',
+        'select_course' => 'Select Course',
+        'campus' => 'Campus',
+        'select_campus' => 'Select Campus',
+        'year_level' => 'Year Level',
+        'select_year_level' => 'Select Year Level',
+    ],
+
     'country' => [
         'country' => 'Country',
         'add_country' => 'Add Country',
@@ -1285,7 +1297,7 @@ return [
         'email_show' => 'Email show',
         'phone_show' => 'Phone Show',
         'dob_show' => 'Date Of Birth Show',
-        'blood_group_show' => 'Blood Group Show',
+        'blood_group_show' => 'Blood Type Show',
         'address_show' => 'Address Show',
         'unique_id_show' => 'Unique ID Show',
         'add_smart_card_templates' => 'Add Smart Card Templates',

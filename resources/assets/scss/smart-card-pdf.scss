@@ -2,7 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: DejaVu Sans, Arial, "Helvetica", Arial, "Liberation Sans", sans-serif;
+    font-family: DejaVu Sans, Arial, "Helvetica", Arial, "Liberation Sans",
+        sans-serif;
     font-weight: 400;
 }
 
@@ -27,7 +28,8 @@
     color: #ff8e4b !important;
 }
 
-.patient_unique_id, .patient_unique_id_span {
+.patient_unique_id,
+.patient_unique_id_span {
     color: #ff8e4b;
 }
 
@@ -81,10 +83,10 @@
 .mystyle {
     display: none;
 }
-.card-detail{
+.card-detail {
     width: 560px;
 }
-.patient-detail{
+.patient-detail {
     position: relative;
     width: 300px;
     height: 180px;
@@ -97,10 +99,9 @@
     padding: 0;
     margin: 0;
 }
-.blood_group{
+.blood_group {
     width: 100px;
 }
-.smart_card__pdf_logo
-{
+.smart_card__pdf_logo {
     width: 50px;
 }
