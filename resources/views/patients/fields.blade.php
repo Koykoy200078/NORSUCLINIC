@@ -1,13 +1,7 @@
+    <!-- Account Information -->
+    <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.account_information') }}</div>
     <div class="row">
-        <div class="col-md-6 mb-5">
-            {{ Form::label('firstName',__('messages.patient.first_name').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('first_name',!empty($patient->user) ? $patient->user->first_name : null,['class' => 'form-control','placeholder' => __('messages.patient.first_name'),'required']) }}
-        </div>
-        <div class="col-md-6 mb-5">
-            {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('last_name',!empty($patient->user) ? $patient->user->last_name : null,['class' => 'form-control','placeholder' => __('messages.patient.last_name'),'required']) }}
-        </div>
-        <div class="col-md-6 mb-5">
+        <div class="col-md-6 mb-5 d-none">
             {{ Form::label('patientUniqueId',__('messages.patient.patient_unique_id').':' ,['class' => 'form-label required']) }}
             {{ Form::text('patient_unique_id',isset($data['patientUniqueId']) ? $data['patientUniqueId'] : null,['class' => 'form-control','required','maxLength' => '8','readonly']) }}
         </div>
@@ -15,6 +9,7 @@
             {{ Form::label('email',__('messages.patient.email').':' ,['class' => 'form-label required']) }}
             {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('messages.patient.email'),'required']) }}
         </div>
+
         @if(empty($patient))
         <div class="col-md-6 mb-5">
             <div class="mb-1">
@@ -40,6 +35,23 @@
             </div>
         </div>
         @endif
+    </div>
+
+    <!-- Personal Information -->
+    <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.personal_information') }}</div>
+    <div class="row">
+        <div class="col-md-6 mb-5">
+            {{ Form::label('firstName',__('messages.patient.first_name').':' ,['class' => 'form-label required']) }}
+            {{ Form::text('first_name',!empty($patient->user) ? $patient->user->first_name : null,['class' => 'form-control','placeholder' => __('messages.patient.first_name'),'required']) }}
+        </div>
+        <div class="col-md-6 mb-5">
+            {{ Form::label('middleName',__('messages.patient.middle_name').':' ,['class' => 'form-label required']) }}
+            {{ Form::text('middle_name',!empty($patient->user) ? $patient->user->middle_name : null,['class' => 'form-control','placeholder' => __('messages.patient.middle_name'),'required']) }}
+        </div>
+        <div class="col-md-6 mb-5">
+            {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label']) }}
+            {{ Form::text('last_name',!empty($patient->user) ? $patient->user->last_name : null,['class' => 'form-control','placeholder' => __('messages.patient.last_name'),'required']) }}
+        </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
             {{ Form::tel('contact', !empty($patient->user) ? '+'.$patient->user->country_code.$patient->user->contact : null, ['class' => 'form-control',
@@ -47,6 +59,15 @@
             {{ Form::hidden('country_code',!empty($patient->user) ? $patient->user->country_code : null,['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
             <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+        </div>
+        <div class="col-md-6 mb-5">
+            {{ Form::label('emergencyName',__('messages.patient.emergency_contact_name').':' ,['class' => 'form-label']) }}
+            {{ Form::text('emergency_contact_name',!empty($patient->user) ? $patient->user->emergency_contact_name : null,['class' => 'form-control','placeholder' => __('messages.patient.emergency_contact_name'),'required']) }}
+        </div>
+
+        <div class="col-md-6 mb-5">
+            {{ Form::label('emergencyNo',__('messages.patient.emergency_contact_no').':' ,['class' => 'form-label']) }}
+            {{ Form::text('emergency_contact_no',!empty($patient->user) ? $patient->user->emergency_contact_no : null,['class' => 'form-control','placeholder' => __('messages.patient.emergency_contact_no'),'required']) }}
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('gender', __('messages.staff.gender').':', ['class' => 'form-label required']) }}
@@ -63,11 +84,11 @@
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('dob',__('messages.patient.dob').':' ,['class' => 'form-label']) }}
-            {{ Form::text('dob',!empty($patient->user) ? $patient->user->dob : null,['class' => 'form-control patient-dob','id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.dob')]) }}
+            {{ Form::text('dob',!empty($patient->user) ? $patient->user->dob : null,['class' => 'form-control patient-dob','id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.select_dob')]) }}
         </div>
         <div class="col-md-6 mb-5">
             <label class="form-label">{{ __('messages.patient.blood_group').':' }}</label>
-            {{ Form::select('blood_group', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_group : null, ['placeholder' => __('messages.patient.blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Group",'data-control'=>'select2']) }}
+            {{ Form::select('blood_group', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_group : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
         </div>
     </div>
     <div class="row">
@@ -106,12 +127,11 @@
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('state_id',__('messages.state.state').':',['class'=>'form-label']) }}
-            {{ Form::select('state_id', [], null, ['id' => 'patientStateId','class' => 'form-select io-select2',
-'data-placeholder' => __('messages.common.select_state'),'aria-label'=>"Select State",'data-control'=>'select2']) }}
+            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['placeholder' => __('messages.patient.select_state'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('city_id',__('messages.city.city').':',['class'=>'form-label']) }}
-            {{ Form::select('city_id', [], null, ['id' => 'patientCityId','class' => 'form-select io-select2', 'data-placeholder' => __('messages.common.select_city'),'aria-label'=>"Select City",'data-control'=>'select2']) }}
+            {{ Form::select('city_id', $data['cities'] ,!empty($patient->address) ? $patient->address->city_id : null, ['placeholder' => __('messages.patient.select_city'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}

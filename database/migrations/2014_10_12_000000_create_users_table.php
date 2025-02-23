@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('email', 191)->unique();
             $table->string('contact')->nullable();
+            $table->string('emergency_contact_name')->nullable();
+            $table->string('emergency_contact_no')->nullable();
             $table->date('dob')->nullable();
             $table->integer('gender')->nullable();
             $table->boolean('status')->default(1);

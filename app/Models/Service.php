@@ -120,9 +120,10 @@ class Service extends Model implements HasMedia
     {
         /** @var Media $media */
         $media = $this->getMedia(self::ICON)->first();
-        if (! empty($media)) {
+
+        if ($media) {
             $fullUrl = $media->getFullUrl();
-            if (strpos($fullUrl, 'http://localhost') === 0) {
+            if (str_starts_with($fullUrl, 'http://localhost')) {
                 $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
             }
             return $fullUrl;

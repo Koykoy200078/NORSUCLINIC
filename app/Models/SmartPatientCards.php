@@ -44,15 +44,21 @@ class SmartPatientCards extends Model implements HasMedia
     {
         /** @var Media $media */
         $media = $this->getMedia(self::PROFILE)->first();
-        if (! empty($media)) {
-            return $media->getFullUrl();
+
+        if ($media) {
+            $fullUrl = $media->getFullUrl();
+            if (str_starts_with($fullUrl, 'http://localhost')) {
+                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+            }
+            return $fullUrl;
         }
+
         return asset('web/media/avatars/male.png');
     }
 
 
-    public function patient():HasOne
+    public function patient(): HasOne
     {
-        return $this->hasOne(Patient::class,'template_id');
+        return $this->hasOne(Patient::class, 'template_id');
     }
 }

@@ -88,8 +88,13 @@ class FrontPatientTestimonial extends Model implements hasMedia
     {
         /** @var Media $media */
         $media = $this->getMedia(self::FRONT_PATIENT_PROFILE)->first();
-        if (! empty($media)) {
-            return $media->getFullUrl();
+
+        if ($media) {
+            $fullUrl = $media->getFullUrl();
+            if (str_starts_with($fullUrl, 'http://localhost')) {
+                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+            }
+            return $fullUrl;
         }
 
         return asset('web/media/avatars/male.png');
