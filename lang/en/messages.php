@@ -466,6 +466,7 @@ return [
         'filter' => 'Filter',
         'today' => 'Today',
         'emailverified' => 'Email Verified',
+        'vaccination_status' => 'Vaccination Status',
     ],
 
     'student' => [

@@ -39,5 +39,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CampusSeeder::class);
         $this->call(CourseSeeder::class);
         $this->call(YearLevelSeeder::class);
+        $this->call(VaccinationSeeder::class);
     }
 }

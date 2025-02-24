@@ -33,6 +33,7 @@ return new class extends Migration
             $table->integer('college_id')->nullable();
             $table->integer('course_id')->nullable();
             $table->integer('year_level_id')->nullable();
+            $table->integer('vaccination_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -55,6 +55,7 @@ class User extends Authenticatable implements HasMedia
         'college_id',
         'course_id',
         'year_level_id',
+        'vaccination_id'
     ];
 
     const LANGUAGES = [
@@ -142,6 +143,8 @@ class User extends Authenticatable implements HasMedia
         'college_id' => 'nullable',
         'course_id' => 'nullable',
         'year_level_id' => 'nullable',
+
+        'vaccination_id' => 'nullable',
     ];
 
     /**
@@ -174,6 +177,8 @@ class User extends Authenticatable implements HasMedia
         'college_id' => 'integer',
         'course_id' => 'integer',
         'year_level_id' => 'integer',
+
+        'vaccination_id' => 'integer',
     ];
 
     public function getProfileImageAttribute(): string

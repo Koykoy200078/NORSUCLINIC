@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting;
 use App\Models\State;
+use App\Models\Vaccination;
 use App\Models\YearLevel;
 
 /**
@@ -59,6 +60,8 @@ class PatientRepository extends BaseRepository
         $data['colleges'] = College::toBase()->pluck('college_name', 'id');
         $data['courses'] = Course::toBase()->pluck('course_name', 'id');
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
+
+        $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
 
         return $data;
     }

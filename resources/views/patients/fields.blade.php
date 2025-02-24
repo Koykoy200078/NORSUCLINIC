@@ -108,7 +108,13 @@
             <label class="form-label">{{ __('messages.patient.blood_group').':' }}</label>
             {{ Form::select('blood_group', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_group : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
         </div>
+        <div class="col-md-6 mb-7">
+            {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'form-label']) }}
+            {{ Form::select('vaccination_id', $data['vaccination_data'] ,!empty($patient->user) ? $patient->user->vaccination_id : null, ['placeholder' => __('messages.patient.vaccination_status'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status",'data-control'=>'select2']) }}
+        </div>
     </div>
+
+    <!-- Address Information -->
     <div class="row">
         <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.address_information') }}
         </div>
@@ -137,7 +143,6 @@
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}
             {{ Form::text('postal_code',!empty($patient->address) ? $patient->address->postal_code : null,['class' => 'form-control','placeholder' => __('messages.patient.postal_code')]) }}
         </div>
-
     </div>
 
     <!-- Student Information -->
