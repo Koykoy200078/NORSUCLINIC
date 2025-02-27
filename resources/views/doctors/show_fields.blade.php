@@ -2,12 +2,12 @@
     <label class="pb-2 fs-4 text-gray-600">{{ __('messages.doctor.specialization')  }}</label>
     <br>
     @foreach($doctorDetailData['data']->specializations as $specialization)
-        <span class="badge my-1 me-1 bg-{{ getBadgeColor($loop->index) }}">{{ $specialization->name }}</span>
+    <span class="badge my-1 me-1 bg-{{ getBadgeColor($loop->index) }}">{{ $specialization->name }}</span>
     @endforeach
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('messages.patient.blood_group')  }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->user->blood_group) ? \App\Models\Doctor::BLOOD_GROUP_ARRAY[$doctorDetailData['data']->user->blood_group] : __('messages.common.n/a') }}</span>
+    <label class="pb-2 fs-4 text-gray-600">{{ __('messages.patient.blood_type')  }}</label>
+    <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->user->blood_type) ? \App\Models\Doctor::BLOOD_GROUP_ARRAY[$doctorDetailData['data']->user->blood_type] : __('messages.common.n/a') }}</span>
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-4 text-gray-600">{{ __('messages.user.gender')  }}</label>

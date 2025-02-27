@@ -4,7 +4,11 @@ namespace App\Repositories;
 
 use App\DataTable\UserDataTable;
 use App\Models\Appointment;
+use App\Models\Campus;
+use App\Models\City;
+use App\Models\College;
 use App\Models\Country;
+use App\Models\Course;
 use App\Models\Doctor;
 use App\Models\DoctorSession;
 use App\Models\Patient;
@@ -20,6 +24,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting;
+use App\Models\State;
+use App\Models\Vaccination;
+use App\Models\YearLevel;
 
 /**
  * Class UserRepository
@@ -62,6 +69,15 @@ class UserRepository extends BaseRepository
         $data['countries'] = Country::toBase()->pluck('name', 'id');
         $data['bloodGroupList'] = Patient::BLOOD_GROUP_ARRAY;
 
+        $data['provinces'] = State::toBase()->pluck('name', 'id');
+        $data['cities'] = City::toBase()->pluck('name', 'id');
+        $data['campuses'] = Campus::toBase()->pluck('campus_name', 'id');
+        $data['colleges'] = College::toBase()->pluck('college_name', 'id');
+        $data['courses'] = Course::toBase()->pluck('course_name', 'id');
+        $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
+
+        $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
+
         return $data;
     }
 
@@ -70,8 +86,10 @@ class UserRepository extends BaseRepository
      */
     public function store(array $input)
     {
-        $addressInputArray = Arr::only($input,
-            ['address1', 'address2', 'country_id', 'city_id', 'state_id', 'postal_code']);
+        $addressInputArray = Arr::only(
+            $input,
+            ['address1', 'address2', 'country_id', 'city_id', 'state_id', 'postal_code']
+        );
         $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
         $specialization = $input['specializations'];
         try {
@@ -80,7 +98,7 @@ class UserRepository extends BaseRepository
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::DOCTOR;
-            $input['language'] = Setting::where('key','language')->get()->toArray()[0]['value'];
+            $input['language'] = Setting::where('key', 'language')->get()->toArray()[0]['value'];
             $doctor = User::create($input);
             $doctor->assignRole('doctor');
             $doctor->address()->create($addressInputArray);
@@ -101,8 +119,10 @@ class UserRepository extends BaseRepository
 
     public function update($input, $doctor)
     {
-        $addressInputArray = Arr::only($input,
-            ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']);
+        $addressInputArray = Arr::only(
+            $input,
+            ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+        );
         $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
         $qualificationArray = json_decode($input['qualifications'], true);
         $specialization = $input['specializations'];
@@ -152,75 +172,103 @@ class UserRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $user = Auth::user();
-            $addressInputArray = Arr::only($userInput,
-                   ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']);
+            $addressInputArray = Arr::only(
+                $userInput,
+                ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+            );
 
-            if($user->hasRole('clinic_admin')) {
-               $user->update($userInput);
+            if ($user->hasRole('clinic_admin')) {
+                $user->update($userInput);
 
-               if ((! empty($userInput['image']))) {
-                  $user->clearMediaCollection(User::PROFILE);
-                  $user->media()->delete();
-                  $user->addMedia($userInput['image'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
-              }
+                if ((! empty($userInput['image']))) {
+                    $user->clearMediaCollection(User::PROFILE);
+                    $user->media()->delete();
+                    $user->addMedia($userInput['image'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
+                }
 
-              if(isset($user->address)){
-                  $user->address()->update($addressInputArray);
-               }else{
-                  $user->address()->create($addressInputArray);
-               }
+                if (isset($user->address)) {
+                    $user->address()->update($addressInputArray);
+                } else {
+                    $user->address()->create($addressInputArray);
+                }
             } elseif ($user->hasRole('patient')) {
-               $patient =  Patient::where('user_id',$user->id)->first();
+                $patient =  Patient::where('user_id', $user->id)->first();
 
 
-               $userInput['type'] = User::PATIENT;
-               $userInput['email'] = setEmailLowerCase($userInput['email']);
+                $userInput['type'] = User::PATIENT;
+                $userInput['email'] = setEmailLowerCase($userInput['email']);
 
-               /** @var Patient $patient */
-               $patient->user()->update(Arr::except($userInput, [
-                   'address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code', 'patient_unique_id',
-                   'avatar_remove',
-                   'profile', 'is_edit', 'edit_patient_country_id', 'edit_patient_state_id', 'edit_patient_city_id',
-                   'backgroundImg','image'
-               ]));
+                /** @var Patient $patient */
+                $patient->user()->update(Arr::except($userInput, [
+                    'address1',
+                    'address2',
+                    'city_id',
+                    'state_id',
+                    'country_id',
+                    'postal_code',
+                    'patient_unique_id',
+                    'avatar_remove',
+                    'profile',
+                    'is_edit',
+                    'edit_patient_country_id',
+                    'edit_patient_state_id',
+                    'edit_patient_city_id',
+                    'backgroundImg',
+                    'image'
+                ]));
 
-               if(isset($patient->address)){
-                   $patient->address()->update($addressInputArray);
-               }else{
-                   $patient->address()->create($addressInputArray);
-               }
+                if (isset($patient->address)) {
+                    $patient->address()->update($addressInputArray);
+                } else {
+                    $patient->address()->create($addressInputArray);
+                }
 
-               if (! empty($userInput['image'])) {
-                  $user->clearMediaCollection(Patient::PROFILE);
-                  $user->patient->media()->delete();
-                  $user->patient->addMedia($userInput['image'])->toMediaCollection(Patient::PROFILE,
-                     config('app.media_disc'));
-               }
-            }elseif ($user->hasRole('doctor')) {
-               $doctor =  Doctor::where('user_id',$user->id)->first();
-               $userInput['type'] = User::DOCTOR;
-               $userInput['email'] = setEmailLowerCase($userInput['email']);
+                if (! empty($userInput['image'])) {
+                    $user->clearMediaCollection(Patient::PROFILE);
+                    $user->patient->media()->delete();
+                    $user->patient->addMedia($userInput['image'])->toMediaCollection(
+                        Patient::PROFILE,
+                        config('app.media_disc')
+                    );
+                }
+            } elseif ($user->hasRole('doctor')) {
+                $doctor =  Doctor::where('user_id', $user->id)->first();
+                $userInput['type'] = User::DOCTOR;
+                $userInput['email'] = setEmailLowerCase($userInput['email']);
 
-               /** @var Patient $patient */
-               $doctor->user()->update(Arr::except($userInput, [
-                   'address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code', 'patient_unique_id',
-                   'avatar_remove',
-                   'profile', 'is_edit', 'edit_patient_country_id', 'edit_patient_state_id', 'edit_patient_city_id',
-                   'backgroundImg','image'
-               ]));
+                /** @var Patient $patient */
+                $doctor->user()->update(Arr::except($userInput, [
+                    'address1',
+                    'address2',
+                    'city_id',
+                    'state_id',
+                    'country_id',
+                    'postal_code',
+                    'patient_unique_id',
+                    'avatar_remove',
+                    'profile',
+                    'is_edit',
+                    'edit_patient_country_id',
+                    'edit_patient_state_id',
+                    'edit_patient_city_id',
+                    'backgroundImg',
+                    'image'
+                ]));
 
-               if(isset($doctor->address)){
-                   $doctor->address()->update($addressInputArray);
-               }else{
-                   $doctor->address()->create($addressInputArray);
-               }
+                if (isset($doctor->address)) {
+                    $doctor->address()->update($addressInputArray);
+                } else {
+                    $doctor->address()->create($addressInputArray);
+                }
 
-               if (! empty($userInput['image'])) {
-                  $user->clearMediaCollection(User::PROFILE);
-                  $user->media()->delete();
-                  $user->addMedia($userInput['image'])->toMediaCollection(User::PROFILE,
-                     config('app.media_disc'));
-               }
+                if (! empty($userInput['image'])) {
+                    $user->clearMediaCollection(User::PROFILE);
+                    $user->media()->delete();
+                    $user->addMedia($userInput['image'])->toMediaCollection(
+                        User::PROFILE,
+                        config('app.media_disc')
+                    );
+                }
             }
 
             DB::commit();
@@ -275,10 +323,16 @@ class UserRepository extends BaseRepository
         //        $doctor['appointments'] = DataTables::of((new UserDataTable())->getAppointment($input->id))->make(true);
         $doctor['appointmentStatus'] = Appointment::ALL_STATUS;
         $doctor['totalAppointmentCount'] = Appointment::whereDoctorId($input->id)->count();
-        $doctor['todayAppointmentCount'] = Appointment::whereDoctorId($input->id)->where('date', '=',
-            $todayDate)->count();
-        $doctor['upcomingAppointmentCount'] = Appointment::whereDoctorId($input->id)->where('date', '>',
-            $todayDate)->count();
+        $doctor['todayAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
+            'date',
+            '=',
+            $todayDate
+        )->count();
+        $doctor['upcomingAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
+            'date',
+            '>',
+            $todayDate
+        )->count();
 
         return $doctor;
     }

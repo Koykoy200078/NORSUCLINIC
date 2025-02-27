@@ -28,6 +28,7 @@ class DefaultUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
+                'time_zone' => '1',
             ],
             [
                 'first_name' => 'Adam',
@@ -38,32 +39,23 @@ class DefaultUserSeeder extends Seeder
                 'email' => 'doctor@norsuclinic.com',
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('123456'),
-            ],
-            [
-                'first_name' => 'Aiko',
-                'last_name' => 'Walsh',
-                'contact' => '1234567890',
-                'gender' => User::MALE,
-                'type' => User::PATIENT,
-                'email' => 'patient@norsuclinic.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('123456'),
-            ],
+                'country_code' => '63',
+                'time_zone' => '1'
+            ]
         ];
 
         foreach ($users as $key => $user) {
             $user = User::create($user);
-            if ($key == 1) {
+            if ($user->type == User::DOCTOR) {
                 $doctor = Doctor::create(['user_id' => $user->id]);
                 $user->address()->create(['owner_id' => $user->id]);
+                $specializationIds = Specialization::pluck('id');
+                $doctor->specializations()->sync($specializationIds);
             }
-            if ($key == 2) {
+            if ($user->type == User::PATIENT) {
                 $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'UNIQUE12']);
                 $patient->address()->create(['owner_id' => $patient['user_id']]);
             }
         }
-
-        $specializationIds = Specialization::pluck('id');
-        $doctor->specializations()->sync($specializationIds);
     }
 }

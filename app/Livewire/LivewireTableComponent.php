@@ -40,7 +40,7 @@ class LivewireTableComponent extends DataTableComponent
 
     public function columns(): array
     {
-        // TODO: Implement columns() method.
+        return [];
     }
 
     public function refreshDataTable()

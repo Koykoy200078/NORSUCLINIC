@@ -87,9 +87,9 @@
                                                                 <td>{{ $datas->user->dob }}</td>
                                                             </tr>
                                                             <tr id="card_show_blood_group"
-                                                                class="{{ $datas->smartPatientCard->show_blood_group == 0 || $datas->user->blood_group == null ? 'd-none' : '' }}">
-                                                                <td class="pe-3 blood_group">Blood Group:</td>
-                                                                <td>{{ !empty($datas->user->blood_group) ? \App\Models\Patient::BLOOD_GROUP_ARRAY[$datas->user->blood_group] : __('messages.common.n/a') }}</td>
+                                                                class="{{ $datas->smartPatientCard->show_blood_group == 0 || $datas->user->blood_type == null ? 'd-none' : '' }}">
+                                                                <td class="pe-3 blood_type">Blood Group:</td>
+                                                                <td>{{ !empty($datas->user->blood_type) ? \App\Models\Patient::BLOOD_GROUP_ARRAY[$datas->user->blood_type] : __('messages.common.n/a') }}</td>
                                                             </tr>
                                                         </table>
                                                     </div>

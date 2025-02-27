@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting;
+use Illuminate\Support\Facades\App;
 
 class SetLanguage
 {
@@ -17,14 +18,13 @@ class SetLanguage
     public function handle(Request $request, Closure $next): Response
     {
         $localeLanguage = Session::get('languageName');
-        $lan = Setting::where('key','language')->get()->toArray()[0];
+        $lan = Setting::where('key', 'language')->get()->toArray()[0];
 
-        if (! isset($localeLanguage) ) {
+        if (! isset($localeLanguage)) {
 
-            \App::setLocale($lan['value']);
-
+            App::setLocale($lan['value']);
         } else {
-            \App::setLocale($localeLanguage);
+            App::setLocale($localeLanguage);
         }
 
         return $next($request);

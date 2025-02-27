@@ -64,7 +64,7 @@
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('middleName',__('messages.patient.middle_name').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('middle_name',!empty($patient->user) ? $patient->user->middle_name : null,['class' => 'form-control','placeholder' => __('messages.patient.middle_name'),'required']) }}
+            {{ Form::text('middle_name',!empty($patient->user) ? $patient->user->middle_name : null,['class' => 'form-control','placeholder' => __('messages.patient.middle_name')]) }}
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label']) }}
@@ -105,8 +105,8 @@
             {{ Form::text('dob',!empty($patient->user) ? $patient->user->dob : null,['class' => 'form-control patient-dob','id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.select_dob')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            <label class="form-label">{{ __('messages.patient.blood_group').':' }}</label>
-            {{ Form::select('blood_group', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_group : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
+            <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
+            {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'form-label']) }}

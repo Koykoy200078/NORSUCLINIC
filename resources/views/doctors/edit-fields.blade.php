@@ -45,8 +45,8 @@
         </span>
     </div>
     <div class="col-md-6 mb-5">
-        <label class="form-label">{{ __('messages.patient.blood_group').':' }}</label>
-        {{ Form::select('blood_group', $bloodGroup , $user->blood_group, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.doctor.select_blood_group')]) }}
+        <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
+        {{ Form::select('blood_type', $bloodGroup , $user->blood_type, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.doctor.select_blood_group')]) }}
     </div>
     <div class="col-md-6 mb-5">
         {{ Form::label('twitter',__('messages.doctor.twitter').':' ,['class' => 'form-label']) }}

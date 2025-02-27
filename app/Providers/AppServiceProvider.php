@@ -15,24 +15,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if (env('APP_ENV') !== 'local') {
+        if (env('APP_ENV') === 'production') {
             URL::forceScheme('https');
+        } else {
+            URL::forceScheme('http');
         }
+
 
         // Bind the Laravel JS Localization command into the app IOC.
         $this->app->singleton('localization.js', function ($app) {
-            $app = $this->app;
             $laravelMajorVersion = (int) $app->version();
-
             $files = $app['files'];
 
-            if ($laravelMajorVersion === 4) {
-                $langs = $app['path.base'] . '/app/lang';
-            } elseif ($laravelMajorVersion >= 5 && $laravelMajorVersion < 9) {
-                $langs = $app['path.base'] . '/resources/lang';
-            } elseif ($laravelMajorVersion >= 9) {
-                $langs = app()->langPath();
-            }
+            $langs = match (true) {
+                $laravelMajorVersion === 4 => $app['path.base'] . '/app/lang',
+                $laravelMajorVersion >= 5 && $laravelMajorVersion < 9 => $app['path.base'] . '/resources/lang',
+                $laravelMajorVersion >= 9 => app()->langPath(),
+                default => throw new \RuntimeException('Unsupported Laravel version'),
+            };
+
             $messages = $app['config']->get('localization-js.messages');
             $generator = new LangJsGenerator($files, $langs, $messages);
 

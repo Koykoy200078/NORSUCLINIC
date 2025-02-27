@@ -22,10 +22,11 @@ class DefaultStaffSeeder extends Seeder
             'contact' => '1234567890',
             'gender' => User::MALE,
             'type' => User::STAFF,
-            'email' => 'john@gamil.com',
+            'email' => 'staff@norsuclinic.com',
             'email_verified_at' => Carbon::now(),
             'password' => Hash::make('123456'),
             'country_code' => '63',
+            'time_zone' => '1'
         ];
 
         $user = User::create($input);

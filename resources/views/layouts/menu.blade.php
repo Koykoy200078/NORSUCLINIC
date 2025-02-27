@@ -189,6 +189,17 @@
         <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
     </a>
 </li>
+
+<li
+    class="nav-item {{ Request::is('admin/request-documents*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+        href="{{ route('request-documents.index') }}">
+        <span class="aside-menu-icon pe-3">
+            <i class="fa-solid fa-file-signature"></i>
+        </span>
+        <span class="aside-menu-title">Request Documents</span>
+    </a>
+</li>
 @endif
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_appointments')

@@ -28,7 +28,7 @@
                         <input tabindex="12" name="show_phone" value="1"
                             {{ isset($smart_patient_cards) && $smart_patient_cards->show_phone == 1 ? 'checked' : '' }}
                             {{ !isset($smart_patient_cards) ? 'checked' : '' }}
-                            class="form-check-input" type="checkbox" id="card_show_phone_switch" >
+                            class="form-check-input" type="checkbox" id="card_show_phone_switch">
                         <label class="form-check-label" for="allowmarketing"></label>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                         <input tabindex="12" name="show_dob" value="1"
                             {{ isset($smart_patient_cards) && $smart_patient_cards->show_dob == 1 ? 'checked' : '' }}
                             {{ !isset($smart_patient_cards) ? 'checked' : '' }}
-                            class="form-check-input" type="checkbox" id="card_show_dob_switch" >
+                            class="form-check-input" type="checkbox" id="card_show_dob_switch">
                         <label class="form-check-label" for="allowmarketing"></label>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <input tabindex="12" name="show_blood_group" value="1"
                             {{ isset($smart_patient_cards) && $smart_patient_cards->show_blood_group == 1 ? 'checked' : '' }}
                             {{ !isset($smart_patient_cards) ? 'checked' : '' }}
-                            class="form-check-input" type="checkbox" id="card_show_blood_group_switch" >
+                            class="form-check-input" type="checkbox" id="card_show_blood_group_switch">
                         <label class="form-check-label" for="allowmarketing"></label>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         <input tabindex="12" name="show_address" value="1"
                             {{ isset($smart_patient_cards) && $smart_patient_cards->show_address == 1 ? 'checked' : '' }}
                             {{ !isset($smart_patient_cards) ? 'checked' : '' }}
-                            class="form-check-input" type="checkbox" id="card_show_address_switch" >
+                            class="form-check-input" type="checkbox" id="card_show_address_switch">
                         <label class="form-check-label" for="allowmarketing"></label>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                         <input tabindex="12" name="show_patient_unique_id" value="1"
                             {{ isset($smart_patient_cards) && $smart_patient_cards->show_patient_unique_id == 1 ? 'checked' : '' }}
                             {{ !isset($smart_patient_cards) ? 'checked' : '' }}
-                            class="form-check-input" type="checkbox" id="card_show_patient_unique_id_switch" >
+                            class="form-check-input" type="checkbox" id="card_show_patient_unique_id_switch">
                         <label class="form-check-label" for="allowmarketing"></label>
                     </div>
                 </div>
@@ -137,14 +137,14 @@
                                             <td>25/02/2006</td>
                                         </tr>
                                         <tr id="card_show_blood_group" class=" @if (isset($smart_patient_cards) && $smart_patient_cards->show_blood_group != 1) d-none @endif ">
-                                            <td class="pe-3">{{__('messages.patient.blood_group').':'}}</td>
+                                            <td class="pe-3">{{__('messages.patient.blood_type').':'}}</td>
                                             <td>A+</td>
                                         </tr>
                                     </table>
                                 </div>
                             </div>
                             <div id="card_show_address" class=" @if (isset($smart_patient_cards) && $smart_patient_cards->show_address != 1) d-none @endif ">
-                                <div class="d-flex address-text me-5" >
+                                <div class="d-flex address-text me-5">
                                     <div class="mb-0 me-3">{{__('messages.setting.address').':'}}</div>
                                     <div>
                                         <address class="mb-0" id="card-address">

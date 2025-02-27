@@ -48,7 +48,7 @@
                                                 <td class="patient_dob"></td>
                                             </tr>
                                             <tr id="">
-                                                <td class="blood_group">{{ __('messages.patient.blood_group') .':' }}</td>
+                                                <td class="blood_type">{{ __('messages.patient.blood_type') .':' }}</td>
                                                 <td class="patient_blood_group"></td>
                                             </tr>
                                         </table>

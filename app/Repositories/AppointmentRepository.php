@@ -238,7 +238,7 @@ class AppointmentRepository extends BaseRepository
         $data['dob'] = $input->patient->user->dob;
         $data['contact'] = $input->patient->user->contact;
         $data['gender'] = $input->patient->user->gender;
-        $data['blood_group'] = $input->patient->user->blood_group;
+        $data['blood_type'] = $input->patient->user->blood_type;
         $data['from_time'] = $input->from_time;
         $data['to_time'] = $input->to_time;
         $data['description'] = $input->discription;

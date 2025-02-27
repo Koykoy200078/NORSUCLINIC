@@ -48,6 +48,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\SmartPatientCardsController;
 use App\Http\Controllers\GeneratePatientSmartCardsController;
 use App\Http\Controllers\PatientQrCodeController;
+use App\Http\Controllers\RequestDocumentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -268,6 +269,10 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
             [PatientController::class, 'patientAppointment']
         )->name('patients.appointment');
     });
+
+    // Request Documents
+    Route::resource('request-documents', RequestDocumentsController::class);
+
 
     //smart patient cardsd
     Route::resource('smart-patient-cards', SmartPatientCardsController::class);

@@ -443,7 +443,7 @@ return [
         'dob' => 'Date Of Birth',
         'select_dob' => 'Select Date Of Birth',
         'gender' => 'Gender',
-        'blood_group' => 'Blood Type',
+        'blood_type' => 'Blood Type',
         'select_blood_group' => 'Select Blood Type',
         'male' => 'Male',
         'female' => 'Female',
@@ -467,6 +467,20 @@ return [
         'today' => 'Today',
         'emailverified' => 'Email Verified',
         'vaccination_status' => 'Vaccination Status',
+    ],
+
+    'request' => [
+        'request' => 'Request',
+        
+        'submit_request' => 'Submit Request',
+        'request_details' => 'Request Details',
+        'request_type' => 'Request Type',
+        'select_request_type' => 'Select Request Type',
+        'request_description' => 'Request Description',
+        'request_status' => 'Request Status',
+        'select_request_status' => 'Select Request Status',
+        'request_date' => 'Request Date',
+
     ],
 
     'student' => [

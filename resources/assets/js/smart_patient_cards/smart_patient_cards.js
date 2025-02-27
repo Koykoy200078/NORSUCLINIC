@@ -215,14 +215,14 @@ listenClick('.show_patient_card', function () {
                 $('#card_show_patient_unique_id').css('display', 'none');
             }
 
-            if(result.data.user.blood_group != null){
+            if(result.data.user.blood_type != null){
                 $('#patient_card_show_blood_group').removeClass('d-none');
-                let bloodKey = result.data.user.blood_group
+                let bloodKey = result.data.user.blood_type
                 let array = JSON.parse(bloodGroupArray);
                 $('.patient_blood_group').text(array[bloodKey]);
             }
 
-            if(result.data.user.blood_group == null){
+            if(result.data.user.blood_type == null){
                 $('#patient_card_show_blood_group').addClass('d-none');
             }
             if(result.data.user.contact != null){

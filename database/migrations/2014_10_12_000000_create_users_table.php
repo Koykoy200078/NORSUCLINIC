@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('type')->nullable();
-            $table->string('blood_group')->nullable();
+            $table->string('blood_type')->nullable();
             $table->string('country_code')->nullable();
             $table->integer('campus_id')->nullable();
             $table->integer('college_id')->nullable();
