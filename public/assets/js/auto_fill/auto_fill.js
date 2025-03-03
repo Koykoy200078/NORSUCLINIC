@@ -16,7 +16,3 @@ $(document).on("click", ".admin-login", function () {
 $(document).on("click", ".doctor-login", function () {
     changeCredentials("doctor@norsuclinic.com", "123456");
 });
-
-$(document).on("click", ".patient-login", function () {
-    changeCredentials("patient@norsuclinic.com", "123456");
-});

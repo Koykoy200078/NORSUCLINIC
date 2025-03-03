@@ -15031,13 +15031,13 @@ listenClick('.show_patient_card', function () {
       } else {
         $('#card_show_patient_unique_id').css('display', 'none');
       }
-      if (result.data.user.blood_group != null) {
+      if (result.data.user.blood_type != null) {
         $('#patient_card_show_blood_group').removeClass('d-none');
-        var bloodKey = result.data.user.blood_group;
+        var bloodKey = result.data.user.blood_type;
         var array = JSON.parse(bloodGroupArray);
         $('.patient_blood_group').text(array[bloodKey]);
       }
-      if (result.data.user.blood_group == null) {
+      if (result.data.user.blood_type == null) {
         $('#patient_card_show_blood_group').addClass('d-none');
       }
       if (result.data.user.contact != null) {
