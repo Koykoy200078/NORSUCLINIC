@@ -15,7 +15,7 @@ class DefaultAssignPermissionSeeder extends Seeder
     public function run(): void
     {
         $roles = Role::whereIn('name', ['patient', 'doctor'])->get();
-        $permissions = Permission::whereIn('name', ['manage_appointments','manage_patient_visits','manage_transactions'])->get();
+        $permissions = Permission::whereIn('name', ['manage_appointments', 'manage_patient_visits', 'manage_transactions', 'manage_request_documents'])->get();
         foreach ($permissions as $permission) {
             foreach ($roles as $role) {
                 $role->givePermissionTo($permission->id);

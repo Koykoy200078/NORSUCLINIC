@@ -81,6 +81,10 @@ class DefaultPermissionSeeder extends Seeder
                 'name' => 'manage_transactions',
                 'display_name' => 'Manage Transactions',
             ],
+            [
+                'name' => 'manage_request_documents',
+                'display_name' => 'Manage Request Documents',
+            ]
         ];
 
         foreach ($permissions as $permission) {

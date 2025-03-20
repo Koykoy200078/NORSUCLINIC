@@ -271,8 +271,10 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
     });
 
     // Request Documents
-    Route::resource('request-documents', RequestDocumentsController::class);
-
+    Route::middleware('permission:manage_request_documents')->group(function () {
+        Route::resource('request-documents', RequestDocumentsController::class);
+        Route::get('/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('search-users');
+    });
 
     //smart patient cardsd
     Route::resource('smart-patient-cards', SmartPatientCardsController::class);

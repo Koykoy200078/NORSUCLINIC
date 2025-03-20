@@ -470,17 +470,8 @@ return [
     ],
 
     'request' => [
-        'request' => 'Request',
-        
-        'submit_request' => 'Submit Request',
-        'request_details' => 'Request Details',
-        'request_type' => 'Request Type',
-        'select_request_type' => 'Select Request Type',
-        'request_description' => 'Request Description',
-        'request_status' => 'Request Status',
-        'select_request_status' => 'Select Request Status',
-        'request_date' => 'Request Date',
-
+        'request' => 'Request Document',
+        'create_request' => 'Create Request',
     ],
 
     'student' => [

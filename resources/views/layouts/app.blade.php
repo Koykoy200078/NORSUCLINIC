@@ -198,20 +198,20 @@
     <script data-turbo-eval="false">
         let stripe = '';
         @if (config('services.stripe.key'))
-            stripe = Stripe('{{ config('services.stripe.key') }}');
+            stripe = Stripe("{{ config('services.stripe.key') }}");
         @endif
         let usersRole = '{{ !empty(getLogInUser()->roles->first()) ? getLogInUser()->roles->first()->name : '' }}';
         let currencyIcon = '{{ getCurrencyIcon() }}';
         let isSetFirstFocus = true;
-        let womanAvatar = '{{ url(asset('web/media/avatars/female.png')) }}';
-        let manAvatar = '{{ url(asset('web/media/avatars/male.png')) }}';
+        let womanAvatar = '{{ url(asset("web/media/avatars/female.png")) }}';
+        let manAvatar = '{{ url(asset("web/media/avatars/male.png")) }}';
         let changePasswordUrl = "{{ route('user.changePassword') }}";
         let updateLanguageURL = "{{ route('change-language') }}";
         let phoneNo = '';
         let dashboardChartBGColor = "{{ Auth::user()->dark_mode ? '#13151f' : '#FFFFFF' }}";
         let dashboardChartFontColor = "{{ Auth::user()->dark_mode ? '#FFFFFF' : '#000000' }}";
-        let userRole = '{{ getLogInUser()->hasRole('patient') }}';
-        let appointmentStripePaymentUrl = '{{ url('appointment-stripe-charge') }}';
+        let userRole = "{{ getLogInUser()->hasRole('patient') }}";
+        let appointmentStripePaymentUrl = "{{ url('appointment-stripe-charge') }}";
         let checkLanguageSession = '{{ checkLanguageSession() }}'
         let noData = "{{ __('messages.common.no_data_available') }}"
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
@@ -263,6 +263,7 @@
             },
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 @php $styleCss = 'style'; @endphp
 

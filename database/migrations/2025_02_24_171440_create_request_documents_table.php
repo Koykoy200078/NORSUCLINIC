@@ -14,15 +14,37 @@ return new class extends Migration
         Schema::create('request_documents', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('clinic_id');
-            $table->string('document_type');
-            $table->text('description')->nullable();
-            $table->date('requested_at');
-            $table->date('fulfilled_at')->nullable();
+            $table->string('name');
+            $table->integer('age');
+            $table->string('gender');
+            $table->string('status');
+            $table->date('date_of_birth');
+            $table->string('address');
+            $table->string('religion')->nullable();
+            $table->string('patient_contact')->nullable();
+            $table->string('campus')->nullable();
+            $table->string('college')->nullable();
+            $table->string('course_year')->nullable();
+            $table->string('informant')->nullable();
+            $table->string('emergency_contact')->nullable();
+            $table->string('complaints')->nullable();
+            $table->string('covid_vaccination')->nullable();
+            $table->string('comorbidities')->nullable();
+            $table->string('allergies')->nullable();
+            $table->string('admissions_surgeries')->nullable();
+            $table->string('maintenance')->nullable();
+            $table->string('pregnancy_status')->nullable();
+            $table->string('lmp_aog')->nullable();
+            $table->string('vital_signs_bp')->nullable();
+            $table->string('vital_signs_pr')->nullable();
+            $table->string('vital_signs_temp')->nullable();
+            $table->string('vital_signs_rr')->nullable();
+            $table->string('vital_signs_o2_sat')->nullable();
+            $table->string('vital_signs_weight')->nullable();
+            $table->string('pertinent_exam')->nullable();
+            $table->string('assessment')->nullable();
+            $table->string('plan')->nullable();
             $table->timestamps();
-
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->foreign('patient_unique_id')->references('id')->on('patient_unique_id')->onDelete('cascade');
         });
     }
 

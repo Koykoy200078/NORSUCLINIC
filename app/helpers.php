@@ -172,6 +172,10 @@ if (! function_exists('getDashboardURL')) {
             if (in_array('manage_transactions', $permissions, true)) {
                 return 'admin/transactions';
             }
+
+            if (in_array('manage_request_documents', $permissions, true)) {
+                return 'admin/request-documents';
+            }
         }
 
         return RouteServiceProvider::HOME;
