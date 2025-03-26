@@ -84,21 +84,21 @@
     </a>
 </li>
 @endcan
-<li class="nav-item {{ Request::is('doctors/live-consultations*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('doctors/live-consultations*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('doctors.live-consultations.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
         <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
     </a>
-</li>
+</li> -->
 
-<li class="nav-item {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('doctors.googleCalendar.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
         <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
     </a>
-</li>
+</li> -->
 <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
@@ -123,13 +123,13 @@
     </a>
 </li>
 
-<li class="nav-item {{ Request::is('patients/reviews*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('patients/reviews*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.reviews.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-star"></i></span>
         <span class="aside-menu-title">{{ __('messages.reviews') }}</span>
     </a>
-</li>
+</li> -->
 
 @can('manage_request_documents')
 <li
@@ -152,21 +152,21 @@
     </a>
 </li>
 
-<li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.live-consultations.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
         <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
     </a>
-</li>
+</li> -->
 
-<li class="nav-item {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.googleCalendar.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
         <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
     </a>
-</li>
+</li> -->
 @endrole
 @can('manage_doctors')
 <li

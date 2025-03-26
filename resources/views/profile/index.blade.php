@@ -79,6 +79,39 @@
                 </div>
 
                 <div class="row mb-5">
+                    {{ Form::label('gender', __('messages.staff.gender') . ':', ['class' => 'col-lg-4 form-label required']) }}
+                    <div class="col-lg-8">
+                        <span class="is-valid">
+                            <input class="form-check-input" type="radio" name="gender" value="1" checked
+                                {{ !empty($user) && $user->gender === 1 ? 'checked' : '' }}>
+                            <label class="form-label">{{ __('messages.staff.male') }}</label>&nbsp;&nbsp;
+                            <input class="form-check-input" type="radio" name="gender" value="2"
+                                {{ !empty($user) && $user->gender === 2 ? 'checked' : '' }}>
+                            <label class="form-label">{{ __('messages.staff.female') }}</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row mb-5">
+                    {{ Form::label('dob',__('messages.patient.dob').':' ,['class' => 'col-lg-4 form-label']) }}
+                    <div class="col-lg-8">
+                        {{ Form::text('dob',!empty($patient->user) ? $patient->user->dob : null,['class' => 'form-control patient-dob','id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.select_dob')]) }}
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <label class="form-label col-lg-4">{{ __('messages.patient.blood_type').':' }}</label>
+                    <div class="col-lg-8">
+                        {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
+                    </div>
+                </div>
+                <div class="row mb-7">
+                    {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'col-lg-4 form-label']) }}
+                    <div class="col-lg-8">
+                        {{ Form::select('vaccination_id', $data['vaccination_data'] ,!empty($patient->user) ? $patient->user->vaccination_id : null, ['placeholder' => __('messages.patient.vaccination_status'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status",'data-control'=>'select2']) }}
+                    </div>
+                </div>
+
+                <div class="row mb-5">
                     <label class="col-lg-4 form-label required">{{ __('messages.user.email').':' }}</label>
                     <div class="col-lg-8">
                         {{ Form::email('email', $user->email, ['class'=> 'form-control', 'placeholder' => __('messages.user.email'), 'required']) }}
@@ -121,20 +154,6 @@
 
                     <div class="col-lg-8">
                         {{ Form::text('emergency_contact_no',!empty($patient->user) ? $patient->user->emergency_contact_no : null,['class' => 'form-control','placeholder' => __('messages.patient.emergency_contact_no'),'required']) }}
-                    </div>
-                </div>
-
-                <div class="row mb-5">
-                    {{ Form::label('gender', __('messages.staff.gender') . ':', ['class' => 'col-lg-4 form-label required']) }}
-                    <div class="col-lg-8">
-                        <span class="is-valid">
-                            <input class="form-check-input" type="radio" name="gender" value="1" checked
-                                {{ !empty($user) && $user->gender === 1 ? 'checked' : '' }}>
-                            <label class="form-label">{{ __('messages.staff.male') }}</label>&nbsp;&nbsp;
-                            <input class="form-check-input" type="radio" name="gender" value="2"
-                                {{ !empty($user) && $user->gender === 2 ? 'checked' : '' }}>
-                            <label class="form-label">{{ __('messages.staff.female') }}</label>
-                        </span>
                     </div>
                 </div>
 
