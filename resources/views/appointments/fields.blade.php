@@ -59,12 +59,12 @@
         {{ Form::select('service_id', $data['services'], null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'appointmentServiceId','placeholder' => __('messages.common.select_service'),'required']) }}
     </div>
     @endrole
-    <div class="col-lg-6 col-sm-12 mb-5">
+    <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Payment Type',__('messages.appointment.payment_method').':' ,['class' => 'form-label required']) }}
-        {{ Form::select('payment_type', getAllPaymentStatus(), null,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.appointment.payment_method')]) }}
+        {{ Form::select('payment_type', getAllPaymentStatus(), 1,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.appointment.payment_method')]) }}
 
     </div>
-    <div class="col-lg-6 col-sm-12 mb-5">
+    <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Charge',__('messages.appointment.charge').':' ,['class' => 'form-label required']) }}
         <div class="input-group">
             {{ Form::text('charge', null,['class' => 'form-control','placeholder' => __('messages.doctor.select_date'), 'id'=>'chargeId', 'required', 'placeholder' => __('messages.appointment.charge'),'readonly']) }}
@@ -95,7 +95,7 @@
     </div>
     @endif
     @if(getLogInUser()->hasRole('patient'))
-    <div class="col-lg-6 col-sm-12 mb-5">
+    <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Total Payable Amount',__('messages.appointment.total_payable_amount').':' ,['class' => 'form-label required']) }}
         <div class="input-group">
             {{ Form::text('payable_amount', null,['class' => 'form-control','placeholder' => __('messages.appointment.total_payable_amount'), 'id'=>'payableAmount', 'required', 'placeholder' => __('messages.appointment.total_payable_amount'), 'readonly']) }}

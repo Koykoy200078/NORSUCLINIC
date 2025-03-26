@@ -14,7 +14,7 @@
         "anandsiddharth/laravel-paytm-wallet": "^2.0",
         "authorizenet/authorizenet": "^2.0",
         "barryvdh/laravel-debugbar": "^3.8",
-        "barryvdh/laravel-dompdf": "^2.0",
+        "barryvdh/laravel-dompdf": "^2.1",
         "firebase/php-jwt": "^5.5",
         "gerardojbaez/money": "^0.3.1",
         "google/apiclient": "^2.6",
@@ -81,7 +81,8 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan vendor:publish --force --tag=livewire:assets --ansi"
         ]
     },
     "extra": {

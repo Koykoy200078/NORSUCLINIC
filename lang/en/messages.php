@@ -1095,12 +1095,12 @@ return [
     ],
 
     'payment_method' => [
-        'stripe' => 'Stripe',
-        'paystack' => 'Paystack',
-        'paypal' => 'Paypal',
-        'razorpay' => 'Razorpay',
+        // 'stripe' => 'Stripe',
+        // 'paystack' => 'Paystack',
+        // 'paypal' => 'Paypal',
+        // 'razorpay' => 'Razorpay',
         'authorize' => 'Authorize',
-        'paytm' => 'Paytm',
+        // 'paytm' => 'Paytm',
         'mobile_required' => 'Mobile number field is required',
         'name' => 'Enter name',
         'email' => 'Enter email',

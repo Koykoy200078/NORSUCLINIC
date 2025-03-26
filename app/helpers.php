@@ -17,7 +17,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Stripe\Stripe;
+// use Stripe\Stripe;
 
 if (! function_exists('getLogInUser')) {
     /**
@@ -374,6 +374,15 @@ if (! function_exists('getSettingValue')) {
             $setting = Setting::all()->keyBy('key');
         }
 
+        // Check and update the URL for specific keys
+        if (in_array($key, ['about_image_1', 'about_image_2', 'about_image_3']) && isset($setting[$key])) {
+            $value = $setting[$key]->value;
+            if (str_starts_with($value, 'http://localhost')) {
+                $value = request()->getSchemeAndHttpHost() . parse_url($value, PHP_URL_PATH);
+            }
+            return $value;
+        }
+
         return $setting[$key]->value;
     }
 }
@@ -431,13 +440,13 @@ if (! function_exists('getCurrencyIcon')) {
     }
 }
 
-if (! function_exists('setStripeApiKey')) {
+// if (! function_exists('setStripeApiKey')) {
 
-    function setStripeApiKey()
-    {
-        Stripe::setApiKey(config('services.stripe.secret_key'));
-    }
-}
+//     function setStripeApiKey()
+//     {
+//         Stripe::setApiKey(config('services.stripe.secret_key'));
+//     }
+// }
 
 if (! function_exists('getCurrencyCode')) {
 
@@ -910,111 +919,112 @@ if (!function_exists('paypalCurrencySupports')) {
     }
 }
 
-if (!function_exists('razorpayCurrencySupports')) {
-    function razorpayCurrencySupports()
-    {
-        $rozarpay = [
-            'AED',
-            'ALL',
-            'AMD',
-            'ARS',
-            'AUD',
-            'AWG',
-            'BBD',
-            'BDT',
-            'BMD',
-            'BND',
-            'BOB',
-            'BSD',
-            'BWP',
-            'BZD',
-            'CAD',
-            'CHF',
-            'CNY',
-            'COP',
-            'CRC',
-            'CUP',
-            'CZK',
-            'DKK',
-            'DOP',
-            'DZD',
-            'EGP',
-            'ETB',
-            'EUR',
-            'FJD',
-            'GBP',
-            'GHS',
-            'GIP',
-            'GMD',
-            'GTQ',
-            'GYD',
-            'HKD',
-            'HNL',
-            'HRK',
-            'HTG',
-            'HUF',
-            'IDR',
-            'ILS',
-            'INR',
-            'JMD',
-            'KES',
-            'KGS',
-            'KHR',
-            'KYD',
-            'KZT',
-            'LAK',
-            'LKR',
-            'LRD',
-            'LSL',
-            'MAD',
-            'MDL',
-            'MKD',
-            'MMK',
-            'MNT',
-            'MOP',
-            'MUR',
-            'MVR',
-            'MWK',
-            'MXN',
-            'MYR',
-            'NAD',
-            'NGN',
-            'NIO',
-            'NOK',
-            'NPR',
-            'NZD',
-            'PEN',
-            'PGK',
-            'PHP',
-            'PKR',
-            'QAR',
-            'RUB',
-            'SAR',
-            'SCR',
-            'SEK',
-            'SGD',
-            'SLL',
-            'SOS',
-            'SSP',
-            'SVC',
-            'SZL',
-            'THB',
-            'TTD',
-            'TZS',
-            'USD',
-            'UYU',
-            'UZS',
-            'YER',
-            'ZAR',
-            'TRY'
-        ];
+// if (!function_exists('razorpayCurrencySupports')) {
+//     function razorpayCurrencySupports()
+//     {
+//         $rozarpay = [
+//             'AED',
+//             'ALL',
+//             'AMD',
+//             'ARS',
+//             'AUD',
+//             'AWG',
+//             'BBD',
+//             'BDT',
+//             'BMD',
+//             'BND',
+//             'BOB',
+//             'BSD',
+//             'BWP',
+//             'BZD',
+//             'CAD',
+//             'CHF',
+//             'CNY',
+//             'COP',
+//             'CRC',
+//             'CUP',
+//             'CZK',
+//             'DKK',
+//             'DOP',
+//             'DZD',
+//             'EGP',
+//             'ETB',
+//             'EUR',
+//             'FJD',
+//             'GBP',
+//             'GHS',
+//             'GIP',
+//             'GMD',
+//             'GTQ',
+//             'GYD',
+//             'HKD',
+//             'HNL',
+//             'HRK',
+//             'HTG',
+//             'HUF',
+//             'IDR',
+//             'ILS',
+//             'INR',
+//             'JMD',
+//             'KES',
+//             'KGS',
+//             'KHR',
+//             'KYD',
+//             'KZT',
+//             'LAK',
+//             'LKR',
+//             'LRD',
+//             'LSL',
+//             'MAD',
+//             'MDL',
+//             'MKD',
+//             'MMK',
+//             'MNT',
+//             'MOP',
+//             'MUR',
+//             'MVR',
+//             'MWK',
+//             'MXN',
+//             'MYR',
+//             'NAD',
+//             'NGN',
+//             'NIO',
+//             'NOK',
+//             'NPR',
+//             'NZD',
+//             'PEN',
+//             'PGK',
+//             'PHP',
+//             'PKR',
+//             'QAR',
+//             'RUB',
+//             'SAR',
+//             'SCR',
+//             'SEK',
+//             'SGD',
+//             'SLL',
+//             'SOS',
+//             'SSP',
+//             'SVC',
+//             'SZL',
+//             'THB',
+//             'TTD',
+//             'TZS',
+//             'USD',
+//             'UYU',
+//             'UZS',
+//             'YER',
+//             'ZAR',
+//             'TRY'
+//         ];
 
-        if (!in_array(strtoupper(getCurrencyCode()), $rozarpay)) {
-            return  false;
-        }
-        return  true;
-    }
-}
+//         if (!in_array(strtoupper(getCurrencyCode()), $rozarpay)) {
+//             return  false;
+//         }
+//         return  true;
+//     }
+// }
+
 if (!function_exists('paystackCurrencySupports')) {
     function paystackCurrencySupports()
     {

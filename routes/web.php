@@ -30,7 +30,7 @@ use App\Http\Controllers\PaystackController;
 use App\Http\Controllers\PayTMController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PurchaseMedicineController;
-use App\Http\Controllers\RazorpayController;
+// use App\Http\Controllers\RazorpayController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\ServiceController;
@@ -125,13 +125,13 @@ Route::get('/paypal-payment', function () {
 })->name('paypal.index');
 
 //RazorPay Route
-Route::post('razorpay-onboard', [RazorpayController::class, 'onBoard'])->name('razorpay.init');
-Route::post('razorpay-payment-success', [RazorpayController::class, 'paymentSuccess'])
-    ->name('razorpay.success');
-Route::post('razorpay-payment-failed', [RazorpayController::class, 'paymentFailed'])
-    ->name('razorpay.failed');
-Route::get('razorpay-payment-webhook', [RazorpayController::class, 'paymentSuccessWebHook'])
-    ->name('razorpay.webhook');
+// Route::post('razorpay-onboard', [RazorpayController::class, 'onBoard'])->name('razorpay.init');
+// Route::post('razorpay-payment-success', [RazorpayController::class, 'paymentSuccess'])
+//     ->name('razorpay.success');
+// Route::post('razorpay-payment-failed', [RazorpayController::class, 'paymentFailed'])
+//     ->name('razorpay.failed');
+// Route::get('razorpay-payment-webhook', [RazorpayController::class, 'paymentSuccessWebHook'])
+//     ->name('razorpay.webhook');
 
 Route::get('paypal-onboard', [PaypalController::class, 'onBoard'])->name('paypal.init');
 Route::get('paypal-payment-success', [PaypalController::class, 'success'])->name('paypal.success');

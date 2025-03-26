@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Stripe\Checkout\Session;
-use Stripe\Exception\ApiErrorException;
+// use Stripe\Checkout\Session;
+// use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -364,7 +364,7 @@ class AppointmentRepository extends BaseRepository
         $appointmentId = $input['appointment_unique_id'];
         $patientEmail = Patient::with('user')->whereId($input['patient_id'])->first();
         $doctorName = Doctor::with('user')->whereId($input['doctor_id'])->first();
-        setStripeApiKey();
+        // setStripeApiKey();
 
         $successUrl = '/medical-payment-success';
         $cancelUrl = '/medical-payment-failed';

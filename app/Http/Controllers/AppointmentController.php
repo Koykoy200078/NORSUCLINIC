@@ -18,7 +18,6 @@ use App\Repositories\GoogleCalendarRepository;
 use \PDF;
 use Carbon\Carbon;
 use Exception;
-use Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -32,7 +31,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Stripe\Exception\ApiErrorException;
+use Laracasts\Flash\Flash;
+// use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AppointmentController extends AppBaseController
@@ -77,81 +77,80 @@ class AppointmentController extends AppBaseController
         $input = $request->all();
         $appointment = $this->appointmentRepository->store($input);
 
-        if ($input['payment_type'] == Appointment::STRIPE) {
-            $result = $this->appointmentRepository->createSession($appointment);
+        // if ($input['payment_type'] == Appointment::STRIPE) {
+        //     $result = $this->appointmentRepository->createSession($appointment);
 
-            return $this->sendResponse([
-                'appointmentId' => $appointment->id,
-                'payment_type' => $input['payment_type'],
-                $result,
-            ], 'Stripe '.__('messages.appointment.session_created_successfully'));
-        }
+        //     return $this->sendResponse([
+        //         'appointmentId' => $appointment->id,
+        //         'payment_type' => $input['payment_type'],
+        //         $result,
+        //     ], 'Stripe ' . __('messages.appointment.session_created_successfully'));
+        // }
 
-        if ($input['payment_type'] == Appointment::PAYSTACK) {
-         if (env('PAYSTACK_PUBLIC_KEY') && env('PAYSTACK_SECRET_KEY')) {
-            if ($request->isXmlHttpRequest()) {
-                return $this->sendResponse([
-                    'redirect_url' => route('paystack.init', ['appointmentData' => $appointment]),
-                    'payment_type' => $input['payment_type'],
-                    'appointmentId' => $appointment->id,
-                ], 'Paystack '.__('messages.appointment.session_created_successfully'));
-            }
-            return redirect(route('paystack.init'));
-         }else {
-            return $this->sendError(__('messages.payment_method.paystack') . ' ' . __('messages.paypal.credentials_not_set'));
-         }
-        }
+        // if ($input['payment_type'] == Appointment::PAYSTACK) {
+        //     if (env('PAYSTACK_PUBLIC_KEY') && env('PAYSTACK_SECRET_KEY')) {
+        //         if ($request->isXmlHttpRequest()) {
+        //             return $this->sendResponse([
+        //                 'redirect_url' => route('paystack.init', ['appointmentData' => $appointment]),
+        //                 'payment_type' => $input['payment_type'],
+        //                 'appointmentId' => $appointment->id,
+        //             ], 'Paystack ' . __('messages.appointment.session_created_successfully'));
+        //         }
+        //         return redirect(route('paystack.init'));
+        //     } else {
+        //         return $this->sendError(__('messages.payment_method.paystack') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     }
+        // }
 
-        if ($input['payment_type'] == Appointment::PAYPAL) {
+        // if ($input['payment_type'] == Appointment::PAYPAL) {
 
-               if (env('PAYPAL_CLIENT_ID') && env('PAYPAL_SECRET')) {
-                  if ($request->isXmlHttpRequest()) {
-                     return $this->sendResponse([
-                           'redirect_url' => route('paypal.index', ['appointmentData' => $appointment]),
-                           'payment_type' => $input['payment_type'],
-                           'appointmentId' => $appointment->id,
-                     ], 'Paypal '.__('messages.appointment.session_created_successfully'));
-                  }
-                  return redirect(route('paypal.init'));
-               }
-               else {
-                  return $this->sendError(__('messages.payment_method.paypal') . ' ' . __('messages.paypal.credentials_not_set'));
-               }
-        }
+        //     if (env('PAYPAL_CLIENT_ID') && env('PAYPAL_SECRET')) {
+        //         if ($request->isXmlHttpRequest()) {
+        //             return $this->sendResponse([
+        //                 'redirect_url' => route('paypal.index', ['appointmentData' => $appointment]),
+        //                 'payment_type' => $input['payment_type'],
+        //                 'appointmentId' => $appointment->id,
+        //             ], 'Paypal ' . __('messages.appointment.session_created_successfully'));
+        //         }
+        //         return redirect(route('paypal.init'));
+        //     } else {
+        //         return $this->sendError(__('messages.payment_method.paypal') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     }
+        // }
 
-        if ($input['payment_type'] == Appointment::RAZORPAY) {
-           if (env('RAZOR_KEY') && env('RAZOR_SECRET')) {
-               return $this->sendResponse([
-                  'payment_type' => $input['payment_type'],
-                  'appointmentId' => $appointment->id,
-               ], 'Razorpay '.__('messages.appointment.session_created_successfully'));
-            }
-            else {
-               return $this->sendError(__('messages.payment_method.razorpay') . ' ' . __('messages.paypal.credentials_not_set'));
-            }
-        }
+        // if ($input['payment_type'] == Appointment::RAZORPAY) {
+        //    if (env('RAZOR_KEY') && env('RAZOR_SECRET')) {
+        //        return $this->sendResponse([
+        //           'payment_type' => $input['payment_type'],
+        //           'appointmentId' => $appointment->id,
+        //        ], 'Razorpay '.__('messages.appointment.session_created_successfully'));
+        //     }
+        //     else {
+        //        return $this->sendError(__('messages.payment_method.razorpay') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     }
+        // }
 
         if ($input['payment_type'] == Appointment::AUTHORIZE) {
             if (env('AUTHORIZE_LOGIN_ID') && env('AUTHORIZE_TRANSACTION_KEY')) {
-               return $this->sendResponse([
-                  'payment_type' => $input['payment_type'],
-                  'appointmentId' => $appointment->id,
-               ], 'Authorize '.__('messages.appointment.session_created_successfully'));
-            }else {
-                  return $this->sendError(__('messages.payment_method.authorize') . ' ' . __('messages.paypal.credentials_not_set'));
+                return $this->sendResponse([
+                    'payment_type' => $input['payment_type'],
+                    'appointmentId' => $appointment->id,
+                ], 'Authorize ' . __('messages.appointment.session_created_successfully'));
+            } else {
+                return $this->sendError(__('messages.payment_method.authorize') . ' ' . __('messages.paypal.credentials_not_set'));
             }
         }
 
-        if ($input['payment_type'] == Appointment::PAYTM) {
-            if (env('PAYTM_MERCHANT_ID') && env('PAYTM_MERCHANT_KEY')) {
-               return $this->sendResponse([
-                  'payment_type' => $input['payment_type'],
-                  'appointmentId' => $appointment->id,
-               ], 'Paytm '.__('messages.appointment.session_created_successfully'));
-            }else {
-                  return $this->sendError(__('messages.payment_method.paytm') . ' ' . __('messages.paypal.credentials_not_set'));
-            }
-       }
+        // if ($input['payment_type'] == Appointment::PAYTM) {
+        //     if (env('PAYTM_MERCHANT_ID') && env('PAYTM_MERCHANT_KEY')) {
+        //         return $this->sendResponse([
+        //             'payment_type' => $input['payment_type'],
+        //             'appointmentId' => $appointment->id,
+        //         ], 'Paytm ' . __('messages.appointment.session_created_successfully'));
+        //     } else {
+        //         return $this->sendError(__('messages.payment_method.paytm') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     }
+        // }
 
         $url = route('appointments.index');
 
@@ -203,19 +202,18 @@ class AppointmentController extends AppBaseController
             return view('patient_appointments.show')->with('appointment', $appointment);
         } else {
             return view('appointments.show')->with('appointment', $appointment)
-            ->with('allPaymentStatus',$allPaymentStatus)
-            ->with([
-                'paid' => Appointment::PAID,
-                'pending' => Appointment::PENDING,
-            ])
-            ->with([
-                'all' => Appointment::ALL,
-                'book' => Appointment::BOOKED,
-                'checkIn' => Appointment::CHECK_IN,
-                'checkOut' => Appointment::CHECK_OUT,
-                'cancel' => Appointment::CANCELLED,
-            ]);
-
+                ->with('allPaymentStatus', $allPaymentStatus)
+                ->with([
+                    'paid' => Appointment::PAID,
+                    'pending' => Appointment::PENDING,
+                ])
+                ->with([
+                    'all' => Appointment::ALL,
+                    'book' => Appointment::BOOKED,
+                    'checkIn' => Appointment::CHECK_IN,
+                    'checkOut' => Appointment::CHECK_OUT,
+                    'cancel' => Appointment::CANCELLED,
+                ]);
         }
     }
 
@@ -330,18 +328,18 @@ class AppointmentController extends AppBaseController
         $appointment->update([
             'status' => $input['appointmentStatus'],
         ]);
-        $fullTime = $appointment->from_time.''.$appointment->from_time_type.' - '.$appointment->to_time.''.$appointment->to_time_type.' '.' '.Carbon::parse($appointment->date)->format('jS M, Y');
+        $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         // $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         $doctor = Doctor::whereId($appointment->doctor_id)->with('user')->first();
         if ($input['appointmentStatus'] == Appointment::CHECK_OUT) {
             Notification::create([
-                'title' => Notification::APPOINTMENT_CHECKOUT_PATIENT_MSG.' '.getLogInUser()->full_name,
+                'title' => Notification::APPOINTMENT_CHECKOUT_PATIENT_MSG . ' ' . getLogInUser()->full_name,
                 'type' => Notification::CHECKOUT,
                 'user_id' => $patient->user_id,
             ]);
             Notification::create([
-                'title' => $patient->user->full_name.'\'s appointment check out by '.getLogInUser()->full_name.' at '.$fullTime,
+                'title' => $patient->user->full_name . '\'s appointment check out by ' . getLogInUser()->full_name . ' at ' . $fullTime,
                 'type' => Notification::CHECKOUT,
                 'user_id' => $doctor->user_id,
             ]);
@@ -354,12 +352,12 @@ class AppointmentController extends AppBaseController
             $repo->destroy($events);
 
             Notification::create([
-                'title' => Notification::APPOINTMENT_CANCEL_PATIENT_MSG.' '.getLogInUser()->full_name,
+                'title' => Notification::APPOINTMENT_CANCEL_PATIENT_MSG . ' ' . getLogInUser()->full_name,
                 'type' => Notification::CANCELED,
                 'user_id' => $patient->user_id,
             ]);
             Notification::create([
-                'title' => $patient->user->full_name.'\'s appointment cancelled by'.getLogInUser()->full_name.' at '.$fullTime,
+                'title' => $patient->user->full_name . '\'s appointment cancelled by' . getLogInUser()->full_name . ' at ' . $fullTime,
                 'type' => Notification::CANCELED,
                 'user_id' => $doctor->user_id,
             ]);
@@ -392,12 +390,12 @@ class AppointmentController extends AppBaseController
             DeleteAppointmentFromGoogleCalendar::dispatch($event, $user);
         }
 
-        $fullTime = $appointment->from_time.''.$appointment->from_time_type.' - '.$appointment->to_time.''.$appointment->to_time_type.' '.' '.Carbon::parse($appointment->date)->format('jS M, Y');
+        $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
 
         $doctor = Doctor::whereId($appointment->doctor_id)->with('user')->first();
         Notification::create([
-            'title' => $patient->user->full_name.' '.Notification::APPOINTMENT_CANCEL_DOCTOR_MSG.' '.$fullTime,
+            'title' => $patient->user->full_name . ' ' . Notification::APPOINTMENT_CANCEL_DOCTOR_MSG . ' ' . $fullTime,
             'type' => Notification::CANCELED,
             'user_id' => $doctor->user_id,
         ]);
@@ -413,14 +411,14 @@ class AppointmentController extends AppBaseController
         app()->setLocale(checkLanguageSession());
         $input = $request->all();
         $appointment = $this->appointmentRepository->frontSideStore($input);
-        if ($input['payment_type'] == Appointment::STRIPE) {
-            $result = $this->appointmentRepository->createSession($appointment);
+        // if ($input['payment_type'] == Appointment::STRIPE) {
+        //     $result = $this->appointmentRepository->createSession($appointment);
 
-            return $this->sendResponse([
-                'payment_type' => $input['payment_type'],
-                $result,
-            ], 'Stripe '.__('messages.appointment.session_created_successfully'));
-        }
+        //     return $this->sendResponse([
+        //         'payment_type' => $input['payment_type'],
+        //         $result,
+        //     ], 'Stripe ' . __('messages.appointment.session_created_successfully'));
+        // }
 
         if ($input['payment_type'] == Appointment::PAYPAL) {
             if ($request->isXmlHttpRequest()) {
@@ -428,7 +426,7 @@ class AppointmentController extends AppBaseController
                     'redirect_url' => route('paypal.index', ['appointmentData' => $appointment]),
                     'payment_type' => $input['payment_type'],
                     'appointmentId' => $appointment->id,
-                ], 'Paypal '.__('messages.appointment.session_created_successfully'));
+                ], 'Paypal ' . __('messages.appointment.session_created_successfully'));
             }
         }
 
@@ -437,7 +435,7 @@ class AppointmentController extends AppBaseController
                 return $this->sendResponse([
                     'redirect_url' => route('paystack.init', ['appointmentData' => $appointment]),
                     'payment_type' => $input['payment_type'],
-                ], 'Paystck '.__('messages.appointment.session_created_successfully'));
+                ], 'Paystck ' . __('messages.appointment.session_created_successfully'));
             }
 
             return redirect(route('paystack.init'));
@@ -447,14 +445,14 @@ class AppointmentController extends AppBaseController
             return $this->sendResponse([
                 'payment_type' => $input['payment_type'],
                 'appointmentId' => $appointment->id,
-            ], 'Razorpay '.__('messages.appointment.session_created_successfully'));
+            ], 'Razorpay ' . __('messages.appointment.session_created_successfully'));
         }
 
         if ($input['payment_type'] == Appointment::PAYTM) {
             return $this->sendResponse([
                 'payment_type' => $input['payment_type'],
                 'appointmentId' => $appointment->id,
-            ], 'Paytm '.__('messages.appointment.session_created_successfully'));
+            ], 'Paytm ' . __('messages.appointment.session_created_successfully'));
         }
 
         if ($input['payment_type'] == Appointment::AUTHORIZE) {
@@ -487,7 +485,7 @@ class AppointmentController extends AppBaseController
         $checkRecord = User::whereEmail($request->email)->whereType(User::PATIENT)->first();
 
         if ($checkRecord != '') {
-            return $this->sendResponse($checkRecord->full_name, __('messages.appointment.patient_name_retrieved') );
+            return $this->sendResponse($checkRecord->full_name, __('messages.appointment.patient_name_retrieved'));
         }
 
         return false;
@@ -504,7 +502,7 @@ class AppointmentController extends AppBaseController
         if (empty($sessionId)) {
             throw new UnprocessableEntityHttpException(__('messages.appointment.session_id_required'));
         }
-        setStripeApiKey();
+        // setStripeApiKey();
 
         $sessionData = \Stripe\Checkout\Session::retrieve($sessionId);
         $appointment = Appointment::whereAppointmentUniqueId($sessionData->client_reference_id)->first();
@@ -514,14 +512,14 @@ class AppointmentController extends AppBaseController
             'transaction_id' => $sessionData->id,
             'appointment_id' => $sessionData->client_reference_id,
             'amount' => intval($sessionData->amount_total / 100),
-            'type' => Appointment::STRIPE,
+            // 'type' => Appointment::STRIPE,
             'meta' => $sessionData,
         ];
 
         Transaction::create($transaction);
 
         $appointment->update([
-            'payment_method' => Appointment::STRIPE,
+            // 'payment_method' => Appointment::STRIPE,
             'payment_type' => Appointment::PAID,
         ]);
 
@@ -554,7 +552,7 @@ class AppointmentController extends AppBaseController
      */
     public function handleFailedPayment(): RedirectResponse
     {
-        setStripeApiKey();
+        // setStripeApiKey();
 
         Flash::error(__('messages.flash.appointment_created_payment_not_complete'));
 
@@ -626,10 +624,10 @@ class AppointmentController extends AppBaseController
 
         $appointmentNotification = Transaction::with('acceptedPaymentUser')->whereAppointmentId($appointment['appointment_unique_id'])->first();
 
-        $fullTime = $appointment->from_time.''.$appointment->from_time_type.' - '.$appointment->to_time.''.$appointment->to_time_type.' '.' '.Carbon::parse($appointment->date)->format('jS M, Y');
+        $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         Notification::create([
-            'title' => $appointmentNotification->acceptedPaymentUser->full_name.' changed the payment status '.Appointment::PAYMENT_TYPE[Appointment::PENDING].' to '.Appointment::PAYMENT_TYPE[$appointment->payment_type].' for appointment '.$fullTime,
+            'title' => $appointmentNotification->acceptedPaymentUser->full_name . ' changed the payment status ' . Appointment::PAYMENT_TYPE[Appointment::PENDING] . ' to ' . Appointment::PAYMENT_TYPE[$appointment->payment_type] . ' for appointment ' . $fullTime,
             'type' => Notification::PAYMENT_DONE,
             'user_id' => $patient->user_id,
         ]);

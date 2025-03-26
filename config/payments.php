@@ -23,10 +23,10 @@ return [
         'validate_ssl' => env('PAYPAL_VALIDATE_SSL', true), // Validate SSL when creating api client.
     ],
 
-    'razorpay' => [
-        'key' => env('RAZOR_KEY'),
-        'secret' => env('RAZOR_SECRET'),
-    ],
+    // 'razorpay' => [
+    //     'key' => env('RAZOR_KEY'),
+    //     'secret' => env('RAZOR_SECRET'),
+    // ],
 
     'authorize' => [
         'login_id' => env('AUTHORIZE_LOGIN_ID'),

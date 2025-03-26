@@ -250,8 +250,8 @@ class MedicineBillController extends AppBaseController
 
         $pdf = Pdf::loadView('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
 
-        dd($data);
-        // return $pdf->stream('medicine-bill.pdf');
+        // dd($data);
+        return $pdf->stream('medicine-bill.pdf');
     }
 
     public function getMedicineCategory(Category $category): JsonResponse
