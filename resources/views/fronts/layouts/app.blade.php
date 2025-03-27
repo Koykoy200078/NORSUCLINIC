@@ -28,6 +28,7 @@
     <!-- Document Title -->
     <title>@yield('front-title') | {{ getAppName() }}</title>
 
+    @routes
     <!-- Scripts -->
     <script src="{{ asset('messages.js') }}"></script>
     <script src="{{ asset('assets/front/vendor/bootstrap.bundle.min.js') }}"></script>

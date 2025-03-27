@@ -28,7 +28,7 @@ class DefaultUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
-                'time_zone' => '1',
+                'time_zone' => '0',
             ],
             [
                 'first_name' => 'Adam',
@@ -40,7 +40,7 @@ class DefaultUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
-                'time_zone' => '1'
+                'time_zone' => '0'
             ]
         ];
 

@@ -107,7 +107,7 @@
                 <div class="row mb-7">
                     {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
-                        {{ Form::select('vaccination_id', $data['vaccination_data'] ,!empty($patient->user) ? $patient->user->vaccination_id : null, ['placeholder' => __('messages.patient.vaccination_status'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status",'data-control'=>'select2']) }}
+                        {{ Form::select('vaccination_id', $data['vaccination_data'] ,!empty($patient->user) ? $patient->user->vaccination_id : null, ['placeholder' => __('messages.patient.choose_vaccination_status'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status",'data-control'=>'select2']) }}
                     </div>
                 </div>
 

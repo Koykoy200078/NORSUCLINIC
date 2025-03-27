@@ -40,7 +40,7 @@
         "spatie/laravel-permission": "^5.8",
         "srmklive/paypal": "^3.0",
         "stripe/stripe-php": "^7.98",
-        "tightenco/ziggy": "^1.1",
+        "tightenco/ziggy": "^2.5",
         "unicodeveloper/laravel-paystack": "^1.1"
     },
     "require-dev": {

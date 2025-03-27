@@ -467,6 +467,7 @@ return [
         'today' => 'Today',
         'emailverified' => 'Email Verified',
         'vaccination_status' => 'Vaccination Status',
+        'choose_vaccination_status' => 'Choose Vaccination Status',
     ],
 
     'request' => [

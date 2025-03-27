@@ -19,8 +19,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $captchakey = Setting::where('key','googleCaptchaKey')->pluck('value')->first();
-        return view('auth.register',compact('captchakey'));
+        $captchakey = Setting::where('key', 'googleCaptchaKey')->pluck('value')->first();
+        return view('auth.register', compact('captchakey'));
     }
 
     /**
@@ -36,14 +36,16 @@ class RegisteredUserController extends Controller
             'toc' => 'required',
         ]);
 
-        $datas1 = Setting::where('key','recaptcha')->first();
-        if($datas1->value){
-            $request->validate([
-                'g-recaptcha-response' => 'required',
-            ],
-            [
-                'g-recaptcha-response.required' => __('messages.common.google_captcha_required'),
-            ]);
+        $datas1 = Setting::where('key', 'recaptcha')->first();
+        if ($datas1->value) {
+            $request->validate(
+                [
+                    'g-recaptcha-response' => 'required',
+                ],
+                [
+                    'g-recaptcha-response.required' => __('messages.common.google_captcha_required'),
+                ]
+            );
         }
 
         $user = User::create([
@@ -53,6 +55,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'type' => User::PATIENT,
             'language' => getSettingValue('language'),
+            'country_code' => getSettingValue('country_code'),
+            'time_zone' => 0,
         ]);
 
         $user->patient()->create([
