@@ -374,6 +374,15 @@ if (! function_exists('getSettingValue')) {
             $setting = Setting::all()->keyBy('key');
         }
 
+        // Check and update the URL for specific keys
+        if (in_array($key, ['about_image_1', 'about_image_2', 'about_image_3']) && isset($setting[$key])) {
+            $value = $setting[$key]->value;
+            if (str_starts_with($value, 'http://localhost')) {
+                $value = request()->getSchemeAndHttpHost() . parse_url($value, PHP_URL_PATH);
+            }
+            return $value;
+        }
+
         return $setting[$key]->value;
     }
 }
