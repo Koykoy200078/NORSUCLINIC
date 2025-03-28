@@ -62,7 +62,6 @@
     <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Payment Type',__('messages.appointment.payment_method').':' ,['class' => 'form-label required']) }}
         {{ Form::select('payment_type', getAllPaymentStatus(), 1,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.appointment.payment_method')]) }}
-
     </div>
     <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Charge',__('messages.appointment.charge').':' ,['class' => 'form-label required']) }}
