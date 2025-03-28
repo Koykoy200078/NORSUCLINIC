@@ -72,8 +72,8 @@ function loadFrontAppointmentData() {
                     $("#payableAmountText").removeClass("d-none");
                     $("#payableAmount").text(
                         currencyIcon +
-                            " " +
-                            getFormattedPrice(result.data.charges)
+                        " " +
+                        getFormattedPrice(result.data.charges)
                     );
                     frontPayableAmount = result.data.charges;
                     frontCharge = result.data.charges;
@@ -103,10 +103,10 @@ function loadFrontAppointmentData() {
                     if (result.data["bookedSlot"] == null) {
                         $(".appointment-slot-data").append(
                             '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                            value +
+                            '">' +
+                            value +
+                            "</span>"
                         );
                     } else {
                         if (
@@ -114,18 +114,18 @@ function loadFrontAppointmentData() {
                         ) {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' +
-                                    value +
-                                    '">' +
-                                    value +
-                                    "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                             );
                         } else {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                    value +
-                                    '">' +
-                                    value +
-                                    "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                             );
                         }
                     }
@@ -192,10 +192,10 @@ listenChange(dateEle, function () {
                     if (result.data["bookedSlot"] == null) {
                         $(".appointment-slot-data").append(
                             '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                            value +
+                            '">' +
+                            value +
+                            "</span>"
                         );
                     } else {
                         if (
@@ -203,18 +203,18 @@ listenChange(dateEle, function () {
                         ) {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' +
-                                    value +
-                                    '">' +
-                                    value +
-                                    "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                             );
                         } else {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                    value +
-                                    '">' +
-                                    value +
-                                    "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                             );
                         }
                     }
@@ -449,9 +449,9 @@ listenSubmit("#frontAppointmentBook", function (e) {
                     });
                 }
 
-                // if (result.data.payment_type == paystack) {
-                //     return (location.href = result.data.redirect_url);
-                // }
+                if (result.data.payment_type == paystack) {
+                    return (location.href = result.data.redirect_url);
+                }
 
                 if (result.data.payment_type == authorizeMethod) {
                     window.location.replace(
@@ -461,87 +461,87 @@ listenSubmit("#frontAppointmentBook", function (e) {
                     );
                 }
 
-                // if (result.data.payment_type == paytmMethod) {
-                //     window.location.replace(
-                //         route("paytm.init", { appointmentId: appointmentID })
-                //     );
-                // }
+                if (result.data.payment_type == paytmMethod) {
+                    window.location.replace(
+                        route("paytm.init", { appointmentId: appointmentID })
+                    );
+                }
 
-                // if (result.data.payment_type == paypal) {
-                //     $.ajax({
-                //         type: "GET",
-                //         url: route("paypal.init"),
-                //         data: { appointmentId: appointmentID },
-                //         success: function (result) {
-                //             if (result.status == 200) {
-                //                 let redirectTo = "";
-                //                 location.href = result.link;
-                //                 $.each(
-                //                     result.result.links,
-                //                     function (key, val) {
-                //                         if (val.rel == "approve") {
-                //                             redirectTo = val.href;
-                //                         }
-                //                     }
-                //                 );
-                //                 location.href = redirectTo;
-                //             }
-                //         },
-                //         error: function (result) {},
-                //         complete: function () {},
-                //     });
-                // }
+                if (result.data.payment_type == paypal) {
+                    $.ajax({
+                        type: "GET",
+                        url: route("paypal.init"),
+                        data: { appointmentId: appointmentID },
+                        success: function (result) {
+                            if (result.status == 200) {
+                                let redirectTo = "";
+                                location.href = result.link;
+                                $.each(
+                                    result.result.links,
+                                    function (key, val) {
+                                        if (val.rel == "approve") {
+                                            redirectTo = val.href;
+                                        }
+                                    }
+                                );
+                                location.href = redirectTo;
+                            }
+                        },
+                        error: function (result) { },
+                        complete: function () { },
+                    });
+                }
 
-                // if (result.data.payment_type == razorpayMethod) {
-                //     $.ajax({
-                //         type: "POST",
-                //         url: route("razorpay.init"),
-                //         data: {
-                //             _token: csrfToken,
-                //             appointmentId: appointmentID,
-                //         },
-                //         success: function (result) {
-                //             if (result.success) {
-                //                 let {
-                //                     id,
-                //                     amount,
-                //                     name,
-                //                     email,
-                //                     contact,
-                //                     country_code,
-                //                 } = result.data;
+                if (result.data.payment_type == razorpayMethod) {
+                    $.ajax({
+                        type: "POST",
+                        url: route("razorpay.init"),
+                        data: {
+                            _token: csrfToken,
+                            appointmentId: appointmentID,
+                        },
+                        success: function (result) {
+                            if (result.success) {
+                                let {
+                                    id,
+                                    amount,
+                                    name,
+                                    email,
+                                    contact,
+                                    region_code,
+                                } = result.data;
 
-                //                 options.amount = amount;
-                //                 options.order_id = id;
-                //                 options.prefill.name = name;
-                //                 options.prefill.email = email;
-                //                 options.prefill.contact = contact;
-                //                 options.prefill.contact = country_code;
-                //                 options.prefill.appointmentID = appointmentID;
+                                options.amount = amount;
+                                options.order_id = id;
+                                options.prefill.name = name;
+                                options.prefill.email = email;
+                                options.prefill.contact = contact;
+                                options.prefill.contact = region_code;
+                                options.prefill.appointmentID = appointmentID;
 
-                //                 let razorPay = new Razorpay(options);
-                //                 razorPay.open();
-                //                 razorPay.on(
-                //                     "payment.failed",
-                //                     storeFailedPayment
-                //                 );
-                //             }
-                //         },
-                //         error: function (result) {},
-                //         complete: function () {},
-                //     });
-                // }
+                                let razorPay = new Razorpay(options);
+                                razorPay.open();
+                                razorPay.on(
+                                    "payment.failed",
+                                    storeFailedPayment
+                                );
+                            }
+                        },
+                        error: function (result) { },
+                        complete: function () { },
+                    });
+                }
 
-                // if (result.data.payment_type == stripeMethod) {
-                //     let sessionId = result.data[0].sessionId;
-                //     stripe
-                //         .redirectToCheckout({
-                //             sessionId: sessionId,
-                //         })
-                //         .then(function (result) {
-                //             manageAjaxErrors(result);
-                //         });
-                // }
+                if (result.data.payment_type == stripeMethod) {
+                    let sessionId = result.data[0].sessionId;
+                    stripe
+                        .redirectToCheckout({
+                            sessionId: sessionId,
+                        })
+                        .then(function (result) {
+                            manageAjaxErrors(result);
+                        });
+                }
 
                 if (result.data === manually) {
                     setTimeout(function () {
@@ -592,18 +592,18 @@ window.setFrontBtnLoader = function (btnLoader) {
         .prop("disabled", true);
 };
 
-// function storeFailedPayment(response) {
-//     $.ajax({
-//         type: "POST",
-//         url: route("razorpay.failed"),
-//         data: {
-//             data: response,
-//         },
-//         success: function (result) {
-//             if (result.success) {
-//                 displaySuccessMessage(result.message);
-//             }
-//         },
-//         error: function () {},
-//     });
-// }
+function storeFailedPayment(response) {
+    $.ajax({
+        type: "POST",
+        url: route("razorpay.failed"),
+        data: {
+            data: response,
+        },
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+            }
+        },
+        error: function () { },
+    });
+}

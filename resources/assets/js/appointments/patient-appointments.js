@@ -225,50 +225,50 @@ listenClick("#submitBtn", function (event) {
         displayErrorMessage(Lang.get("js.select_payment"));
         return false;
     }
-    // let stripeMethod = 2;
-    // let paystackMethod = 3;
-    // let paypalMethod = 4;
-    // let razorpayMethod = 5;
+    let stripeMethod = 2;
+    let paystackMethod = 3;
+    let paypalMethod = 4;
+    let razorpayMethod = 5;
     let authorizeMethod = 6;
-    // let paytmMethod = 7;
+    let paytmMethod = 7;
 
     let appointmentId = $("#patientAppointmentId").val();
     let btnSubmitEle = $("#patientPaymentForm").find("#submitBtn");
     setAdminBtnLoader(btnSubmitEle);
 
-    // if (paymentGatewayType == stripeMethod) {
-    //     $.ajax({
-    //         url: route("patients.appointment-payment"),
-    //         type: "POST",
-    //         data: { appointmentId: appointmentId },
-    //         success: function (result) {
-    //             let sessionId = result.data.sessionId;
-    //             stripe
-    //                 .redirectToCheckout({
-    //                     sessionId: sessionId,
-    //                 })
-    //                 .then(function (result) {
-    //                     manageAjaxErrors(result);
-    //                 });
-    //         },
-    //         error: function (result) {
-    //             displayErrorMessage(result.responseJSON.message);
-    //         },
-    //         complete: function () {},
-    //     });
-    // }
+    if (paymentGatewayType == stripeMethod) {
+        $.ajax({
+            url: route("patients.appointment-payment"),
+            type: "POST",
+            data: { appointmentId: appointmentId },
+            success: function (result) {
+                let sessionId = result.data.sessionId;
+                stripe
+                    .redirectToCheckout({
+                        sessionId: sessionId,
+                    })
+                    .then(function (result) {
+                        manageAjaxErrors(result);
+                    });
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON.message);
+            },
+            complete: function () {},
+        });
+    }
 
-    // if (paymentGatewayType == paytmMethod) {
-    //     window.location.replace(
-    //         route("paytm.init", { appointmentId: appointmentId })
-    //     );
-    // }
+    if (paymentGatewayType == paytmMethod) {
+        window.location.replace(
+            route("paytm.init", { appointmentId: appointmentId })
+        );
+    }
 
-    // if (paymentGatewayType == paystackMethod) {
-    //     window.location.replace(
-    //         route("paystack.init", { appointmentData: appointmentId })
-    //     );
-    // }
+    if (paymentGatewayType == paystackMethod) {
+        window.location.replace(
+            route("paystack.init", { appointmentData: appointmentId })
+        );
+    }
 
     if (paymentGatewayType == authorizeMethod) {
         window.location.replace(
@@ -276,77 +276,77 @@ listenClick("#submitBtn", function (event) {
         );
     }
 
-    // if (paymentGatewayType == paypalMethod) {
-    //     $.ajax({
-    //         type: "GET",
-    //         url: route("paypal.init"),
-    //         data: { appointmentId: appointmentId },
-    //         success: function (result) {
-    //             if (result.status == 200) {
-    //                 let redirectTo = "";
-    //                 location.href = result.link;
-    //                 // $.each(result.result.links,
-    //                 //     function (key, val) {
-    //                 //         if (val.rel == 'approve') {
-    //                 //             redirectTo = val.href;
-    //                 //         }
-    //                 //     });
-    //                 // location.href = redirectTo;
-    //             }
-    //         },
-    //         error: function (result) {
-    //             displayErrorMessage(result.responseJSON.message);
-    //         },
-    //         complete: function () {},
-    //     });
-    // }
+    if (paymentGatewayType == paypalMethod) {
+        $.ajax({
+            type: "GET",
+            url: route("paypal.init"),
+            data: { appointmentId: appointmentId },
+            success: function (result) {
+                if (result.status == 200) {
+                    let redirectTo = "";
+                    location.href = result.link;
+                    // $.each(result.result.links,
+                    //     function (key, val) {
+                    //         if (val.rel == 'approve') {
+                    //             redirectTo = val.href;
+                    //         }
+                    //     });
+                    // location.href = redirectTo;
+                }
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON.message);
+            },
+            complete: function () {},
+        });
+    }
 
-    // if (paymentGatewayType == razorpayMethod) {
-    //     $.ajax({
-    //         type: "POST",
-    //         url: route("razorpay.init"),
-    //         data: { appointmentId: appointmentId },
-    //         success: function (result) {
-    //             if (result.success) {
-    //                 let { id, amount, name, email, contact } = result.data;
+    if (paymentGatewayType == razorpayMethod) {
+        $.ajax({
+            type: "POST",
+            url: route("razorpay.init"),
+            data: { appointmentId: appointmentId },
+            success: function (result) {
+                if (result.success) {
+                    let { id, amount, name, email, contact } = result.data;
 
-    //                 options.amount = amount;
-    //                 options.order_id = id;
-    //                 options.prefill.name = name;
-    //                 options.prefill.email = email;
-    //                 options.prefill.contact = contact;
-    //                 options.prefill.appointmentID = appointmentId;
+                    options.amount = amount;
+                    options.order_id = id;
+                    options.prefill.name = name;
+                    options.prefill.email = email;
+                    options.prefill.contact = contact;
+                    options.prefill.appointmentID = appointmentId;
 
-    //                 let razorPay = new Razorpay(options);
-    //                 razorPay.open();
-    //                 razorPay.on("payment.failed", storeFailedPayment);
-    //             }
-    //         },
-    //         error: function (result) {
-    //             displayErrorMessage(result.responseJSON.message);
-    //         },
-    //         complete: function () {},
-    //     });
-    // }
+                    let razorPay = new Razorpay(options);
+                    razorPay.open();
+                    razorPay.on("payment.failed", storeFailedPayment);
+                }
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON.message);
+            },
+            complete: function () {},
+        });
+    }
 
     return false;
 });
 
-// function storeFailedPayment(response) {
-//     $.ajax({
-//         type: "POST",
-//         url: route("razorpay.failed"),
-//         data: {
-//             data: response,
-//         },
-//         success: function (result) {
-//             if (result.success) {
-//                 displaySuccessMessage(result.message);
-//             }
-//         },
-//         error: function () {},
-//     });
-// }
+function storeFailedPayment(response) {
+    $.ajax({
+        type: "POST",
+        url: route("razorpay.failed"),
+        data: {
+            data: response,
+        },
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+            }
+        },
+        error: function () {},
+    });
+}
 
 listenClick(".payment-btn", function (event) {
     let appointmentId = $(this).attr("data-id");
