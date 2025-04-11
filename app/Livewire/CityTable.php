@@ -37,7 +37,7 @@ class CityTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.staff_skeleton');
+        return view('livewire.staff_skeleton');
     }
 
     public function builder(): Builder
@@ -50,7 +50,7 @@ class CityTable extends LivewireTableComponent
         return [
             Column::make(__('messages.common.name'), 'name')->view('cities.components.name')
                 ->sortable()->searchable(),
-            Column::make(__('messages.city.state'), 'state.name')->view('cities.components.state')
+            Column::make(__('messages.city.province'), 'state.name')->view('cities.components.state')
                 ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('cities.components.action'),
         ];

@@ -53,7 +53,7 @@ class StateController extends AppBaseController
             $state = $this->stateRepository->create($input);
             return $this->sendSuccess(__('messages.flash.state_create'));
         } else {
-            return $this->sendError(__('messages.common.state_not_avl'));
+            return $this->sendError(__('messages.common.province_not_avl'));
         }
     }
 

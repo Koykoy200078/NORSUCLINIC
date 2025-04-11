@@ -13,9 +13,9 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call(DefaultSpecializationSeeder::class);
-        $this->call(DefaultUserSeeder::class);
         $this->call(SettingTableSeeder::class);
         $this->call(CreateCountriesSeeder::class);
+        $this->call(DefaultUserSeeder::class);
         $this->call(DefaultPermissionSeeder::class);
         $this->call(DefaultRoleSeeder::class);
         $this->call(DefaultServiceCategorySeeder::class);
@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultCurrenciesSeeder::class);
         $this->call(DefaultStaffSeeder::class);
         $this->call(DefaultSliderSeeder::class);
+        $this->call(DefaultFaqsSeeder::class);
+        $this->call(DefaultFrontPatientTestimonialsSeeder::class);
         $this->call(AddFieldsSettingTableSeeder::class);
         $this->call(AddTwoFieldsSettingSeeder::class);
         $this->call(AddEmailVerifiedFieldSettingTableSeeder::class);
@@ -33,11 +35,14 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultAssignPermissionSeeder::class);
         $this->call(SmartPatientCardsSeeder::class);
 
-        $this->call(CollegeSeeder::class);
+
         $this->call(CampusSeeder::class);
+        $this->call(CollegeSeeder::class);
         $this->call(CourseSeeder::class);
         $this->call(YearLevelSeeder::class);
         $this->call(VaccinationSeeder::class);
-        $this->call(RequestDocumentsSeeder::class);
+
+        $this->call(MedicineSeeder::class);
+        $this->call(DiagnoseSeeder::class);
     }
 }

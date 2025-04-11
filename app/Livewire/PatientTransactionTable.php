@@ -14,7 +14,7 @@ class PatientTransactionTable extends LivewireTableComponent
 {
     protected $model = Transaction::class;
     protected string $tableName = 'transactions';
-    protected $listeners = ['refresh' => '$refresh', 'resetPage','statusFilter','paymentFilter','changeDateFilter'];
+    protected $listeners = ['refresh' => '$refresh', 'resetPage', 'statusFilter', 'paymentFilter', 'changeDateFilter'];
     public $paymentType;
     public $statusType;
     public string $dateFilter = '';
@@ -42,12 +42,11 @@ class PatientTransactionTable extends LivewireTableComponent
 
             return [];
         });
-
     }
 
     public function placeholder()
     {
-          return view('livewire.transaction_skeleton');
+        return view('livewire.transaction_skeleton');
     }
 
     public function columns(): array
@@ -55,10 +54,10 @@ class PatientTransactionTable extends LivewireTableComponent
         return [
             Column::make(__('messages.appointment.date'), 'created_at')->view('transactions.patient_panel.components.date')
                 ->sortable()->searchable(),
-            Column::make(__('messages.appointment.payment_method'), 'type')->view('transactions.patient_panel.components.payment_method')
-                ->sortable(),
-            Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.patient_panel.components.amount')
-                ->sortable()->searchable(),
+            // Column::make(__('messages.appointment.payment_method'), 'type')->view('transactions.patient_panel.components.payment_method')
+            //     ->sortable(),
+            // Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.patient_panel.components.amount')
+            //     ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('transactions.patient_panel.components.action'),
         ];
     }
@@ -67,14 +66,18 @@ class PatientTransactionTable extends LivewireTableComponent
     {
         $query = Transaction::where('user_id', '=', getLogInUserId());
 
-        $query->when($this->paymentType != '',
-        function (Builder $q) {
-            $q->where('transactions.type', '=', $this->paymentType);
-        });
-        $query->when($this->statusType != '',
-        function (Builder $q) {
-            $q->where('transactions.status', '=', $this->statusType);
-        });
+        $query->when(
+            $this->paymentType != '',
+            function (Builder $q) {
+                $q->where('transactions.type', '=', $this->paymentType);
+            }
+        );
+        $query->when(
+            $this->statusType != '',
+            function (Builder $q) {
+                $q->where('transactions.status', '=', $this->statusType);
+            }
+        );
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
@@ -117,5 +120,4 @@ class PatientTransactionTable extends LivewireTableComponent
     {
         $this->resetPage('transactionsPage');
     }
-
 }

@@ -9,17 +9,18 @@ use App\Models\City;
 use App\Models\College;
 use App\Models\Country;
 use App\Models\Course;
+use App\Models\Diagnose;
 use App\Models\Doctor;
 use App\Models\DoctorSession;
 use App\Models\Patient;
 use App\Models\Qualification;
 use App\Models\Specialization;
 use App\Models\User;
-use Arr;
 use Carbon\Carbon;
-use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
@@ -67,7 +68,7 @@ class UserRepository extends BaseRepository
     {
         $data['patientUniqueId'] = mb_strtoupper(Patient::generatePatientUniqueId());
         $data['countries'] = Country::toBase()->pluck('name', 'id');
-        $data['bloodGroupList'] = Patient::BLOOD_GROUP_ARRAY;
+        $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
 
         $data['provinces'] = State::toBase()->pluck('name', 'id');
         $data['cities'] = City::toBase()->pluck('name', 'id');
@@ -77,6 +78,7 @@ class UserRepository extends BaseRepository
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
+        $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
 
         return $data;
     }
@@ -107,7 +109,7 @@ class UserRepository extends BaseRepository
             if (isset($input['profile']) && ! empty('profile')) {
                 $doctor->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
-            $doctor->sendEmailVerificationNotification();
+            // $doctor->sendEmailVerificationNotification();
 
             DB::commit();
 

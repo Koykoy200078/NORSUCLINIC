@@ -4,8 +4,8 @@
             <div class="row align-items-center">
                 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
                     <label class="pb-2 fs-4 text-gray-600">{{__('messages.doctor_session.doctor')}}</label>
-                    <span class="fs-4 text-gray-800">
-                        {{ $visit->visitDoctor->user->full_name }}
+                    <span class="fs-4 text-gray-800"> 
+                       {{ $visit->visitDoctor->user->full_name }}
                     </span>
                 </div>
                 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
@@ -23,19 +23,19 @@
                 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
                     <label class="pb-2 fs-4 text-gray-600">{{__('messages.doctor.created_at')}}</label>
                     <span class="fs-4 text-gray-800" data-bs-toggle="tooltip" data-bs-placement="top"
-                        title="{{\Carbon\Carbon::parse($visit->created_at)->isoFormat('DD MMM YYYY')}}">{{$visit->updated_at->diffForHumans()}}</span>
+                          title="{{\Carbon\Carbon::parse($visit->created_at)->isoFormat('DD MMM YYYY')}}">{{$visit->updated_at->diffForHumans()}}</span>
                 </div>
                 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
                     <label class="pb-2 fs-4 text-gray-600">{{__('messages.doctor.updated_at')}}</label>
                     <span class="fs-4 text-gray-800" data-bs-toggle="tooltip" data-bs-placement="top"
-                        title="{{\Carbon\Carbon::parse($visit->updated_at)->isoFormat('DD MMM YYYY')}}">{{$visit->updated_at->diffForHumans()}}</span>
+                          title="{{\Carbon\Carbon::parse($visit->updated_at)->isoFormat('DD MMM YYYY')}}">{{$visit->updated_at->diffForHumans()}}</span>
                 </div>
                 <div class="col-md-12 d-flex flex-column mb-md-10 mb-5">
-                    <label class="pb-2 fs-4 text-gray-600">{{__('messages.visit.description')}}</label>
-                    <div class="fs-4 text-gray-800" style="max-height: 200px; overflow:auto;">
-                        {!! nl2br(!empty($visit->description) ? $visit->description : 'N/A') !!}
+                        <label class="pb-2 fs-4 text-gray-600">{{__('messages.visit.description')}}</label>
+                        <div class="fs-4 text-gray-800" style="max-height: 200px; overflow:auto;">   
+                             {!! nl2br(!empty($visit->description) ? $visit->description : 'N/A') !!}
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -46,19 +46,19 @@
     <ul class="nav nav-tabs mb-5 pb-1 overflow-auto flex-nowrap text-nowrap" id="subAnalytics" role="tablist">
         <li class="nav-item position-relative me-7 mb-3" role="presentation">
             <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab"
-                href="#problesTab">{{ __('messages.visit.problems') }}</a>
+               href="#problesTab">{{ __('messages.visit.problems') }}</a>
         </li>
         <li class="nav-item position-relative me-7 mb-3" role="presentation">
             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab"
-                href="#observationsTab">{{ __('messages.visit.observations') }}</a>
+               href="#observationsTab">{{ __('messages.visit.observations') }}</a>
         </li>
         <li class="nav-item position-relative me-7 mb-3" role="presentation">
             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab"
-                href="#notesTab">{{ __('messages.visit.notes') }}</a>
+               href="#notesTab">{{ __('messages.visit.notes') }}</a>
         </li>
         <li class="nav-item position-relative me-7 mb-3" role="presentation">
             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab"
-                href="#prescriptionsTab">{{ __('messages.visit.prescriptions') }}</a>
+               href="#prescriptionsTab">{{ __('messages.visit.prescriptions') }}</a>
         </li>
     </ul>
     <!--begin:::Tab content-->
@@ -76,12 +76,12 @@
                             <div class="col-md-12">
                                 <ul class="list-group list-group-flush problem-list" id="problemLists">
                                     @if(!empty($visit))
-                                    @forelse($visit->problems as $val)
-                                    <li class="list-group-item text-wrap text-break d-flex justify-content-between align-items-center py-5">{{ $val->problem_name }}
-                                    </li>
-                                    @empty
-                                    <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
-                                    @endforelse
+                                        @forelse($visit->problems as $val)
+                                            <li class="list-group-item text-wrap text-break d-flex justify-content-between align-items-center py-5">{{ $val->problem_name }}
+                                            </li>
+                                        @empty
+                                            <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
+                                        @endforelse
                                     @endif
                                 </ul>
                             </div>
@@ -106,12 +106,12 @@
                             <div class="px-2">
                                 <ul class="list-group list-group-flush problem-list" id="observationLists">
                                     @if(!empty($visit))
-                                    @forelse($visit->observations as $val)
-                                    <li class="list-group-item d-flex text-wrap text-break justify-content-between align-items-center py-5">{{ $val->observation_name }}
-                                    </li>
-                                    @empty
-                                    <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
-                                    @endforelse
+                                        @forelse($visit->observations as $val)
+                                            <li class="list-group-item d-flex text-wrap text-break justify-content-between align-items-center py-5">{{ $val->observation_name }}
+                                            </li>
+                                        @empty
+                                            <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
+                                        @endforelse
                                     @endif
                                 </ul>
                             </div>
@@ -137,12 +137,12 @@
                             <div class="px-2">
                                 <ul class="list-group list-group-flush problem-list" id="noteLists">
                                     @if(!empty($visit))
-                                    @forelse($visit->notes as $val)
-                                    <li class="list-group-item text-wrap text-break d-flex justify-content-between align-items-center py-5">{{ $val->note_name }}
-                                    </li>
-                                    @empty
-                                    <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
-                                    @endforelse
+                                        @forelse($visit->notes as $val)
+                                            <li class="list-group-item text-wrap text-break d-flex justify-content-between align-items-center py-5">{{ $val->note_name }}
+                                            </li>
+                                        @empty
+                                            <p class="text-center fw-bold mt-3 text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</p>
+                                        @endforelse
                                     @endif
                                 </ul>
                             </div>
@@ -163,27 +163,27 @@
                 </div>
                 <table class="table table-striped align-middle table-row-dashed fs-6 gy-5 mt-5">
                     <thead>
-                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                            <th scope="col">{{ __('messages.prescription.name') }}</th>
-                            <th scope="col">{{ __('messages.frequency') }}</th>
-                            <th scope="col">{{ __('messages.prescription.duration') }}</th>
-                        </tr>
+                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                        <th scope="col">{{ __('messages.prescription.name') }}</th>
+                        <th scope="col">{{ __('messages.frequency') }}</th>
+                        <th scope="col">{{ __('messages.prescription.duration') }}</th>
+                    </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold visit-prescriptions">
-                        @if(!empty($visit))
+                    @if(!empty($visit))
                         @forelse($visit->prescriptions as $prescription)
-                        <tr id="prescriptionLists">
-                            <td class="text-break text-wrap">{{$prescription->prescription_name}}</td>
-                            <td class="text-break text-wrap">{{$prescription->frequency}}</td>
-                            <td class="text-break text-wrap">{{$prescription->duration}}</td>
-                        </tr>
+                            <tr id="prescriptionLists">
+                                <td class="text-break text-wrap">{{$prescription->prescription_name}}</td>
+                                <td class="text-break text-wrap">{{$prescription->frequency}}</td>
+                                <td class="text-break text-wrap">{{$prescription->duration}}</td>
+                            </tr>
                         @empty
-                        <tr id="noPrescriptionLists">
-                            <td colspan="5"
-                                class="text-center  text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</td>
-                        </tr>
+                            <tr id="noPrescriptionLists">
+                                <td colspan="5"
+                                    class="text-center  text-muted text-gray-600">{{ __('messages.common.no_records_found') }}</td>
+                            </tr>
                         @endforelse
-                        @endif
+                    @endif
                     </tbody>
                 </table>
                 <!--begin::Card-->
@@ -195,3 +195,5 @@
     </div>
     <!--end:::Tab content-->
 </div>
+
+

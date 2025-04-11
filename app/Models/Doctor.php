@@ -86,7 +86,7 @@ class Doctor extends Model
 
     const AB_NEGATIVE = 8;
 
-    const BLOOD_GROUP_ARRAY = [
+    const BLOOD_TYPE_ARRAY = [
         self::O_POSITIVE => 'O+',
         self::A_POSITIVE => 'A+',
         self::B_POSITIVE => 'B+',

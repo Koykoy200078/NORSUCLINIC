@@ -96,7 +96,7 @@
                         <img src="{{ getAppLogo() }}" style="width:70px;margin-left:70%;margin-bottom:40px;">
                         </img>
                     </td>
-                    <h1 style="margin-right:100%;margin-top:10px;">NORSU CLINIC</h1>
+                    <h1 style="margin-right:100%;margin-top:10px;">{{ getAppName() }}</h1>
                 </tr>
             </tbody>
         </table>

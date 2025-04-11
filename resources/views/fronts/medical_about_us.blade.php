@@ -127,7 +127,7 @@
                     <div class="card mx-lg-2 flex-fill">
                         <div class="card-body text-center d-flex flex-column">
                             <div class="card-image mb-4 rounded-circle">
-                                <img src="{{ $doctor->user->profile_image }}" alt="NORSU CLINIC" class="img-fluid rounded-circle object-image-cover" loading="lazy" />
+                                <img src="{{ $doctor->user->profile_image }}" alt="NORSU LOGO" class="img-fluid rounded-circle object-image-cover" loading="lazy" />
                             </div>
                             <h4 class="text-primary"> {{ $doctor->user->full_name }}</h4>
                             <label class="designation-label pb-4 mb-3 d-block">
@@ -167,7 +167,7 @@
     <!-- start services counter section -->
 
     <!-- start testimonial section -->
-    @include('fronts.patient_testimonial')
+    <!-- @include('fronts.patient_testimonial') -->
     <!-- end testimonial section -->
 </div>
 

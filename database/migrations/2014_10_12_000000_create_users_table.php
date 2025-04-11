@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('email', 191)->unique();
+            $table->string('email', 191)->nullable()->unique();
             $table->string('contact')->nullable();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_no')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string('language')->default('en')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->integer('type')->nullable();
             $table->string('blood_type')->nullable();
             $table->string('country_code')->nullable();

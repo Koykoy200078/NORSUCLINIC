@@ -95,46 +95,46 @@
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.appointment.service') }}:</label>
                             <span class="fs-4 text-gray-800">{{$appointment['data']->services->name}}</span>
                         </div>
-                        <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
+                        <!-- <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.doctor_appointment.amount') }}:</label>
                             <span class="fs-4 text-gray-800"> {{ getCurrencyFormat(getCurrencyCode(),$appointment['data']->payable_amount) }} </span>
                         </div>
-                        <div class="col-md-6 d-flex flex-column mb-md-1 mb-5">
+                         <div class="col-md-6 d-flex flex-column mb-md-1 mb-5">
                             <label for="name" class="pb-4 fs-4 text-gray-600">{{ __('messages.appointment.payment') }}:</label>
                             <div class="w-50">
                                 @if ($appointment['data']->payment_type != $paid)
-                                <select class="io-select2 form-select appointment-change-payment-status payment-status"
-                                    style="min-width: 150px; max-width:150px;" data-control="select2" data-id="{{ $appointment['data']->id }}">
-                                    <option value="{{ $paid }}"
-                                        {{ $appointment['data']->payment_type == $paid ? 'selected' : '' }}>
-                                        {{ __('messages.transaction.paid') }}
-                                    </option>
-                                    <option value="{{ $pending }}"
-                                        {{ $appointment['data']->payment_type == $paid ? 'disabled' : 'selected' }}>
-                                        {{ __('messages.transaction.pending') }}
-                                    </option>
-                                </select>
+                                    <select class="io-select2 form-select appointment-change-payment-status payment-status"
+                                        style="min-width: 150px; max-width:150px;" data-control="select2" data-id="{{ $appointment['data']->id }}">
+                                        <option value="{{ $paid }}"
+                                            {{ $appointment['data']->payment_type == $paid ? 'selected' : '' }}>
+                                            {{ __('messages.transaction.paid') }}
+                                        </option>
+                                        <option value="{{ $pending }}"
+                                            {{ $appointment['data']->payment_type == $paid ? 'disabled' : 'selected' }}>
+                                            {{ __('messages.transaction.pending') }}
+                                        </option>
+                                    </select>
                                 @else
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-light-success">{{ __('messages.transaction.paid') }}</span>
-                                </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-light-success">{{ __('messages.transaction.paid') }}</span>
+                                    </div>
                                 @endif
                             </div>
                         </div>
                         @if($appointment['data']->payment_type === \App\Models\Appointment::PAID)
-                        <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-                            <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.appointment.payment_method') }}:</label>
-                            <span class="fs-4 text-gray-800">
-                                {{ !empty($appointment['data']->payment_method) ? \App\Models\Appointment::PAYMENT_METHOD[$appointment['data']->payment_method] : __('messages.common.n/a') }}
-                            </span>
-                        </div>
+                            <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
+                                <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.appointment.payment_method') }}:</label>
+                                <span class="fs-4 text-gray-800">
+                                    {{ !empty($appointment['data']->payment_method) ? \App\Models\Appointment::PAYMENT_METHOD[$appointment['data']->payment_method] : __('messages.common.n/a') }}
+                                </span>
+                            </div>
                         @endif
                         <div class="col-md-6 d-flex flex-column">
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.doctor.created_at') }}:</label>
                             <span class="fs-4 text-gray-800">
                                 {{$appointment['data']->created_at->diffForHumans()}}
                             </span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="tab-pane fade" id="user" role="tabpanel" aria-labelledby="user-tab">

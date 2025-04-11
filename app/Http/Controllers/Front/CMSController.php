@@ -37,7 +37,7 @@ class CMSController extends AppBaseController
         if (isset($cmsData['about_image_3']) && str_starts_with($cmsData['about_image_3'], 'http://localhost')) {
             $cmsData['about_image_3'] = request()->getSchemeAndHttpHost() . parse_url($cmsData['about_image_3'], PHP_URL_PATH);
         }
-        
+
         return view('fronts.cms.cms', compact('cmsData'));
     }
 

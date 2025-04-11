@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix|unique:users,email',
-            'password' => ['required', 'confirmed', 'min:6'],
+            // 'password' => ['required', 'confirmed', 'min:6'],
             'toc' => 'required',
         ]);
 
@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            // 'password' => Hash::make($request->password),
             'type' => User::PATIENT,
             'language' => getSettingValue('language'),
             'country_code' => getSettingValue('country_code'),
@@ -65,7 +65,7 @@ class RegisteredUserController extends Controller
 
         $user->assignRole('patient');
 
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
 
         Flash::success(__('messages.flash.your_reg_success'));
 

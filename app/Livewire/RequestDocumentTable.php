@@ -2,59 +2,73 @@
 
 namespace App\Livewire;
 
+use Rappasoft\LaravelLivewireTables\DataTableComponent;
+use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\RequestDocuments;
-use Livewire\Component;
-use Livewire\Attributes\Lazy;
+use Illuminate\Support\Facades\Auth;
 
-#[Lazy]
-class RequestDocumentTable extends Component
+class RequestDocumentTable extends DataTableComponent
 {
-    public $name;
-    public $age;
-    public $gender;
-    public $status;
-    public $date_of_birth;
-    public $address;
-    public $religion;
-    public $patient_contact;
-    public $campus;
-    public $college;
-    public $course_year;
-    public $informant;
-    public $emergency_contact;
-    public $complaints;
-    public $covid_vaccination;
-    public $comorbidities;
-    public $allergies;
-    public $admissions_surgeries;
-    public $maintenance;
-    public $pregnancy_status;
-    public $lmp_aog;
-    public $vital_signs_bp;
-    public $vital_signs_pr;
-    public $vital_signs_temp;
-    public $vital_signs_rr;
-    public $vital_signs_o2_sat;
-    public $vital_signs_weight;
-    public $pertinent_exam;
-    public $assessment;
-    public $plan;
+    protected $model = RequestDocuments::class;
+    public bool $showFilterOnHeader = false;
+    public bool $showButtonOnHeader = true;
+    public string $buttonComponent = 'requests.components.table-buttons';
 
-    public $requestDocuments;
-    public $selectedDocument;
-
-    public function mount()
+    public function configure(): void
     {
-        $this->requestDocuments = RequestDocuments::all();
+        $this->setPrimaryKey('id');
+        $this->setTableAttributes([
+            'class' => 'table table-striped table-bordered',
+        ]);
+        $this->setColumnSelectStatus(false);
     }
 
-    public function selectDocument($id)
+    public function builder(): \Illuminate\Database\Eloquent\Builder
     {
-        $this->selectedDocument = RequestDocuments::find($id);
+        $query = RequestDocuments::query();
+
+        // Check the user's role and filter data accordingly
+        $user = Auth::user();
+
+        if ($user->type == 3) { // Patient
+            $query->where('user_id', $user->id);
+        }
+
+        return $query;
     }
 
-    public function render()
+    public function columns(): array
     {
-        return view('livewire.request-document-table');
+        return [
+            Column::make("ID", "id")
+                ->sortable(),
+            Column::make("Patient Name", "name")
+                ->sortable(),
+            Column::make("Document Type", "document_type")
+                ->sortable()
+                ->searchable()
+                ->format(function ($value) {
+                    // Map the document_type to a user-friendly label
+                    $documentTypes = [
+                        'medical_certificate' => 'Medical Certificate',
+                        'referral_letter' => 'Referral Letter',
+                        'clearance' => 'Clearance',
+                        'consultation_form' => 'Consultation Form',
+                        'medical_history' => 'Medical History',
+                        'medical_report' => 'Medical Report',
+                        'other' => 'Other',
+                    ];
+
+                    return $documentTypes[$value] ?? ucfirst(str_replace('_', ' ', $value));
+                }),
+            Column::make("Requested At", "requested_at")
+                ->sortable()
+                ->format(fn($value) => $value ? $value->format('Y-m-d') : 'N/A'),
+
+            Column::make("Actions")
+                ->label(
+                    fn($row) => view('requests.components.action-buttons', ['id' => $row->id])
+                ),
+        ];
     }
 }

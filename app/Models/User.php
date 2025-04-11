@@ -20,6 +20,73 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * App\Models\User
+ *
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $contact
+ * @property string|null $dob
+ * @property int $gender
+ * @property int $status
+ * @property string|null $language
+ * @property Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $remember_token
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Address|null $address
+ * @property-read Doctor|null $doctor
+ * @property-read string $full_name
+ * @property-read string $profile_image
+ * @property-read MediaCollection|Media[] $media
+ * @property-read int|null $media_count
+ * @property-read DatabaseNotificationCollection|DatabaseNotification[]
+ *     $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Patient|null $patient
+ *
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static Builder|User newModelQuery()
+ * @method static Builder|User newQuery()
+ * @method static Builder|User query()
+ * @method static Builder|User whereContact($value)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereDob($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User whereEmailVerifiedAt($value)
+ * @method static Builder|User whereFirstName($value)
+ * @method static Builder|User whereGender($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereLanguage($value)
+ * @method static Builder|User whereLastName($value)
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereStatus($value)
+ * @method static Builder|User whereUpdatedAt($value)
+ *
+ * @property int|null $type
+ * @property string|null $blood_type
+ * @property-read mixed $role_name
+ * @property-read Collection|\Spatie\Permission\Models\Permission[] $permissions
+ * @property-read int|null $permissions_count
+ * @property-read Collection|Qualification[] $qualifications
+ * @property-read int|null $qualifications_count
+ * @property-read Collection|\Spatie\Permission\Models\Role[] $roles
+ * @property-read int|null $roles_count
+ *
+ * @method static Builder|User permission($permissions)
+ * @method static Builder|User role($roles, $guard = null)
+ * @method static Builder|User whereBloodGroup($value)
+ * @method static Builder|User whereType($value)
+ *
+ * @property-read \App\Models\Staff|null $staff
+ * @property string|null $country_code
+ *
+ * @method static Builder|User whereRegionCode($value)
+ */
 class User extends Authenticatable implements HasMedia
 {
     use HasFactory, Notifiable, InteractsWithMedia, HasRoles, Impersonate;
@@ -63,7 +130,7 @@ class User extends Authenticatable implements HasMedia
     ];
 
     const LANGUAGES_IMAGE = [
-        'en' => 'web/media/flags/united-states.svg',
+        'en' => 'web/media/flags/philippines.svg',
     ];
 
     const PROFILE = 'profile';
@@ -125,12 +192,10 @@ class User extends Authenticatable implements HasMedia
     public static $rules = [
         'first_name' => 'required',
         'middle_name' => 'nullable',
-        'emergency_contact_name' => 'nullable',
-        'emergency_contact_no' => 'nullable',
         'last_name' => 'required',
-        'email' => 'required|email|unique:users,email|regex:/(.*)@(.*)\.(.*)/',
+        'email' => 'nullable|email|unique:users,email|regex:/(.*)@(.*)\.(.*)/',
         'contact' => 'nullable|unique:users,contact',
-        'password' => 'required|same:password_confirmation|min:6',
+        'password' => 'nullable|same:password_confirmation|min:6',
         'dob' => 'nullable|date',
         'experience' => 'nullable|numeric',
         'specializations' => 'required',
@@ -139,11 +204,12 @@ class User extends Authenticatable implements HasMedia
         'postal_code' => 'nullable',
         'profile' => 'nullable|mimes:jpeg,png,jpg|max:2000',
 
+        'emergency_contact_name' => 'nullable',
+        'emergency_contact_no' => 'nullable',
         'campus_id' => 'nullable',
         'college_id' => 'nullable',
         'course_id' => 'nullable',
         'year_level_id' => 'nullable',
-
         'vaccination_id' => 'nullable',
     ];
 
@@ -155,9 +221,6 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
         'first_name' => 'string',
-        'middle_name' => 'string',
-        'emergency_contact_name' => 'string',
-        'emergency_contact_no' => 'string',
         'last_name' => 'string',
         'email' => 'string',
         'contact' => 'string',
@@ -173,11 +236,13 @@ class User extends Authenticatable implements HasMedia
         'time_zone' => 'string',
         'dark_mode' => 'boolean',
 
+        'middle_name' => 'string',
+        'emergency_contact_name' => 'string',
+        'emergency_contact_no' => 'string',
         'campus_id' => 'integer',
         'college_id' => 'integer',
         'course_id' => 'integer',
         'year_level_id' => 'integer',
-
         'vaccination_id' => 'integer',
     ];
 
@@ -194,9 +259,12 @@ class User extends Authenticatable implements HasMedia
             return $fullUrl;
         }
 
-        return $this->gender == self::FEMALE
-            ? asset('web/media/avatars/female.png')
-            : asset('web/media/avatars/male.png');
+        $gender = $this->gender;
+        if ($gender == self::FEMALE) {
+            return asset('web/media/avatars/female.png');
+        }
+
+        return asset('web/media/avatars/male.png');
     }
 
     public function getRoleNameAttribute()

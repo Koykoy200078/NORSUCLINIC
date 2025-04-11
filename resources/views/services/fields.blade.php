@@ -9,8 +9,7 @@
         <div class="mb-5">
             {{ Form::label('category_id',__('messages.service.category').':', ['class' => 'form-label required']) }}
             <div class="input-group flex-nowrap">
-                {{ Form::select('category_id',$data['serviceCategories'], null,['class' => 'form-select io-select2',
-            'placeholder' => __('messages.service.category'),'data-control'=>'select2','id'=>'serviceCategory']) }}
+                {{ Form::select('category_id',$data['serviceCategories'], null,['class' => 'form-select io-select2', 'placeholder' => __('messages.service.category'),'data-control'=>'select2','id'=>'serviceCategory']) }}
                 <div class="input-group-append" id="createServiceCategory">
                     <div class="input-group-text">
                         <a href="javascript:void(0)" data-toggle="modal" id="createServiceCategoryButtonID"

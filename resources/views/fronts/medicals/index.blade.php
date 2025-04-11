@@ -9,7 +9,7 @@ $styleCss = 'style';
 <div class="home-page">
     <!-- start hero section -->
     <section class="hero-section p-t-100 p-b-100">
-        <div class="container p-t-100">
+        <div class="container p-t-120">
             <div class="row align-items-center flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 text-lg-end text-center">
                     <div class="hero-content mt-5 mt-lg-0">
@@ -17,14 +17,14 @@ $styleCss = 'style';
                         <h1 class="mb-5">
                             {{ $sliders->short_description }}
                         </h1>
-                        @if(!getLogInUser())
+                        <!-- @if(!getLogInUser())
                         <a href="{{ route('register') }}"
                             class="btn btn-primary">{{ __('messages.web.sign_up') }}</a>
-                        @endif
+                        @endif -->
                     </div>
                 </div>
                 <div class="col-lg-6 text-lg-end text-center">
-                    <img src="{{ $sliders->slider_image }}" alt="NORSU CLINIC" class="img-fluid object-image-cover" loading="lazy" />
+                    <img src="{{ $sliders->slider_image }}" alt="NORSU LOGO" class="img-fluid object-image-cover" loading="lazy" />
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@ $styleCss = 'style';
     <!-- end about section -->
 
     <!-- start how-it-work section -->
-    <section class="how-work-section p-t-100 p-b-100">
+    <!-- <section class="how-work-section p-t-100 p-b-100">
         <div class="container">
             <div class="text-center mb-lg-5 mb-4">
                 <h5 class="text-primary top-heading fs-6 mb-3">{{__('messages.web.working_process')}}</h5>
@@ -140,11 +140,11 @@ $styleCss = 'style';
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- end how-it-work section -->
 
     <!-- start appointment section -->
-    <section class="appointmnet-section p-t-100 p-b-100">
+    <!-- <section class="appointmnet-section p-t-100 p-b-100">
         <div class="container">
             <div class="bg-primary border-bmr-100 appointmnet-section__inner-block">
                 <div class="row align-items-center">
@@ -199,7 +199,7 @@ $styleCss = 'style';
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- end appointment section -->
 
     <!-- start services section -->
@@ -207,7 +207,7 @@ $styleCss = 'style';
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-xxl-4">
-                    <div class="text-xxl-start text-center mb-lg-0 mb-5">
+                    <div class="text-xxl-start text-center mb-lg-0 mb-5 mt-3">
                         <h5 class="text-primary top-heading fs-6 mb-3">{{__('messages.web.services')}}</h5>
                         <h2 class="pb-2">{{__('messages.web.we_cover_a_big___')}}</h2>
                         <p class="paragraph pb-3">

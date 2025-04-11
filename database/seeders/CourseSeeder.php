@@ -14,210 +14,144 @@ class CourseSeeder extends Seeder
     public function run(): void
     {
         $course = [
+            // CAS
             [
-                'course_name' => 'BACHELOR OF AGRICULTURAL TECHNOLOGY Major in Animal Husbandry',
+                'course_name' => 'Bachelor of Science in Biology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN AGRICULTURE Major in Animal Science',
+                'course_name' => 'Bachelor of Science in Chemistry',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN AGRICULTURE Major in Agribusiness',
+                'course_name' => 'Bachelor of Science in Computer Science',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN AGRICULTURE Major in Agronomy',
+                'course_name' => 'Bachelor of Science in Geology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN FISHERIES',
+                'course_name' => 'Bachelor of Science in Information Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN FORESTRY',
+                'course_name' => 'Bachelor of Mass Communication',
             ],
             [
-                'course_name' => 'BACHELOR OF ARTS Major in General Curriculum',
+                'course_name' => 'Bachelor of Science in Mathematics',
             ],
             [
-                'course_name' => 'BACHELOR OF ARTS Major in Social Science',
+                'course_name' => 'Bachelor of Science in Psychology',
             ],
+            // CBA
             [
-                'course_name' => 'BACHELOR OF MASS COMMUNICATION',
+                'course_name' => 'Bachelor of Science in Accountancy',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN BIOLOGY',
+                'course_name' => 'Bachelor of Science in Business Administration Major in Human Resource Development Management',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN CHEMISTRY',
+                'course_name' => 'Bachelor of Science in Business Administration Major in Financial Management',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN COMPUTER SCIENCE',
+                'course_name' => 'Bachelor of Science in Office Systems Management',
             ],
+            // CEA
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY',
+                'course_name' => 'Bachelor of Science in Architecture',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN MATHEMATICS',
+                'course_name' => 'Bachelor of Science in Civil Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN PSYCHOLOGY',
+                'course_name' => 'Bachelor of Science in Computer Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN SOCIAL SCIENCE',
+                'course_name' => 'Bachelor of Science in Electrical Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ACCOUNTANCY',
+                'course_name' => 'Bachelor of Science in Electronics and Communication Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION Major in Financial Management',
+                'course_name' => 'Bachelor of Science in Geodetic Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION Major in Human Resource Management',
+                'course_name' => 'Bachelor of Science in Geothermal Engineering',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION Major in Marketing Management',
+                'course_name' => 'Bachelor of Science in Mechanical Engineering',
             ],
+            // CNPAHS
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT',
+                'course_name' => 'Bachelor of Science in Nursing',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN OFFICE ADMINISTRATION',
+                'course_name' => 'Bachelor of Science in Pharmacy',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN TOURISM MANAGEMENT',
+                'course_name' => 'Midwifery',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN CRIMINOLOGY',
+                'course_name' => 'Associate in Medical Dental Nursing Assistant (AMDNA)',
             ],
+            // CTHM
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ARCHITECTURE',
+                'course_name' => 'Bachelor of Science in Hospitality Management',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN CIVIL ENGINEERING',
+                'course_name' => 'Bachelor of Science in Tourism',
             ],
+            // CAFF
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN COMPUTER ENGINEERING',
+                'course_name' => 'Bachelor of Science in Forestry',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ELECTRICAL ENGINEERING',
+                'course_name' => 'Bachelor of Science in Agriculture Major in Agronomy',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ELECTRONICS ENGINEERING',
+                'course_name' => 'Bachelor of Science in Agriculture Major in Horticulture',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN GEODETIC ENGINEERING',
+                'course_name' => 'Bachelor of Science in Agriculture Major in Animal Science',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ELECTRONICS ENGINEERING',
+                'course_name' => 'Bachelor of Science in Agriculture Major in Agricultural Extension',
             ],
+            // CCJE
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN ELECTRONICS ENGINEERING',
+                'course_name' => 'Bachelor of Science in Criminology',
             ],
+            // CIT
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN AVIATION MAINTENANCE Major in Airframe and Maintenance',
+                'course_name' => 'Bachelor of Science in Automotive Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION Major in Avionics (Aviation Electronics)',
+                'course_name' => 'Bachelor of Science in Aviation Maintenance',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Architectural Drafting Technology',
+                'course_name' => 'Bachelor of Science in Civil Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Automotive Technology',
+                'course_name' => 'Bachelor of Science in Computer and Electronics Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Civil Technology',
+                'course_name' => 'Bachelor of Science in Electrical Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Computer Technology',
+                'course_name' => 'Bachelor of Science in Food Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Electrical Technology',
+                'course_name' => 'Bachelor of Science in Industrial Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Food Technology',
+                'course_name' => 'Bachelor of Science in Mechanical Technology',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Garments Technology',
+                'course_name' => 'Bachelor of Science in Refrigeration and Air Conditioning Technology',
             ],
+            // CTED
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Mechanical Technology',
+                'course_name' => 'Bachelor of Elementary Education',
             ],
             [
-                'course_name' => 'BACHELOR OF SCIENCE IN INDUSTRIAL TECHNOLOGY Major in Refrigeration and Air Conditioning Technology',
-            ],
-            [
-                'course_name' => 'BACHELOR OF TECHNOLOGICAL TECHNOLOGY Major in Computer Technology',
-            ],
-            [
-                'course_name' => 'ASSOCIATE IN MEDICAL-DENTAL-NURSING ASSISTANT',
-            ],
-            [
-                'course_name' => 'MIDWIFERY',
-            ],
-            [
-                'course_name' => 'ASSOCIATE IN MEDICAL-DENTAL-NURSING ASSISTANT',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SCIENCE IN NURSING',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SCIENCE IN PHARMACY',
-            ],
-            [
-                'course_name' => 'BACHELOR OF CULTURE & ARTS EDUCATION',
-            ],
-            [
-                'course_name' => 'BACHELOR OF EARLY CHILDHOOD EDUCATION',
-            ],
-            [
-                'course_name' => 'BACHELOR OF ELEMENTARY EDUCATION Major in General Curriculum',
-            ],
-            [
-                'course_name' => 'BACHELOR OF PHYSICAL EDUCATION',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major English',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SPECIAL NEEDS EDUCATION Specialization Deaf and Hard-of-Hearing Learners',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SPECIAL NEEDS EDUCATION Specialization Early Childhood Education',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SPECIAL NEEDS EDUCATION Specialization Elementary School Teaching',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SPECIAL NEEDS EDUCATION Specialization General',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SPECIAL NEEDS EDUCATION Specialization Teaching Learners with Visual Impairment',
-            ],
-            [
-                'course_name' => 'BACHELOR OF TECHNOLOGY & LIVELIHOOD EDUCATION Specialization Agri-Fishery Arts',
-            ],
-            [
-                'course_name' => 'BACHELOR OF TECHNOLOGY & LIVELIHOOD EDUCATION Specialization Home Economics',
-            ],
-            [
-                'course_name' => 'BACHELOR OF TECHNOLOGY & LIVELIHOOD EDUCATION Specialization Industrial Arts',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major in Values Education',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major in Filipino',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major in Mathematics',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major in Sciences',
-            ],
-            [
-                'course_name' => 'BACHELOR OF SECONDARY EDUCATION Major in Social Studies',
-            ],
-            [
-                'course_name' => 'BACHELOR OF TECHNOLOGY & LIVELIHOOD EDUCATION Specialization Information & Communication Technology',
-            ],
+                'course_name' => 'Bachelor of Secondary Education',
+            ]
         ];
 
         Course::insert($course);

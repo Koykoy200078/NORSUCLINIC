@@ -8,9 +8,9 @@
                         <div class="footer-info__footer-icon fs-5 d-flex align-items-center justify-content-center">
                             <i class="fa-solid fa-phone text-primary "></i>
                         </div>
-                        <a href="tel: {{ getSettingValue('contact_no') }}"
+                        <a href="tel:+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}"
                             class="text-decoration-none text-white footer-info__contact-label">
-                            {{ getSettingValue('contact_no') }}
+                            +{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}
                         </a>
                     </div>
                     <div class="d-flex align-items-center footer-info__block mb-3 pb-1">

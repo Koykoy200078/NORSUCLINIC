@@ -12,7 +12,7 @@
 
     <div class="col-lg-6 mb-5 col-sm-12">
         {{ Form::label('Date',__('messages.appointment.date').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('date', null,['class' => 'form-control date','placeholder' => __('Choose a date'), 'id'=>'appointmentDate', 'required','autocomplete'=>'off']) }}
+        {{ Form::text('date', null,['class' => 'form-control date','placeholder' => __('messages.appointment.date'), 'id'=>'appointmentDate', 'required','autocomplete'=>'off']) }}
     </div>
 
     @role('patient')
@@ -26,12 +26,19 @@
     {{ Form::hidden('status',\App\Models\Appointment::BOOKED) }}
     <div class="col-sm-12 col-lg-6 mb-5">
         {{ Form::label('Patient',__('messages.appointment.patient').':' ,['class' => 'form-label required']) }}
-        {{ Form::select('patient_id', $data['patients'], null,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.appointment.patient')]) }}
+        {{ Form::select('patient_id', $data['patients'], null,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('Select a patient')]) }}
     </div>
     @endrole
     @php
     $styleCss = 'style';
     @endphp
+    @role('patient')
+    <div class="col-lg-6 col-sm-12 mb-5">
+        {{ Form::label('Service',__('messages.appointment.service').':' ,['class' => 'form-label required']) }}
+        {{ Form::select('service_id', [], null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'appointmentServiceId','placeholder' => __('messages.common.select_service'),'required']) }}
+    </div>
+    @endrole
+
     <div class="col-12 form-group">
         {{ Form::label('Available Slots',__('messages.appointment.available_slot').':' ,['class' => 'form-label required']) }}
         <div class="mb-0 d-inline-flex align-items-center ms-2">
@@ -53,17 +60,12 @@
         {{ Form::label('Description',__('messages.appointment.description').':' ,['class' => 'form-label']) }}
         {{ Form::textarea('description', null, ['class'=> 'form-control','rows'=> 10,'placeholder'=>__('messages.appointment.description') ])}}
     </div>
-    @role('patient')
-    <div class="col-lg-6 col-sm-12 mb-5">
-        {{ Form::label('Service',__('messages.appointment.service').':' ,['class' => 'form-label required']) }}
-        {{ Form::select('service_id', $data['services'], null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'appointmentServiceId','placeholder' => __('messages.common.select_service'),'required']) }}
-    </div>
-    @endrole
-    <div class="col-lg-6 col-sm-12 mb-5 d-none">
+
+    <div class="col-lg-6 col-sm-12 mb-5" style="display: none;">
         {{ Form::label('Payment Type',__('messages.appointment.payment_method').':' ,['class' => 'form-label required']) }}
         {{ Form::select('payment_type', getAllPaymentStatus(), 1,['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.appointment.payment_method')]) }}
     </div>
-    <div class="col-lg-6 col-sm-12 mb-5 d-none">
+    <div class="col-lg-6 col-sm-12 mb-5" style="display: none;">
         {{ Form::label('Charge',__('messages.appointment.charge').':' ,['class' => 'form-label required']) }}
         <div class="input-group">
             {{ Form::text('charge', null,['class' => 'form-control','placeholder' => __('messages.doctor.select_date'), 'id'=>'chargeId', 'required', 'placeholder' => __('messages.appointment.charge'),'readonly']) }}
@@ -73,7 +75,7 @@
         </div>
     </div>
     @if(!getLogInUser()->hasRole('patient'))
-    <div class="col-lg-6 col-sm-12 mb-5">
+    <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Add Fees',__('messages.appointment.extra_fees').':' ,['class' => 'form-label']) }}
         <div class="input-group">
             {{ Form::text('add_fees',null,['class' => 'form-control', 'id' => 'addFees', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")',
@@ -83,17 +85,6 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 col-sm-12 mb-5">
-        {{ Form::label('Total Payable Amount',__('messages.appointment.total_payable_amount').':' ,['class' => 'form-label required']) }}
-        <div class="input-group">
-            {{ Form::text('payable_amount', null,['class' => 'form-control','placeholder' => __('messages.appointment.total_payable_amount'), 'id'=>'payableAmount', 'required', 'placeholder' => __('messages.appointment.total_payable_amount'), 'readonly']) }}
-            <div class="input-group-text">
-                <a class="fw-bolder text-gray-500 text-decoration-none">{{ getCurrencyIcon() }}</a>
-            </div>
-        </div>
-    </div>
-    @endif
-    @if(getLogInUser()->hasRole('patient'))
     <div class="col-lg-6 col-sm-12 mb-5 d-none">
         {{ Form::label('Total Payable Amount',__('messages.appointment.total_payable_amount').':' ,['class' => 'form-label required']) }}
         <div class="input-group">
@@ -104,6 +95,17 @@
         </div>
     </div>
     @endif
+    <!-- @if(getLogInUser()->hasRole('patient'))
+    <div class="col-lg-6 col-sm-12 mb-5" style="display: none;">
+        {{ Form::label('Total Payable Amount',__('messages.appointment.total_payable_amount').':' ,['class' => 'form-label required']) }}
+        <div class="input-group">
+            {{ Form::text('payable_amount', null,['class' => 'form-control','placeholder' => __('messages.appointment.total_payable_amount'), 'id'=>'payableAmount', 'required', 'placeholder' => __('messages.appointment.total_payable_amount'), 'readonly']) }}
+            <div class="input-group-text">
+                <a class="fw-bolder text-gray-500 text-decoration-none">{{ getCurrencyIcon() }}</a>
+            </div>
+        </div>
+    </div>
+    @endif -->
     <div class="d-flex">
         {{ Form::button(__('messages.common.save'),['type' => 'submit','class' => 'btn btn-primary me-2 submitAppointmentBtn' ]) }}
         &nbsp;

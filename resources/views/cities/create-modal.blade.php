@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3>{{__('messages.city.add_city')}}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             {{ Form::open(['id' => 'createCityForm']) }}
             <div class="modal-body">
@@ -13,8 +13,8 @@
                     {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' =>  __('messages.common.name'),'required']) }}
                 </div>
                 <div>
-                    {{ Form::label('state_id', __('messages.city.state').':', ['class' => 'required form-label ']) }}
-                    {{ Form::select('state_id', $states, null, ['id' => 'stateCity','required','data-control'=>"select2", 'placeholder' => __('messages.city.state')]) }}
+                    {{ Form::label('state_id', __('messages.city.province').':', ['class' => 'required form-label ']) }}
+                    {{ Form::select('state_id', $states, null, ['id' => 'stateCity','required','data-control'=>"select2", 'placeholder' => __('messages.city.province')]) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

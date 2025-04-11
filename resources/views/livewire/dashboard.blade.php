@@ -59,20 +59,5 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="col-xl-12 col-md-6" wire:ignore>
-              <div class="admin-dashbord-earning-card widget mb-5">
-                  <div class="admin-dashbord-earning-card-header">
-                      <h3>{{ __('messages.monthly_earning') }}</h3>
-                      <span class="mt-4 fw-light">{{ __('messages.datepicker.this_month') }}</span>
-                  </div>
-                  <div class="admin-dashbord-earning-card-body d-flex align-items-center justify-content-between">
-                 <div class="total-amount fs-1 my-2">0</div>
-                    <div>
-                           <span class="text-success admin-dashbord-earning-card-body-amont me-3">100.00% ^</span>
-                           <div> {{ __('messages.from_previous_month') }}</div>
-                          </div>
-                  </div>
-              </div>
-          </div> -->
     </div>
 </div>

@@ -29,6 +29,13 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (Auth::user()->type === User::PATIENT) {
+            Auth::logout(); // Log out the user
+            return redirect()->route('login')->withErrors([
+                'email' => 'Patients are not allowed to log in.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(getDashboardURL());
@@ -39,7 +46,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $language =   Setting::where('key','language')->get()->toArray()[0]['value'];
+        $language =   Setting::where('key', 'language')->get()->toArray()[0]['value'];
 
         Auth::guard('web')->logout();
 

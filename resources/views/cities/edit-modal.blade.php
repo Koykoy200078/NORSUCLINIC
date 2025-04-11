@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3>{{__('messages.city.edit_city')}}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             {{ Form::open(['id' => 'editCityForm']) }}
             <div class="modal-body">
@@ -14,7 +14,7 @@
                     {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' =>  __('messages.web.name'),'required','id'=>'editCityName']) }}
                 </div>
                 <div>
-                    {{ Form::label('state_id', __('messages.city.state').':', ['class' => 'required']) }}
+                    {{ Form::label('state_id', __('messages.city.province').':', ['class' => 'required']) }}
                     {{ Form::select('state_id', $states, null, ['id' => 'editCityStateId','required','data-control'=>"select2"]) }}
                 </div>
             </div>

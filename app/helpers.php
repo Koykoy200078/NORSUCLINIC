@@ -17,7 +17,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-// use Stripe\Stripe;
+use Stripe\Stripe;
 
 if (! function_exists('getLogInUser')) {
     /**
@@ -106,78 +106,70 @@ if (! function_exists('getCities')) {
     }
 }
 
-if (! function_exists('getDashboardURL')) {
+if (!function_exists('getDashboardURL')) {
     /**
+     * Get the dashboard URL based on the user's role or permissions.
+     *
      * @return string
      */
     function getDashboardURL()
     {
-        if (Auth::user()->hasRole('clinic_admin')) {
-            return 'admin/dashboard';
-        } else {
-            if (Auth::user()->hasRole('doctor')) {
-                return 'doctors/dashboard';
-            } else {
-                if (Auth::user()->hasRole('patient')) {
-                    return 'patients/dashboard';
-                }
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Return the default home URL if no user is authenticated
+        if (!$user) {
+            return RouteServiceProvider::HOME;
+        }
+
+        // Role-based dashboard URLs
+        $roleDashboardMap = [
+            'clinic_admin' => 'admin/dashboard',
+            'doctor' => 'doctors/dashboard',
+        ];
+
+        // Check if the user has a specific role and return the corresponding dashboard URL
+        foreach ($roleDashboardMap as $role => $url) {
+            if ($user->hasRole($role)) {
+                return $url;
             }
         }
 
-        if (Auth::user() !== null) {
-            /** @var User $user */
-            $user = Auth::user();
-            $permissions = $user->getAllPermissions()->pluck('name')->toArray();
+        // Permission-based dashboard URLs
+        $permissionDashboardMap = [
+            'manage_admin_dashboard' => 'admin/dashboard',
+            'manage_doctors' => 'admin/doctors',
+            'manage_patients' => 'admin/patients',
+            'manage_staff' => 'admin/staff',
+            'manage_appointments' => 'admin/appointments',
+            'manage_patient_visits' => 'admin/visits',
+            'manage_settings' => 'admin/settings',
+            'manage_specialties' => 'admin/specializations',
+            'manage_services' => 'admin/services',
+            'manage_front_cms' => 'admin/cms',
+            'manage_transactions' => 'admin/transactions',
+        ];
 
-            if (in_array('manage_admin_dashboard', $permissions, true)) {
-                return 'admin/dashboard';
+        // Get all user permissions
+        $permissions = $user->getAllPermissions()->pluck('name')->toArray();
+
+        // Check if the user has a specific permission and return the corresponding dashboard URL
+        foreach ($permissionDashboardMap as $permission => $url) {
+            if (in_array($permission, $permissions, true)) {
+                return $url;
             }
+        }
 
-            if (in_array('manage_doctors', $permissions, true)) {
-                return 'admin/doctors';
-            }
-
-            if (in_array('manage_patients', $permissions, true)) {
-                return 'admin/patients';
-            }
-
-            if (in_array('manage_staff', $permissions, true)) {
-                return 'admin/staff';
-            }
-
-            if (in_array('manage_appointments', $permissions, true)) {
-                return 'admin/appointments';
-            }
-
-            if (in_array('manage_patient_visits', $permissions, true)) {
-                return 'admin/visits';
-            }
-
-            if (in_array('manage_settings', $permissions, true)) {
-                return 'admin/settings';
-            }
-
-            if (in_array('manage_specialties', $permissions, true)) {
-                return 'admin/specializations';
-            }
-
-            if (in_array('manage_services', $permissions, true)) {
-                return 'admin/services';
-            }
-
-            if (in_array('manage_front_cms', $permissions, true)) {
-                return 'admin/cms';
-            }
-
-            if (in_array('manage_transactions', $permissions, true)) {
-                return 'admin/transactions';
-            }
-
-            if (in_array('manage_request_documents', $permissions, true)) {
+        // Special handling for 'manage_request_documents' permission
+        if (in_array('manage_request_documents', $permissions, true)) {
+            if ($user->hasRole('clinic_admin')) {
                 return 'admin/request-documents';
+            } elseif ($user->hasRole('doctor')) {
+                return 'doctor/request-documents';
             }
         }
 
+        // Return the default home URL if no role or permission matches
         return RouteServiceProvider::HOME;
     }
 }
@@ -440,13 +432,13 @@ if (! function_exists('getCurrencyIcon')) {
     }
 }
 
-// if (! function_exists('setStripeApiKey')) {
+if (! function_exists('setStripeApiKey')) {
 
-//     function setStripeApiKey()
-//     {
-//         Stripe::setApiKey(config('services.stripe.secret_key'));
-//     }
-// }
+    function setStripeApiKey()
+    {
+        Stripe::setApiKey(config('services.stripe.secret_key'));
+    }
+}
 
 if (! function_exists('getCurrencyCode')) {
 
@@ -919,112 +911,111 @@ if (!function_exists('paypalCurrencySupports')) {
     }
 }
 
-// if (!function_exists('razorpayCurrencySupports')) {
-//     function razorpayCurrencySupports()
-//     {
-//         $rozarpay = [
-//             'AED',
-//             'ALL',
-//             'AMD',
-//             'ARS',
-//             'AUD',
-//             'AWG',
-//             'BBD',
-//             'BDT',
-//             'BMD',
-//             'BND',
-//             'BOB',
-//             'BSD',
-//             'BWP',
-//             'BZD',
-//             'CAD',
-//             'CHF',
-//             'CNY',
-//             'COP',
-//             'CRC',
-//             'CUP',
-//             'CZK',
-//             'DKK',
-//             'DOP',
-//             'DZD',
-//             'EGP',
-//             'ETB',
-//             'EUR',
-//             'FJD',
-//             'GBP',
-//             'GHS',
-//             'GIP',
-//             'GMD',
-//             'GTQ',
-//             'GYD',
-//             'HKD',
-//             'HNL',
-//             'HRK',
-//             'HTG',
-//             'HUF',
-//             'IDR',
-//             'ILS',
-//             'INR',
-//             'JMD',
-//             'KES',
-//             'KGS',
-//             'KHR',
-//             'KYD',
-//             'KZT',
-//             'LAK',
-//             'LKR',
-//             'LRD',
-//             'LSL',
-//             'MAD',
-//             'MDL',
-//             'MKD',
-//             'MMK',
-//             'MNT',
-//             'MOP',
-//             'MUR',
-//             'MVR',
-//             'MWK',
-//             'MXN',
-//             'MYR',
-//             'NAD',
-//             'NGN',
-//             'NIO',
-//             'NOK',
-//             'NPR',
-//             'NZD',
-//             'PEN',
-//             'PGK',
-//             'PHP',
-//             'PKR',
-//             'QAR',
-//             'RUB',
-//             'SAR',
-//             'SCR',
-//             'SEK',
-//             'SGD',
-//             'SLL',
-//             'SOS',
-//             'SSP',
-//             'SVC',
-//             'SZL',
-//             'THB',
-//             'TTD',
-//             'TZS',
-//             'USD',
-//             'UYU',
-//             'UZS',
-//             'YER',
-//             'ZAR',
-//             'TRY'
-//         ];
+if (!function_exists('razorpayCurrencySupports')) {
+    function razorpayCurrencySupports()
+    {
+        $rozarpay = [
+            'AED',
+            'ALL',
+            'AMD',
+            'ARS',
+            'AUD',
+            'AWG',
+            'BBD',
+            'BDT',
+            'BMD',
+            'BND',
+            'BOB',
+            'BSD',
+            'BWP',
+            'BZD',
+            'CAD',
+            'CHF',
+            'CNY',
+            'COP',
+            'CRC',
+            'CUP',
+            'CZK',
+            'DKK',
+            'DOP',
+            'DZD',
+            'EGP',
+            'ETB',
+            'EUR',
+            'FJD',
+            'GBP',
+            'GHS',
+            'GIP',
+            'GMD',
+            'GTQ',
+            'GYD',
+            'HKD',
+            'HNL',
+            'HRK',
+            'HTG',
+            'HUF',
+            'IDR',
+            'ILS',
+            'INR',
+            'JMD',
+            'KES',
+            'KGS',
+            'KHR',
+            'KYD',
+            'KZT',
+            'LAK',
+            'LKR',
+            'LRD',
+            'LSL',
+            'MAD',
+            'MDL',
+            'MKD',
+            'MMK',
+            'MNT',
+            'MOP',
+            'MUR',
+            'MVR',
+            'MWK',
+            'MXN',
+            'MYR',
+            'NAD',
+            'NGN',
+            'NIO',
+            'NOK',
+            'NPR',
+            'NZD',
+            'PEN',
+            'PGK',
+            'PHP',
+            'PKR',
+            'QAR',
+            'RUB',
+            'SAR',
+            'SCR',
+            'SEK',
+            'SGD',
+            'SLL',
+            'SOS',
+            'SSP',
+            'SVC',
+            'SZL',
+            'THB',
+            'TTD',
+            'TZS',
+            'USD',
+            'UYU',
+            'UZS',
+            'YER',
+            'ZAR',
+            'TRY'
+        ];
 
-//         if (!in_array(strtoupper(getCurrencyCode()), $rozarpay)) {
-//             return  false;
-//         }
-//         return  true;
-//     }
-// }
-
+        if (!in_array(strtoupper(getCurrencyCode()), $rozarpay)) {
+            return  false;
+        }
+        return  true;
+    }
+}
 if (!function_exists('paystackCurrencySupports')) {
     function paystackCurrencySupports()
     {

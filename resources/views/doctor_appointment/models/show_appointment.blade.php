@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3 class="modal-title">{{__('messages.appointment.appointment_details')}}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                        aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="d-flex">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 @php
-                $styleCss = 'style';
+                    $styleCss = 'style';
                 @endphp
                 <div class="d-flex align-items-center">
                     <label {{ $styleCss }}="width: 125px">{{__('messages.appointment.appointment_unique_id')}}:</label>
@@ -44,16 +44,13 @@
                 </div>
                 <div class="d-flex align-items-center mt-3">
                     <label {{ $styleCss }}="width: 125px">{{__('messages.appointment.payable_amount')}}:</label>
-                    <div class="fs-6 fw-bold ms-3">
-                        <span>{{getCurrencyCode()}}</span>
-                        <span class="ms-1" data-calendar="event_amount"></span>
-                    </div>
+                    <div class="fs-6 fw-bold ms-3"><span>$</span><span class="ms-1" data-calendar="event_amount"></span></div>
                 </div>
                 <div class="d-flex align-items-center mt-4">
                     <label for="" {{ $styleCss }}="width: 170px">{{__('messages.appointment.status')}}:</label>
                     <select class="form-select-sm form-select-solid form-select doctor-apptnt-calendar-status-change"
-                        data-control="select2" data-calendar="event_status"
-                        data-minimum-results-for-search="Infinity">
+                            data-control="select2" data-calendar="event_status"
+                            data-minimum-results-for-search="Infinity">
                     </select>
                 </div>
             </div>

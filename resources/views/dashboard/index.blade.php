@@ -14,15 +14,13 @@
                 <div class="row">
                     <livewire:AdminDashboardSidebarTable />
                 </div>
-
-                <div class="col-xxl-12">
-                    <livewire:admin-dashBoard-table />
-                </div>
                 <!--end::Charts Widget 8-->
             </div>
 
 
-
+            <div class="col-xxl-12">
+                <livewire:admin-dashBoard-table />
+            </div>
         </div>
     </div>
 </div>

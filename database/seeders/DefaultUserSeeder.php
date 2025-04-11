@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\Specialization;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\Doctor;
+use App\Models\Specialization;
 
 class DefaultUserSeeder extends Seeder
 {
@@ -18,6 +19,7 @@ class DefaultUserSeeder extends Seeder
     public function run(): void
     {
         $users = [
+            // Admin
             [
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
@@ -30,6 +32,7 @@ class DefaultUserSeeder extends Seeder
                 'country_code' => '63',
                 'time_zone' => '0',
             ],
+            // Doctor
             [
                 'first_name' => 'Adam',
                 'last_name' => 'Diaz',

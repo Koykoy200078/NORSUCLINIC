@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('meeting_id')->nullable();
             $table->text('meta')->nullable();
-            $table->string('time_zone')->nullable();
+            $table->string('time_zone')->default(0);
             $table->string('password')->nullable();
 
             $table->timestamps();

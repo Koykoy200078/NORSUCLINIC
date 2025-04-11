@@ -9,7 +9,6 @@ use App\Models\PurchasedMedicine;
 use App\Models\SaleMedicine;
 use App\Repositories\MedicineRepository;
 use Exception;
-use Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
 use Response;
+use Laracasts\Flash\Flash;
 
 class MedicineController extends AppBaseController
 {
@@ -61,10 +61,11 @@ class MedicineController extends AppBaseController
     public function store(CreateMedicineRequest $request): RedirectResponse
     {
         $input = $request->all();
+        $input['selling_price'] = $input['selling_price'] ?? "0";
 
         $this->medicineRepository->create($input);
 
-        Flash::success(__('messages.medicine.medicine').' '.__('messages.medicine.saved_successfully'));
+        Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
 
         return redirect(route('medicines.index'));
     }
@@ -102,9 +103,10 @@ class MedicineController extends AppBaseController
      */
     public function update(Medicine $medicine, UpdateMedicineRequest $request): RedirectResponse
     {
+
         $this->medicineRepository->update($request->all(), $medicine->id);
 
-        Flash::success(__('messages.medicine.medicine').' '.__('messages.medicine.updated_successfully'));
+        Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.updated_successfully'));
 
         return redirect(route('medicines.index'));
     }
@@ -130,7 +132,7 @@ class MedicineController extends AppBaseController
         }
         $this->medicineRepository->delete($medicine->id);
 
-        return $this->sendSuccess(__('messages.medicine.medicine').' '.__('messages.medicine.deleted_successfully'));
+        return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.deleted_successfully'));
     }
 
     /**
@@ -139,6 +141,8 @@ class MedicineController extends AppBaseController
     public function showModal(Medicine $medicine): JsonResponse
     {
         $medicine->load(['brand', 'category']);
+        $getBuyingPrice = Medicine::find($medicine->id)->buying_price;
+        $getSellingPrice = Medicine::find($medicine->id)->selling_price;
 
         $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
         $medicine = [
@@ -148,8 +152,8 @@ class MedicineController extends AppBaseController
             'salt_composition' => $medicine->salt_composition,
             'side_effects' => $medicine->side_effects,
             'created_at' => $medicine->created_at,
-            'selling_price' => getCurrencyFormat(getCurrencyCode(), $medicine->buying_price),
-            'buying_price' => getCurrencyFormat(getCurrencyCode(), $medicine->buying_price),
+            'selling_price' => getCurrencyFormat(getCurrencyCode(), $getBuyingPrice),
+            'buying_price' => getCurrencyFormat(getCurrencyCode(), $getSellingPrice),
             'updated_at' => $medicine->updated_at,
             'description' => $medicine->description,
             'quantity' => $medicine->quantity,
@@ -175,6 +179,5 @@ class MedicineController extends AppBaseController
         }
 
         return $this->sendResponse($result, __('messages.medicine.no_use'));
-
     }
 }

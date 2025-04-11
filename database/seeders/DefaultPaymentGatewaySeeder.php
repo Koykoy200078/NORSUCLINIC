@@ -34,10 +34,10 @@ class DefaultPaymentGatewaySeeder extends Seeder
             //     'payment_gateway_id' => Appointment::RAZORPAY,
             //     'payment_gateway' => Appointment::PAYMENT_METHOD[5],
             // ],
-            [
-                'payment_gateway_id' => Appointment::AUTHORIZE,
-                'payment_gateway' => Appointment::PAYMENT_METHOD[6],
-            ],
+            // [
+            //     'payment_gateway_id' => Appointment::AUTHORIZE,
+            //     'payment_gateway' => Appointment::PAYMENT_METHOD[6],
+            // ],
             // [
             //     'payment_gateway_id' => Appointment::PAYTM,
             //     'payment_gateway' => Appointment::PAYMENT_METHOD[7],

@@ -14,7 +14,7 @@
         "anandsiddharth/laravel-paytm-wallet": "^2.0",
         "authorizenet/authorizenet": "^2.0",
         "barryvdh/laravel-debugbar": "^3.8",
-        "barryvdh/laravel-dompdf": "^2.1",
+        "barryvdh/laravel-dompdf": "^2.0",
         "firebase/php-jwt": "^5.5",
         "gerardojbaez/money": "^0.3.1",
         "google/apiclient": "^2.6",
@@ -40,7 +40,7 @@
         "spatie/laravel-permission": "^5.8",
         "srmklive/paypal": "^3.0",
         "stripe/stripe-php": "^7.98",
-        "tightenco/ziggy": "^2.5",
+        "tightenco/ziggy": "^1.1",
         "unicodeveloper/laravel-paystack": "^1.1"
     },
     "require-dev": {
@@ -81,8 +81,7 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan vendor:publish --force --tag=livewire:assets --ansi"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ]
     },
     "extra": {

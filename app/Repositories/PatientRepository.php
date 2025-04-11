@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\College;
 use App\Models\Country;
 use App\Models\Course;
+use App\Models\Diagnose;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Support\Arr;
@@ -52,7 +53,7 @@ class PatientRepository extends BaseRepository
     {
         $data['patientUniqueId'] = mb_strtoupper(Patient::generatePatientUniqueId());
         $data['countries'] = Country::toBase()->pluck('name', 'id');
-        $data['bloodGroupList'] = Patient::BLOOD_GROUP_ARRAY;
+        $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
         $data['provinces'] = State::toBase()->pluck('name', 'id');
         $data['cities'] = City::toBase()->pluck('name', 'id');
 
@@ -62,6 +63,7 @@ class PatientRepository extends BaseRepository
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
+        $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
 
         return $data;
     }
@@ -81,7 +83,7 @@ class PatientRepository extends BaseRepository
             $patientArray = Arr::only($input, ['patient_unique_id']);
             $input['type'] = User::PATIENT;
             $input['language'] = Setting::where('key', 'language')->get()->toArray()[0]['value'];
-            $input['password'] = Hash::make($input['password']);
+            // $input['password'] = Hash::make($input['password']);
             $user = User::create($input);
 
             $patient = $user->patient()->create($patientArray);
@@ -90,7 +92,7 @@ class PatientRepository extends BaseRepository
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
             }
-            $user->sendEmailVerificationNotification();
+            // $user->sendEmailVerificationNotification();
 
             DB::commit();
 

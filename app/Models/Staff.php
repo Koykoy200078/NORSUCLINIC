@@ -101,4 +101,12 @@ class Staff extends Model implements HasMedia
         'gender' => 'required',
         'role' => 'required',
     ];
+
+    /**
+     * Relationship with the User model.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

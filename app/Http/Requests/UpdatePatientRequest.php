@@ -21,9 +21,9 @@ class UpdatePatientRequest extends FormRequest
     public function rules(): array
     {
         $rules = Patient::$editRules;
-        $rules['patient_unique_id'] = 'required|regex:/^\S*$/u|unique:patients,patient_unique_id,'.$this->route('patient')->id;
-        $rules['email'] = 'required|email:filter|unique:users,email,'.$this->route('patient')->user->id;
-        $rules['contact'] = 'nullable|unique:users,contact,'.$this->route('patient')->user->id;
+        $rules['patient_unique_id'] = 'required|regex:/^\S*$/u|unique:patients,patient_unique_id,' . $this->route('patient')->id;
+        $rules['email'] = 'nullable|email:filter|unique:users,email,' . $this->route('patient')->user->id;
+        $rules['contact'] = 'nullable|unique:users,contact,' . $this->route('patient')->user->id;
         $rules['postal_code'] = 'nullable';
         $rules['profile'] = 'mimes:jpeg,jpg,png|max:2000';
 

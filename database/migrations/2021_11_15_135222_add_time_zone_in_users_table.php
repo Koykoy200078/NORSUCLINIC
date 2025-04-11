@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('time_zone')->nullable();
+            $table->string('time_zone')->default(0);
         });
     }
 

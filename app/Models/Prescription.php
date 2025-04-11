@@ -168,12 +168,12 @@ class Prescription extends Model
         self::YEAR => 'Years',
     ];
 
-    const AFTER_MEAL = 0;
+    const AFETR_MEAL = 0;
 
     const BEFORE_MEAL = 1;
 
     const MEAL_ARR = [
-        self::AFTER_MEAL => 'After Meal',
+        self::AFETR_MEAL => 'After Meal',
         self::BEFORE_MEAL => 'Before Meal',
     ];
 

@@ -90,10 +90,10 @@ class Medicine extends Model
         'category_id' => 'required',
         'brand_id' => 'required',
         'name' => 'required|min:2|unique:medicines,name',
-        'selling_price' => 'required',
+        'selling_price' => 'nullable',
         'buying_price' => 'required',
         'side_effects' => 'nullable',
-        'salt_composition' => 'required|string',
+        'salt_composition' => 'nullable|string',
         // 'quantity'    => 'required|integer',
         // 'available_quantity' => 'required|integer|lte:quantity'
     ];

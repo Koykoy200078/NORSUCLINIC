@@ -13,7 +13,10 @@ class RequestDocuments extends Model
 
     protected $table = 'request_documents';
 
+    public $timestamps = false;
+
     protected $fillable = [
+        'document_type',
         'user_id',
         'name',
         'age',
@@ -25,9 +28,11 @@ class RequestDocuments extends Model
         'patient_contact',
         'campus',
         'college',
-        'course_year',
+        'course',
+        'year_level',
         'informant',
         'emergency_contact',
+        'requested_at',
         'complaints',
         'covid_vaccination',
         'comorbidities',
@@ -41,9 +46,24 @@ class RequestDocuments extends Model
         'vital_signs_temp',
         'vital_signs_rr',
         'vital_signs_o2_sat',
+        'vital_signs_height',
         'vital_signs_weight',
         'pertinent_exam',
         'assessment',
-        'plan'
+        'plan',
+        'consult_mode',
+        'nursing_intervention',
+        'nursing_incharged_id',
+        'examined_on',
+        'complaints_diagnosis',
+        'medical_cert_remarks',
+        'doc_lic_no',
+        'doc_prt_no',
+    ];
+
+    protected $casts = [
+        'requested_at' => 'datetime',
+        'examined_on' => 'datetime',
+        'date_of_birth' => 'date',
     ];
 }

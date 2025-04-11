@@ -18,7 +18,13 @@
     <title>{{ getAppName() }} </title>
     <style>
         .card .card-header {
-            background-color: {{ $datas->smartPatientCard->header_color }};
+            background-color: {
+                    {
+                    $datas->smartPatientCard->header_color
+                }
+            }
+
+            ;
         }
     </style>
 
@@ -68,13 +74,15 @@
                                                             <tr>
                                                                 <td class="pe-3">Name:</td>
                                                                 <td id="card_name" style="word-break: break-word">
-                                                                    {{ $datas->user->full_name }}</td>
+                                                                    {{ $datas->user->full_name }}
+                                                                </td>
                                                             </tr>
                                                             <tr id="card_show_email"
                                                                 class="{{ $datas->smartPatientCard->show_email == 0 ? 'd-none' : '' }}">
                                                                 <td class="pe-3">Email:</td>
                                                                 <td style="word-break: break-word">
-                                                                    {{ $datas->user->email }}</td>
+                                                                    {{ $datas->user->email }}
+                                                                </td>
                                                             </tr>
                                                             <tr id="card_show_phone"
                                                                 class="{{ $datas->smartPatientCard->show_phone == 0 || $datas->user->contact == null ? 'd-none' : '' }}">
@@ -89,7 +97,7 @@
                                                             <tr id="card_show_blood_group"
                                                                 class="{{ $datas->smartPatientCard->show_blood_group == 0 || $datas->user->blood_type == null ? 'd-none' : '' }}">
                                                                 <td class="pe-3 blood_type">Blood Group:</td>
-                                                                <td>{{ !empty($datas->user->blood_type) ? \App\Models\Patient::BLOOD_GROUP_ARRAY[$datas->user->blood_type] : __('messages.common.n/a') }}</td>
+                                                                <td>{{ !empty($datas->user->blood_type) ? \App\Models\Patient::BLOOD_TYPE_ARRAY[$datas->user->blood_type] : __('messages.common.n/a') }}</td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -111,20 +119,20 @@
                                         </tr>
                                     </table>
                                     @if (!empty($datas->address->address1))
-                                        <table>
-                                            <tr
-                                                class="{{ $datas->smartPatientCard->show_address == 0 || $datas->address->address1 == null ? 'd-none' : '' }} address-text">
-                                                <td>
-                                                    <div class="mb-0 me-3">Address:</div>
-                                                </td>
-                                                <td>
-                                                    <address class="mb-0" id="card-address">
-                                                        {{ $datas->address->address1 }}
-                                                        {{ $datas->address->address2 }}
-                                                    </address>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <table>
+                                        <tr
+                                            class="{{ $datas->smartPatientCard->show_address == 0 || $datas->address->address1 == null ? 'd-none' : '' }} address-text">
+                                            <td>
+                                                <div class="mb-0 me-3">Address:</div>
+                                            </td>
+                                            <td>
+                                                <address class="mb-0" id="card-address">
+                                                    {{ $datas->address->address1 }}
+                                                    {{ $datas->address->address2 }}
+                                                </address>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     @endif
                                 </div>
                             </div>

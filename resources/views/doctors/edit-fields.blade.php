@@ -104,8 +104,8 @@
 ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=>'editDoctorCountryId','placeholder' => __('messages.common.select_country')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('State',__('messages.doctor.state').':' ,['class' => 'form-label']) }}
-        {{ Form::select('state_id', (isset($state) && $state!=null) ? $state:[], isset($user->address->state_id) ? $user->address->state_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId','placeholder' => __('messages.common.select_state')]) }}
+        {{ Form::label('State',__('messages.doctor.province').':' ,['class' => 'form-label']) }}
+        {{ Form::select('state_id', (isset($state) && $state!=null) ? $state:[], isset($user->address->state_id) ? $user->address->state_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId','placeholder' => __('messages.common.province')]) }}
     </div>
     <div class="col-md-6 mb-5">
         {{ Form::label('City',__('messages.doctor.city').':' ,['class' => 'form-label']) }}

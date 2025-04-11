@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Role
@@ -37,9 +37,7 @@ class Permission extends Model
     protected $table = 'permissions';
 
     public $fillable = [
-        'name',
-        'display_name',
-        'guard_name',
+        'name', 'display_name', 'guard_name',
     ];
 
     /**

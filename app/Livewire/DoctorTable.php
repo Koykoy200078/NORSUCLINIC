@@ -48,12 +48,14 @@ class DoctorTable extends LivewireTableComponent
     {
         $query = Doctor::with(['user', 'specializations', 'reviews'])->select('doctors.*');
 
-        $query->when($this->statusFilter != '' && $this->statusFilter != User::ALL,
+        $query->when(
+            $this->statusFilter != '' && $this->statusFilter != User::ALL,
             function (Builder $query) {
                 return $query->whereHas('user', function (Builder $q) {
                     $q->where('status', $this->statusFilter);
                 });
-            });
+            }
+        );
 
         return $query;
     }
@@ -84,7 +86,7 @@ class DoctorTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.listing_skeleton');
+        return view('livewire.listing_skeleton');
     }
 
     public function changeStatusFilter($value): void

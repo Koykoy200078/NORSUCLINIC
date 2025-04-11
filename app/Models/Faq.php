@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
@@ -31,7 +31,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin Model
  */
-class Faq extends Model
+class Faq extends EloquentModel
 {
     use HasFactory;
 

@@ -35,18 +35,5 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="col-xl-12 col-md-6 doctor-dashbord-earning-card widget mb-5" wire:ignore>
-            <div class="doctor-dashbord-earning-card-header">
-                <h3>{{ __('messages.monthly_earning') }}</h3>
-                <span class="mt-4 fw-light">{{ __('messages.datepicker.this_month') }}</span>
-            </div>
-            <div class="doctor-dashbord-earning-card-body d-flex align-items-center justify-content-between">
-                <div class="doctor-month-total-amount fs-1 my-2">0</div>
-                <div class="">
-                    <span class="me-3 text-success dashbord-earning-card-body-amont"></span>
-                    <div>{{ __('messages.from_previous_month') }}</div>
-                </div>
-            </div>
-        </div> -->
     </div>
 </div>

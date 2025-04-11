@@ -16,26 +16,79 @@ class DefaultStaffSeeder extends Seeder
      */
     public function run(): void
     {
-        $input = [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'contact' => '1234567890',
-            'gender' => User::MALE,
-            'type' => User::STAFF,
-            'email' => 'staff@norsuclinic.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('123456'),
-            'country_code' => '63',
-            'time_zone' => '0'
+        // Create the staff role if it doesn't exist
+        $staffRole = Role::firstOrCreate(['name' => 'staff', 'display_name' => 'Staff']);
+
+        // Generate 5 staff members
+        $staffMembers = [
+            [
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'contact' => '1234567890',
+                'gender' => User::MALE,
+                'type' => User::STAFF,
+                'email' => 'john.doe@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password123'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ],
+            [
+                'first_name' => 'Jane',
+                'last_name' => 'Smith',
+                'contact' => '0987654321',
+                'gender' => User::FEMALE,
+                'type' => User::STAFF,
+                'email' => 'jane.smith@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password123'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ],
+            [
+                'first_name' => 'Alice',
+                'last_name' => 'Johnson',
+                'contact' => '1122334455',
+                'gender' => User::FEMALE,
+                'type' => User::STAFF,
+                'email' => 'alice.johnson@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password123'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ],
+            [
+                'first_name' => 'Bob',
+                'last_name' => 'Brown',
+                'contact' => '2233445566',
+                'gender' => User::MALE,
+                'type' => User::STAFF,
+                'email' => 'bob.brown@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password123'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ],
+            [
+                'first_name' => 'Charlie',
+                'last_name' => 'Davis',
+                'contact' => '3344556677',
+                'gender' => User::MALE,
+                'type' => User::STAFF,
+                'email' => 'charlie.davis@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password123'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ],
         ];
 
-        $user = User::create($input);
+        foreach ($staffMembers as $staffData) {
+            $user = User::create($staffData);
+            $user->assignRole($staffRole);
+        }
 
-        /** @var Role $staffRole */
-        $staffRole = Role::create(['name' => 'staff', 'display_name' => 'Staff']);
-        $user->assignRole($staffRole);
-
-        /** @var Permission $allPermission */
+        // Assign all permissions to the staff role
         $allPermission = Permission::pluck('id');
         $staffRole->givePermissionTo($allPermission);
     }

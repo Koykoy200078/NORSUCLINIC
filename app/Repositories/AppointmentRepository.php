@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-// use Stripe\Checkout\Session;
-// use Stripe\Exception\ApiErrorException;
+use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -77,7 +77,7 @@ class AppointmentRepository extends BaseRepository
             $input['from_time_type'] = $fromTime[1];
             $input['to_time'] = $toTime[0];
             $input['to_time_type'] = $toTime[1];
-            $input['payment_type'] = Appointment::MANUALLY;
+            $input['payment_type'] = 2;
             $input['payment_method'] = Appointment::MANUALLY;
 
             $appointment = Appointment::create($input);
@@ -149,7 +149,7 @@ class AppointmentRepository extends BaseRepository
                 }
                 $input['original_password'] = Str::random(8);
                 $input['type'] = User::PATIENT;
-                $userFields = ['first_name', 'last_name', 'email', 'password', 'type', 'region_code', 'contact', 'email_verified_at'];
+                $userFields = ['first_name', 'last_name', 'email', 'password', 'type', 'country_code', 'contact', 'email_verified_at'];
                 $input['email_verified_at'] = Carbon::now();
                 $input['password'] = Hash::make($input['original_password']);
                 /** @var User $user */
@@ -364,7 +364,7 @@ class AppointmentRepository extends BaseRepository
         $appointmentId = $input['appointment_unique_id'];
         $patientEmail = Patient::with('user')->whereId($input['patient_id'])->first();
         $doctorName = Doctor::with('user')->whereId($input['doctor_id'])->first();
-        // setStripeApiKey();
+        setStripeApiKey();
 
         $successUrl = '/medical-payment-success';
         $cancelUrl = '/medical-payment-failed';

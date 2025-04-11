@@ -24,7 +24,7 @@ class PatientTable extends LivewireTableComponent
 
     public array $FilterComponent = ['patients.components.filter', Patient::PATIENT_FILTER];
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage','changeDateFilter','patientChangeDateFilter'];
+    protected $listeners = ['refresh' => '$refresh', 'resetPage', 'changeDateFilter', 'patientChangeDateFilter'];
 
     public string $dateFilter = '';
 
@@ -53,8 +53,8 @@ class PatientTable extends LivewireTableComponent
             $timeEntryDate = explode(' - ', $this->dateFilter);
             $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-            $query->whereDate('patients.created_at','>=', $startDate);
-            $query->whereDate('patients.created_at','<=', $endDate);
+            $query->whereDate('patients.created_at', '>=', $startDate);
+            $query->whereDate('patients.created_at', '<=', $endDate);
         }
         return $query;
     }
@@ -91,7 +91,7 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.common.email_verified'), 'user.email_verified_at')
                 ->sortable()
                 ->view('patients.components.email_verified'),
-            Column::make(__('messages.common.impersonate'), 'user.first_name')->view('patients.components.impersonate'),
+            // Column::make(__('messages.common.impersonate'), 'user.first_name')->view('patients.components.impersonate'),
             Column::make(__('messages.patient.registered_on'), 'created_at')->view('patients.components.registered_on')
                 ->sortable(),
             Column::make(__('messages.common.action'), 'user.id')->view('patients.components.action'),

@@ -14,9 +14,9 @@ class SmartPatientCardsSeeder extends Seeder
     public function run(): void
     {
         $input = [
-            'template_name' => 'demo temp',
-            'address' => 'Guihulngan City, Negros Oriental',
-            'header_color' => '#007fff',
+            'template_name' => 'demo tamp',
+            'address' => 'surat,gujrat,india',
+            'header_color' => '#ffffff',
             'show_email' => 1,
             'show_phone' => 1,
             'show_dob' => 1,
@@ -25,6 +25,6 @@ class SmartPatientCardsSeeder extends Seeder
             'show_patient_unique_id' => 1,
         ];
 
-        SmartPatientCards::create($input);
+        $user = SmartPatientCards::create($input);
     }
 }

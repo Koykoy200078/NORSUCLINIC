@@ -3,7 +3,7 @@
         <div class="row align-items-center">
             <div class="col-lg-1 col-4">
                 <a href="#!" class="header-logo">
-                    <img src="{{ asset(getAppLogo()) }}" alt="NORSU CLINIC" class="object-cover front-app-logo" loading="lazy" />
+                    <img src="{{ asset(getAppLogo()) }}" alt="NORSU LOGO" class="object-cover front-app-logo" loading="lazy" />
                 </a>
             </div>
             <div class="col-lg-11 col-8">
@@ -34,28 +34,6 @@
                                 <a class="nav-link {{ Request::is('medical-contact*') ? 'active' : '' }}"
                                     href="{{ route('medicalContact') }}">{{ __('messages.web.contact_us') }}</a>
                             </li>
-
-                            <li class="nav-item dropdown">
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <li class="add-menu-left">
-                                        <ul>
-                                            @foreach(getUserLanguages() as $key => $value)
-                                            @foreach(\App\Models\User::LANGUAGES_IMAGE as $imageKey=> $imageValue)
-                                            @if($imageKey == $key)
-                                            <li class="d-flex languageSelection language-padding {{ (getCurrentLanguageName() == $value) ? 'active' : '' }}" data-prefix-value="{{ $key }}">
-                                                <a href="javascript:void(0)" class="text-decoration-none">
-                                                    <img class="rounded-1 ms-2 me-2 w-20px"
-                                                        src="{{asset($imageValue)}}" loading="lazy" />
-                                                    <span class="language-color">{{ $value }}</span>
-                                                </a>
-                                            </li>
-                                            @endif
-                                            @endforeach
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
                         </ul>
                         <div class="text-lg-end header-btn-grp ms-xxl-5 ms-lg-3">
                             @if(getLogInUser())
@@ -74,7 +52,7 @@
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.login') }}</a>
                             @endif
 
-                            <a href="{{ route('medicalAppointment') }}" class="btn btn-primary mb-3 mb-lg-0">{{ __('messages.web.book_an_appointment') }}</a>
+                            <!-- <a href="{{ route('medicalAppointment') }}" class="btn btn-primary mb-3 mb-lg-0">{{ __('messages.web.book_an_appointment') }}</a> -->
                         </div>
                     </div>
                 </nav>

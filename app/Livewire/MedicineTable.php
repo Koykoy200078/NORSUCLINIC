@@ -44,9 +44,9 @@ class MedicineTable extends LivewireTableComponent
     }
 
     public function placeholder()
-   {
-         return view('livewire.staff_skeleton');
-   }
+    {
+        return view('livewire.staff_skeleton');
+    }
 
     public function columns(): array
     {
@@ -62,10 +62,10 @@ class MedicineTable extends LivewireTableComponent
                 ->view('medicines.templates.columns.avalable_quantity')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.medicine.selling_price'), 'selling_price')
-                ->view('medicines.templates.columns.selling_price')
-                ->searchable()
-                ->sortable(),
+            // Column::make(__('messages.medicine.selling_price'), 'selling_price')
+            //     ->view('medicines.templates.columns.selling_price')
+            //     ->searchable()
+            //     ->sortable(),
             Column::make(__('messages.medicine.buying_price'), 'buying_price')
                 ->view('medicines.templates.columns.buying_price')
                 ->searchable()

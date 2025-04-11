@@ -7,7 +7,7 @@
         "mb-3 mb-md-0 input-group" => $isBootstrap,
     ])>
         <input
-            wire:model.live.blur="filterComponents.{{ $filter->getKey() }}"
+            wire:model.blur="filterComponents.{{ $filter->getKey() }}"
             wire:key="{{ $filter->generateWireKey($tableName, 'number') }}"
             id="{{ $tableName }}-filter-{{ $filter->getKey() }}@if($filter->hasCustomPosition())-{{ $filter->getCustomPosition() }}@endif"
             type="number"

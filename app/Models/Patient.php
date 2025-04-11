@@ -82,7 +82,7 @@ class Patient extends Model implements HasMedia
 
     const AB_NEGATIVE = 8;
 
-    const BLOOD_GROUP_ARRAY = [
+    const BLOOD_TYPE_ARRAY = [
         self::O_POSITIVE => 'O+',
         self::A_POSITIVE => 'A+',
         self::B_POSITIVE => 'B+',
@@ -147,9 +147,9 @@ class Patient extends Model implements HasMedia
         'patient_unique_id' => 'required|unique:patients,patient_unique_id|regex:/^\S*$/u',
         'first_name' => 'required',
         'last_name' => 'required',
-        'email' => 'required|email|unique:users,email',
+        'email' => 'nullable|email|unique:users,email',
         'contact' => 'nullable|unique:users,contact',
-        'password' => 'required|same:password_confirmation|min:6',
+        'password' => 'nullable|same:password_confirmation|min:6',
         'postal_code' => 'nullable',
         'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
     ];
@@ -185,6 +185,7 @@ class Patient extends Model implements HasMedia
 
     public function getProfileAttribute(): string
     {
+
         /** @var Media $media */
         $media = $this->getMedia(self::PROFILE)->first();
 
@@ -196,9 +197,12 @@ class Patient extends Model implements HasMedia
             return $fullUrl;
         }
 
-        return $this->user->gender == self::FEMALE
-            ? asset('web/media/avatars/female.png')
-            : asset('web/media/avatars/male.png');
+        $gender = $this->user->gender;
+        if ($gender == self::FEMALE) {
+            return asset('web/media/avatars/female.png');
+        }
+
+        return asset('web/media/avatars/male.png');
     }
 
     public function address(): MorphOne

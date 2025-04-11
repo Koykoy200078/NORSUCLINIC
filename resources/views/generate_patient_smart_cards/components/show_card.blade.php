@@ -4,11 +4,11 @@
         <div class="modal-content patient-modal-content w-75">
             <div class="modal-body p-0">
                 <div class="alert alert-danger d-none hide" id="medicineCategoryErrorsBox"></div>
-                <div class="card patient-smart-card-card" style="background-color: #E3E9EB;" id="card">
+                <div class="card patient-smart-card-card" style="background-color: #ffffff;" id="card">
                     <div class="card-header patient-card-header smart-card-header d-flex align-items-center">
                         <div class="flex-1 d-flex align-items-center justify-content-center me-3">
                             <div class="logo me-4">
-                                <img src="{{ url($logo[0]) }}" alt="logo" style="height: 45px; width: 45px;" />
+                                <img src="{{ url($logo[0]) }}" alt="logo" style="height: 50px; width: 60px;" />
                             </div>
                             <h4 class="mb-0 fw-bold text-white text-left">Negros Oriental State University</h4>
                         </div>

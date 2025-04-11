@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Campus;
+use App\Models\College;
+use App\Models\Course;
+use App\Models\Diagnose;
+use App\Models\Patient;
 use App\Models\RequestDocuments;
+use App\Models\Staff;
 use App\Models\User;
+use App\Models\Vaccination;
+use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
-use App\Repositories\RequestRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class RequestDocumentsController extends Controller
 {
-    private $requestRepository;
-
-    public function __construct(RequestRepository $requestRepo)
-    {
-        $this->requestRepository = $requestRepo;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -35,72 +37,132 @@ class RequestDocumentsController extends Controller
         return view('requests.create', compact('data'));
     }
 
-    public function searchUsers(Request $request)
-    {
-        $search = $request->input('query');
-
-        // Search users by first name or last name
-        $users = User::where(function ($query) use ($search) {
-            $query->where('first_name', 'LIKE', "%{$search}%")
-                ->orWhere('last_name', 'LIKE', "%{$search}%");
-        })
-            ->orWhere('email', 'LIKE', "%{$search}%")
-            ->select('id', 'first_name', 'last_name', 'dob', 'gender', 'contact', 'campus_id', 'college_id', 'course_id', 'year_level_id', 'vaccination_id')
-            ->get();
-
-        return response()->json($users);
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // $validatedData = $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'age' => 'required|integer',
-        //     'gender' => 'required|string|max:50',
-        //     'status' => 'required|string|max:50',
-        //     'date_of_birth' => 'required|date',
-        //     'address' => 'required|string|max:255',
-        //     'religion' => 'nullable|string|max:50',
-        //     'patient_contact' => 'nullable|string|max:50',
-        //     'campus' => 'nullable|string|max:50',
-        //     'college' => 'nullable|string|max:50',
-        //     'course_year' => 'nullable|string|max:50',
-        //     'informant' => 'nullable|string|max:50',
-        //     'emergency_contact' => 'nullable|string|max:255',
-        //     'complaints' => 'nullable|string|max:255',
-        //     'covid_vaccination' => 'nullable|string|max:50',
-        //     'comorbidities' => 'nullable|string|max:255',
-        //     'allergies' => 'nullable|string|max:255',
-        //     'admissions_surgeries' => 'nullable|string|max:255',
-        //     'maintenance' => 'nullable|string|max:255',
-        //     'pregnancy_status' => 'nullable|string|max:50',
-        //     'lmp_aog' => 'nullable|string|max:50',
-        //     'vital_signs_bp' => 'nullable|string|max:50',
-        //     'vital_signs_pr' => 'nullable|string|max:50',
-        //     'vital_signs_temp' => 'nullable|string|max:50',
-        //     'vital_signs_rr' => 'nullable|string|max:50',
-        //     'vital_signs_o2_sat' => 'nullable|string|max:50',
-        //     'vital_signs_weight' => 'nullable|string|max:50',
-        //     'pertinent_exam' => 'nullable|string|max:255',
-        //     'assessment' => 'nullable|string|max:255',
-        //     'plan' => 'nullable|string|max:255',
-        // ]);
+        $data = $request->except('_token');
 
-        // RequestDocuments::create($validatedData);
-        dd($request->all());
+        try {
+            $data['user_id'] = auth()->id();
 
-        // return redirect()->back()->with('success', 'Request created successfully.');
+            if ($data['document_type'] === 'medical_certificate') {
+                $this->storeMedicalCertificate($data);
+            } elseif ($data['document_type'] === 'consultation_form') {
+                $this->storeConsultationForm($data);
+            }
+
+            // Return a success response
+            return redirect()->route('request-documents.index')
+                ->with('success', 'Request document created successfully.');
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error in store method: ' . $e->getMessage());
+
+            // Return an error response
+            return redirect()->back()
+                ->with('error', 'An error occurred while creating the request document.');
+        }
+    }
+
+    /**
+     * Store a medical certificate document.
+     */
+    private function storeMedicalCertificate(array $data)
+    {
+        // Prepare the data for insertion
+        $data['vital_signs_bp'] = $data['vital_signs_bp_2'] . '/' . $data['vital_signs_bp_22'];
+        $data['vital_signs_pr'] = $data['vital_signs_pr_2'];
+        $data['vital_signs_rr'] = $data['vital_signs_rr_2'];
+        $data['vital_signs_temp'] = $data['vital_signs_temp_2'];
+        $data['vital_signs_height'] = $data['vital_signs_height_2'];
+        $data['vital_signs_weight'] = $data['vital_signs_weight_2'];
+
+        // Insert the data into the database
+        RequestDocuments::create([
+            'document_type' => $data['document_type'],
+            'user_id' => $data['user_id'],
+            'name' => $data['name'],
+            'age' => $data['age'],
+            'gender' => $data['gender'],
+            'address' => $data['address'],
+            'requested_at' => now()->format('Y-m-d'),
+            'examined_on' => $data['examined_on'],
+            'complaints_diagnosis' => $data['complaints_diagnosis'],
+            'vital_signs_bp' => $data['vital_signs_bp'],
+            'vital_signs_pr' => $data['vital_signs_pr'],
+            'vital_signs_temp' => $data['vital_signs_temp'],
+            'vital_signs_rr' => $data['vital_signs_rr'],
+            'vital_signs_height' => $data['vital_signs_height'],
+            'vital_signs_weight' => $data['vital_signs_weight'],
+            'medical_cert_remarks' => $data['medical_cert_remarks'],
+            'doc_lic_no' => $data['doc_lic_no'],
+            'doc_prt_no' => $data['doc_prt_no'],
+        ]);
+    }
+
+    /**
+     * Store a consultation form document.
+     */
+    private function storeConsultationForm(array $data)
+    {
+        // Map related names for numeric fields using their IDs
+        $data['campus'] = Campus::find($data['campus_id'])->campus_name ?? 'Unknown Campus';
+        $data['college'] = College::find($data['college_id'])->college_name ?? 'Unknown College';
+        $data['course'] = Course::find($data['course_id'])->course_name ?? 'Unknown Course';
+        $data['year_level'] = YearLevel::find($data['year_level_id'])->year_level_name ?? 'Unknown Year Level';
+        $data['vaccination_id'] = Vaccination::find($data['vaccination_id'])->vaccination_status ?? 'Unknown Vaccination';
+        $data['comorbidities_id'] = Diagnose::find($data['comorbidities_id'])->diagnoses ?? 'Unknown Comorbidity';
+
+        RequestDocuments::create([
+            'document_type' => $data['document_type'],
+            'user_id' => $data['user_id'],
+            'name' => $data['name'],
+            'age' => $data['age'],
+            'gender' => $data['gender'],
+            'status' => $data['status'],
+            'date_of_birth' => $data['date_of_birth'],
+            'address' => $data['address'],
+            'religion' => $data['religion'],
+            'patient_contact' => $data['patient_contact'],
+            'campus' => $data['campus'],
+            'college' => $data['college'],
+            'course' => $data['course'],
+            'year_level' => $data['year_level'],
+            'informant' => $data['informant'],
+            'emergency_contact' => $data['emergency_contact'],
+            'requested_at' => $data['requested_at'],
+            'complaints' => $data['complaints'],
+            'covid_vaccination' => $data['vaccination_id'],
+            'comorbidities' => $data['comorbidities_id'],
+            'allergies' => $data['allergies'],
+            'admissions_surgeries' => $data['admissions_surgeries'],
+            'maintenance' => $data['maintenance'],
+            'pregnancy_status' => $data['pregnancy_status'],
+            'lmp_aog' => $data['lmp_aog'],
+            'vital_signs_bp' => $data['vital_signs_bp'],
+            'vital_signs_pr' => $data['vital_signs_pr'],
+            'vital_signs_temp' => $data['vital_signs_temp'],
+            'vital_signs_rr' => $data['vital_signs_rr'],
+            'vital_signs_o2_sat' => $data['vital_signs_o2_sat'],
+            'vital_signs_height' => $data['vital_signs_height'],
+            'vital_signs_weight' => $data['vital_signs_weight'],
+            'pertinent_exam' => $data['pertinent_exam'],
+            'assessment' => $data['assessment'],
+            'plan' => $data['plan'],
+            'consult_mode' => $data['consult_mode'],
+            'nursing_intervention' => $data['nursing_intervention'],
+            'nursing_incharged_id' => $data['nursing_incharged'],
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(RequestDocuments $requestDocuments)
+    public function show(RequestDocuments $requestDocument)
     {
-        //
+        return view('requests.view', compact('requestDocument'));
     }
 
     /**
@@ -124,6 +186,57 @@ class RequestDocumentsController extends Controller
      */
     public function destroy(RequestDocuments $requestDocuments)
     {
+
         //
+    }
+
+
+    public function searchUsers(Request $request)
+    {
+        try {
+            $search = $request->input('query');
+
+            if (empty($search)) {
+                return response()->json(['error' => 'Query parameter is required'], 400);
+            }
+
+            // Search patients by first name, last name
+            $patients = Patient::whereHas('user', function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%{$search}%")
+                    ->orWhere('last_name', 'LIKE', "%{$search}%");
+            })
+                ->select('id', 'patient_unique_id', 'user_id')
+                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,campus_id,college_id,course_id,year_level_id,vaccination_id', 'address' => function ($query) {
+                    $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'postal_code');
+                }])
+                ->get();
+
+            return response()->json($patients);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error in searchUsers: ' . $e->getMessage());
+
+            // Return a generic error response
+            return response()->json(['error' => 'An error occurred while processing your request'], 500);
+        }
+    }
+
+    public function exportPdf($id)
+    {
+        try {
+            // Fetch the request document by ID
+            $requestDocument = RequestDocuments::findOrFail($id);
+
+
+            // Pass the data to a Blade view for the PDF
+            $pdf = Pdf::loadView('requests.pdf', compact('requestDocument'));
+
+            // Return the PDF as a download
+            return $pdf->download('request_document_' . $id . '.pdf');
+        } catch (\Exception $e) {
+            // Log the error and redirect back with an error message
+            Log::error('Error exporting PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while exporting the PDF.');
+        }
     }
 }

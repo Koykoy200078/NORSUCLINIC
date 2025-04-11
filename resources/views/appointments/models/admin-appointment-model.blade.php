@@ -20,6 +20,7 @@
                 </div>
                 <div class="d-flex align-items-center ms-7 mb-2">
                     <i class="fa-solid fa-circle me-3 text-success"></i>
+                    asdasdasdasd
                     <div class="fs-6">
                         <span class="">{{__('messages.appointment.starts')}}</span>
                         <span data-calendar="event_start_date"></span>

@@ -11,9 +11,9 @@ use App\Models\Prescription;
 use App\Repositories\DoctorRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
-use \PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -54,10 +54,12 @@ class PrescriptionController extends AppBaseController
         $mealList = $this->medicineRepository->getMealList();
         $doseDuration = $this->medicineRepository->getDoseDurationList();
         $doseInverval = $this->medicineRepository->getDoseInterValList();
-        $appointment = Appointment::with('doctor','patient')->find($appointmentId);
+        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
 
-        return view('prescriptions.create',
-            compact('patients', 'doctors','appointment', 'medicines','medicinesQuantity', 'medicineList', 'mealList', 'doseDuration', 'doseInverval', 'appointmentId'))->with($data);
+        return view(
+            'prescriptions.create',
+            compact('patients', 'doctors', 'appointment', 'medicines', 'medicinesQuantity', 'medicineList', 'mealList', 'doseDuration', 'doseInverval', 'appointmentId')
+        )->with($data);
     }
 
     /**
@@ -90,10 +92,9 @@ class PrescriptionController extends AppBaseController
                 if ($medicine->available_quantity < $qty) {
                     $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
                     // Flash::error('The available quantity of '.$medicine->name.' is '.$available.'.');
-                    Flash::error(__('messages.prescription.available_quantity_of').$medicine->name.' '.__('messages.prescription.is').' '.$available.'.');
+                    Flash::error(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
 
                     return Redirect::back();
-
                 }
             }
         }
@@ -145,7 +146,7 @@ class PrescriptionController extends AppBaseController
             }
         }
 
-        $appointment = Appointment::with('doctor','patient')->find($appointmentId);
+        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
 
         $patients = $this->prescriptionRepository->getPatients();
         $doctors = $this->prescriptionRepository->getDoctors();
@@ -157,7 +158,7 @@ class PrescriptionController extends AppBaseController
         $doseDuration = $this->medicineRepository->getDoseDurationList();
         $doseInverval = $this->medicineRepository->getDoseInterValList();
 
-        return view('prescriptions.edit', compact('patients','appointment', 'appointmentId', 'prescription', 'doctors', 'medicines', 'medicineList', 'mealList', 'doseDuration', 'doseInverval'))->with($data);
+        return view('prescriptions.edit', compact('patients', 'appointment', 'appointmentId', 'prescription', 'doctors', 'medicines', 'medicineList', 'mealList', 'doseDuration', 'doseInverval'))->with($data);
     }
 
     /**
@@ -209,7 +210,7 @@ class PrescriptionController extends AppBaseController
             if (! array_key_exists($input['medicine'][$key], $result) && $medicine->available_quantity < $qty) {
                 $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
                 // Flash::error('The available quantity of '.$medicine->name.' is '.$available.'.');
-                Flash::error(__('messages.prescription.available_quantity_of').$medicine->name.__('messages.prescription.is').$available.'.');
+                Flash::error(__('messages.prescription.available_quantity_of') . $medicine->name . __('messages.prescription.is') . $available . '.');
 
                 return Redirect::back();
             }
@@ -282,7 +283,7 @@ class PrescriptionController extends AppBaseController
         $input = $request->all();
         $this->medicineRepository->create($input);
 
-        return $this->sendSuccess(__('messages.medicine.medicine').' '.__('messages.medicine.saved_successfully'));
+        return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
     }
 
     /**
@@ -314,8 +315,8 @@ class PrescriptionController extends AppBaseController
 
         $medicines = $this->prescriptionRepository->getMedicineData($id);
 
-        $pdf = PDF::loadView('prescriptions.prescription_pdf', compact('prescription', 'medicines', 'data'));
+        $pdf = Pdf::loadView('prescriptions.prescription_pdf', compact('prescription', 'medicines', 'data'));
 
-        return $pdf->stream($prescription['prescription']->patient->user->full_name.'-'.$prescription['prescription']->id);
+        return $pdf->stream($prescription['prescription']->patient->user->full_name . '-' . $prescription['prescription']->id);
     }
 }

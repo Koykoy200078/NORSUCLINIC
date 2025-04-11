@@ -20,6 +20,9 @@ class CampusSeeder extends Seeder
             [
                 'campus_name' => 'Main Campus 2',
             ],
+            [
+                'campus_name' => 'Pamplona Campus',
+            ]
         ];
 
         Campus::insert($campus);

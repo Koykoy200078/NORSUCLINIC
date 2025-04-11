@@ -12,17 +12,21 @@ class DefaultCurrenciesSeeder extends Seeder
      */
     public function run(): void
     {
-        $input = [
+        $currencies = [
             [
-                'currency_name' => 'Philippines Peso',
+                'currency_name' => 'Philippine peso',
                 'currency_icon' => '₱',
                 'currency_code' => 'PHP',
                 'is_default' => '1'
-            ]
+            ],
         ];
 
-        foreach ($input as $data) {
-            Currency::create($data);
+        foreach ($currencies as $currency) {
+            // Check if the currency already exists
+            Currency::updateOrCreate(
+                ['currency_code' => $currency['currency_code']],
+                $currency
+            );
         }
     }
 }

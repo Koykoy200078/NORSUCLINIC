@@ -1,6 +1,6 @@
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-6 text-secondary">{{ __('messages.patient.blood_type')  }}</label>
-    <span class="fs-6 text-secondary">{{ !empty($patient->user->blood_type) ? \App\Models\Patient::BLOOD_GROUP_ARRAY[$patient->user->blood_type] : __('messages.common.n/a') }}</span>
+    <span class="fs-6 text-secondary">{{ !empty($patient->user->blood_type) ? \App\Models\Patient::BLOOD_TYPE_ARRAY[$patient->user->blood_type] : __('messages.common.n/a') }}</span>
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-6 text-secondary">{{ __('messages.user.gender')  }}</label>

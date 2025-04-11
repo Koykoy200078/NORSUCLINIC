@@ -24,35 +24,9 @@
             {{ Form::text('patient_unique_id',isset($data['patientUniqueId']) ? $data['patientUniqueId'] : null,['class' => 'form-control','required','maxLength' => '8','readonly']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('email',__('messages.patient.email').':' ,['class' => 'form-label required']) }}
-            {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('messages.patient.email'),'required']) }}
+            {{ Form::label('email',__('messages.patient.email').'(Optional):' ,['class' => 'form-label']) }}
+            {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('Email Address')]) }}
         </div>
-
-        @if(empty($patient))
-        <div class="col-md-6 mb-5">
-            <div class="mb-1">
-                {{ Form::label('password',__('messages.patient.password').':' ,['class' => 'form-label required']) }}
-                <span data-bs-toggle="tooltip" title="{{ __('messages.flash.user_8_or') }}">
-                    <i class="fa fa-question-circle"></i></span>
-                <div class="mb-3 position-relative">
-                    {{Form::password('password',['class' => 'form-control','placeholder' => __('messages.patient.password'),'autocomplete' => 'off','required','aria-label'=>"Password",'data-toggle'=>"password"])}}
-                    <span class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4 input-icon input-password-hide cursor-pointer text-gray-600"> <i class="bi bi-eye-slash-fill"></i> </span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-5">
-            <div class="mb-1">
-                {{ Form::label('confirmPassword',__('messages.patient.confirm_password').':' ,['class' => 'form-label required']) }}
-                <span data-bs-toggle="tooltip"
-                    title="{{ __('messages.flash.user_8_or') }}">
-                    <i class="fa fa-question-circle"></i></span>
-                <div class="mb-3 position-relative">
-                    {{Form::password('password_confirmation',['class' => 'form-control','placeholder' => __('messages.user.confirm_password'),'autocomplete' => 'off','required','aria-label'=>"Password",'data-toggle'=>"password"])}}
-                    <span class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4 input-icon input-password-hide cursor-pointer text-gray-600"> <i class="bi bi-eye-slash-fill"></i> </span>
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
 
     <!-- Personal Information -->
@@ -63,11 +37,11 @@
             {{ Form::text('first_name',!empty($patient->user) ? $patient->user->first_name : null,['class' => 'form-control','placeholder' => __('messages.patient.first_name'),'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('middleName',__('messages.patient.middle_name').':' ,['class' => 'form-label required']) }}
+            {{ Form::label('middleName',__('messages.patient.middle_name').':' ,['class' => 'form-label']) }}
             {{ Form::text('middle_name',!empty($patient->user) ? $patient->user->middle_name : null,['class' => 'form-control','placeholder' => __('messages.patient.middle_name')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label']) }}
+            {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label required']) }}
             {{ Form::text('last_name',!empty($patient->user) ? $patient->user->last_name : null,['class' => 'form-control','placeholder' => __('messages.patient.last_name'),'required']) }}
         </div>
         <div class="col-md-6 mb-5">
@@ -106,7 +80,7 @@
         </div>
         <div class="col-md-6 mb-5">
             <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
-            {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_group'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
+            {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_type'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'form-label']) }}
@@ -132,12 +106,12 @@
         'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('state_id',__('messages.state.state').':',['class'=>'form-label']) }}
-            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['placeholder' => __('messages.patient.select_state'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
+            {{ Form::label('state_id',__('messages.province.province').':',['class'=>'form-label']) }}
+            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['placeholder' => __('messages.province.select_province'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('city_id',__('messages.city.city').':',['class'=>'form-label']) }}
-            {{ Form::select('city_id', $data['cities'] ,!empty($patient->address) ? $patient->address->city_id : null, ['placeholder' => __('messages.patient.select_city'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
+            {{ Form::select('city_id', $data['cities'] ,!empty($patient->address) ? $patient->address->city_id : null, ['placeholder' => __('messages.city.select_city'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}

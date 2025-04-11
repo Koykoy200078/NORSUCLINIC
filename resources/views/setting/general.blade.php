@@ -49,12 +49,9 @@
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('specialties',__('messages.setting.specialties').':',
-                                     ['class'=>'col-lg-4 form-label required']) }}
+                    {{ Form::label('specialties',__('messages.setting.specialties').':', ['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties']), ['multiple',
-                         'class' => 'form-select', 'aria-label'=>"Select a Country",
-                         'data-control'=>'select2','required']) }}
+                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties']), ['multiple', 'class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2','required']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
@@ -64,7 +61,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="appLogoPreview"
-                                        style="background-image: url('{{($setting['logo']) ? asset($setting['logo']) : asset('assets/image/norsu_favicon.ico')}}');">
+                                        style="background-image: url('{{($setting['logo'])?asset($setting['logo']):asset('assets/image/norsu_favicon.ico')}}')">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small"
                                         data-bs-toggle="tooltip"
@@ -87,7 +84,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="faviconPreview"
-                                        style="background-image: url('{{($setting['favicon']) ? asset($setting['favicon']) : asset('assets/image/norsu_logo.png')}}');">
+                                        style="background-image: url('{{($setting['favicon'])?asset($setting['favicon']):asset('assets/image/norsu_logo.png')}}');">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                                         data-placement="top" data-bs-original-title="{{ __('messages.setting.change_favicon') }}">

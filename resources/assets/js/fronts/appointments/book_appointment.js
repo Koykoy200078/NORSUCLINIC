@@ -72,8 +72,8 @@ function loadFrontAppointmentData() {
                     $("#payableAmountText").removeClass("d-none");
                     $("#payableAmount").text(
                         currencyIcon +
-                        " " +
-                        getFormattedPrice(result.data.charges)
+                            " " +
+                            getFormattedPrice(result.data.charges)
                     );
                     frontPayableAmount = result.data.charges;
                     frontCharge = result.data.charges;
@@ -103,10 +103,10 @@ function loadFrontAppointmentData() {
                     if (result.data["bookedSlot"] == null) {
                         $(".appointment-slot-data").append(
                             '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                            value +
-                            '">' +
-                            value +
-                            "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                         );
                     } else {
                         if (
@@ -114,18 +114,18 @@ function loadFrontAppointmentData() {
                         ) {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                                    value +
+                                    '">' +
+                                    value +
+                                    "</span>"
                             );
                         } else {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                                    value +
+                                    '">' +
+                                    value +
+                                    "</span>"
                             );
                         }
                     }
@@ -192,10 +192,10 @@ listenChange(dateEle, function () {
                     if (result.data["bookedSlot"] == null) {
                         $(".appointment-slot-data").append(
                             '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                            value +
-                            '">' +
-                            value +
-                            "</span>"
+                                value +
+                                '">' +
+                                value +
+                                "</span>"
                         );
                     } else {
                         if (
@@ -203,18 +203,18 @@ listenChange(dateEle, function () {
                         ) {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                                    value +
+                                    '">' +
+                                    value +
+                                    "</span>"
                             );
                         } else {
                             $(".appointment-slot-data").append(
                                 '<span class="badge badge-lg slots-item bg-success time-slot" data-id="' +
-                                value +
-                                '">' +
-                                value +
-                                "</span>"
+                                    value +
+                                    '">' +
+                                    value +
+                                    "</span>"
                             );
                         }
                     }
@@ -487,8 +487,8 @@ listenSubmit("#frontAppointmentBook", function (e) {
                                 location.href = redirectTo;
                             }
                         },
-                        error: function (result) { },
-                        complete: function () { },
+                        error: function (result) {},
+                        complete: function () {},
                     });
                 }
 
@@ -508,7 +508,7 @@ listenSubmit("#frontAppointmentBook", function (e) {
                                     name,
                                     email,
                                     contact,
-                                    region_code,
+                                    country_code,
                                 } = result.data;
 
                                 options.amount = amount;
@@ -516,7 +516,7 @@ listenSubmit("#frontAppointmentBook", function (e) {
                                 options.prefill.name = name;
                                 options.prefill.email = email;
                                 options.prefill.contact = contact;
-                                options.prefill.contact = region_code;
+                                options.prefill.contact = country_code;
                                 options.prefill.appointmentID = appointmentID;
 
                                 let razorPay = new Razorpay(options);
@@ -527,8 +527,8 @@ listenSubmit("#frontAppointmentBook", function (e) {
                                 );
                             }
                         },
-                        error: function (result) { },
-                        complete: function () { },
+                        error: function (result) {},
+                        complete: function () {},
                     });
                 }
 
@@ -604,6 +604,6 @@ function storeFailedPayment(response) {
                 displaySuccessMessage(result.message);
             }
         },
-        error: function () { },
+        error: function () {},
     });
 }

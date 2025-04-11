@@ -291,21 +291,12 @@ body {
         flex-direction: column !important;
     }
 }
-.extra-margin{
-
+.extra-margin {
     margin-top: 21px !important;
 }
 .purchase-tax {
     min-width: 42px !important;
 }
-
-
-
-
-
-
-
-
 
 * {
     margin: 0;
@@ -332,7 +323,8 @@ body {
 .text-primary {
     color: #ff8e4b !important;
 }
-.patient_unique_id, .patient_unique_id_span{
+.patient_unique_id,
+.patient_unique_id_span {
     color: #ff8e4b;
 }
 
@@ -383,7 +375,7 @@ body {
             width: 80px;
             height: 80px;
         }
-        .qr-main-div{
+        .qr-main-div {
             @media (max-width: 768px) {
                 width: 60% !important;
                 text-align: center;
@@ -408,29 +400,29 @@ body {
         }
     }
 }
-.display_show{
-    display:none;
+.display_show {
+    display: none;
 }
-.color-black{
+.color-black {
     color: black !important;
 }
-.color-white{
+.color-white {
     color: white !important;
 }
-.smart-card-tem-body{
+.smart-card-tem-body {
     width: 600px;
 }
-.patient-modal-content{
+.patient-modal-content {
     background-color: transparent !important;
 }
-.patient-smart-card-body{
+.patient-smart-card-body {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
-.patient-smart-card-ser-detail{
+.patient-smart-card-ser-detail {
     color: white !important;
 }
-.add-slot{
+.add-slot {
     @media (max-width: 500px) {
         flex-direction: column;
         margin-left: 100px;
@@ -468,40 +460,38 @@ body {
         margin-left: 8px;
     }
 }
-.checkbox-content{
+.checkbox-content {
     @media (max-width: 575px) {
         margin-top: 25px;
     }
 }
-.checkbox-content{
+.checkbox-content {
     @media (max-width: 500px) {
         margin-top: 0px;
     }
 }
 
-
-
-.admin-dashbord-user-card-header{
+.admin-dashbord-user-card-header {
     background-color: #e0e3ff;
     color: #6571ff;
     padding: 15px 0px 40px 15px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.admin-dashbord-user-card-body{
+.admin-dashbord-user-card-body {
     background-color: white;
     position: relative;
     padding: 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     @media (max-width: 1800px) {
-       flex-direction: column;
+        flex-direction: column;
     }
     @media (max-width: 1024px) {
         flex-direction: row;
     }
 }
-.admin-user-card-img{
+.admin-user-card-img {
     width: 70px !important;
     height: 70px !important;
     border-radius: 50%;
@@ -515,22 +505,22 @@ body {
     //     left: -88px;
     //  }
 }
-.dashboard-vizit{
+.dashboard-vizit {
     margin-left: 100px;
 }
-.admin-user-data{
+.admin-user-data {
     margin-top: -25px;
     @media (max-width: 1040px) {
         margin-top: 10px;
-     }
+    }
 }
-.admin-dashbord-earning-card-header{
+.admin-dashbord-earning-card-header {
     padding: 15px 0px 15px 15px;
     background-color: white !important;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.admin-dashbord-earning-card-body{
+.admin-dashbord-earning-card-body {
     height: 60px;
     background-color: white;
     padding: 20px;
@@ -538,10 +528,12 @@ body {
     border-bottom-right-radius: 10px;
 }
 
-.admin-wiget-appointment-card1, .admin-wiget-appointment-card2, .admin-wiget-appointment-card3{
+.admin-wiget-appointment-card1,
+.admin-wiget-appointment-card2,
+.admin-wiget-appointment-card3 {
     background-color: white;
 }
-.admin-card-icon{
+.admin-card-icon {
     @media (max-width: 1440px) {
         font-size: 20px !important;
     }
@@ -550,66 +542,62 @@ body {
     }
 }
 
-
-
-
-
 // progress bar
 .admin-radial-bar {
     // margin: 50px;
     margin-right: 50px;
-    margin-left:auto;
+    margin-left: auto;
     width: 80px;
     height: 80px;
     background-color: #cccccc;
     border-radius: 50%;
-  }
+}
 
 .admin-radial-bar__mask {
-clip: rect(0px, 80px, 80px, 40px);
--webkit-backface-visibility: hidden;
-transition: -webkit-transform 1s;
-transition: -ms-transform 1s;
-transition: transform 1s;
-width: 80px;
-height: 80px;
-position: absolute;
-border-radius: 50%;
+    clip: rect(0px, 80px, 80px, 40px);
+    -webkit-backface-visibility: hidden;
+    transition: -webkit-transform 1s;
+    transition: -ms-transform 1s;
+    transition: transform 1s;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    border-radius: 50%;
 }
 
 .admin-radial-bar__fill {
--webkit-backface-visibility: hidden;
-transition: -webkit-transform 1s;
-transition: -ms-transform 1s;
-transition: transform 1s;
-border-radius: 50%;
-clip: rect(0px, 40px, 80px, 0px);
-background-color: #6571ff;
-width: 80px;
-height: 80px;
-position: absolute;
+    -webkit-backface-visibility: hidden;
+    transition: -webkit-transform 1s;
+    transition: -ms-transform 1s;
+    transition: transform 1s;
+    border-radius: 50%;
+    clip: rect(0px, 40px, 80px, 0px);
+    background-color: #6571ff;
+    width: 80px;
+    height: 80px;
+    position: absolute;
 }
 
 .admin-radial-bar__inset {
-width: 70px;
-height: 70px;
-position: absolute;
-margin-left: 5px;
-margin-top: 5px;
-background-color: #fbfbfb;
-border-radius: 50%;
-display: table-cell;
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 5px;
+    background-color: #fbfbfb;
+    border-radius: 50%;
+    display: table-cell;
 }
 
 .admin-radial-bar__percent {
-text-align: center;
-position: relative;
-top: 50%;
-transform: translateY(-50%);
-color: #627ce8;
-font-size: 22px;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #627ce8;
+    font-size: 22px;
 }
-.admin-patient-widget-icon{
+.admin-patient-widget-icon {
     width: 70px !important;
     height: 70px !important;
     min-width: 70px !important;
@@ -624,29 +612,26 @@ font-size: 22px;
         min-width: 50px !important;
     }
 }
-.blood_group{
+.blood_type {
     width: 100px;
 }
 
-
-
-
 //patient dashboard
-.dashbord-patient-card-header{
+.dashbord-patient-card-header {
     background-color: #e0e3ff;
     color: #6571ff;
     padding: 15px 0px 40px 15px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.dashbord-patient-card-body{
+.dashbord-patient-card-body {
     background-color: white;
     position: relative;
     padding: 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
-.patient-card-img{
+.patient-card-img {
     width: 70px !important;
     height: 70px !important;
     border-radius: 50%;
@@ -655,18 +640,14 @@ font-size: 22px;
     top: -40px;
 }
 
-
-
-
-
-.dashbord-doctor-card-header{
+.dashbord-doctor-card-header {
     background-color: #e0e3ff;
     color: #6571ff;
     padding: 15px 0px 40px 15px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.dashbord-doctor-card-body{
+.dashbord-doctor-card-body {
     background-color: white;
     position: relative;
     padding: 15px;
@@ -675,9 +656,9 @@ font-size: 22px;
     @media (max-width: 1400px) {
         flex-direction: column;
         float: start;
-     }
+    }
 }
-.doctor-card-img{
+.doctor-card-img {
     width: 72px !important;
     height: 72px !important;
     border-radius: 50%;
@@ -685,38 +666,40 @@ font-size: 22px;
     position: relative;
     top: -40px;
 }
-.dashboard-vizit{
+.dashboard-vizit {
     margin-left: 100px;
 }
-.card-header-dashbord{
+.card-header-dashbord {
     padding: 0px !important;
 }
-.patient-dashbord-earning-card-header{
+.patient-dashbord-earning-card-header {
     padding: 17px 0px 0px 17px;
     background-color: white !important;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.patient-dashbord-earning-card-body{
+.patient-dashbord-earning-card-body {
     height: 60px;
     background-color: white;
     padding: 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
-.patient-wiget-appointment-card1, .patient-wiget-appointment-card2, .patient-wiget-appointment-card3{
+.patient-wiget-appointment-card1,
+.patient-wiget-appointment-card2,
+.patient-wiget-appointment-card3 {
     background-color: white;
 }
-.dashboard-card{
+.dashboard-card {
     width: 345px !important;
 }
-.patient-data{
+.patient-data {
     margin-top: -40px;
 }
-.doctor-data{
+.doctor-data {
     margin-top: -40px;
 }
-.dashbord-doctor-card{
+.dashbord-doctor-card {
     border-radius: 10px;
     @media (max-width: 768px) {
         width: 357px;
@@ -732,13 +715,13 @@ font-size: 22px;
         width: 290px;
     }
 }
-.doctor-dashbord-earning-card-header{
+.doctor-dashbord-earning-card-header {
     padding: 15px 0px 15px 15px;
     background-color: white !important;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-.doctor-dashbord-earning-card-body{
+.doctor-dashbord-earning-card-body {
     height: 60px;
     background-color: white;
     padding: 15px;
@@ -752,15 +735,17 @@ font-size: 22px;
     }
     @media (max-width: 1400px) {
         height: 100px !important;
-     }
+    }
 }
-.doctor-dashbord-earning-card{
+.doctor-dashbord-earning-card {
     border-radius: 10px;
 }
-.doctor-wiget-appointment-card1, .doctor-wiget-appointment-card2, .doctor-wiget-appointment-card3{
+.doctor-wiget-appointment-card1,
+.doctor-wiget-appointment-card2,
+.doctor-wiget-appointment-card3 {
     background-color: white;
 }
-.card-icon{
+.card-icon {
     @media (max-width: 1440px) {
         font-size: 20px !important;
     }
@@ -769,13 +754,10 @@ font-size: 22px;
     }
 }
 
-
-
-
 // progress bar
 .patient-radial-bar {
     margin-right: 40px;
-    margin-left:auto;
+    margin-left: auto;
     width: 80px;
     height: 80px;
     background-color: #cccccc;
@@ -783,36 +765,37 @@ font-size: 22px;
 }
 .doctor-radial-bar {
     margin-right: 40px;
-    margin-left:auto;
+    margin-left: auto;
     width: 80px;
     height: 80px;
     background-color: #cccccc;
     border-radius: 50%;
 }
 
-.patient-radial-bar__mask,.doctor-radial-bar__mask {
-clip: rect(0px, 80px, 80px, 40px);
--webkit-backface-visibility: hidden;
-transition: -webkit-transform 1s;
-transition: -ms-transform 1s;
-transition: transform 1s;
-width: 80px;
-height: 80px;
-position: absolute;
-border-radius: 50%;
+.patient-radial-bar__mask,
+.doctor-radial-bar__mask {
+    clip: rect(0px, 80px, 80px, 40px);
+    -webkit-backface-visibility: hidden;
+    transition: -webkit-transform 1s;
+    transition: -ms-transform 1s;
+    transition: transform 1s;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    border-radius: 50%;
 }
 
 .patient-radial-bar__fill {
--webkit-backface-visibility: hidden;
-transition: -webkit-transform 1s;
-transition: -ms-transform 1s;
-transition: transform 1s;
-border-radius: 50%;
-clip: rect(0px, 40px, 80px, 0px);
-background-color: #6571ff;
-width: 80px;
-height: 80px;
-position: absolute;
+    -webkit-backface-visibility: hidden;
+    transition: -webkit-transform 1s;
+    transition: -ms-transform 1s;
+    transition: transform 1s;
+    border-radius: 50%;
+    clip: rect(0px, 40px, 80px, 0px);
+    background-color: #6571ff;
+    width: 80px;
+    height: 80px;
+    position: absolute;
 }
 .doctor-radial-bar__fill {
     -webkit-backface-visibility: hidden;
@@ -825,28 +808,31 @@ position: absolute;
     width: 80px;
     height: 80px;
     position: absolute;
-    }
-
-.patient-radial-bar__inset,.doctor-radial-bar__inset {
-width: 70px;
-height: 70px;
-position: absolute;
-margin-left: 5px;
-margin-top: 5px;
-background-color: #fbfbfb;
-border-radius: 50%;
-display: table-cell;
 }
 
-.patient-radial-bar__percent,.doctor-radial-bar__percent {
-text-align: center;
-position: relative;
-top: 50%;
-transform: translateY(-50%);
-color: #627ce8;
-font-size: 22px;
+.patient-radial-bar__inset,
+.doctor-radial-bar__inset {
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 5px;
+    background-color: #fbfbfb;
+    border-radius: 50%;
+    display: table-cell;
 }
-.patient-widget-icon,.doctor-widget-icon{
+
+.patient-radial-bar__percent,
+.doctor-radial-bar__percent {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #627ce8;
+    font-size: 22px;
+}
+.patient-widget-icon,
+.doctor-widget-icon {
     width: 60px !important;
     height: 60px !important;
     min-width: 60px !important;
@@ -861,27 +847,27 @@ font-size: 22px;
         min-width: 50px !important;
     }
 }
-.patient_unique_id{
+.patient_unique_id {
     width: 133px;
     @media (max-width: 768px) {
         width: 100% !important;
     }
 }
-.card-main-div{
+.card-main-div {
     width: 75% !important;
     @media (max-width: 992px) {
         width: 100% !important;
     }
 }
 
-@media (max-width: 1400px){
+@media (max-width: 1400px) {
     .custom-margin-transaction-filter {
         margin-top: 10px !important;
     }
-    .custom-margin-filter{
+    .custom-margin-filter {
         margin-right: 0px !important;
-       }
- }
-.custom-margin-filter{
- margin-right: 10px !important;
+    }
+}
+.custom-margin-filter {
+    margin-right: 10px !important;
 }

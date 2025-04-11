@@ -5,7 +5,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="exampleModalLabel">{{ __('messages.prescription.new_medicine') }}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             {{ Form::open(['id' => 'createMedicineFromPrescription', 'method' => 'POST']) }}
             @csrf
@@ -37,7 +37,7 @@
                     <div class="form-group col-md-6 mb-5">
                         {{ Form::label('salt_composition', __('messages.medicine.salt_composition').(':'), ['class' => 'form-label']) }}
                         <span
-                                class="required"></span>
+                            class="required"></span>
                         {{ Form::text('salt_composition', null, ['class' => 'form-control','required','placeholder'=>__('messages.medicine.salt_composition')]) }}
                     </div>
 
@@ -71,7 +71,7 @@
             <div class="modal-footer pt-0">
                 {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary m-0','id' => 'prescriptionMedicineSave','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
                 <button type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
+                    data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
             </div>
             {{ Form::close() }}
         </div>

@@ -31,7 +31,7 @@ class CreateMedicineRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'category_id.required' =>__('messages.common.category_required'),
+            'category_id.required' => __('messages.common.category_required'),
             'brand_id.required' => __('messages.common.brand_required'),
         ];
     }
@@ -39,8 +39,7 @@ class CreateMedicineRequest extends FormRequest
     public function sanitize()
     {
         $input = $this->all();
-        $input['selling_price'] = ! empty($input['selling_price']) ? str_replace(',', '',
-            $input['selling_price']) : null;
+        $input['selling_price'] = ! empty($input['selling_price']) ? str_replace(',', '', $input['selling_price']) : null;
         $input['buying_price'] = ! empty($input['buying_price']) ? str_replace(',', '', $input['buying_price']) : null;
         $this->replace($input);
     }

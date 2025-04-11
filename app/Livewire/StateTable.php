@@ -37,7 +37,7 @@ class StateTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.staff_skeleton');
+        return view('livewire.staff_skeleton');
     }
 
     public function columns(): array
@@ -46,7 +46,7 @@ class StateTable extends LivewireTableComponent
             Column::make(__('messages.common.name'), 'name')->view('states.components.name')
                 ->sortable()
                 ->searchable(),
-            Column::make(__('messages.state.country'), 'country_id')->view('states.components.country')
+            Column::make(__('messages.country.country'), 'country_id')->view('states.components.country')
                 ->sortable()
                 ->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('states.components.action'),

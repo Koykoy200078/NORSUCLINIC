@@ -17,14 +17,14 @@
     <a class="nav-link p-0 {{ Request::is('doctors/doctor-schedule-edit*','doctors/doctor-sessions/create*') ? 'active' : '' }}"
         href="{{ getLoginDoctorSessionUrl() }}">{{ __('messages.doctor_session.my_schedule') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/visits*') ? 'd-none' : '' }}">
+<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/visits*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/visits*') ? 'active' : '' }}"
         href="{{ route('doctors.visits.index') }}">{{ __('messages.visits') }}</a>
-</li>
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/connect-google-calendar*') ? 'd-none' : '' }}">
+</li> -->
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/connect-google-calendar*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}"
         href="{{ route('doctors.googleCalendar.index') }}">{{ __('messages.setting.connect_google_calendar') }}</a>
-</li> -->
+</li>
 <!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/live-consultations*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/live-consultation*') ? 'active' : '' }}"
         href="{{ route('doctors.live-consultations.index') }}">{{ __('messages.live_consultations') }}</a>
@@ -47,22 +47,22 @@
     <a class="nav-link p-0 {{ Request::is('patients/appointments*','patients/patient-appointments-calendar*','patients/prescription-medicine-show*') ? 'active' : '' }}"
         href="{{ route('patients.patient-appointments-index') }}">{{ __('messages.appointments') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/patient-visits*') ? 'd-none' : '' }}">
+<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/patient-visits*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/patient-visits*') ? 'active' : '' }}"
         href="{{ route('patients.patient.visits.index') }}">{{ __('messages.visits') }}</a>
-</li>
+</li> -->
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/transactions*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/transactions*') ? 'active' : '' }}"
         href="{{ route('patients.transactions') }}">{{ __('messages.transactions') }}</a>
 </li>
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/connect-google-calendar*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/connect-google-calendar*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}"
         href="{{ route('patients.googleCalendar.index') }}">{{ __('messages.setting.connect_google_calendar') }}</a>
-</li> -->
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/reviews*') ? 'd-none' : '' }}">
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/reviews*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/reviews*') ? 'active' : '' }}"
         href="{{ route('patients.reviews.index') }}">{{ __('messages.reviews') }}</a>
-</li> -->
+</li>
 <!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/live-consultations*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/live-consultations*') ? 'active' : '' }}"
         href="{{ route('patients.live-consultations.index') }}">{{ __('messages.live_consultations') }}</a>
@@ -142,12 +142,12 @@
 
 @can('manage_settings')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/settings*') ? 'active' : '' }}"
         href="{{ route('setting.index') }}">{{ __('messages.settings') }}</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/clinic-schedules*') ? 'active' : '' }}"
         href="{{ route('clinic-schedules.index') }}">{{ __('messages.clinic_schedules') }}</a>
 </li>
@@ -162,21 +162,21 @@
 @endcan
 @can('manage_roles')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/roles*') ? 'active' : '' }}"
         href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a>
 </li>
 @endcan
 @can('manage_currencies')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/currencies*') ? 'active' : '' }}"
         href="{{ route('currencies.index') }}">{{ __('messages.currencies') }}</a>
 </li>
 @endcan
 @can('manage_countries')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/countries*') ? 'active' : '' }}"
         href="{{ route('countries.index') }}">{{ __('messages.countries') }}</a>
 </li>
@@ -184,15 +184,15 @@
 
 @can('manage_states')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/states*') ? 'active' : '' }}"
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/provinces*') ? 'active' : '' }}"
         href="{{ route('states.index') }}">{{ __('messages.states') }}</a>
 </li>
 @endcan
 
 @can('manage_cities')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/provinces*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/cities*') ? 'active' : '' }}"
         href="{{ route('cities.index') }}">{{ __('messages.cities') }}</a>
 </li>
@@ -220,12 +220,12 @@
         href="{{ route('appointments.index') }}">{{ __('messages.appointments') }}</a>
 </li>
 @endcan
-@can('manage_patient_visits')
+<!-- @can('manage_patient_visits')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/visits*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/visits*') ? 'active' : '' }}"
         href="{{ route('visits.index') }}">{{ __('messages.visits') }}</a>
 </li>
-@endcan
+@endcan -->
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('profile/edit*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('profile/edit*') ? 'active' : '' }}"
         href="{{ route('profile.setting') }}">{{ __('messages.user.profile_details') }}</a>

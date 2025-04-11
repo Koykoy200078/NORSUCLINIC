@@ -10,7 +10,6 @@
                 <a href="{{route('doctors.show', $row->doctor->id)}}" class="mb-1 text-decoration-none fs-6">
                     {{$row->doctor->user->full_name}}
                 </a>
-
             </div>
         </div>
         <span class="fs-6">{{$row->doctor->user->email}}</span>

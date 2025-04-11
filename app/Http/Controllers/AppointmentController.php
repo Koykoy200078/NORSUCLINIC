@@ -30,9 +30,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Laracasts\Flash\Flash;
-// use Stripe\Exception\ApiErrorException;
+use Illuminate\Support\Str;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AppointmentController extends AppBaseController
@@ -119,27 +119,26 @@ class AppointmentController extends AppBaseController
         // }
 
         // if ($input['payment_type'] == Appointment::RAZORPAY) {
-        //    if (env('RAZOR_KEY') && env('RAZOR_SECRET')) {
-        //        return $this->sendResponse([
-        //           'payment_type' => $input['payment_type'],
-        //           'appointmentId' => $appointment->id,
-        //        ], 'Razorpay '.__('messages.appointment.session_created_successfully'));
-        //     }
-        //     else {
-        //        return $this->sendError(__('messages.payment_method.razorpay') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     if (env('RAZOR_KEY') && env('RAZOR_SECRET')) {
+        //         return $this->sendResponse([
+        //             'payment_type' => $input['payment_type'],
+        //             'appointmentId' => $appointment->id,
+        //         ], 'Razorpay ' . __('messages.appointment.session_created_successfully'));
+        //     } else {
+        //         return $this->sendError(__('messages.payment_method.razorpay') . ' ' . __('messages.paypal.credentials_not_set'));
         //     }
         // }
 
-        if ($input['payment_type'] == Appointment::AUTHORIZE) {
-            if (env('AUTHORIZE_LOGIN_ID') && env('AUTHORIZE_TRANSACTION_KEY')) {
-                return $this->sendResponse([
-                    'payment_type' => $input['payment_type'],
-                    'appointmentId' => $appointment->id,
-                ], 'Authorize ' . __('messages.appointment.session_created_successfully'));
-            } else {
-                return $this->sendError(__('messages.payment_method.authorize') . ' ' . __('messages.paypal.credentials_not_set'));
-            }
-        }
+        // if ($input['payment_type'] == Appointment::AUTHORIZE) {
+        //     if (env('AUTHORIZE_LOGIN_ID') && env('AUTHORIZE_TRANSACTION_KEY')) {
+        //         return $this->sendResponse([
+        //             'payment_type' => $input['payment_type'],
+        //             'appointmentId' => $appointment->id,
+        //         ], 'Authorize ' . __('messages.appointment.session_created_successfully'));
+        //     } else {
+        //         return $this->sendError(__('messages.payment_method.authorize') . ' ' . __('messages.paypal.credentials_not_set'));
+        //     }
+        // }
 
         // if ($input['payment_type'] == Appointment::PAYTM) {
         //     if (env('PAYTM_MERCHANT_ID') && env('PAYTM_MERCHANT_KEY')) {
@@ -411,14 +410,14 @@ class AppointmentController extends AppBaseController
         app()->setLocale(checkLanguageSession());
         $input = $request->all();
         $appointment = $this->appointmentRepository->frontSideStore($input);
-        // if ($input['payment_type'] == Appointment::STRIPE) {
-        //     $result = $this->appointmentRepository->createSession($appointment);
+        if ($input['payment_type'] == Appointment::STRIPE) {
+            $result = $this->appointmentRepository->createSession($appointment);
 
-        //     return $this->sendResponse([
-        //         'payment_type' => $input['payment_type'],
-        //         $result,
-        //     ], 'Stripe ' . __('messages.appointment.session_created_successfully'));
-        // }
+            return $this->sendResponse([
+                'payment_type' => $input['payment_type'],
+                $result,
+            ], 'Stripe ' . __('messages.appointment.session_created_successfully'));
+        }
 
         if ($input['payment_type'] == Appointment::PAYPAL) {
             if ($request->isXmlHttpRequest()) {
@@ -502,7 +501,7 @@ class AppointmentController extends AppBaseController
         if (empty($sessionId)) {
             throw new UnprocessableEntityHttpException(__('messages.appointment.session_id_required'));
         }
-        // setStripeApiKey();
+        setStripeApiKey();
 
         $sessionData = \Stripe\Checkout\Session::retrieve($sessionId);
         $appointment = Appointment::whereAppointmentUniqueId($sessionData->client_reference_id)->first();
@@ -512,14 +511,14 @@ class AppointmentController extends AppBaseController
             'transaction_id' => $sessionData->id,
             'appointment_id' => $sessionData->client_reference_id,
             'amount' => intval($sessionData->amount_total / 100),
-            // 'type' => Appointment::STRIPE,
+            'type' => Appointment::STRIPE,
             'meta' => $sessionData,
         ];
 
         Transaction::create($transaction);
 
         $appointment->update([
-            // 'payment_method' => Appointment::STRIPE,
+            'payment_method' => Appointment::STRIPE,
             'payment_type' => Appointment::PAID,
         ]);
 
@@ -552,7 +551,7 @@ class AppointmentController extends AppBaseController
      */
     public function handleFailedPayment(): RedirectResponse
     {
-        // setStripeApiKey();
+        setStripeApiKey();
 
         Flash::error(__('messages.flash.appointment_created_payment_not_complete'));
 

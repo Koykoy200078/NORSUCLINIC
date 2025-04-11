@@ -49,6 +49,7 @@
     </a>
 </li>
 @endcan
+
 @can('manage_request_documents')
 <li
     class="nav-item {{ Request::is('doctors/request-documents*') ? 'active' : '' }}">
@@ -61,6 +62,7 @@
     </a>
 </li>
 @endcan
+
 @can('manage_transactions')
 <li class="nav-item {{ Request::is('doctors/transactions*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.transactions') }}">
@@ -76,14 +78,14 @@
         <span class="aside-menu-title">{{ __('messages.doctor_session.my_schedule') }}</span>
     </a>
 </li>
-@can('manage_patient_visits')
+<!-- @can('manage_patient_visits')
 <li class="nav-item {{ Request::is('doctors/visits*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.visits.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
         <span class="aside-menu-title">{{ __('messages.visits') }}</span>
     </a>
 </li>
-@endcan
+@endcan -->
 <!-- <li class="nav-item {{ Request::is('doctors/live-consultations*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('doctors.live-consultations.index') }}">
@@ -92,13 +94,13 @@
     </a>
 </li> -->
 
-<!-- <li class="nav-item {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}">
+<li class="nav-item {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('doctors.googleCalendar.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
         <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
     </a>
-</li> -->
+</li>
 <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
@@ -144,13 +146,13 @@
 </li>
 @endcan
 
-<li class="nav-item {{ Request::is('patients/patient-visits*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('patients/patient-visits*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.patient.visits.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
         <span class="aside-menu-title">{{ __('messages.visits') }}</span>
     </a>
-</li>
+</li> -->
 
 <!-- <li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
@@ -160,13 +162,13 @@
     </a>
 </li> -->
 
-<!-- <li class="nav-item {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}">
+<li class="nav-item {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.googleCalendar.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
         <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
     </a>
-</li> -->
+</li>
 @endrole
 @can('manage_doctors')
 <li
@@ -187,7 +189,7 @@
     </a>
 </li>
 @endcan
-@if (isRole('doctor'))
+<!-- @if (isRole('doctor'))
 <li
     class="nav-item {{ Request::is('doctors/smart-patient-cards*', 'doctors/generate-patient-smart-cards*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
@@ -196,16 +198,16 @@
         <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
     </a>
 </li>
-@endif
-{{-- @if (isRole('patient'))
+@endif -->
+<!-- {{-- @if (isRole('patient'))
 <li class="nav-item {{ Request::is('patients/smart-patient-cards*', 'patients/generate-patient-smart-cards*') ? 'active' : '' }}">
 <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.generate-patient-smart-cards.index') }}">
     <span class="aside-menu-icon pe-3"><i class="fa-solid fa-id-card"></i></span>
     <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
 </a>
 </li>
-@endif --}}
-@if (isRole('clinic_admin'))
+@endif --}} -->
+<!-- @if (isRole('clinic_admin'))
 <li
     class="nav-item {{ Request::is('admin/smart-patient-cards*', 'admin/generate-patient-smart-cards*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
@@ -214,7 +216,7 @@
         <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
     </a>
 </li>
-@endif
+@endif -->
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_request_documents')
 <li
@@ -265,14 +267,14 @@
 @endcan
 @endif
 @if (!isRole('doctor') && !isRole('patient'))
-@can('manage_patient_visits')
+<!-- @can('manage_patient_visits')
 <li class="nav-item {{ Request::is('admin/visits*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('visits.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
         <span class="aside-menu-title">{{ __('messages.visits') }}</span>
     </a>
 </li>
-@endcan
+@endcan -->
 @endif
 @can('manage_services')
 <li class="nav-item {{ Request::is('admin/services*', 'admin/service-categories*') ? 'active' : '' }}">
@@ -320,7 +322,7 @@
 @endcan
 @can('manage_settings')
 <li
-    class="nav-item {{ Request::is('admin/settings*', 'admin/roles*', 'admin/currencies*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/states*', 'admin/cities*') ? 'active' : '' }}">
+    class="nav-item {{ Request::is('admin/settings*', 'admin/roles*', 'admin/currencies*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('setting.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
         <span class="aside-menu-title">{{ __('messages.settings') }}</span>

@@ -1,43 +1,26 @@
-# Laravel specific
+/node_modules
 /public/hot
 /public/storage
-/storage/*.key
-/vendor
-/.idea
-/.vscode
-.env
-.env.backup
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-
-# Laravel Mix
 /public/css
 /public/js
-/public/mix-manifest.json
-
-# Docker
+/public/backend
+/public/fonts
+/public/vendor
+/public/web
+/storage/*.key
+/vendor
+.env.backup
+.phpunit.result.cache
 docker-compose.override.yml
-
-# Node.js
-node_modules/
+Homestead.json
+Homestead.yaml
 npm-debug.log
 yarn-error.log
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# IDE specific
-.idea
+/.idea
 /.vscode
-
-# Custom
+.idea
 /public/assets
 /public/uploads
 /public/js/app.js
+/public/mix-manifest.json
 /DEVSENSE/packages-cache/authorizenet

@@ -102,7 +102,7 @@ class MedicineCategoryTable extends LivewireTableComponent
         }
         $category->save();
 
-        $this->dispatch('success', 'Status updated successfully.');
+        $this->dispatchBrowserEvent('success', 'Status updated successfully.');
     }
 
     public function resetPagination()
