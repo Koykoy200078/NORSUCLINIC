@@ -1,9688 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./resources/assets/front/js/front-language.js":
-/*!*****************************************************!*\
-  !*** ./resources/assets/front/js/front-language.js ***!
-  \*****************************************************/
-/***/ (() => {
-
-listenClick('.languageSelection', function () {
-  var languageName = $(this).data('prefix-value');
-  $.ajax({
-    type: 'POST',
-    url: route('front.change.language'),
-    data: {
-      '_token': csrfToken,
-      languageName: languageName
-    },
-    success: function success() {
-      location.reload();
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/appointments/appointments.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/appointments/appointments.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadAppointmentFilterDate)
-var appointmentFilterDate = $("#appointmentDateFilter");
-var appointmentStart = moment().startOf("week");
-var appointmentEnd = moment().endOf("week");
-Livewire.hook("element.init", function () {
-  loadAppointmentFilterDate();
-
-  if ($("#paymentType").length) {
-    $("#paymentType").select2();
-  }
-
-  if ($("#paymentStatus").length) {
-    $("#paymentStatus").select2();
-  }
-
-  if ($("#doctorApptPaymentStatus").length) {
-    $("#doctorApptPaymentStatus").select2();
-  }
-
-  if ($("#appointmentStatus").length) {
-    $("#appointmentStatus").select2();
-  }
-
-  if (appointmentStart != undefined && appointmentEnd != undefined) {
-    cb(appointmentStart, appointmentEnd);
-  }
-});
-
-function loadAppointmentFilterDate() {
-  var _ranges;
-
-  if (!$("#appointmentDateFilter").length) {
-    return;
-  } // let appointmentStart = moment().startOf("week");
-  // let appointmentEnd = moment().endOf("week");
-
-
-  $("#appointmentDateFilter").daterangepicker({
-    startDate: appointmentStart,
-    endDate: appointmentEnd,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      format: "DD/MM/YYYY",
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } // cb
-  ); // cb(appointmentStart, appointmentEnd);
-
-  $("#appointmentDateFilter").on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    Livewire.dispatch("changeStatusFilter", {
-      status: $("#appointmentStatus").val()
-    });
-    Livewire.dispatch("changePaymentTypeFilter", {
-      type: $("#paymentStatus").val()
-    });
-    appointmentStart = picker.startDate;
-    appointmentEnd = picker.endDate;
-  });
-}
-
-function cb(start, end) {
-  $("#appointmentDateFilter").val(start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY"));
-}
-
-listenClick("#appointmentResetFilter", function () {
-  $("#paymentStatus").val(0).trigger("change");
-  $("#appointmentStatus").val(1).trigger("change");
-  var date = moment().startOf("week").format("DD/MM/YYYY") + " - " + moment().endOf("week").format("DD/MM/YYYY");
-  $("#appointmentDateFilter").val(date);
-  Livewire.dispatch("changeDateFilter", {
-    date: date
-  });
-  hideDropdownManually($("#apptmentFilterBtn"), $(".dropdown-menu"));
-});
-listenClick("#doctorApptResetFilter", function () {
-  $("#doctorApptPaymentStatus").val(1).trigger("change");
-  var date = moment().startOf("week").format("DD/MM/YYYY") + " - " + moment().endOf("week").format("DD/MM/YYYY");
-  $("#appointmentDateFilter").val(date);
-  Livewire.dispatch("changeDateFilter", {
-    date: date
-  });
-  hideDropdownManually($("#doctorAptFilterBtn"), $(".dropdown-menu"));
-});
-listenClick(".appointment-delete-btn", function (event) {
-  var recordId = $(event.currentTarget).attr("data-id");
-  deleteItem(route("appointments.destroy", recordId), Lang.get("js.appointment"));
-});
-listenChange(".appointment-status-change", function () {
-  var appointmentStatus = $(this).val();
-  var appointmentId = $(this).attr("data-id");
-  var currentData = $(this);
-  $.ajax({
-    url: route("change-status", appointmentId),
-    type: "POST",
-    data: {
-      appointmentId: appointmentId,
-      appointmentStatus: appointmentStatus
-    },
-    _success: function _success(result) {
-      $(currentData).children("option.booked").addClass("hide");
-      window.location.reload(); // Turbo.visit(window.location.href);
-
-      displaySuccessMessage(result.message);
-    },
-
-    get success() {
-      return this._success;
-    },
-
-    set success(value) {
-      this._success = value;
-    }
-
-  });
-});
-listenChange(".appointment-change-payment-status", function () {
-  var paymentStatus = $(this).val();
-  var appointmentId = $(this).attr("data-id");
-  $("#paymentStatusModal").modal("show").appendTo("body");
-  $("#appointmentPaymentStatus").val(paymentStatus);
-  $("#appointmentId").val(appointmentId);
-});
-listenChange("#paymentStatus", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $("#appointmentDateFilter").val()
-  });
-  Livewire.dispatch("changeStatusFilter", {
-    status: $("#appointmentStatus").val()
-  });
-  Livewire.dispatch("changePaymentTypeFilter", {
-    type: $(this).val()
-  });
-});
-listenChange("#doctorApptPaymentStatus", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $("#appointmentDateFilter").val()
-  });
-  Livewire.dispatch("changeDoctorStatusFilter", {
-    status: $(this).val()
-  });
-});
-listenChange("#appointmentStatus", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $("#appointmentDateFilter").val()
-  });
-  Livewire.dispatch("changeStatusFilter", {
-    status: $(this).val()
-  });
-  Livewire.dispatch("changePaymentTypeFilter", {
-    type: $("#paymentStatus").val()
-  });
-});
-listenSubmit("#appointmentPaymentStatusForm", function (event) {
-  event.preventDefault();
-  var paymentStatus = $("#appointmentPaymentStatus").val();
-  var appointmentId = $("#appointmentId").val();
-  var paymentMethod = $("#paymentType").val();
-  $.ajax({
-    url: route("change-payment-status", appointmentId),
-    type: "POST",
-    data: {
-      appointmentId: appointmentId,
-      paymentStatus: paymentStatus,
-      paymentMethod: paymentMethod,
-      loginUserId: currentLoginUserId
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $("#paymentStatusModal").modal("hide");
-        location.reload();
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/appointments/calendar.js":
-/*!******************************************************!*\
-  !*** ./resources/assets/js/appointments/calendar.js ***!
-  \******************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadAppointmentCalendar);
-var popover;
-var popoverState = false;
-var appointmentStatusId = null;
-var calendar;
-var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  patientName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
-  amount: 0,
-  service: '',
-  doctorName: ''
-}; // View event variables
-
-var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewPatientName, viewEndDate, viewModal, viewEditButton, viewDeleteButton, viewService, viewUId, viewAmount;
-
-function loadAppointmentCalendar() {
-  initCalendarApp();
-  init();
-}
-
-var initCalendarApp = function initCalendarApp() {
-  if (!$('#adminAppointmentCalendar').length) {
-    return;
-  }
-
-  if (usersRole == 'patient') {
-    return;
-  }
-
-  var calendarEl = document.getElementById('adminAppointmentCalendar');
-  var lang = $('.currentLanguage').val();
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: lang,
-    themeSystem: 'bootstrap5',
-    height: 750,
-    buttonText: {
-      today: Lang.get('js.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
-    },
-    headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
-    },
-    initialDate: new Date(),
-    timeZone: 'UTC',
-    dayMaxEvents: true,
-    events: function events(info, successCallback, failureCallback) {
-      $.ajax({
-        url: route('appointments.calendar'),
-        type: 'GET',
-        data: info,
-        success: function success(result) {
-          if (result.success) {
-            successCallback(result.data);
-          }
-        },
-        error: function error(result) {
-          displayErrorMessage(result.responseJSON.message);
-          failureCallback();
-        }
-      });
-    },
-    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
-    eventMouseEnter: function eventMouseEnter(arg) {
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        patient: arg.event.extendedProps.patient,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        doctorName: arg.event.extendedProps.doctorName
-      }); // Show popover preview
-
-      initPopovers(arg.el);
-    },
-    eventMouseLeave: function eventMouseLeave() {
-      hidePopovers();
-    },
-    // Click event --- more info: https://fullcalendar.io/docs/eventClick
-    eventClick: function eventClick(arg) {
-      hidePopovers();
-      appointmentStatusId = arg.event.id;
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        patient: arg.event.extendedProps.patient,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        doctorName: arg.event.extendedProps.doctorName
-      });
-      handleViewEvent();
-    }
-  });
-  calendar.render();
-};
-
-var init = function init() {
-  if (!$('#eventModal').length) {
-    return;
-  }
-
-  var viewElement = document.getElementById('eventModal');
-  viewModal = new bootstrap.Modal(viewElement);
-  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
-  viewPatientName = viewElement.querySelector('[data-calendar="event_patient_name"]');
-  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
-  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
-  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
-  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
-  viewService = viewElement.querySelector('[data-calendar="event_service"]');
-  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
-  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
-}; // Format FullCalendar responses
-
-
-var formatArgs = function formatArgs(res) {
-  data.id = res.id;
-  data.eventName = res.title;
-  data.patientName = res.patient;
-  data.eventDescription = res.description;
-  data.eventStatus = res.status;
-  data.startDate = res.startStr;
-  data.endDate = res.endStr;
-  data.amount = res.amount;
-  data.uId = res.uId;
-  data.service = res.service;
-  data.doctorName = res.doctorName;
-}; // Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
-
-
-var initPopovers = function initPopovers(element) {
-  hidePopovers(); // Generate popover content
-
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '<div class="fw-bolder mb-2"><b>Patient</b>: ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>'; // Popover options
-
-  var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
-    dismiss: true,
-    html: true,
-    title: 'Appointment Details',
-    content: popoverHtml
-  };
-}; // Hide active popovers
-
-
-var hidePopovers = function hidePopovers() {
-  if (popoverState) {
-    popover.dispose();
-    popoverState = false;
-  }
-}; // Handle view event
-
-
-var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
-  viewModal.show(); // Detect all day event
-
-  var eventNameMod;
-  var startDateMod;
-  var endDateMod;
-  var book = $('#bookCalenderConst').val();
-  var checkIn = $('#checkInCalenderConst').val();
-  var checkOut = $('#checkOutCalenderConst').val();
-  var cancel = $('#cancelCalenderConst').val();
-  eventNameMod = '';
-  startDateMod = moment(data.startDate).utc().format("DD MMM, YYYY - h:mm A");
-  endDateMod = moment(data.endDate).utc().format('DD MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod; // Populate view data
-
-  viewEventName.innerText = Lang.get('js.doctor') + data.doctorName;
-  viewPatientName.innerText = Lang.get('js.patient') + data.patientName;
-  $(viewEventStatus).empty();
-  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
-  $(viewEventStatus).val(data.eventStatus).trigger('change');
-  viewAmount.innerText = addCommas(data.amount);
-  viewUId.innerText = data.uId;
-  viewService.innerText = data.service;
-};
-
-listenChange('#changeAppointmentStatus', function () {
-  if (!$(this).val()) {
-    return false;
-  }
-
-  var appointmentStatus = $(this).val();
-  var appointmentId = appointmentStatusId;
-
-  if (parseInt(appointmentStatus) === data.eventStatus) {
-    return false;
-  }
-
-  $.ajax({
-    url: route('change-status', appointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: appointmentId,
-      appointmentStatus: appointmentStatus
-    },
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      $('#eventModal').modal('hide');
-      calendar.refetchEvents();
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/appointments/create-edit.js":
-/*!*********************************************************!*\
-  !*** ./resources/assets/js/appointments/create-edit.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
-
-document.addEventListener('DOMContentLoaded', loadAppointmentCreateEditData);
-var appointmentDate = $('#appointmentDate');
-var selectedDate;
-var selectedSlotTime;
-var timezoneOffsetMinutes = new Date().getTimezoneOffset();
-timezoneOffsetMinutes = timezoneOffsetMinutes === 0 ? 0 : -timezoneOffsetMinutes;
-
-function loadAppointmentCreateEditData() {
-  if (!$('#appointmentDate').length) {
-    return;
-  }
-
-  var lang = $('.currentLanguage').val();
-  $('#appointmentDate').flatpickr({
-    "locale": lang,
-    minDate: new Date(),
-    disableMobile: true
-  });
-  $('.no-time-slot').removeClass('d-none');
-}
-
-listenChange('#appointmentDate', function () {
-  selectedDate = $(this).val();
-  var userRole = $('#userRole').val();
-  var doctorRole = $('#doctorRole').val();
-  var appointmentIsEdit = $('#appointmentIsEdit').val();
-  $('.appointment-slot-data').html('');
-  var url = '';
-
-  if (!isEmpty(userRole) || !isEmpty(doctorRole)) {
-    if (!isEmpty(userRole)) {
-      url = route('patients.doctor-session-time');
-    }
-
-    if (!isEmpty(doctorRole)) {
-      url = route('doctors.doctor-session-time');
-    }
-  } else {
-    url = route('doctor-session-time');
-  } // let url = !isEmpty(userRole)
-  //     ? route('patients.doctor-session-time')
-  //     : route('doctor-session-time');
-
-
-  $.ajax({
-    url: url,
-    type: 'GET',
-    data: {
-      'adminAppointmentDoctorId': $('#adminAppointmentDoctorId').val(),
-      'date': selectedDate,
-      'timezone_offset_minutes': timezoneOffsetMinutes
-    },
-    success: function success(result) {
-      if (result.success) {
-        if (result.data['bookedSlot'] != null && result.data['bookedSlot'].length > 0) {
-          if (result.data['slots'].length == 0) {
-            $('.no-time-slot').addClass('d-none');
-            $('.doctor-time-over').removeClass('d-none');
-          }
-        }
-
-        $.each(result.data['slots'], function (index, value) {
-          if (appointmentIsEdit && fromTime == value) {
-            $('.no-time-slot').addClass('d-none');
-            $('.doctor-time-over').addClass('d-none');
-            $('.appointment-slot-data').append('<span class="time-slot col-lg-2  activeSlot" data-id="' + value + '">' + value + '</span>');
-          } else {
-            $('.no-time-slot').addClass('d-none');
-            $('.doctor-time-over').addClass('d-none');
-
-            if (result.data['bookedSlot'] == null) {
-              $('.appointment-slot-data').append('<span class="time-slot col-lg-2" data-id="' + value + '">' + value + '</span>');
-            } else {
-              if ($.inArray(value, result.data['bookedSlot']) !== -1) {
-                $('.appointment-slot-data').append('<span class="time-slot col-lg-2 bookedSlot " data-id="' + value + '">' + value + '</span>');
-              } else {
-                $('.appointment-slot-data').append('<span class="time-slot col-lg-2" data-id="' + value + '">' + value + '</span>');
-              }
-            }
-          }
-        });
-      }
-    },
-    error: function error(result) {
-      $('.no-time-slot').removeClass('d-none');
-      $('.doctor-time-over').addClass('d-none');
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.time-slot', function () {
-  if ($('.time-slot').hasClass('activeSlot')) {
-    $('.time-slot').removeClass('activeSlot');
-    selectedSlotTime = $(this).addClass('activeSlot');
-  } else {
-    selectedSlotTime = $(this).addClass('activeSlot');
-  }
-
-  var fromToTime = $(this).attr('data-id').split('-');
-  var fromTime = fromToTime[0];
-  var toTime = fromToTime[1];
-  $('#timeSlot').val('');
-  $('#toTime').val('');
-  $('#timeSlot').val(fromTime);
-  $('#toTime').val(toTime);
-});
-var charge;
-var addFees = parseInt($('#addFees').val());
-var totalFees;
-listenChange('#adminAppointmentDoctorId', function () {
-  $('#chargeId').val('');
-  $('#payableAmount').val('');
-  appointmentDate.val('');
-  $('#addFees').val('');
-  $('.appointment-slot-data').html('');
-  $('.no-time-slot').removeClass('d-none');
-  var url = !isEmpty(userRole) ? route('patients.get-service') : route('get-service');
-  $.ajax({
-    url: url,
-    type: 'GET',
-    data: {
-      'appointmentDoctorId': $(this).val()
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#appointmentDate').removeAttr('disabled');
-        $('#appointmentServiceId').empty();
-        $('#appointmentServiceId').append($('<option value=""></option>').text(Lang.get('js.select_service')));
-        $.each(result.data, function (i, v) {
-          $('#appointmentServiceId').append($('<option></option>').attr('value', v.id).text(v.name));
-        });
-      }
-    }
-  });
-});
-listenChange('#appointmentServiceId', function () {
-  var url = !isEmpty(userRole) ? route('patients.get-charge') : route('get-charge');
-  $.ajax({
-    url: url,
-    type: 'GET',
-    data: {
-      'chargeId': $(this).val()
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#chargeId').val('');
-        $('#addFees').val('');
-        $('#payableAmount').val('');
-
-        if (result.data) {
-          $('#chargeId').val(result.data.charges);
-          $('#payableAmount').val(result.data.charges);
-          charge = result.data.charges;
-        }
-      }
-    }
-  });
-});
-listenKeyup('#addFees', function (e) {
-  if (e.which != 8 && isNaN(String.fromCharCode(e.which))) {
-    e.preventDefault();
-  }
-
-  totalFees = '';
-  totalFees = parseFloat(charge) + parseFloat($(this).val() ? $(this).val() : 0);
-  $('#payableAmount').val(totalFees.toFixed(2));
-});
-listenSubmit('#addAppointmentForm', function (e) {
-  e.preventDefault();
-  var data = new FormData($(this)[0]);
-  $('.submitAppointmentBtn').prop(Lang.get('js.discard'), true);
-  $('.submitAppointmentBtn').text(Lang.get('js.please_wait'));
-  $.ajax({
-    url: $(this).attr('action'),
-    type: 'POST',
-    data: data,
-    processData: false,
-    contentType: false,
-    success: function success(mainResult) {
-      if (mainResult.success) {
-        var appID = mainResult.data.appointmentId; //displaySuccessMessage(mainResult.message);
-
-        $('#addAppointmentForm')[0].reset();
-        $('#addAppointmentForm').val('').trigger('change');
-
-        if (mainResult.data.payment_type == $('#paystackMethod').val()) {
-          return location.href = mainResult.data.redirect_url;
-        }
-
-        if (mainResult.data.payment_type == $('#paytmMethod').val()) {
-          window.location.replace(route('paytm.init', {
-            'appointmentId': appID
-          }));
-        }
-
-        if (mainResult.data.payment_type == $('#authorizeMethod').val()) {
-          window.location.href = route('authorize.init', {
-            appointmentId: appID
-          }); // Turbo.visit(route('authorize.init', {'appointmentId': appID}));
-        }
-
-        if (mainResult.data.payment_type == $('#paypalMethod').val()) {
-          $.ajax({
-            type: 'GET',
-            url: route('paypal.init'),
-            data: {
-              'appointmentId': appID
-            },
-            success: function success(result) {
-              if (result.status == 200) {
-                if (result.link != null) {
-                  location.href = result.link;
-                }
-              } else {
-                displayErrorMessage(result.message);
-              }
-            },
-            error: function error(result) {
-              displayErrorMessage(result.responseJSON.message);
-            }
-          });
-        }
-
-        if (mainResult.data.payment_type == $('#manuallyMethod').val()) {
-          window.location.replace(route('manually-payment', {
-            'appointmentId': appID
-          }));
-        }
-
-        if (mainResult.data.payment_type == $('#stripeMethod').val()) {
-          var sessionId = mainResult.data[0].sessionId;
-          stripe.redirectToCheckout({
-            sessionId: sessionId
-          }).then(function (mainResult) {
-            manageAjaxErrors(mainResult);
-          });
-        }
-
-        if (mainResult.data.payment_type == $('#razorpayMethodMethod').val()) {
-          $.ajax({
-            type: 'POST',
-            url: route('razorpay.init'),
-            data: {
-              'appointmentId': appID
-            },
-            success: function success(result) {
-              if (result.success) {
-                var _result$data = result.data,
-                    id = _result$data.id,
-                    amount = _result$data.amount,
-                    name = _result$data.name,
-                    email = _result$data.email,
-                    contact = _result$data.contact;
-                options.amount = amount;
-                options.order_id = id;
-                options.prefill.name = name;
-                options.prefill.email = email;
-                options.prefill.contact = contact;
-                options.prefill.appointmentID = appID;
-                var razorPay = new Razorpay(options);
-                razorPay.open();
-                razorPay.on('payment.failed', storeFailedPayment);
-              }
-            },
-            error: function error(result) {},
-            complete: function complete() {}
-          });
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-      $('.submitAppointmentBtn').prop(Lang.get('js.discard'), false);
-      $('.submitAppointmentBtn').text(Lang.get('js.save'));
-    },
-    complete: function complete() {}
-  });
-});
-
-function storeFailedPayment(response) {
-  $.ajax({
-    type: 'POST',
-    url: route('razorpay.failed'),
-    data: {
-      data: response
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-      }
-    },
-    error: function error() {}
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/appointments/patient-appointments.js":
-/*!******************************************************************!*\
-  !*** ./resources/assets/js/appointments/patient-appointments.js ***!
-  \******************************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded',
-//     loadPatientPanelAppointmentFilterData)
-var patientPanelApptmentStart = moment().startOf("week");
-var patientPanelApptmentEnd = moment().endOf("week");
-
-function loadPatientPanelAppointmentFilterData() {
-  var _ranges;
-
-  if (!$("#patientAppointmentDate").length) {
-    return;
-  } // let patientPanelApptmentStart = moment().startOf("week");
-  // let patientPanelApptmentEnd = moment().endOf("week");
-
-
-  var patientDatePicker = $("#patientAppointmentDate").daterangepicker({
-    startDate: patientPanelApptmentStart,
-    endDate: patientPanelApptmentEnd,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } // cb
-  ); // cb(patientPanelApptmentStart, patientPanelApptmentEnd);
-
-  patientDatePicker.on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    patientPanelApptmentStart = picker.startDate;
-    patientPanelApptmentEnd = picker.endDate; // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
-  });
-}
-
-function cb(start, end) {
-  $("#patientAppointmentDate").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
-}
-
-listenClick("#patientPanelApptmentResetFilter", function () {
-  Livewire.dispatch("refresh");
-  $("#patientPaymentStatus").val(0).trigger("change");
-  $("#patientAppointmentStatus").val(1).trigger("change");
-  $("#patientAppointmentDate").data("daterangepicker").setStartDate(moment().startOf("week").format("MM/DD/YYYY"));
-  $("#patientAppointmentDate").data("daterangepicker").setEndDate(moment().endOf("week").format("MM/DD/YYYY"));
-  hideDropdownManually($("#patientPanelApptFilterBtn"), $(".dropdown-menu"));
-});
-listenChange("#patientPaymentStatus", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $("#patientAppointmentDate").val()
-  });
-  Livewire.dispatch("changePaymentTypeFilter", {
-    type: $(this).val()
-  });
-});
-listenChange("#patientAppointmentStatus", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $("#patientAppointmentDate").val()
-  });
-  Livewire.dispatch("changeStatusFilter", {
-    status: $(this).val()
-  });
-}); // document.addEventListener('livewire:load', function () {
-//     window.livewire.hook('message.processed', () => {
-//         if ($('#patientPaymentStatus').length) {
-//             $('#patientPaymentStatus').select2()
-//         }
-//         if ($('#patientAppointmentStatus').length) {
-//             $('#patientAppointmentStatus').select2()
-//         }
-//     })
-// })
-
-Livewire.hook("element.init", function () {
-  loadPatientPanelAppointmentFilterData();
-
-  if ($("#patientPaymentStatus").length) {
-    $("#patientPaymentStatus").select2();
-  }
-
-  if ($("#patientAppointmentStatus").length) {
-    $("#patientAppointmentStatus").select2();
-  }
-
-  if (patientPanelApptmentStart != undefined && patientPanelApptmentEnd != undefined) {
-    cb(patientPanelApptmentStart, patientPanelApptmentEnd);
-  }
-});
-listenClick(".patient-panel-apptment-delete-btn", function (event) {
-  var userRole = $("#userRole").val();
-  var patientPanelApptmentRecordId = $(event.currentTarget).attr("data-id");
-  var patientPanelApptmentRecordUrl = !isEmpty(userRole) ? route("patients.appointments.destroy", patientPanelApptmentRecordId) : route("appointments.destroy", patientPanelApptmentRecordId);
-  deleteItem(patientPanelApptmentRecordUrl, "Appointment");
-});
-listenClick(".patient-cancel-appointment", function (event) {
-  var appointmentId = $(event.currentTarget).attr("data-id");
-  cancelAppointment(route("patients.cancel-status"), Lang.get("js.appointment"), appointmentId);
-});
-
-window.cancelAppointment = function (url, header, appointmentId) {
-  swal({
-    title: Lang.get("js.cancelled_appointment"),
-    text: Lang.get("js.are_you_sure_cancel") + header + " ?",
-    type: "warning",
-    icon: "warning",
-    showCancelButton: true,
-    closeOnConfirm: false,
-    confirmButtonColor: "#266CB0",
-    showLoaderOnConfirm: true,
-    buttons: {
-      confirm: Lang.get("js.yes"),
-      cancel: Lang.get("js.no")
-    }
-  }).then(function (result) {
-    if (result) {
-      deleteItemAjax(url, header, appointmentId);
-    }
-  });
-};
-
-function deleteItemAjax(url, header, appointmentId) {
-  $.ajax({
-    url: route("patients.cancel-status"),
-    type: "POST",
-    data: {
-      appointmentId: appointmentId
-    },
-    success: function success(obj) {
-      if (obj.success) {
-        Livewire.dispatch("refresh");
-      }
-
-      swal({
-        title: Lang.get("js.cancelled_appointment"),
-        text: header + Lang.get("js.has_cancel"),
-        icon: "success",
-        confirmButtonColor: "#266CB0",
-        timer: 2000
-      });
-    },
-    error: function error(data) {
-      swal({
-        title: "Error",
-        icon: "error",
-        text: data.responseJSON.message,
-        type: "error",
-        confirmButtonColor: "#266CB0",
-        timer: 5000
-      });
-    }
-  });
-}
-
-listenClick("#submitBtn", function (event) {
-  event.preventDefault();
-  var paymentGatewayType = $("#paymentGatewayType").val();
-
-  if (isEmpty(paymentGatewayType)) {
-    displayErrorMessage(Lang.get("js.select_payment"));
-    return false;
-  }
-
-  var stripeMethod = 2;
-  var paystackMethod = 3;
-  var paypalMethod = 4;
-  var razorpayMethod = 5;
-  var authorizeMethod = 6;
-  var paytmMethod = 7;
-  var appointmentId = $("#patientAppointmentId").val();
-  var btnSubmitEle = $("#patientPaymentForm").find("#submitBtn");
-  setAdminBtnLoader(btnSubmitEle);
-
-  if (paymentGatewayType == stripeMethod) {
-    $.ajax({
-      url: route("patients.appointment-payment"),
-      type: "POST",
-      data: {
-        appointmentId: appointmentId
-      },
-      success: function success(result) {
-        var sessionId = result.data.sessionId;
-        stripe.redirectToCheckout({
-          sessionId: sessionId
-        }).then(function (result) {
-          manageAjaxErrors(result);
-        });
-      },
-      error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
-      },
-      complete: function complete() {}
-    });
-  }
-
-  if (paymentGatewayType == paytmMethod) {
-    window.location.replace(route("paytm.init", {
-      appointmentId: appointmentId
-    }));
-  }
-
-  if (paymentGatewayType == paystackMethod) {
-    window.location.replace(route("paystack.init", {
-      appointmentData: appointmentId
-    }));
-  }
-
-  if (paymentGatewayType == authorizeMethod) {
-    window.location.replace(route("authorize.init", {
-      appointmentId: appointmentId
-    }));
-  }
-
-  if (paymentGatewayType == paypalMethod) {
-    $.ajax({
-      type: "GET",
-      url: route("paypal.init"),
-      data: {
-        appointmentId: appointmentId
-      },
-      success: function success(result) {
-        if (result.status == 200) {
-          var redirectTo = "";
-          location.href = result.link; // $.each(result.result.links,
-          //     function (key, val) {
-          //         if (val.rel == 'approve') {
-          //             redirectTo = val.href;
-          //         }
-          //     });
-          // location.href = redirectTo;
-        }
-      },
-      error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
-      },
-      complete: function complete() {}
-    });
-  }
-
-  if (paymentGatewayType == razorpayMethod) {
-    $.ajax({
-      type: "POST",
-      url: route("razorpay.init"),
-      data: {
-        appointmentId: appointmentId
-      },
-      success: function success(result) {
-        if (result.success) {
-          var _result$data = result.data,
-              id = _result$data.id,
-              amount = _result$data.amount,
-              name = _result$data.name,
-              email = _result$data.email,
-              contact = _result$data.contact;
-          options.amount = amount;
-          options.order_id = id;
-          options.prefill.name = name;
-          options.prefill.email = email;
-          options.prefill.contact = contact;
-          options.prefill.appointmentID = appointmentId;
-          var razorPay = new Razorpay(options);
-          razorPay.open();
-          razorPay.on("payment.failed", storeFailedPayment);
-        }
-      },
-      error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
-      },
-      complete: function complete() {}
-    });
-  }
-
-  return false;
-});
-
-function storeFailedPayment(response) {
-  $.ajax({
-    type: "POST",
-    url: route("razorpay.failed"),
-    data: {
-      data: response
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-      }
-    },
-    error: function error() {}
-  });
-}
-
-listenClick(".payment-btn", function (event) {
-  var appointmentId = $(this).attr("data-id");
-  $("#paymentGatewayModal").modal("show").appendTo("body");
-  $("#patientAppointmentId").val(appointmentId);
-});
-listen("hidden.bs.modal", "#paymentGatewayModal", function (e) {
-  $("#patientPaymentForm")[0].reset();
-  $("#paymentGatewayType").val(null).trigger("change");
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/appointments/patient-calendar.js":
-/*!**************************************************************!*\
-  !*** ./resources/assets/js/appointments/patient-calendar.js ***!
-  \**************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadPatientAppointmentCalendar);
-var popover;
-var popoverState = false;
-var calendar;
-var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
-  amount: 0,
-  service: '',
-  doctorName: ''
-}; // View event variables
-
-var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewEndDate, viewModal, viewEditButton, viewDeleteButton, viewService, viewUId, viewAmount;
-
-function loadPatientAppointmentCalendar() {
-  if (!$('#appointmentCalendar').length) {
-    return;
-  }
-
-  initCalendarApp();
-  init();
-}
-
-var initCalendarApp = function initCalendarApp() {
-  if (usersRole != 'patient') {
-    return;
-  }
-
-  var lang = $('.currentLanguage').val();
-  var calendarEl = document.getElementById('appointmentCalendar');
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: lang,
-    themeSystem: 'bootstrap5',
-    height: 750,
-    buttonText: {
-      today: Lang.get('js.datepicker.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
-    },
-    headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
-    },
-    initialDate: new Date(),
-    timeZone: 'UTC',
-    dayMaxEvents: true,
-    events: function events(info, successCallback, failureCallback) {
-      $.ajax({
-        url: route('patients.appointments.calendar'),
-        type: 'GET',
-        data: info,
-        success: function success(result) {
-          if (result.success) {
-            successCallback(result.data);
-          }
-        },
-        error: function error(result) {
-          displayErrorMessage(result.responseJSON.message);
-          failureCallback();
-        }
-      });
-    },
-    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
-    eventMouseEnter: function eventMouseEnter(arg) {
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        description: arg.event.extendedProps.description,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        doctorName: arg.event.extendedProps.doctorName
-      }); // Show popover preview
-
-      initPopovers(arg.el);
-    },
-    eventMouseLeave: function eventMouseLeave() {
-      hidePopovers();
-    },
-    // Click event --- more info: https://fullcalendar.io/docs/eventClick
-    eventClick: function eventClick(arg) {
-      hidePopovers();
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        description: arg.event.extendedProps.description,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        doctorName: arg.event.extendedProps.doctorName
-      });
-      handleViewEvent();
-    }
-  });
-  calendar.render();
-};
-
-var init = function init() {
-  if (!$('#patientEventModal').length) {
-    return;
-  }
-
-  var viewElement = document.getElementById('patientEventModal');
-  viewModal = new bootstrap.Modal(viewElement);
-  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
-  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
-  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
-  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
-  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
-  viewService = viewElement.querySelector('[data-calendar="event_service"]');
-  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
-  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
-}; // Format FullCalendar responses
-
-
-var formatArgs = function formatArgs(res) {
-  data.id = res.id;
-  data.eventName = res.title;
-  data.eventDescription = res.description;
-  data.eventStatus = res.status;
-  data.startDate = res.startStr;
-  data.endDate = res.endStr;
-  data.amount = res.amount;
-  data.uId = res.uId;
-  data.service = res.service;
-  data.doctorName = res.doctorName;
-}; // Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
-
-
-var initPopovers = function initPopovers(element) {
-  hidePopovers(); // Generate popover content
-
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>'; // Popover options
-
-  var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
-    dismiss: true,
-    html: true,
-    title: 'Appointment Details',
-    content: popoverHtml
-  };
-}; // Hide active popovers
-
-
-var hidePopovers = function hidePopovers() {
-  if (popoverState) {
-    popover.dispose();
-    popoverState = false;
-  }
-}; // Handle view event
-
-
-var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
-  viewModal.show(); // Detect all day event
-
-  var eventNameMod;
-  var startDateMod;
-  var endDateMod;
-  eventNameMod = '';
-  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
-  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod; // Populate view data
-
-  viewEventName.innerText = 'Doctor: ' + data.doctorName;
-  $(viewEventStatus).val(data.eventStatus);
-  viewAmount.innerText = addCommas(data.amount);
-  viewUId.innerText = data.uId;
-  viewService.innerText = data.service;
-};
-
-/***/ }),
-
-/***/ "./resources/assets/js/brands/brands.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/brands/brands.js ***!
-  \**********************************************/
-/***/ (() => {
-
-"use strict";
-
-
-listenClick('.brand-delete-btn', function (event) {
-  var brandId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('brands.destroy', brandId), Lang.get('js.brand'));
-});
-listenSubmit('#createBrandForm, #editBrandForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    return false;
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/category/category.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/category/category.js ***!
-  \**************************************************/
-/***/ (() => {
-
-"use strict";
-
-
-Livewire.hook('element.init', function (_ref) {
-  var component = _ref.component,
-      el = _ref.el;
-
-  if ($('#medicineCategoryHead').length) {
-    $('#medicineCategoryHead').select2();
-  }
-});
-listenClick('.add-category', function () {
-  $('#add_categories_modal').modal('show').appendTo('body');
-});
-listenSubmit('#addMedicineCategoryForm', function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find('#medicineCategorySave');
-  loadingButton.button('loading');
-  $.ajax({
-    url: $('#indexCategoryCreateUrl').val(),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#add_categories_modal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      loadingButton.button('reset');
-    }
-  });
-});
-listenSubmit('#editMedicineCategoryForm', function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find('#editCategorySave');
-  loadingButton.button('loading');
-  var id = $('#editMedicineCategoryId').val();
-  $.ajax({
-    url: route('categories.update', id),
-    type: 'put',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#edit_categories_modal').modal('hide');
-
-        if ($('#categoriesShowUrl').length) {
-          window.location.href = $('#categoriesShowUrl').val();
-        } else {
-          Livewire.dispatch('refresh');
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      loadingButton.button('reset');
-    }
-  });
-});
-listen('hidden.bs.modal', '#add_categories_modal', function () {
-  resetModalForm('#addMedicineCategoryForm', '#medicineCategoryErrorsBox');
-});
-listen('hidden.bs.modal', '#edit_categories_modal', function () {
-  resetModalForm('#editMedicineCategoryForm', '#editMedicineCategoryErrorsBox');
-});
-
-function renderCategoryData(id) {
-  $.ajax({
-    url: route('categories.edit', id),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        var category = result.data;
-        $('#editMedicineCategoryId').val(category.id);
-        $('#editCategoryName').val(category.name);
-        if (category.is_active === 1) $('#editCategoryIsActive').prop('checked', true);else $('#editCategoryIsActive').prop('checked', false);
-        $('#edit_categories_modal').modal('show');
-        ajaxCallCompleted();
-      }
-    },
-    error: function error(result) {
-      manageAjaxErrors(result);
-    }
-  });
-}
-
-listenClick('.category-edit-btn', function (event) {
-  if ($('.ajaxCallIsRunning').val()) {
-    return;
-  }
-
-  ajaxCallInProgress();
-  var categoryId = $(event.currentTarget).attr('data-id');
-  renderCategoryData(categoryId);
-});
-listenClick('.category-delete-btn', function (event) {
-  var categoryId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('categories.destroy', categoryId), Lang.get('js.category'));
-}); // category activation deactivation change event
-
-listenChange('.medicine-category-status', function (event) {
-  var categoryId = $(event.currentTarget).attr('data-id');
-  activeDeActiveCategory(categoryId);
-});
-listenClick('#categoryResetFilter', function () {
-  $('#medicineCategoryHead').val(0).trigger('change');
-  hideDropdownManually($('#medicineCategoryFilterBtn'), $('.dropdown-menu'));
-}); // activate de-activate category
-
-function activeDeActiveCategory(id) {
-  $.ajax({
-    url: route('active.deactive', id),
-    method: 'post',
-    cache: false,
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        Livewire.dispatch('refresh');
-      }
-    }
-  });
-}
-
-;
-listenChange('#medicineCategoryHead', function () {
-  Livewire.dispatch('changeFilter', {
-    value: $(this).val()
-  });
-  hideDropdownManually($('#medicineCategoryFilterBtn'), $('#medicineCategoryFilter'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/cities/cities.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/cities/cities.js ***!
-  \**********************************************/
-/***/ (() => {
-
-listenClick("#createCity", function () {
-  $("#createCityModal").modal("show").appendTo("body");
-  $("#stateCity").select2({
-    dropdownParent: $("#createCityModal")
-  });
-});
-listen("hidden.bs.modal", "#createCityModal", function () {
-  resetModalForm("#createCityForm", "#createCityValidationErrorsBox");
-  $("#stateCity").val(null).trigger("change");
-});
-listen("hidden.bs.modal", "#editCityModal", function () {
-  resetModalForm("#editCityForm", "#editCityValidationErrorsBox");
-});
-listenClick(".city-edit-btn", function (event) {
-  var editCityId = $(event.currentTarget).attr("data-id");
-  renderData(editCityId);
-  $("#editCityStateId").select2({
-    dropdownParent: $("#editCityModal")
-  });
-});
-
-function renderData(id) {
-  $.ajax({
-    url: route("cities.edit", id),
-    type: "GET",
-    success: function success(result) {
-      $("#cityID").val(result.data.id);
-      $("#editCityName").val(result.data.name);
-      $("#editCityStateId").val(result.data.state_id).trigger("change");
-      $("#editCityModal").modal("show");
-    }
-  });
-}
-
-listenSubmit("#createCityForm", function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route("cities.store"),
-    type: "POST",
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $("#createCityModal").modal("hide");
-        Livewire.dispatch("refresh");
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit("#editCityForm", function (e) {
-  e.preventDefault();
-  var updateCityId = $("#cityID").val();
-  $.ajax({
-    url: route("cities.update", updateCityId),
-    type: "PUT",
-    data: $(this).serialize(),
-    success: function success(result) {
-      $("#editCityModal").modal("hide");
-      displaySuccessMessage(result.message);
-      Livewire.dispatch("refresh");
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick(".city-delete-btn", function (event) {
-  var cityRecordId = $(event.currentTarget).attr("data-id");
-  deleteItem(route("cities.destroy", cityRecordId), Lang.get("js.city"));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/clinic_schedule/create-edit.js":
-/*!************************************************************!*\
-  !*** ./resources/assets/js/clinic_schedule/create-edit.js ***!
-  \************************************************************/
-/***/ (() => {
-
-listenSubmit('#clinicScheduleSaveForm', function (e) {
-  e.preventDefault();
-  var data = new FormData($(this)[0]);
-  $.ajax({
-    url: route('checkRecord'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      saveUpdateForm(data);
-    },
-    error: function error(result) {
-      swal({
-        title: Lang.get('js.deleted'),
-        text: result.responseJSON.message,
-        type: 'warning',
-        icon: 'warning',
-        showCancelButton: true,
-        closeOnConfirm: true,
-        confirmButtonColor: '#266CB0',
-        showLoaderOnConfirm: true,
-        cancelButtonText: Lang.get('js.no'),
-        confirmButtonText: Lang.get('js.yes_update')
-      }).then(function (result) {
-        if (result) {
-          saveUpdateForm(data);
-        }
-      });
-    }
-  });
-});
-
-function saveUpdateForm(data) {
-  $.ajax({
-    url: route('clinic-schedules.store'),
-    type: 'POST',
-    data: data,
-    processData: false,
-    contentType: false,
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          location.reload();
-        }, 1500);
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {}
-  });
-}
-
-listenChange('select[name^="clinicStartTimes"]', function (e) {
-  var selectedIndex = $(this)[0].selectedIndex;
-  var endTimeOptions = $(this).closest('.weekly-row').find('select[name^="clinicEndTimes"] option');
-  endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
-  endTimeOptions.each(function (index) {
-    if (index <= selectedIndex) {
-      $(this).attr('disabled', true);
-    } else {
-      $(this).attr('disabled', false);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/countries/countries.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/countries/countries.js ***!
-  \****************************************************/
-/***/ (() => {
-
-listenClick('.country-delete-btn', function (event) {
-  var countryRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('countries.destroy', countryRecordId), Lang.get('js.country'));
-});
-listenClick('#addCountry', function () {
-  $('#addCountryModal').modal('show').appendTo('body');
-});
-listenSubmit('#addCountryForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('countries.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#addCountryModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.country-edit-btn', function (event) {
-  $('#editCountryModal').modal('show').appendTo('body');
-  var editCountryId = $(event.currentTarget).attr('data-id');
-  $('#editCountryId').val(editCountryId);
-  $.ajax({
-    url: route('countries.edit', editCountryId),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        $('#editCountryName').val(result.data.name);
-        $('#editShortCodeName').val(result.data.short_code);
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editCountryForm', function (event) {
-  event.preventDefault();
-  var updateCountryId = $('#editCountryId').val();
-  $.ajax({
-    url: route('countries.update', updateCountryId),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#editCountryModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listen('hidden.bs.modal', '#addCountryModal', function (e) {
-  $('#addCountryForm')[0].reset();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/currencies/currencies.js":
-/*!******************************************************!*\
-  !*** ./resources/assets/js/currencies/currencies.js ***!
-  \******************************************************/
-/***/ (() => {
-
-listenClick('#createCurrency', function () {
-  $('#createCurrencyModal').modal('show').appendTo('body');
-});
-listen('hidden.bs.modal', '#createCurrencyModal', function () {
-  resetModalForm('#createCurrencyForm', '#createCurrencyValidationErrorsBox');
-});
-listen('hidden.bs.modal', '#editCurrencyModal', function () {
-  resetModalForm('#editCurrencyForm', '#editCurrencyValidationErrorsBox');
-});
-listenClick('.currency-edit-btn', function (event) {
-  var editCurrencyId = $(event.currentTarget).attr('data-id');
-  renderData(editCurrencyId);
-});
-
-function renderData(id) {
-  $.ajax({
-    url: route('currencies.edit', id),
-    type: 'GET',
-    success: function success(result) {
-      $('#currencyID').val(result.data.id);
-      $('#editCurrency_Name').val(result.data.currency_name);
-      $('#editCurrency_Icon').val(result.data.currency_icon);
-      $('#editCurrency_Code').val(result.data.currency_code);
-      $('#editCurrencyModal').modal('show');
-    }
-  });
-}
-
-listenSubmit('#createCurrencyForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('currencies.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#createCurrencyModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editCurrencyForm', function (e) {
-  e.preventDefault();
-  var updateCurrencyId = $('#currencyID').val();
-  $.ajax({
-    url: route('currencies.update', updateCurrencyId),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      $('#editCurrencyModal').modal('hide');
-      displaySuccessMessage(result.message);
-      Livewire.dispatch('refresh');
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {}
-  });
-});
-listenClick('.currency-delete-btn', function (event) {
-  var currencyRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('currencies.destroy', currencyRecordId), Lang.get('js.currency'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/create-account.js":
-/*!******************************************************!*\
-  !*** ./resources/assets/js/custom/create-account.js ***!
-  \******************************************************/
-/***/ (function() {
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-document.addEventListener('DOMContentLoaded', loadAccountData);
-
-function loadAccountData() {
-  if (!$('#expiryMonth').length || !$('#expiryYear').length) {
-    return;
-  }
-
-  $('#expiryMonth').select2();
-  $('#expiryYear').select2();
-}
-
-listenClick('#submitBtn', function (event) {
-  var valid = true;
-  $('.demoInputBox').css('background-color', '');
-  var message = '';
-  var cardHolderNameRegex = /^[a-z ,.'-]+$/i;
-  var cvvRegex = /^[0-9]{3,3}$/;
-  var cardHolderName = $('#cardHolderName').val();
-  var cardNumber = $('#cardNumber').val();
-  var exMonth = $('#expiryMonth').val();
-  var exYear = $('#expiryYear').val();
-  var cvv = $('#cvv').val();
-
-  if (cardHolderName == '') {
-    message += 'Card holder name fields are required.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (cardHolderName != '' && !cardHolderNameRegex.test(cardHolderName)) {
-    message = 'Card holder name is Invalid.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (cardNumber == '') {
-    message = 'Card number fields are required.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (exMonth === '') {
-    message = 'Expiration month fields are required.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (exYear === '') {
-    message += 'Expiration year fields are required.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  exMonth = parseInt(exMonth) + 1;
-  var expiryDate = new Date(exYear + '-' + exMonth + '-01');
-
-  if (expiryDate < new Date()) {
-    message += 'Enter valid expiration date.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (cvv == '') {
-    message += 'CVV number fields are required.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (cvv != '' && !cvvRegex.test(cvv)) {
-    message += 'CVV is invalid.';
-    $('.error').html(message);
-    $('#errorCard').addClass('show');
-    return false;
-  }
-
-  if (cardNumber != '') {
-    $('#cardNumber').validateCreditCard(function (result) {
-      if (!result.valid) {
-        message = 'Card number is invalid.';
-        $('.error').html(message);
-        $('#errorCard').addClass('show');
-        return false;
-      }
-    });
-  }
-
-  if (message != '') {
-    return false;
-  }
-}); // Generated by CoffeeScript 1.10.0
-
-(function () {
-  var $,
-      Range,
-      Trie,
-      indexOf = [].indexOf || function (item) {
-    for (var i = 0, l = this.length; i < l; i++) {
-      if (i in this && this[i] === item) return i;
-    }
-
-    return -1;
-  };
-
-  Trie = function () {
-    function Trie() {
-      this.trie = {};
-    }
-
-    Trie.prototype.push = function (value) {
-      var _char, i, j, len, obj, ref, results;
-
-      value = value.toString();
-      obj = this.trie;
-      ref = value.split('');
-      results = [];
-
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        _char = ref[i];
-
-        if (obj[_char] == null) {
-          if (i === value.length - 1) {
-            obj[_char] = null;
-          } else {
-            obj[_char] = {};
-          }
-        }
-
-        results.push(obj = obj[_char]);
-      }
-
-      return results;
-    };
-
-    Trie.prototype.find = function (value) {
-      var _char2, i, j, len, obj, ref;
-
-      value = value.toString();
-      obj = this.trie;
-      ref = value.split('');
-
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        _char2 = ref[i];
-
-        if (obj.hasOwnProperty(_char2)) {
-          if (obj[_char2] === null) {
-            return true;
-          }
-        } else {
-          return false;
-        }
-
-        obj = obj[_char2];
-      }
-    };
-
-    return Trie;
-  }();
-
-  Range = function () {
-    function Range(trie1) {
-      this.trie = trie1;
-
-      if (this.trie.constructor !== Trie) {
-        throw Error('Range constructor requires a Trie parameter');
-      }
-    }
-
-    Range.rangeWithString = function (ranges) {
-      var j, k, len, n, r, range, ref, ref1, trie;
-
-      if (typeof ranges !== 'string') {
-        throw Error('rangeWithString requires a string parameter');
-      }
-
-      ranges = ranges.replace(/ /g, '');
-      ranges = ranges.split(',');
-      trie = new Trie();
-
-      for (j = 0, len = ranges.length; j < len; j++) {
-        range = ranges[j];
-
-        if (r = range.match(/^(\d+)-(\d+)$/)) {
-          for (n = k = ref = r[1], ref1 = r[2]; ref <= ref1 ? k <= ref1 : k >= ref1; n = ref <= ref1 ? ++k : --k) {
-            trie.push(n);
-          }
-        } else if (range.match(/^\d+$/)) {
-          trie.push(range);
-        } else {
-          throw Error('Invalid range \'' + r + '\'');
-        }
-      }
-
-      return new Range(trie);
-    };
-
-    Range.prototype.match = function (number) {
-      return this.trie.find(number);
-    };
-
-    return Range;
-  }();
-
-  $ = jQuery;
-
-  $.fn.validateCreditCard = function (callback, options) {
-    var bind, card, card_type, card_types, get_card_type, is_valid_length, is_valid_luhn, j, len, normalize, ref, validate, validate_number;
-    card_types = [{
-      name: 'amex',
-      range: '34,37',
-      valid_length: [15]
-    }, {
-      name: 'diners_club_carte_blanche',
-      range: '300-305',
-      valid_length: [14]
-    }, {
-      name: 'diners_club_international',
-      range: '36',
-      valid_length: [14]
-    }, {
-      name: 'jcb',
-      range: '3528-3589',
-      valid_length: [16]
-    }, {
-      name: 'laser',
-      range: '6304, 6706, 6709, 6771',
-      valid_length: [16, 17, 18, 19]
-    }, {
-      name: 'visa_electron',
-      range: '4026, 417500, 4508, 4844, 4913, 4917',
-      valid_length: [16]
-    }, {
-      name: 'visa',
-      range: '4',
-      valid_length: [13, 14, 15, 16, 17, 18, 19]
-    }, {
-      name: 'mastercard',
-      range: '51-55,2221-2720',
-      valid_length: [16]
-    }, {
-      name: 'discover',
-      range: '6011, 622126-622925, 644-649, 65',
-      valid_length: [16]
-    }, {
-      name: 'dankort',
-      range: '5019',
-      valid_length: [16]
-    }, {
-      name: 'maestro',
-      range: '50, 56-69',
-      valid_length: [12, 13, 14, 15, 16, 17, 18, 19]
-    }, {
-      name: 'uatp',
-      range: '1',
-      valid_length: [15]
-    }];
-    bind = false;
-
-    if (callback) {
-      if (_typeof(callback) === 'object') {
-        options = callback;
-        bind = false;
-        callback = null;
-      } else if (typeof callback === 'function') {
-        bind = true;
-      }
-    }
-
-    if (options == null) {
-      options = {};
-    }
-
-    if (options.accept == null) {
-      options.accept = function () {
-        var j, len, results;
-        results = [];
-
-        for (j = 0, len = card_types.length; j < len; j++) {
-          card = card_types[j];
-          results.push(card.name);
-        }
-
-        return results;
-      }();
-    }
-
-    ref = options.accept;
-
-    for (j = 0, len = ref.length; j < len; j++) {
-      card_type = ref[j];
-
-      if (indexOf.call(function () {
-        var k, len1, results;
-        results = [];
-
-        for (k = 0, len1 = card_types.length; k < len1; k++) {
-          card = card_types[k];
-          results.push(card.name);
-        }
-
-        return results;
-      }(), card_type) < 0) {
-        throw Error('Credit card type \'' + card_type + '\' is not supported');
-      }
-    }
-
-    get_card_type = function get_card_type(number) {
-      var k, len1, r, ref1;
-
-      ref1 = function () {
-        var l, len1, ref1, results;
-        results = [];
-
-        for (l = 0, len1 = card_types.length; l < len1; l++) {
-          card = card_types[l];
-
-          if (ref1 = card.name, indexOf.call(options.accept, ref1) >= 0) {
-            results.push(card);
-          }
-        }
-
-        return results;
-      }();
-
-      for (k = 0, len1 = ref1.length; k < len1; k++) {
-        card_type = ref1[k];
-        r = Range.rangeWithString(card_type.range);
-
-        if (r.match(number)) {
-          return card_type;
-        }
-      }
-
-      return null;
-    };
-
-    is_valid_luhn = function is_valid_luhn(number) {
-      var digit, k, len1, n, ref1, sum;
-      sum = 0;
-      ref1 = number.split('').reverse();
-
-      for (n = k = 0, len1 = ref1.length; k < len1; n = ++k) {
-        digit = ref1[n];
-        digit = +digit;
-
-        if (n % 2) {
-          digit *= 2;
-
-          if (digit < 10) {
-            sum += digit;
-          } else {
-            sum += digit - 9;
-          }
-        } else {
-          sum += digit;
-        }
-      }
-
-      return sum % 10 === 0;
-    };
-
-    is_valid_length = function is_valid_length(number, card_type) {
-      var ref1;
-      return ref1 = number.length, indexOf.call(card_type.valid_length, ref1) >= 0;
-    };
-
-    validate_number = function validate_number(number) {
-      var length_valid, luhn_valid;
-      card_type = get_card_type(number);
-      luhn_valid = false;
-      length_valid = false;
-
-      if (card_type != null) {
-        luhn_valid = is_valid_luhn(number);
-        length_valid = is_valid_length(number, card_type);
-      }
-
-      return {
-        card_type: card_type,
-        valid: luhn_valid && length_valid,
-        luhn_valid: luhn_valid,
-        length_valid: length_valid
-      };
-    };
-
-    validate = function (_this) {
-      return function () {
-        var number;
-        number = normalize($(_this).val());
-        return validate_number(number);
-      };
-    }(this);
-
-    normalize = function normalize(number) {
-      return number.replace(/[ -]/g, '');
-    };
-
-    if (!bind) {
-      return validate();
-    }
-
-    this.on('input.jccv', function (_this) {
-      return function () {
-        $(_this).off('keyup.jccv');
-        return callback.call(_this, validate());
-      };
-    }(this));
-    this.on('keyup.jccv', function (_this) {
-      return function () {
-        return callback.call(_this, validate());
-      };
-    }(this));
-    callback.call(this, validate());
-    return this;
-  };
-}).call(this);
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/custom.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/custom/custom.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-document.addEventListener('DOMContentLoaded', loadCustomData);
-var source = null;
-
-var jsrender = __webpack_require__(/*! jsrender */ "./node_modules/jsrender/jsrender.js");
-
-var csrfToken = $('meta[name="csrf-token"]').attr('content');
-$.ajaxSetup({
-  headers: {
-    'X-CSRF-TOKEN': csrfToken
-  }
-});
-document.addEventListener('DOMContentLoaded', initAllComponents);
-
-function initAllComponents() {
-  select2initialize();
-  refreshCsrfToken();
-  alertInitialize();
-  modalInputFocus();
-  inputFocus();
-  IOInitImageComponent();
-  IOInitSidebar();
-  tooltip();
-  togglePassword();
-  setLoginUserLanguage();
-}
-
-function tooltip() {
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-}
-
-function alertInitialize() {
-  $('.alert').delay(5000).slideUp(300);
-}
-
-function refreshCsrfToken() {
-  csrfToken = $('meta[name="csrf-token"]').attr('content');
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': csrfToken
-    }
-  });
-}
-
-function select2initialize() {
-  $('[data-control="select2"]').each(function () {
-    $(this).select2();
-  });
-}
-
-document.addEventListener('click', function (e) {
-  var filterBtnEle = $(e.target).closest('.show[data-ic-dropdown-btn="true"]');
-  var filterDropDownEle = $(e.target).closest('.show[data-ic-dropdown="true"]');
-
-  if (!(filterBtnEle.length > 0 || filterDropDownEle.length > 0)) {
-    $('[data-ic-dropdown-btn="true"]').removeClass('show');
-    $('[data-ic-dropdown="true"]').removeClass('show');
-  }
-});
-document.addEventListener('livewire:load', function () {
-  window.livewire.hook('message.processed', function () {
-    $('[data-control="select2"]').each(function () {
-      $(this).select2();
-    });
-  });
-});
-
-var inputFocus = function inputFocus() {
-  $('input:text:not([readonly="readonly"]):not([name="search"]):not(.front-input)').first().focus();
-};
-
-var modalInputFocus = function modalInputFocus() {
-  $(function () {
-    $('.modal').on('shown.bs.modal', function () {
-      if ($(this).find('input:text')[0]) {
-        $(this).find('input:text')[0].focus();
-      }
-    });
-  });
-};
-
-function loadCustomData() {
-  // script to active parent menu if sub menu has currently active
-  var hasActiveMenu = $(document).find('.nav-item.dropdown ul li').hasClass('active');
-
-  if (hasActiveMenu) {
-    $(document).find('.nav-item.dropdown ul li.active').parent('ul').css('display', 'block');
-    $(document).find('.nav-item.dropdown ul li.active').parent('ul').parent('li').addClass('active');
-  }
-
-  if ($(window).width() > 992) {
-    $('.no-hover').on('click', function () {
-      $(this).toggleClass('open');
-    });
-  }
-}
-
-$(document).ajaxComplete(function () {
-  // Required for Bootstrap tooltips in DataTables
-  $('[data-toggle="tooltip"]').tooltip({
-    'html': true,
-    'offset': 10
-  });
-});
-listen('select2:open', function () {
-  var allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
-  allFound[allFound.length - 1].focus();
-});
-listen('focus', '.select2.select2-container', function (e) {
-  var isOriginalEvent = e.originalEvent; // don't re-open on closing focus event
-
-  var isSingleSelect = $(this).find('.select2-selection--single').length > 0; // multi-select will pass focus to input
-
-  if (isOriginalEvent && isSingleSelect) {
-    if ($('select').data('select2')) {
-      $(this).siblings('select:enabled').select2('open');
-    }
-  }
-});
-$(function () {
-  $('.modal').on('shown.bs.modal', function () {
-    if ($(this).attr('class') != 'modal fade event-modal show') {
-      $(this).find('input:text,input:password').first().focus();
-    }
-  });
-});
-toastr.options = {
-  'closeButton': true,
-  'debug': false,
-  'newestOnTop': false,
-  'progressBar': true,
-  'positionClass': 'toast-top-right',
-  'preventDuplicates': false,
-  'onclick': null,
-  'showDuration': '300',
-  'hideDuration': '1000',
-  'timeOut': '5000',
-  'extendedTimeOut': '1000',
-  'showEasing': 'swing',
-  'hideEasing': 'linear',
-  'showMethod': 'fadeIn',
-  'hideMethod': 'fadeOut'
-};
-
-window.resetModalForm = function (formId, validationBox) {
-  $(formId)[0].reset();
-  $('select.select2Selector').each(function (index, element) {
-    var drpSelector = '#' + $(this).attr('id');
-    $(drpSelector).val('');
-    $(drpSelector).trigger('change');
-  });
-  $(validationBox).hide();
-};
-
-window.printErrorMessage = function (selector, errorResult) {
-  $(selector).show().html('');
-  $(selector).text(errorResult.responseJSON.message);
-};
-
-window.manageAjaxErrors = function (data) {
-  var errorDivId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'editValidationErrorsBox';
-
-  if (data.status == 404) {
-    toastr.error(data.responseJSON.message);
-  } else if (data.status == 422) {
-    toastr.error(data.responseJSON.message);
-  } else {
-    printErrorMessage('#' + errorDivId, data);
-  }
-};
-
-window.displaySuccessMessage = function (message) {
-  toastr.success(message);
-};
-
-window.displayErrorMessage = function (message) {
-  toastr.error(message);
-};
-
-window.deleteItem = function (url, header) {
-  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-  swal({
-    title: Lang.get('js.delete') + ' !',
-    text: Lang.get('js.are_you_sure') + ' "' + header + '" ?',
-    buttons: {
-      confirm: Lang.get('js.yes'),
-      cancel: Lang.get('js.no')
-    },
-    reverseButtons: true,
-    icon: 'warning'
-  }).then(function (willDelete) {
-    if (willDelete) {
-      deleteItemAjax(url, header, callFunction);
-    }
-  });
-};
-
-function deleteItemAjax(url, header) {
-  var callFunction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  $.ajax({
-    url: url,
-    type: 'DELETE',
-    dataType: 'json',
-    success: function success(obj) {
-      if (obj.success) {
-        Livewire.dispatch('refresh');
-        Livewire.dispatch('resetPage');
-      }
-
-      swal({
-        icon: 'success',
-        title: Lang.get('js.deleted'),
-        text: header + ' ' + Lang.get('js.has_been'),
-        timer: 2000,
-        buttons: {
-          confirm: Lang.get('js.ok')
-        }
-      });
-
-      if (callFunction) {
-        eval(callFunction);
-      }
-    },
-    error: function error(data) {
-      swal({
-        title: Lang.get('js.error'),
-        icon: 'error',
-        text: data.responseJSON.message,
-        type: 'error',
-        timer: 4000,
-        buttons: {
-          confirm: Lang.get('js.ok')
-        }
-      });
-    }
-  });
-}
-
-window.format = function (dateTime) {
-  var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'DD-MMM-YYYY';
-  return moment(dateTime).format(format);
-};
-
-window.processingBtn = function (selecter, btnId) {
-  var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  var loadingButton = $(selecter).find(btnId);
-
-  if (state === 'loading') {
-    loadingButton.button('loading');
-  } else {
-    loadingButton.button('reset');
-  }
-};
-
-window.prepareTemplateRender = function (templateSelector, data) {
-  var template = jsrender.templates(templateSelector);
-  return template.render(data);
-};
-
-window.isValidFile = function (inputSelector, validationMessageSelector) {
-  var ext = $(inputSelector).val().split('.').pop().toLowerCase();
-
-  if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
-    $(inputSelector).val('');
-    $(validationMessageSelector).removeClass('d-none');
-    $(validationMessageSelector).html(Lang.get("js.image_file_type")).show();
-    $(validationMessageSelector).delay(5000).slideUp(300);
-    return false;
-  }
-
-  $(validationMessageSelector).hide();
-  return true;
-};
-
-window.displayPhoto = function (input, selector) {
-  var displayPreview = true;
-
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-
-    reader.onload = function (e) {
-      var image = new Image();
-      image.src = e.target.result;
-
-      image.onload = function () {
-        $(selector).attr('src', e.target.result);
-        displayPreview = true;
-      };
-    };
-
-    if (input.files[0].size > 2097152) {
-      displayErrorMessage(Lang.get("js.image_file_type"));
-      return false;
-    }
-
-    if (displayPreview) {
-      reader.readAsDataURL(input.files[0]);
-      $(selector).show();
-    }
-  }
-};
-
-window.removeCommas = function (str) {
-  return str.replace(/,/g, '');
-};
-
-window.DatetimepickerDefaults = function (opts) {
-  return $.extend({}, {
-    sideBySide: true,
-    ignoreReadonly: true,
-    icons: {
-      close: 'fa fa-times',
-      time: 'fa fa-clock-o',
-      date: 'fa fa-calendar',
-      up: 'fa fa-arrow-up',
-      down: 'fa fa-arrow-down',
-      previous: 'fa fa-chevron-left',
-      next: 'fa fa-chevron-right',
-      today: 'fa fa-clock-o',
-      clear: 'fa fa-trash-o'
-    }
-  }, opts);
-};
-
-window.isEmpty = function (value) {
-  return value === undefined || value === null || value === '';
-};
-
-window.screenLock = function () {
-  $('#overlay-screen-lock').show();
-  $('body').css({
-    'pointer-events': 'none',
-    'opacity': '0.6'
-  });
-};
-
-window.screenUnLock = function () {
-  $('body').css({
-    'pointer-events': 'auto',
-    'opacity': '1'
-  });
-  $('#overlay-screen-lock').hide();
-};
-
-window.onload = function () {
-  window.startLoader = function () {
-    $('.infy-loader').show();
-  };
-
-  window.stopLoader = function () {
-    $('.infy-loader').hide();
-  }; // infy loader js
-
-
-  stopLoader();
-};
-
-window.setBtnLoader = function (btnLoader) {
-  if (btnLoader.attr('data-old-text')) {
-    btnLoader.html(btnLoader.attr('data-old-text')).prop('disabled', false);
-    btnLoader.removeAttr('data-old-text');
-    return;
-  }
-
-  btnLoader.attr('data-old-text', btnLoader.text());
-  btnLoader.html('<i class="icon-line-loader icon-spin m-0"></i>').prop('disabled', true);
-};
-
-window.setAdminBtnLoader = function (btnLoader) {
-  if (btnLoader.attr('data-old-text')) {
-    btnLoader.html(btnLoader.attr('data-old-text')).prop('disabled', false);
-    btnLoader.removeAttr('data-old-text');
-    return;
-  }
-
-  btnLoader.attr('data-old-text', btnLoader.text());
-  btnLoader.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
-};
-
-window.urlValidation = function (value, regex) {
-  var urlCheck = value == '' ? true : value.match(regex) ? true : false;
-
-  if (!urlCheck) {
-    return false;
-  }
-
-  return true;
-};
-
-listenClick('.languageSelection', function () {
-  var languageName = $(this).data('prefix-value');
-  $.ajax({
-    type: 'POST',
-    url: '/change-language',
-    data: {
-      languageName: languageName
-    },
-    success: function success() {
-      location.reload();
-    }
-  });
-});
-listenClick('#register', function (e) {
-  e.preventDefault();
-  $('.open #dropdownLanguage').trigger('click');
-  $('.open #dropdownLogin').trigger('click');
-});
-listenClick('#language', function (e) {
-  e.preventDefault();
-  $('.open #dropdownRegister').trigger('click');
-  $('.open #dropdownLogin').trigger('click');
-});
-listenClick('#login', function (e) {
-  e.preventDefault();
-  $('.open #dropdownRegister').trigger('click');
-  $('.open #dropdownLanguage').trigger('click');
-});
-
-window.checkSummerNoteEmpty = function (selectorElement, errorMessage) {
-  var isRequired = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-  if ($(selectorElement).summernote('isEmpty') && isRequired === 1) {
-    displayErrorMessage(errorMessage);
-    $(document).find('.note-editable').html('<p><br></p>');
-    return false;
-  } else if (!$(selectorElement).summernote('isEmpty')) {
-    $(document).find('.note-editable').contents().each(function () {
-      if (this.nodeType === 3) {
-        // text node
-        this.textContent = this.textContent.replace(/\u00A0/g, '');
-      }
-    });
-
-    if ($(document).find('.note-editable').text().trim().length == 0) {
-      $(document).find('.note-editable').html('<p><br></p>');
-      $(selectorElement).val(null);
-
-      if (isRequired === 1) {
-        displayErrorMessage(errorMessage);
-        return false;
-      }
-    }
-  }
-
-  return true;
-};
-
-window.preparedTemplate = function () {
-  source = $('#actionTemplate').html();
-  window.preparedTemplate = Handlebars.compile(source);
-};
-
-window.ajaxCallInProgress = function () {
-  ajaxCallIsRunning = true;
-};
-
-window.ajaxCallCompleted = function () {
-  ajaxCallIsRunning = false;
-};
-
-window.avoidSpace = function (event) {
-  var k = event ? event.which : window.event.keyCode;
-
-  if (k == 32) {
-    return false;
-  }
-};
-
-listenClick('#readNotification', function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-  var notificationId = $(this).attr('data-id');
-  var notification = $(this);
-  $.ajax({
-    type: 'POST',
-    url: route('notifications.read', notificationId),
-    data: {
-      notificationId: notificationId
-    },
-    success: function success() {
-      var count = parseInt($('#header-notification-counter').text());
-      $('#header-notification-counter').text(count - 1);
-      notification.remove();
-      var notificationCounter = document.getElementsByClassName('readNotification').length;
-      $('#counter').text(notificationCounter);
-
-      if (notificationCounter == 0) {
-        $('.notification-counter').addClass('d-none');
-        $('#readAllNotification').addClass('d-none');
-        $('.empty-state').removeClass('d-none');
-        $('.notification-toggle').removeClass('beep');
-      }
-
-      displaySuccessMessage(Lang.get('js.notification_read'));
-    },
-    error: function error(_error) {
-      manageAjaxErrors(_error);
-    }
-  });
-});
-listenClick('#readAllNotification', function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-  $.ajax({
-    type: 'POST',
-    url: route('notifications.read.all'),
-    success: function success() {
-      $('#header-notification-counter').text(0);
-      $('#header-notification-counter').addClass('d-none');
-      $('.readNotification').remove();
-      $('#readAllNotification').addClass('d-none');
-      $('.empty-state').removeClass('d-none');
-      $('.notification-toggle').removeClass('beep');
-      displaySuccessMessage(Lang.get('js.notification_read'));
-    },
-    error: function error(_error2) {
-      manageAjaxErrors(_error2);
-    }
-  });
-});
-
-window.getAvgReviewHtmlData = function (reviews) {
-  var ratingCount = reviews.length;
-  var totalSumRating = 0;
-  $(reviews).each(function (index, value) {
-    totalSumRating += value.rating;
-  });
-  var avgRating = totalSumRating / ratingCount;
-  var data = '<div class="avg-review-star-div d-flex align-self-center mb-1">';
-
-  for (var i = 0; i < 5; i++) {
-    if (avgRating > 0) {
-      if (avgRating > 0.5) {
-        data += '<i class="fas fa-star review-star"></i>';
-      } else {
-        data += '<i class="fas fa-star-half-alt review-star"></i>';
-      }
-    } else {
-      data += '<i class="far fa-star review-star"></i>';
-    }
-
-    avgRating--;
-  }
-
-  data += '</div>';
-  return data;
-};
-
-listenClick('.apply-dark-mode', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('update-dark-mode'),
-    type: 'get',
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          location.reload();
-        }, 500);
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-window.openDropdownManually = function (dropdownBtnEle, dropdownEle) {
-  if (!dropdownBtnEle.hasClass('show')) {
-    dropdownBtnEle.addClass('show');
-    dropdownEle.addClass('show');
-  } else {
-    dropdownBtnEle.removeClass('show');
-    dropdownEle.removeClass('show');
-  }
-};
-
-window.hideDropdownManually = function (dropdownBtnEle, dropdownEle) {
-  dropdownBtnEle.removeClass('show');
-  dropdownEle.removeClass('show');
-};
-
-function togglePassword() {
-  $('[data-toggle="password"]').each(function () {
-    var input = $(this);
-    var eye_btn = $(this).parent().find('.input-icon');
-    eye_btn.css('cursor', 'pointer').addClass('input-password-hide');
-    eye_btn.on('click', function () {
-      if (eye_btn.hasClass('input-password-hide')) {
-        eye_btn.removeClass('input-password-hide').addClass('input-password-show');
-        eye_btn.find('.bi').removeClass('bi-eye-slash-fill').addClass('bi-eye-fill');
-        input.attr('type', 'text');
-      } else {
-        eye_btn.removeClass('input-password-show').addClass('input-password-hide');
-        eye_btn.find('.bi').removeClass('bi-eye-fill').addClass('bi-eye-slash-fill');
-        input.attr('type', 'password');
-      }
-    });
-  });
-}
-
-document.addEventListener('turbo:before-cache', function () {
-  var currentSelect2 = '.select2-hidden-accessible';
-  $(currentSelect2).each(function () {
-    $(this).select2('destroy');
-  });
-  $(currentSelect2).each(function () {
-    $(this).select2();
-  });
-  $('.toast').addClass('d-none');
-});
-
-function setLoginUserLanguage() {
-  var checkLanguageSession = $('.currentLanguage').val();
-  Lang.setLocale(checkLanguageSession);
-} // set N/A if span tag is empty
-
-
-window.setValueOfEmptySpan = function () {
-  $('span.showSpan').each(function () {
-    if (!$(this).text()) {
-      $(this).text('N/A');
-    }
-  });
-};
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/helper.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/custom/helper.js ***!
-  \**********************************************/
-/***/ (() => {
-
-window.listen = function (event, selector, callback) {
-  $(document).on(event, selector, callback);
-};
-
-window.listenClick = function (selector, callback) {
-  $(document).on('click', selector, callback);
-};
-
-window.listenSubmit = function (selector, callback) {
-  $(document).on('submit', selector, callback);
-};
-
-window.listenChange = function (selector, callback) {
-  $(document).on('change', selector, callback);
-};
-
-window.listenKeyup = function (selector, callback) {
-  $(document).on('keyup', selector, callback);
-};
-
-window.listenHiddenBsModal = function (selector, callback) {
-  $(document).on('hidden.bs.modal', selector, callback);
-};
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/input_price_format.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/custom/input_price_format.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-"use strict";
-
-
-window.setPrice = function (selector, price) {
-  if (price != '' || price > 0) {
-    if (typeof price !== 'number') {
-      price = price.replace(/,/g, '');
-    }
-
-    var formattedPrice = addCommas(price);
-    $(selector).val(formattedPrice);
-  }
-};
-
-window.addCommas = function (nStr) {
-  nStr += '';
-  var x = nStr.split('.');
-  var x1 = x[0];
-  var x2 = x.length > 1 ? '.' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-  }
-
-  return x1 + x2;
-};
-
-window.getFormattedPrice = function (price) {
-  if (price != '' || price > 0) {
-    if (typeof price !== 'number') {
-      price = price.replace(/,/g, '');
-    }
-
-    return addCommas(price);
-  }
-};
-
-window.priceFormatSelector = function (selector) {
-  var afterDecimal = 2;
-  $(document).on('input keyup keydown keypress', selector, function (event) {
-    var price = $(this).val();
-
-    if (price === '') {
-      $(this).val('');
-    } else {
-      if (/^[0-9]+(,[0-9]+)*$/.test(price)) {
-        $(this).val(getFormattedPrice(price));
-        return true;
-      } else {
-        this.value = this.value.replace(/(\..*)\./g, '$1').replace(new RegExp("(\\.[\\d]{" + afterDecimal + "}).", "g"), '$1');
-      }
-    }
-  });
-};
-
-window.removeCommas = function (str) {
-  return str.replace(/,/g, '');
-};
-
-priceFormatSelector('.price-input');
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/phone-number-country-code.js":
-/*!*****************************************************************!*\
-  !*** ./resources/assets/js/custom/phone-number-country-code.js ***!
-  \*****************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadPhoneNumberCountryCodeData);
-
-function loadPhoneNumberCountryCodeData() {
-  loadPhoneNumberCountryCode();
-  userCreateForm();
-  userEditForm();
-  vcardEditForm();
-  createSetting();
-}
-
-function loadPhoneNumberCountryCode() {
-  if (!$('#phoneNumber').length) {
-    return false;
-  }
-
-  var input = document.querySelector('#phoneNumber'),
-      errorMsg = document.querySelector('#error-msg'),
-      validMsg = document.querySelector('#valid-msg');
-  var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_number'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')]; // initialise plugin
-
-  var intl = window.intlTelInput(input, {
-    initialCountry: defaultCountryCodeValue,
-    separateDialCode: true,
-    geoIpLookup: function geoIpLookup(success, failure) {
-      $.get('https://ipinfo.io', function () {}, 'jsonp').always(function (resp) {
-        var countryCode = resp && resp.country ? resp.country : '';
-        success(countryCode);
-      });
-    },
-    utilsScript: '../../public/assets/js/inttel/js/utils.min.js'
-  });
-
-  var reset = function reset() {
-    input.classList.remove('error');
-    errorMsg.innerHTML = '';
-    errorMsg.classList.add('d-none');
-    validMsg.classList.add('d-none');
-  };
-
-  input.addEventListener('blur', function () {
-    reset();
-
-    if (input.value.trim()) {
-      if (intl.isValidNumber()) {
-        validMsg.classList.remove('d-none');
-      } else {
-        input.classList.add('error');
-        var errorCode = intl.getValidationError();
-        errorMsg.innerHTML = errorMap[errorCode];
-        errorMsg.classList.remove('d-none');
-      }
-    }
-  }); // on keyup / change flag: reset
-
-  input.addEventListener('change', reset);
-  input.addEventListener('keyup', reset);
-
-  if (typeof phoneNo != 'undefined' && phoneNo !== '') {
-    setTimeout(function () {
-      $('#phoneNumber').trigger('change');
-    }, 500);
-  }
-
-  $('#phoneNumber').on('blur keyup change countrychange', function () {
-    if (typeof phoneNo != 'undefined' && phoneNo !== '') {
-      intl.setNumber('+' + phoneNo);
-      phoneNo = '';
-    }
-
-    var getCode = intl.selectedCountryData['dialCode'];
-    $('#prefix_code').val(getCode);
-  });
-  var getCode = intl.selectedCountryData['dialCode'];
-  $('#prefix_code').val(getCode);
-  var getPhoneNumber = $('#phoneNumber').val();
-  var removeDashPhoneNumber = getPhoneNumber.replaceAll('-', ' ');
-  var removeSpacePhoneNumber = removeDashPhoneNumber.replace(/\s/g, '');
-  $('#phoneNumber').val(removeSpacePhoneNumber);
-  $('#phoneNumber').focus();
-  $('#phoneNumber').trigger('blur');
-}
-
-$(document).on('click', '.iti__country', function () {
-  var flagClass = $('.iti__selected-flag>.iti__flag').attr('class');
-  flagClass = flagClass.split(/\s+/)[1];
-  var dialCodeVal = $('.iti__selected-dial-code').text();
-  window.localStorage.setItem('flagClassLocal', flagClass);
-  window.localStorage.setItem('dialCodeValLocal', dialCodeVal);
-});
-
-function userCreateForm() {
-  if (!$('#userCreateForm').length) {
-    return false;
-  }
-
-  $('#userCreateForm').submit(function () {
-    if ($('#error-msg').text() !== '') {
-      $('#phoneNumber').focus();
-      return false;
-    }
-  });
-}
-
-function vcardEditForm() {
-  if (!$('#editForm').length) {
-    return false;
-  }
-
-  $('#editForm').submit(function () {
-    if ($('#error-msg').text() !== '') {
-      $('#phoneNumber').focus();
-      return false;
-    }
-  });
-}
-
-function createSetting() {
-  if (!$('#createSetting').length) {
-    return false;
-  }
-
-  $('#createSetting').submit(function () {
-    if ($('#error-msg').text() !== '') {
-      $('#phoneNumber').focus();
-      return false;
-    }
-  });
-}
-
-function userEditForm() {
-  if (!$('#userEditForm').length) {
-    return false;
-  }
-
-  $('#userEditForm').submit(function () {
-    if ($('#error-msg').text() !== '') {
-      $('#phoneNumber').focus();
-      return false;
-    }
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/custom/sidebar_menu.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/custom/sidebar_menu.js ***!
-  \****************************************************/
-/***/ (() => {
-
-listenKeyup('#menuSearch', function () {
-  var value = $(this).val().toLowerCase();
-  $('.nav-item').filter(function () {
-    $('.no-record').addClass('d-none');
-    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-    checkEmpty();
-  });
-});
-
-function checkEmpty() {
-  if ($('.nav-item:visible').last().length == 0) {
-    $('.no-record').removeClass('d-none');
-  }
-}
-
-listenClick('.sidebar-aside-toggle', function () {
-  if ($(this).hasClass('active') === true) {
-    $('.sidebar-search-box').addClass('d-none');
-  } else {
-    $('.sidebar-search-box').removeClass('d-none');
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/dashboard/dashboard.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/dashboard/dashboard.js ***!
-  \****************************************************/
-/***/ (() => {
-
-// document.addEventListener('DOMContentLoaded', loadDashboardData)
-// document.addEventListener('DOMContentLoaded', loadPatientDashboardData)
-// document.addEventListener('DOMContentLoaded', loadDoctorDashboardData)
-var amount = [];
-var month = [];
-var totalAmount = 0;
-var chartType = 'area';
-var adminDashboardAppointmentChart = null;
-Livewire.hook('element.init', function (_ref) {
-  var component = _ref.component,
-      el = _ref.el;
-  loadDashboardData();
-  loadPatientDashboardData();
-  loadDoctorDashboardData();
-});
-
-function loadPatientDashboardData() {
-  if (!$('#patientChartData').length) {
-    return;
-  }
-
-  var patientChartData = JSON.parse($('#patientChartData').val());
-  var lang = $('.currentLanguage').val();
-  var currentDate = new Date();
-  var currentMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var currentValue = patientChartData[1][currentMonth];
-  $('.patient-month-total-amount').text(currencyIcon + ' ' + currentValue);
-  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
-
-  var previousMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var previousMonthValue = patientChartData[1][previousMonth];
-  var performancedataforprogressbabr;
-
-  if (previousMonthValue === 0) {
-    performancedataforprogressbabr = 100;
-  } else if (currentValue == 0 && previousMonthValue == 0) {
-    performancedataforprogressbabr = 0;
-  } else {
-    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
-  }
-
-  if (performancedataforprogressbabr > 100) {
-    $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
-    $(".bord-earning-card-body-amont").css('color', 'green');
-  } else {
-    if (performancedataforprogressbabr < 0) {
-      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
-      $(".dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
-    } else {
-      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
-      $(".dashbord-earning-card-body-amont").css('color', 'green');
-    }
-  }
-
-  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
-
-  if (remainingPercenctageForProgressbar > 100) {
-    remainingPercenctageForProgressbar = 100;
-  }
-
-  $(function () {
-    var setRadial = function setRadial(percent) {
-      $(".patient-js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".patient-js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
-      $(".patient-js-radial-percent").html(percent + '%');
-    };
-
-    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
-  });
-}
-
-function loadDashboardData() {
-  if (!$('#adminChartData').length) {
-    return;
-  }
-
-  var adminChartData = JSON.parse($('#adminChartData').val());
-  var lang = $('.currentLanguage').val();
-  var currentDate = new Date();
-  var currentMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var currentValue = adminChartData[currentMonth];
-  $('.total-amount').text(currencyIcon + ' ' + currentValue);
-  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
-
-  var previousMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var previousMonthValue = adminChartData[previousMonth];
-  var performancedataforprogressbabr;
-
-  if (previousMonthValue == 0 && currentValue != 0) {
-    performancedataforprogressbabr = 100;
-  } else if (currentValue == 0 && previousMonthValue == 0) {
-    performancedataforprogressbabr = 0;
-  } else {
-    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
-  }
-
-  if (performancedataforprogressbabr > 100) {
-    $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
-    $(".admin-dashbord-earning-card-body-amont").css('color', 'green');
-  } else {
-    if (performancedataforprogressbabr < 0) {
-      $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
-      $(".admin-dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
-    } else {
-      $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
-      $(".admin-dashbord-earning-card-body-amont").css('color', 'green');
-    }
-  }
-
-  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
-
-  if (remainingPercenctageForProgressbar > 100) {
-    remainingPercenctageForProgressbar = 100;
-  }
-
-  $(function () {
-    var setRadial = function setRadial(percent) {
-      $(".js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
-      $(".js-radial-percent").html(percent + '%');
-    };
-
-    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
-  });
-  month = [];
-  amount = [];
-  totalAmount = 0;
-  $.each(adminChartData, function (key, value) {
-    month.push(key);
-    amount.push(value);
-    totalAmount += value;
-  });
-  $('.totalEarning').text(totalAmount);
-  prepareAppointmentReport();
-}
-
-function loadDoctorDashboardData() {
-  if (!$('#doctorChartData').length) {
-    return;
-  }
-
-  var doctorChartData = JSON.parse($('#doctorChartData').val());
-  var lang = $('.currentLanguage').val();
-  var currentDate = new Date();
-  var currentMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var currentValue = doctorChartData[2][currentMonth]; // $('.thismontappointment').text(currentValue);
-
-  $('.doctor-month-total-amount').text(currencyIcon + ' ' + currentValue);
-  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
-
-  var previousMonth = currentDate.toLocaleString(lang, {
-    month: 'short'
-  });
-  var previousMonthValue = doctorChartData[2][previousMonth];
-  var performancedataforprogressbabr;
-
-  if (previousMonthValue == 0 && currentValue != 0) {
-    performancedataforprogressbabr = 100;
-  } else if (currentValue == 0 && previousMonthValue == 0) {
-    performancedataforprogressbabr = 0;
-  } else {
-    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
-  }
-
-  if (performancedataforprogressbabr > 100) {
-    $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
-    $(".bord-earning-card-body-amont").css('color', 'green');
-  } else {
-    if (performancedataforprogressbabr < 0) {
-      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
-      $(".dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
-    } else {
-      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
-      $(".dashbord-earning-card-body-amont").css('color', 'green');
-    }
-  }
-
-  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
-
-  if (remainingPercenctageForProgressbar > 100) {
-    remainingPercenctageForProgressbar = 100;
-  }
-
-  $(function () {
-    var setRadial = function setRadial(percent) {
-      $(".doctor-js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".doctor-js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
-      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
-      $(".doctor-js-radial-percent").html(percent + '%');
-    };
-
-    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
-  });
-  month = [];
-  amount = [];
-  appointmentmonth = [];
-  appointmentvalue = [];
-  totalAmount = 0;
-  totalAppointment = 0;
-  $.each(doctorChartData[0], function (key, value) {
-    month.push(key);
-    amount.push(value);
-    totalAmount += value;
-  });
-  $.each(doctorChartData[1], function (key, value) {
-    appointmentmonth.push(key);
-    appointmentvalue.push(value);
-    totalAppointment += value;
-  });
-  prepareDoctorAppointmentReport();
-}
-
-function prepareAppointmentReport() {
-  if (!$('#appointmentChartId').length) {
-    return;
-  }
-
-  $('#appointmentChartId').remove();
-  $('.appointmentChart').append('<div id="appointmentChartId" style="height: 350px" class="card-rounded-bottom"></div>');
-  var id = document.getElementById('appointmentChartId'),
-      borderColor = '--bs-gray-200';
-  id && new ApexCharts(id, {
-    series: [{
-      name: Lang.get('js.amount'),
-      type: chartType,
-      stacked: !0,
-      data: amount
-    }],
-    chart: {
-      fontFamily: 'inherit',
-      stacked: !0,
-      type: chartType,
-      height: 350,
-      toolbar: {
-        show: !1
-      },
-      background: dashboardChartBGColor
-    },
-    plotOptions: {
-      bar: {
-        stacked: !0,
-        horizontal: !1,
-        borderRadius: 4,
-        columnWidth: ['12%']
-      }
-    },
-    legend: {
-      show: !1
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    stroke: {
-      curve: 'smooth',
-      show: !0,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: month,
-      axisBorder: {
-        show: !1
-      },
-      axisTicks: {
-        show: !1
-      },
-      labels: {
-        style: {
-          colors: dashboardChartFontColor,
-          fontSize: '12px'
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: dashboardChartFontColor,
-          fontSize: '12px'
-        }
-      }
-    },
-    fill: {
-      opacity: 1
-    },
-    states: {
-      normal: {
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      },
-      hover: {
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      },
-      active: {
-        allowMultipleDataPointsSelection: !1,
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      }
-    },
-    tooltip: {
-      style: {
-        fontSize: '12px'
-      },
-      y: {
-        formatter: function formatter(e) {
-          return currencyIcon + ' ' + e;
-        }
-      }
-    },
-    grid: {
-      borderColor: borderColor,
-      strokeDashArray: 4,
-      yaxis: {
-        lines: {
-          show: !0
-        }
-      },
-      padding: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-      }
-    },
-    theme: {
-      mode: 'dark',
-      palette: 'palette1',
-      monochrome: {
-        enabled: false,
-        color: '#13151f',
-        shadeTo: 'dark',
-        shadeIntensity: 0.00
-      }
-    }
-  }).render();
-}
-
-function prepareDoctorAppointmentReport() {
-  if (!$('#appointmentDoctorChartId').length) {
-    return;
-  }
-
-  $('#appointmentDoctorChartId').remove();
-  $('.appointmentDoctorChart').append('<div id="appointmentDoctorChartId" style="height: 350px" class="card-rounded-bottom"></div>');
-  var id = document.getElementById('appointmentDoctorChartId'),
-      borderColor = '--bs-gray-200';
-  id && new ApexCharts(id, {
-    series: [{
-      name: 'appointment',
-      type: chartType,
-      stacked: !0,
-      data: appointmentvalue
-    }],
-    chart: {
-      fontFamily: 'inherit',
-      stacked: !0,
-      type: chartType,
-      height: 350,
-      toolbar: {
-        show: !1
-      },
-      background: dashboardChartBGColor
-    },
-    plotOptions: {
-      bar: {
-        stacked: !0,
-        horizontal: !1,
-        borderRadius: 4,
-        columnWidth: ['12%']
-      }
-    },
-    legend: {
-      show: !1
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    stroke: {
-      curve: 'smooth',
-      show: !0,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: appointmentmonth,
-      axisBorder: {
-        show: !1
-      },
-      axisTicks: {
-        show: !1
-      },
-      labels: {
-        style: {
-          colors: dashboardChartFontColor,
-          fontSize: '12px'
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: dashboardChartFontColor,
-          fontSize: '12px'
-        }
-      }
-    },
-    fill: {
-      opacity: 1
-    },
-    states: {
-      normal: {
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      },
-      hover: {
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      },
-      active: {
-        allowMultipleDataPointsSelection: !1,
-        filter: {
-          type: 'none',
-          value: 0
-        }
-      }
-    },
-    tooltip: {
-      style: {
-        fontSize: '12px'
-      },
-      y: {
-        formatter: function formatter(e) {
-          return ' ' + e;
-        }
-      }
-    },
-    grid: {
-      borderColor: borderColor,
-      strokeDashArray: 4,
-      yaxis: {
-        lines: {
-          show: !0
-        }
-      },
-      padding: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-      }
-    },
-    theme: {
-      mode: 'dark',
-      palette: 'palette1',
-      monochrome: {
-        enabled: false,
-        color: '#13151f',
-        shadeTo: 'dark',
-        shadeIntensity: 0.00
-      }
-    }
-  }).render(); // totalAmount = 0;
-}
-
-listenClick('#changeChart', function () {
-  if (chartType == 'area') {
-    chartType = 'bar';
-    $('.chart').addClass('fa-chart-area');
-    $('.chart').removeClass('fa-chart-bar');
-    prepareAppointmentReport();
-  } else {
-    chartType = 'area';
-    $('.chart').removeClass('fa-chart-area');
-    $('.chart').addClass('fa-chart-bar');
-    prepareAppointmentReport();
-  }
-});
-listenClick('#monthData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('patientData.dashboard'),
-    type: 'GET',
-    data: {
-      month: 'month'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#monthlyReport').empty();
-        $(document).find('#week').removeClass('show active');
-        $(document).find('#day').removeClass('show active');
-        $(document).find('#month').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.profile,
-              'name': value.user.full_name,
-              'email': value.user.email,
-              'patientId': value.patient_unique_id,
-              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
-              'appointment_count': value.appointments_count,
-              'route': route('patients.show', value.id)
-            }];
-            $(document).find('#monthlyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#monthlyReport').append("<tr class=\"text-center\">\n                                                    <td colspan=\"5\" class=\"text-muted fw-bold\">".concat(noData, "</td>\n                                                </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenChange('#serviceId', function (e) {
-  e.preventDefault();
-  var serviceId = $('#serviceId').val();
-  var dashboardDoctorId = $('#dashboardDoctorId').val();
-  var serviceCategoryId = $('#serviceCategoryId').val();
-  $('.totalEarning').text('');
-
-  if ($(this).val() != '') {
-    $.ajax({
-      url: route('admin.dashboard'),
-      type: 'GET',
-      data: {
-        serviceId: serviceId,
-        dashboardDoctorId: dashboardDoctorId,
-        serviceCategoryId: serviceCategoryId
-      },
-      success: function success(result) {
-        if (result.success) {
-          month = [];
-          amount = [];
-          totalAmount = 0;
-          $.each(result.data, function (key, value) {
-            month.push(key);
-            amount.push(value);
-            totalAmount += value;
-          });
-          $('.totalEarning').text(totalAmount);
-          prepareAppointmentReport();
-        }
-      },
-      error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
-      }
-    });
-  }
-});
-listenClick('#dashboardResetBtn', function () {
-  $('.dashboardFilter').val('').trigger('change');
-  hideDropdownManually($('#dashboardFilterBtn'), $('.dropdown-menu'));
-});
-listenChange('#dashboardDoctorId', function (e) {
-  e.preventDefault();
-  var serviceId = $('#serviceId').val();
-  var dashboardDoctorId = $('#dashboardDoctorId').val();
-  var serviceCategoryId = $('#serviceCategoryId').val();
-  $('.totalEarning').text('');
-  $.ajax({
-    url: route('admin.dashboard'),
-    type: 'GET',
-    data: {
-      serviceId: serviceId,
-      dashboardDoctorId: dashboardDoctorId,
-      serviceCategoryId: serviceCategoryId
-    },
-    success: function success(result) {
-      if (result.success) {
-        month = [];
-        amount = [];
-        totalAmount = 0;
-        $.each(result.data, function (key, value) {
-          month.push(key);
-          amount.push(value);
-          totalAmount += value;
-        });
-        $('.totalEarning').text(totalAmount);
-        prepareAppointmentReport();
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenChange('#serviceCategoryId', function (e) {
-  e.preventDefault();
-  var serviceId = $('#serviceId').val();
-  var dashboardDoctorId = $('#dashboardDoctorId').val();
-  var serviceCategoryId = $('#serviceCategoryId').val();
-  $('.totalEarning').text('');
-  $.ajax({
-    url: route('admin.dashboard'),
-    type: 'GET',
-    data: {
-      serviceId: serviceId,
-      dashboardDoctorId: dashboardDoctorId,
-      serviceCategoryId: serviceCategoryId
-    },
-    success: function success(result) {
-      if (result.success) {
-        month = [];
-        amount = [];
-        totalAmount = 0;
-        $.each(result.data, function (key, value) {
-          month.push(key);
-          amount.push(value);
-          totalAmount += value;
-        });
-        $('.totalEarning').text(totalAmount);
-        prepareAppointmentReport();
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#weekData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('patientData.dashboard'),
-    type: 'GET',
-    data: {
-      week: 'week'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#weeklyReport').empty();
-        $(document).find('#month').removeClass('show active');
-        $(document).find('#day').removeClass('show active');
-        $(document).find('#week').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.profile,
-              'name': value.user.full_name,
-              'email': value.user.email,
-              'patientId': value.patient_unique_id,
-              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
-              'appointment_count': value.appointments_count,
-              'route': route('patients.show', value.id)
-            }];
-            $(document).find('#weeklyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#weeklyReport').append("<tr class=\"text-center\">\n                                                    <td colspan=\"5\" class=\"text-muted fw-bold\">".concat(noData, "</td>\n                                                </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#dayData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('patientData.dashboard'),
-    type: 'GET',
-    data: {
-      day: 'day'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#dailyReport').empty();
-        $(document).find('#month').removeClass('show active');
-        $(document).find('#week').removeClass('show active');
-        $(document).find('#day').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.profile,
-              'name': value.user.full_name,
-              'email': value.user.email,
-              'patientId': value.patient_unique_id,
-              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
-              'appointment_count': value.appointments_count,
-              'route': route('patients.show', value.id)
-            }];
-            $(document).find('#dailyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#dailyReport').append("\n                    <tr class=\"text-center\">\n                        <td colspan=\"5\" class=\"text-muted fw-bold\"> ".concat(noData, "</td>\n                    </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.dayData', function () {
-  $(this).addClass('text-primary');
-  $('.weekData ,.monthData').removeClass('text-primary');
-});
-listenClick('.weekData', function () {
-  $(this).addClass('text-primary');
-  $('.dayData ,.monthData').removeClass('text-primary');
-});
-listenClick('.monthData', function () {
-  $(this).addClass('text-primary');
-  $('.weekData ,.dayData').removeClass('text-primary');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/dashboard/doctor-dashboard.js":
-/*!***********************************************************!*\
-  !*** ./resources/assets/js/dashboard/doctor-dashboard.js ***!
-  \***********************************************************/
-/***/ (() => {
-
-listenClick('#doctorMonthData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('doctors.appointment.dashboard'),
-    type: 'GET',
-    data: {
-      month: 'month'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#doctorMonthlyReport').empty();
-        $(document).find('#week').removeClass('show active');
-        $(document).find('#day').removeClass('show active');
-        $(document).find('#month').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.patient.profile,
-              'name': value.patient.user.full_name,
-              'email': value.patient.user.email,
-              'patientId': value.patient.patient_unique_id,
-              'date': moment(value.date).format('Do MMM, Y'),
-              'from_time': value.from_time,
-              'from_time_type': value.from_time_type,
-              'to_time': value.to_time,
-              'to_time_type': value.to_time_type,
-              'route': route('doctors.patient.detail', value.patient_id)
-            }];
-            $(document).find('#doctorMonthlyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#doctorMonthlyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#doctorWeekData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('doctors.appointment.dashboard'),
-    type: 'GET',
-    data: {
-      week: 'week'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#doctorWeeklyReport').empty();
-        $(document).find('#month').removeClass('show active');
-        $(document).find('#day').removeClass('show active');
-        $(document).find('#week').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.patient.profile,
-              'name': value.patient.user.full_name,
-              'email': value.patient.user.email,
-              'patientId': value.patient.patient_unique_id,
-              'date': moment(value.date).format('Do MMM, Y'),
-              'from_time': value.from_time,
-              'from_time_type': value.from_time_type,
-              'to_time': value.to_time,
-              'to_time_type': value.to_time_type,
-              'route': route('doctors.patient.detail', value.patient_id)
-            }];
-            $(document).find('#doctorWeeklyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#doctorWeeklyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#doctorDayData', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('doctors.appointment.dashboard'),
-    type: 'GET',
-    data: {
-      day: 'day'
-    },
-    success: function success(result) {
-      if (result.success) {
-        $('#doctorDailyReport').empty();
-        $(document).find('#month').removeClass('show active');
-        $(document).find('#week').removeClass('show active');
-        $(document).find('#day').addClass('show active');
-
-        if (result.data.patients.data != '') {
-          $.each(result.data.patients.data, function (index, value) {
-            var data = [{
-              'image': value.patient.profile,
-              'name': value.patient.user.full_name,
-              'email': value.patient.user.email,
-              'patientId': value.patient.patient_unique_id,
-              'date': moment(value.date).format('Do MMM, Y'),
-              'from_time': value.from_time,
-              'from_time_type': value.from_time_type,
-              'to_time': value.to_time,
-              'to_time_type': value.to_time_type,
-              'route': route('doctors.patient.detail', value.patient_id)
-            }];
-            $(document).find('#doctorDailyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
-          });
-        } else {
-          $(document).find('#doctorDailyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
-        }
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#doctorDayData', function () {
-  $(this).addClass('text-primary');
-  $('#doctorWeekData ,#doctorMonthData').removeClass('text-primary');
-});
-listenClick('#doctorWeekData', function () {
-  $(this).addClass('text-primary');
-  $('#doctorDayData ,#doctorMonthData').removeClass('text-primary');
-});
-listenClick('#doctorMonthData', function () {
-  $(this).addClass('text-primary');
-  $('#doctorWeekData ,#doctorDayData').removeClass('text-primary');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_appointments/calendar.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/js/doctor_appointments/calendar.js ***!
-  \*************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadDoctorAppointmentCalendar);
-var popover;
-var popoverState = false;
-var appointmentStatusId = null;
-var doctorAppointmentCalendar;
-var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
-  amount: 0,
-  service: '',
-  patientName: ''
-}; // View event variables
-
-var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewEndDate, viewModal, viewService, viewUId, viewAmount;
-
-function loadDoctorAppointmentCalendar() {
-  initCalendarApp();
-  init();
-}
-
-var initCalendarApp = function initCalendarApp() {
-  if (usersRole != 'doctor') {
-    return;
-  }
-
-  var calendarEl = document.getElementById('doctorAppointmentCalendar');
-
-  if (!$(calendarEl).length) {
-    return;
-  }
-
-  var lang = $('.currentLanguage').val();
-  doctorAppointmentCalendar = new FullCalendar.Calendar(calendarEl, {
-    locale: lang,
-    themeSystem: 'bootstrap5',
-    height: 750,
-    buttonText: {
-      today: Lang.get('js.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
-    },
-    headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
-    },
-    initialDate: new Date(),
-    timeZone: 'UTC',
-    dayMaxEvents: true,
-    events: function events(info, successCallback, failureCallback) {
-      $.ajax({
-        url: route('doctors.appointments.calendar'),
-        type: 'GET',
-        data: info,
-        success: function success(result) {
-          if (result.success) {
-            successCallback(result.data);
-          }
-        },
-        error: function error(result) {
-          displayErrorMessage(result.responseJSON.message);
-          failureCallback();
-        }
-      });
-    },
-    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
-    eventMouseEnter: function eventMouseEnter(arg) {
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        description: arg.event.extendedProps.description,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        patientName: arg.event.extendedProps.patientName
-      }); // Show popover preview
-
-      initPopovers(arg.el);
-    },
-    eventMouseLeave: function eventMouseLeave() {
-      hidePopovers();
-    },
-    // Click event --- more info: https://fullcalendar.io/docs/eventClick
-    eventClick: function eventClick(arg) {
-      hidePopovers();
-      appointmentStatusId = arg.event.id;
-      formatArgs({
-        id: arg.event.id,
-        title: arg.event.title,
-        startStr: arg.event.startStr,
-        endStr: arg.event.endStr,
-        description: arg.event.extendedProps.description,
-        status: arg.event.extendedProps.status,
-        amount: arg.event.extendedProps.amount,
-        uId: arg.event.extendedProps.uId,
-        service: arg.event.extendedProps.service,
-        patientName: arg.event.extendedProps.patientName
-      });
-      handleViewEvent();
-    }
-  });
-  doctorAppointmentCalendar.render();
-};
-
-var init = function init() {
-  if (!$('#doctorAppointmentCalendarModal').length) {
-    return;
-  }
-
-  var viewElement = document.getElementById('doctorAppointmentCalendarModal');
-  viewModal = new bootstrap.Modal(viewElement);
-  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
-  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
-  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
-  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
-  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
-  viewService = viewElement.querySelector('[data-calendar="event_service"]');
-  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
-  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
-}; // Format FullCalendar responses
-
-
-var formatArgs = function formatArgs(res) {
-  data.id = res.id;
-  data.eventName = res.title;
-  data.eventStatus = res.status;
-  data.startDate = res.startStr;
-  data.endDate = res.endStr;
-  data.amount = res.amount;
-  data.uId = res.uId;
-  data.service = res.service;
-  data.patientName = res.patientName;
-}; // Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
-
-
-var initPopovers = function initPopovers(element) {
-  hidePopovers(); // Generate popover content
-
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Patient:</b> ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>'; // Popover options
-
-  var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
-    dismiss: true,
-    html: true,
-    title: 'Appointment Details',
-    content: popoverHtml
-  };
-}; // Hide active popovers
-
-
-var hidePopovers = function hidePopovers() {
-  if (popoverState) {
-    popover.dispose();
-    popoverState = false;
-  }
-}; // Handle view event
-
-
-var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
-  viewModal.show(); // Detect all day event
-
-  var eventNameMod;
-  var startDateMod;
-  var endDateMod;
-  var book = $('#bookCalenderConst').val();
-  var checkIn = $('#checkInCalenderConst').val();
-  var checkOut = $('#checkOutCalenderConst').val();
-  var cancel = $('#cancelCalenderConst').val();
-  eventNameMod = '';
-  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
-  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod; // Populate view data
-
-  viewEventName.innerText = 'Patient: ' + data.patientName;
-  $(viewEventStatus).empty();
-  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
-  $(viewEventStatus).val(data.eventStatus).trigger('change');
-  viewAmount.innerText = addCommas(data.amount);
-  viewUId.innerText = data.uId;
-  viewService.innerText = data.service;
-};
-
-listenChange('.doctor-apptnt-calendar-status-change', function () {
-  if (!$(this).val()) {
-    return false;
-  }
-
-  var appointmentStatus = $(this).val();
-  var appointmentId = appointmentStatusId;
-
-  if (parseInt(appointmentStatus) === data.eventStatus) {
-    return false;
-  }
-
-  $.ajax({
-    url: route('doctors.change-status', appointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: appointmentId,
-      appointmentStatus: appointmentStatus
-    },
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      $('#doctorAppointmentCalendarModal').modal('hide');
-      doctorAppointmentCalendar.refetchEvents();
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_appointments/doctor_appointments.js":
-/*!************************************************************************!*\
-  !*** ./resources/assets/js/doctor_appointments/doctor_appointments.js ***!
-  \************************************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadDoctorAppointmentFilterDate)
-var doctorAppointmentFilterDate = '#doctorPanelAppointmentDate';
-Livewire.hook("element.init", function () {
-  loadDoctorAppointmentFilterDate();
-
-  if ($('#doctorPanelPaymentType').length) {
-    $('#doctorPanelPaymentType').select2();
-  }
-
-  if ($('#doctorPanelAppointmentStatus').length) {
-    $('#doctorPanelAppointmentStatus').select2();
-  }
-
-  if ($('.appointment-status').length) {
-    $('.appointment-status').select2();
-  }
-
-  if ($('.payment-status').length) {
-    $('.payment-status').select2();
-  }
-});
-
-function loadDoctorAppointmentFilterDate() {
-  var _ranges;
-
-  if (!$(doctorAppointmentFilterDate).length) {
-    return;
-  }
-
-  var timeRange = $('#doctorPanelAppointmentDate');
-  var doctorAppointmentStart = moment().startOf('week');
-  var doctorAppointmentEnd = moment().endOf('week');
-
-  function cb(doctorAppointmentStart, doctorAppointmentEnd) {
-    $('#doctorPanelAppointmentDate').val(doctorAppointmentStart.format('MM/DD/YYYY') + ' - ' + doctorAppointmentEnd.format('MM/DD/YYYY'));
-  }
-
-  timeRange.daterangepicker({
-    startDate: doctorAppointmentStart,
-    endDate: doctorAppointmentEnd,
-    opens: 'left',
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get('js.custom'),
-      applyLabel: Lang.get('js.apply'),
-      cancelLabel: Lang.get('js.cancel'),
-      fromLabel: Lang.get('js.from'),
-      toLabel: Lang.get('js.to'),
-      monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
-      daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get('js.today'), [moment(), moment()]), _defineProperty(_ranges, Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), _defineProperty(_ranges, Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), _defineProperty(_ranges, Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), _defineProperty(_ranges, Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), _defineProperty(_ranges, Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]), _ranges)
-  }, cb);
-  cb(doctorAppointmentStart, doctorAppointmentEnd);
-  timeRange.on("apply.daterangepicker", function (ev, picker) {
-    Livewire.dispatch('changeDateFilter', {
-      date: $(this).val()
-    });
-  });
-}
-
-listenChange('.doctor-appointment-status-change', function () {
-  var doctorAppointmentStatus = $(this).val();
-  var doctorAppointmentId = $(this).attr('data-id');
-  var doctorAppointmentCurrentData = $(this);
-  $.ajax({
-    url: route('doctors.change-status', doctorAppointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: doctorAppointmentId,
-      appointmentStatus: doctorAppointmentStatus
-    },
-    success: function success(result) {
-      $(doctorAppointmentCurrentData).children('option.booked').addClass('hide');
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-      setTimeout(function () {
-        location.reload();
-      }, 2000);
-    }
-  });
-});
-listenChange('.doctor-apptment-change-payment-status', function () {
-  var doctorApptmentPaymentStatus = $(this).val();
-  var doctorApptmentAppointmentId = $(this).attr('data-id');
-  $('#doctorAppointmentPaymentStatusModal').modal('show').appendTo('body');
-  $('#doctorAppointmentPaymentStatus').val(doctorApptmentPaymentStatus);
-  $('#doctorAppointmentId').val(doctorApptmentAppointmentId);
-});
-listenSubmit('#doctorAppointmentPaymentStatusForm', function (event) {
-  event.preventDefault();
-  var paymentStatus = $('#doctorAppointmentPaymentStatus').val();
-  var appointmentId = $('#doctorAppointmentId').val();
-  var paymentMethod = $('#doctorPaymentType').val();
-  $.ajax({
-    url: route('doctors.change-payment-status', appointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: appointmentId,
-      paymentStatus: paymentStatus,
-      paymentMethod: paymentMethod,
-      loginUserId: currentLoginUserId
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#doctorAppointmentPaymentStatusModal').modal('hide');
-        location.reload();
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenChange('#doctorPanelPaymentType', function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $('#doctorPanelAppointmentDate').val()
-  });
-  Livewire.dispatch("changePaymentTypeFilter", {
-    type: $(this).val()
-  });
-});
-listenChange('#doctorPanelAppointmentStatus', function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $('#doctorPanelAppointmentDate').val()
-  });
-  Livewire.dispatch("changeStatusFilter", {
-    status: $(this).val()
-  });
-});
-listenClick('#doctorPanelApptmentResetFilter', function () {
-  $('#doctorPanelPaymentType').val(0).trigger('change');
-  $('#doctorPanelAppointmentStatus').val(1).trigger('change');
-  doctorAppointmentFilterDate.data('daterangepicker').setStartDate(moment().startOf('week').format('MM/DD/YYYY'));
-  doctorAppointmentFilterDate.data('daterangepicker').setEndDate(moment().endOf('week').format('MM/DD/YYYY'));
-  hideDropdownManually($('#doctorPanelApptFilterBtn'), $('.dropdown-menu'));
-});
-listenClick('#doctorPanelApptResetFilter', function () {
-  $('#doctorPanelPaymentType').val(0).trigger('change');
-  $('#doctorPanelAppointmentStatus').val(1).trigger('change');
-  $('#doctorPanelAppointmentDate').data('daterangepicker').setStartDate(moment().startOf('week').format('MM/DD/YYYY'));
-  $('#doctorPanelAppointmentDate').data('daterangepicker').setEndDate(moment().endOf('week').format('MM/DD/YYYY'));
-  hideDropdownManually($('#doctorPanelApptFilterBtn'), $('.dropdown-menu'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_holiday/Create_edit.js":
-/*!***********************************************************!*\
-  !*** ./resources/assets/js/doctor_holiday/Create_edit.js ***!
-  \***********************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadDoctorData);
-
-function loadDoctorData() {
-  loadDoctorDate();
-}
-
-function loadDoctorDate() {
-  var lang = $(".currentLanguage").val();
-  $("#doctorHolidayDate").flatpickr({
-    locale: lang,
-    minDate: new Date().fp_incr(1),
-    disableMobile: true
-  });
-  listenClick(".doctor-holiday-delete-btn", function (event) {
-    var holidayRecordId = $(event.currentTarget).attr("data-id");
-    deleteItem(route("holidays.destroy", holidayRecordId), Lang.get("js.holiday"));
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_holiday/doctor_holiday.js":
-/*!**************************************************************!*\
-  !*** ./resources/assets/js/doctor_holiday/doctor_holiday.js ***!
-  \**************************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadDoctorHoliday)
-var startDate = moment().startOf("week");
-var endDate = moment().endOf("week");
-Livewire.hook("element.init", function () {
-  loadDoctorHoliday();
-
-  if ($("#doctorHolidayStatus").length) {
-    $("#doctorHolidayStatus").select2();
-  }
-
-  if (startDate != undefined && endDate != undefined) {
-    cb(startDate, endDate);
-  }
-});
-
-function loadDoctorHoliday() {
-  var _ranges;
-
-  // let lang = $(".currentLanguage").val();
-  // $("#doctorHolidayDate").flatpickr({
-  //     locale: lang,
-  //     minDate: new Date().fp_incr(1),
-  //     disableMobile: true,
-  // });
-  // listenClick(".doctor-holiday-delete-btn", function (event) {
-  //     let holidayRecordId = $(event.currentTarget).attr("data-id");
-  //     deleteItem(
-  //         route("holidays.destroy", holidayRecordId),
-  //         Lang.get("js.holiday")
-  //     );
-  // });
-  if (!$("#doctorHolidayDateFilter").length) {
-    return;
-  } // let startDate = moment().startOf("week");
-  // let endDate = moment().endOf("week");
-
-
-  var datePicker = $("#doctorHolidayDateFilter").daterangepicker({
-    startDate: startDate,
-    endDate: endDate,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } // cb
-  ); //cb(startDate, endDate);
-
-  datePicker.on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    startDate = picker.startDate;
-    endDate = picker.endDate; // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
-  });
-}
-
-function cb(start, end) {
-  $("#doctorHolidayDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
-}
-
-listenChange("#doctorHolidayStatus", function () {
-  $("#doctorHolidayStatus").val($(this).val());
-  Livewire.dispatch("changeStatusFilter", $(this).val());
-}); // listenChange('#holidayDateFilter,#doctorHolidayDateFilter', function () {
-//     Livewire.dispatch("changeDateFilter", { date: $(this).val(),});
-// })
-
-listenClick(".holiday-delete-btn", function (event) {
-  var holidayRecordId = $(event.currentTarget).attr("data-id");
-  deleteItem(route("doctors.holiday-destroy", holidayRecordId), Lang.get("js.holiday"));
-}); // listenClick('#holidayDateResetFilter', function () {
-//     $('#holidayDateFilter').data('daterangepicker').setStartDate(moment().startOf('week').format('DD/MM/YYYY'))
-//     $('#holidayDateFilter').data('daterangepicker').setEndDate(moment().endOf('week').format('DD/MM/YYYY'))
-//     hideDropdownManually($('#holidayFilterBtn'), $('.dropdown-menu'));
-// })
-// listenClick('#doctorHolidayResetFilter', function () {
-//     $('#doctorHolidayDateFilter').data('daterangepicker').setStartDate(moment().startOf('week').format('DD/MM/YYYY'))
-//     $('#doctorHolidayDateFilter').data('daterangepicker').setEndDate(moment().endOf('week').format('DD/MM/YYYY'))
-//     hideDropdownManually($('#doctorHolidayFilterBtn'), $('.dropdown-menu'));
-// })
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_holiday/holiday.js":
-/*!*******************************************************!*\
-  !*** ./resources/assets/js/doctor_holiday/holiday.js ***!
-  \*******************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadHoliday)
-var Start = moment().startOf("week");
-var End = moment().endOf("week");
-Livewire.hook("element.init", function () {
-  loadHoliday();
-
-  if (Start != undefined && End != undefined) {
-    cb(Start, End);
-  }
-});
-
-function loadHoliday() {
-  var _ranges;
-
-  if (!$("#holidayDateFilter").length) {
-    return;
-  } // let Start = moment().startOf("week");
-  // let End = moment().endOf("week");
-
-
-  var holidayPcker = $("#holidayDateFilter").daterangepicker({
-    startDate: Start,
-    endDate: End,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } // cb
-  ); // cb(Start, End);
-
-  holidayPcker.on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    Start = picker.startDate;
-    End = picker.endDate; // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
-  });
-}
-
-function cb(start, end) {
-  $("#holidayDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
-}
-
-listenClick(".holiday-delete-btn", function (event) {
-  var holidayRecordId = $(event.currentTarget).attr("data-id");
-  deleteItem(route("doctors.holiday-destroy", holidayRecordId), Lang.get("js.holiday"));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_sessions/create-edit.js":
-/*!************************************************************!*\
-  !*** ./resources/assets/js/doctor_sessions/create-edit.js ***!
-  \************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadDoctorSessionData);
-
-function loadDoctorSessionData() {
-  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
-
-  if (!doctorSessionIsEdit == true) {
-    $('.startTimeSlot').prop('disabled', true);
-    $('.endTimeSlot').prop('disabled', true);
-  }
-
-  var lang = $('.currentLanguage').val();
-  $('#addHolidayBtn').flatpickr({
-    "locale": lang,
-    disableMobile: true,
-    minDate: new Date()
-  });
-  $('select[name^="startTimes"]').each(function () {
-    var selectedIndex = $(this)[0].selectedIndex;
-    var endSelectedIndex = $(this).closest('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
-    var endTimeOptions = $(this).closest('.add-slot').find('select[name^="endTimes"] option');
-
-    if (selectedIndex >= endSelectedIndex) {
-      endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
-    }
-
-    endTimeOptions.each(function (index) {
-      if (index <= selectedIndex) {
-        $(this).attr('disabled', true);
-      } else {
-        $(this).attr('disabled', false);
-      }
-    });
-  });
-  $('select[name^="endTimes"]').each(function () {
-    var selectedIndex = $(this)[0].selectedIndex;
-    var startTimeOptions = $(this).closest('.timeSlot').next().find('select[name^="startTimes"] option');
-    startTimeOptions.each(function (index) {
-      if (index <= selectedIndex) {
-        $(this).attr('disabled', true);
-      } else {
-        $(this).attr('disabled', false);
-      }
-    });
-  });
-}
-
-listenChange('#selGap', function () {
-  $('.startTimeSlot').prop('disabled', false);
-  $('.endTimeSlot').prop('disabled', false);
-});
-listenClick('.add-session-time', function () {
-  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
-
-  if (!doctorSessionIsEdit == true) {
-    if ($('#selGap').val() == '') {
-      return false;
-    }
-  }
-
-  var selectedIndex = 0;
-
-  if ($(this).parent().prev().children('.session-times').find('.timeSlot:last-child').length > 0) {
-    selectedIndex = $(this).parent().prev().children('.session-times').find('.timeSlot:last-child').children('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
-  }
-
-  var day = $(this).closest('.weekly-content').attr('data-day');
-  var $ele = $(this);
-  var weeklyEle = $(this).closest('.weekly-content');
-  var gap = $('#selGap').val();
-  var getSlotByGapUrl = $('#getSlotByGapUrl').val();
-  $.ajax({
-    url: getSlotByGapUrl,
-    data: {
-      gap: gap,
-      day: day
-    },
-    success: function success(data) {
-      weeklyEle.find('.unavailable-time').html('');
-      weeklyEle.find('input[name="checked_week_days[]"').prop('checked', true).prop('disabled', false);
-      $ele.closest('.weekly-content').find('.session-times').append(data.data);
-      weeklyEle.find('select[data-control="select2"]').select2();
-      var startTimeOptions = $('.add-session-time').parent().prev().children('.session-times').find('.timeSlot:last-child').children('.add-slot').find('select[name^="startTimes"] option');
-      startTimeOptions.each(function (index) {
-        if (index <= selectedIndex) {
-          $(this).attr('disabled', true);
-        } else {
-          $(this).attr('disabled', false);
-        }
-      });
-    }
-  });
-});
-listenClick('.copy-btn', function () {
-  $(this).closest('.copy-card').removeClass('show');
-  $('.copy-dropdown').removeClass('show');
-  var selectEle = $(this).closest('.weekly-content').find('.session-times').find('select'); // check for slot is empty
-
-  if (selectEle.length == 0) {
-    $(this).closest('.menu-content').find('.copy-label .form-check-input:checked').each(function () {
-      var weekEle = $(".weekly-content[data-day=\"".concat($(this).val(), "\"]"));
-      $(weekEle).find('.session-times').html('');
-      weekEle.find('.weekly-row').find('.unavailable-time').remove();
-      weekEle.find('.weekly-row').append('<div class="unavailable-time">' + Lang.get('js.unavailable') + '</div>');
-      var dayChk = $(weekEle).find('.weekly-row').find('input[name="checked_week_days[]"');
-      dayChk.prop('checked', false).prop('disabled', true);
-    });
-  } else {
-    selectEle.each(function () {
-      $(this).select2('destroy');
-    });
-    var selects = $(this).closest('.weekly-content').find('.session-times').find('select');
-    var $cloneEle = $(this).closest('.weekly-content').find('.session-times').clone();
-    $(this).closest('.menu-content').find('.copy-label .form-check-input:checked').each(function () {
-      var $cloneEle2 = $cloneEle;
-      var currentDay = $(this).val();
-      var weekEle = ".weekly-content[data-day=\"".concat(currentDay, "\"]");
-      $cloneEle2.find('select[name^="startTimes"]').attr('name', "startTimes[".concat(currentDay, "][]"));
-      $cloneEle2.find('select[name^="endTimes"]').attr('name', "endTimes[".concat(currentDay, "][]"));
-      $(weekEle).find('.unavailable-time').html('');
-      $cloneEle2.find('.error-msg').html('');
-      $(weekEle).find('.session-times').html($cloneEle2.html());
-      $(weekEle).find('.session-times select').select2();
-      $(weekEle).find('input[name="checked_week_days[]"').prop('disabled', false).prop('checked', true);
-      $(selects).each(function (i) {
-        var select = this;
-        $(weekEle).find('.session-times').find('select').eq(i).val($(select).val()).trigger('change');
-      });
-    });
-    $(this).closest('.weekly-content').find('.session-times').find('select').each(function () {
-      $(this).select2();
-    });
-    $('.copy-check-input').prop('checked', false);
-  }
-});
-listenClick('.deleteBtn', function () {
-  var selectedIndex = 0;
-
-  if ($(this).closest('.timeSlot').prev().length > 0) {
-    selectedIndex = $(this).closest('.timeSlot').prev().children('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
-  }
-
-  if ($(this).closest('.weekly-row').find('.session-times').find('select').length == 2) {
-    var dayChk = $(this).closest('.weekly-row').find('input[name="checked_week_days[]"');
-    dayChk.prop('checked', false).prop('disabled', true);
-    $(this).closest('.weekly-row').append('<div class="unavailable-time">' + Lang.get('js.unavailable') + '</div>');
-  }
-
-  var startTimeOptions = $(this).closest('.timeSlot').next().children('.add-slot').find('select[name^="startTimes"] option');
-  startTimeOptions.each(function (index) {
-    if (index <= selectedIndex) {
-      $(this).attr('disabled', true);
-    } else {
-      $(this).attr('disabled', false);
-    }
-  });
-  $(this).parent().siblings('.error-msg').remove();
-  $(this).parent().closest('.timeSlot').remove();
-  $(this).parent().remove();
-});
-listenSubmit('#saveFormDoctor', function (e) {
-  e.preventDefault();
-  var checkedDayLength = $('input[name="checked_week_days[]"]:checked').length;
-
-  if (!checkedDayLength) {
-    displayErrorMessage('Please select any one day');
-    return false;
-  }
-
-  $(".weekly-content").find('.error-msg').text('');
-  $.ajax({
-    url: $(this).attr('action'),
-    type: 'POST',
-    data: new FormData($(this)[0]),
-    processData: false,
-    contentType: false,
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          location.href = $('#btnBack').attr('href');
-        }, 2000);
-      }
-    },
-    error: function error(result) {
-      var _result$responseJSON$ = result.responseJSON.message,
-          day = _result$responseJSON$.day,
-          key = _result$responseJSON$.key;
-      $(".weekly-content[data-day=\"".concat(day, "\"]")).find('.error-msg').text('');
-      $(".weekly-content[data-day=\"".concat(day, "\"]")).find('.error-msg').eq(key).text('Slot timing is overlap with other slot timing');
-    },
-    complete: function complete() {}
-  });
-});
-listenChange('select[name^="startTimes"]', function (e) {
-  var selectedIndex = $(this)[0].selectedIndex;
-  var endTimeOptions = $(this).closest('.add-slot').find('select[name^="endTimes"] option');
-  var endSelectedIndex = $(this).closest('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
-
-  if (selectedIndex >= endSelectedIndex) {
-    endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
-  }
-
-  endTimeOptions.each(function (index) {
-    if (index <= selectedIndex) {
-      $(this).attr('disabled', true);
-    } else {
-      $(this).attr('disabled', false);
-    }
-  });
-});
-listenChange('select[name^="endTimes"]', function (e) {
-  var selectedIndex = $(this)[0].selectedIndex;
-  var startTimeOptions = $(this).closest('.timeSlot').next().find('select[name^="startTimes"] option');
-  startTimeOptions.each(function (index) {
-    if (index <= selectedIndex) {
-      $(this).attr('disabled', true);
-    } else {
-      $(this).attr('disabled', false);
-    }
-  });
-});
-listenClick('#addHolidayBtn', function () {
-  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctor_sessions/doctor_sessions.js":
-/*!****************************************************************!*\
-  !*** ./resources/assets/js/doctor_sessions/doctor_sessions.js ***!
-  \****************************************************************/
-/***/ (() => {
-
-listenClick('.doctor-session-delete-btn', function (event) {
-  var doctorSessionRecordId = $(event.currentTarget).attr('data-id');
-  var doctorSessionUrl = $('#doctorSessionUrl').val();
-  deleteItem(doctorSessionUrl + '/' + doctorSessionRecordId, Lang.get('js.doctor_session'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctors/create-edit.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/doctors/create-edit.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
-
-document.addEventListener('DOMContentLoaded', loadDoctorData);
-var isDefault = false;
-var deletedQualifications = [];
-var degree;
-var university;
-var year;
-var updateId;
-var primaryId;
-var qualification = [];
-var id = 1;
-$('.showQualification').hide();
-
-function loadDoctorData() {
-  loadDoctorDate();
-}
-
-function loadDoctorDate() {
-  var doctorDob = '.doctor-dob';
-  var lang = $('.currentLanguage').val();
-  $('.showQualification').slideUp();
-
-  if (!$(doctorDob).length) {
-    return;
-  }
-
-  $(doctorDob).flatpickr({
-    "locale": lang,
-    maxDate: new Date(),
-    disableMobile: true
-  });
-
-  if (!$('#doctorCountryId').val()) {
-    return;
-  }
-
-  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
-  setTimeout(function () {
-    $('#editDoctorStateId').val($('#doctorStateId').val()).trigger('change');
-  }, 400);
-  setTimeout(function () {
-    $('#editDoctorCityId').val($('#doctorCityId').val()).trigger('change');
-  }, 7000);
-}
-
-listenClick('#addQualification', function () {
-  isDefault = false;
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('').trigger('change');
-  $('.showQualification').slideToggle(500);
-});
-listenClick('#cancelQualification', function () {
-  $('.showQualification').slideUp(500);
-});
-listenClick('#ResetForm', function () {
-  window.location.href = route('doctors.index');
-});
-listenClick('#saveQualification', function (e) {
-  e.preventDefault();
-  degree = $('.degree').val();
-  university = $('.university').val();
-  year = $('.year').val();
-  var existId = $('#doctorQualificationTbl tr:last-child td:first-child').data('value');
-  existId++;
-
-  if (existId) {
-    id = existId;
-  }
-
-  var prepareData = {
-    'id': primaryId,
-    'degree': degree,
-    'year': year,
-    'university': university
-  };
-  var data = {
-    'id': id,
-    'degree': degree,
-    'year': year,
-    'university': university
-  };
-  var emptyDegree = $('.degree').val().trim().replace(/ \r\n\t/g, '') === '';
-  var emptyUniversity = $('.university').val().trim().replace(/ \r\n\t/g, '') === '';
-  var emptyYear = $('.year').val().trim().replace(/ \r\n\t/g, '') === '';
-
-  if (emptyDegree) {
-    displayErrorMessage(Lang.get('js.degree_required'));
-    return false;
-  } else if (emptyUniversity) {
-    displayErrorMessage(Lang.get('js.university_required'));
-    return false;
-  } else if (emptyYear) {
-    displayErrorMessage(Lang.get('js.year_required'));
-    return false;
-  }
-
-  if (updateId == null) {
-    qualification.push(prepareData);
-  } else {
-    qualification[updateId - 1] = prepareData;
-  }
-
-  var qualificationHtml = prepareTemplateRender('#qualificationTemplateData', data);
-
-  if (isDefault == false) {
-    $('tbody').append(qualificationHtml);
-    id++;
-  } else if (isDefault == true) {
-    var _data = {
-      'id': updateId,
-      'degree': degree,
-      'year': year,
-      'university': university
-    };
-    var updateQualificationHtml = prepareTemplateRender('#qualificationTemplateData', _data);
-    var table = $('table tbody');
-    $(table).find('tr').each(function (i, v) {
-      i = i + 1;
-
-      if (i == updateId) {
-        $('tbody').find(v).replaceWith(updateQualificationHtml);
-      }
-    });
-  }
-
-  $('.showQualification').slideUp(500);
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('');
-});
-listenClick('.delete-btn-qualification', function (event) {
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('').trigger('change');
-  qualification.pop([0]);
-  $('.showQualification').slideUp(500);
-  var Ele = $(this);
-  var qualificationID = $(this).attr('data-id');
-  var header = Lang.get('js.qualification');
-  swal({
-    title: Lang.get('js.delete') + ' !',
-    text: Lang.get('js.are_you_sure') + ' "' + header + '" ?',
-    buttons: {
-      confirm: Lang.get('js.yes'),
-      cancel: Lang.get('js.no')
-    },
-    reverseButtons: true,
-    icon: 'warning'
-  }).then(function (result) {
-    if (result == true) {
-      deletedQualifications.push(qualificationID);
-      $('#deletedQualifications').val(deletedQualifications);
-      Ele.closest('tr')[0].remove();
-      swal({
-        icon: 'success',
-        title: Lang.get('js.deleted'),
-        text: header + Lang.get('js.has_been'),
-        timer: 2000
-      });
-    }
-  });
-});
-listenClick('.edit-btn-qualification', function () {
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('');
-  updateId = $(this).attr('data-id');
-  primaryId = $(this).data('primary-id');
-  var currentRow = $(this).closest('tr');
-  var currentDegree = currentRow.find('td:eq(1)').text();
-  var currentCollage = currentRow.find('td:eq(2)').text();
-  var currentYear = currentRow.find('td:eq(3)').text();
-  $('.degree').val(currentDegree);
-  $('.university').val(currentCollage);
-  $('.year').val(currentYear).trigger('change');
-  isDefault = true;
-  $('.showQualification').slideToggle(500);
-});
-listenSubmit('#editDoctorForm', function (e) {
-  var twitterUrl = $('#twitterUrl').val();
-  var linkedinUrl = $('#linkedinUrl').val();
-  var instagramUrl = $('#instagramUrl').val();
-  var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
-  var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
-  var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
-  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
-
-  if (!twitterCheck) {
-    displayErrorMessage(Lang.get('js.valid_twitter'));
-    return false;
-  }
-
-  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
-
-  if (!linkedInCheck) {
-    displayErrorMessage(Lang.get('js.valid_linkedin'));
-    return false;
-  }
-
-  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
-
-  if (!instagramCheck) {
-    displayErrorMessage(Lang.get('js.valid_instagram'));
-    return false;
-  }
-
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-
-  e.preventDefault();
-  var doctorFormData = new FormData($(this)[0]);
-  var editDoctorId = $('#editDoctorId').val();
-  doctorFormData.append('qualifications', JSON.stringify(qualification));
-  $.ajax({
-    url: route('doctors.update', editDoctorId),
-    type: 'POST',
-    data: doctorFormData,
-    contentType: false,
-    processData: false,
-    success: function success(result) {
-      if (result.success) {
-        window.location.href = route('doctors.index');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenChange('input[type=radio][name=gender]', function () {
-  var file = $('#profilePicture').val();
-
-  if (isEmpty(file)) {
-    if (this.value == 1) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
-    } else if (this.value == 2) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
-    }
-  }
-});
-listenChange('#editDoctorCountryId', function () {
-  var doctorIsEdit = $('#doctorIsEdit').val();
-  $.ajax({
-    url: route('get-state'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      data: $(this).val()
-    },
-    success: function success(data) {
-      $('#editDoctorStateId').empty();
-      $('#editDoctorCityId').empty(); //
-
-      $('#editDoctorStateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
-      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-      $.each(data.data, function (i, v) {
-        $('#editDoctorStateId').append($('<option></option>').attr('value', i).text(v));
-      });
-
-      if (doctorIsEdit && $('#doctorStateId').val()) {
-        $('#stateId').val($('#doctorStateId').val()).trigger('change');
-      }
-    }
-  });
-});
-listenChange('#editDoctorStateId', function () {
-  var doctorIsEdit = $('#doctorIsEdit').val();
-  $.ajax({
-    url: route('get-city'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      state: $(this).val(),
-      country: $('#editDoctorCountryId').val()
-    },
-    success: function success(data) {
-      $('#editDoctorCityId').empty();
-      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-      $.each(data.data, function (i, v) {
-        $('#editDoctorCityId').append($('<option ></option>').attr('value', i).text(v));
-      });
-
-      if (doctorIsEdit && $('#doctorCityId').val()) {
-        $('#cityId').val($('#doctorCityId').val()).trigger('change');
-      }
-    }
-  });
-});
-
-if ($('#doctorIsEdit').val() && $('#doctorCountryId').val()) {
-  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
-}
-
-listenKeyup('#twitterUrl', function () {
-  this.value = this.value.toLowerCase();
-});
-listenKeyup('#linkedinUrl', function () {
-  this.value = this.value.toLowerCase();
-});
-listenKeyup('#instagramUrl', function () {
-  this.value = this.value.toLowerCase();
-});
-listenSubmit('#createDoctorForm', function () {
-  var twitterUrl = $('#twitterUrl').val();
-  var linkedinUrl = $('#linkedinUrl').val();
-  var instagramUrl = $('#instagramUrl').val();
-  var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
-  var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
-  var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
-  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
-
-  if (!twitterCheck) {
-    displayErrorMessage(Lang.get('js.valid_twitter'));
-    return false;
-  }
-
-  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
-
-  if (!linkedInCheck) {
-    displayErrorMessage(Lang.get('js.valid_linkedin'));
-    return false;
-  }
-
-  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
-
-  if (!instagramCheck) {
-    displayErrorMessage(Lang.get('js.valid_instagram'));
-    return false;
-  }
-
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenClick('.removeAvatarIcon', function () {
-  $('#bgImage').css('background-image', '');
-  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
-  $('#removeAvatar').remove();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctors/detail.js":
-/*!***********************************************!*\
-  !*** ./resources/assets/js/doctors/detail.js ***!
-  \***********************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-document.addEventListener('DOMContentLoaded', loadDoctorShowApptmentFilterDate);
-var doctorShowApptmentFilterDate = $('#doctorShowAppointmentDateFilter');
-
-function loadDoctorShowApptmentFilterDate() {
-  var _ranges;
-
-  if (!$('#doctorShowAppointmentDateFilter').length) {
-    return;
-  }
-
-  var doctorShowApptmentStart = moment().startOf('week');
-  var doctorShowApptmentEnd = moment().endOf('week');
-
-  function cb(start, end) {
-    $('#doctorShowAppointmentDateFilter').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
-  }
-
-  $('#doctorShowAppointmentDateFilter').daterangepicker({
-    startDate: doctorShowApptmentStart,
-    endDate: doctorShowApptmentEnd,
-    opens: 'left',
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get('js.custom'),
-      applyLabel: Lang.get('js.apply'),
-      cancelLabel: Lang.get('js.cancel'),
-      fromLabel: Lang.get('js.from'),
-      toLabel: Lang.get('js.to'),
-      monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
-      daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get('js.today'), [moment(), moment()]), _defineProperty(_ranges, Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), _defineProperty(_ranges, Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), _defineProperty(_ranges, Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), _defineProperty(_ranges, Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), _defineProperty(_ranges, Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]), _ranges)
-  }, cb);
-  cb(doctorShowApptmentStart, doctorShowApptmentEnd);
-}
-
-listenClick('.doctor-show-apptment-delete-btn', function (event) {
-  var doctorShowApptmentRecordId = $(event.currentTarget).attr('data-id');
-  var doctorShowApptmentUrl = !isEmpty($('#patientRoleDoctorDetail').val()) ? route('patients.appointments.destroy', doctorShowApptmentRecordId) : route('appointments.destroy', doctorShowApptmentRecordId);
-  deleteItem(doctorShowApptmentUrl, 'Appointment');
-});
-listenChange('.doctor-show-apptment-status', function () {
-  var doctorShowAppointmentStatus = $(this).val();
-  var doctorShowAppointmentId = $(this).attr('data-id');
-  var currentData = $(this);
-  $.ajax({
-    url: route('change-status', doctorShowAppointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: doctorShowAppointmentId,
-      appointmentStatus: doctorShowAppointmentStatus
-    },
-    success: function success(result) {
-      $(currentData).children('option.booked').addClass('hide');
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenChange('#doctorShowAppointmentDateFilter', function () {
-  Livewire.dispatch('changeDateFilter', $(this).val());
-});
-listenChange('#doctorShowAppointmentStatus', function () {
-  Livewire.dispatch('changeDateFilter', $('#doctorShowAppointmentDateFilter').val());
-  Livewire.dispatch('changeStatusFilter', $(this).val());
-});
-listenClick('#doctorShowApptmentResetFilter', function () {
-  $('#doctorShowAppointmentStatus').val(1).trigger('change');
-  $('#doctorShowAppointmentDateFilter').val(moment().startOf('week').format('MM/DD/YYYY') + ' - ' + moment().endOf('week').format('MM/DD/YYYY')).trigger('change');
-  Livewire.dispatch('refresh');
-});
-document.addEventListener('livewire:load', function () {
-  window.livewire.hook('message.processed', function () {
-    if ($('#doctorShowAppointmentStatus').length) {
-      $('#doctorShowAppointmentStatus').select2();
-    }
-
-    if ($('.doctor-show-apptment-status').length) {
-      $('.doctor-show-apptment-status').select2();
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/doctors/doctors.js":
-/*!************************************************!*\
-  !*** ./resources/assets/js/doctors/doctors.js ***!
-  \************************************************/
-/***/ (() => {
-
-listenClick('#doctorResetFilter', function () {
-  var firstDate = moment(moment().startOf('week'), "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
-  var lastDate = moment(moment().endOf('week'), "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
-  $('#doctorPanelAppointmentDate').val(firstDate + " - " + lastDate).trigger('change');
-  $('#doctorPanelPaymentType').val(0).trigger('change');
-  $('#doctorPanelAppointmentStatus').val(3).trigger('change');
-  $('#doctorStatus').val(2).trigger('change');
-  hideDropdownManually($('#doctorFilterBtn'), $('.dropdown-menu'));
-});
-listenChange('#doctorStatus', function () {
-  Livewire.dispatch("changeStatusFilter", {
-    value: $(this).val()
-  });
-});
-Livewire.hook("element.init", function () {
-  if ($('#doctorStatus').length) {
-    $('#doctorStatus').select2();
-  }
-});
-listenClick('.doctor-delete-btn', function () {
-  var userId = $(this).attr('data-id');
-  var deleteUserUrl = route('doctors.destroy', userId);
-  deleteItem(deleteUserUrl, Lang.get('js.doctor'));
-});
-listenClick('.add-qualification', function () {
-  var userId = $(this).attr('data-id');
-  $('#qualificationID').val(userId);
-  $('#qualificationModal').modal('show');
-});
-listenSubmit('#qualificationForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('add.qualification'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#year').val(null).trigger('change');
-        $('#qualificationModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listen('hidden.bs.modal', '#qualificationModal', function () {
-  resetModalForm('#qualificationForm');
-  $('#year').val(null).trigger('change');
-});
-listenClick('.doctor-status', function (event) {
-  var doctorRecordId = $(event.currentTarget).attr('data-id');
-  $.ajax({
-    type: 'PUT',
-    url: route('doctor.status'),
-    data: {
-      id: doctorRecordId
-    },
-    success: function success(result) {
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick('.doctor-email-verification', function (event) {
-  var userId = $(event.currentTarget).attr('data-id');
-  $.ajax({
-    type: 'POST',
-    url: route('resend.email.verification', userId),
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      setTimeout(function () {
-        window.location.reload(); // Turbo.visit(window.location.href);
-      }, 5000);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#qualificationSaveBtn', function () {
-  $('#qualificationForm').trigger('submit');
-});
-listenChange('.doctor-email-verified', function (e) {
-  var recordId = $(e.currentTarget).attr('data-id');
-  var value = $(this).is(':checked') ? 1 : 0;
-  $.ajax({
-    type: 'POST',
-    url: route('emailVerified'),
-    data: {
-      id: recordId,
-      value: value
-    },
-    success: function success(result) {
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-Livewire.hook("element.init", function () {
-  if ($('#enquiriesStatus').length) {
-    $('#enquiriesStatus').select2();
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/appointments/book_appointment.js":
-/*!*********************************************************************!*\
-  !*** ./resources/assets/js/fronts/appointments/book_appointment.js ***!
-  \*********************************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadFrontAppointmentData);
-var frontTimezoneOffsetMinutes = new Date().getTimezoneOffset();
-frontTimezoneOffsetMinutes = frontTimezoneOffsetMinutes === 0 ? 0 : -frontTimezoneOffsetMinutes;
-var frontSelectedDate;
-var frontCharge = "";
-var frontPayableAmount = "";
-var dateEle = "#templateAppointmentDate";
-
-function loadFrontDateData() {
-  if (!$("#templateAppointmentDate").length) {
-    return;
-  }
-
-  $("#templateAppointmentDate").datepicker({
-    language: "es-es",
-    format: "yyyy-mm-dd",
-    minDate: new Date(),
-    startDate: new Date(),
-    todayHighlight: true
-  });
-}
-
-function loadFrontAppointmentData() {
-  if (!$("#templateAppointmentDate").length) {
-    return;
-  }
-
-  loadFrontDateData();
-  var frontSelectedDate = $("#templateAppointmentDate").val();
-
-  if (!($("#appointmentDoctorId").val() == "")) {
-    $(dateEle).removeAttr("disabled");
-    $.ajax({
-      url: route("get-service"),
-      type: "GET",
-      data: {
-        appointmentDoctorId: $("#appointmentDoctorId").val()
-      },
-      success: function success(result) {
-        if (result.success) {
-          $(dateEle).removeAttr("disabled");
-          $("#FrontAppointmentServiceId").empty();
-          $("#FrontAppointmentServiceId").append($('<option value=""></option>').text(Lang.get("js.select_service")));
-          $.each(result.data, function (i, v) {
-            $("#FrontAppointmentServiceId").append($("<option></option>").attr("value", v.id).text(v.name));
-          });
-        }
-      }
-    });
-  }
-
-  if (!($("#FrontAppointmentServiceId").val() == "") && $("#FrontAppointmentServiceId").length) {
-    $.ajax({
-      url: route("get-charge"),
-      type: "GET",
-      data: {
-        chargeId: $("#FrontAppointmentServiceId").val()
-      },
-      success: function success(result) {
-        if (result.success) {
-          $("#payableAmountText").removeClass("d-none");
-          $("#payableAmount").text(currencyIcon + " " + getFormattedPrice(result.data.charges));
-          frontPayableAmount = result.data.charges;
-          frontCharge = result.data.charges;
-        }
-      }
-    });
-  }
-
-  if (!frontSelectedDate) {
-    return false;
-  }
-
-  $.ajax({
-    url: route("doctor-session-time"),
-    type: "GET",
-    data: {
-      adminAppointmentDoctorId: $("#appointmentDoctorId").val(),
-      date: frontSelectedDate,
-      timezone_offset_minutes: frontTimezoneOffsetMinutes
-    },
-    success: function success(result) {
-      if (result.success) {
-        $(".appointment-slot-data").html("");
-        $.each(result.data["slots"], function (index, value) {
-          $(".no-time-slot").addClass("d-none");
-
-          if (result.data["bookedSlot"] == null) {
-            $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
-          } else {
-            if ($.inArray(value, result.data["bookedSlot"]) !== -1) {
-              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' + value + '">' + value + "</span>");
-            } else {
-              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
-            }
-          }
-        });
-      }
-    },
-    error: function error(result) {
-      $(".appointment-slot-data").html("");
-      $(".book-appointment-message").css("display", "block");
-      var response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
-      $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    }
-  });
-}
-
-listenChange("#isPatientAccount", function () {
-  if (this.checked) {
-    $(".name-details").addClass("d-none");
-    $(".registered-patient").removeClass("d-none");
-    $("#template-medical-email").keyup(function () {
-      $("#patientName").val("");
-      var email = $("#template-medical-email").val();
-      $.ajax({
-        url: route("get-patient-name"),
-        type: "GET",
-        data: {
-          email: email
-        },
-        success: function success(result) {
-          if (result.data) {
-            $("#patientName").val(result.data);
-          }
-        }
-      });
-    });
-  } else {
-    $(".name-details").removeClass("d-none");
-    $(".registered-patient").addClass("d-none");
-  }
-});
-$(".no-time-slot").removeClass("d-none");
-listenChange(dateEle, function () {
-  frontSelectedDate = $(this).val();
-  $.ajax({
-    url: route("doctor-session-time"),
-    type: "GET",
-    data: {
-      adminAppointmentDoctorId: $("#appointmentDoctorId").val(),
-      date: frontSelectedDate,
-      timezone_offset_minutes: frontTimezoneOffsetMinutes
-    },
-    success: function success(result) {
-      if (result.success) {
-        $(".appointment-slot-data").html("");
-        $.each(result.data["slots"], function (index, value) {
-          $(".no-time-slot").addClass("d-none");
-
-          if (result.data["bookedSlot"] == null) {
-            $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
-          } else {
-            if ($.inArray(value, result.data["bookedSlot"]) !== -1) {
-              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' + value + '">' + value + "</span>");
-            } else {
-              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
-            }
-          }
-        });
-      }
-    },
-    error: function error(result) {
-      $(".appointment-slot-data").html("");
-      $(".book-appointment-message").css("display", "block");
-      var response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
-      $(".book-appointment-message").html(response).delay(5000).hide("slow");
-
-      if ($(".no-time-slot").hasClass("d-none")) {
-        $(".no-time-slot").removeClass("d-none");
-      }
-    }
-  });
-});
-listenClick(".time-slot", function () {
-  if ($(".time-slot").hasClass("activeSlot")) {
-    $(".time-slot").removeClass("activeSlot");
-    $(this).addClass("activeSlot");
-  } else {
-    $(this).addClass("activeSlot");
-  }
-
-  var fromToTime = $(this).attr("data-id").split("-");
-  var fromTime = fromToTime[0];
-  var toTime = fromToTime[1];
-  $("#timeSlot").val("");
-  $("#toTime").val("");
-  $("#timeSlot").val(fromTime);
-  $("#toTime").val(toTime);
-});
-var serviceIdExist = $("#FrontAppointmentServiceId").val();
-listenChange("#appointmentDoctorId", function (e) {
-  e.preventDefault();
-  $("#payableAmountText").addClass("d-none");
-  $("#chargeId").val("");
-  $("#payableAmount").val("");
-  $("#templateAppointmentDate").val("");
-  $("#addFees").val("");
-  $(".appointment-slot-data").html("");
-  $(".no-time-slot").removeClass("d-none");
-  $(dateEle).removeAttr("disabled");
-  $.ajax({
-    url: route("get-service"),
-    type: "GET",
-    data: {
-      appointmentDoctorId: $(this).val()
-    },
-    success: function success(result) {
-      if (result.success) {
-        $(dateEle).removeAttr("disabled");
-        $("#FrontAppointmentServiceId").empty();
-        $("#FrontAppointmentServiceId").append($('<option value=""></option>').text(Lang.get("js.select_service")));
-        $.each(result.data, function (i, v) {
-          $("#FrontAppointmentServiceId").append($("<option></option>").attr("value", v.id).attr("selected", v.id == serviceIdExist).text(v.name));
-        });
-
-        if (serviceIdExist && $("#FrontAppointmentServiceId").val()) {
-          $("#payableAmountText").removeClass("d-none");
-        }
-      }
-    }
-  });
-});
-listenChange("#FrontAppointmentServiceId", function () {
-  if ($(this).val() == "") {
-    $("#payableAmountText").addClass("d-none");
-    return;
-  }
-
-  $.ajax({
-    url: route("get-charge"),
-    type: "GET",
-    data: {
-      chargeId: $(this).val()
-    },
-    success: function success(result) {
-      if (result.success) {
-        $("#payableAmountText").removeClass("d-none");
-        $("#payableAmount").text(currencyIcon + " " + getFormattedPrice(result.data.charges));
-        frontPayableAmount = result.data.charges;
-        frontCharge = result.data.charges;
-      }
-    }
-  });
-});
-listenSubmit("#frontAppointmentBook", function (e) {
-  e.preventDefault();
-  var firstName = $("#template-medical-first_name").val().trim();
-  var lastName = $("#template-medical-last_name").val().trim();
-  var email = $("#template-medical-email").val().trim();
-  var doctor = $("#appointmentDoctorId").val().trim();
-  var services = $("#FrontAppointmentServiceId").val().trim();
-  var appointmentDate = $("#templateAppointmentDate").val().trim();
-  var paymentType = $("#paymentMethod").val().trim();
-  $(".book-appointment-message").css("display", "block");
-
-  if (!$("#isPatientAccount").is(":checked")) {
-    if (firstName == "") {
-      response = '<div class="gen alert alert-danger">' + Lang.get("js.first_name_required") + "</div>";
-      $(window).scrollTop($(".appointment-form").offset().top);
-      $(".book-appointment-message").html(response).delay(5000).hide("slow");
-      return false;
-    }
-
-    if (lastName == "") {
-      response = '<div class="gen alert alert-danger">' + Lang.get("js.last_name_required") + "</div>";
-      $(window).scrollTop($(".appointment-form").offset().top);
-      $(".book-appointment-message").html(response).delay(5000).hide("slow");
-      return false;
-    }
-  }
-
-  if (email == "") {
-    response = '<div class="gen alert alert-danger">' + Lang.get("js.email_required") + "</div>";
-    $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    $(window).scrollTop($(".appointment-form").offset().top);
-    return false;
-  }
-
-  if (doctor == "") {
-    response = '<div class="gen alert alert-danger">' + Lang.get("js.doctor_required") + "</div>";
-    $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    $(window).scrollTop($(".appointment-form").offset().top);
-    return false;
-  }
-
-  if (services == "") {
-    response = '<div class="gen alert alert-danger">' + Lang.get("js.service_required") + "</div>";
-    $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    $(window).scrollTop($(".appointment-form").offset().top);
-    return false;
-  }
-
-  if (appointmentDate == "") {
-    response = '<div class="gen alert alert-danger">' + Lang.get("js.appointment_date_required") + "</div>";
-    $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    $(window).scrollTop($(".appointment-form").offset().top);
-    return false;
-  }
-
-  if (paymentType == "") {
-    response = '<div class="gen alert alert-danger">' + Lang.get("js.payment_type_required") + "</div>";
-    $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    $(window).scrollTop($(".appointment-form").offset().top);
-    return false;
-  }
-
-  var btnSaveEle = $(this).find("#saveBtn");
-  setFrontBtnLoader(btnSaveEle);
-  var frontAppointmentFormData = new FormData($(this)[0]);
-  frontAppointmentFormData.append("payable_amount", frontPayableAmount);
-  var response = '<div class="alert alert-warning alert-dismissable"> ' + Lang.get("js.processing") + "</div>";
-  jQuery(this).find(".book-appointment-message").html(response).show("slow");
-  $.ajax({
-    url: $(this).attr("action"),
-    type: "POST",
-    data: frontAppointmentFormData,
-    processData: false,
-    contentType: false,
-    success: function success(result) {
-      if (result.success) {
-        var appointmentID = result.data.appointmentId;
-        response = '<div class="gen alert alert-success">' + result.message + "</div>";
-        $(".book-appointment-message").html(response).delay(5000).hide("slow");
-        $(window).scrollTop($(".appointment-form").offset().top);
-        $("#frontAppointmentBook")[0].reset();
-
-        if (result.data.payment_type == manually) {
-          // Turbo.visit(
-          //     route("manually-payment", {
-          //         appointmentId: appointmentID,
-          //     })
-          // );
-          window.location.href = route("manually-payment", {
-            appointmentId: appointmentID
-          });
-        }
-
-        if (result.data.payment_type == paystack) {
-          return location.href = result.data.redirect_url;
-        }
-
-        if (result.data.payment_type == authorizeMethod) {
-          window.location.replace(route("authorize.init", {
-            appointmentId: appointmentID
-          }));
-        }
-
-        if (result.data.payment_type == paytmMethod) {
-          window.location.replace(route("paytm.init", {
-            appointmentId: appointmentID
-          }));
-        }
-
-        if (result.data.payment_type == paypal) {
-          $.ajax({
-            type: "GET",
-            url: route("paypal.init"),
-            data: {
-              appointmentId: appointmentID
-            },
-            success: function success(result) {
-              if (result.status == 200) {
-                var redirectTo = "";
-                location.href = result.link;
-                $.each(result.result.links, function (key, val) {
-                  if (val.rel == "approve") {
-                    redirectTo = val.href;
-                  }
-                });
-                location.href = redirectTo;
-              }
-            },
-            error: function error(result) {},
-            complete: function complete() {}
-          });
-        }
-
-        if (result.data.payment_type == razorpayMethod) {
-          $.ajax({
-            type: "POST",
-            url: route("razorpay.init"),
-            data: {
-              _token: csrfToken,
-              appointmentId: appointmentID
-            },
-            success: function success(result) {
-              if (result.success) {
-                var _result$data = result.data,
-                    id = _result$data.id,
-                    amount = _result$data.amount,
-                    name = _result$data.name,
-                    _email = _result$data.email,
-                    contact = _result$data.contact,
-                    country_code = _result$data.country_code;
-                options.amount = amount;
-                options.order_id = id;
-                options.prefill.name = name;
-                options.prefill.email = _email;
-                options.prefill.contact = contact;
-                options.prefill.contact = country_code;
-                options.prefill.appointmentID = appointmentID;
-                var razorPay = new Razorpay(options);
-                razorPay.open();
-                razorPay.on("payment.failed", storeFailedPayment);
-              }
-            },
-            error: function error(result) {},
-            complete: function complete() {}
-          });
-        }
-
-        if (result.data.payment_type == stripeMethod) {
-          var sessionId = result.data[0].sessionId;
-          stripe.redirectToCheckout({
-            sessionId: sessionId
-          }).then(function (result) {
-            manageAjaxErrors(result);
-          });
-        }
-
-        if (result.data === manually) {
-          setTimeout(function () {
-            location.reload();
-          }, 1200);
-        }
-      }
-    },
-    error: function error(result) {
-      $(".book-appointment-message").css("display", "block");
-      response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
-      $(window).scrollTop($(".appointment-form").offset().top);
-      $(".book-appointment-message").html(response).delay(5000).hide("slow");
-    },
-    complete: function complete() {
-      setFrontBtnLoader(btnSaveEle);
-    }
-  });
-});
-listenClick(".show-more-btn", function () {
-  if ($(".question").hasClass("d-none")) {
-    $(".question").removeClass("d-none");
-    $(".show-more-btn").html("show less");
-  } else {
-    $(".show-content").addClass("d-none");
-    $(".show-more-btn").html("show more");
-  }
-});
-
-window.setFrontBtnLoader = function (btnLoader) {
-  if (btnLoader.attr("data-old-text")) {
-    btnLoader.html(btnLoader.attr("data-old-text")).prop("disabled", false);
-    btnLoader.removeAttr("data-old-text");
-    return;
-  }
-
-  btnLoader.attr("data-old-text", btnLoader.text());
-  btnLoader.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop("disabled", true);
-};
-
-function storeFailedPayment(response) {
-  $.ajax({
-    type: "POST",
-    url: route("razorpay.failed"),
-    data: {
-      data: response
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-      }
-    },
-    error: function error() {}
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/cms/create.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/fronts/cms/create.js ***!
-  \**************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadFrontCMSData);
-
-function loadFrontCMSData() {
-  $('#cmsShortDescription').on('keyup', function () {
-    $('#cmsShortDescription').attr('maxlength', 800);
-  });
-  $('#cmsShortDescription').attr('maxlength', 800);
-
-  if (!$('#cmsTermConditionId').length) {
-    return;
-  }
-
-  var quill1 = new Quill('#cmsTermConditionId', {
-    modules: {
-      toolbar: [[{
-        header: [1, 2, false]
-      }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
-    },
-    placeholder: Lang.get('js.terms_conditions'),
-    theme: 'snow' // or 'bubble'
-
-  });
-  quill1.on('text-change', function (delta, oldDelta, source) {
-    if (quill1.getText().trim().length === 0) {
-      quill1.setContents([{
-        insert: ''
-      }]);
-    }
-  });
-
-  if (!$('#cmsPrivacyPolicyId').length) {
-    return;
-  }
-
-  var quill2 = new Quill('#cmsPrivacyPolicyId', {
-    modules: {
-      toolbar: [[{
-        header: [1, 2, false]
-      }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
-    },
-    placeholder: Lang.get('js.privacy_policy'),
-    theme: 'snow' // or 'bubble'
-
-  });
-  quill2.on('text-change', function (delta, oldDelta, source) {
-    if (quill2.getText().trim().length === 0) {
-      quill2.setContents([{
-        insert: ''
-      }]);
-    }
-  });
-  var element = document.createElement('textarea');
-  element.innerHTML = $('#cmsTermConditionData').val();
-  quill1.root.innerHTML = element.value;
-  element.innerHTML = $('#cmsPrivacyPolicyData').val();
-  quill2.root.innerHTML = element.value;
-  listenSubmit('#addCMSForm', function () {
-    var title = $('#aboutTitleId').val();
-    var empty = title.trim().replace(/ \r\n\t/g, '') === '';
-    var description = $('#cmsShortDescription').val();
-    var empty2 = description.trim().replace(/ \r\n\t/g, '') === '';
-
-    if (empty) {
-      displayErrorMessage(Lang.get('js.title_no_white_space'));
-      return false;
-    }
-
-    if (empty2) {
-      displayErrorMessage(Lang.get('js.description_no_white_space'));
-      return false;
-    }
-
-    if ($('#aboutExperience').val() === '') {
-      displayErrorMessage(Lang.get('js.experience_required'));
-      return false;
-    }
-
-    var element = document.createElement('textarea');
-    var editor_content_1 = quill1.root.innerHTML;
-    element.innerHTML = editor_content_1;
-    var editor_content_2 = quill2.root.innerHTML;
-
-    if (quill1.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.Terms_Conditions_required'));
-      return false;
-    }
-
-    if (quill2.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.privacy_policy_required'));
-      return false;
-    }
-
-    $('#termData').val(JSON.stringify(editor_content_1));
-    $('#privacyData').val(JSON.stringify(editor_content_2));
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/enquiries/enquiry.js":
-/*!*********************************************************!*\
-  !*** ./resources/assets/js/fronts/enquiries/enquiry.js ***!
-  \*********************************************************/
-/***/ (() => {
-
-listenClick('#enquiryResetFilter', function () {
-  var allEnquiry = $('#allEnquiry').val();
-  $('#enquiriesStatus').val(allEnquiry).trigger('change');
-  hideDropdownManually($('#enquiryFilterBtn'), $('.dropdown-menu'));
-});
-listenChange('#enquiriesStatus', function () {
-  Livewire.dispatch('changeStatusFilter', {
-    value: $(this).val()
-  });
-});
-listenClick('.enquiry-delete-btn', function () {
-  var enquiryRecordId = $(this).attr('data-id');
-  deleteItem(route('enquiries.destroy', enquiryRecordId), Lang.get('js.enquiry'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/faqs/faqs.js":
-/*!*************************************************!*\
-  !*** ./resources/assets/js/fronts/faqs/faqs.js ***!
-  \*************************************************/
-/***/ (() => {
-
-listenClick('.faq-delete-btn', function (event) {
-  var faqRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('faqs.destroy', faqRecordId), Lang.get('js.faqs'));
-});
-listenClick('.accordion-button', function (event) {
-  var tohide = $(this).attr("data-bs-target");
-
-  if (!$(this).hasClass('custom-class')) {
-    $(this).addClass('custom-class');
-    $(tohide).addClass('show');
-    $(tohide).removeClass('hide');
-    $(this).attr("aria-expanded", "true");
-  } else {
-    $(this).attr("aria-expanded", "false");
-    $(this).addClass('collapsed');
-    $(tohide).removeClass('show');
-    $(tohide).addClass('hide');
-    $(this).removeClass('custom-class');
-    $(this).css("box-shadow", "none");
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/front_home/front-home.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/js/fronts/front_home/front-home.js ***!
-  \*************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadFrontHomeData);
-
-function loadFrontHomeData() {
-  var frontAppointmentDate = '#frontAppointmentDate';
-
-  if (!$(frontAppointmentDate).length) {
-    return;
-  }
-
-  $(frontAppointmentDate).datepicker({
-    format: 'yyyy-mm-dd',
-    startDate: new Date(),
-    todayHighlight: true
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/front_patient_testimonials/create-edit.js":
-/*!******************************************************************************!*\
-  !*** ./resources/assets/js/fronts/front_patient_testimonials/create-edit.js ***!
-  \******************************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadFrontTestimonialData);
-
-function loadFrontTestimonialData() {
-  if (!$('#shortDescription').length) {
-    return;
-  }
-
-  $('#shortDescription').on('keyup', function () {
-    $('#shortDescription').attr('maxlength', 111);
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/front_patient_testimonials/front_patient_testimonials.js":
-/*!*********************************************************************************************!*\
-  !*** ./resources/assets/js/fronts/front_patient_testimonials/front_patient_testimonials.js ***!
-  \*********************************************************************************************/
-/***/ (() => {
-
-listenClick('.front-testimonial-delete-btn', function (event) {
-  var testimonialRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('front-patient-testimonials.destroy', testimonialRecordId), Lang.get('js.front_patient_testimonials'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/medical-contact/enquiry.js":
-/*!***************************************************************!*\
-  !*** ./resources/assets/js/fronts/medical-contact/enquiry.js ***!
-  \***************************************************************/
-/***/ (() => {
-
-// listenSubmit('#enquiryForm', function (e) {
-//     e.preventDefault()
-//     let btnLoader = $(this).find('button[type="submit"]')
-//     // setBtnLoader(btnLoader)
-//     $.ajax({
-//         url: route('enquiries.store'),
-//         type: 'POST',
-//         data: $(this).serialize(),
-//         success: function (result) {
-//             if (result.success) {
-//              
-//                 $('#enquiryForm')[0].reset()
-//                
-//             }
-//         },
-//         error: function (error) {
-//             // toastr.error(error.responseJSON.message)
-//         },
-//     })
-// })
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/sliders/create-edit-slider.js":
-/*!******************************************************************!*\
-  !*** ./resources/assets/js/fronts/sliders/create-edit-slider.js ***!
-  \******************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadSliderData);
-
-function loadSliderData() {
-  if (!$('#shortDescription').length) {
-    return;
-  }
-
-  listenKeyup('#shortDescription', function () {
-    $('#sliderShortDescription').attr('maxlength', 55);
-  });
-
-  if (!$('#sliderShortDescription').length) {
-    return;
-  }
-
-  $('#sliderShortDescription').attr('maxlength', 55);
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/sliders/slider.js":
-/*!******************************************************!*\
-  !*** ./resources/assets/js/fronts/sliders/slider.js ***!
-  \******************************************************/
-/***/ (() => {
-
-
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/subscribers/create.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/fronts/subscribers/create.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-listenSubmit('#subscribeForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('subscribe.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        $('.subscribeForm-message').append('' + '<div class="gen alert alert-success">' + Lang.get("js.subscriber_creat") + '</div>').delay(5000);
-        setTimeout(function () {
-          $('.subscribeForm-message').empty();
-          $('#subscribeForm')[0].reset();
-        }, 3000);
-      }
-    },
-    error: function error(_error) {
-      $('.subscribeForm-message').append('' + '<div class="err alert alert-danger">' + Lang.get("js.email_already_exist") + '</div>').delay(5000);
-      setTimeout(function () {
-        $('.subscribeForm-message').empty();
-        $('#subscribeForm')[0].reset();
-      }, 3000);
-    },
-    complete: function complete() {}
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/fronts/subscribers/subscriber.js":
-/*!**************************************************************!*\
-  !*** ./resources/assets/js/fronts/subscribers/subscriber.js ***!
-  \**************************************************************/
-/***/ (() => {
-
-listenClick('.subscriber-delete-btn', function () {
-  var subscriberId = $(this).attr('data-id');
-  deleteItem(route('subscribers.destroy', subscriberId), Lang.get('js.subscribers'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/google_calendar/google_calendar.js":
-/*!****************************************************************!*\
-  !*** ./resources/assets/js/google_calendar/google_calendar.js ***!
-  \****************************************************************/
-/***/ (() => {
-
-listenClick('#syncGoogleCalendar', function () {
-  var btnSubmitEle = $(this);
-  setAdminBtnLoader(btnSubmitEle);
-  $.ajax({
-    url: route('syncGoogleCalendarList'),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          location.reload();
-        }, 1200);
-      }
-    },
-    complete: function complete() {
-      setAdminBtnLoader(btnSubmitEle);
-    }
-  });
-});
-listenSubmit('#googleCalendarForm', function (e) {
-  e.preventDefault();
-
-  if (!$('.google-calendar').is(':checked')) {
-    displayErrorMessage(Lang.get('js.select_calendar'));
-    return;
-  }
-
-  var url = '';
-
-  if (!isEmpty($('#googleCalendarDoctorRole').val())) {
-    url = route('doctors.appointmentGoogleCalendar.store');
-  } else if (!isEmpty($('#googleCalendarPatientRole').val())) {
-    url = route('patients.appointmentGoogleCalendar.store');
-  }
-
-  $.ajax({
-    url: url,
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          location.reload();
-        }, 1200);
-      }
-    },
-    error: function error(_error) {
-      displayErrorMessage(_error.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/live_consultations/live_consultations.js":
-/*!**********************************************************************!*\
-  !*** ./resources/assets/js/live_consultations/live_consultations.js ***!
-  \**********************************************************************/
-/***/ (() => {
-
-// document.addEventListener('DOMContentLoaded', loadLiveConsultationDate)
-Livewire.hook("element.init", function () {
-  loadLiveConsultationDate();
-
-  if ($('#doctorLiveConsultantStatus').length) {
-    $('#doctorLiveConsultantStatus').select2();
-  }
-});
-
-function loadLiveConsultationDate() {
-  if (!$('#consultationDate').length) {
-    return;
-  }
-
-  var lang = $('.currentLanguage').val();
-  $('#consultationDate').flatpickr({
-    "locale": lang,
-    enableTime: true,
-    minDate: new Date(),
-    dateFormat: 'Y-m-d H:i'
-  });
-
-  if (!$('.edit-consultation-date').length) {
-    return;
-  }
-
-  $('.edit-consultation-date').flatpickr({
-    "locale": lang,
-    enableTime: true,
-    minDate: new Date(),
-    dateFormat: 'Y-m-d H:i'
-  });
-}
-
-var liveConsultationTableName = '#liveConsultationTable';
-listenClick('#addLiveConsultationBtn', function () {
-  resetModalForm('#addNewForm');
-  $('#addDoctorID').trigger('change');
-  var lang = $('.currentLanguage').val();
-  $('#patientName').trigger('change');
-  $('#consultationDate').flatpickr({
-    "locale": lang,
-    enableTime: true,
-    minDate: new Date(),
-    dateFormat: 'Y-m-d H:i',
-    disableMobile: 'true'
-  });
-  $('#addModal').modal('show').appendTo('body');
-});
-listenSubmit('#addNewForm', function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find('#btnSave');
-  loadingButton.button('loading');
-  setAdminBtnLoader(loadingButton);
-  $.ajax({
-    url: route('doctors.live-consultations.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#addModal').modal('hide');
-        Livewire.dispatch('refresh');
-        setTimeout(function () {
-          loadingButton.button('reset');
-        }, 2500);
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-      setTimeout(function () {
-        loadingButton.button('reset');
-      }, 2000);
-    },
-    complete: function complete() {
-      setAdminBtnLoader(loadingButton);
-    }
-  });
-});
-listenClick('#liveConsultationResetFilter', function () {
-  $('#statusArr').val(3).trigger('change');
-});
-listenChange('.doctorLiveConsultantStatus', function () {
-  Livewire.dispatch("changeStatusFilter", {
-    value: $(this).val()
-  });
-});
-listenSubmit('#editForm', function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find('#btnEditSave');
-  loadingButton.button('loading');
-  setAdminBtnLoader(loadingButton);
-  var id = $('#liveConsultationId').val();
-  $.ajax({
-    url: route('doctors.live-consultations.destroy', id),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#editModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      setAdminBtnLoader(loadingButton);
-      loadingButton.button('reset');
-    }
-  });
-});
-listenChange('.consultation-change-status', function (e) {
-  e.preventDefault();
-  var statusId = $(this).val();
-  $.ajax({
-    url: route('doctors.live.consultation.change.status'),
-    type: 'POST',
-    data: {
-      statusId: statusId,
-      id: $(this).attr('data-id')
-    },
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.start-btn', function (event) {
-  var StartLiveConsultationId = $(event.currentTarget).attr('data-id');
-  startRenderData(StartLiveConsultationId);
-});
-listenClick('.live-consultation-edit-btn', function (event) {
-  var editLiveConsultationId = $(event.currentTarget).attr('data-id');
-  editRenderData(editLiveConsultationId);
-});
-
-window.editRenderData = function (id) {
-  $.ajax({
-    url: route('doctors.live-consultations.edit', id),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        var liveConsultation = result.data;
-        $('#liveConsultationId').val(liveConsultation.id);
-        $('.edit-consultation-title').val(liveConsultation.consultation_title);
-        $('.edit-consultation-date').val(moment(liveConsultation.consultation_date).format('YYYY-MM-DD H:mm'));
-        $('.edit-consultation-duration-minutes').val(liveConsultation.consultation_duration_minutes);
-        $('.edit-patient-name').val(liveConsultation.patient_id).trigger('change');
-        $('.edit-doctor-name').val(liveConsultation.doctor_id).trigger('change');
-        $('.host-enable,.host-disabled').prop('checked', false);
-
-        if (liveConsultation.host_video == true) {
-          $('.host-enable').prop('checked', true).val(1);
-        } else {
-          $('.host-disabled').prop('checked', true).val(1);
-        }
-
-        $('.client-enable,.client-disabled').prop('checked', false);
-
-        if (liveConsultation.participant_video == true) {
-          $('.client-enable').prop('checked', true).val(1);
-        } else {
-          $('.client-disabled').prop('checked', true).val(1);
-        }
-
-        $('.edit-consultation-type').val(liveConsultation.type).trigger('change');
-        $('.edit-consultation-type-number').val(liveConsultation.type_number).trigger('change');
-        $('.edit-description').val(liveConsultation.description);
-        $('#editModal').appendTo('body').modal('show');
-      }
-    },
-    error: function error(result) {
-      manageAjaxErrors(result);
-    }
-  });
-};
-
-window.startRenderData = function (id) {
-  $.ajax({
-    url: $('#doctorRole').val() ? route('doctors.live.consultation.get.live.status', id) : route('patients.live.consultation.get.live.status', id),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        var liveConsultation = result.data;
-        $('#startLiveConsultationId').val(liveConsultation.liveConsultation.id);
-        $('.start-modal-title').text(liveConsultation.liveConsultation.consultation_title);
-        $('.host-name').text(liveConsultation.liveConsultation.user.full_name);
-        $('.date').text(moment(liveConsultation.liveConsultation.consultation_date).format('LT') + ', ' + moment(liveConsultation.liveConsultation.consultation_date).format('Do MMM, Y'));
-        $('.minutes').text(liveConsultation.liveConsultation.consultation_duration_minutes);
-        $('#startModal').find('.status').append(liveConsultation.zoomLiveData.status === 'started' ? $('.status').text('Started') : $('.status').text('Awaited'));
-        $('.start').attr('href', $('#patientRole').val() ? liveConsultation.liveConsultation.meta.join_url : liveConsultation.zoomLiveData.status === 'started' ? $('.start').addClass('disabled') : liveConsultation.liveConsultation.meta.start_url);
-        $('#startModal').appendTo('body').modal('show');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-};
-
-listenClick('.live-consultation-delete-btn', function (event) {
-  var liveConsultationId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('doctors.live-consultations.destroy', liveConsultationId), Lang.get('js.live_consultations'));
-});
-listenClick('.consultation-show-data', function (event) {
-  var consultationId = $(event.currentTarget).attr('data-id');
-  $.ajax({
-    url: $('#doctorRole').val() ? route('doctors.live-consultations.show', consultationId) : route('patients.live-consultations.show', consultationId),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        var liveConsultation = result.data.liveConsultation;
-        var showModal = $('#showModal');
-        $('#startLiveConsultationId').val(liveConsultation.id);
-        $('#consultationTitle').text(liveConsultation.consultation_title);
-        $('#consultationDates').text(moment(liveConsultation.consultation_date).format('LT') + ', ' + moment(liveConsultation.consultation_date).format('Do MMM, Y'));
-        $('#consultationDurationMinutes').text(liveConsultation.consultation_duration_minutes);
-        $('#consultationPatient').text(liveConsultation.patient.user.full_name);
-        $('#consultationDoctor').text(liveConsultation.doctor.user.full_name);
-        liveConsultation.host_video === 0 ? $('#consultationHostVideo').text('Disable') : $('#consultationHostVideo').text('Enable');
-        liveConsultation.participant_video === 0 ? $('#consultationParticipantVideo').text('Disable') : $('#consultationParticipantVideo').text('Enable');
-        isEmpty(liveConsultation.description) ? $('#consultationDescription').text('N/A') : $('#consultationDescription').text(liveConsultation.description);
-        showModal.modal('show').appendTo('body');
-      }
-    },
-    error: function error(result) {
-      manageAjaxErrors(result);
-    }
-  });
-});
-listenClick('#doctorLiveConsultantResetFilter', function () {
-  $('#doctorLiveConsultantStatus').val(3).trigger('change');
-  hideDropdownManually($('#doctorLiveConsultantFilterBtn'), $('.dropdown-menu'));
-});
-listenClick('.add-credential', function () {
-  if ($('.ajaxCallIsRunning').val()) {
-    return;
-  }
-
-  ajaxCallInProgress();
-  var userId = $('#zoomUserId').val();
-  renderUserZoomData(userId);
-});
-
-function renderUserZoomData(id) {
-  $.ajax({
-    url: 'user-zoom-credential/' + id + '/fetch',
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        var userZoomData = result.data;
-
-        if (!isEmpty(userZoomData)) {
-          $('#zoomApiKey').val(userZoomData.zoom_api_key);
-          $('#zoomApiSecret').val(userZoomData.zoom_api_secret);
-        }
-
-        $('#addCredential').modal('show');
-        ajaxCallCompleted();
-      }
-    },
-    error: function error(result) {
-      manageAjaxErrors(result);
-    }
-  });
-}
-
-listenSubmit('#addZoomForm', function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find('#btnZoomSave');
-  loadingButton.button('loading');
-  $.ajax({
-    url: $('#zoomCredentialCreateUrl').val(),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#addCredential').modal('hide');
-        setTimeout(function () {
-          loadingButton.button('reset');
-        }, 2500);
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/medicine_bills/medicine_bill.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/js/medicine_bills/medicine_bill.js ***!
-  \*************************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadSaleMedicineCreate);
-var uniquePrescriptionId = "";
-
-function loadSaleMedicineCreate() {
-  if (!$("#medicineUniqueId").length) {
-    return;
-  }
-
-  $(".medicinePurchaseId").select2({
-    width: "100%"
-  });
-  $(".medicine_bill_date").flatpickr({
-    enableTime: true,
-    defaultDate: new Date(),
-    dateFormat: "Y-m-d H:i"
-  });
-  $(".edit_medicine_bill_date").flatpickr({
-    enableTime: true,
-    dateFormat: "Y-m-d H:i"
-  });
-  $(".medicineBillExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
-  $(".medicine-payment-mode").select2({
-    width: "100%"
-  });
-  $(".medicineBillCategoriesId").select2({
-    width: "100%"
-  });
-}
-
-listenChange(".medicineBillCategoriesId", function () {
-  var categoryId = $(this).val();
-  var currentRow = $(this).closest("tr");
-  var medicineId = currentRow.find('.purchaseMedicineId');
-  var medicineAvlQty = currentRow.find('.medicineTotalQuantity');
-  var medicineSalePrice = currentRow.find('.medicineBill-sale-price');
-
-  if (categoryId == "") {
-    $(medicineId).find("option").remove();
-    $(medicineId).append($("<option></option>").attr("placeholder", "").text(Lang.get("js.select_medicine")));
-    $(medicineAvlQty).text('0');
-    return false;
-  }
-
-  $.ajax({
-    type: "get",
-    url: route("get-medicine-category", categoryId),
-    success: function success(result) {
-      var array = result.data.medicine;
-      $(medicineId).find("option").remove();
-      $(medicineId).attr("required", true);
-      $(medicineId).append($('<option value="">Select Medicine</option>'));
-      $.each(array, function (key, value) {
-        $(medicineId).append($('<option></option>').attr('value', key).text(value));
-      });
-      $(medicineAvlQty).text('0');
-      $(medicineSalePrice).val('0.00');
-    }
-  });
-});
-listenChange(".medicinePurchaseId", function () {
-  var currentRow = $(this).closest("tr");
-  var medicineId = $(this).val();
-  var uniqueId = $(this).attr("data-id");
-  var salePriceId = currentRow.find(".medicineBill-sale-price");
-  var QuantityPriceId = currentRow.find(".medicineTotalQuantity");
-
-  if (medicineId == "" || medicineId == Lang.get("js.select_medicine")) {
-    $(salePriceId).val("0.00");
-    $(QuantityPriceId).text("0");
-    return false;
-  }
-
-  $.ajax({
-    type: "get",
-    url: route("get-medicine", medicineId),
-    success: function success(result) {
-      $(salePriceId).val(result.data.selling_price.toFixed(2));
-      var currentqty = currentRow.find(".medicineBill-quantity").val();
-      var price = currentRow.find(".medicineBill-sale-price").val();
-      var currentamount = parseFloat(price * currentqty);
-      currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
-      var taxEle = $(".medicineBill-tax");
-      var elements = $(".medicine-bill-amount");
-      var total = 0.0;
-      var totalTax = 0;
-      var netAmount = 0;
-      var discount = 0;
-      var amount = 0;
-
-      for (var i = 0; i < elements.length; i++) {
-        total += parseFloat(elements[i].value);
-        discount = $(".medicineBill-discount").val();
-
-        if (taxEle[i].value != 0 && taxEle[i].value != "") {
-          totalTax += elements[i].value * taxEle[i].value / 100;
-        } else {
-          amount += parseFloat(elements[i].value);
-        }
-      }
-
-      discount = discount == "" ? 0 : discount;
-      netAmount = parseFloat(total) + parseFloat(totalTax);
-      netAmount = parseFloat(netAmount) - parseFloat(discount);
-
-      if (discount > total && $(this).hasClass("medicineBill-discount")) {
-        discount = discount.slice(0, -1);
-        displayErrorMessage(Lang.get("js.the_discount_shoul"));
-        $("#discountAmount").val(discount);
-        return false;
-      }
-
-      if (discount > total) {
-        netAmount = 0;
-      }
-
-      $("#total").val(total.toFixed(2));
-      $("#medicineTotalTaxId").val(totalTax.toFixed(2));
-      $("#netAmount").val(netAmount.toFixed(2));
-      $(QuantityPriceId).text(result.data.available_quantity);
-    }
-  });
-});
-listenClick(".add-medicine-btn-medicine-bill", function () {
-  uniquePrescriptionId = $("#medicineUniqueId").val();
-  var data = {
-    medicinesCategories: JSON.parse($("#showMedicineCategoriesMedicineBill").val()),
-    medicines: JSON.parse($(".associatePurchaseMedicines").val()),
-    uniqueId: uniquePrescriptionId
-  };
-  var prescriptionMedicineHtml = prepareTemplateRender("#medicineBillTemplate", data);
-  $(".medicine-bill-container").append(prescriptionMedicineHtml);
-  dropdownToSelecte2(".medicinePurchaseId");
-  dropdownToSelecteCategories2(".medicinebillCategories");
-  expiryDateFlatePicker(".medicinebillCategories");
-  $(".purchaseMedicineExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
-  uniquePrescriptionId++;
-  $("#medicineUniqueId").val(uniquePrescriptionId);
-});
-
-var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.select_medicine'),
-    width: "100%"
-  });
-};
-
-var dropdownToSelecteCategories2 = function dropdownToSelecteCategories2(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.select_category'),
-    width: "100%"
-  });
-};
-
-var expiryDateFlatePicker = function expiryDateFlatePicker(selector) {
-  $(".medicineBillExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
-};
-
-listenKeyup(".medicineBill-quantity,.medicineBill-price,.medicineBill-tax,.medicineBill-discount,.medicineBill-sale-price", function () {
-  var value = $(this).val();
-  $(this).val(value.replace(/[^0-9\.]/g, ""));
-  var currentRow = $(this).closest("tr");
-  var currentqty = currentRow.find(".medicineBill-quantity").val();
-  var price = currentRow.find(".medicineBill-sale-price").val();
-  var currentamount = parseFloat(price * currentqty);
-  currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
-  var taxEle = $(".medicineBill-tax");
-  var elements = $(".medicine-bill-amount");
-  var total = 0.0;
-  var totalTax = 0;
-  var netAmount = 0;
-  var discount = 0;
-  var amount = 0;
-  var qty = $(".medicineBill-quantity");
-  var PreviousQty = $(".previous-quantity");
-
-  for (var i = 0; i < elements.length; i++) {
-    total += parseFloat(elements[i].value);
-    discount = $(".medicineBill-discount").val();
-
-    if ($("#medicineBillStatus").val() == 1) {
-      if (parseInt(qty[i].value) > parseInt(PreviousQty[i].value)) {
-        var qtyRollback = qty[i].value.slice(0, -1);
-        currentRow.find(".medicineBill-quantity").val(qtyRollback);
-        currentqty = currentRow.find(".medicineBill-quantity").val();
-        price = currentRow.find(".medicineBill-sale-price").val();
-        currentamount = parseFloat(price * currentqty);
-        currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
-        displayErrorMessage(Lang.get("js.update_quantity"));
-        return false;
-      }
-    }
-
-    if (taxEle[i].value != 0 && taxEle[i].value != "") {
-      if (taxEle[i].value > 99) {
-        var taxAmount = taxEle[i].value.slice(0, -1);
-        currentRow.find(".medicineBill-tax").val(taxAmount);
-        displayErrorMessage(Lang.get("js.tax_should_be"));
-        $("#discountAmount").val(discount);
-        return false;
-      }
-
-      totalTax += elements[i].value * taxEle[i].value / 100;
-    } else {
-      amount += parseFloat(elements[i].value);
-    }
-  }
-
-  discount = discount == "" ? 0 : discount;
-  netAmount = parseFloat(total) + parseFloat(totalTax);
-  netAmount = parseFloat(netAmount) - parseFloat(discount);
-
-  if (discount > total && $(this).hasClass("medicineBill-discount")) {
-    discount = discount.slice(0, -1);
-    displayErrorMessage(Lang.get("js.the_discount_shoul"));
-    $("#discountAmount").val(discount);
-    return false;
-  }
-
-  if (discount > total) {
-    netAmount = 0;
-  }
-
-  $("#total").val(total.toFixed(2));
-  $("#medicineTotalTaxId").val(totalTax.toFixed(2));
-  $("#netAmount").val(netAmount.toFixed(2));
-});
-listenSubmit("#CreateMedicineBillForm", function (e) {
-  e.preventDefault();
-  var netAmount = "#netAmount";
-
-  if ($("#total").val() < $("#discountAmount").val()) {
-    displayErrorMessage(Lang.get("js.the_discount_shoul"));
-    return false;
-  } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
-    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
-    return false;
-  } else if ($(netAmount).val() == 0) {
-    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
-    return false;
-  } else if ($(".medicineBill-quantity").val() == 0 || $(".medicineBill-quantity").val() == null || $(".medicineBill-quantity").val() == "") {
-    displayErrorMessage(Lang.get("js.quantity_should"));
-    return false;
-  }
-
-  $(this)[0].submit();
-});
-listenClick(".add-patient-modal", function () {
-  $("#addPatientModal").appendTo("body").modal("show");
-});
-listenSubmit("#addPatientForm", function (e) {
-  e.preventDefault();
-  processingBtn("#addPatientForm", "#patientBtnSave", "loading");
-  $("#patientBtnSave").attr("disabled", true);
-  $.ajax({
-    url: route("store.patient"),
-    type: "POST",
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        $("#prescriptionPatientId").find("option").remove();
-        $("#prescriptionPatientId").append($("<option></option>").attr("placeholder", "").text(Lang.get("js.select_patient")));
-        $.each(result.data, function (i, v) {
-          $("#prescriptionPatientId").append($("<option></option>").attr("value", i).text(v));
-        });
-        displaySuccessMessage(result.message);
-        $("#addPatientModal").modal("hide");
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      $("#patientBtnSave").attr("disabled", false);
-      processingBtn("#addPatientForm", "#patientBtnSave");
-    }
-  });
-});
-listen('hidden.bs.modal', "#addPatientModal", function () {
-  resetModalForm("#addPatientForm", "#patientErrorsBox");
-});
-listenClick(".medicine-bill-delete-btn", function (event) {
-  var id = $(event.currentTarget).attr("data-id");
-  deleteItem(route("medicine-bills.destroy", id), Lang.get("js.medicine_bill"));
-});
-listenSubmit("#MedicinebillForm", function (e) {
-  e.preventDefault();
-  var netAmount = "#netAmount";
-
-  if (parseFloat($("#total").val()) < parseFloat($("#discountAmount").val())) {
-    displayErrorMessage(Lang.get("js.the_discount_shoul"));
-    return false;
-  } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
-    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
-    return false;
-  } else if ($(netAmount).val() == 0) {
-    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
-    return false;
-  } else if ($(".medicineBill-quantity").val() == 0 || $(".medicineBill-quantity").val() == null || $(".medicineBill-quantity").val() == "") {
-    displayErrorMessage(Lang.get("js.quantity_should"));
-    return false;
-  }
-
-  $medicineBillId = $("#medicineBillId").val();
-  $.ajax({
-    url: route("medicine-bills.update", $medicineBillId),
-    type: "post",
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        setTimeout(function () {
-          // Turbo.visit(route("medicine-bills.index")); // true
-          window.location.href = route("medicine-bills.index");
-        }, 2000);
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick(".delete-medicine-bill-item", function () {
-  var currentRow = $(this).closest("tr");
-  var currentRowAmount = currentRow.find(".medicine-bill-amount").val();
-  var currentRowTax = currentRow.find(".medicineBill-tax").val();
-  var currentTaxAmount = parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
-  var updatedTax = parseFloat($("#medicineTotalTaxId").val()) - parseFloat(currentTaxAmount);
-  $("#medicineTotalTaxId").val(updatedTax.toFixed(2));
-  var updatedTotalAmount = parseFloat($("#total").val()) - parseFloat(currentRowAmount);
-  $("#total").val(updatedTotalAmount.toFixed(2));
-  var amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
-  var updateNetAmount = parseFloat($("#netAmount").val()) - parseFloat(amountSubfromNetAmt);
-  $("#netAmount").val(updateNetAmount.toFixed(2));
-  $(this).parents("tr").remove();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/medicines/medicines.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/medicines/medicines.js ***!
-  \****************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadMedicineCreateData);
-"use strict";
-
-function loadMedicineCreateData() {
-  $('#medicineCategoryId,#medicineBrandId').select2({
-    width: '100%'
-  });
-  listenClick(".showMedicineBtn", function (event) {
-    event.preventDefault();
-    var medicineId = $(event.currentTarget).attr("data-id");
-    renderMedicineData(medicineId);
-  });
-
-  function renderMedicineData(id) {
-    $.ajax({
-      url: route("medicines.show.modal", id),
-      type: "GET",
-      success: function success(result) {
-        if (result.success) {
-          $("#showMedicineName").text(result.data.name);
-          $("#showMedicineBrand").text(result.data.brand_name);
-          $("#showMedicineCategory").text(result.data.category_name);
-          $("#showMedicineSaltComposition").text(result.data.salt_composition);
-          $("#showMedicineSellingPrice").text(result.data.selling_price);
-          $("#showMedicineBuyingPrice").text(result.data.buying_price);
-          $("#showMedicineQuanity").text(addCommas(result.data.quantity));
-          $("#showMedicineAvailableQuanity").text(addCommas(result.data.available_quantity));
-          $("#showMedicineSideEffects").text(result.data.side_effects);
-          moment.locale($("#medicineLanguage").val());
-          var createDate = moment(result.data.created_at);
-          $("#showMedicineCreatedOn").text(createDate.fromNow());
-          $("#showMedicineUpdatedOn").text(moment(result.data.updated_at).fromNow());
-          $("#showMedicineDescription").text(result.data.description);
-          setValueOfEmptySpan();
-          $("#showMedicine").appendTo("body").modal("show");
-        }
-      },
-      error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
-      }
-    });
-  }
-}
-
-listenClick(".deleteMedicineBtn", function (event) {
-  var id = $(event.currentTarget).attr("data-id");
-  medicineDeleteItem(route("check.use.medicine", id), Lang.get("js.medicine"));
-});
-
-window.medicineDeleteItem = function (url, header) {
-  var tableId = null;
-  var callFunction = null;
-  $.ajax({
-    url: url,
-    type: "GET",
-    success: function success(result) {
-      if (result.success) {
-        var popUpText = result.data.result == true ? Lang.get('js.the_medicine_already_in_use') : Lang.get('js.are_you_sure') + ' "' + header + '"?';
-        swal({
-          title: Lang.get('js.deleted'),
-          text: popUpText,
-          icon: 'warning',
-          buttons: {
-            confirm: Lang.get('js.yes'),
-            cancel: Lang.get('js.no')
-          }
-        }).then(function (popResult) {
-          if (popResult) {
-            deleteMedicineAjax($("#indexMedicineUrl").val() + "/" + result.data.id, tableId = null, header, callFunction = null);
-          }
-        });
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-};
-
-function deleteMedicineAjax(url) {
-  var tableId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-  var header = arguments.length > 2 ? arguments[2] : undefined;
-  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-  $.ajax({
-    url: url,
-    type: "DELETE",
-    dataType: "json",
-    success: function success(obj) {
-      if (obj.success && obj.data) {
-        swal({
-          title: obj.message,
-          text: Lang.get('js.are_you_sure') + ' "' + header + '"?',
-          icon: sweetAlertIcon,
-          timer: 3000,
-          buttons: {
-            confirm: Lang.get('js.yes'),
-            cancel: Lang.get('js.no')
-          }
-        }).then(function (result) {
-          if (result) {
-            $.ajax({
-              url: url,
-              type: "DELETE",
-              dataType: "json",
-              data: {
-                canDeleteCheck: "yes"
-              },
-              success: function success(obj) {},
-              error: function error(data) {
-                swal({
-                  title: "",
-                  text: data.responseJSON.message,
-                  confirmButtonColor: "#009ef7",
-                  icon: "error",
-                  timer: 5000,
-                  buttons: {
-                    confirm: Lang.get('js.ok')
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-
-      if (obj.success && !obj.data) {
-        Livewire.dispatch("resetPage");
-        swal({
-          icon: "success",
-          title: Lang.get('js.deleted'),
-          confirmButtonColor: "#f62947",
-          text: header + " " + Lang.get('js.has_been'),
-          timer: 2000,
-          buttons: {
-            confirm: Lang.get('js.ok')
-          }
-        });
-
-        if (callFunction) {
-          eval(callFunction);
-        }
-      }
-    },
-    error: function error(data) {
-      swal({
-        title: "",
-        text: data.responseJSON.message,
-        confirmButtonColor: "#009ef7",
-        icon: "error",
-        timer: 5000,
-        buttons: {
-          confirm: Lang.get('js.ok')
-        }
-      });
-    }
-  });
-}
-
-/***/ }),
-
-/***/ "./resources/assets/js/patient_visits/patient-visit.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/js/patient_visits/patient-visit.js ***!
-  \*************************************************************/
-/***/ (() => {
-
-
-
-/***/ }),
-
-/***/ "./resources/assets/js/patients/create-edit.js":
-/*!*****************************************************!*\
-  !*** ./resources/assets/js/patients/create-edit.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
-
-document.addEventListener('DOMContentLoaded', loadPatientData);
-
-function loadPatientData() {
-  loadPatientDob();
-  loadPatientCountry();
-  loadPatientprofileCountry();
-}
-
-function loadPatientDob() {
-  var patientDob = '.patient-dob';
-  var lang = $('.currentLanguage').val();
-
-  if (!$(patientDob).length) {
-    return;
-  }
-
-  $(patientDob).flatpickr({
-    "locale": lang,
-    maxDate: new Date(),
-    disableMobile: true
-  });
-}
-
-function loadPatientCountry() {
-  if (!$('#editPatientCountryId').length) {
-    return;
-  }
-
-  $('#patientCountryId').val($('#editPatientCountryId').val()).trigger('change');
-  setTimeout(function () {
-    $('#patientStateId').val($('#editPatientStateId').val()).trigger('change');
-  }, 400);
-  setTimeout(function () {
-    $('#patientCityId').val($('#editPatientCityId').val()).trigger('change');
-  }, 700);
-}
-
-function loadPatientprofileCountry() {
-  if (!$('#editPatientProfileCountryId').length) {
-    return;
-  }
-
-  $('#patientProfileCountryId').val($('#editPatientProfileCountryId').val()).trigger('change');
-  setTimeout(function () {
-    $('#patientProfileStateId').val($('#editPatientProfileStateId').val()).trigger('change');
-  }, 400);
-  setTimeout(function () {
-    $('#patientProfileCityId').val($('#editPatientProfileCityId').val()).trigger('change');
-  }, 700);
-}
-
-listenChange('input[type=radio][name=gender]', function () {
-  var file = $('#profilePicture').val();
-
-  if (isEmpty(file)) {
-    if (this.value == 1) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
-    } else if (this.value == 2) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
-    }
-  }
-});
-listenChange('#patientCountryId', function () {
-  $('#patientStateId').empty();
-  $('#patientCityId').empty();
-  $.ajax({
-    url: route('get-state'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      data: $(this).val()
-    },
-    success: function success(data) {
-      $('#patientStateId').empty();
-      $('#patientCityId').empty();
-      $('#patientStateId').append($('<option value=""></option>').text('Select State'));
-      $('#patientCityId').append($('<option value=""></option>').text('Select City'));
-      $.each(data.data, function (i, v) {
-        $('#patientStateId').append($('<option></option>').attr('value', i).text(v));
-      });
-    }
-  });
-});
-listenChange('#patientProfileCountryId', function () {
-  $('#patientProfileStateId').empty();
-  $('#patientProfileCityId').empty();
-  $.ajax({
-    url: route('get-state'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      data: $(this).val()
-    },
-    success: function success(data) {
-      $('#patientProfileStateId').empty();
-      $('#patientProfileCityId').empty();
-      $('#patientProfileStateId').append($('<option value=""></option>').text('Select State'));
-      $('#patientProfileCityId').append($('<option value=""></option>').text('Select City'));
-      $.each(data.data, function (i, v) {
-        $('#patientProfileStateId').append($('<option></option>').attr('value', i).text(v));
-      });
-    }
-  });
-});
-listenChange('#patientProfileStateId', function () {
-  $('#patientProfileCityId').empty();
-  $.ajax({
-    url: route('get-city'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      state: $(this).val()
-    },
-    success: function success(data) {
-      $('#patientProfileCityId').empty();
-      $('#patientProfileCityId').append($('<option value=""></option>').text('Select City'));
-      $.each(data.data, function (i, v) {
-        $('#patientProfileCityId').append($('<option></option>').attr('value', i).text(v));
-      });
-
-      if ($('#patientProfileIsEdit').val() && $('#editPatientProfileCityId').val()) {
-        $('#patientProfileCityId').val($('#editPatientProfileCityId').val()).trigger('change');
-      }
-    }
-  });
-});
-listenChange('#patientStateId', function () {
-  $('#patientCityId').empty();
-  $.ajax({
-    url: route('get-city'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      state: $(this).val()
-    },
-    success: function success(data) {
-      $('#patientCityId').empty();
-      $('#patientCityId').append($('<option value=""></option>').text('Select City'));
-      $.each(data.data, function (i, v) {
-        $('#patientCityId').append($('<option></option>').attr('value', i).text(v));
-      });
-
-      if ($('#patientIsEdit').val() && $('#editPatientCityId').val()) {
-        $('#patientCityId').val($('#editPatientCityId').val()).trigger('change');
-      }
-    }
-  });
-});
-listenSubmit('#createPatientForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenSubmit('#editPatientForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenClick('.removeAvatarIcon', function () {
-  var backgroundImg = $('#patientBackgroundImg').val();
-  $('#bgImage').css('background-image', '');
-  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
-  $('#removeAvatar').addClass('hide');
-  $('#tooltip287851').addClass('hide');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/patients/detail.js":
-/*!************************************************!*\
-  !*** ./resources/assets/js/patients/detail.js ***!
-  \************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadPatientShowAppointmentDate)
-var patientShowApptmentFilterDate = $("#patientShowPageAppointmentDate");
-var patientShowApptmentStart = moment().startOf("week");
-var patientShowApptmentEnd = moment().endOf("week");
-Livewire.hook("element.init", function () {
-  loadPatientShowAppointmentDate();
-
-  if ($("#patientShowPageAppointmentStatus").length) {
-    $("#patientShowPageAppointmentStatus").select2();
-  }
-
-  if ($(".patient-show-apptment-status-change").length) {
-    $(".patient-show-apptment-status-change").select2();
-  }
-
-  if (patientShowApptmentStart != undefined && patientShowApptmentEnd != undefined) {
-    cb(patientShowApptmentStart, patientShowApptmentEnd);
-  }
-});
-
-function loadPatientShowAppointmentDate() {
-  var _ranges;
-
-  if (!$("#patientShowPageAppointmentDate").length) {
-    return;
-  } // let patientShowApptmentStart = moment().startOf("week");
-  // let patientShowApptmentEnd = moment().endOf("week");
-
-
-  $("#patientShowPageAppointmentDate").daterangepicker({
-    startDate: patientShowApptmentStart,
-    endDate: patientShowApptmentEnd,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } //cb
-  ); // cb(patientShowApptmentStart, patientShowApptmentEnd);
-}
-
-function cb(start, end) {
-  $("#patientShowPageAppointmentDate").val(start.format("YYYY-MM-DD") + " - " + end.format("YYYY-MM-DD"));
-}
-
-listenClick(".patient-show-apptment-delete-btn", function (event) {
-  var patientShowApptmentRecordId = $(event.currentTarget).attr("data-id");
-  var patientShowApptmentUrl = !isEmpty($("#patientRolePatientDetail").val()) ? route("patients.appointments.destroy", patientShowApptmentRecordId) : route("appointments.destroy", patientShowApptmentRecordId);
-  deleteItem(patientShowApptmentUrl, "Appointment");
-});
-listenChange(".patient-show-apptment-status-change", function () {
-  var patientShowAppointmentStatus = $(this).val();
-  var patientShowAppointmentId = $(this).attr("data-id");
-  var currentData = $(this);
-  $.ajax({
-    url: route("change-status", patientShowAppointmentId),
-    type: "POST",
-    data: {
-      appointmentId: patientShowAppointmentId,
-      appointmentStatus: patientShowAppointmentStatus
-    },
-    success: function success(result) {
-      $(currentData).children("option.booked").addClass("hide");
-      Livewire.dispatch("refresh");
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick("#patientAppointmentResetFilter", function () {
-  $("#patientShowPageAppointmentStatus").val(1).trigger("change");
-  $("#patientShowPageAppointmentDate").val(moment().startOf("week").format("MM/DD/YYYY") + " - " + moment().endOf("week").format("MM/DD/YYYY")).trigger("change");
-});
-listenChange("#patientShowPageAppointmentDate", function () {
-  Livewire.dispatch("changeDateFilter", {
-    date: $(this).val()
-  });
-});
-listenChange("#patientShowPageAppointmentStatus", function () {
-  // Livewire.dispatch('changeDateFilter',
-  //     $('#patientShowPageAppointmentDate').val())
-  Livewire.dispatch("changeStatusFilter", {
-    status: $(this).val()
-  });
-}); // document.addEventListener('livewire:load', function () {
-//     window.livewire.hook('message.processed', () => {
-//         if ($('#patientShowPageAppointmentStatus').length) {
-//             $('#patientShowPageAppointmentStatus').select2()
-//         }
-//         if ($('.patient-show-apptment-status-change').length) {
-//             $('.patient-show-apptment-status-change').select2()
-//         }
-//     })
-// })
-
-/***/ }),
-
-/***/ "./resources/assets/js/patients/doctor-patient-appointment.js":
-/*!********************************************************************!*\
-  !*** ./resources/assets/js/patients/doctor-patient-appointment.js ***!
-  \********************************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadDoctorPanelApptmentFilteDate);
-var doctorPanelApptmentFilterDate = $('#doctorAppointmentDateFilter');
-
-function loadDoctorPanelApptmentFilteDate() {
-  if (!doctorPanelApptmentFilterDate.length) {
-    return;
-  }
-
-  var doctorPanelApptmentStart = moment().startOf('week');
-  var doctorPanelApptmentEnd = moment().endOf('week');
-
-  function cb(start, end) {
-    doctorPanelApptmentFilterDate.html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
-  }
-
-  doctorPanelApptmentFilterDate.daterangepicker({
-    startDate: doctorPanelApptmentStart,
-    endDate: doctorPanelApptmentEnd,
-    ranges: {
-      'Today': [moment(), moment()],
-      'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-      'This Week': [moment().startOf('week'), moment().endOf('week')],
-      'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-      'This Month': [moment().startOf('month'), moment().endOf('month')],
-      'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-    }
-  }, cb);
-  cb(doctorPanelApptmentStart, doctorPanelApptmentEnd);
-}
-
-listenClick('.doctor-panel-delete-btn', function (event) {
-  var doctorPanelApptmentRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('patients.appointments.destroy', doctorPanelApptmentRecordId), 'Appointment');
-});
-listenChange('.doctor-panel-status-change', function () {
-  var appointmentStatus = $(this).val();
-  var appointmentId = $(this).attr('data-id');
-  var currentData = $(this);
-  $.ajax({
-    url: route('doctors.change-status', appointmentId),
-    type: 'POST',
-    data: {
-      appointmentId: appointmentId,
-      appointmentStatus: appointmentStatus
-    },
-    success: function success(result) {
-      $(currentData).children('option.booked').addClass('hide');
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick('#doctorPanelResetFilter', function () {
-  $('#appointmentStatus').val(book).trigger('change');
-  $('#doctorAppointmentDateFilter').val(moment().format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY')).trigger('change');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/patients/patients.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/patients/patients.js ***!
-  \**************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadAppointmentFilterDate)
-var patientFilterDate = "#patientDateFilter";
-var patientStart = moment().subtract(100, "years");
-var patientEnd = moment();
-Livewire.hook("element.init", function () {
-  loadAppointmentFilterDate();
-
-  if (patientStart != undefined && patientEnd != undefined) {
-    cb(patientStart, patientEnd);
-  }
-});
-
-function loadAppointmentFilterDate() {
-  var _ranges;
-
-  if (!$(patientFilterDate).length) {
-    return;
-  }
-
-  var timeRange = $("#patientDateFilter"); // let patientStart = moment().subtract(100, "years");
-  // let patientEnd = moment();
-
-  timeRange.daterangepicker({
-    startDate: patientStart,
-    endDate: patientEnd,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.all"), [moment().subtract(100, "years"), moment()]), _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } //  cb
-  ); // cb(patientStart, patientEnd)
-
-  timeRange.on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    patientStart = picker.startDate;
-    patientEnd = picker.endDate;
-  });
-}
-
-function cb(start, end) {
-  $("#patientDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
-}
-
-listenClick(".patient-delete-btn", function () {
-  var patientId = $(this).attr("data-id");
-  deleteItem(route("patients.destroy", patientId), Lang.get("js.patient"));
-});
-listenChange(".patient-email-verified", function (e) {
-  var patientRecordId = $(e.currentTarget).attr("data-id");
-  var value = $(this).is(":checked") ? 1 : 0;
-  $.ajax({
-    type: "POST",
-    url: route("emailVerified"),
-    data: {
-      id: patientRecordId,
-      value: value
-    },
-    success: function success(result) {
-      Livewire.dispatch("refresh");
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick(".patient-email-verification", function (event) {
-  var userId = $(event.currentTarget).attr("data-id");
-  $.ajax({
-    type: "POST",
-    url: route("resend.email.verification", userId),
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      setTimeout(function () {
-        window.location.reload(); // Turbo.visit(window.location.href);
-      }, 5000);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/prescriptions/create-edit.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/prescriptions/create-edit.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadPrescriptionCreate);
-var uniquePrescriptionId = 1;
-
-function loadPrescriptionCreate() {
-  if (!$('#prescriptionPatientId').length && !$('#editPrescriptionPatientId').length) {
-    return;
-  }
-
-  $('#prescriptionPatientId,#editPrescriptionPatientId,#filter_status,#prescriptionDoctorId,#editPrescriptionDoctorId,#prescriptionTime,#prescriptionMedicineCategoryId,#prescriptionMedicineBrandId,.prescriptionMedicineId,.prescriptionMedicineMealId,#editPrescriptionTime').select2({
-    width: '100%'
-  });
-  $('#prescriptionMedicineBrandId, #prescriptionMedicineBrandId').select2({
-    width: '100%',
-    dropdownParent: $('#add_new_medicine')
-  });
-  $('#prescriptionPatientId,#editPrescriptionPatientId').first().focus();
-}
-
-;
-listenSubmit('#createPrescription, #editPrescription', function () {
-  $('.btnPrescriptionSave').attr('disabled', true);
-});
-listenClick(".add-medicine", function () {
-  $("#add_new_medicine").appendTo("body").modal("show");
-});
-listenSubmit('#createMedicineFromPrescription', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('prescription.medicine.store'),
-    method: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      $('#add_new_medicine').modal('hide');
-      $(".medicineTable").load(location.href + " .medicineTable");
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listen('hidden.bs.modal', '#add_new_medicine', function () {
-  resetModalForm('#createMedicineFromPrescription', '#medicinePrescriptionErrorBox');
-});
-
-var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.select_medicine'),
-    width: '100%'
-  });
-};
-
-var dropdownToSelecteDuration2 = function dropdownToSelecteDuration2(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.select_duration'),
-    width: '100%'
-  });
-};
-
-var dropdownToSelecteInterVal = function dropdownToSelecteInterVal(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.dose_interval'),
-    width: '100%'
-  });
-};
-
-listenClick('.delete-prescription-medicine-item', function () {
-  $(this).parents('tr').remove(); // resetPrescriptionMedicineItemIndex()
-});
-listenClick('.add-medicine-btn', function () {
-  uniquePrescriptionId++;
-  $('#prescriptionUniqueId').val(uniquePrescriptionId);
-  var data = {
-    'medicines': JSON.parse($('.associatePrescriptionMedicines').val()),
-    'meals': JSON.parse($('.associatePrescriptionMeals').val()),
-    'doseDuration': JSON.parse($('.DoseDurationId').val()),
-    'doseInterVal': JSON.parse($('.DoseInterValId').val()),
-    'uniqueId': uniquePrescriptionId
-  };
-  var prescriptionMedicineHtml = prepareTemplateRender('#prescriptionMedicineTemplate', data);
-  $('.prescription-medicine-container').append(prescriptionMedicineHtml);
-  dropdownToSelecte2('.prescriptionMedicineId');
-  dropdownToSelecte2('.prescriptionMedicineMealId');
-  dropdownToSelecteDuration2('.DoseDurationIdTemplate');
-  dropdownToSelecteInterVal('.DoseInterValIdTemplate');
-});
-
-var resetPrescriptionMedicineItemIndex = function resetPrescriptionMedicineItemIndex() {
-  var index = 1;
-
-  if (index - 1 == 0) {
-    var data = {
-      'medicines': JSON.parse($('.associatePrescriptionMedicines').val()),
-      'meals': JSON.parse($('.associatePrescriptionMeals').val()),
-      'doseDuration': JSON.parse($('.DoseDurationId').val()),
-      'doseInterVal': JSON.parse($('.DoseInterValId').val()),
-      'uniqueId': uniquePrescriptionId
-    };
-    var packageServiceItemHtml = prepareTemplateRender('#prescriptionMedicineTemplate', data);
-    $('.prescription-medicine-container').append(packageServiceItemHtml);
-    dropdownToSelecte2('.prescriptionMedicineId');
-    dropdownToSelecte2('.prescriptionMedicineMealId');
-    dropdownToSelecteDuration2('.DoseDurationIdTemplate');
-    dropdownToSelecteInterVal('.DoseInterValIdTemplate');
-    uniquePrescriptionId++;
-  }
-};
-
-listenChange('.quantityget', function () {
-  var medicineId = $(this).val();
-  var currentRow = $(this).closest("tr");
-  var uniqueId = $(this).attr("data-id");
-  var salePriceId = currentRow.find('.quantityshow');
-  var totalPriceId = currentRow.find('.totalqty');
-
-  if (medicineId == "" || medicineId == Lang.get("js.select_medicine")) {
-    $(totalPriceId).addClass("d-none");
-    $(salePriceId).addClass("d-none");
-    return false;
-  }
-
-  $.ajax({
-    type: "get",
-    url: route("get-medicine", medicineId),
-    success: function success(result) {
-      $(totalPriceId).removeClass("d-none");
-      $(salePriceId).removeClass("d-none");
-      $(totalPriceId).attr("class", "text-success totalqty");
-      $('#quantityshow' + uniqueId).text(result.data.available_quantity);
-
-      if ($(salePriceId).text() == null) {
-        $(totalPriceId).attr("class", "text-success totalqty d-none");
-      }
-
-      if ($(salePriceId).text() != null) {
-        $(totalPriceId).attr("class", "text-success totalqty");
-        $(".extra-margin-tr").css("margin-top", "21px");
-        $(".extrm").css("margin-top", "21px");
-      }
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/prescriptions/prescriptions.js":
-/*!************************************************************!*\
-  !*** ./resources/assets/js/prescriptions/prescriptions.js ***!
-  \************************************************************/
-/***/ (() => {
-
-listenClick('.delete-prescription-btn', function (event) {
-  var prescriptionId = $(event.currentTarget).attr('data-id');
-  deleteItem(route("prescriptions.destroy", prescriptionId), Lang.get('js.prescription'));
-});
-listenChange('.prescriptionStatus', function (event) {
-  var prescriptionId = $(event.currentTarget).attr('data-id');
-  prescriptionUpdateStatus(prescriptionId);
-});
-
-function prescriptionUpdateStatus(id) {
-  $.ajax({
-    url: route(prescriptionStatusRoute, id),
-    method: 'post',
-    cache: false,
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        hideDropdownManually($('#prescriptionFilterBtn'), $('#prescriptionFilter'));
-      }
-    }
-  });
-}
-
-listenClick('#prescriptionResetFilter', function () {
-  $('#prescriptionHead').val('2').trigger('change');
-  hideDropdownManually($('#prescriptionFilterBtn'), $('.dropdown-menu'));
-});
-listenChange('#prescriptionHead', function () {
-  Livewire.dispatch('changeFilter', {
-    value: $(this).val()
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/profile/create-edit.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/profile/create-edit.js ***!
-  \****************************************************/
-/***/ (() => {
-
-listenSubmit('#profileForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenClick('.removeAvatarIcon', function () {
-  $('#bgImage').css('background-image', '');
-  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
-  $('#removeAvatar').addClass('hide');
-  $('#tooltip287851').addClass('hide');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/purchase-medicine/purchase-medicine.js":
-/*!********************************************************************!*\
-  !*** ./resources/assets/js/purchase-medicine/purchase-medicine.js ***!
-  \********************************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadPurchaseMedicineCreate);
-var uniquePrescriptionId = "";
-
-function loadPurchaseMedicineCreate() {
-  if (!$("#purchaseUniqueId").length) {
-    return;
-  }
-
-  $(".purchaseMedicineExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
-  $("#paymentMode,#paymentMode2").select2({
-    width: "100%"
-  });
-}
-
-listenClick(".add-medicine-btn-purchase", function () {
-  uniquePrescriptionId = $("#purchaseUniqueId").val();
-  var data = {
-    medicines: JSON.parse($(".associatePurchaseMedicines").val()),
-    uniqueId: uniquePrescriptionId
-  };
-  var prescriptionMedicineHtml = prepareTemplateRender("#purchaseMedicineTemplate", data);
-  $(".prescription-medicine-container").append(prescriptionMedicineHtml);
-  dropdownToSelecte2(".purchaseMedicineId");
-  $(".purchaseMedicineExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
-  uniquePrescriptionId++;
-  $("#purchaseUniqueId").val(uniquePrescriptionId);
-});
-
-var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
-  $(selector).select2({
-    placeholder: Lang.get('js.select_medicine'),
-    width: "100%"
-  });
-};
-
-listenChange(".purchaseMedicineId", function () {
-  var medicineId = $(this).val();
-  var uniqueId = $(this).attr("data-id");
-  var salePriceId = "#sale_price" + uniqueId;
-  var buyPriceId = "#purchase_price" + uniqueId;
-
-  if (medicineId == "") {
-    $(salePriceId).val("0.00");
-    $(buyPriceId).val("0.00");
-    return false;
-  }
-
-  $.ajax({
-    type: "get",
-    url: route("get-medicine", medicineId),
-    success: function success(result) {
-      $(salePriceId).val(result.data.selling_price.toFixed(2));
-      $(buyPriceId).val(result.data.buying_price.toFixed(2));
-    }
-  });
-});
-listenKeyup(".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,.purchase-discount", function () {
-  var value = $(this).val();
-  $(this).val(value.replace(/[^0-9\.]/g, ""));
-  var currentRow = $(this).closest("tr");
-  var currentqty = currentRow.find('.purchase-quantity').val();
-  var price = currentRow.find('.purchase-price').val();
-  var currentamount = parseFloat(price * currentqty);
-  currentRow.find('.purchase-amount').val(currentamount.toFixed(2));
-  var taxEle = $('.purchase-tax');
-  var elements = $('.purchase-amount');
-  var total = 0.00;
-  var totalTax = 0;
-  var netAmount = 0;
-  var discount = 0;
-  var amount = 0;
-
-  for (var i = 0; i < elements.length; i++) {
-    total += parseFloat(elements[i].value);
-    discount = $('.purchase-discount').val();
-
-    if (taxEle[i].value != 0 && taxEle[i].value != '') {
-      if (taxEle[i].value > 99) {
-        var taxAmount = taxEle[i].value.slice(0, -1);
-        currentRow.find('.purchase-tax').val(taxAmount);
-        displayErrorMessage(Lang.get("js.tax_should_be"));
-        $("#discountAmount").val(discount);
-        return false;
-      }
-
-      totalTax += elements[i].value * taxEle[i].value / 100;
-    } else {
-      amount += parseFloat(elements[i].value);
-    }
-  }
-
-  discount = discount == '' ? 0 : discount;
-  netAmount = parseFloat(total) + parseFloat(totalTax);
-  netAmount = parseFloat(netAmount) - parseFloat(discount);
-
-  if (discount > total && $(this).hasClass('purchase-discount')) {
-    discount = discount.slice(0, -1);
-    displayErrorMessage(Lang.get("js.the_discount_shoul"));
-    $("#discountAmount").val(discount);
-    return false;
-  }
-
-  if (discount > total) {
-    netAmount = 0;
-  }
-
-  $("#total").val(total.toFixed(2));
-  $("#purchaseTaxId").val(totalTax.toFixed(2));
-  $("#netAmount").val(netAmount.toFixed(2)); // let value = $(this).val();
-  // $(this).val(value.replace(/[^0-9\.]/g, ""));
-  // var currentRow = $(this).closest("tr");
-  // let currentqty = currentRow.find(".purchase-quantity").val();
-  // let price = currentRow.find(".purchase-price").val();
-  // let medicineBillTax = currentRow.find(".purchase-tax").val();
-  // let currentamount = parseFloat(price * currentqty);
-  // currentRow.find(".amount").val(currentamount.toFixed(2));
-  // let y = $(".purchaseMedicineId").length;
-  // let taxEle = $(".purchase-tax");
-  // let elements = $(".amount");
-  // let total = 0.0;
-  // let totalTax = 0;
-  // let netAmount = 0;
-  // let discount = 0;
-  // let amount = 0;
-  // var qty = $(".purchase-quantity");
-  // for (let i = 0; i < elements.length; i++) {
-  //     total += parseFloat(elements[i].value);
-  //     discount = $(".purchase-discount").val();
-  //     let taxAmount = $(this).val();
-  //     if (taxEle[i].value != 0 && taxEle[i].value != "") {
-  //         if (taxEle[i].value > 99) {
-  //             let taxAmount = taxEle[i].value.slice(0, -1);
-  //             currentRow.find(".purchase-tax").val(taxAmount);
-  //             displayErrorMessage(
-  //                 Lang.get("Taxes should be less than 100%.")
-  //             );
-  //             $("#discountAmount").val(discount);
-  //             return false;
-  //         }
-  //         totalTax += (elements[i].value * taxEle[i].value) / 100;
-  //         amount += parseFloat(elements[i].value) + parseFloat(totalTax);
-  //     } else {
-  //         amount += parseFloat(elements[i].value);
-  //     }
-  // }
-  // discount = discount == "" ? 0 : discount;
-  // netAmount = parseFloat(amount) - parseFloat(discount);
-  // if (discount > total && $(this).hasClass("purchase-discount")) {
-  //     discount = discount.slice(0, -1);
-  //     displayErrorMessage(
-  //         Lang.get("The discount should be less than the total amount.")
-  //     );
-  //     $("#discountAmount").val(discount);
-  //     return false;
-  // }
-  // if (discount > total) {
-  //     netAmount = 0;
-  // }
-  // $("#total").val(total.toFixed(2));
-  // $("#purchaseTaxId").val(totalTax.toFixed(2));
-  // $("#netAmount").val(netAmount.toFixed(2));
-});
-listenClick(".delete-purchase-medicine-item", function () {
-  var currentRow = $(this).closest("tr");
-  var currentRowAmount = currentRow.find('.purchase-amount').val();
-  var currentRowTax = currentRow.find('.purchase-tax').val();
-  var currentTaxAmount = parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
-  var updatedTax = parseFloat($('#purchaseTaxId').val()) - parseFloat(currentTaxAmount);
-  $('#purchaseTaxId').val(updatedTax.toFixed(2));
-  var updatedTotalAmount = parseFloat($('#total').val()) - parseFloat(currentRowAmount);
-  $('#total').val(updatedTotalAmount.toFixed(2));
-  var amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
-  var updateNetAmount = parseFloat($('#netAmount').val()) - parseFloat(amountSubfromNetAmt);
-  $('#netAmount').val(updateNetAmount.toFixed(2));
-  $(this).parents("tr").remove();
-});
-listenSubmit("#purchaseMedicineFormId", function (e) {
-  e.preventDefault();
-  var y = $("#purchaseUniqueId").val() - 1;
-  var tx = 1;
-
-  for (var i = 1; i <= y; i++) {
-    var medicinID = "#medicineChooseId" + i;
-    var taxId = "tax" + i;
-
-    if (typeof $(taxId).val() != "undefined") {
-      if ($(taxId).val() == null || $(taxId).val() == "") {
-        tx = 0;
-      }
-    }
-
-    if (typeof $(medicinID).val() != "undefined") {
-      if ($(medicinID).val() == null || $(medicinID).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_lot_number'));
-        return false;
-      }
-    }
-
-    var lotNum = "#lot_no" + i;
-
-    if (typeof $(lotNum).val() != "undefined") {
-      if ($(lotNum).val() == null || $(lotNum).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_lot_number'));
-        return false;
-      }
-    }
-
-    var salePrice = "#sale_price" + i;
-
-    if (typeof $(salePrice).val() != "undefined") {
-      if ($(salePrice).val() == null || $(salePrice).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_sale_price'));
-        return false;
-      }
-    }
-
-    var purchasePrice = "#purchase_price" + i;
-
-    if (typeof $(purchasePrice).val() != "undefined") {
-      if ($(purchasePrice).val() == null || $(purchasePrice).val() == "") {
-        displayErrorMessage("Enter purchase price.");
-        return false;
-      } else if ($(purchasePrice).val() == 0) {
-        displayErrorMessage(Lang.get('js.quantity_should'));
-        return false;
-      }
-    }
-
-    var quantityID = "#quantity" + i;
-
-    if (typeof $(quantityID).val() != "undefined") {
-      if ($(quantityID).val() == null || $(quantityID).val() == "") {
-        displayErrorMessage("Enter quantity.");
-        return false;
-      } else if ($(quantityID).val() == 0) {
-        displayErrorMessage(Lang.get('js.quantity_should'));
-        return false;
-      }
-    }
-  }
-
-  var netAmount = "#netAmount";
-
-  if ($(netAmount).val() == null || $(netAmount).val() == "") {
-    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
-    return false;
-  } else if ($(netAmount).val() == 0) {
-    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
-    return false;
-  }
-
-  if (tx == 0 && ($("#purchaseTaxId").val() == null || $("#purchaseTaxId").val() == "")) {
-    displayErrorMessage(Lang.get("js.tax_cannot_be_zero_empty"));
-    return false;
-  }
-
-  $(this)[0].submit();
-});
-listenClick(".purchaseMedicineDelete", function (event) {
-  var id = $(event.currentTarget).attr("data-id");
-  deleteItem(route("medicine-purchase.destroy", id), Lang.get("js.purchase_medicine"));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/reviews/review.js":
-/*!***********************************************!*\
-  !*** ./resources/assets/js/reviews/review.js ***!
-  \***********************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadReviewData);
-
-function loadReviewData() {
-  var star_rating_width = $('.fill-ratings span').width();
-  $('.star-ratings').width(star_rating_width);
-}
-
-listenClick('.addReviewBtn', function () {
-  var reviewDoctorId = $(this).attr('data-id');
-  $('#reviewDoctorId').val(reviewDoctorId);
-});
-listenSubmit('#addReviewForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('patients.reviews.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#addReviewModal').modal('hide');
-        setTimeout(function () {
-          location.reload();
-        }, 1200);
-      }
-    },
-    error: function error(_error) {
-      displayErrorMessage(_error.responseJSON.message);
-    }
-  });
-});
-listenClick('.editReviewBtn', function () {
-  var reviewId = $(this).attr('data-id');
-  $.ajax({
-    url: route('patients.reviews.edit', reviewId),
-    type: 'GET',
-    success: function success(result) {
-      $('#editReviewModal').modal('show').appendTo('body');
-      $('#editDoctorId').val(result.data.doctor_id);
-      $('#editReviewId').val(result.data.id);
-      $('#editReview').val(result.data.review);
-      $('#editRating-' + result.data.rating).attr('checked', true);
-    },
-    error: function error(_error2) {
-      displayErrorMessage(_error2.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editReviewForm', function (e) {
-  e.preventDefault();
-  var reviewId = $('#editReviewId').val();
-  $.ajax({
-    url: route('patients.reviews.update', reviewId),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-      $('#editReviewModal').modal('hide');
-      setTimeout(function () {
-        location.reload();
-      }, 1200);
-    },
-    error: function error(_error3) {
-      displayErrorMessage(_error3.responseJSON.message);
-    }
-  });
-});
-listenClick('.addReviewBtn', function () {
-  $('#addReviewModal').modal('show').appendTo('body');
-});
-listen('hidden.bs.modal', '#addReviewModal', function () {
-  $('#reviewDoctorId').val('');
-  resetModalForm('#addReviewForm');
-});
-listen('hidden.bs.modal', '#editReviewModal', function () {
-  $('#editDoctorId').val('');
-  resetModalForm('#editReviewForm');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/roles/create-edit.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/roles/create-edit.js ***!
-  \**************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadRoleData);
-
-function loadRoleData() {
-  var totalPermissionsCount = parseInt($('#totalPermissions').val() - 1);
-  var checkAllLength = $('.permission:checked').length;
-  var roleIsEdit = $('#roleIsEdit').val();
-
-  if (roleIsEdit == true) {
-    if (checkAllLength === totalPermissionsCount) {
-      $('#checkAllPermission').prop('checked', true);
-    } else {
-      $('#checkAllPermission').prop('checked', false);
-    }
-  }
-}
-
-listenClick('#checkAllPermission', function () {
-  if ($('#checkAllPermission').is(':checked')) {
-    $('.permission').each(function () {
-      $(this).prop('checked', true);
-    });
-  } else {
-    $('.permission').each(function () {
-      $(this).prop('checked', false);
-    });
-  }
-});
-listenClick('.permission', function () {
-  var checkAllLength = $('.permission:checked').length;
-  var totalPermissionsCount = parseInt($('#totalPermissions').val() - 1);
-
-  if (checkAllLength === totalPermissionsCount) {
-    $('#checkAllPermission').prop('checked', true);
-  } else {
-    $('#checkAllPermission').prop('checked', false);
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/roles/roles.js":
-/*!********************************************!*\
-  !*** ./resources/assets/js/roles/roles.js ***!
-  \********************************************/
-/***/ (() => {
-
-listenClick('.role-delete-btn', function (event) {
-  var roleRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('roles.destroy', roleRecordId), Lang.get('js.roles'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/service_categories/service_categories.js":
-/*!**********************************************************************!*\
-  !*** ./resources/assets/js/service_categories/service_categories.js ***!
-  \**********************************************************************/
-/***/ (() => {
-
-listenClick('#createServiceCategory', function () {
-  $('#createServiceCategoryPageModal').modal('show').appendTo('body');
-});
-listen('hidden.bs.modal', '#createServiceCategoryPageModal', function () {
-  resetModalForm('#createServiceCategoryForm', '#createServiceCategoryValidationErrorsBox');
-});
-listen('hidden.bs.modal', '#editServiceCategoryModal', function () {
-  resetModalForm('#editServiceCategoryForm', '#editServiceCategoryValidationErrorsBox');
-});
-listenClick('.service-category-edit-btn', function (event) {
-  var editServiceCategoryId = $(event.currentTarget).attr('data-id');
-  renderData(editServiceCategoryId);
-});
-
-function renderData(id) {
-  $.ajax({
-    url: route('service-categories.edit', id),
-    type: 'GET',
-    success: function success(result) {
-      $('#serviceCategoryID').val(result.data.id);
-      $('#editServiceCategoryName').val(result.data.name);
-      $('#editServiceCategoryModal').modal('show');
-    }
-  });
-}
-
-listenSubmit('#createServiceCategoryForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('service-categories.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        Livewire.dispatch('refresh');
-        $('#createServiceCategoryPageModal').modal('hide');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editServiceCategoryForm', function (e) {
-  e.preventDefault();
-  var updateServiceCategoryId = $('#serviceCategoryID').val();
-  $.ajax({
-    url: route('service-categories.update', updateServiceCategoryId),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      $('#editServiceCategoryModal').modal('hide');
-      displaySuccessMessage(result.message);
-      Livewire.dispatch('refresh');
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.service-category-delete-btn', function (event) {
-  var serviceCategoryRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('service-categories.destroy', serviceCategoryRecordId), Lang.get('js.service_category'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/services/create-edit.js":
-/*!*****************************************************!*\
-  !*** ./resources/assets/js/services/create-edit.js ***!
-  \*****************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadServiceData);
-
-function loadServiceData() {
-  if (!$('.price-input').length) {
-    return;
-  }
-
-  var price = $('.price-input').val();
-
-  if (price === '') {
-    $('.price-input').val('');
-  } else {
-    if (/[0-9]+(,[0-9]+)*$/.test(price)) {
-      $('.price-input').val(getFormattedPrice(price));
-      return true;
-    } else {
-      $('.price-input').val(price.replace(/[^0-9 \,]/, ''));
-    }
-  }
-}
-
-listenClick('#createServiceCategory', function () {
-  $('#serviceCreateServiceCategoryModal').modal('show').appendTo('body');
-});
-listenSubmit('#serviceCreateServiceCategoryForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('service-categories.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#serviceCreateServiceCategoryModal').modal('hide');
-        var data = {
-          id: result.data.id,
-          name: result.data.name
-        };
-        var newOption = new Option(data.name, data.id, false, true);
-        $('#serviceCategory').append(newOption).trigger('change');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      processingBtn('#serviceCreateServiceCategoryForm', '#btnSave');
-    }
-  });
-});
-listen('hidden.bs.modal', '#serviceCreateServiceCategoryModal', function () {
-  resetModalForm('#serviceCreateServiceCategoryForm', '#createServiceCategoryValidationErrorsBox');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/services/services.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/services/services.js ***!
-  \**************************************************/
-/***/ (() => {
-
-listenClick('#serviceResetFilter', function () {
-  $('#servicesStatus').val($('#allServices').val()).trigger('change');
-});
-listenChange('#servicesStatus', function () {
-  Livewire.dispatch('changeStatusFilter', $(this).val());
-});
-listenClick('.service-delete-btn', function (event) {
-  var serviceRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('services.destroy', serviceRecordId), Lang.get('js.service'));
-});
-listenClick('.service-statusbar', function (event) {
-  var recordId = $(event.currentTarget).attr('data-id');
-  $.ajax({
-    type: 'PUT',
-    url: route('service.status'),
-    data: {
-      id: recordId
-    },
-    success: function success(result) {
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/settings/settings.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/settings/settings.js ***!
-  \**************************************************/
-/***/ (() => {
-
-document.addEventListener('DOMContentLoaded', loadSettingData);
-var form;
-var phone;
-var prefixCode;
-var loadData = false;
-
-function loadSettingData() {
-  var settingCountryId = $('#settingCountryId').val();
-  var settingStateId = $('#settingStateId').val();
-  var settingCityId = $('#settingCityId').val();
-
-  if (settingCountryId != '') {
-    $('#settingCountryId').val(settingCountryId).trigger('change');
-    setTimeout(function () {
-      $('#settingStateId').val(settingStateId).trigger('change');
-    }, 800);
-    setTimeout(function () {
-      $('#settingCityId').val(settingCityId).trigger('change');
-    }, 400);
-    loadData = true;
-  }
-
-  if (!$('#generalSettingForm').length) {
-    return;
-  }
-
-  form = document.getElementById('generalSettingForm');
-  phone = document.getElementById('phoneNumber').value;
-  prefixCode = document.getElementById('prefix_code').value;
-  var input = document.querySelector('#defaultCountryData');
-  var intl = window.intlTelInput(input, {
-    initialCountry: defaultCountryCodeValue,
-    separateDialCode: true,
-    geoIpLookup: function geoIpLookup(success, failure) {
-      $.get('https://ipinfo.io', function () {}, 'jsonp').always(function (resp) {
-        var countryCode = resp && resp.country ? resp.country : '';
-        success(countryCode);
-      });
-    },
-    utilsScript: '../../public/assets/js/inttel/js/utils.min.js'
-  });
-  var getCode = intl.selectedCountryData['name'] + ' +' + intl.selectedCountryData['dialCode'];
-  $('#defaultCountryData').val(getCode);
-}
-
-listenKeyup('#defaultCountryData', function () {
-  var str2 = $(this).val().slice(0, -1) + '';
-  return $(this).val(str2);
-});
-listenClick('.iti__standard', function () {
-  var currentSelectedFlag = $(this).parent().parent().parent().next();
-  $(this).attr('data-country-code');
-
-  if (currentSelectedFlag.has('#defaultCountryCode')) {
-    $('#defaultCountryCode').val($(this).attr('data-country-code'));
-  }
-
-  var CountryDataVal = $(this).children('.iti__country-name').text() + ' ' + $(this).children('.iti__dial-code').text();
-  $('#defaultCountryData').val(CountryDataVal);
-});
-listenChange('#settingCountryId', function () {
-  $.ajax({
-    url: route('states-list'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      settingCountryId: $(this).val()
-    },
-    success: function success(data) {
-      $('#settingStateId').empty();
-      $('#settingCityId').empty();
-      $('#settingStateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
-      $('#settingCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-      $.each(data.data.states, function (i, v) {
-        $('#settingStateId').append($("<option ".concat(!loadData && i == data.data.state_id ? 'selected' : '', "></option>")).attr('value', i).text(v));
-      });
-    }
-  });
-});
-listenChange('#settingrecaptcha', function () {
-  var settingrechapcha = $('#settingrecaptcha').prop("checked");
-
-  if (settingrechapcha == false) {
-    $('.recaptcha-field').css('display', 'none');
-  } else {
-    $('.recaptcha-field').css('display', 'block');
-  }
-});
-listenChange('#settingStateId', function () {
-  $('#settingCityId').empty();
-  $.ajax({
-    url: route('cities-list'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      stateId: $(this).val()
-    },
-    success: function success(data) {
-      $('#settingCityId').empty();
-      $('#settingCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-      $.each(data.data.cities, function (i, v) {
-        $('#settingCityId').append($("<option ".concat(loadData && i == data.data.city_id ? 'selected' : '', "></option>")).attr('value', i).text(v));
-      });
-    }
-  });
-});
-listenClick('#settingSubmitBtn', function () {
-  var checkedPaymentMethod = $('input[name="payment_gateway[]"]:checked').length;
-
-  if (!checkedPaymentMethod) {
-    displayErrorMessage(Lang.get('js.select_payment'));
-    return false;
-  }
-
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-
-  $("#generalSettingForm")[0].submit();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/smart_patient_cards/smart_patient_cards.js":
-/*!************************************************************************!*\
-  !*** ./resources/assets/js/smart_patient_cards/smart_patient_cards.js ***!
-  \************************************************************************/
-/***/ (() => {
-
-document.addEventListener("DOMContentLoaded", loadAppointmentFilterDate);
-
-function loadAppointmentFilterDate() {
-  $(".patient_select").css("display", "none");
-
-  if ($("#header_color").length !== 0) {
-    var header = $("#header_color").val();
-    $(".card-header").css("background-color", header);
-  }
-
-  $(".generate_smart_patientcard_patient_select").select2({
-    dropdownParent: $("#add_templates_modal")
-  });
-  $(".select_template").select2({
-    dropdownParent: $("#add_templates_modal")
-  });
-}
-
-listenChange("#card_show_email_switch, #card_show_phone_switch, #card_show_dob_switch, #card_show_blood_group_switch, #card_show_address_switch, #card_show_patient_unique_id_switch, #header_color", function () {
-  var name = $(this).attr("id");
-  var color = $("#header_color").val();
-
-  switch (name) {
-    case "header_color":
-      $(".card-header").css("background-color", color);
-      break;
-
-    case "card_show_email_switch":
-      $("#card_show_email").toggleClass("display_show");
-      break;
-
-    case "card_show_phone_switch":
-      $("#card_show_phone").toggleClass("display_show");
-      break;
-
-    case "card_show_address_switch":
-      $("#card_show_address").toggleClass("display_show");
-      break;
-
-    case "card_show_blood_group_switch":
-      $("#card_show_blood_group").toggleClass("display_show");
-      break;
-
-    case "card_show_dob_switch":
-      $("#card_show_dob").toggleClass("display_show");
-      break;
-
-    case "card_show_patient_unique_id_switch":
-      $("#card_show_patient_unique_id").toggleClass("display_show");
-      break;
-  }
-});
-listenClick(".smart-patient-card-delete-btn", function (event) {
-  var templateRecordId = $(event.currentTarget).attr("data-id");
-  var templateRecordName = $(event.currentTarget).attr("data-name");
-  deleteItem(route(samartCardDelete, templateRecordId), templateRecordName);
-});
-listenClick(".generate-patient-card-delete-btn", function (event) {
-  var smartCardRecordId = $(event.currentTarget).attr("data-id");
-  var smartCardRecordName = $(event.currentTarget).attr("data-name");
-  deleteItem(route(GeneratePatientCardDelete, smartCardRecordId), smartCardRecordName + " " + Lang.get("js.patient_smart_card_deleted"));
-}); //smart card table index page status
-
-listenChange("#card_email_status, #card_phone_status ,#card_dob_status, #card_blood_group_status, #card_address_status, #card_patient_unique_id_status", function () {
-  var status = $(this).prop("checked") ? 1 : 0;
-  var id = $(this).data("id");
-  var name = $(this).attr("name");
-  $.ajax({
-    type: "PUT",
-    url: route(startcardStatusRoute, id),
-    data: {
-      status: status,
-      changefield: name
-    },
-    success: function success(result) {
-      Livewire.dispatch("refresh");
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenChange(".type_tem", function (event) {
-  var status = $(this).val();
-  $("#prescriptionPatientId").select2({
-    dropdownParent: $("#add_templates_modal")
-  });
-
-  if (status == 2) {
-    $(".patient_select").css("display", "");
-  } else {
-    $(".patient_select").css("display", "none");
-  }
-});
-listenChange(".card_header_color_change", function (event) {
-  var status = $(this).val();
-  var id = $(this).data("id");
-  $.ajax({
-    type: "PUT",
-    url: route(startcardStatusRoute, id),
-    data: {
-      status: status,
-      changefield: "header_color"
-    },
-    success: function success(result) {
-      Livewire.dispatch("refresh");
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick(".add-templates", function () {
-  $("#add_templates_modal").modal("show").appendTo("body");
-});
-
-function hexToRgb(hex) {
-  hex = hex.replace(/^#/, "");
-  var bigint = parseInt(hex, 16);
-  var r = bigint >> 16 & 255;
-  var g = bigint >> 8 & 255;
-  var b = bigint & 255;
-  return [r, g, b];
-}
-
-listenClick(".show_patient_card", function () {
-  $("#show_card_modal").modal("show").appendTo("body");
-  var id = $(this).data("id");
-  $.ajax({
-    type: "get",
-    url: route(showPatientSmartCard, id),
-    success: function success(result) {
-      var rgb = hexToRgb(result.data.smart_patient_card.header_color);
-      var luminance = 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2];
-
-      if (luminance > 128) {
-        $(".clinic_name").addClass("color-black");
-        $(".clinic_address").addClass("color-black");
-      } else {
-        $(".clinic_name").addClass("color-white");
-        $(".clinic_address").addClass("color-white");
-      }
-
-      $(".patient-card-header").css("background-color", result.data.smart_patient_card.header_color);
-      $(".patient-model-download").css("color", result.data.smart_patient_card.header_color);
-      $("#card_profilePicture").attr("src", result.img);
-      $(".card_name").text(result.data.user.full_name);
-      $(".card_name").css("word-break", "break-word");
-      $(".patient_email").text(result.data.user.email);
-      $(".patient_unique_id").text(result.data.patient_unique_id);
-      $(".clinic_name").text(result.clinic_name);
-      $(".clinic_address").text(result.address_one);
-
-      if (result.data.smart_patient_card.show_email == 1) {
-        $("#card_show_email").css("display", "");
-        $("#card_show_email").css("word-break", "break-word");
-      } else {
-        $("#card_show_email").css("display", "none");
-      }
-
-      if (result.data.smart_patient_card.show_phone == 1) {
-        $("#patient_card_show_phone").css("display", "");
-      } else {
-        $("#patient_card_show_phone").css("display", "none");
-      }
-
-      if (result.data.smart_patient_card.show_dob == 1) {
-        $("#patient_card_show_dob").css("display", "");
-      } else {
-        $("#patient_card_show_dob").css("display", "none");
-      }
-
-      if (result.data.smart_patient_card.show_blood_group == 1) {
-        $("#patient_card_show_blood_group").css("display", "");
-      } else {
-        $("#patient_card_show_blood_group").css("display", "none");
-      }
-
-      if (result.data.smart_patient_card.show_address == 1) {
-        $("#patient_card_show_address").css("display", "");
-      } else {
-        $("#patient_card_show_address").css("display", "none");
-      }
-
-      if (result.data.address.address1 == null) {
-        $("#patient_card_show_address").css("display", "none");
-      } else if (result.data.address.address1 != null && result.data.address.address2 != null) {
-        $(".card_address").text(result.data.address.address1 + "," + result.data.address.address2);
-      } else if (result.data.address.address1 != null) {
-        $(".card_address").text(result.data.address.address1);
-      }
-
-      if (result.data.smart_patient_card.show_patient_unique_id == 1) {
-        $("#card_show_patient_unique_id").css("display", "");
-      } else {
-        $("#card_show_patient_unique_id").css("display", "none");
-      }
-
-      if (result.data.user.blood_type != null) {
-        $("#patient_card_show_blood_group").removeClass("d-none");
-        var bloodKey = result.data.user.blood_type;
-        var array = JSON.parse(bloodGroupArray);
-        $(".patient_blood_group").text(array[bloodKey]);
-      }
-
-      if (result.data.user.blood_type == null) {
-        $("#patient_card_show_blood_group").addClass("d-none");
-      }
-
-      if (result.data.user.contact != null) {
-        $(".patient_contact").text(result.data.user.contact);
-      } else {
-        $("#patient_card_show_phone").css("display", "none");
-      }
-
-      if (result.data.user.dob != null) {
-        $(".patient_dob").text(result.data.user.dob);
-      } else {
-        $("#patient_card_show_dob").css("display", "none");
-      }
-    }
-  });
-  $.ajax({
-    type: "get",
-    url: route(smartCardQrCode, id),
-    success: function success(data) {
-      var svgContent = data;
-      $(".svgContainer").html(svgContent);
-    },
-    error: function error() {
-      alert("Failed to load QR code");
-    }
-  });
-});
-listenSubmit("#addtemplateForm", function (event) {
-  event.preventDefault();
-  var loadingButton = jQuery(this).find("#medicineCategorySave");
-  loadingButton.button("loading");
-
-  if ($(".generate_smart_patientcard_status2").prop("checked")) {
-    if ($(".generate_smart_patientcard_patient_select").val() != "") {
-      $(this)[0].submit();
-    } else {
-      displayErrorMessage(Lang.get("js.please_selest_patient"));
-    }
-  } else {
-    $(this)[0].submit();
-  }
-});
-listenHiddenBsModal("#add_templates_modal", function () {
-  resetModalForm("#addtemplateForm");
-  $(".select_template").trigger("change");
-  $(".generate_smart_patientcard_patient_select").trigger("change");
-  $(".patient_select").css("display", "none");
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/specializations/specializations.js":
-/*!****************************************************************!*\
-  !*** ./resources/assets/js/specializations/specializations.js ***!
-  \****************************************************************/
-/***/ (() => {
-
-listenClick('#createSpecialization', function () {
-  $('#createSpecializationModal').modal('show').appendTo('body');
-});
-listen('hidden.bs.modal', '#createSpecializationModal', function () {
-  resetModalForm('#createSpecializationForm', '#createSpecializationValidationErrorsBox');
-});
-listen('hidden.bs.modal', '#editSpecializationModal', function () {
-  resetModalForm('#editSpecializationForm', '#editSpecializationValidationErrorsBox');
-});
-listenClick('.specialization-edit-btn', function (event) {
-  var editSpecializationId = $(event.currentTarget).attr('data-id');
-  renderData(editSpecializationId);
-});
-
-function renderData(id) {
-  $.ajax({
-    url: route('specializations.edit', id),
-    type: 'GET',
-    success: function success(result) {
-      $('#specializationID').val(result.data.id);
-      $('#editName').val(result.data.name);
-      $('#editSpecializationModal').modal('show');
-    }
-  });
-}
-
-listenSubmit('#createSpecializationForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('specializations.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#createSpecializationModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editSpecializationForm', function (e) {
-  e.preventDefault();
-  var updateSpecializationId = $('#specializationID').val();
-  $.ajax({
-    url: route('specializations.update', updateSpecializationId),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      $('#editSpecializationModal').modal('hide');
-      displaySuccessMessage(result.message);
-      Livewire.dispatch('refresh');
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.specialization-delete-btn', function (event) {
-  var specializationRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('specializations.destroy', specializationRecordId), Lang.get('js.specializations'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/staff/create-edit.js":
-/*!**************************************************!*\
-  !*** ./resources/assets/js/staff/create-edit.js ***!
-  \**************************************************/
-/***/ (() => {
-
-listenChange('input[type=radio][name=gender]', function () {
-  var file = $('#profilePicture').val();
-
-  if (isEmpty(file)) {
-    if (this.value == 1) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
-    } else if (this.value == 2) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
-    }
-  }
-});
-listenSubmit('#createStaffForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenSubmit('#editStaffForm', function () {
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
-    return false;
-  }
-});
-listenClick('.removeAvatarIcon', function () {
-  $('#bgImage').css('background-image', '');
-  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
-  $('#removeAvatar').addClass('hide');
-  $('#tooltip287851').addClass('hide');
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/staff/staff.js":
-/*!********************************************!*\
-  !*** ./resources/assets/js/staff/staff.js ***!
-  \********************************************/
-/***/ (() => {
-
-listenClick('.staff-delete-btn', function (event) {
-  var staffRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('staffs.destroy', staffRecordId), Lang.get('js.staff'));
-});
-listenChange('.staff-email-verified', function (e) {
-  var verifyRecordId = $(e.currentTarget).attr('data-id');
-  var value = $(this).is(':checked') ? 1 : 0;
-  $.ajax({
-    type: 'POST',
-    url: route('emailVerified'),
-    data: {
-      id: verifyRecordId,
-      value: value
-    },
-    success: function success(result) {
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    }
-  });
-});
-listenClick('.staff-email-verification', function (event) {
-  var staffVerifyId = $(event.currentTarget).attr('data-id');
-  $.ajax({
-    type: 'POST',
-    url: route('resend.email.verification', staffVerifyId),
-    success: function success(result) {
-      Livewire.dispatch('refresh');
-      displaySuccessMessage(result.message);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/states/states.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/states/states.js ***!
-  \**********************************************/
-/***/ (() => {
-
-listenClick('#addState', function () {
-  $('#addStateModal').modal('show').appendTo('body');
-  $('#countryState').select2({
-    dropdownParent: $('#addStateModal')
-  });
-});
-listenSubmit('#addStateForm', function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: route('states.store'),
-    type: 'POST',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#addStateModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('.state-edit-btn', function (event) {
-  $('#editStateModal').modal('show').appendTo('body');
-  $('#selectCountry').select2({
-    dropdownParent: $('#editStateModal')
-  });
-  var editStateId = $(event.currentTarget).attr('data-id');
-  $('#editStateId').val(editStateId);
-  $.ajax({
-    url: route('states.edit', editStateId),
-    type: 'GET',
-    success: function success(result) {
-      if (result.success) {
-        $('#editStateName').val(result.data.name);
-        $('#selectCountry').val(result.data.country_id).trigger('change');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenSubmit('#editStateForm', function (event) {
-  event.preventDefault();
-  var updateStateId = $('#editStateId').val();
-  $.ajax({
-    url: route('states.update', updateStateId),
-    type: 'PUT',
-    data: $(this).serialize(),
-    success: function success(result) {
-      if (result.success) {
-        displaySuccessMessage(result.message);
-        $('#editStateModal').modal('hide');
-        Livewire.dispatch('refresh');
-      }
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listen('hidden.bs.modal', '#addStateModal', function (e) {
-  $('#addStateForm')[0].reset();
-  $('#countryState').val(null).trigger('change');
-});
-listenClick('.state-delete-btn', function (event) {
-  var stateRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('states.destroy', stateRecordId), Lang.get('js.state'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/transactions/patient-transactions.js":
-/*!******************************************************************!*\
-  !*** ./resources/assets/js/transactions/patient-transactions.js ***!
-  \******************************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-document.addEventListener('DOMContentLoaded', loadPatientTransactionTable);
-var patientTransactionTableName = '#patientTransactionsTable';
-
-function loadPatientTransactionTable() {
-  if (!$(patientTransactionTableName).length) {
-    return;
-  }
-
-  var patientTransactionTbl = $(patientTransactionTableName).DataTable({
-    processing: true,
-    serverSide: true,
-    searchDelay: 500,
-    'language': {
-      'lengthMenu': 'Show _MENU_'
-    },
-    'order': [[0, 'desc']],
-    ajax: {
-      url: route('patients.transactions')
-    },
-    columnDefs: [{
-      'targets': [0],
-      'width': '50%'
-    }, {
-      'targets': [1],
-      'width': '18%'
-    }, {
-      'targets': [3],
-      'orderable': false,
-      'searchable': false,
-      'className': 'text-center',
-      'width': '8%'
-    }],
-    columns: [{
-      data: function data(row) {
-        return "<span class=\"badge badge-light-info\">".concat(moment.parseZone(row.created_at).format('Do MMM, Y h:mm A'), "</span>");
-      },
-      name: 'created_at'
-    }, {
-      data: function data(row) {
-        if (row.type == manuallyMethod) {
-          return manually;
-        }
-
-        if (row.type == stripeMethod) {
-          return stripe;
-        }
-
-        if (row.type == paystckMethod) {
-          return paystck;
-        }
-
-        if (row.type == paypalMethod) {
-          return paypal;
-        }
-
-        if (row.type == razorpayMethod) {
-          return razorpay;
-        }
-
-        if (row.type == authorizeMethod) {
-          return authorize;
-        }
-
-        if (row.type == paytmMethod) {
-          return paytm;
-        }
-
-        return '';
-      },
-      name: 'type'
-    }, {
-      data: function data(row) {
-        return currencyIcon + ' ' + getFormattedPrice(row.amount);
-      },
-      name: 'amount'
-    }, {
-      data: function data(row) {
-        var patientTransactionData = [{
-          'id': row.id,
-          'showUrl': route('patients.transactions.show', row.id)
-        }];
-        return prepareTemplateRender('#transactionsTemplate', patientTransactionData);
-      },
-      name: 'id'
-    }]
-  });
-  handleSearchDatatable(patientTransactionTbl);
-  document.addEventListener('DOMContentLoaded', loadTransactionFilterDate);
-
-  function loadTransactionFilterDate() {
-    var _ranges;
-
-    if (!$('#transactionDateFilter').length) {
-      return;
-    }
-
-    var appointmentStart = moment().startOf('week');
-    var appointmentEnd = moment().endOf('week');
-
-    function cb(start, end) {
-      $('#transactionDateFilter').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
-    }
-
-    var transactionDatePicker = $('#transactionDateFilter').daterangepicker({
-      startDate: appointmentStart,
-      endDate: appointmentEnd,
-      opens: 'left',
-      showDropdowns: true,
-      locale: {
-        customRangeLabel: Lang.get('js.custom'),
-        applyLabel: Lang.get('js.apply'),
-        cancelLabel: Lang.get('js.cancel'),
-        fromLabel: Lang.get('js.from'),
-        toLabel: Lang.get('js.to'),
-        monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
-        daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
-      },
-      ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get('js.today'), [moment(), moment()]), _defineProperty(_ranges, Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), _defineProperty(_ranges, Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), _defineProperty(_ranges, Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), _defineProperty(_ranges, Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), _defineProperty(_ranges, Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]), _ranges)
-    }, cb);
-    cb(appointmentStart, appointmentEnd);
-    transactionDatePicker.on("apply.daterangepicker", function (ev, picker) {
-      Livewire.dispatch("changeDateFilter", {
-        date: $(this).val()
-      });
-    });
-  }
-}
-
-listenClick('.transaction-statusbar', function (event) {
-  var recordId = $(event.currentTarget).attr('data-id');
-  var acceptPaymentUserId = currentLoginUserId;
-  $.ajax({
-    type: 'PUT',
-    url: route('transaction.status'),
-    data: {
-      id: recordId,
-      acceptPaymentUserId: acceptPaymentUserId
-    },
-    success: function success(result) {
-      if (result.success) {
-        Livewire.dispatch('refresh');
-        displaySuccessMessage(Lang.get('js.status_update'));
-      }
-    },
-    error: function error(result) {
-      Livewire.dispatch('refresh');
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/transactions/transactions.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/transactions/transactions.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// document.addEventListener('DOMContentLoaded', loadTransactionFilterDate)
-var appointmentStart = moment().startOf("week");
-var appointmentEnd = moment().endOf("week");
-Livewire.hook("element.init", function () {
-  loadTransactionFilterDate();
-
-  if ($("#trPaymentMehtod").length) {
-    $("#trPaymentMehtod").select2();
-  }
-
-  if ($("#transactionStatus").length) {
-    $("#transactionStatus").select2();
-  }
-
-  if ($("#transactionDoctor").length) {
-    $("#transactionDoctor").select2();
-  }
-
-  if ($("#transactionServices").length) {
-    $("#transactionServices").select2();
-  }
-
-  if (appointmentStart != undefined && appointmentEnd != undefined) {
-    cb(appointmentStart, appointmentEnd);
-  }
-});
-
-function loadTransactionFilterDate() {
-  var _ranges;
-
-  if (!$("#transactionDateFilter").length) {
-    return;
-  } // let appointmentStart = moment().startOf('week')
-  // let appointmentEnd = moment().endOf('week')
-
-
-  var transactionDatePicker = $("#transactionDateFilter").daterangepicker({
-    startDate: appointmentStart,
-    endDate: appointmentEnd,
-    opens: "left",
-    showDropdowns: true,
-    locale: {
-      customRangeLabel: Lang.get("js.custom"),
-      applyLabel: Lang.get("js.apply"),
-      cancelLabel: Lang.get("js.cancel"),
-      fromLabel: Lang.get("js.from"),
-      toLabel: Lang.get("js.to"),
-      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
-      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
-    },
-    ranges: (_ranges = {}, _defineProperty(_ranges, Lang.get("js.today"), [moment(), moment()]), _defineProperty(_ranges, Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), _defineProperty(_ranges, Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), _defineProperty(_ranges, Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), _defineProperty(_ranges, Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), _defineProperty(_ranges, Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]), _ranges)
-  } // cb
-  ); //cb(appointmentStart, appointmentEnd);
-
-  transactionDatePicker.on("apply.daterangepicker", function (ev, picker) {
-    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
-    Livewire.dispatch("changeDateFilter", {
-      date: date
-    });
-    appointmentStart = picker.startDate;
-    appointmentEnd = picker.endDate;
-  });
-  window.addEventListener("update-item", function (event) {
-    var array = event.detail.data;
-    console.log(array);
-    $("#transactionDoctor").empty();
-    $("#transactionDoctor").append($('<option value=""></option>').text(Lang.get("js.select_doctor")));
-    $.each(array, function (key, value) {
-      $("#transactionDoctor").append($("<option></option>").attr("value", key).text(value));
-    });
-  });
-}
-
-function cb(start, end) {
-  $("#transactionDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
-}
-
-listenChange("#trPaymentMehtod", function () {
-  Livewire.dispatch("paymentFilter", {
-    pType: $(this).val()
-  });
-});
-listenChange("#transactionStatus", function () {
-  Livewire.dispatch("statusFilter", {
-    statusType: $(this).val()
-  });
-});
-listenChange("#transactionDoctor", function () {
-  Livewire.dispatch("doctorFilter", {
-    doctorType: $(this).val()
-  });
-});
-listenChange("#transactionServices", function () {
-  Livewire.dispatch("serviceFilter", {
-    serviceType: $(this).val()
-  });
-});
-listenClick("#transactionResetFilter", function () {
-  $("#trPaymentMehtod").val("").trigger("change");
-  $("#transactionStatus").val("").trigger("change");
-  $("#transactionDoctor,#transactionServices").val("").trigger("change");
-  hideDropdownManually($("#transactionFilterBtn"), $(".dropdown-menu"));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/users/user-profile.js":
-/*!***************************************************!*\
-  !*** ./resources/assets/js/users/user-profile.js ***!
-  \***************************************************/
-/***/ (() => {
-
-listenClick('#changePassword', function () {
-  $('#changePasswordForm')[0].reset();
-  $('.pass-check-meter div.flex-grow-1').removeClass('active');
-  $('#changePasswordModal').modal('show').appendTo('body');
-});
-listenClick('#changeLanguage', function () {
-  $('#changeLanguageModal').modal('show').appendTo('body');
-});
-listenClick('#passwordChangeBtn', function () {
-  $.ajax({
-    url: changePasswordUrl,
-    type: 'PUT',
-    data: $('#changePasswordForm').serialize(),
-    success: function success(result) {
-      $('#changePasswordModal').modal('hide');
-      $('#changePasswordForm')[0].reset();
-      displaySuccessMessage(result.message);
-      setTimeout(function () {
-        location.reload();
-      }, 1000);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-window.printErrorMessage = function (selector, errorResult) {
-  $(selector).show().html('');
-  $(selector).text(errorResult.message);
-};
-
-listenClick('#emailNotification', function () {
-  $('#emailNotificationModal').modal('show').appendTo('body');
-
-  if ($('#emailNotificationForm').length) {
-    $('#emailNotificationForm')[0].reset();
-  }
-});
-listenClick('#emailNotificationChange', function () {
-  $.ajax({
-    url: route('emailNotification'),
-    type: 'PUT',
-    data: $('#emailNotificationForm').serialize(),
-    success: function success(result) {
-      $('#emailNotificationModal').modal('hide');
-      displaySuccessMessage(result.message);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-listenClick('#languageChangeBtn', function () {
-  $.ajax({
-    url: updateLanguageURL,
-    type: 'POST',
-    data: $('#changeLanguageForm').serialize(),
-    success: function success(result) {
-      $('#changeLanguageModal').modal('hide');
-      displaySuccessMessage(result.message);
-      window.location.reload(); // Turbo.visit(window.location.href);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/visits/create-edit.js":
-/*!***************************************************!*\
-  !*** ./resources/assets/js/visits/create-edit.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
-/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
-
-document.addEventListener('DOMContentLoaded', loadVisitData);
-
-function loadVisitData() {
-  var visitDate = '.visit-date';
-
-  if (!$(visitDate).length) {
-    return;
-  }
-
-  var lang = $('.currentLanguage').val();
-  $(visitDate).flatpickr({
-    "locale": lang,
-    disableMobile: true
-  });
-}
-
-listenSubmit('#saveForm', function (e) {
-  e.preventDefault();
-  $('#btnSubmit').attr('disabled', true);
-  $('#saveForm')[0].submit();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/visits/doctor-visit.js":
-/*!****************************************************!*\
-  !*** ./resources/assets/js/visits/doctor-visit.js ***!
-  \****************************************************/
-/***/ (() => {
-
-listenClick('.doctor-visit-delete-btn', function (event) {
-  var visitDoctorRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('doctors.visits.destroy', visitDoctorRecordId), Lang.get('js.visits'));
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/visits/show-page.js":
-/*!*************************************************!*\
-  !*** ./resources/assets/js/visits/show-page.js ***!
-  \*************************************************/
-/***/ (() => {
-
-setTimeout(function () {
-  $('.visit-detail-width').parent().parent().addClass('visit-detail-width');
-}, 100); // Add visit Problem Data
-
-listenSubmit('#addVisitProblem', function (e) {
-  e.preventDefault();
-  var problemName = $('#problemName').val();
-  var empty = problemName.trim().replace(/ \r\n\t/g, '') === '';
-
-  if (empty) {
-    displayErrorMessage(Lang.get('js.problem_white_space'));
-    return false;
-  }
-
-  var btnSubmitEle = $(this).find('#problemSubmitBtn');
-  setAdminBtnLoader(btnSubmitEle);
-  var problemAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.problem') : route('add.problem');
-  $.ajax({
-    url: problemAddUrl,
-    type: 'POST',
-    data: $(this).serialize(),
-    dataType: 'json',
-    success: function success(result) {
-      $('ul#problemLists').empty();
-
-      if (result.data.length > 0) {
-        displaySuccessMessage(result.message);
-        $.each(result.data, function (i, val) {
-          $('#problemName').val('');
-          $('#problemLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.problem_name, "<span class=\"remove-problem\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
-        });
-      } else {
-        $('#problemLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-      }
-    },
-    complete: function complete() {
-      $('#problemSubmitBtn').attr('disabled', false);
-    }
-  });
-}); // Delete Visit Problem Data
-
-listenClick('.remove-problem', function (e) {
-  e.preventDefault();
-  var id = $(this).attr('data-id');
-  var problemDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.problem', id) : route('delete.problem', id);
-  $(this).closest('li').remove();
-  $.ajax({
-    url: problemDeleteUrl,
-    type: 'POST',
-    dataType: 'json',
-    success: function success(result) {
-      if (result.success) {
-        if ($('#problemLists li').length < 1) {
-          displaySuccessMessage(result.message);
-          $('#problemLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-        } else {
-          displaySuccessMessage(result.message);
-        }
-      }
-    }
-  });
-}); // Add Visit Observation Data
-
-listenSubmit('#addVisitObservation', function (e) {
-  e.preventDefault();
-  var observationName = $('#observationName').val();
-  var empty2 = observationName.trim().replace(/ \r\n\t/g, '') === '';
-
-  if (empty2) {
-    displayErrorMessage(Lang.get('js.observation_white_space'));
-    return false;
-  }
-
-  var btnSubmitEle = $(this).find('#observationSubmitBtn');
-  setAdminBtnLoader(btnSubmitEle);
-  var observationAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.observation') : route('add.observation');
-  $.ajax({
-    url: observationAddUrl,
-    type: 'POST',
-    data: $(this).serialize(),
-    dataType: 'json',
-    success: function success(result) {
-      $('ul#observationLists').empty();
-
-      if (result.data.length > 0) {
-        displaySuccessMessage(result.message);
-        $.each(result.data, function (i, val) {
-          $('#observationName').val('');
-          $('#observationLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.observation_name, "<span class=\"remove-observation\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
-        });
-      } else {
-        $('#observationLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-      }
-    },
-    complete: function complete() {
-      $('#observationSubmitBtn').attr('disabled', false);
-    }
-  });
-}); // Delete Visit Observation Data
-
-listenClick('.remove-observation', function (e) {
-  e.preventDefault();
-  var id = $(this).attr('data-id');
-  var observationDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.observation', id) : route('delete.observation', id);
-  $(this).closest('li').remove();
-  $.ajax({
-    url: observationDeleteUrl,
-    type: 'POST',
-    dataType: 'json',
-    success: function success(result) {
-      if (result.success) {
-        if ($('#observationLists li').length < 1) {
-          displaySuccessMessage(result.message);
-          $('#observationLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-        } else {
-          displaySuccessMessage(result.message);
-        }
-      }
-    }
-  });
-}); // Add visit Note Data
-
-listenSubmit('#addVisitNote', function (e) {
-  e.preventDefault();
-  var noteName = $('#noteName').val();
-  var empty2 = noteName.trim().replace(/ \r\n\t/g, '') === '';
-
-  if (empty2) {
-    displayErrorMessage(Lang.get('js.note_white_space'));
-    return false;
-  }
-
-  var btnSubmitEle = $(this).find('#noteSubmitBtn');
-  setAdminBtnLoader(btnSubmitEle);
-  var noteAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.note') : route('add.note');
-  $.ajax({
-    url: noteAddUrl,
-    type: 'POST',
-    data: $(this).serialize(),
-    dataType: 'json',
-    success: function success(result) {
-      $('ul#noteLists').empty();
-
-      if (result.data.length > 0) {
-        displaySuccessMessage(result.message);
-        $.each(result.data, function (i, val) {
-          $('#noteName').val('');
-          $('#noteLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.note_name, "<span class=\"remove-note\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
-        });
-      } else {
-        $('#noteLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-      }
-    },
-    complete: function complete() {
-      $('#noteSubmitBtn').attr('disabled', false);
-    }
-  });
-}); // Delete Visit Note Data
-
-listenClick('.remove-note', function (e) {
-  e.preventDefault();
-  var id = $(this).attr('data-id');
-  $(this).closest('li').remove();
-  var noteDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.note', id) : route('delete.note', id);
-  $.ajax({
-    url: noteDeleteUrl,
-    type: 'POST',
-    dataType: 'json',
-    success: function success(result) {
-      if (result.success) {
-        if ($('#noteLists li').length < 1) {
-          displaySuccessMessage(result.message);
-          $('#noteLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
-        } else {
-          displaySuccessMessage(result.message);
-        }
-      }
-    }
-  });
-}); // Add visit Prescription Data
-
-listenSubmit('#addPrescription', function (e) {
-  e.preventDefault();
-  var btnSubmitEle = $(this).find('#prescriptionSubmitBtn');
-  setAdminBtnLoader(btnSubmitEle);
-  var prescriptionAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.prescription') : route('add.prescription');
-  $.ajax({
-    url: prescriptionAddUrl,
-    type: 'POST',
-    data: $(this).serialize(),
-    dataType: 'json',
-    success: function success(result) {
-      $('#addPrescription')[0].reset();
-      $('.visit-prescriptions').empty();
-      $('#prescriptionId').val('');
-      $.each(result.data, function (i, val) {
-        var data = [{
-          'id': val.id,
-          'name': val.prescription_name,
-          'frequency': val.frequency,
-          'duration': val.duration
-        }];
-        var visitPrescriptionTblData = prepareTemplateRender('#visitsPrescriptionTblTemplate', data);
-        $('.visit-prescriptions').append(visitPrescriptionTblData);
-      });
-      $('#addVisitPrescription').removeClass('show');
-      displaySuccessMessage(result.message);
-    },
-    error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
-    },
-    complete: function complete() {
-      $('#prescriptionSubmitBtn').attr('disabled', false);
-    }
-  });
-}); // Edit Visit Prescription Data
-
-function renderData(id) {
-  var prescriptionEditUrl = $('#doctorLogin').val() ? route('doctors.visits.edit.prescription', id) : route('edit.prescription', id);
-  $.ajax({
-    url: prescriptionEditUrl,
-    type: 'GET',
-    success: function success(result) {
-      $('#addPrescription')[0].reset();
-      $('#prescriptionId').val(result.data.id);
-      $('#prescriptionNameId').val(result.data.prescription_name);
-      $('#frequencyId').val(result.data.frequency);
-      $('#durationId').val(result.data.duration);
-      $('#descriptionId').val(result.data.description);
-    }
-  });
-}
-
-listenClick('.edit-prescription-btn', function () {
-  var id = $(this).attr('data-id');
-
-  if (!$('#addVisitPrescription').hasClass('show')) {
-    $('#addVisitPrescription').addClass('show');
-  }
-
-  renderData(id);
-}); // Delete Visit Prescription Data
-
-listenClick('.delete-visit-prescription-btn', function (e) {
-  e.preventDefault();
-  var id = $(this).attr('data-id');
-  $(this).closest('tr').remove();
-  var prescriptionDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.prescription', id) : route('delete.prescription', id);
-  $.ajax({
-    url: prescriptionDeleteUrl,
-    type: 'POST',
-    dataType: 'json',
-    success: function success(result) {
-      $('#addPrescription')[0].reset();
-      $('#prescriptionId').val('');
-
-      if (result.data.length < 1) {
-        $('#addVisitPrescription').removeClass('show');
-        displaySuccessMessage(result.message);
-        $('.visit-prescriptions').append("<tr><td colspan=\"4\" class=\"text-center fw-bold  text-muted text-gray-600\">No data available in table</td></tr>");
-      } else {
-        $('#addVisitPrescription').removeClass('show');
-        displaySuccessMessage(result.message);
-      }
-    }
-  });
-}); // Reset Form JS
-
-listenClick('.reset-form', function () {
-  $('#addPrescription')[0].reset();
-});
-
-/***/ }),
-
-/***/ "./resources/assets/js/visits/visits.js":
-/*!**********************************************!*\
-  !*** ./resources/assets/js/visits/visits.js ***!
-  \**********************************************/
-/***/ (() => {
-
-listenClick('.visit-delete-btn', function (event) {
-  var visitRecordId = $(event.currentTarget).attr('data-id');
-  deleteItem(route('visits.destroy', visitRecordId), Lang.get('js.visits'));
-});
-
-/***/ }),
-
 /***/ "./node_modules/flatpickr/dist/l10n/index.js":
 /*!***************************************************!*\
   !*** ./node_modules/flatpickr/dist/l10n/index.js ***!
@@ -9755,7 +73,17 @@ listenClick('.visit-delete-btn', function (event) {
                 "ديسمبر",
             ],
         },
-        rangeSeparator: " - ",
+        firstDayOfWeek: 6,
+        rangeSeparator: " إلى ",
+        weekAbbreviation: "Wk",
+        scrollTitle: "قم بالتمرير للزيادة",
+        toggleTitle: "اضغط للتبديل",
+        amPM: ["ص", "م"],
+        yearAriaLabel: "سنة",
+        monthAriaLabel: "شهر",
+        hourAriaLabel: "ساعة",
+        minuteAriaLabel: "دقيقة",
+        time_24hr: false,
     };
     fp.l10ns.ar = Arabic;
     fp.l10ns;
@@ -9813,6 +141,7 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " bis ",
         scrollTitle: "Zum Ändern scrollen",
         toggleTitle: "Zum Umschalten klicken",
+        time_24hr: true,
     };
     fp$1.l10ns.at = Austria;
     fp$1.l10ns;
@@ -10168,12 +497,77 @@ listenClick('.visit-delete-btn', function (event) {
             }
         },
         firstDayOfWeek: 1,
+        rangeSeparator: " a ",
         time_24hr: true,
     };
     fp$7.l10ns.cat = fp$7.l10ns.ca = Catalan;
     fp$7.l10ns;
 
     var fp$8 = typeof window !== "undefined" && window.flatpickr !== undefined
+        ? window.flatpickr
+        : {
+            l10ns: {},
+        };
+    var Kurdish = {
+        weekdays: {
+            shorthand: [
+                "یەکشەممە",
+                "دووشەممە",
+                "سێشەممە",
+                "چوارشەممە",
+                "پێنجشەممە",
+                "هەینی",
+                "شەممە",
+            ],
+            longhand: [
+                "یەکشەممە",
+                "دووشەممە",
+                "سێشەممە",
+                "چوارشەممە",
+                "پێنجشەممە",
+                "هەینی",
+                "شەممە",
+            ],
+        },
+        months: {
+            shorthand: [
+                "ڕێبەندان",
+                "ڕەشەمە",
+                "نەورۆز",
+                "گوڵان",
+                "جۆزەردان",
+                "پووشپەڕ",
+                "گەلاوێژ",
+                "خەرمانان",
+                "ڕەزبەر",
+                "گەڵاڕێزان",
+                "سەرماوەز",
+                "بەفرانبار",
+            ],
+            longhand: [
+                "ڕێبەندان",
+                "ڕەشەمە",
+                "نەورۆز",
+                "گوڵان",
+                "جۆزەردان",
+                "پووشپەڕ",
+                "گەلاوێژ",
+                "خەرمانان",
+                "ڕەزبەر",
+                "گەڵاڕێزان",
+                "سەرماوەز",
+                "بەفرانبار",
+            ],
+        },
+        firstDayOfWeek: 6,
+        ordinal: function () {
+            return "";
+        },
+    };
+    fp$8.l10ns.ckb = Kurdish;
+    fp$8.l10ns;
+
+    var fp$9 = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10233,10 +627,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Rok",
         time_24hr: true,
     };
-    fp$8.l10ns.cs = Czech;
-    fp$8.l10ns;
+    fp$9.l10ns.cs = Czech;
+    fp$9.l10ns;
 
-    var fp$9 = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$a = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10314,10 +708,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$9.l10ns.cy = Welsh;
-    fp$9.l10ns;
+    fp$a.l10ns.cy = Welsh;
+    fp$a.l10ns;
 
-    var fp$a = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$b = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10373,10 +767,10 @@ listenClick('.visit-delete-btn', function (event) {
         weekAbbreviation: "uge",
         time_24hr: true,
     };
-    fp$a.l10ns.da = Danish;
-    fp$a.l10ns;
+    fp$b.l10ns.da = Danish;
+    fp$b.l10ns;
 
-    var fp$b = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$c = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10431,8 +825,8 @@ listenClick('.visit-delete-btn', function (event) {
         toggleTitle: "Zum Umschalten klicken",
         time_24hr: true,
     };
-    fp$b.l10ns.de = German;
-    fp$b.l10ns;
+    fp$c.l10ns.de = German;
+    fp$c.l10ns;
 
     var english = {
         weekdays: {
@@ -10506,7 +900,7 @@ listenClick('.visit-delete-btn', function (event) {
         time_24hr: false,
     };
 
-    var fp$c = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$d = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10564,10 +958,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$c.l10ns.eo = Esperanto;
-    fp$c.l10ns;
+    fp$d.l10ns.eo = Esperanto;
+    fp$d.l10ns;
 
-    var fp$d = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$e = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10622,10 +1016,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " a ",
         time_24hr: true,
     };
-    fp$d.l10ns.es = Spanish;
-    fp$d.l10ns;
+    fp$e.l10ns.es = Spanish;
+    fp$e.l10ns;
 
-    var fp$e = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$f = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10683,10 +1077,10 @@ listenClick('.visit-delete-btn', function (event) {
         toggleTitle: "Klõpsa, et vahetada",
         time_24hr: true,
     };
-    fp$e.l10ns.et = Estonian;
-    fp$e.l10ns;
+    fp$f.l10ns.et = Estonian;
+    fp$f.l10ns;
 
-    var fp$f = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$g = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10739,10 +1133,10 @@ listenClick('.visit-delete-btn', function (event) {
             return "";
         },
     };
-    fp$f.l10ns.fa = Persian;
-    fp$f.l10ns;
+    fp$g.l10ns.fa = Persian;
+    fp$g.l10ns;
 
-    var fp$g = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$h = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10750,45 +1144,45 @@ listenClick('.visit-delete-btn', function (event) {
     var Finnish = {
         firstDayOfWeek: 1,
         weekdays: {
-            shorthand: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"],
+            shorthand: ["su", "ma", "ti", "ke", "to", "pe", "la"],
             longhand: [
-                "Sunnuntai",
-                "Maanantai",
-                "Tiistai",
-                "Keskiviikko",
-                "Torstai",
-                "Perjantai",
-                "Lauantai",
+                "sunnuntai",
+                "maanantai",
+                "tiistai",
+                "keskiviikko",
+                "torstai",
+                "perjantai",
+                "lauantai",
             ],
         },
         months: {
             shorthand: [
-                "Tammi",
-                "Helmi",
-                "Maalis",
-                "Huhti",
-                "Touko",
-                "Kesä",
-                "Heinä",
-                "Elo",
-                "Syys",
-                "Loka",
-                "Marras",
-                "Joulu",
+                "tammi",
+                "helmi",
+                "maalis",
+                "huhti",
+                "touko",
+                "kesä",
+                "heinä",
+                "elo",
+                "syys",
+                "loka",
+                "marras",
+                "joulu",
             ],
             longhand: [
-                "Tammikuu",
-                "Helmikuu",
-                "Maaliskuu",
-                "Huhtikuu",
-                "Toukokuu",
-                "Kesäkuu",
-                "Heinäkuu",
-                "Elokuu",
-                "Syyskuu",
-                "Lokakuu",
-                "Marraskuu",
-                "Joulukuu",
+                "tammikuu",
+                "helmikuu",
+                "maaliskuu",
+                "huhtikuu",
+                "toukokuu",
+                "kesäkuu",
+                "heinäkuu",
+                "elokuu",
+                "syyskuu",
+                "lokakuu",
+                "marraskuu",
+                "joulukuu",
             ],
         },
         ordinal: function () {
@@ -10796,10 +1190,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$g.l10ns.fi = Finnish;
-    fp$g.l10ns;
+    fp$h.l10ns.fi = Finnish;
+    fp$h.l10ns;
 
-    var fp$h = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$i = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10858,10 +1252,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Ár",
         time_24hr: true,
     };
-    fp$h.l10ns.fo = Faroese;
-    fp$h.l10ns;
+    fp$i.l10ns.fo = Faroese;
+    fp$i.l10ns;
 
-    var fp$i = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$j = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10921,10 +1315,10 @@ listenClick('.visit-delete-btn', function (event) {
         toggleTitle: "Cliquer pour basculer",
         time_24hr: true,
     };
-    fp$i.l10ns.fr = French;
-    fp$i.l10ns;
+    fp$j.l10ns.fr = French;
+    fp$j.l10ns;
 
-    var fp$j = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$k = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -10949,8 +1343,8 @@ listenClick('.visit-delete-btn', function (event) {
                 "Μάρ",
                 "Απρ",
                 "Μάι",
-                "Ιού",
-                "Ιού",
+                "Ιούν",
+                "Ιούλ",
                 "Αύγ",
                 "Σεπ",
                 "Οκτ",
@@ -10981,11 +1375,15 @@ listenClick('.visit-delete-btn', function (event) {
         scrollTitle: "Μετακυλήστε για προσαύξηση",
         toggleTitle: "Κάντε κλικ για αλλαγή",
         amPM: ["ΠΜ", "ΜΜ"],
+        yearAriaLabel: "χρόνος",
+        monthAriaLabel: "μήνας",
+        hourAriaLabel: "ώρα",
+        minuteAriaLabel: "λεπτό",
     };
-    fp$j.l10ns.gr = Greek;
-    fp$j.l10ns;
+    fp$k.l10ns.gr = Greek;
+    fp$k.l10ns;
 
-    var fp$k = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$l = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11028,10 +1426,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " אל ",
         time_24hr: true,
     };
-    fp$k.l10ns.he = Hebrew;
-    fp$k.l10ns;
+    fp$l.l10ns.he = Hebrew;
+    fp$l.l10ns;
 
-    var fp$l = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$m = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11080,10 +1478,10 @@ listenClick('.visit-delete-btn', function (event) {
             ],
         },
     };
-    fp$l.l10ns.hi = Hindi;
-    fp$l.l10ns;
+    fp$m.l10ns.hi = Hindi;
+    fp$m.l10ns;
 
-    var fp$m = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$n = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11134,10 +1532,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$m.l10ns.hr = Croatian;
-    fp$m.l10ns;
+    fp$n.l10ns.hr = Croatian;
+    fp$n.l10ns;
 
-    var fp$n = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$o = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11195,10 +1593,76 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " - ",
         time_24hr: true,
     };
-    fp$n.l10ns.hu = Hungarian;
-    fp$n.l10ns;
+    fp$o.l10ns.hu = Hungarian;
+    fp$o.l10ns;
 
-    var fp$o = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$p = typeof window !== "undefined" && window.flatpickr !== undefined
+        ? window.flatpickr
+        : {
+            l10ns: {},
+        };
+    var Armenian = {
+        weekdays: {
+            shorthand: ["Կիր", "Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ"],
+            longhand: [
+                "Կիրակի",
+                "Եկուշաբթի",
+                "Երեքշաբթի",
+                "Չորեքշաբթի",
+                "Հինգշաբթի",
+                "Ուրբաթ",
+                "Շաբաթ",
+            ],
+        },
+        months: {
+            shorthand: [
+                "Հնվ",
+                "Փտր",
+                "Մար",
+                "Ապր",
+                "Մայ",
+                "Հնս",
+                "Հլս",
+                "Օգս",
+                "Սեպ",
+                "Հոկ",
+                "Նմբ",
+                "Դեկ",
+            ],
+            longhand: [
+                "Հունվար",
+                "Փետրվար",
+                "Մարտ",
+                "Ապրիլ",
+                "Մայիս",
+                "Հունիս",
+                "Հուլիս",
+                "Օգոստոս",
+                "Սեպտեմբեր",
+                "Հոկտեմբեր",
+                "Նոյեմբեր",
+                "Դեկտեմբեր",
+            ],
+        },
+        firstDayOfWeek: 1,
+        ordinal: function () {
+            return "";
+        },
+        rangeSeparator: " — ",
+        weekAbbreviation: "ՇԲՏ",
+        scrollTitle: "Ոլորեք՝ մեծացնելու համար",
+        toggleTitle: "Սեղմեք՝ փոխելու համար",
+        amPM: ["ՄԿ", "ԿՀ"],
+        yearAriaLabel: "Տարի",
+        monthAriaLabel: "Ամիս",
+        hourAriaLabel: "Ժամ",
+        minuteAriaLabel: "Րոպե",
+        time_24hr: true,
+    };
+    fp$p.l10ns.hy = Armenian;
+    fp$p.l10ns;
+
+    var fp$q = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11245,10 +1709,10 @@ listenClick('.visit-delete-btn', function (event) {
         time_24hr: true,
         rangeSeparator: " - ",
     };
-    fp$o.l10ns.id = Indonesian;
-    fp$o.l10ns;
+    fp$q.l10ns.id = Indonesian;
+    fp$q.l10ns;
 
-    var fp$p = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$r = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11305,10 +1769,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Ár",
         time_24hr: true,
     };
-    fp$p.l10ns.is = Icelandic;
-    fp$p.l10ns;
+    fp$r.l10ns.is = Icelandic;
+    fp$r.l10ns;
 
-    var fp$q = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$s = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11364,10 +1828,10 @@ listenClick('.visit-delete-btn', function (event) {
         toggleTitle: "Clicca per cambiare",
         time_24hr: true,
     };
-    fp$q.l10ns.it = Italian;
-    fp$q.l10ns;
+    fp$s.l10ns.it = Italian;
+    fp$s.l10ns;
 
-    var fp$r = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$t = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11423,10 +1887,10 @@ listenClick('.visit-delete-btn', function (event) {
         hourAriaLabel: "時間",
         minuteAriaLabel: "分",
     };
-    fp$r.l10ns.ja = Japanese;
-    fp$r.l10ns;
+    fp$t.l10ns.ja = Japanese;
+    fp$t.l10ns;
 
-    var fp$s = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$u = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11486,10 +1950,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "წელი",
         time_24hr: true,
     };
-    fp$s.l10ns.ka = Georgian;
-    fp$s.l10ns;
+    fp$u.l10ns.ka = Georgian;
+    fp$u.l10ns;
 
-    var fp$t = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$v = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11541,11 +2005,12 @@ listenClick('.visit-delete-btn', function (event) {
             return "일";
         },
         rangeSeparator: " ~ ",
+        amPM: ["오전", "오후"],
     };
-    fp$t.l10ns.ko = Korean;
-    fp$t.l10ns;
+    fp$v.l10ns.ko = Korean;
+    fp$v.l10ns;
 
-    var fp$u = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$w = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11604,10 +2069,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "ឆ្នាំ",
         time_24hr: true,
     };
-    fp$u.l10ns.km = Khmer;
-    fp$u.l10ns;
+    fp$w.l10ns.km = Khmer;
+    fp$w.l10ns;
 
-    var fp$v = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$x = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11666,10 +2131,10 @@ listenClick('.visit-delete-btn', function (event) {
         amPM: ["ТД", "ТК"],
         yearAriaLabel: "Жыл",
     };
-    fp$v.l10ns.kz = Kazakh;
-    fp$v.l10ns;
+    fp$x.l10ns.kz = Kazakh;
+    fp$x.l10ns;
 
-    var fp$w = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$y = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11727,10 +2192,10 @@ listenClick('.visit-delete-btn', function (event) {
         toggleTitle: "Perjungti laiko formatą",
         time_24hr: true,
     };
-    fp$w.l10ns.lt = Lithuanian;
-    fp$w.l10ns;
+    fp$y.l10ns.lt = Lithuanian;
+    fp$y.l10ns;
 
-    var fp$x = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$z = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11782,10 +2247,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " līdz ",
         time_24hr: true,
     };
-    fp$x.l10ns.lv = Latvian;
-    fp$x.l10ns;
+    fp$z.l10ns.lv = Latvian;
+    fp$z.l10ns;
 
-    var fp$y = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$A = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11838,10 +2303,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " до ",
         time_24hr: true,
     };
-    fp$y.l10ns.mk = Macedonian;
-    fp$y.l10ns;
+    fp$A.l10ns.mk = Macedonian;
+    fp$A.l10ns;
 
-    var fp$z = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$B = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11885,26 +2350,18 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: "-с ",
         time_24hr: true,
     };
-    fp$z.l10ns.mn = Mongolian;
-    fp$z.l10ns;
+    fp$B.l10ns.mn = Mongolian;
+    fp$B.l10ns;
 
-    var fp$A = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$C = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
         };
     var Malaysian = {
         weekdays: {
-            shorthand: ["Min", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"],
-            longhand: [
-                "Minggu",
-                "Isnin",
-                "Selasa",
-                "Rabu",
-                "Khamis",
-                "Jumaat",
-                "Sabtu",
-            ],
+            shorthand: ["Aha", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"],
+            longhand: ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"],
         },
         months: {
             shorthand: [
@@ -11941,9 +2398,9 @@ listenClick('.visit-delete-btn', function (event) {
             return "";
         },
     };
-    fp$A.l10ns;
+    fp$C.l10ns;
 
-    var fp$B = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$D = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -11997,10 +2454,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$B.l10ns.my = Burmese;
-    fp$B.l10ns;
+    fp$D.l10ns.my = Burmese;
+    fp$D.l10ns;
 
-    var fp$C = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$E = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12060,10 +2517,71 @@ listenClick('.visit-delete-btn', function (event) {
             return "de";
         },
     };
-    fp$C.l10ns.nl = Dutch;
-    fp$C.l10ns;
+    fp$E.l10ns.nl = Dutch;
+    fp$E.l10ns;
 
-    var fp$D = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$F = typeof window !== "undefined" && window.flatpickr !== undefined
+        ? window.flatpickr
+        : {
+            l10ns: {},
+        };
+    var NorwegianNynorsk = {
+        weekdays: {
+            shorthand: ["Sø.", "Må.", "Ty.", "On.", "To.", "Fr.", "La."],
+            longhand: [
+                "Søndag",
+                "Måndag",
+                "Tysdag",
+                "Onsdag",
+                "Torsdag",
+                "Fredag",
+                "Laurdag",
+            ],
+        },
+        months: {
+            shorthand: [
+                "Jan",
+                "Feb",
+                "Mars",
+                "Apr",
+                "Mai",
+                "Juni",
+                "Juli",
+                "Aug",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Des",
+            ],
+            longhand: [
+                "Januar",
+                "Februar",
+                "Mars",
+                "April",
+                "Mai",
+                "Juni",
+                "Juli",
+                "August",
+                "September",
+                "Oktober",
+                "November",
+                "Desember",
+            ],
+        },
+        firstDayOfWeek: 1,
+        rangeSeparator: " til ",
+        weekAbbreviation: "Veke",
+        scrollTitle: "Scroll for å endre",
+        toggleTitle: "Klikk for å veksle",
+        time_24hr: true,
+        ordinal: function () {
+            return ".";
+        },
+    };
+    fp$F.l10ns.nn = NorwegianNynorsk;
+    fp$F.l10ns;
+
+    var fp$G = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12121,10 +2639,10 @@ listenClick('.visit-delete-btn', function (event) {
             return ".";
         },
     };
-    fp$D.l10ns.no = Norwegian;
-    fp$D.l10ns;
+    fp$G.l10ns.no = Norwegian;
+    fp$G.l10ns;
 
-    var fp$E = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$H = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12174,10 +2692,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$E.l10ns.pa = Punjabi;
-    fp$E.l10ns;
+    fp$H.l10ns.pa = Punjabi;
+    fp$H.l10ns;
 
-    var fp$F = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$I = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12235,10 +2753,10 @@ listenClick('.visit-delete-btn', function (event) {
             return ".";
         },
     };
-    fp$F.l10ns.pl = Polish;
-    fp$F.l10ns;
+    fp$I.l10ns.pl = Polish;
+    fp$I.l10ns;
 
-    var fp$G = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$J = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12289,10 +2807,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " até ",
         time_24hr: true,
     };
-    fp$G.l10ns.pt = Portuguese;
-    fp$G.l10ns;
+    fp$J.l10ns.pt = Portuguese;
+    fp$J.l10ns;
 
-    var fp$H = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$K = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12346,10 +2864,10 @@ listenClick('.visit-delete-btn', function (event) {
             return "";
         },
     };
-    fp$H.l10ns.ro = Romanian;
-    fp$H.l10ns;
+    fp$K.l10ns.ro = Romanian;
+    fp$K.l10ns;
 
-    var fp$I = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$L = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12409,10 +2927,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Год",
         time_24hr: true,
     };
-    fp$I.l10ns.ru = Russian;
-    fp$I.l10ns;
+    fp$L.l10ns.ru = Russian;
+    fp$L.l10ns;
 
-    var fp$J = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$M = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12462,10 +2980,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$J.l10ns.si = Sinhala;
-    fp$J.l10ns;
+    fp$M.l10ns.si = Sinhala;
+    fp$M.l10ns;
 
-    var fp$K = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$N = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12520,10 +3038,10 @@ listenClick('.visit-delete-btn', function (event) {
             return ".";
         },
     };
-    fp$K.l10ns.sk = Slovak;
-    fp$K.l10ns;
+    fp$N.l10ns.sk = Slovak;
+    fp$N.l10ns;
 
-    var fp$L = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$O = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12578,10 +3096,10 @@ listenClick('.visit-delete-btn', function (event) {
             return ".";
         },
     };
-    fp$L.l10ns.sl = Slovenian;
-    fp$L.l10ns;
+    fp$O.l10ns.sl = Slovenian;
+    fp$O.l10ns;
 
-    var fp$M = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$P = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12629,12 +3147,19 @@ listenClick('.visit-delete-btn', function (event) {
                 "Dhjetor",
             ],
         },
+        firstDayOfWeek: 1,
+        rangeSeparator: " deri ",
+        weekAbbreviation: "Java",
+        yearAriaLabel: "Viti",
+        monthAriaLabel: "Muaji",
+        hourAriaLabel: "Ora",
+        minuteAriaLabel: "Minuta",
         time_24hr: true,
     };
-    fp$M.l10ns.sq = Albanian;
-    fp$M.l10ns;
+    fp$P.l10ns.sq = Albanian;
+    fp$P.l10ns;
 
-    var fp$N = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$Q = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12687,10 +3212,10 @@ listenClick('.visit-delete-btn', function (event) {
         rangeSeparator: " do ",
         time_24hr: true,
     };
-    fp$N.l10ns.sr = Serbian;
-    fp$N.l10ns;
+    fp$Q.l10ns.sr = Serbian;
+    fp$Q.l10ns;
 
-    var fp$O = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$R = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12699,56 +3224,57 @@ listenClick('.visit-delete-btn', function (event) {
         firstDayOfWeek: 1,
         weekAbbreviation: "v",
         weekdays: {
-            shorthand: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"],
+            shorthand: ["sön", "mån", "tis", "ons", "tor", "fre", "lör"],
             longhand: [
-                "Söndag",
-                "Måndag",
-                "Tisdag",
-                "Onsdag",
-                "Torsdag",
-                "Fredag",
-                "Lördag",
+                "söndag",
+                "måndag",
+                "tisdag",
+                "onsdag",
+                "torsdag",
+                "fredag",
+                "lördag",
             ],
         },
         months: {
             shorthand: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "Maj",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Okt",
-                "Nov",
-                "Dec",
+                "jan",
+                "feb",
+                "mar",
+                "apr",
+                "maj",
+                "jun",
+                "jul",
+                "aug",
+                "sep",
+                "okt",
+                "nov",
+                "dec",
             ],
             longhand: [
-                "Januari",
-                "Februari",
-                "Mars",
-                "April",
-                "Maj",
-                "Juni",
-                "Juli",
-                "Augusti",
-                "September",
-                "Oktober",
-                "November",
-                "December",
+                "januari",
+                "februari",
+                "mars",
+                "april",
+                "maj",
+                "juni",
+                "juli",
+                "augusti",
+                "september",
+                "oktober",
+                "november",
+                "december",
             ],
         },
+        rangeSeparator: " till ",
         time_24hr: true,
         ordinal: function () {
             return ".";
         },
     };
-    fp$O.l10ns.sv = Swedish;
-    fp$O.l10ns;
+    fp$R.l10ns.sv = Swedish;
+    fp$R.l10ns;
 
-    var fp$P = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$S = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12805,10 +3331,10 @@ listenClick('.visit-delete-btn', function (event) {
             return "";
         },
     };
-    fp$P.l10ns.th = Thai;
-    fp$P.l10ns;
+    fp$S.l10ns.th = Thai;
+    fp$S.l10ns;
 
-    var fp$Q = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$T = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12867,10 +3393,10 @@ listenClick('.visit-delete-btn', function (event) {
         amPM: ["ÖÖ", "ÖS"],
         time_24hr: true,
     };
-    fp$Q.l10ns.tr = Turkish;
-    fp$Q.l10ns;
+    fp$T.l10ns.tr = Turkish;
+    fp$T.l10ns;
 
-    var fp$R = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$U = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12921,10 +3447,10 @@ listenClick('.visit-delete-btn', function (event) {
         },
         time_24hr: true,
     };
-    fp$R.l10ns.uk = Ukrainian;
-    fp$R.l10ns;
+    fp$U.l10ns.uk = Ukrainian;
+    fp$U.l10ns;
 
-    var fp$S = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$V = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -12984,10 +3510,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Йил",
         time_24hr: true,
     };
-    fp$S.l10ns.uz = Uzbek;
-    fp$S.l10ns;
+    fp$V.l10ns.uz = Uzbek;
+    fp$V.l10ns;
 
-    var fp$T = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$W = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -13047,10 +3573,10 @@ listenClick('.visit-delete-btn', function (event) {
         yearAriaLabel: "Yil",
         time_24hr: true,
     };
-    fp$T.l10ns["uz_latn"] = UzbekLatin;
-    fp$T.l10ns;
+    fp$W.l10ns["uz_latn"] = UzbekLatin;
+    fp$W.l10ns;
 
-    var fp$U = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$X = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -13101,10 +3627,10 @@ listenClick('.visit-delete-btn', function (event) {
         firstDayOfWeek: 1,
         rangeSeparator: " đến ",
     };
-    fp$U.l10ns.vn = Vietnamese;
-    fp$U.l10ns;
+    fp$X.l10ns.vn = Vietnamese;
+    fp$X.l10ns;
 
-    var fp$V = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$Y = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -13157,10 +3683,10 @@ listenClick('.visit-delete-btn', function (event) {
         scrollTitle: "滚动切换",
         toggleTitle: "点击切换 12/24 小时时制",
     };
-    fp$V.l10ns.zh = Mandarin;
-    fp$V.l10ns;
+    fp$Y.l10ns.zh = Mandarin;
+    fp$Y.l10ns;
 
-    var fp$W = typeof window !== "undefined" && window.flatpickr !== undefined
+    var fp$Z = typeof window !== "undefined" && window.flatpickr !== undefined
         ? window.flatpickr
         : {
             l10ns: {},
@@ -13213,8 +3739,8 @@ listenClick('.visit-delete-btn', function (event) {
         scrollTitle: "滾動切換",
         toggleTitle: "點擊切換 12/24 小時時制",
     };
-    fp$W.l10ns.zh_tw = MandarinTraditional;
-    fp$W.l10ns;
+    fp$Z.l10ns.zh_tw = MandarinTraditional;
+    fp$Z.l10ns;
 
     var l10n = {
         ar: Arabic,
@@ -13225,6 +3751,7 @@ listenClick('.visit-delete-btn', function (event) {
         bn: Bangla,
         bs: Bosnian,
         ca: Catalan,
+        ckb: Kurdish,
         cat: Catalan,
         cs: Czech,
         cy: Welsh,
@@ -13244,6 +3771,7 @@ listenClick('.visit-delete-btn', function (event) {
         hi: Hindi,
         hr: Croatian,
         hu: Hungarian,
+        hy: Armenian,
         id: Indonesian,
         is: Icelandic,
         it: Italian,
@@ -13259,6 +3787,7 @@ listenClick('.visit-delete-btn', function (event) {
         ms: Malaysian,
         my: Burmese,
         nl: Dutch,
+        nn: NorwegianNynorsk,
         no: Norwegian,
         pa: Punjabi,
         pl: Polish,
@@ -13296,14 +3825,14 @@ listenClick('.visit-delete-btn', function (event) {
   \*******************************************/
 /***/ ((module) => {
 
-/*! JsRender v1.0.11: http://jsviews.com/#jsrender */
+/*! JsRender v1.0.15: http://jsviews.com/#jsrender */
 /*! **VERSION FOR WEB** (For NODE.JS see http://jsviews.com/download/jsrender-node.js) */
 /*
  * Best-of-breed templating in browser or on Node.js.
  * Does not require jQuery, or HTML DOM
  * Integrates with JsViews (http://jsviews.com/#jsviews)
  *
- * Copyright 2021, Boris Moore
+ * Copyright 2024, Boris Moore
  * Released under the MIT License.
  */
 
@@ -13336,7 +3865,7 @@ var setGlobals = $ === false; // Only set globals if script block in browser (no
 
 $ = $ && $.fn ? $ : global.jQuery; // $ is jQuery passed in by CommonJS loader (Browserify), or global jQuery.
 
-var versionNumber = "v1.0.11",
+var versionNumber = "v1.0.15",
 	jsvStoreName, rTag, rTmplString, topView, $views, $expando,
 	_ocp = "_ocp",      // Observable contextual parameter
 
@@ -13375,6 +3904,7 @@ var versionNumber = "v1.0.11",
 		lt: "<"
 	},
 	HTML = "html",
+	STRING = "string",
 	OBJECT = "object",
 	tmplAttr = "data-jsv-tmpl",
 	jsvTmpl = "jsvTmpl",
@@ -13723,7 +4253,7 @@ function contextParameter(key, value, get) {
 				// Not a contextual parameter
 				// Set storeView to tag (if this is a tag.ctxPrm() call) or to root view ("data" view of linked template)
 				storeView = storeView.tagCtx || $isFunction(res)
-					? storeView // Is a tag, not a view, or is a computed contextual parameter, so scope to the callView, no the 'scope view'
+					? storeView // Is a tag, not a view, or is a computed contextual parameter, so scope to the callView, not the 'scope view'
 					: (storeView = storeView.scope || storeView,
 						!storeView.isTop && storeView.ctx.tag // If this view is in a tag, set storeView to the tag
 							|| storeView);
@@ -13882,7 +4412,7 @@ function convertArgs(tagElse, bound) { // tag.cvtArgs() or tag.cvtArgs(tagElse?,
 	bindFrom = tag.bindFrom;
 	args = tagCtx.args;
 
-	if ((converter = tag.convert) && "" + converter === converter) {
+	if ((converter = tag.convert) && typeof converter === STRING) {
 		converter = converter === "true"
 			? undefined
 			: (tagCtx.view.getRsc("converters", converter) || error("Unknown converter: '" + converter + "'"));
@@ -13945,7 +4475,7 @@ function convertBoundArgs(tagElse) { // tag.bndArgs()
 function getResource(resourceType, itemName) {
 	var res, store,
 		view = this;
-	if ("" + itemName === itemName) {
+	if (typeof itemName === STRING) {
 		while ((res === undefined) && view) {
 			store = view.tmpl && view.tmpl[resourceType];
 			res = store && store[itemName];
@@ -14344,13 +4874,13 @@ function compileTag(name, tagDef, parentTmpl) {
 			depends: tagDef.depends,
 			render: tagDef
 		};
-	} else if ("" + tagDef === tagDef) {
+	} else if (typeof tagDef === STRING) {
 		tagDef = {template: tagDef};
 	}
 
 	if (baseTag = tagDef.baseTag) {
 		tagDef.flow = !!tagDef.flow; // Set flow property, so defaults to false even if baseTag has flow=true
-		baseTag = "" + baseTag === baseTag
+		baseTag = typeof baseTag === STRING
 			? (parentTmpl && parentTmpl.tags[baseTag] || $tags[baseTag])
 			: baseTag;
 		if (!baseTag) {
@@ -14367,7 +4897,7 @@ function compileTag(name, tagDef, parentTmpl) {
 
 	// Tag declared as object, used as the prototype for tag instantiation (control/presenter)
 	if ((tmpl = compiledDef.template) !== undefined) {
-		compiledDef.template = "" + tmpl === tmpl ? ($templates[tmpl] || $templates(tmpl)) : tmpl;
+		compiledDef.template = typeof tmpl === STRING ? ($templates[tmpl] || $templates(tmpl)) : tmpl;
 	}
 	(Tag.prototype = compiledDef).constructor = compiledDef._ctr = Tag;
 
@@ -14395,7 +4925,7 @@ function compileTmpl(name, tmpl, parentTmpl, options) {
 		// If value is of type string - treat as selector, or name of compiled template
 		// Return the template object, if already compiled, or the markup string
 		var currentName, tmpl;
-		if (("" + value === value) || value.nodeType > 0 && (elem = value)) {
+		if ((typeof value === STRING) || value.nodeType > 0 && (elem = value)) {
 			if (!elem) {
 				if (/^\.?\/[^\\:*?"<>]*$/.test(value)) {
 					// value="./some/file.html" (or "/some/file.html")
@@ -14409,7 +4939,7 @@ function compileTmpl(name, tmpl, parentTmpl, options) {
 					}
 				} else if (value.charAt(0) === "#") {
 					elem = document.getElementById(value.slice(1));
-				} else if ($.fn && !$sub.rTmpl.test(value)) {
+				} if (!elem && $.fn && !$sub.rTmpl.test(value)) {
 					try {
 						elem = $(value, document)[0]; // if jQuery is loaded, test for selector returning elements, and get first element
 					} catch (e) {}
@@ -14559,7 +5089,7 @@ function compileViewModel(name, type) {
 		for (; j < getterCount; j++) {
 			prop = getters[j];
 			getterType = undefined;
-			if (prop + "" !== prop) {
+			if (typeof prop !== STRING) {
 				getterType = prop;
 				prop = getterType.getter;
 				parentRef = getterType.parentRef;
@@ -14572,7 +5102,7 @@ function compileViewModel(name, type) {
 	}
 
 	function map(data) {
-		data = data + "" === data
+		data = typeof data === STRING
 			? JSON.parse(data) // Accept JSON string
 			: data;            // or object/array
 		var l, prop, childOb, parentRef,
@@ -14625,7 +5155,7 @@ function compileViewModel(name, type) {
 	}
 
 	function merge(data, parent, parentRef) {
-		data = data + "" === data
+		data = typeof data === STRING
 			? JSON.parse(data) // Accept JSON string
 			: data;            // or object/array
 
@@ -14648,7 +5178,7 @@ function compileViewModel(name, type) {
 					mod = model[j];
 
 					if (id) {
-						assigned[j] = found = id + "" === id
+						assigned[j] = found = typeof id === STRING
 						? (ob[id] && (getterNames[id] ? mod[id]() : mod[id]) === ob[id])
 						: id(mod, ob);
 					}
@@ -14706,7 +5236,7 @@ function compileViewModel(name, type) {
 		for (; k < getterCount; k++) {
 			prop = getters[k];
 			getterType = undefined;
-			if (prop + "" !== prop) {
+			if (typeof prop !== STRING) {
 				getterType = prop;
 				prop = getterType.getter;
 			}
@@ -14847,7 +5377,7 @@ function registerStore(storeName, storeSettings) {
 			return item || $views;
 		}
 		// Adding a single unnamed item to the store
-		if (name && "" + name !== name) { // name must be a string
+		if (name &&  typeof name !== STRING) { // name must be a string
 			parentTmpl = item;
 			item = name;
 			name = undefined;
@@ -15379,7 +5909,7 @@ function tmplFn(markup, tmpl, isLinkExpr, convertBack, hasElse) {
 	pushprecedingContent(markup.length);
 
 	if (loc = astTop[astTop.length - 1]) {
-		blockTagCheck("" + loc !== loc && (+loc[10] === loc[10]) && loc[0]);
+		blockTagCheck(typeof loc !== STRING && (+loc[10] === loc[10]) && loc[0]);
 	}
 //			result = tmplFnsCache[markup] = buildCode(astTop, tmpl);
 //		}
@@ -15721,7 +6251,7 @@ function buildCode(ast, tmpl, isLinkExpr) {
 		tmplOptions = {},
 		l = ast.length;
 
-	if ("" + tmpl === tmpl) {
+	if (typeof tmpl === STRING) {
 		tmplName = isLinkExpr ? 'data-link="' + tmpl.replace(rNewLine, " ").slice(1, -1) + '"' : tmpl;
 		tmpl = 0;
 	} else {
@@ -15740,7 +6270,7 @@ function buildCode(ast, tmpl, isLinkExpr) {
 		node = ast[i];
 
 		// Add newline for each callout to t() c() etc. and each markup string
-		if ("" + node === node) {
+		if (typeof node === STRING) {
 			// a markup string to be inserted
 			code += '+"' + node + '"';
 		} else {
@@ -15960,11 +6490,11 @@ function getTargetSorted(value, tagCtx) {
 	if (!$isArray(value)) {
 		return value;
 	}
-	if (directSort || sort && "" + sort === sort) {
+	if (directSort || sort && typeof sort === STRING) {
 		// Temporary mapped array holds objects with index and sort-value
 		mapped = value.map(function(item, i) {
 			item = directSort ? item : getPathObject(item, sort);
-			return {i: i, v: "" + item === item ? item.toLowerCase() : item};
+			return {i: i, v: typeof item === STRING ? item.toLowerCase() : item};
 		});
 		// Sort mapped array
 		mapped.sort(function(a, b) {
@@ -16063,12 +6593,12 @@ function htmlEncode(text) {
 
 function dataEncode(text) {
 	// Encode just < > and & - intended for 'safe data' along with {{:}} rather than {{>}}
-  return "" + text === text ? text.replace(rDataEncode, getCharEntity) : text;
+  return typeof text === STRING ? text.replace(rDataEncode, getCharEntity) : text;
 }
 
 function dataUnencode(text) {
   // Unencode just < > and & - intended for 'safe data' along with {{:}} rather than {{>}}
-  return "" + text === text ? text.replace(rDataUnencode, getCharFromEntity) : text;
+  return  typeof text === STRING ? text.replace(rDataUnencode, getCharFromEntity) : text;
 }
 
 //========================== Initialize ==========================
@@ -16172,7 +6702,7 @@ if (!(jsr || $ && $.render)) {
 			: (
 				$subSettings._clFns && $subSettings._clFns(), // Clear linkExprStore (cached compiled expressions), since debugMode setting affects compilation for expressions
 				$subSettings.debugMode = debugMode,
-				$subSettings.onError = debugMode + "" === debugMode
+				$subSettings.onError = typeof debugMode === STRING
 					? function() { return debugMode; }
 					: $isFunction(debugMode)
 						? debugMode
@@ -16314,10 +6844,33 @@ return $ || jsr;
 
 /***/ }),
 
-/***/ "./resources/assets/front/scss/front-custom.scss":
-/*!*******************************************************!*\
-  !*** ./resources/assets/front/scss/front-custom.scss ***!
-  \*******************************************************/
+/***/ "./resources/assets/front/js/front-language.js":
+/*!*****************************************************!*\
+  !*** ./resources/assets/front/js/front-language.js ***!
+  \*****************************************************/
+/***/ (() => {
+
+listenClick('.languageSelection', function () {
+  var languageName = $(this).data('prefix-value');
+  $.ajax({
+    type: 'POST',
+    url: route('front.change.language'),
+    data: {
+      '_token': csrfToken,
+      languageName: languageName
+    },
+    success: function success() {
+      location.reload();
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/front/scss/about.scss":
+/*!************************************************!*\
+  !*** ./resources/assets/front/scss/about.scss ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16327,10 +6880,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/assets/front/scss/about.scss":
-/*!************************************************!*\
-  !*** ./resources/assets/front/scss/about.scss ***!
-  \************************************************/
+/***/ "./resources/assets/front/scss/front-custom.scss":
+/*!*******************************************************!*\
+  !*** ./resources/assets/front/scss/front-custom.scss ***!
+  \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16353,10 +6906,9092 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/css/app.css":
-/*!*******************************!*\
-  !*** ./resources/css/app.css ***!
-  \*******************************/
+/***/ "./resources/assets/js/appointments/appointments.js":
+/*!**********************************************************!*\
+  !*** ./resources/assets/js/appointments/appointments.js ***!
+  \**********************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadAppointmentFilterDate)
+
+var appointmentFilterDate = $("#appointmentDateFilter");
+var appointmentStart = moment().startOf("week");
+var appointmentEnd = moment().endOf("week");
+Livewire.hook("element.init", function () {
+  loadAppointmentFilterDate();
+  if ($("#paymentType").length) {
+    $("#paymentType").select2();
+  }
+  if ($("#paymentStatus").length) {
+    $("#paymentStatus").select2();
+  }
+  if ($("#doctorApptPaymentStatus").length) {
+    $("#doctorApptPaymentStatus").select2();
+  }
+  if ($("#appointmentStatus").length) {
+    $("#appointmentStatus").select2();
+  }
+  if (appointmentStart != undefined && appointmentEnd != undefined) {
+    cb(appointmentStart, appointmentEnd);
+  }
+});
+function loadAppointmentFilterDate() {
+  if (!$("#appointmentDateFilter").length) {
+    return;
+  }
+
+  // let appointmentStart = moment().startOf("week");
+  // let appointmentEnd = moment().endOf("week");
+
+  $("#appointmentDateFilter").daterangepicker({
+    startDate: appointmentStart,
+    endDate: appointmentEnd,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      format: "DD/MM/YYYY",
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  // cb
+  );
+
+  // cb(appointmentStart, appointmentEnd);
+
+  $("#appointmentDateFilter").on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    Livewire.dispatch("changeStatusFilter", {
+      status: $("#appointmentStatus").val()
+    });
+    Livewire.dispatch("changePaymentTypeFilter", {
+      type: $("#paymentStatus").val()
+    });
+    appointmentStart = picker.startDate;
+    appointmentEnd = picker.endDate;
+  });
+}
+function cb(start, end) {
+  $("#appointmentDateFilter").val(start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY"));
+}
+listenClick("#appointmentResetFilter", function () {
+  $("#paymentStatus").val(0).trigger("change");
+  $("#appointmentStatus").val(1).trigger("change");
+  var date = moment().startOf("week").format("DD/MM/YYYY") + " - " + moment().endOf("week").format("DD/MM/YYYY");
+  $("#appointmentDateFilter").val(date);
+  Livewire.dispatch("changeDateFilter", {
+    date: date
+  });
+  hideDropdownManually($("#apptmentFilterBtn"), $(".dropdown-menu"));
+});
+listenClick("#doctorApptResetFilter", function () {
+  $("#doctorApptPaymentStatus").val(1).trigger("change");
+  var date = moment().startOf("week").format("DD/MM/YYYY") + " - " + moment().endOf("week").format("DD/MM/YYYY");
+  $("#appointmentDateFilter").val(date);
+  Livewire.dispatch("changeDateFilter", {
+    date: date
+  });
+  hideDropdownManually($("#doctorAptFilterBtn"), $(".dropdown-menu"));
+});
+listenClick(".appointment-delete-btn", function (event) {
+  var recordId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("appointments.destroy", recordId), Lang.get("js.appointment"));
+});
+listenChange(".appointment-status-change", function () {
+  var appointmentStatus = $(this).val();
+  var appointmentId = $(this).attr("data-id");
+  var currentData = $(this);
+  $.ajax({
+    url: route("change-status", appointmentId),
+    type: "POST",
+    data: {
+      appointmentId: appointmentId,
+      appointmentStatus: appointmentStatus
+    },
+    _success: function _success(result) {
+      $(currentData).children("option.booked").addClass("hide");
+      window.location.reload();
+      // Turbo.visit(window.location.href);
+      displaySuccessMessage(result.message);
+    },
+    get success() {
+      return this._success;
+    },
+    set success(value) {
+      this._success = value;
+    }
+  });
+});
+listenChange(".appointment-change-payment-status", function () {
+  var paymentStatus = $(this).val();
+  var appointmentId = $(this).attr("data-id");
+  $("#paymentStatusModal").modal("show").appendTo("body");
+  $("#appointmentPaymentStatus").val(paymentStatus);
+  $("#appointmentId").val(appointmentId);
+});
+listenChange("#paymentStatus", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $("#appointmentDateFilter").val()
+  });
+  Livewire.dispatch("changeStatusFilter", {
+    status: $("#appointmentStatus").val()
+  });
+  Livewire.dispatch("changePaymentTypeFilter", {
+    type: $(this).val()
+  });
+});
+listenChange("#doctorApptPaymentStatus", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $("#appointmentDateFilter").val()
+  });
+  Livewire.dispatch("changeDoctorStatusFilter", {
+    status: $(this).val()
+  });
+});
+listenChange("#appointmentStatus", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $("#appointmentDateFilter").val()
+  });
+  Livewire.dispatch("changeStatusFilter", {
+    status: $(this).val()
+  });
+  Livewire.dispatch("changePaymentTypeFilter", {
+    type: $("#paymentStatus").val()
+  });
+});
+listenSubmit("#appointmentPaymentStatusForm", function (event) {
+  event.preventDefault();
+  var paymentStatus = $("#appointmentPaymentStatus").val();
+  var appointmentId = $("#appointmentId").val();
+  var paymentMethod = $("#paymentType").val();
+  $.ajax({
+    url: route("change-payment-status", appointmentId),
+    type: "POST",
+    data: {
+      appointmentId: appointmentId,
+      paymentStatus: paymentStatus,
+      paymentMethod: paymentMethod,
+      loginUserId: currentLoginUserId
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $("#paymentStatusModal").modal("hide");
+        location.reload();
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/appointments/calendar.js":
+/*!******************************************************!*\
+  !*** ./resources/assets/js/appointments/calendar.js ***!
+  \******************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadAppointmentCalendar);
+var popover;
+var popoverState = false;
+var appointmentStatusId = null;
+var calendar;
+var data = {
+  id: '',
+  uId: '',
+  eventName: '',
+  patientName: '',
+  eventDescription: '',
+  eventStatus: '',
+  startDate: '',
+  endDate: '',
+  amount: 0,
+  service: '',
+  doctorName: ''
+};
+
+// View event variables
+var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewPatientName, viewEndDate, viewModal, viewEditButton, viewDeleteButton, viewService, viewUId, viewAmount;
+function loadAppointmentCalendar() {
+  initCalendarApp();
+  init();
+}
+var initCalendarApp = function initCalendarApp() {
+  if (!$('#adminAppointmentCalendar').length) {
+    return;
+  }
+  if (usersRole == 'patient') {
+    return;
+  }
+  var calendarEl = document.getElementById('adminAppointmentCalendar');
+  var lang = $('.currentLanguage').val();
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: lang,
+    themeSystem: 'bootstrap5',
+    height: 750,
+    buttonText: {
+      today: Lang.get('js.today'),
+      day: Lang.get('js.day'),
+      month: Lang.get('js.month')
+    },
+    headerToolbar: {
+      left: 'title',
+      center: 'prev,next today',
+      right: 'dayGridDay,dayGridMonth'
+    },
+    initialDate: new Date(),
+    timeZone: 'UTC',
+    dayMaxEvents: true,
+    events: function events(info, successCallback, failureCallback) {
+      $.ajax({
+        url: route('appointments.calendar'),
+        type: 'GET',
+        data: info,
+        success: function success(result) {
+          if (result.success) {
+            successCallback(result.data);
+          }
+        },
+        error: function error(result) {
+          displayErrorMessage(result.responseJSON.message);
+          failureCallback();
+        }
+      });
+    },
+    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
+    eventMouseEnter: function eventMouseEnter(arg) {
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        patient: arg.event.extendedProps.patient,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        doctorName: arg.event.extendedProps.doctorName
+      });
+
+      // Show popover preview
+      initPopovers(arg.el);
+    },
+    eventMouseLeave: function eventMouseLeave() {
+      hidePopovers();
+    },
+    // Click event --- more info: https://fullcalendar.io/docs/eventClick
+    eventClick: function eventClick(arg) {
+      hidePopovers();
+      appointmentStatusId = arg.event.id;
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        patient: arg.event.extendedProps.patient,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        doctorName: arg.event.extendedProps.doctorName
+      });
+      handleViewEvent();
+    }
+  });
+  calendar.render();
+};
+var init = function init() {
+  if (!$('#eventModal').length) {
+    return;
+  }
+  var viewElement = document.getElementById('eventModal');
+  viewModal = new bootstrap.Modal(viewElement);
+  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
+  viewPatientName = viewElement.querySelector('[data-calendar="event_patient_name"]');
+  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
+  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
+  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
+  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
+  viewService = viewElement.querySelector('[data-calendar="event_service"]');
+  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
+  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
+};
+
+// Format FullCalendar responses
+var formatArgs = function formatArgs(res) {
+  data.id = res.id;
+  data.eventName = res.title;
+  data.patientName = res.patient;
+  data.eventDescription = res.description;
+  data.eventStatus = res.status;
+  data.startDate = res.startStr;
+  data.endDate = res.endStr;
+  data.amount = res.amount;
+  data.uId = res.uId;
+  data.service = res.service;
+  data.doctorName = res.doctorName;
+};
+
+// Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
+var initPopovers = function initPopovers(element) {
+  hidePopovers();
+
+  // Generate popover content
+  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
+  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '<div class="fw-bolder mb-2"><b>Patient</b>: ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+
+  // Popover options
+  var options = {
+    container: 'body',
+    trigger: 'manual',
+    boundary: 'window',
+    placement: 'auto',
+    dismiss: true,
+    html: true,
+    title: 'Appointment Details',
+    content: popoverHtml
+  };
+};
+
+// Hide active popovers
+var hidePopovers = function hidePopovers() {
+  if (popoverState) {
+    popover.dispose();
+    popoverState = false;
+  }
+};
+
+// Handle view event
+var handleViewEvent = function handleViewEvent() {
+  $('.fc-popover').addClass('hide');
+  viewModal.show();
+
+  // Detect all day event
+  var eventNameMod;
+  var startDateMod;
+  var endDateMod;
+  var book = $('#bookCalenderConst').val();
+  var checkIn = $('#checkInCalenderConst').val();
+  var checkOut = $('#checkOutCalenderConst').val();
+  var cancel = $('#cancelCalenderConst').val();
+  eventNameMod = '';
+  startDateMod = moment(data.startDate).utc().format("DD MMM, YYYY - h:mm A");
+  endDateMod = moment(data.endDate).utc().format('DD MMM, YYYY - h:mm A');
+  viewEndDate.innerText = ': ' + endDateMod;
+  viewStartDate.innerText = ': ' + startDateMod;
+
+  // Populate view data
+  viewEventName.innerText = Lang.get('js.doctor') + data.doctorName;
+  viewPatientName.innerText = Lang.get('js.patient') + data.patientName;
+  $(viewEventStatus).empty();
+  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
+  $(viewEventStatus).val(data.eventStatus).trigger('change');
+  viewAmount.innerText = addCommas(data.amount);
+  viewUId.innerText = data.uId;
+  viewService.innerText = data.service;
+};
+listenChange('#changeAppointmentStatus', function () {
+  if (!$(this).val()) {
+    return false;
+  }
+  var appointmentStatus = $(this).val();
+  var appointmentId = appointmentStatusId;
+  if (parseInt(appointmentStatus) === data.eventStatus) {
+    return false;
+  }
+  $.ajax({
+    url: route('change-status', appointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: appointmentId,
+      appointmentStatus: appointmentStatus
+    },
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      $('#eventModal').modal('hide');
+      calendar.refetchEvents();
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/appointments/create-edit.js":
+/*!*********************************************************!*\
+  !*** ./resources/assets/js/appointments/create-edit.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
+
+document.addEventListener('DOMContentLoaded', loadAppointmentCreateEditData);
+var appointmentDate = $('#appointmentDate');
+var selectedDate;
+var selectedSlotTime;
+var timezoneOffsetMinutes = new Date().getTimezoneOffset();
+timezoneOffsetMinutes = timezoneOffsetMinutes === 0 ? 0 : -timezoneOffsetMinutes;
+function loadAppointmentCreateEditData() {
+  if (!$('#appointmentDate').length) {
+    return;
+  }
+  var lang = $('.currentLanguage').val();
+  $('#appointmentDate').flatpickr({
+    "locale": lang,
+    minDate: new Date(),
+    disableMobile: true
+  });
+  $('.no-time-slot').removeClass('d-none');
+}
+listenChange('#appointmentDate', function () {
+  selectedDate = $(this).val();
+  var userRole = $('#userRole').val();
+  var doctorRole = $('#doctorRole').val();
+  var appointmentIsEdit = $('#appointmentIsEdit').val();
+  $('.appointment-slot-data').html('');
+  var url = '';
+  if (!isEmpty(userRole) || !isEmpty(doctorRole)) {
+    if (!isEmpty(userRole)) {
+      url = route('patients.doctor-session-time');
+    }
+    if (!isEmpty(doctorRole)) {
+      url = route('doctors.doctor-session-time');
+    }
+  } else {
+    url = route('doctor-session-time');
+  }
+  // let url = !isEmpty(userRole)
+  //     ? route('patients.doctor-session-time')
+  //     : route('doctor-session-time');
+  $.ajax({
+    url: url,
+    type: 'GET',
+    data: {
+      'adminAppointmentDoctorId': $('#adminAppointmentDoctorId').val(),
+      'date': selectedDate,
+      'timezone_offset_minutes': timezoneOffsetMinutes
+    },
+    success: function success(result) {
+      if (result.success) {
+        if (result.data['bookedSlot'] != null && result.data['bookedSlot'].length > 0) {
+          if (result.data['slots'].length == 0) {
+            $('.no-time-slot').addClass('d-none');
+            $('.doctor-time-over').removeClass('d-none');
+          }
+        }
+        $.each(result.data['slots'], function (index, value) {
+          if (appointmentIsEdit && fromTime == value) {
+            $('.no-time-slot').addClass('d-none');
+            $('.doctor-time-over').addClass('d-none');
+            $('.appointment-slot-data').append('<span class="time-slot col-lg-2  activeSlot" data-id="' + value + '">' + value + '</span>');
+          } else {
+            $('.no-time-slot').addClass('d-none');
+            $('.doctor-time-over').addClass('d-none');
+            if (result.data['bookedSlot'] == null) {
+              $('.appointment-slot-data').append('<span class="time-slot col-lg-2" data-id="' + value + '">' + value + '</span>');
+            } else {
+              if ($.inArray(value, result.data['bookedSlot']) !== -1) {
+                $('.appointment-slot-data').append('<span class="time-slot col-lg-2 bookedSlot " data-id="' + value + '">' + value + '</span>');
+              } else {
+                $('.appointment-slot-data').append('<span class="time-slot col-lg-2" data-id="' + value + '">' + value + '</span>');
+              }
+            }
+          }
+        });
+      }
+    },
+    error: function error(result) {
+      $('.no-time-slot').removeClass('d-none');
+      $('.doctor-time-over').addClass('d-none');
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.time-slot', function () {
+  if ($('.time-slot').hasClass('activeSlot')) {
+    $('.time-slot').removeClass('activeSlot');
+    selectedSlotTime = $(this).addClass('activeSlot');
+  } else {
+    selectedSlotTime = $(this).addClass('activeSlot');
+  }
+  var fromToTime = $(this).attr('data-id').split('-');
+  var fromTime = fromToTime[0];
+  var toTime = fromToTime[1];
+  $('#timeSlot').val('');
+  $('#toTime').val('');
+  $('#timeSlot').val(fromTime);
+  $('#toTime').val(toTime);
+});
+var charge;
+var addFees = parseInt($('#addFees').val());
+var totalFees;
+listenChange('#adminAppointmentDoctorId', function () {
+  $('#chargeId').val('');
+  $('#payableAmount').val('');
+  appointmentDate.val('');
+  $('#addFees').val('');
+  $('.appointment-slot-data').html('');
+  $('.no-time-slot').removeClass('d-none');
+  var url = !isEmpty(userRole) ? route('patients.get-service') : route('get-service');
+  $.ajax({
+    url: url,
+    type: 'GET',
+    data: {
+      'appointmentDoctorId': $(this).val()
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#appointmentDate').removeAttr('disabled');
+        $('#appointmentServiceId').empty();
+        $('#appointmentServiceId').append($('<option value=""></option>').text(Lang.get('js.select_service')));
+        $.each(result.data, function (i, v) {
+          $('#appointmentServiceId').append($('<option></option>').attr('value', v.id).text(v.name));
+        });
+      }
+    }
+  });
+});
+listenChange('#appointmentServiceId', function () {
+  var url = !isEmpty(userRole) ? route('patients.get-charge') : route('get-charge');
+  $.ajax({
+    url: url,
+    type: 'GET',
+    data: {
+      'chargeId': $(this).val()
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#chargeId').val('');
+        $('#addFees').val('');
+        $('#payableAmount').val('');
+        if (result.data) {
+          $('#chargeId').val(result.data.charges);
+          $('#payableAmount').val(result.data.charges);
+          charge = result.data.charges;
+        }
+      }
+    }
+  });
+});
+listenKeyup('#addFees', function (e) {
+  if (e.which != 8 && isNaN(String.fromCharCode(e.which))) {
+    e.preventDefault();
+  }
+  totalFees = '';
+  totalFees = parseFloat(charge) + parseFloat($(this).val() ? $(this).val() : 0);
+  $('#payableAmount').val(totalFees.toFixed(2));
+});
+listenSubmit('#addAppointmentForm', function (e) {
+  e.preventDefault();
+  var data = new FormData($(this)[0]);
+  $('.submitAppointmentBtn').prop(Lang.get('js.discard'), true);
+  $('.submitAppointmentBtn').text(Lang.get('js.please_wait'));
+  $.ajax({
+    url: $(this).attr('action'),
+    type: 'POST',
+    data: data,
+    processData: false,
+    contentType: false,
+    success: function success(mainResult) {
+      if (mainResult.success) {
+        var appID = mainResult.data.appointmentId;
+
+        //displaySuccessMessage(mainResult.message);
+
+        $('#addAppointmentForm')[0].reset();
+        $('#addAppointmentForm').val('').trigger('change');
+        if (mainResult.data.payment_type == $('#paystackMethod').val()) {
+          return location.href = mainResult.data.redirect_url;
+        }
+        if (mainResult.data.payment_type == $('#paytmMethod').val()) {
+          window.location.replace(route('paytm.init', {
+            'appointmentId': appID
+          }));
+        }
+        if (mainResult.data.payment_type == $('#authorizeMethod').val()) {
+          window.location.href = route('authorize.init', {
+            appointmentId: appID
+          });
+
+          // Turbo.visit(route('authorize.init', {'appointmentId': appID}));
+        }
+        if (mainResult.data.payment_type == $('#paypalMethod').val()) {
+          $.ajax({
+            type: 'GET',
+            url: route('paypal.init'),
+            data: {
+              'appointmentId': appID
+            },
+            success: function success(result) {
+              if (result.status == 200) {
+                if (result.link != null) {
+                  location.href = result.link;
+                }
+              } else {
+                displayErrorMessage(result.message);
+              }
+            },
+            error: function error(result) {
+              displayErrorMessage(result.responseJSON.message);
+            }
+          });
+        }
+        if (mainResult.data.payment_type == $('#manuallyMethod').val()) {
+          window.location.replace(route('manually-payment', {
+            'appointmentId': appID
+          }));
+        }
+        if (mainResult.data.payment_type == $('#stripeMethod').val()) {
+          var sessionId = mainResult.data[0].sessionId;
+          stripe.redirectToCheckout({
+            sessionId: sessionId
+          }).then(function (mainResult) {
+            manageAjaxErrors(mainResult);
+          });
+        }
+        if (mainResult.data.payment_type == $('#razorpayMethodMethod').val()) {
+          $.ajax({
+            type: 'POST',
+            url: route('razorpay.init'),
+            data: {
+              'appointmentId': appID
+            },
+            success: function success(result) {
+              if (result.success) {
+                var _result$data = result.data,
+                  id = _result$data.id,
+                  amount = _result$data.amount,
+                  name = _result$data.name,
+                  email = _result$data.email,
+                  contact = _result$data.contact;
+                options.amount = amount;
+                options.order_id = id;
+                options.prefill.name = name;
+                options.prefill.email = email;
+                options.prefill.contact = contact;
+                options.prefill.appointmentID = appID;
+                var razorPay = new Razorpay(options);
+                razorPay.open();
+                razorPay.on('payment.failed', storeFailedPayment);
+              }
+            },
+            error: function error(result) {},
+            complete: function complete() {}
+          });
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+      $('.submitAppointmentBtn').prop(Lang.get('js.discard'), false);
+      $('.submitAppointmentBtn').text(Lang.get('js.save'));
+    },
+    complete: function complete() {}
+  });
+});
+function storeFailedPayment(response) {
+  $.ajax({
+    type: 'POST',
+    url: route('razorpay.failed'),
+    data: {
+      data: response
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+      }
+    },
+    error: function error() {}
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/appointments/patient-appointments.js":
+/*!******************************************************************!*\
+  !*** ./resources/assets/js/appointments/patient-appointments.js ***!
+  \******************************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded',
+//     loadPatientPanelAppointmentFilterData)
+var patientPanelApptmentStart = moment().startOf("week");
+var patientPanelApptmentEnd = moment().endOf("week");
+function loadPatientPanelAppointmentFilterData() {
+  if (!$("#patientAppointmentDate").length) {
+    return;
+  }
+
+  // let patientPanelApptmentStart = moment().startOf("week");
+  // let patientPanelApptmentEnd = moment().endOf("week");
+
+  var patientDatePicker = $("#patientAppointmentDate").daterangepicker({
+    startDate: patientPanelApptmentStart,
+    endDate: patientPanelApptmentEnd,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  // cb
+  );
+
+  // cb(patientPanelApptmentStart, patientPanelApptmentEnd);
+  patientDatePicker.on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    patientPanelApptmentStart = picker.startDate;
+    patientPanelApptmentEnd = picker.endDate;
+
+    // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
+  });
+}
+function cb(start, end) {
+  $("#patientAppointmentDate").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
+}
+listenClick("#patientPanelApptmentResetFilter", function () {
+  Livewire.dispatch("refresh");
+  $("#patientPaymentStatus").val(0).trigger("change");
+  $("#patientAppointmentStatus").val(1).trigger("change");
+  $("#patientAppointmentDate").data("daterangepicker").setStartDate(moment().startOf("week").format("MM/DD/YYYY"));
+  $("#patientAppointmentDate").data("daterangepicker").setEndDate(moment().endOf("week").format("MM/DD/YYYY"));
+  hideDropdownManually($("#patientPanelApptFilterBtn"), $(".dropdown-menu"));
+});
+listenChange("#patientPaymentStatus", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $("#patientAppointmentDate").val()
+  });
+  Livewire.dispatch("changePaymentTypeFilter", {
+    type: $(this).val()
+  });
+});
+listenChange("#patientAppointmentStatus", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $("#patientAppointmentDate").val()
+  });
+  Livewire.dispatch("changeStatusFilter", {
+    status: $(this).val()
+  });
+});
+
+// document.addEventListener('livewire:load', function () {
+//     window.livewire.hook('message.processed', () => {
+//         if ($('#patientPaymentStatus').length) {
+//             $('#patientPaymentStatus').select2()
+//         }
+//         if ($('#patientAppointmentStatus').length) {
+//             $('#patientAppointmentStatus').select2()
+//         }
+//     })
+// })
+
+Livewire.hook("element.init", function () {
+  loadPatientPanelAppointmentFilterData();
+  if ($("#patientPaymentStatus").length) {
+    $("#patientPaymentStatus").select2();
+  }
+  if ($("#patientAppointmentStatus").length) {
+    $("#patientAppointmentStatus").select2();
+  }
+  if (patientPanelApptmentStart != undefined && patientPanelApptmentEnd != undefined) {
+    cb(patientPanelApptmentStart, patientPanelApptmentEnd);
+  }
+});
+listenClick(".patient-panel-apptment-delete-btn", function (event) {
+  var userRole = $("#userRole").val();
+  var patientPanelApptmentRecordId = $(event.currentTarget).attr("data-id");
+  var patientPanelApptmentRecordUrl = !isEmpty(userRole) ? route("patients.appointments.destroy", patientPanelApptmentRecordId) : route("appointments.destroy", patientPanelApptmentRecordId);
+  deleteItem(patientPanelApptmentRecordUrl, "Appointment");
+});
+listenClick(".patient-cancel-appointment", function (event) {
+  var appointmentId = $(event.currentTarget).attr("data-id");
+  cancelAppointment(route("patients.cancel-status"), Lang.get("js.appointment"), appointmentId);
+});
+window.cancelAppointment = function (url, header, appointmentId) {
+  swal({
+    title: Lang.get("js.cancelled_appointment"),
+    text: Lang.get("js.are_you_sure_cancel") + header + " ?",
+    type: "warning",
+    icon: "warning",
+    showCancelButton: true,
+    closeOnConfirm: false,
+    confirmButtonColor: "#266CB0",
+    showLoaderOnConfirm: true,
+    buttons: {
+      confirm: Lang.get("js.yes"),
+      cancel: Lang.get("js.no")
+    }
+  }).then(function (result) {
+    if (result) {
+      deleteItemAjax(url, header, appointmentId);
+    }
+  });
+};
+function deleteItemAjax(url, header, appointmentId) {
+  $.ajax({
+    url: route("patients.cancel-status"),
+    type: "POST",
+    data: {
+      appointmentId: appointmentId
+    },
+    success: function success(obj) {
+      if (obj.success) {
+        Livewire.dispatch("refresh");
+      }
+      swal({
+        title: Lang.get("js.cancelled_appointment"),
+        text: header + Lang.get("js.has_cancel"),
+        icon: "success",
+        confirmButtonColor: "#266CB0",
+        timer: 2000
+      });
+    },
+    error: function error(data) {
+      swal({
+        title: "Error",
+        icon: "error",
+        text: data.responseJSON.message,
+        type: "error",
+        confirmButtonColor: "#266CB0",
+        timer: 5000
+      });
+    }
+  });
+}
+listenClick("#submitBtn", function (event) {
+  event.preventDefault();
+  var paymentGatewayType = $("#paymentGatewayType").val();
+  if (isEmpty(paymentGatewayType)) {
+    displayErrorMessage(Lang.get("js.select_payment"));
+    return false;
+  }
+  var stripeMethod = 2;
+  var paystackMethod = 3;
+  var paypalMethod = 4;
+  var razorpayMethod = 5;
+  var authorizeMethod = 6;
+  var paytmMethod = 7;
+  var appointmentId = $("#patientAppointmentId").val();
+  var btnSubmitEle = $("#patientPaymentForm").find("#submitBtn");
+  setAdminBtnLoader(btnSubmitEle);
+  if (paymentGatewayType == stripeMethod) {
+    $.ajax({
+      url: route("patients.appointment-payment"),
+      type: "POST",
+      data: {
+        appointmentId: appointmentId
+      },
+      success: function success(result) {
+        var sessionId = result.data.sessionId;
+        stripe.redirectToCheckout({
+          sessionId: sessionId
+        }).then(function (result) {
+          manageAjaxErrors(result);
+        });
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON.message);
+      },
+      complete: function complete() {}
+    });
+  }
+  if (paymentGatewayType == paytmMethod) {
+    window.location.replace(route("paytm.init", {
+      appointmentId: appointmentId
+    }));
+  }
+  if (paymentGatewayType == paystackMethod) {
+    window.location.replace(route("paystack.init", {
+      appointmentData: appointmentId
+    }));
+  }
+  if (paymentGatewayType == authorizeMethod) {
+    window.location.replace(route("authorize.init", {
+      appointmentId: appointmentId
+    }));
+  }
+  if (paymentGatewayType == paypalMethod) {
+    $.ajax({
+      type: "GET",
+      url: route("paypal.init"),
+      data: {
+        appointmentId: appointmentId
+      },
+      success: function success(result) {
+        if (result.status == 200) {
+          var redirectTo = "";
+          location.href = result.link;
+          // $.each(result.result.links,
+          //     function (key, val) {
+          //         if (val.rel == 'approve') {
+          //             redirectTo = val.href;
+          //         }
+          //     });
+          // location.href = redirectTo;
+        }
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON.message);
+      },
+      complete: function complete() {}
+    });
+  }
+  if (paymentGatewayType == razorpayMethod) {
+    $.ajax({
+      type: "POST",
+      url: route("razorpay.init"),
+      data: {
+        appointmentId: appointmentId
+      },
+      success: function success(result) {
+        if (result.success) {
+          var _result$data = result.data,
+            id = _result$data.id,
+            amount = _result$data.amount,
+            name = _result$data.name,
+            email = _result$data.email,
+            contact = _result$data.contact;
+          options.amount = amount;
+          options.order_id = id;
+          options.prefill.name = name;
+          options.prefill.email = email;
+          options.prefill.contact = contact;
+          options.prefill.appointmentID = appointmentId;
+          var razorPay = new Razorpay(options);
+          razorPay.open();
+          razorPay.on("payment.failed", storeFailedPayment);
+        }
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON.message);
+      },
+      complete: function complete() {}
+    });
+  }
+  return false;
+});
+function storeFailedPayment(response) {
+  $.ajax({
+    type: "POST",
+    url: route("razorpay.failed"),
+    data: {
+      data: response
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+      }
+    },
+    error: function error() {}
+  });
+}
+listenClick(".payment-btn", function (event) {
+  var appointmentId = $(this).attr("data-id");
+  $("#paymentGatewayModal").modal("show").appendTo("body");
+  $("#patientAppointmentId").val(appointmentId);
+});
+listen("hidden.bs.modal", "#paymentGatewayModal", function (e) {
+  $("#patientPaymentForm")[0].reset();
+  $("#paymentGatewayType").val(null).trigger("change");
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/appointments/patient-calendar.js":
+/*!**************************************************************!*\
+  !*** ./resources/assets/js/appointments/patient-calendar.js ***!
+  \**************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadPatientAppointmentCalendar);
+var popover;
+var popoverState = false;
+var calendar;
+var data = {
+  id: '',
+  uId: '',
+  eventName: '',
+  eventDescription: '',
+  eventStatus: '',
+  startDate: '',
+  endDate: '',
+  amount: 0,
+  service: '',
+  doctorName: ''
+};
+
+// View event variables
+var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewEndDate, viewModal, viewEditButton, viewDeleteButton, viewService, viewUId, viewAmount;
+function loadPatientAppointmentCalendar() {
+  if (!$('#appointmentCalendar').length) {
+    return;
+  }
+  initCalendarApp();
+  init();
+}
+var initCalendarApp = function initCalendarApp() {
+  if (usersRole != 'patient') {
+    return;
+  }
+  var lang = $('.currentLanguage').val();
+  var calendarEl = document.getElementById('appointmentCalendar');
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: lang,
+    themeSystem: 'bootstrap5',
+    height: 750,
+    buttonText: {
+      today: Lang.get('js.datepicker.today'),
+      day: Lang.get('js.day'),
+      month: Lang.get('js.month')
+    },
+    headerToolbar: {
+      left: 'title',
+      center: 'prev,next today',
+      right: 'dayGridDay,dayGridMonth'
+    },
+    initialDate: new Date(),
+    timeZone: 'UTC',
+    dayMaxEvents: true,
+    events: function events(info, successCallback, failureCallback) {
+      $.ajax({
+        url: route('patients.appointments.calendar'),
+        type: 'GET',
+        data: info,
+        success: function success(result) {
+          if (result.success) {
+            successCallback(result.data);
+          }
+        },
+        error: function error(result) {
+          displayErrorMessage(result.responseJSON.message);
+          failureCallback();
+        }
+      });
+    },
+    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
+    eventMouseEnter: function eventMouseEnter(arg) {
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        description: arg.event.extendedProps.description,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        doctorName: arg.event.extendedProps.doctorName
+      });
+
+      // Show popover preview
+      initPopovers(arg.el);
+    },
+    eventMouseLeave: function eventMouseLeave() {
+      hidePopovers();
+    },
+    // Click event --- more info: https://fullcalendar.io/docs/eventClick
+    eventClick: function eventClick(arg) {
+      hidePopovers();
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        description: arg.event.extendedProps.description,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        doctorName: arg.event.extendedProps.doctorName
+      });
+      handleViewEvent();
+    }
+  });
+  calendar.render();
+};
+var init = function init() {
+  if (!$('#patientEventModal').length) {
+    return;
+  }
+  var viewElement = document.getElementById('patientEventModal');
+  viewModal = new bootstrap.Modal(viewElement);
+  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
+  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
+  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
+  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
+  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
+  viewService = viewElement.querySelector('[data-calendar="event_service"]');
+  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
+  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
+};
+
+// Format FullCalendar responses
+var formatArgs = function formatArgs(res) {
+  data.id = res.id;
+  data.eventName = res.title;
+  data.eventDescription = res.description;
+  data.eventStatus = res.status;
+  data.startDate = res.startStr;
+  data.endDate = res.endStr;
+  data.amount = res.amount;
+  data.uId = res.uId;
+  data.service = res.service;
+  data.doctorName = res.doctorName;
+};
+
+// Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
+var initPopovers = function initPopovers(element) {
+  hidePopovers();
+
+  // Generate popover content
+  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
+  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+
+  // Popover options
+  var options = {
+    container: 'body',
+    trigger: 'manual',
+    boundary: 'window',
+    placement: 'auto',
+    dismiss: true,
+    html: true,
+    title: 'Appointment Details',
+    content: popoverHtml
+  };
+};
+
+// Hide active popovers
+var hidePopovers = function hidePopovers() {
+  if (popoverState) {
+    popover.dispose();
+    popoverState = false;
+  }
+};
+
+// Handle view event
+var handleViewEvent = function handleViewEvent() {
+  $('.fc-popover').addClass('hide');
+  viewModal.show();
+
+  // Detect all day event
+  var eventNameMod;
+  var startDateMod;
+  var endDateMod;
+  eventNameMod = '';
+  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
+  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
+  viewEndDate.innerText = ': ' + endDateMod;
+  viewStartDate.innerText = ': ' + startDateMod;
+
+  // Populate view data
+  viewEventName.innerText = 'Doctor: ' + data.doctorName;
+  $(viewEventStatus).val(data.eventStatus);
+  viewAmount.innerText = addCommas(data.amount);
+  viewUId.innerText = data.uId;
+  viewService.innerText = data.service;
+};
+
+/***/ }),
+
+/***/ "./resources/assets/js/brands/brands.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/brands/brands.js ***!
+  \**********************************************/
+/***/ (() => {
+
+"use strict";
+
+
+listenClick('.brand-delete-btn', function (event) {
+  var brandId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('brands.destroy', brandId), Lang.get('js.brand'));
+});
+listenSubmit('#createBrandForm, #editBrandForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    return false;
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/category/category.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/category/category.js ***!
+  \**************************************************/
+/***/ (() => {
+
+"use strict";
+
+
+Livewire.hook('element.init', function (_ref) {
+  var component = _ref.component,
+    el = _ref.el;
+  if ($('#medicineCategoryHead').length) {
+    $('#medicineCategoryHead').select2();
+  }
+});
+listenClick('.add-category', function () {
+  $('#add_categories_modal').modal('show').appendTo('body');
+});
+listenSubmit('#addMedicineCategoryForm', function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find('#medicineCategorySave');
+  loadingButton.button('loading');
+  $.ajax({
+    url: $('#indexCategoryCreateUrl').val(),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#add_categories_modal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      loadingButton.button('reset');
+    }
+  });
+});
+listenSubmit('#editMedicineCategoryForm', function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find('#editCategorySave');
+  loadingButton.button('loading');
+  var id = $('#editMedicineCategoryId').val();
+  $.ajax({
+    url: route('categories.update', id),
+    type: 'put',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#edit_categories_modal').modal('hide');
+        if ($('#categoriesShowUrl').length) {
+          window.location.href = $('#categoriesShowUrl').val();
+        } else {
+          Livewire.dispatch('refresh');
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      loadingButton.button('reset');
+    }
+  });
+});
+listen('hidden.bs.modal', '#add_categories_modal', function () {
+  resetModalForm('#addMedicineCategoryForm', '#medicineCategoryErrorsBox');
+});
+listen('hidden.bs.modal', '#edit_categories_modal', function () {
+  resetModalForm('#editMedicineCategoryForm', '#editMedicineCategoryErrorsBox');
+});
+function renderCategoryData(id) {
+  $.ajax({
+    url: route('categories.edit', id),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        var category = result.data;
+        $('#editMedicineCategoryId').val(category.id);
+        $('#editCategoryName').val(category.name);
+        if (category.is_active === 1) $('#editCategoryIsActive').prop('checked', true);else $('#editCategoryIsActive').prop('checked', false);
+        $('#edit_categories_modal').modal('show');
+        ajaxCallCompleted();
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+}
+listenClick('.category-edit-btn', function (event) {
+  if ($('.ajaxCallIsRunning').val()) {
+    return;
+  }
+  ajaxCallInProgress();
+  var categoryId = $(event.currentTarget).attr('data-id');
+  renderCategoryData(categoryId);
+});
+listenClick('.category-delete-btn', function (event) {
+  var categoryId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('categories.destroy', categoryId), Lang.get('js.category'));
+});
+
+// category activation deactivation change event
+listenChange('.medicine-category-status', function (event) {
+  var categoryId = $(event.currentTarget).attr('data-id');
+  activeDeActiveCategory(categoryId);
+});
+listenClick('#categoryResetFilter', function () {
+  $('#medicineCategoryHead').val(0).trigger('change');
+  hideDropdownManually($('#medicineCategoryFilterBtn'), $('.dropdown-menu'));
+});
+
+// activate de-activate category
+function activeDeActiveCategory(id) {
+  $.ajax({
+    url: route('active.deactive', id),
+    method: 'post',
+    cache: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        Livewire.dispatch('refresh');
+      }
+    }
+  });
+}
+;
+listenChange('#medicineCategoryHead', function () {
+  Livewire.dispatch('changeFilter', {
+    value: $(this).val()
+  });
+  hideDropdownManually($('#medicineCategoryFilterBtn'), $('#medicineCategoryFilter'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/cities/cities.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/cities/cities.js ***!
+  \**********************************************/
+/***/ (() => {
+
+listenClick("#createCity", function () {
+  $("#createCityModal").modal("show").appendTo("body");
+  $("#stateCity").select2({
+    dropdownParent: $("#createCityModal")
+  });
+});
+listen("hidden.bs.modal", "#createCityModal", function () {
+  resetModalForm("#createCityForm", "#createCityValidationErrorsBox");
+  $("#stateCity").val(null).trigger("change");
+});
+listen("hidden.bs.modal", "#editCityModal", function () {
+  resetModalForm("#editCityForm", "#editCityValidationErrorsBox");
+});
+listenClick(".city-edit-btn", function (event) {
+  var editCityId = $(event.currentTarget).attr("data-id");
+  renderData(editCityId);
+  $("#editCityStateId").select2({
+    dropdownParent: $("#editCityModal")
+  });
+});
+function renderData(id) {
+  $.ajax({
+    url: route("cities.edit", id),
+    type: "GET",
+    success: function success(result) {
+      $("#cityID").val(result.data.id);
+      $("#editCityName").val(result.data.name);
+      $("#editCityStateId").val(result.data.state_id).trigger("change");
+      $("#editCityModal").modal("show");
+    }
+  });
+}
+listenSubmit("#createCityForm", function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route("cities.store"),
+    type: "POST",
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $("#createCityModal").modal("hide");
+        Livewire.dispatch("refresh");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit("#editCityForm", function (e) {
+  e.preventDefault();
+  var updateCityId = $("#cityID").val();
+  $.ajax({
+    url: route("cities.update", updateCityId),
+    type: "PUT",
+    data: $(this).serialize(),
+    success: function success(result) {
+      $("#editCityModal").modal("hide");
+      displaySuccessMessage(result.message);
+      Livewire.dispatch("refresh");
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick(".city-delete-btn", function (event) {
+  var cityRecordId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("cities.destroy", cityRecordId), Lang.get("js.city"));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/clinic_schedule/create-edit.js":
+/*!************************************************************!*\
+  !*** ./resources/assets/js/clinic_schedule/create-edit.js ***!
+  \************************************************************/
+/***/ (() => {
+
+listenSubmit('#clinicScheduleSaveForm', function (e) {
+  e.preventDefault();
+  var data = new FormData($(this)[0]);
+  $.ajax({
+    url: route('checkRecord'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      saveUpdateForm(data);
+    },
+    error: function error(result) {
+      swal({
+        title: Lang.get('js.deleted'),
+        text: result.responseJSON.message,
+        type: 'warning',
+        icon: 'warning',
+        showCancelButton: true,
+        closeOnConfirm: true,
+        confirmButtonColor: '#266CB0',
+        showLoaderOnConfirm: true,
+        cancelButtonText: Lang.get('js.no'),
+        confirmButtonText: Lang.get('js.yes_update')
+      }).then(function (result) {
+        if (result) {
+          saveUpdateForm(data);
+        }
+      });
+    }
+  });
+});
+function saveUpdateForm(data) {
+  $.ajax({
+    url: route('clinic-schedules.store'),
+    type: 'POST',
+    data: data,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          location.reload();
+        }, 1500);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {}
+  });
+}
+listenChange('select[name^="clinicStartTimes"]', function (e) {
+  var selectedIndex = $(this)[0].selectedIndex;
+  var endTimeOptions = $(this).closest('.weekly-row').find('select[name^="clinicEndTimes"] option');
+  endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
+  endTimeOptions.each(function (index) {
+    if (index <= selectedIndex) {
+      $(this).attr('disabled', true);
+    } else {
+      $(this).attr('disabled', false);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/countries/countries.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/countries/countries.js ***!
+  \****************************************************/
+/***/ (() => {
+
+listenClick('.country-delete-btn', function (event) {
+  var countryRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('countries.destroy', countryRecordId), Lang.get('js.country'));
+});
+listenClick('#addCountry', function () {
+  $('#addCountryModal').modal('show').appendTo('body');
+});
+listenSubmit('#addCountryForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('countries.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#addCountryModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.country-edit-btn', function (event) {
+  $('#editCountryModal').modal('show').appendTo('body');
+  var editCountryId = $(event.currentTarget).attr('data-id');
+  $('#editCountryId').val(editCountryId);
+  $.ajax({
+    url: route('countries.edit', editCountryId),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        $('#editCountryName').val(result.data.name);
+        $('#editShortCodeName').val(result.data.short_code);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editCountryForm', function (event) {
+  event.preventDefault();
+  var updateCountryId = $('#editCountryId').val();
+  $.ajax({
+    url: route('countries.update', updateCountryId),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#editCountryModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listen('hidden.bs.modal', '#addCountryModal', function (e) {
+  $('#addCountryForm')[0].reset();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/currencies/currencies.js":
+/*!******************************************************!*\
+  !*** ./resources/assets/js/currencies/currencies.js ***!
+  \******************************************************/
+/***/ (() => {
+
+listenClick('#createCurrency', function () {
+  $('#createCurrencyModal').modal('show').appendTo('body');
+});
+listen('hidden.bs.modal', '#createCurrencyModal', function () {
+  resetModalForm('#createCurrencyForm', '#createCurrencyValidationErrorsBox');
+});
+listen('hidden.bs.modal', '#editCurrencyModal', function () {
+  resetModalForm('#editCurrencyForm', '#editCurrencyValidationErrorsBox');
+});
+listenClick('.currency-edit-btn', function (event) {
+  var editCurrencyId = $(event.currentTarget).attr('data-id');
+  renderData(editCurrencyId);
+});
+function renderData(id) {
+  $.ajax({
+    url: route('currencies.edit', id),
+    type: 'GET',
+    success: function success(result) {
+      $('#currencyID').val(result.data.id);
+      $('#editCurrency_Name').val(result.data.currency_name);
+      $('#editCurrency_Icon').val(result.data.currency_icon);
+      $('#editCurrency_Code').val(result.data.currency_code);
+      $('#editCurrencyModal').modal('show');
+    }
+  });
+}
+listenSubmit('#createCurrencyForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('currencies.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#createCurrencyModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editCurrencyForm', function (e) {
+  e.preventDefault();
+  var updateCurrencyId = $('#currencyID').val();
+  $.ajax({
+    url: route('currencies.update', updateCurrencyId),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      $('#editCurrencyModal').modal('hide');
+      displaySuccessMessage(result.message);
+      Livewire.dispatch('refresh');
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {}
+  });
+});
+listenClick('.currency-delete-btn', function (event) {
+  var currencyRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('currencies.destroy', currencyRecordId), Lang.get('js.currency'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/create-account.js":
+/*!******************************************************!*\
+  !*** ./resources/assets/js/custom/create-account.js ***!
+  \******************************************************/
+/***/ (function() {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+document.addEventListener('DOMContentLoaded', loadAccountData);
+function loadAccountData() {
+  if (!$('#expiryMonth').length || !$('#expiryYear').length) {
+    return;
+  }
+  $('#expiryMonth').select2();
+  $('#expiryYear').select2();
+}
+listenClick('#submitBtn', function (event) {
+  var valid = true;
+  $('.demoInputBox').css('background-color', '');
+  var message = '';
+  var cardHolderNameRegex = /^[a-z ,.'-]+$/i;
+  var cvvRegex = /^[0-9]{3,3}$/;
+  var cardHolderName = $('#cardHolderName').val();
+  var cardNumber = $('#cardNumber').val();
+  var exMonth = $('#expiryMonth').val();
+  var exYear = $('#expiryYear').val();
+  var cvv = $('#cvv').val();
+  if (cardHolderName == '') {
+    message += 'Card holder name fields are required.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (cardHolderName != '' && !cardHolderNameRegex.test(cardHolderName)) {
+    message = 'Card holder name is Invalid.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (cardNumber == '') {
+    message = 'Card number fields are required.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (exMonth === '') {
+    message = 'Expiration month fields are required.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (exYear === '') {
+    message += 'Expiration year fields are required.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  exMonth = parseInt(exMonth) + 1;
+  var expiryDate = new Date(exYear + '-' + exMonth + '-01');
+  if (expiryDate < new Date()) {
+    message += 'Enter valid expiration date.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (cvv == '') {
+    message += 'CVV number fields are required.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (cvv != '' && !cvvRegex.test(cvv)) {
+    message += 'CVV is invalid.';
+    $('.error').html(message);
+    $('#errorCard').addClass('show');
+    return false;
+  }
+  if (cardNumber != '') {
+    $('#cardNumber').validateCreditCard(function (result) {
+      if (!result.valid) {
+        message = 'Card number is invalid.';
+        $('.error').html(message);
+        $('#errorCard').addClass('show');
+        return false;
+      }
+    });
+  }
+  if (message != '') {
+    return false;
+  }
+});
+
+// Generated by CoffeeScript 1.10.0
+(function () {
+  var $,
+    Range,
+    Trie,
+    indexOf = [].indexOf || function (item) {
+      for (var i = 0, l = this.length; i < l; i++) {
+        if (i in this && this[i] === item) return i;
+      }
+      return -1;
+    };
+  Trie = function () {
+    function Trie() {
+      this.trie = {};
+    }
+    Trie.prototype.push = function (value) {
+      var _char, i, j, len, obj, ref, results;
+      value = value.toString();
+      obj = this.trie;
+      ref = value.split('');
+      results = [];
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        _char = ref[i];
+        if (obj[_char] == null) {
+          if (i === value.length - 1) {
+            obj[_char] = null;
+          } else {
+            obj[_char] = {};
+          }
+        }
+        results.push(obj = obj[_char]);
+      }
+      return results;
+    };
+    Trie.prototype.find = function (value) {
+      var _char2, i, j, len, obj, ref;
+      value = value.toString();
+      obj = this.trie;
+      ref = value.split('');
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        _char2 = ref[i];
+        if (obj.hasOwnProperty(_char2)) {
+          if (obj[_char2] === null) {
+            return true;
+          }
+        } else {
+          return false;
+        }
+        obj = obj[_char2];
+      }
+    };
+    return Trie;
+  }();
+  Range = function () {
+    function Range(trie1) {
+      this.trie = trie1;
+      if (this.trie.constructor !== Trie) {
+        throw Error('Range constructor requires a Trie parameter');
+      }
+    }
+    Range.rangeWithString = function (ranges) {
+      var j, k, len, n, r, range, ref, ref1, trie;
+      if (typeof ranges !== 'string') {
+        throw Error('rangeWithString requires a string parameter');
+      }
+      ranges = ranges.replace(/ /g, '');
+      ranges = ranges.split(',');
+      trie = new Trie();
+      for (j = 0, len = ranges.length; j < len; j++) {
+        range = ranges[j];
+        if (r = range.match(/^(\d+)-(\d+)$/)) {
+          for (n = k = ref = r[1], ref1 = r[2]; ref <= ref1 ? k <= ref1 : k >= ref1; n = ref <= ref1 ? ++k : --k) {
+            trie.push(n);
+          }
+        } else if (range.match(/^\d+$/)) {
+          trie.push(range);
+        } else {
+          throw Error('Invalid range \'' + r + '\'');
+        }
+      }
+      return new Range(trie);
+    };
+    Range.prototype.match = function (number) {
+      return this.trie.find(number);
+    };
+    return Range;
+  }();
+  $ = jQuery;
+  $.fn.validateCreditCard = function (callback, options) {
+    var bind, card, card_type, card_types, get_card_type, is_valid_length, is_valid_luhn, j, len, normalize, ref, validate, validate_number;
+    card_types = [{
+      name: 'amex',
+      range: '34,37',
+      valid_length: [15]
+    }, {
+      name: 'diners_club_carte_blanche',
+      range: '300-305',
+      valid_length: [14]
+    }, {
+      name: 'diners_club_international',
+      range: '36',
+      valid_length: [14]
+    }, {
+      name: 'jcb',
+      range: '3528-3589',
+      valid_length: [16]
+    }, {
+      name: 'laser',
+      range: '6304, 6706, 6709, 6771',
+      valid_length: [16, 17, 18, 19]
+    }, {
+      name: 'visa_electron',
+      range: '4026, 417500, 4508, 4844, 4913, 4917',
+      valid_length: [16]
+    }, {
+      name: 'visa',
+      range: '4',
+      valid_length: [13, 14, 15, 16, 17, 18, 19]
+    }, {
+      name: 'mastercard',
+      range: '51-55,2221-2720',
+      valid_length: [16]
+    }, {
+      name: 'discover',
+      range: '6011, 622126-622925, 644-649, 65',
+      valid_length: [16]
+    }, {
+      name: 'dankort',
+      range: '5019',
+      valid_length: [16]
+    }, {
+      name: 'maestro',
+      range: '50, 56-69',
+      valid_length: [12, 13, 14, 15, 16, 17, 18, 19]
+    }, {
+      name: 'uatp',
+      range: '1',
+      valid_length: [15]
+    }];
+    bind = false;
+    if (callback) {
+      if (_typeof(callback) === 'object') {
+        options = callback;
+        bind = false;
+        callback = null;
+      } else if (typeof callback === 'function') {
+        bind = true;
+      }
+    }
+    if (options == null) {
+      options = {};
+    }
+    if (options.accept == null) {
+      options.accept = function () {
+        var j, len, results;
+        results = [];
+        for (j = 0, len = card_types.length; j < len; j++) {
+          card = card_types[j];
+          results.push(card.name);
+        }
+        return results;
+      }();
+    }
+    ref = options.accept;
+    for (j = 0, len = ref.length; j < len; j++) {
+      card_type = ref[j];
+      if (indexOf.call(function () {
+        var k, len1, results;
+        results = [];
+        for (k = 0, len1 = card_types.length; k < len1; k++) {
+          card = card_types[k];
+          results.push(card.name);
+        }
+        return results;
+      }(), card_type) < 0) {
+        throw Error('Credit card type \'' + card_type + '\' is not supported');
+      }
+    }
+    get_card_type = function get_card_type(number) {
+      var k, len1, r, ref1;
+      ref1 = function () {
+        var l, len1, ref1, results;
+        results = [];
+        for (l = 0, len1 = card_types.length; l < len1; l++) {
+          card = card_types[l];
+          if (ref1 = card.name, indexOf.call(options.accept, ref1) >= 0) {
+            results.push(card);
+          }
+        }
+        return results;
+      }();
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        card_type = ref1[k];
+        r = Range.rangeWithString(card_type.range);
+        if (r.match(number)) {
+          return card_type;
+        }
+      }
+      return null;
+    };
+    is_valid_luhn = function is_valid_luhn(number) {
+      var digit, k, len1, n, ref1, sum;
+      sum = 0;
+      ref1 = number.split('').reverse();
+      for (n = k = 0, len1 = ref1.length; k < len1; n = ++k) {
+        digit = ref1[n];
+        digit = +digit;
+        if (n % 2) {
+          digit *= 2;
+          if (digit < 10) {
+            sum += digit;
+          } else {
+            sum += digit - 9;
+          }
+        } else {
+          sum += digit;
+        }
+      }
+      return sum % 10 === 0;
+    };
+    is_valid_length = function is_valid_length(number, card_type) {
+      var ref1;
+      return ref1 = number.length, indexOf.call(card_type.valid_length, ref1) >= 0;
+    };
+    validate_number = function validate_number(number) {
+      var length_valid, luhn_valid;
+      card_type = get_card_type(number);
+      luhn_valid = false;
+      length_valid = false;
+      if (card_type != null) {
+        luhn_valid = is_valid_luhn(number);
+        length_valid = is_valid_length(number, card_type);
+      }
+      return {
+        card_type: card_type,
+        valid: luhn_valid && length_valid,
+        luhn_valid: luhn_valid,
+        length_valid: length_valid
+      };
+    };
+    validate = function (_this) {
+      return function () {
+        var number;
+        number = normalize($(_this).val());
+        return validate_number(number);
+      };
+    }(this);
+    normalize = function normalize(number) {
+      return number.replace(/[ -]/g, '');
+    };
+    if (!bind) {
+      return validate();
+    }
+    this.on('input.jccv', function (_this) {
+      return function () {
+        $(_this).off('keyup.jccv');
+        return callback.call(_this, validate());
+      };
+    }(this));
+    this.on('keyup.jccv', function (_this) {
+      return function () {
+        return callback.call(_this, validate());
+      };
+    }(this));
+    callback.call(this, validate());
+    return this;
+  };
+}).call(this);
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/custom.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/custom/custom.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+document.addEventListener('DOMContentLoaded', loadCustomData);
+var source = null;
+var jsrender = __webpack_require__(/*! jsrender */ "./node_modules/jsrender/jsrender.js");
+var csrfToken = $('meta[name="csrf-token"]').attr('content');
+$.ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': csrfToken
+  }
+});
+document.addEventListener('DOMContentLoaded', initAllComponents);
+function initAllComponents() {
+  select2initialize();
+  refreshCsrfToken();
+  alertInitialize();
+  modalInputFocus();
+  inputFocus();
+  IOInitImageComponent();
+  IOInitSidebar();
+  tooltip();
+  togglePassword();
+  setLoginUserLanguage();
+}
+function tooltip() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+}
+function alertInitialize() {
+  $('.alert').delay(5000).slideUp(300);
+}
+function refreshCsrfToken() {
+  csrfToken = $('meta[name="csrf-token"]').attr('content');
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': csrfToken
+    }
+  });
+}
+function select2initialize() {
+  $('[data-control="select2"]').each(function () {
+    $(this).select2();
+  });
+}
+document.addEventListener('click', function (e) {
+  var filterBtnEle = $(e.target).closest('.show[data-ic-dropdown-btn="true"]');
+  var filterDropDownEle = $(e.target).closest('.show[data-ic-dropdown="true"]');
+  if (!(filterBtnEle.length > 0 || filterDropDownEle.length > 0)) {
+    $('[data-ic-dropdown-btn="true"]').removeClass('show');
+    $('[data-ic-dropdown="true"]').removeClass('show');
+  }
+});
+document.addEventListener('livewire:load', function () {
+  window.livewire.hook('message.processed', function () {
+    $('[data-control="select2"]').each(function () {
+      $(this).select2();
+    });
+  });
+});
+var inputFocus = function inputFocus() {
+  $('input:text:not([readonly="readonly"]):not([name="search"]):not(.front-input)').first().focus();
+};
+var modalInputFocus = function modalInputFocus() {
+  $(function () {
+    $('.modal').on('shown.bs.modal', function () {
+      if ($(this).find('input:text')[0]) {
+        $(this).find('input:text')[0].focus();
+      }
+    });
+  });
+};
+function loadCustomData() {
+  // script to active parent menu if sub menu has currently active
+  var hasActiveMenu = $(document).find('.nav-item.dropdown ul li').hasClass('active');
+  if (hasActiveMenu) {
+    $(document).find('.nav-item.dropdown ul li.active').parent('ul').css('display', 'block');
+    $(document).find('.nav-item.dropdown ul li.active').parent('ul').parent('li').addClass('active');
+  }
+  if ($(window).width() > 992) {
+    $('.no-hover').on('click', function () {
+      $(this).toggleClass('open');
+    });
+  }
+}
+$(document).ajaxComplete(function () {
+  // Required for Bootstrap tooltips in DataTables
+  $('[data-toggle="tooltip"]').tooltip({
+    'html': true,
+    'offset': 10
+  });
+});
+listen('select2:open', function () {
+  var allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+  allFound[allFound.length - 1].focus();
+});
+listen('focus', '.select2.select2-container', function (e) {
+  var isOriginalEvent = e.originalEvent; // don't re-open on closing focus event
+  var isSingleSelect = $(this).find('.select2-selection--single').length > 0; // multi-select will pass focus to input
+
+  if (isOriginalEvent && isSingleSelect) {
+    if ($('select').data('select2')) {
+      $(this).siblings('select:enabled').select2('open');
+    }
+  }
+});
+$(function () {
+  $('.modal').on('shown.bs.modal', function () {
+    if ($(this).attr('class') != 'modal fade event-modal show') {
+      $(this).find('input:text,input:password').first().focus();
+    }
+  });
+});
+toastr.options = {
+  'closeButton': true,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': true,
+  'positionClass': 'toast-top-right',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '5000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+};
+window.resetModalForm = function (formId, validationBox) {
+  $(formId)[0].reset();
+  $('select.select2Selector').each(function (index, element) {
+    var drpSelector = '#' + $(this).attr('id');
+    $(drpSelector).val('');
+    $(drpSelector).trigger('change');
+  });
+  $(validationBox).hide();
+};
+window.printErrorMessage = function (selector, errorResult) {
+  $(selector).show().html('');
+  $(selector).text(errorResult.responseJSON.message);
+};
+window.manageAjaxErrors = function (data) {
+  var errorDivId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'editValidationErrorsBox';
+  if (data.status == 404) {
+    toastr.error(data.responseJSON.message);
+  } else if (data.status == 422) {
+    toastr.error(data.responseJSON.message);
+  } else {
+    printErrorMessage('#' + errorDivId, data);
+  }
+};
+window.displaySuccessMessage = function (message) {
+  toastr.success(message);
+};
+window.displayErrorMessage = function (message) {
+  toastr.error(message);
+};
+window.deleteItem = function (url, header) {
+  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  swal({
+    title: Lang.get('js.delete') + ' !',
+    text: Lang.get('js.are_you_sure') + ' "' + header + '" ?',
+    buttons: {
+      confirm: Lang.get('js.yes'),
+      cancel: Lang.get('js.no')
+    },
+    reverseButtons: true,
+    icon: 'warning'
+  }).then(function (willDelete) {
+    if (willDelete) {
+      deleteItemAjax(url, header, callFunction);
+    }
+  });
+};
+function deleteItemAjax(url, header) {
+  var callFunction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  $.ajax({
+    url: url,
+    type: 'DELETE',
+    dataType: 'json',
+    success: function success(obj) {
+      if (obj.success) {
+        Livewire.dispatch('refresh');
+        Livewire.dispatch('resetPage');
+      }
+      swal({
+        icon: 'success',
+        title: Lang.get('js.deleted'),
+        text: header + ' ' + Lang.get('js.has_been'),
+        timer: 2000,
+        buttons: {
+          confirm: Lang.get('js.ok')
+        }
+      });
+      if (callFunction) {
+        eval(callFunction);
+      }
+    },
+    error: function error(data) {
+      swal({
+        title: Lang.get('js.error'),
+        icon: 'error',
+        text: data.responseJSON.message,
+        type: 'error',
+        timer: 4000,
+        buttons: {
+          confirm: Lang.get('js.ok')
+        }
+      });
+    }
+  });
+}
+window.format = function (dateTime) {
+  var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'DD-MMM-YYYY';
+  return moment(dateTime).format(format);
+};
+window.processingBtn = function (selecter, btnId) {
+  var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  var loadingButton = $(selecter).find(btnId);
+  if (state === 'loading') {
+    loadingButton.button('loading');
+  } else {
+    loadingButton.button('reset');
+  }
+};
+window.prepareTemplateRender = function (templateSelector, data) {
+  var template = jsrender.templates(templateSelector);
+  return template.render(data);
+};
+window.isValidFile = function (inputSelector, validationMessageSelector) {
+  var ext = $(inputSelector).val().split('.').pop().toLowerCase();
+  if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+    $(inputSelector).val('');
+    $(validationMessageSelector).removeClass('d-none');
+    $(validationMessageSelector).html(Lang.get("js.image_file_type")).show();
+    $(validationMessageSelector).delay(5000).slideUp(300);
+    return false;
+  }
+  $(validationMessageSelector).hide();
+  return true;
+};
+window.displayPhoto = function (input, selector) {
+  var displayPreview = true;
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var image = new Image();
+      image.src = e.target.result;
+      image.onload = function () {
+        $(selector).attr('src', e.target.result);
+        displayPreview = true;
+      };
+    };
+    if (input.files[0].size > 2097152) {
+      displayErrorMessage(Lang.get("js.image_file_type"));
+      return false;
+    }
+    if (displayPreview) {
+      reader.readAsDataURL(input.files[0]);
+      $(selector).show();
+    }
+  }
+};
+window.removeCommas = function (str) {
+  return str.replace(/,/g, '');
+};
+window.DatetimepickerDefaults = function (opts) {
+  return $.extend({}, {
+    sideBySide: true,
+    ignoreReadonly: true,
+    icons: {
+      close: 'fa fa-times',
+      time: 'fa fa-clock-o',
+      date: 'fa fa-calendar',
+      up: 'fa fa-arrow-up',
+      down: 'fa fa-arrow-down',
+      previous: 'fa fa-chevron-left',
+      next: 'fa fa-chevron-right',
+      today: 'fa fa-clock-o',
+      clear: 'fa fa-trash-o'
+    }
+  }, opts);
+};
+window.isEmpty = function (value) {
+  return value === undefined || value === null || value === '';
+};
+window.screenLock = function () {
+  $('#overlay-screen-lock').show();
+  $('body').css({
+    'pointer-events': 'none',
+    'opacity': '0.6'
+  });
+};
+window.screenUnLock = function () {
+  $('body').css({
+    'pointer-events': 'auto',
+    'opacity': '1'
+  });
+  $('#overlay-screen-lock').hide();
+};
+window.onload = function () {
+  window.startLoader = function () {
+    $('.infy-loader').show();
+  };
+  window.stopLoader = function () {
+    $('.infy-loader').hide();
+  };
+
+  // infy loader js
+  stopLoader();
+};
+window.setBtnLoader = function (btnLoader) {
+  if (btnLoader.attr('data-old-text')) {
+    btnLoader.html(btnLoader.attr('data-old-text')).prop('disabled', false);
+    btnLoader.removeAttr('data-old-text');
+    return;
+  }
+  btnLoader.attr('data-old-text', btnLoader.text());
+  btnLoader.html('<i class="icon-line-loader icon-spin m-0"></i>').prop('disabled', true);
+};
+window.setAdminBtnLoader = function (btnLoader) {
+  if (btnLoader.attr('data-old-text')) {
+    btnLoader.html(btnLoader.attr('data-old-text')).prop('disabled', false);
+    btnLoader.removeAttr('data-old-text');
+    return;
+  }
+  btnLoader.attr('data-old-text', btnLoader.text());
+  btnLoader.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
+};
+window.urlValidation = function (value, regex) {
+  var urlCheck = value == '' ? true : value.match(regex) ? true : false;
+  if (!urlCheck) {
+    return false;
+  }
+  return true;
+};
+listenClick('.languageSelection', function () {
+  var languageName = $(this).data('prefix-value');
+  $.ajax({
+    type: 'POST',
+    url: '/change-language',
+    data: {
+      languageName: languageName
+    },
+    success: function success() {
+      location.reload();
+    }
+  });
+});
+listenClick('#register', function (e) {
+  e.preventDefault();
+  $('.open #dropdownLanguage').trigger('click');
+  $('.open #dropdownLogin').trigger('click');
+});
+listenClick('#language', function (e) {
+  e.preventDefault();
+  $('.open #dropdownRegister').trigger('click');
+  $('.open #dropdownLogin').trigger('click');
+});
+listenClick('#login', function (e) {
+  e.preventDefault();
+  $('.open #dropdownRegister').trigger('click');
+  $('.open #dropdownLanguage').trigger('click');
+});
+window.checkSummerNoteEmpty = function (selectorElement, errorMessage) {
+  var isRequired = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+  if ($(selectorElement).summernote('isEmpty') && isRequired === 1) {
+    displayErrorMessage(errorMessage);
+    $(document).find('.note-editable').html('<p><br></p>');
+    return false;
+  } else if (!$(selectorElement).summernote('isEmpty')) {
+    $(document).find('.note-editable').contents().each(function () {
+      if (this.nodeType === 3) {
+        // text node
+        this.textContent = this.textContent.replace(/\u00A0/g, '');
+      }
+    });
+    if ($(document).find('.note-editable').text().trim().length == 0) {
+      $(document).find('.note-editable').html('<p><br></p>');
+      $(selectorElement).val(null);
+      if (isRequired === 1) {
+        displayErrorMessage(errorMessage);
+        return false;
+      }
+    }
+  }
+  return true;
+};
+window.preparedTemplate = function () {
+  source = $('#actionTemplate').html();
+  window.preparedTemplate = Handlebars.compile(source);
+};
+window.ajaxCallInProgress = function () {
+  ajaxCallIsRunning = true;
+};
+window.ajaxCallCompleted = function () {
+  ajaxCallIsRunning = false;
+};
+window.avoidSpace = function (event) {
+  var k = event ? event.which : window.event.keyCode;
+  if (k == 32) {
+    return false;
+  }
+};
+listenClick('#readNotification', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var notificationId = $(this).attr('data-id');
+  var notification = $(this);
+  $.ajax({
+    type: 'POST',
+    url: route('notifications.read', notificationId),
+    data: {
+      notificationId: notificationId
+    },
+    success: function success() {
+      var count = parseInt($('#header-notification-counter').text());
+      $('#header-notification-counter').text(count - 1);
+      notification.remove();
+      var notificationCounter = document.getElementsByClassName('readNotification').length;
+      $('#counter').text(notificationCounter);
+      if (notificationCounter == 0) {
+        $('.notification-counter').addClass('d-none');
+        $('#readAllNotification').addClass('d-none');
+        $('.empty-state').removeClass('d-none');
+        $('.notification-toggle').removeClass('beep');
+      }
+      displaySuccessMessage(Lang.get('js.notification_read'));
+    },
+    error: function error(_error) {
+      manageAjaxErrors(_error);
+    }
+  });
+});
+listenClick('#readAllNotification', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  $.ajax({
+    type: 'POST',
+    url: route('notifications.read.all'),
+    success: function success() {
+      $('#header-notification-counter').text(0);
+      $('#header-notification-counter').addClass('d-none');
+      $('.readNotification').remove();
+      $('#readAllNotification').addClass('d-none');
+      $('.empty-state').removeClass('d-none');
+      $('.notification-toggle').removeClass('beep');
+      displaySuccessMessage(Lang.get('js.notification_read'));
+    },
+    error: function error(_error2) {
+      manageAjaxErrors(_error2);
+    }
+  });
+});
+window.getAvgReviewHtmlData = function (reviews) {
+  var ratingCount = reviews.length;
+  var totalSumRating = 0;
+  $(reviews).each(function (index, value) {
+    totalSumRating += value.rating;
+  });
+  var avgRating = totalSumRating / ratingCount;
+  var data = '<div class="avg-review-star-div d-flex align-self-center mb-1">';
+  for (var i = 0; i < 5; i++) {
+    if (avgRating > 0) {
+      if (avgRating > 0.5) {
+        data += '<i class="fas fa-star review-star"></i>';
+      } else {
+        data += '<i class="fas fa-star-half-alt review-star"></i>';
+      }
+    } else {
+      data += '<i class="far fa-star review-star"></i>';
+    }
+    avgRating--;
+  }
+  data += '</div>';
+  return data;
+};
+listenClick('.apply-dark-mode', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('update-dark-mode'),
+    type: 'get',
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+window.openDropdownManually = function (dropdownBtnEle, dropdownEle) {
+  if (!dropdownBtnEle.hasClass('show')) {
+    dropdownBtnEle.addClass('show');
+    dropdownEle.addClass('show');
+  } else {
+    dropdownBtnEle.removeClass('show');
+    dropdownEle.removeClass('show');
+  }
+};
+window.hideDropdownManually = function (dropdownBtnEle, dropdownEle) {
+  dropdownBtnEle.removeClass('show');
+  dropdownEle.removeClass('show');
+};
+function togglePassword() {
+  $('[data-toggle="password"]').each(function () {
+    var input = $(this);
+    var eye_btn = $(this).parent().find('.input-icon');
+    eye_btn.css('cursor', 'pointer').addClass('input-password-hide');
+    eye_btn.on('click', function () {
+      if (eye_btn.hasClass('input-password-hide')) {
+        eye_btn.removeClass('input-password-hide').addClass('input-password-show');
+        eye_btn.find('.bi').removeClass('bi-eye-slash-fill').addClass('bi-eye-fill');
+        input.attr('type', 'text');
+      } else {
+        eye_btn.removeClass('input-password-show').addClass('input-password-hide');
+        eye_btn.find('.bi').removeClass('bi-eye-fill').addClass('bi-eye-slash-fill');
+        input.attr('type', 'password');
+      }
+    });
+  });
+}
+document.addEventListener('turbo:before-cache', function () {
+  var currentSelect2 = '.select2-hidden-accessible';
+  $(currentSelect2).each(function () {
+    $(this).select2('destroy');
+  });
+  $(currentSelect2).each(function () {
+    $(this).select2();
+  });
+  $('.toast').addClass('d-none');
+});
+function setLoginUserLanguage() {
+  var checkLanguageSession = $('.currentLanguage').val();
+  Lang.setLocale(checkLanguageSession);
+}
+
+// set N/A if span tag is empty
+window.setValueOfEmptySpan = function () {
+  $('span.showSpan').each(function () {
+    if (!$(this).text()) {
+      $(this).text('N/A');
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/helper.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/custom/helper.js ***!
+  \**********************************************/
+/***/ (() => {
+
+window.listen = function (event, selector, callback) {
+  $(document).on(event, selector, callback);
+};
+window.listenClick = function (selector, callback) {
+  $(document).on('click', selector, callback);
+};
+window.listenSubmit = function (selector, callback) {
+  $(document).on('submit', selector, callback);
+};
+window.listenChange = function (selector, callback) {
+  $(document).on('change', selector, callback);
+};
+window.listenKeyup = function (selector, callback) {
+  $(document).on('keyup', selector, callback);
+};
+window.listenHiddenBsModal = function (selector, callback) {
+  $(document).on('hidden.bs.modal', selector, callback);
+};
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/input_price_format.js":
+/*!**********************************************************!*\
+  !*** ./resources/assets/js/custom/input_price_format.js ***!
+  \**********************************************************/
+/***/ (() => {
+
+"use strict";
+
+
+window.setPrice = function (selector, price) {
+  if (price != '' || price > 0) {
+    if (typeof price !== 'number') {
+      price = price.replace(/,/g, '');
+    }
+    var formattedPrice = addCommas(price);
+    $(selector).val(formattedPrice);
+  }
+};
+window.addCommas = function (nStr) {
+  nStr += '';
+  var x = nStr.split('.');
+  var x1 = x[0];
+  var x2 = x.length > 1 ? '.' + x[1] : '';
+  var rgx = /(\d+)(\d{3})/;
+  while (rgx.test(x1)) {
+    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+  }
+  return x1 + x2;
+};
+window.getFormattedPrice = function (price) {
+  if (price != '' || price > 0) {
+    if (typeof price !== 'number') {
+      price = price.replace(/,/g, '');
+    }
+    return addCommas(price);
+  }
+};
+window.priceFormatSelector = function (selector) {
+  var afterDecimal = 2;
+  $(document).on('input keyup keydown keypress', selector, function (event) {
+    var price = $(this).val();
+    if (price === '') {
+      $(this).val('');
+    } else {
+      if (/^[0-9]+(,[0-9]+)*$/.test(price)) {
+        $(this).val(getFormattedPrice(price));
+        return true;
+      } else {
+        this.value = this.value.replace(/(\..*)\./g, '$1').replace(new RegExp("(\\.[\\d]{" + afterDecimal + "}).", "g"), '$1');
+      }
+    }
+  });
+};
+window.removeCommas = function (str) {
+  return str.replace(/,/g, '');
+};
+priceFormatSelector('.price-input');
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/phone-number-country-code.js":
+/*!*****************************************************************!*\
+  !*** ./resources/assets/js/custom/phone-number-country-code.js ***!
+  \*****************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadPhoneNumberCountryCodeData);
+function loadPhoneNumberCountryCodeData() {
+  loadPhoneNumberCountryCode();
+  userCreateForm();
+  userEditForm();
+  vcardEditForm();
+  createSetting();
+}
+function loadPhoneNumberCountryCode() {
+  if (!$('#phoneNumber').length) {
+    return false;
+  }
+  var input = document.querySelector('#phoneNumber'),
+    errorMsg = document.querySelector('#error-msg'),
+    validMsg = document.querySelector('#valid-msg');
+  var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_number'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')];
+
+  // initialise plugin
+  var intl = window.intlTelInput(input, {
+    initialCountry: defaultCountryCodeValue,
+    separateDialCode: true,
+    geoIpLookup: function geoIpLookup(success, failure) {
+      $.get('https://ipinfo.io', function () {}, 'jsonp').always(function (resp) {
+        var countryCode = resp && resp.country ? resp.country : '';
+        success(countryCode);
+      });
+    },
+    utilsScript: '../../public/assets/js/inttel/js/utils.min.js'
+  });
+  var reset = function reset() {
+    input.classList.remove('error');
+    errorMsg.innerHTML = '';
+    errorMsg.classList.add('d-none');
+    validMsg.classList.add('d-none');
+  };
+  input.addEventListener('blur', function () {
+    reset();
+    if (input.value.trim()) {
+      if (intl.isValidNumber()) {
+        validMsg.classList.remove('d-none');
+      } else {
+        input.classList.add('error');
+        var errorCode = intl.getValidationError();
+        errorMsg.innerHTML = errorMap[errorCode];
+        errorMsg.classList.remove('d-none');
+      }
+    }
+  });
+
+  // on keyup / change flag: reset
+  input.addEventListener('change', reset);
+  input.addEventListener('keyup', reset);
+  if (typeof phoneNo != 'undefined' && phoneNo !== '') {
+    setTimeout(function () {
+      $('#phoneNumber').trigger('change');
+    }, 500);
+  }
+  $('#phoneNumber').on('blur keyup change countrychange', function () {
+    if (typeof phoneNo != 'undefined' && phoneNo !== '') {
+      intl.setNumber('+' + phoneNo);
+      phoneNo = '';
+    }
+    var getCode = intl.selectedCountryData['dialCode'];
+    $('#prefix_code').val(getCode);
+  });
+  var getCode = intl.selectedCountryData['dialCode'];
+  $('#prefix_code').val(getCode);
+  var getPhoneNumber = $('#phoneNumber').val();
+  var removeDashPhoneNumber = getPhoneNumber.replaceAll('-', ' ');
+  var removeSpacePhoneNumber = removeDashPhoneNumber.replace(/\s/g, '');
+  $('#phoneNumber').val(removeSpacePhoneNumber);
+  $('#phoneNumber').focus();
+  $('#phoneNumber').trigger('blur');
+}
+$(document).on('click', '.iti__country', function () {
+  var flagClass = $('.iti__selected-flag>.iti__flag').attr('class');
+  flagClass = flagClass.split(/\s+/)[1];
+  var dialCodeVal = $('.iti__selected-dial-code').text();
+  window.localStorage.setItem('flagClassLocal', flagClass);
+  window.localStorage.setItem('dialCodeValLocal', dialCodeVal);
+});
+function userCreateForm() {
+  if (!$('#userCreateForm').length) {
+    return false;
+  }
+  $('#userCreateForm').submit(function () {
+    if ($('#error-msg').text() !== '') {
+      $('#phoneNumber').focus();
+      return false;
+    }
+  });
+}
+function vcardEditForm() {
+  if (!$('#editForm').length) {
+    return false;
+  }
+  $('#editForm').submit(function () {
+    if ($('#error-msg').text() !== '') {
+      $('#phoneNumber').focus();
+      return false;
+    }
+  });
+}
+function createSetting() {
+  if (!$('#createSetting').length) {
+    return false;
+  }
+  $('#createSetting').submit(function () {
+    if ($('#error-msg').text() !== '') {
+      $('#phoneNumber').focus();
+      return false;
+    }
+  });
+}
+function userEditForm() {
+  if (!$('#userEditForm').length) {
+    return false;
+  }
+  $('#userEditForm').submit(function () {
+    if ($('#error-msg').text() !== '') {
+      $('#phoneNumber').focus();
+      return false;
+    }
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/custom/sidebar_menu.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/custom/sidebar_menu.js ***!
+  \****************************************************/
+/***/ (() => {
+
+listenKeyup('#menuSearch', function () {
+  var value = $(this).val().toLowerCase();
+  $('.nav-item').filter(function () {
+    $('.no-record').addClass('d-none');
+    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    checkEmpty();
+  });
+});
+function checkEmpty() {
+  if ($('.nav-item:visible').last().length == 0) {
+    $('.no-record').removeClass('d-none');
+  }
+}
+listenClick('.sidebar-aside-toggle', function () {
+  if ($(this).hasClass('active') === true) {
+    $('.sidebar-search-box').addClass('d-none');
+  } else {
+    $('.sidebar-search-box').removeClass('d-none');
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/dashboard/dashboard.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/dashboard/dashboard.js ***!
+  \****************************************************/
+/***/ (() => {
+
+// document.addEventListener('DOMContentLoaded', loadDashboardData)
+// document.addEventListener('DOMContentLoaded', loadPatientDashboardData)
+// document.addEventListener('DOMContentLoaded', loadDoctorDashboardData)
+
+var amount = [];
+var month = [];
+var totalAmount = 0;
+var chartType = 'area';
+var adminDashboardAppointmentChart = null;
+Livewire.hook('element.init', function (_ref) {
+  var component = _ref.component,
+    el = _ref.el;
+  loadDashboardData();
+  loadPatientDashboardData();
+  loadDoctorDashboardData();
+});
+function loadPatientDashboardData() {
+  if (!$('#patientChartData').length) {
+    return;
+  }
+  var patientChartData = JSON.parse($('#patientChartData').val());
+  var lang = $('.currentLanguage').val();
+  var currentDate = new Date();
+  var currentMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var currentValue = patientChartData[1][currentMonth];
+  $('.patient-month-total-amount').text(currencyIcon + ' ' + currentValue);
+  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
+  var previousMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var previousMonthValue = patientChartData[1][previousMonth];
+  var performancedataforprogressbabr;
+  if (previousMonthValue === 0) {
+    performancedataforprogressbabr = 100;
+  } else if (currentValue == 0 && previousMonthValue == 0) {
+    performancedataforprogressbabr = 0;
+  } else {
+    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
+  }
+  if (performancedataforprogressbabr > 100) {
+    $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
+    $(".bord-earning-card-body-amont").css('color', 'green');
+  } else {
+    if (performancedataforprogressbabr < 0) {
+      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
+      $(".dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
+    } else {
+      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
+      $(".dashbord-earning-card-body-amont").css('color', 'green');
+    }
+  }
+  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
+  if (remainingPercenctageForProgressbar > 100) {
+    remainingPercenctageForProgressbar = 100;
+  }
+  $(function () {
+    var setRadial = function setRadial(percent) {
+      $(".patient-js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".patient-js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
+      $(".patient-js-radial-percent").html(percent + '%');
+    };
+    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
+  });
+}
+function loadDashboardData() {
+  if (!$('#adminChartData').length) {
+    return;
+  }
+  var adminChartData = JSON.parse($('#adminChartData').val());
+  var lang = $('.currentLanguage').val();
+  var currentDate = new Date();
+  var currentMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var currentValue = adminChartData[currentMonth];
+  $('.total-amount').text(currencyIcon + ' ' + currentValue);
+  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
+  var previousMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var previousMonthValue = adminChartData[previousMonth];
+  var performancedataforprogressbabr;
+  if (previousMonthValue == 0 && currentValue != 0) {
+    performancedataforprogressbabr = 100;
+  } else if (currentValue == 0 && previousMonthValue == 0) {
+    performancedataforprogressbabr = 0;
+  } else {
+    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
+  }
+  if (performancedataforprogressbabr > 100) {
+    $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
+    $(".admin-dashbord-earning-card-body-amont").css('color', 'green');
+  } else {
+    if (performancedataforprogressbabr < 0) {
+      $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
+      $(".admin-dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
+    } else {
+      $(".admin-dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
+      $(".admin-dashbord-earning-card-body-amont").css('color', 'green');
+    }
+  }
+  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
+  if (remainingPercenctageForProgressbar > 100) {
+    remainingPercenctageForProgressbar = 100;
+  }
+  $(function () {
+    var setRadial = function setRadial(percent) {
+      $(".js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
+      $(".js-radial-percent").html(percent + '%');
+    };
+    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
+  });
+  month = [];
+  amount = [];
+  totalAmount = 0;
+  $.each(adminChartData, function (key, value) {
+    month.push(key);
+    amount.push(value);
+    totalAmount += value;
+  });
+  $('.totalEarning').text(totalAmount);
+  prepareAppointmentReport();
+}
+function loadDoctorDashboardData() {
+  if (!$('#doctorChartData').length) {
+    return;
+  }
+  var doctorChartData = JSON.parse($('#doctorChartData').val());
+  var lang = $('.currentLanguage').val();
+  var currentDate = new Date();
+  var currentMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var currentValue = doctorChartData[2][currentMonth];
+  // $('.thismontappointment').text(currentValue);
+  $('.doctor-month-total-amount').text(currencyIcon + ' ' + currentValue);
+  currentDate.setMonth(currentDate.getMonth() - 1); // Move one month back
+  var previousMonth = currentDate.toLocaleString(lang, {
+    month: 'short'
+  });
+  var previousMonthValue = doctorChartData[2][previousMonth];
+  var performancedataforprogressbabr;
+  if (previousMonthValue == 0 && currentValue != 0) {
+    performancedataforprogressbabr = 100;
+  } else if (currentValue == 0 && previousMonthValue == 0) {
+    performancedataforprogressbabr = 0;
+  } else {
+    performancedataforprogressbabr = (currentValue - previousMonthValue) / Math.abs(previousMonthValue) * 100;
+  }
+  if (performancedataforprogressbabr > 100) {
+    $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + "<i class='fa fa-arrow-up' aria-hidden='true'></i>");
+    $(".bord-earning-card-body-amont").css('color', 'green');
+  } else {
+    if (performancedataforprogressbabr < 0) {
+      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + '%' + " <i class='fa fa-arrow-down'></i>");
+      $(".dashbord-earning-card-body-amont").removeClass('text-success').addClass('text-danger');
+    } else {
+      $(".dashbord-earning-card-body-amont").html(performancedataforprogressbabr.toFixed(2) + "%" + " <i class='fa fa-arrow-up' aria-hidden='true'></i>");
+      $(".dashbord-earning-card-body-amont").css('color', 'green');
+    }
+  }
+  var remainingPercenctageForProgressbar = performancedataforprogressbabr + 100;
+  if (remainingPercenctageForProgressbar > 100) {
+    remainingPercenctageForProgressbar = 100;
+  }
+  $(function () {
+    var setRadial = function setRadial(percent) {
+      $(".doctor-js-radial-mask").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".doctor-js-radial-fill").css('transform', 'rotate(' + 1.8 * percent + 'deg)');
+      $(".js-radial-fill_fix").css('transform', 'rotate(' + 3.6 * percent + 'deg)');
+      $(".doctor-js-radial-percent").html(percent + '%');
+    };
+    setRadial(Math.abs(remainingPercenctageForProgressbar).toFixed(0));
+  });
+  month = [];
+  amount = [];
+  appointmentmonth = [];
+  appointmentvalue = [];
+  totalAmount = 0;
+  totalAppointment = 0;
+  $.each(doctorChartData[0], function (key, value) {
+    month.push(key);
+    amount.push(value);
+    totalAmount += value;
+  });
+  $.each(doctorChartData[1], function (key, value) {
+    appointmentmonth.push(key);
+    appointmentvalue.push(value);
+    totalAppointment += value;
+  });
+  prepareDoctorAppointmentReport();
+}
+function prepareAppointmentReport() {
+  if (!$('#appointmentChartId').length) {
+    return;
+  }
+  $('#appointmentChartId').remove();
+  $('.appointmentChart').append('<div id="appointmentChartId" style="height: 350px" class="card-rounded-bottom"></div>');
+  var id = document.getElementById('appointmentChartId'),
+    borderColor = '--bs-gray-200';
+  id && new ApexCharts(id, {
+    series: [{
+      name: Lang.get('js.amount'),
+      type: chartType,
+      stacked: !0,
+      data: amount
+    }],
+    chart: {
+      fontFamily: 'inherit',
+      stacked: !0,
+      type: chartType,
+      height: 350,
+      toolbar: {
+        show: !1
+      },
+      background: dashboardChartBGColor
+    },
+    plotOptions: {
+      bar: {
+        stacked: !0,
+        horizontal: !1,
+        borderRadius: 4,
+        columnWidth: ['12%']
+      }
+    },
+    legend: {
+      show: !1
+    },
+    dataLabels: {
+      enabled: !1
+    },
+    stroke: {
+      curve: 'smooth',
+      show: !0,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: month,
+      axisBorder: {
+        show: !1
+      },
+      axisTicks: {
+        show: !1
+      },
+      labels: {
+        style: {
+          colors: dashboardChartFontColor,
+          fontSize: '12px'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: dashboardChartFontColor,
+          fontSize: '12px'
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    states: {
+      normal: {
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      },
+      hover: {
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      },
+      active: {
+        allowMultipleDataPointsSelection: !1,
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      }
+    },
+    tooltip: {
+      style: {
+        fontSize: '12px'
+      },
+      y: {
+        formatter: function formatter(e) {
+          return currencyIcon + ' ' + e;
+        }
+      }
+    },
+    grid: {
+      borderColor: borderColor,
+      strokeDashArray: 4,
+      yaxis: {
+        lines: {
+          show: !0
+        }
+      },
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+      }
+    },
+    theme: {
+      mode: 'dark',
+      palette: 'palette1',
+      monochrome: {
+        enabled: false,
+        color: '#13151f',
+        shadeTo: 'dark',
+        shadeIntensity: 0.00
+      }
+    }
+  }).render();
+}
+function prepareDoctorAppointmentReport() {
+  if (!$('#appointmentDoctorChartId').length) {
+    return;
+  }
+  $('#appointmentDoctorChartId').remove();
+  $('.appointmentDoctorChart').append('<div id="appointmentDoctorChartId" style="height: 350px" class="card-rounded-bottom"></div>');
+  var id = document.getElementById('appointmentDoctorChartId'),
+    borderColor = '--bs-gray-200';
+  id && new ApexCharts(id, {
+    series: [{
+      name: 'appointment',
+      type: chartType,
+      stacked: !0,
+      data: appointmentvalue
+    }],
+    chart: {
+      fontFamily: 'inherit',
+      stacked: !0,
+      type: chartType,
+      height: 350,
+      toolbar: {
+        show: !1
+      },
+      background: dashboardChartBGColor
+    },
+    plotOptions: {
+      bar: {
+        stacked: !0,
+        horizontal: !1,
+        borderRadius: 4,
+        columnWidth: ['12%']
+      }
+    },
+    legend: {
+      show: !1
+    },
+    dataLabels: {
+      enabled: !1
+    },
+    stroke: {
+      curve: 'smooth',
+      show: !0,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: appointmentmonth,
+      axisBorder: {
+        show: !1
+      },
+      axisTicks: {
+        show: !1
+      },
+      labels: {
+        style: {
+          colors: dashboardChartFontColor,
+          fontSize: '12px'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: dashboardChartFontColor,
+          fontSize: '12px'
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    states: {
+      normal: {
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      },
+      hover: {
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      },
+      active: {
+        allowMultipleDataPointsSelection: !1,
+        filter: {
+          type: 'none',
+          value: 0
+        }
+      }
+    },
+    tooltip: {
+      style: {
+        fontSize: '12px'
+      },
+      y: {
+        formatter: function formatter(e) {
+          return ' ' + e;
+        }
+      }
+    },
+    grid: {
+      borderColor: borderColor,
+      strokeDashArray: 4,
+      yaxis: {
+        lines: {
+          show: !0
+        }
+      },
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+      }
+    },
+    theme: {
+      mode: 'dark',
+      palette: 'palette1',
+      monochrome: {
+        enabled: false,
+        color: '#13151f',
+        shadeTo: 'dark',
+        shadeIntensity: 0.00
+      }
+    }
+  }).render();
+
+  // totalAmount = 0;
+}
+listenClick('#changeChart', function () {
+  if (chartType == 'area') {
+    chartType = 'bar';
+    $('.chart').addClass('fa-chart-area');
+    $('.chart').removeClass('fa-chart-bar');
+    prepareAppointmentReport();
+  } else {
+    chartType = 'area';
+    $('.chart').removeClass('fa-chart-area');
+    $('.chart').addClass('fa-chart-bar');
+    prepareAppointmentReport();
+  }
+});
+listenClick('#monthData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('patientData.dashboard'),
+    type: 'GET',
+    data: {
+      month: 'month'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#monthlyReport').empty();
+        $(document).find('#week').removeClass('show active');
+        $(document).find('#day').removeClass('show active');
+        $(document).find('#month').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.profile,
+              'name': value.user.full_name,
+              'email': value.user.email,
+              'patientId': value.patient_unique_id,
+              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
+              'appointment_count': value.appointments_count,
+              'route': route('patients.show', value.id)
+            }];
+            $(document).find('#monthlyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#monthlyReport').append("<tr class=\"text-center\">\n                                                    <td colspan=\"5\" class=\"text-muted fw-bold\">".concat(noData, "</td>\n                                                </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenChange('#serviceId', function (e) {
+  e.preventDefault();
+  var serviceId = $('#serviceId').val();
+  var dashboardDoctorId = $('#dashboardDoctorId').val();
+  var serviceCategoryId = $('#serviceCategoryId').val();
+  $('.totalEarning').text('');
+  if ($(this).val() != '') {
+    $.ajax({
+      url: route('admin.dashboard'),
+      type: 'GET',
+      data: {
+        serviceId: serviceId,
+        dashboardDoctorId: dashboardDoctorId,
+        serviceCategoryId: serviceCategoryId
+      },
+      success: function success(result) {
+        if (result.success) {
+          month = [];
+          amount = [];
+          totalAmount = 0;
+          $.each(result.data, function (key, value) {
+            month.push(key);
+            amount.push(value);
+            totalAmount += value;
+          });
+          $('.totalEarning').text(totalAmount);
+          prepareAppointmentReport();
+        }
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON.message);
+      }
+    });
+  }
+});
+listenClick('#dashboardResetBtn', function () {
+  $('.dashboardFilter').val('').trigger('change');
+  hideDropdownManually($('#dashboardFilterBtn'), $('.dropdown-menu'));
+});
+listenChange('#dashboardDoctorId', function (e) {
+  e.preventDefault();
+  var serviceId = $('#serviceId').val();
+  var dashboardDoctorId = $('#dashboardDoctorId').val();
+  var serviceCategoryId = $('#serviceCategoryId').val();
+  $('.totalEarning').text('');
+  $.ajax({
+    url: route('admin.dashboard'),
+    type: 'GET',
+    data: {
+      serviceId: serviceId,
+      dashboardDoctorId: dashboardDoctorId,
+      serviceCategoryId: serviceCategoryId
+    },
+    success: function success(result) {
+      if (result.success) {
+        month = [];
+        amount = [];
+        totalAmount = 0;
+        $.each(result.data, function (key, value) {
+          month.push(key);
+          amount.push(value);
+          totalAmount += value;
+        });
+        $('.totalEarning').text(totalAmount);
+        prepareAppointmentReport();
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenChange('#serviceCategoryId', function (e) {
+  e.preventDefault();
+  var serviceId = $('#serviceId').val();
+  var dashboardDoctorId = $('#dashboardDoctorId').val();
+  var serviceCategoryId = $('#serviceCategoryId').val();
+  $('.totalEarning').text('');
+  $.ajax({
+    url: route('admin.dashboard'),
+    type: 'GET',
+    data: {
+      serviceId: serviceId,
+      dashboardDoctorId: dashboardDoctorId,
+      serviceCategoryId: serviceCategoryId
+    },
+    success: function success(result) {
+      if (result.success) {
+        month = [];
+        amount = [];
+        totalAmount = 0;
+        $.each(result.data, function (key, value) {
+          month.push(key);
+          amount.push(value);
+          totalAmount += value;
+        });
+        $('.totalEarning').text(totalAmount);
+        prepareAppointmentReport();
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#weekData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('patientData.dashboard'),
+    type: 'GET',
+    data: {
+      week: 'week'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#weeklyReport').empty();
+        $(document).find('#month').removeClass('show active');
+        $(document).find('#day').removeClass('show active');
+        $(document).find('#week').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.profile,
+              'name': value.user.full_name,
+              'email': value.user.email,
+              'patientId': value.patient_unique_id,
+              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
+              'appointment_count': value.appointments_count,
+              'route': route('patients.show', value.id)
+            }];
+            $(document).find('#weeklyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#weeklyReport').append("<tr class=\"text-center\">\n                                                    <td colspan=\"5\" class=\"text-muted fw-bold\">".concat(noData, "</td>\n                                                </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#dayData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('patientData.dashboard'),
+    type: 'GET',
+    data: {
+      day: 'day'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#dailyReport').empty();
+        $(document).find('#month').removeClass('show active');
+        $(document).find('#week').removeClass('show active');
+        $(document).find('#day').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.profile,
+              'name': value.user.full_name,
+              'email': value.user.email,
+              'patientId': value.patient_unique_id,
+              'registered': moment.parseZone(value.user.created_at).format('Do MMM Y hh:mm A'),
+              'appointment_count': value.appointments_count,
+              'route': route('patients.show', value.id)
+            }];
+            $(document).find('#dailyReport').append(prepareTemplateRender('#adminDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#dailyReport').append("\n                    <tr class=\"text-center\">\n                        <td colspan=\"5\" class=\"text-muted fw-bold\"> ".concat(noData, "</td>\n                    </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.dayData', function () {
+  $(this).addClass('text-primary');
+  $('.weekData ,.monthData').removeClass('text-primary');
+});
+listenClick('.weekData', function () {
+  $(this).addClass('text-primary');
+  $('.dayData ,.monthData').removeClass('text-primary');
+});
+listenClick('.monthData', function () {
+  $(this).addClass('text-primary');
+  $('.weekData ,.dayData').removeClass('text-primary');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/dashboard/doctor-dashboard.js":
+/*!***********************************************************!*\
+  !*** ./resources/assets/js/dashboard/doctor-dashboard.js ***!
+  \***********************************************************/
+/***/ (() => {
+
+listenClick('#doctorMonthData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('doctors.appointment.dashboard'),
+    type: 'GET',
+    data: {
+      month: 'month'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#doctorMonthlyReport').empty();
+        $(document).find('#week').removeClass('show active');
+        $(document).find('#day').removeClass('show active');
+        $(document).find('#month').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.patient.profile,
+              'name': value.patient.user.full_name,
+              'email': value.patient.user.email,
+              'patientId': value.patient.patient_unique_id,
+              'date': moment(value.date).format('Do MMM, Y'),
+              'from_time': value.from_time,
+              'from_time_type': value.from_time_type,
+              'to_time': value.to_time,
+              'to_time_type': value.to_time_type,
+              'route': route('doctors.patient.detail', value.patient_id)
+            }];
+            $(document).find('#doctorMonthlyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#doctorMonthlyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#doctorWeekData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('doctors.appointment.dashboard'),
+    type: 'GET',
+    data: {
+      week: 'week'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#doctorWeeklyReport').empty();
+        $(document).find('#month').removeClass('show active');
+        $(document).find('#day').removeClass('show active');
+        $(document).find('#week').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.patient.profile,
+              'name': value.patient.user.full_name,
+              'email': value.patient.user.email,
+              'patientId': value.patient.patient_unique_id,
+              'date': moment(value.date).format('Do MMM, Y'),
+              'from_time': value.from_time,
+              'from_time_type': value.from_time_type,
+              'to_time': value.to_time,
+              'to_time_type': value.to_time_type,
+              'route': route('doctors.patient.detail', value.patient_id)
+            }];
+            $(document).find('#doctorWeeklyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#doctorWeeklyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#doctorDayData', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('doctors.appointment.dashboard'),
+    type: 'GET',
+    data: {
+      day: 'day'
+    },
+    success: function success(result) {
+      if (result.success) {
+        $('#doctorDailyReport').empty();
+        $(document).find('#month').removeClass('show active');
+        $(document).find('#week').removeClass('show active');
+        $(document).find('#day').addClass('show active');
+        if (result.data.patients.data != '') {
+          $.each(result.data.patients.data, function (index, value) {
+            var data = [{
+              'image': value.patient.profile,
+              'name': value.patient.user.full_name,
+              'email': value.patient.user.email,
+              'patientId': value.patient.patient_unique_id,
+              'date': moment(value.date).format('Do MMM, Y'),
+              'from_time': value.from_time,
+              'from_time_type': value.from_time_type,
+              'to_time': value.to_time,
+              'to_time_type': value.to_time_type,
+              'route': route('doctors.patient.detail', value.patient_id)
+            }];
+            $(document).find('#doctorDailyReport').append(prepareTemplateRender('#doctorDashboardTemplate', data));
+          });
+        } else {
+          $(document).find('#doctorDailyReport').append("\n                                                <tr>\n                                                    <td colspan=\"4\" class=\"text-center fw-bold text-muted\">".concat(noData, "</td>\n                                                </tr>"));
+        }
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#doctorDayData', function () {
+  $(this).addClass('text-primary');
+  $('#doctorWeekData ,#doctorMonthData').removeClass('text-primary');
+});
+listenClick('#doctorWeekData', function () {
+  $(this).addClass('text-primary');
+  $('#doctorDayData ,#doctorMonthData').removeClass('text-primary');
+});
+listenClick('#doctorMonthData', function () {
+  $(this).addClass('text-primary');
+  $('#doctorWeekData ,#doctorDayData').removeClass('text-primary');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_appointments/calendar.js":
+/*!*************************************************************!*\
+  !*** ./resources/assets/js/doctor_appointments/calendar.js ***!
+  \*************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadDoctorAppointmentCalendar);
+var popover;
+var popoverState = false;
+var appointmentStatusId = null;
+var doctorAppointmentCalendar;
+var data = {
+  id: '',
+  uId: '',
+  eventName: '',
+  eventDescription: '',
+  eventStatus: '',
+  startDate: '',
+  endDate: '',
+  amount: 0,
+  service: '',
+  patientName: ''
+};
+
+// View event variables
+var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewEndDate, viewModal, viewService, viewUId, viewAmount;
+function loadDoctorAppointmentCalendar() {
+  initCalendarApp();
+  init();
+}
+var initCalendarApp = function initCalendarApp() {
+  if (usersRole != 'doctor') {
+    return;
+  }
+  var calendarEl = document.getElementById('doctorAppointmentCalendar');
+  if (!$(calendarEl).length) {
+    return;
+  }
+  var lang = $('.currentLanguage').val();
+  doctorAppointmentCalendar = new FullCalendar.Calendar(calendarEl, {
+    locale: lang,
+    themeSystem: 'bootstrap5',
+    height: 750,
+    buttonText: {
+      today: Lang.get('js.today'),
+      day: Lang.get('js.day'),
+      month: Lang.get('js.month')
+    },
+    headerToolbar: {
+      left: 'title',
+      center: 'prev,next today',
+      right: 'dayGridDay,dayGridMonth'
+    },
+    initialDate: new Date(),
+    timeZone: 'UTC',
+    dayMaxEvents: true,
+    events: function events(info, successCallback, failureCallback) {
+      $.ajax({
+        url: route('doctors.appointments.calendar'),
+        type: 'GET',
+        data: info,
+        success: function success(result) {
+          if (result.success) {
+            successCallback(result.data);
+          }
+        },
+        error: function error(result) {
+          displayErrorMessage(result.responseJSON.message);
+          failureCallback();
+        }
+      });
+    },
+    // MouseEnter event --- more info: https://fullcalendar.io/docs/eventMouseEnter
+    eventMouseEnter: function eventMouseEnter(arg) {
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        description: arg.event.extendedProps.description,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        patientName: arg.event.extendedProps.patientName
+      });
+
+      // Show popover preview
+      initPopovers(arg.el);
+    },
+    eventMouseLeave: function eventMouseLeave() {
+      hidePopovers();
+    },
+    // Click event --- more info: https://fullcalendar.io/docs/eventClick
+    eventClick: function eventClick(arg) {
+      hidePopovers();
+      appointmentStatusId = arg.event.id;
+      formatArgs({
+        id: arg.event.id,
+        title: arg.event.title,
+        startStr: arg.event.startStr,
+        endStr: arg.event.endStr,
+        description: arg.event.extendedProps.description,
+        status: arg.event.extendedProps.status,
+        amount: arg.event.extendedProps.amount,
+        uId: arg.event.extendedProps.uId,
+        service: arg.event.extendedProps.service,
+        patientName: arg.event.extendedProps.patientName
+      });
+      handleViewEvent();
+    }
+  });
+  doctorAppointmentCalendar.render();
+};
+var init = function init() {
+  if (!$('#doctorAppointmentCalendarModal').length) {
+    return;
+  }
+  var viewElement = document.getElementById('doctorAppointmentCalendarModal');
+  viewModal = new bootstrap.Modal(viewElement);
+  viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
+  viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
+  viewEventStatus = viewElement.querySelector('[data-calendar="event_status"]');
+  viewAmount = viewElement.querySelector('[data-calendar="event_amount"]');
+  viewUId = viewElement.querySelector('[data-calendar="event_uId"]');
+  viewService = viewElement.querySelector('[data-calendar="event_service"]');
+  viewStartDate = viewElement.querySelector('[data-calendar="event_start_date"]');
+  viewEndDate = viewElement.querySelector('[data-calendar="event_end_date"]');
+};
+
+// Format FullCalendar responses
+var formatArgs = function formatArgs(res) {
+  data.id = res.id;
+  data.eventName = res.title;
+  data.eventStatus = res.status;
+  data.startDate = res.startStr;
+  data.endDate = res.endStr;
+  data.amount = res.amount;
+  data.uId = res.uId;
+  data.service = res.service;
+  data.patientName = res.patientName;
+};
+
+// Initialize popovers --- more info: https://getbootstrap.com/docs/4.0/components/popovers/
+var initPopovers = function initPopovers(element) {
+  hidePopovers();
+
+  // Generate popover content
+  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
+  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Patient:</b> ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+
+  // Popover options
+  var options = {
+    container: 'body',
+    trigger: 'manual',
+    boundary: 'window',
+    placement: 'auto',
+    dismiss: true,
+    html: true,
+    title: 'Appointment Details',
+    content: popoverHtml
+  };
+};
+
+// Hide active popovers
+var hidePopovers = function hidePopovers() {
+  if (popoverState) {
+    popover.dispose();
+    popoverState = false;
+  }
+};
+
+// Handle view event
+var handleViewEvent = function handleViewEvent() {
+  $('.fc-popover').addClass('hide');
+  viewModal.show();
+
+  // Detect all day event
+  var eventNameMod;
+  var startDateMod;
+  var endDateMod;
+  var book = $('#bookCalenderConst').val();
+  var checkIn = $('#checkInCalenderConst').val();
+  var checkOut = $('#checkOutCalenderConst').val();
+  var cancel = $('#cancelCalenderConst').val();
+  eventNameMod = '';
+  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
+  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
+  viewEndDate.innerText = ': ' + endDateMod;
+  viewStartDate.innerText = ': ' + startDateMod;
+
+  // Populate view data
+  viewEventName.innerText = 'Patient: ' + data.patientName;
+  $(viewEventStatus).empty();
+  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
+  $(viewEventStatus).val(data.eventStatus).trigger('change');
+  viewAmount.innerText = addCommas(data.amount);
+  viewUId.innerText = data.uId;
+  viewService.innerText = data.service;
+};
+listenChange('.doctor-apptnt-calendar-status-change', function () {
+  if (!$(this).val()) {
+    return false;
+  }
+  var appointmentStatus = $(this).val();
+  var appointmentId = appointmentStatusId;
+  if (parseInt(appointmentStatus) === data.eventStatus) {
+    return false;
+  }
+  $.ajax({
+    url: route('doctors.change-status', appointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: appointmentId,
+      appointmentStatus: appointmentStatus
+    },
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      $('#doctorAppointmentCalendarModal').modal('hide');
+      doctorAppointmentCalendar.refetchEvents();
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_appointments/doctor_appointments.js":
+/*!************************************************************************!*\
+  !*** ./resources/assets/js/doctor_appointments/doctor_appointments.js ***!
+  \************************************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadDoctorAppointmentFilterDate)
+
+var doctorAppointmentFilterDate = '#doctorPanelAppointmentDate';
+Livewire.hook("element.init", function () {
+  loadDoctorAppointmentFilterDate();
+  if ($('#doctorPanelPaymentType').length) {
+    $('#doctorPanelPaymentType').select2();
+  }
+  if ($('#doctorPanelAppointmentStatus').length) {
+    $('#doctorPanelAppointmentStatus').select2();
+  }
+  if ($('.appointment-status').length) {
+    $('.appointment-status').select2();
+  }
+  if ($('.payment-status').length) {
+    $('.payment-status').select2();
+  }
+});
+function loadDoctorAppointmentFilterDate() {
+  if (!$(doctorAppointmentFilterDate).length) {
+    return;
+  }
+  var timeRange = $('#doctorPanelAppointmentDate');
+  var doctorAppointmentStart = moment().startOf('week');
+  var doctorAppointmentEnd = moment().endOf('week');
+  function cb(doctorAppointmentStart, doctorAppointmentEnd) {
+    $('#doctorPanelAppointmentDate').val(doctorAppointmentStart.format('MM/DD/YYYY') + ' - ' + doctorAppointmentEnd.format('MM/DD/YYYY'));
+  }
+  timeRange.daterangepicker({
+    startDate: doctorAppointmentStart,
+    endDate: doctorAppointmentEnd,
+    opens: 'left',
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get('js.custom'),
+      applyLabel: Lang.get('js.apply'),
+      cancelLabel: Lang.get('js.cancel'),
+      fromLabel: Lang.get('js.from'),
+      toLabel: Lang.get('js.to'),
+      monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
+      daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get('js.today'), [moment(), moment()]), Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')])
+  }, cb);
+  cb(doctorAppointmentStart, doctorAppointmentEnd);
+  timeRange.on("apply.daterangepicker", function (ev, picker) {
+    Livewire.dispatch('changeDateFilter', {
+      date: $(this).val()
+    });
+  });
+}
+listenChange('.doctor-appointment-status-change', function () {
+  var doctorAppointmentStatus = $(this).val();
+  var doctorAppointmentId = $(this).attr('data-id');
+  var doctorAppointmentCurrentData = $(this);
+  $.ajax({
+    url: route('doctors.change-status', doctorAppointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: doctorAppointmentId,
+      appointmentStatus: doctorAppointmentStatus
+    },
+    success: function success(result) {
+      $(doctorAppointmentCurrentData).children('option.booked').addClass('hide');
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+      setTimeout(function () {
+        location.reload();
+      }, 2000);
+    }
+  });
+});
+listenChange('.doctor-apptment-change-payment-status', function () {
+  var doctorApptmentPaymentStatus = $(this).val();
+  var doctorApptmentAppointmentId = $(this).attr('data-id');
+  $('#doctorAppointmentPaymentStatusModal').modal('show').appendTo('body');
+  $('#doctorAppointmentPaymentStatus').val(doctorApptmentPaymentStatus);
+  $('#doctorAppointmentId').val(doctorApptmentAppointmentId);
+});
+listenSubmit('#doctorAppointmentPaymentStatusForm', function (event) {
+  event.preventDefault();
+  var paymentStatus = $('#doctorAppointmentPaymentStatus').val();
+  var appointmentId = $('#doctorAppointmentId').val();
+  var paymentMethod = $('#doctorPaymentType').val();
+  $.ajax({
+    url: route('doctors.change-payment-status', appointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: appointmentId,
+      paymentStatus: paymentStatus,
+      paymentMethod: paymentMethod,
+      loginUserId: currentLoginUserId
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#doctorAppointmentPaymentStatusModal').modal('hide');
+        location.reload();
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenChange('#doctorPanelPaymentType', function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $('#doctorPanelAppointmentDate').val()
+  });
+  Livewire.dispatch("changePaymentTypeFilter", {
+    type: $(this).val()
+  });
+});
+listenChange('#doctorPanelAppointmentStatus', function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $('#doctorPanelAppointmentDate').val()
+  });
+  Livewire.dispatch("changeStatusFilter", {
+    status: $(this).val()
+  });
+});
+listenClick('#doctorPanelApptmentResetFilter', function () {
+  $('#doctorPanelPaymentType').val(0).trigger('change');
+  $('#doctorPanelAppointmentStatus').val(1).trigger('change');
+  doctorAppointmentFilterDate.data('daterangepicker').setStartDate(moment().startOf('week').format('MM/DD/YYYY'));
+  doctorAppointmentFilterDate.data('daterangepicker').setEndDate(moment().endOf('week').format('MM/DD/YYYY'));
+  hideDropdownManually($('#doctorPanelApptFilterBtn'), $('.dropdown-menu'));
+});
+listenClick('#doctorPanelApptResetFilter', function () {
+  $('#doctorPanelPaymentType').val(0).trigger('change');
+  $('#doctorPanelAppointmentStatus').val(1).trigger('change');
+  $('#doctorPanelAppointmentDate').data('daterangepicker').setStartDate(moment().startOf('week').format('MM/DD/YYYY'));
+  $('#doctorPanelAppointmentDate').data('daterangepicker').setEndDate(moment().endOf('week').format('MM/DD/YYYY'));
+  hideDropdownManually($('#doctorPanelApptFilterBtn'), $('.dropdown-menu'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_holiday/Create_edit.js":
+/*!***********************************************************!*\
+  !*** ./resources/assets/js/doctor_holiday/Create_edit.js ***!
+  \***********************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadDoctorData);
+function loadDoctorData() {
+  loadDoctorDate();
+}
+function loadDoctorDate() {
+  var lang = $(".currentLanguage").val();
+  $("#doctorHolidayDate").flatpickr({
+    locale: lang,
+    minDate: new Date().fp_incr(1),
+    disableMobile: true
+  });
+  listenClick(".doctor-holiday-delete-btn", function (event) {
+    var holidayRecordId = $(event.currentTarget).attr("data-id");
+    deleteItem(route("holidays.destroy", holidayRecordId), Lang.get("js.holiday"));
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_holiday/doctor_holiday.js":
+/*!**************************************************************!*\
+  !*** ./resources/assets/js/doctor_holiday/doctor_holiday.js ***!
+  \**************************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadDoctorHoliday)
+
+var startDate = moment().startOf("week");
+var endDate = moment().endOf("week");
+Livewire.hook("element.init", function () {
+  loadDoctorHoliday();
+  if ($("#doctorHolidayStatus").length) {
+    $("#doctorHolidayStatus").select2();
+  }
+  if (startDate != undefined && endDate != undefined) {
+    cb(startDate, endDate);
+  }
+});
+function loadDoctorHoliday() {
+  // let lang = $(".currentLanguage").val();
+  // $("#doctorHolidayDate").flatpickr({
+  //     locale: lang,
+  //     minDate: new Date().fp_incr(1),
+  //     disableMobile: true,
+  // });
+
+  // listenClick(".doctor-holiday-delete-btn", function (event) {
+  //     let holidayRecordId = $(event.currentTarget).attr("data-id");
+  //     deleteItem(
+  //         route("holidays.destroy", holidayRecordId),
+  //         Lang.get("js.holiday")
+  //     );
+  // });
+
+  if (!$("#doctorHolidayDateFilter").length) {
+    return;
+  }
+  // let startDate = moment().startOf("week");
+  // let endDate = moment().endOf("week");
+
+  var datePicker = $("#doctorHolidayDateFilter").daterangepicker({
+    startDate: startDate,
+    endDate: endDate,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  // cb
+  );
+  //cb(startDate, endDate);
+
+  datePicker.on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    startDate = picker.startDate;
+    endDate = picker.endDate;
+    // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
+  });
+}
+function cb(start, end) {
+  $("#doctorHolidayDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
+}
+listenChange("#doctorHolidayStatus", function () {
+  $("#doctorHolidayStatus").val($(this).val());
+  Livewire.dispatch("changeStatusFilter", $(this).val());
+});
+
+// listenChange('#holidayDateFilter,#doctorHolidayDateFilter', function () {
+//     Livewire.dispatch("changeDateFilter", { date: $(this).val(),});
+// })
+
+listenClick(".holiday-delete-btn", function (event) {
+  var holidayRecordId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("doctors.holiday-destroy", holidayRecordId), Lang.get("js.holiday"));
+});
+
+// listenClick('#holidayDateResetFilter', function () {
+//     $('#holidayDateFilter').data('daterangepicker').setStartDate(moment().startOf('week').format('DD/MM/YYYY'))
+//     $('#holidayDateFilter').data('daterangepicker').setEndDate(moment().endOf('week').format('DD/MM/YYYY'))
+//     hideDropdownManually($('#holidayFilterBtn'), $('.dropdown-menu'));
+// })
+
+// listenClick('#doctorHolidayResetFilter', function () {
+//     $('#doctorHolidayDateFilter').data('daterangepicker').setStartDate(moment().startOf('week').format('DD/MM/YYYY'))
+//     $('#doctorHolidayDateFilter').data('daterangepicker').setEndDate(moment().endOf('week').format('DD/MM/YYYY'))
+//     hideDropdownManually($('#doctorHolidayFilterBtn'), $('.dropdown-menu'));
+// })
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_holiday/holiday.js":
+/*!*******************************************************!*\
+  !*** ./resources/assets/js/doctor_holiday/holiday.js ***!
+  \*******************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadHoliday)
+var Start = moment().startOf("week");
+var End = moment().endOf("week");
+Livewire.hook("element.init", function () {
+  loadHoliday();
+  if (Start != undefined && End != undefined) {
+    cb(Start, End);
+  }
+});
+function loadHoliday() {
+  if (!$("#holidayDateFilter").length) {
+    return;
+  }
+
+  // let Start = moment().startOf("week");
+  // let End = moment().endOf("week");
+
+  var holidayPcker = $("#holidayDateFilter").daterangepicker({
+    startDate: Start,
+    endDate: End,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  // cb
+  );
+
+  // cb(Start, End);
+
+  holidayPcker.on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    Start = picker.startDate;
+    End = picker.endDate;
+    // Livewire.dispatch("changeDateFilter", { date: $(this).val() });
+  });
+}
+function cb(start, end) {
+  $("#holidayDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
+}
+listenClick(".holiday-delete-btn", function (event) {
+  var holidayRecordId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("doctors.holiday-destroy", holidayRecordId), Lang.get("js.holiday"));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_sessions/create-edit.js":
+/*!************************************************************!*\
+  !*** ./resources/assets/js/doctor_sessions/create-edit.js ***!
+  \************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadDoctorSessionData);
+function loadDoctorSessionData() {
+  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
+  if (!doctorSessionIsEdit == true) {
+    $('.startTimeSlot').prop('disabled', true);
+    $('.endTimeSlot').prop('disabled', true);
+  }
+  var lang = $('.currentLanguage').val();
+  $('#addHolidayBtn').flatpickr({
+    "locale": lang,
+    disableMobile: true,
+    minDate: new Date()
+  });
+  $('select[name^="startTimes"]').each(function () {
+    var selectedIndex = $(this)[0].selectedIndex;
+    var endSelectedIndex = $(this).closest('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
+    var endTimeOptions = $(this).closest('.add-slot').find('select[name^="endTimes"] option');
+    if (selectedIndex >= endSelectedIndex) {
+      endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
+    }
+    endTimeOptions.each(function (index) {
+      if (index <= selectedIndex) {
+        $(this).attr('disabled', true);
+      } else {
+        $(this).attr('disabled', false);
+      }
+    });
+  });
+  $('select[name^="endTimes"]').each(function () {
+    var selectedIndex = $(this)[0].selectedIndex;
+    var startTimeOptions = $(this).closest('.timeSlot').next().find('select[name^="startTimes"] option');
+    startTimeOptions.each(function (index) {
+      if (index <= selectedIndex) {
+        $(this).attr('disabled', true);
+      } else {
+        $(this).attr('disabled', false);
+      }
+    });
+  });
+}
+listenChange('#selGap', function () {
+  $('.startTimeSlot').prop('disabled', false);
+  $('.endTimeSlot').prop('disabled', false);
+});
+listenClick('.add-session-time', function () {
+  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
+  if (!doctorSessionIsEdit == true) {
+    if ($('#selGap').val() == '') {
+      return false;
+    }
+  }
+  var selectedIndex = 0;
+  if ($(this).parent().prev().children('.session-times').find('.timeSlot:last-child').length > 0) {
+    selectedIndex = $(this).parent().prev().children('.session-times').find('.timeSlot:last-child').children('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
+  }
+  var day = $(this).closest('.weekly-content').attr('data-day');
+  var $ele = $(this);
+  var weeklyEle = $(this).closest('.weekly-content');
+  var gap = $('#selGap').val();
+  var getSlotByGapUrl = $('#getSlotByGapUrl').val();
+  $.ajax({
+    url: getSlotByGapUrl,
+    data: {
+      gap: gap,
+      day: day
+    },
+    success: function success(data) {
+      weeklyEle.find('.unavailable-time').html('');
+      weeklyEle.find('input[name="checked_week_days[]"').prop('checked', true).prop('disabled', false);
+      $ele.closest('.weekly-content').find('.session-times').append(data.data);
+      weeklyEle.find('select[data-control="select2"]').select2();
+      var startTimeOptions = $('.add-session-time').parent().prev().children('.session-times').find('.timeSlot:last-child').children('.add-slot').find('select[name^="startTimes"] option');
+      startTimeOptions.each(function (index) {
+        if (index <= selectedIndex) {
+          $(this).attr('disabled', true);
+        } else {
+          $(this).attr('disabled', false);
+        }
+      });
+    }
+  });
+});
+listenClick('.copy-btn', function () {
+  $(this).closest('.copy-card').removeClass('show');
+  $('.copy-dropdown').removeClass('show');
+  var selectEle = $(this).closest('.weekly-content').find('.session-times').find('select');
+  // check for slot is empty
+  if (selectEle.length == 0) {
+    $(this).closest('.menu-content').find('.copy-label .form-check-input:checked').each(function () {
+      var weekEle = $(".weekly-content[data-day=\"".concat($(this).val(), "\"]"));
+      $(weekEle).find('.session-times').html('');
+      weekEle.find('.weekly-row').find('.unavailable-time').remove();
+      weekEle.find('.weekly-row').append('<div class="unavailable-time">' + Lang.get('js.unavailable') + '</div>');
+      var dayChk = $(weekEle).find('.weekly-row').find('input[name="checked_week_days[]"');
+      dayChk.prop('checked', false).prop('disabled', true);
+    });
+  } else {
+    selectEle.each(function () {
+      $(this).select2('destroy');
+    });
+    var selects = $(this).closest('.weekly-content').find('.session-times').find('select');
+    var $cloneEle = $(this).closest('.weekly-content').find('.session-times').clone();
+    $(this).closest('.menu-content').find('.copy-label .form-check-input:checked').each(function () {
+      var $cloneEle2 = $cloneEle;
+      var currentDay = $(this).val();
+      var weekEle = ".weekly-content[data-day=\"".concat(currentDay, "\"]");
+      $cloneEle2.find('select[name^="startTimes"]').attr('name', "startTimes[".concat(currentDay, "][]"));
+      $cloneEle2.find('select[name^="endTimes"]').attr('name', "endTimes[".concat(currentDay, "][]"));
+      $(weekEle).find('.unavailable-time').html('');
+      $cloneEle2.find('.error-msg').html('');
+      $(weekEle).find('.session-times').html($cloneEle2.html());
+      $(weekEle).find('.session-times select').select2();
+      $(weekEle).find('input[name="checked_week_days[]"').prop('disabled', false).prop('checked', true);
+      $(selects).each(function (i) {
+        var select = this;
+        $(weekEle).find('.session-times').find('select').eq(i).val($(select).val()).trigger('change');
+      });
+    });
+    $(this).closest('.weekly-content').find('.session-times').find('select').each(function () {
+      $(this).select2();
+    });
+    $('.copy-check-input').prop('checked', false);
+  }
+});
+listenClick('.deleteBtn', function () {
+  var selectedIndex = 0;
+  if ($(this).closest('.timeSlot').prev().length > 0) {
+    selectedIndex = $(this).closest('.timeSlot').prev().children('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
+  }
+  if ($(this).closest('.weekly-row').find('.session-times').find('select').length == 2) {
+    var dayChk = $(this).closest('.weekly-row').find('input[name="checked_week_days[]"');
+    dayChk.prop('checked', false).prop('disabled', true);
+    $(this).closest('.weekly-row').append('<div class="unavailable-time">' + Lang.get('js.unavailable') + '</div>');
+  }
+  var startTimeOptions = $(this).closest('.timeSlot').next().children('.add-slot').find('select[name^="startTimes"] option');
+  startTimeOptions.each(function (index) {
+    if (index <= selectedIndex) {
+      $(this).attr('disabled', true);
+    } else {
+      $(this).attr('disabled', false);
+    }
+  });
+  $(this).parent().siblings('.error-msg').remove();
+  $(this).parent().closest('.timeSlot').remove();
+  $(this).parent().remove();
+});
+listenSubmit('#saveFormDoctor', function (e) {
+  e.preventDefault();
+  var checkedDayLength = $('input[name="checked_week_days[]"]:checked').length;
+  if (!checkedDayLength) {
+    displayErrorMessage('Please select any one day');
+    return false;
+  }
+  $(".weekly-content").find('.error-msg').text('');
+  $.ajax({
+    url: $(this).attr('action'),
+    type: 'POST',
+    data: new FormData($(this)[0]),
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          location.href = $('#btnBack').attr('href');
+        }, 2000);
+      }
+    },
+    error: function error(result) {
+      var _result$responseJSON$ = result.responseJSON.message,
+        day = _result$responseJSON$.day,
+        key = _result$responseJSON$.key;
+      $(".weekly-content[data-day=\"".concat(day, "\"]")).find('.error-msg').text('');
+      $(".weekly-content[data-day=\"".concat(day, "\"]")).find('.error-msg').eq(key).text('Slot timing is overlap with other slot timing');
+    },
+    complete: function complete() {}
+  });
+});
+listenChange('select[name^="startTimes"]', function (e) {
+  var selectedIndex = $(this)[0].selectedIndex;
+  var endTimeOptions = $(this).closest('.add-slot').find('select[name^="endTimes"] option');
+  var endSelectedIndex = $(this).closest('.add-slot').find('select[name^="endTimes"] option:selected')[0].index;
+  if (selectedIndex >= endSelectedIndex) {
+    endTimeOptions.eq(selectedIndex + 1).prop('selected', true).trigger('change');
+  }
+  endTimeOptions.each(function (index) {
+    if (index <= selectedIndex) {
+      $(this).attr('disabled', true);
+    } else {
+      $(this).attr('disabled', false);
+    }
+  });
+});
+listenChange('select[name^="endTimes"]', function (e) {
+  var selectedIndex = $(this)[0].selectedIndex;
+  var startTimeOptions = $(this).closest('.timeSlot').next().find('select[name^="startTimes"] option');
+  startTimeOptions.each(function (index) {
+    if (index <= selectedIndex) {
+      $(this).attr('disabled', true);
+    } else {
+      $(this).attr('disabled', false);
+    }
+  });
+});
+listenClick('#addHolidayBtn', function () {
+  var doctorSessionIsEdit = $('#doctorSessionIsEdit').val();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctor_sessions/doctor_sessions.js":
+/*!****************************************************************!*\
+  !*** ./resources/assets/js/doctor_sessions/doctor_sessions.js ***!
+  \****************************************************************/
+/***/ (() => {
+
+listenClick('.doctor-session-delete-btn', function (event) {
+  var doctorSessionRecordId = $(event.currentTarget).attr('data-id');
+  var doctorSessionUrl = $('#doctorSessionUrl').val();
+  deleteItem(doctorSessionUrl + '/' + doctorSessionRecordId, Lang.get('js.doctor_session'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctors/create-edit.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/doctors/create-edit.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
+
+document.addEventListener('DOMContentLoaded', loadDoctorData);
+var isDefault = false;
+var deletedQualifications = [];
+var degree;
+var university;
+var year;
+var updateId;
+var primaryId;
+var qualification = [];
+var id = 1;
+$('.showQualification').hide();
+function loadDoctorData() {
+  loadDoctorDate();
+}
+function loadDoctorDate() {
+  var doctorDob = '.doctor-dob';
+  var lang = $('.currentLanguage').val();
+  $('.showQualification').slideUp();
+  if (!$(doctorDob).length) {
+    return;
+  }
+  $(doctorDob).flatpickr({
+    "locale": lang,
+    maxDate: new Date(),
+    disableMobile: true
+  });
+  if (!$('#doctorCountryId').val()) {
+    return;
+  }
+  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
+  setTimeout(function () {
+    $('#editDoctorStateId').val($('#doctorStateId').val()).trigger('change');
+  }, 400);
+  setTimeout(function () {
+    $('#editDoctorCityId').val($('#doctorCityId').val()).trigger('change');
+  }, 7000);
+}
+listenClick('#addQualification', function () {
+  isDefault = false;
+  $('.degree').val('');
+  $('.university').val('');
+  $('.year').val('').trigger('change');
+  $('.showQualification').slideToggle(500);
+});
+listenClick('#cancelQualification', function () {
+  $('.showQualification').slideUp(500);
+});
+listenClick('#ResetForm', function () {
+  window.location.href = route('doctors.index');
+});
+listenClick('#saveQualification', function (e) {
+  e.preventDefault();
+  degree = $('.degree').val();
+  university = $('.university').val();
+  year = $('.year').val();
+  var existId = $('#doctorQualificationTbl tr:last-child td:first-child').data('value');
+  existId++;
+  if (existId) {
+    id = existId;
+  }
+  var prepareData = {
+    'id': primaryId,
+    'degree': degree,
+    'year': year,
+    'university': university
+  };
+  var data = {
+    'id': id,
+    'degree': degree,
+    'year': year,
+    'university': university
+  };
+  var emptyDegree = $('.degree').val().trim().replace(/ \r\n\t/g, '') === '';
+  var emptyUniversity = $('.university').val().trim().replace(/ \r\n\t/g, '') === '';
+  var emptyYear = $('.year').val().trim().replace(/ \r\n\t/g, '') === '';
+  if (emptyDegree) {
+    displayErrorMessage(Lang.get('js.degree_required'));
+    return false;
+  } else if (emptyUniversity) {
+    displayErrorMessage(Lang.get('js.university_required'));
+    return false;
+  } else if (emptyYear) {
+    displayErrorMessage(Lang.get('js.year_required'));
+    return false;
+  }
+  if (updateId == null) {
+    qualification.push(prepareData);
+  } else {
+    qualification[updateId - 1] = prepareData;
+  }
+  var qualificationHtml = prepareTemplateRender('#qualificationTemplateData', data);
+  if (isDefault == false) {
+    $('tbody').append(qualificationHtml);
+    id++;
+  } else if (isDefault == true) {
+    var _data = {
+      'id': updateId,
+      'degree': degree,
+      'year': year,
+      'university': university
+    };
+    var updateQualificationHtml = prepareTemplateRender('#qualificationTemplateData', _data);
+    var table = $('table tbody');
+    $(table).find('tr').each(function (i, v) {
+      i = i + 1;
+      if (i == updateId) {
+        $('tbody').find(v).replaceWith(updateQualificationHtml);
+      }
+    });
+  }
+  $('.showQualification').slideUp(500);
+  $('.degree').val('');
+  $('.university').val('');
+  $('.year').val('');
+});
+listenClick('.delete-btn-qualification', function (event) {
+  $('.degree').val('');
+  $('.university').val('');
+  $('.year').val('').trigger('change');
+  qualification.pop([0]);
+  $('.showQualification').slideUp(500);
+  var Ele = $(this);
+  var qualificationID = $(this).attr('data-id');
+  var header = Lang.get('js.qualification');
+  swal({
+    title: Lang.get('js.delete') + ' !',
+    text: Lang.get('js.are_you_sure') + ' "' + header + '" ?',
+    buttons: {
+      confirm: Lang.get('js.yes'),
+      cancel: Lang.get('js.no')
+    },
+    reverseButtons: true,
+    icon: 'warning'
+  }).then(function (result) {
+    if (result == true) {
+      deletedQualifications.push(qualificationID);
+      $('#deletedQualifications').val(deletedQualifications);
+      Ele.closest('tr')[0].remove();
+      swal({
+        icon: 'success',
+        title: Lang.get('js.deleted'),
+        text: header + Lang.get('js.has_been'),
+        timer: 2000
+      });
+    }
+  });
+});
+listenClick('.edit-btn-qualification', function () {
+  $('.degree').val('');
+  $('.university').val('');
+  $('.year').val('');
+  updateId = $(this).attr('data-id');
+  primaryId = $(this).data('primary-id');
+  var currentRow = $(this).closest('tr');
+  var currentDegree = currentRow.find('td:eq(1)').text();
+  var currentCollage = currentRow.find('td:eq(2)').text();
+  var currentYear = currentRow.find('td:eq(3)').text();
+  $('.degree').val(currentDegree);
+  $('.university').val(currentCollage);
+  $('.year').val(currentYear).trigger('change');
+  isDefault = true;
+  $('.showQualification').slideToggle(500);
+});
+listenSubmit('#editDoctorForm', function (e) {
+  var twitterUrl = $('#twitterUrl').val();
+  var linkedinUrl = $('#linkedinUrl').val();
+  var instagramUrl = $('#instagramUrl').val();
+  var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
+  var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
+  var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
+  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
+  if (!twitterCheck) {
+    displayErrorMessage(Lang.get('js.valid_twitter'));
+    return false;
+  }
+  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
+  if (!linkedInCheck) {
+    displayErrorMessage(Lang.get('js.valid_linkedin'));
+    return false;
+  }
+  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
+  if (!instagramCheck) {
+    displayErrorMessage(Lang.get('js.valid_instagram'));
+    return false;
+  }
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+  e.preventDefault();
+  var doctorFormData = new FormData($(this)[0]);
+  var editDoctorId = $('#editDoctorId').val();
+  doctorFormData.append('qualifications', JSON.stringify(qualification));
+  $.ajax({
+    url: route('doctors.update', editDoctorId),
+    type: 'POST',
+    data: doctorFormData,
+    contentType: false,
+    processData: false,
+    success: function success(result) {
+      if (result.success) {
+        window.location.href = route('doctors.index');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenChange('input[type=radio][name=gender]', function () {
+  var file = $('#profilePicture').val();
+  if (isEmpty(file)) {
+    if (this.value == 1) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
+    } else if (this.value == 2) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
+    }
+  }
+});
+listenChange('#editDoctorCountryId', function () {
+  var doctorIsEdit = $('#doctorIsEdit').val();
+  $.ajax({
+    url: route('get-state'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      data: $(this).val()
+    },
+    success: function success(data) {
+      $('#editDoctorStateId').empty();
+      $('#editDoctorCityId').empty();
+      //
+      $('#editDoctorStateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
+      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $.each(data.data, function (i, v) {
+        $('#editDoctorStateId').append($('<option></option>').attr('value', i).text(v));
+      });
+      if (doctorIsEdit && $('#doctorStateId').val()) {
+        $('#stateId').val($('#doctorStateId').val()).trigger('change');
+      }
+    }
+  });
+});
+listenChange('#editDoctorStateId', function () {
+  var doctorIsEdit = $('#doctorIsEdit').val();
+  $.ajax({
+    url: route('get-city'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      state: $(this).val(),
+      country: $('#editDoctorCountryId').val()
+    },
+    success: function success(data) {
+      $('#editDoctorCityId').empty();
+      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $.each(data.data, function (i, v) {
+        $('#editDoctorCityId').append($('<option ></option>').attr('value', i).text(v));
+      });
+      if (doctorIsEdit && $('#doctorCityId').val()) {
+        $('#cityId').val($('#doctorCityId').val()).trigger('change');
+      }
+    }
+  });
+});
+if ($('#doctorIsEdit').val() && $('#doctorCountryId').val()) {
+  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
+}
+listenKeyup('#twitterUrl', function () {
+  this.value = this.value.toLowerCase();
+});
+listenKeyup('#linkedinUrl', function () {
+  this.value = this.value.toLowerCase();
+});
+listenKeyup('#instagramUrl', function () {
+  this.value = this.value.toLowerCase();
+});
+listenSubmit('#createDoctorForm', function () {
+  var twitterUrl = $('#twitterUrl').val();
+  var linkedinUrl = $('#linkedinUrl').val();
+  var instagramUrl = $('#instagramUrl').val();
+  var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
+  var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
+  var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
+  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
+  if (!twitterCheck) {
+    displayErrorMessage(Lang.get('js.valid_twitter'));
+    return false;
+  }
+  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
+  if (!linkedInCheck) {
+    displayErrorMessage(Lang.get('js.valid_linkedin'));
+    return false;
+  }
+  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
+  if (!instagramCheck) {
+    displayErrorMessage(Lang.get('js.valid_instagram'));
+    return false;
+  }
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenClick('.removeAvatarIcon', function () {
+  $('#bgImage').css('background-image', '');
+  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
+  $('#removeAvatar').remove();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctors/detail.js":
+/*!***********************************************!*\
+  !*** ./resources/assets/js/doctors/detail.js ***!
+  \***********************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+document.addEventListener('DOMContentLoaded', loadDoctorShowApptmentFilterDate);
+var doctorShowApptmentFilterDate = $('#doctorShowAppointmentDateFilter');
+function loadDoctorShowApptmentFilterDate() {
+  if (!$('#doctorShowAppointmentDateFilter').length) {
+    return;
+  }
+  var doctorShowApptmentStart = moment().startOf('week');
+  var doctorShowApptmentEnd = moment().endOf('week');
+  function cb(start, end) {
+    $('#doctorShowAppointmentDateFilter').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+  }
+  $('#doctorShowAppointmentDateFilter').daterangepicker({
+    startDate: doctorShowApptmentStart,
+    endDate: doctorShowApptmentEnd,
+    opens: 'left',
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get('js.custom'),
+      applyLabel: Lang.get('js.apply'),
+      cancelLabel: Lang.get('js.cancel'),
+      fromLabel: Lang.get('js.from'),
+      toLabel: Lang.get('js.to'),
+      monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
+      daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get('js.today'), [moment(), moment()]), Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')])
+  }, cb);
+  cb(doctorShowApptmentStart, doctorShowApptmentEnd);
+}
+listenClick('.doctor-show-apptment-delete-btn', function (event) {
+  var doctorShowApptmentRecordId = $(event.currentTarget).attr('data-id');
+  var doctorShowApptmentUrl = !isEmpty($('#patientRoleDoctorDetail').val()) ? route('patients.appointments.destroy', doctorShowApptmentRecordId) : route('appointments.destroy', doctorShowApptmentRecordId);
+  deleteItem(doctorShowApptmentUrl, 'Appointment');
+});
+listenChange('.doctor-show-apptment-status', function () {
+  var doctorShowAppointmentStatus = $(this).val();
+  var doctorShowAppointmentId = $(this).attr('data-id');
+  var currentData = $(this);
+  $.ajax({
+    url: route('change-status', doctorShowAppointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: doctorShowAppointmentId,
+      appointmentStatus: doctorShowAppointmentStatus
+    },
+    success: function success(result) {
+      $(currentData).children('option.booked').addClass('hide');
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenChange('#doctorShowAppointmentDateFilter', function () {
+  Livewire.dispatch('changeDateFilter', $(this).val());
+});
+listenChange('#doctorShowAppointmentStatus', function () {
+  Livewire.dispatch('changeDateFilter', $('#doctorShowAppointmentDateFilter').val());
+  Livewire.dispatch('changeStatusFilter', $(this).val());
+});
+listenClick('#doctorShowApptmentResetFilter', function () {
+  $('#doctorShowAppointmentStatus').val(1).trigger('change');
+  $('#doctorShowAppointmentDateFilter').val(moment().startOf('week').format('MM/DD/YYYY') + ' - ' + moment().endOf('week').format('MM/DD/YYYY')).trigger('change');
+  Livewire.dispatch('refresh');
+});
+document.addEventListener('livewire:load', function () {
+  window.livewire.hook('message.processed', function () {
+    if ($('#doctorShowAppointmentStatus').length) {
+      $('#doctorShowAppointmentStatus').select2();
+    }
+    if ($('.doctor-show-apptment-status').length) {
+      $('.doctor-show-apptment-status').select2();
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/doctors/doctors.js":
+/*!************************************************!*\
+  !*** ./resources/assets/js/doctors/doctors.js ***!
+  \************************************************/
+/***/ (() => {
+
+listenClick('#doctorResetFilter', function () {
+  var firstDate = moment(moment().startOf('week'), "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+  var lastDate = moment(moment().endOf('week'), "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+  $('#doctorPanelAppointmentDate').val(firstDate + " - " + lastDate).trigger('change');
+  $('#doctorPanelPaymentType').val(0).trigger('change');
+  $('#doctorPanelAppointmentStatus').val(3).trigger('change');
+  $('#doctorStatus').val(2).trigger('change');
+  hideDropdownManually($('#doctorFilterBtn'), $('.dropdown-menu'));
+});
+listenChange('#doctorStatus', function () {
+  Livewire.dispatch("changeStatusFilter", {
+    value: $(this).val()
+  });
+});
+Livewire.hook("element.init", function () {
+  if ($('#doctorStatus').length) {
+    $('#doctorStatus').select2();
+  }
+});
+listenClick('.doctor-delete-btn', function () {
+  var userId = $(this).attr('data-id');
+  var deleteUserUrl = route('doctors.destroy', userId);
+  deleteItem(deleteUserUrl, Lang.get('js.doctor'));
+});
+listenClick('.add-qualification', function () {
+  var userId = $(this).attr('data-id');
+  $('#qualificationID').val(userId);
+  $('#qualificationModal').modal('show');
+});
+listenSubmit('#qualificationForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('add.qualification'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#year').val(null).trigger('change');
+        $('#qualificationModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listen('hidden.bs.modal', '#qualificationModal', function () {
+  resetModalForm('#qualificationForm');
+  $('#year').val(null).trigger('change');
+});
+listenClick('.doctor-status', function (event) {
+  var doctorRecordId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    type: 'PUT',
+    url: route('doctor.status'),
+    data: {
+      id: doctorRecordId
+    },
+    success: function success(result) {
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick('.doctor-email-verification', function (event) {
+  var userId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    type: 'POST',
+    url: route('resend.email.verification', userId),
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      setTimeout(function () {
+        window.location.reload();
+        // Turbo.visit(window.location.href);
+      }, 5000);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#qualificationSaveBtn', function () {
+  $('#qualificationForm').trigger('submit');
+});
+listenChange('.doctor-email-verified', function (e) {
+  var recordId = $(e.currentTarget).attr('data-id');
+  var value = $(this).is(':checked') ? 1 : 0;
+  $.ajax({
+    type: 'POST',
+    url: route('emailVerified'),
+    data: {
+      id: recordId,
+      value: value
+    },
+    success: function success(result) {
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+Livewire.hook("element.init", function () {
+  if ($('#enquiriesStatus').length) {
+    $('#enquiriesStatus').select2();
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/appointments/book_appointment.js":
+/*!*********************************************************************!*\
+  !*** ./resources/assets/js/fronts/appointments/book_appointment.js ***!
+  \*********************************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadFrontAppointmentData);
+var frontTimezoneOffsetMinutes = new Date().getTimezoneOffset();
+frontTimezoneOffsetMinutes = frontTimezoneOffsetMinutes === 0 ? 0 : -frontTimezoneOffsetMinutes;
+var frontSelectedDate;
+var frontCharge = "";
+var frontPayableAmount = "";
+var dateEle = "#templateAppointmentDate";
+function loadFrontDateData() {
+  if (!$("#templateAppointmentDate").length) {
+    return;
+  }
+  $("#templateAppointmentDate").datepicker({
+    language: "es-es",
+    format: "yyyy-mm-dd",
+    minDate: new Date(),
+    startDate: new Date(),
+    todayHighlight: true
+  });
+}
+function loadFrontAppointmentData() {
+  if (!$("#templateAppointmentDate").length) {
+    return;
+  }
+  loadFrontDateData();
+  var frontSelectedDate = $("#templateAppointmentDate").val();
+  if (!($("#appointmentDoctorId").val() == "")) {
+    $(dateEle).removeAttr("disabled");
+    $.ajax({
+      url: route("get-service"),
+      type: "GET",
+      data: {
+        appointmentDoctorId: $("#appointmentDoctorId").val()
+      },
+      success: function success(result) {
+        if (result.success) {
+          $(dateEle).removeAttr("disabled");
+          $("#FrontAppointmentServiceId").empty();
+          $("#FrontAppointmentServiceId").append($('<option value=""></option>').text(Lang.get("js.select_service")));
+          $.each(result.data, function (i, v) {
+            $("#FrontAppointmentServiceId").append($("<option></option>").attr("value", v.id).text(v.name));
+          });
+        }
+      }
+    });
+  }
+  if (!($("#FrontAppointmentServiceId").val() == "") && $("#FrontAppointmentServiceId").length) {
+    $.ajax({
+      url: route("get-charge"),
+      type: "GET",
+      data: {
+        chargeId: $("#FrontAppointmentServiceId").val()
+      },
+      success: function success(result) {
+        if (result.success) {
+          $("#payableAmountText").removeClass("d-none");
+          $("#payableAmount").text(currencyIcon + " " + getFormattedPrice(result.data.charges));
+          frontPayableAmount = result.data.charges;
+          frontCharge = result.data.charges;
+        }
+      }
+    });
+  }
+  if (!frontSelectedDate) {
+    return false;
+  }
+  $.ajax({
+    url: route("doctor-session-time"),
+    type: "GET",
+    data: {
+      adminAppointmentDoctorId: $("#appointmentDoctorId").val(),
+      date: frontSelectedDate,
+      timezone_offset_minutes: frontTimezoneOffsetMinutes
+    },
+    success: function success(result) {
+      if (result.success) {
+        $(".appointment-slot-data").html("");
+        $.each(result.data["slots"], function (index, value) {
+          $(".no-time-slot").addClass("d-none");
+          if (result.data["bookedSlot"] == null) {
+            $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
+          } else {
+            if ($.inArray(value, result.data["bookedSlot"]) !== -1) {
+              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' + value + '">' + value + "</span>");
+            } else {
+              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
+            }
+          }
+        });
+      }
+    },
+    error: function error(result) {
+      $(".appointment-slot-data").html("");
+      $(".book-appointment-message").css("display", "block");
+      var response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
+      $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    }
+  });
+}
+listenChange("#isPatientAccount", function () {
+  if (this.checked) {
+    $(".name-details").addClass("d-none");
+    $(".registered-patient").removeClass("d-none");
+    $("#template-medical-email").keyup(function () {
+      $("#patientName").val("");
+      var email = $("#template-medical-email").val();
+      $.ajax({
+        url: route("get-patient-name"),
+        type: "GET",
+        data: {
+          email: email
+        },
+        success: function success(result) {
+          if (result.data) {
+            $("#patientName").val(result.data);
+          }
+        }
+      });
+    });
+  } else {
+    $(".name-details").removeClass("d-none");
+    $(".registered-patient").addClass("d-none");
+  }
+});
+$(".no-time-slot").removeClass("d-none");
+listenChange(dateEle, function () {
+  frontSelectedDate = $(this).val();
+  $.ajax({
+    url: route("doctor-session-time"),
+    type: "GET",
+    data: {
+      adminAppointmentDoctorId: $("#appointmentDoctorId").val(),
+      date: frontSelectedDate,
+      timezone_offset_minutes: frontTimezoneOffsetMinutes
+    },
+    success: function success(result) {
+      if (result.success) {
+        $(".appointment-slot-data").html("");
+        $.each(result.data["slots"], function (index, value) {
+          $(".no-time-slot").addClass("d-none");
+          if (result.data["bookedSlot"] == null) {
+            $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
+          } else {
+            if ($.inArray(value, result.data["bookedSlot"]) !== -1) {
+              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot bookedSlot" data-id="' + value + '">' + value + "</span>");
+            } else {
+              $(".appointment-slot-data").append('<span class="badge badge-lg slots-item bg-success time-slot" data-id="' + value + '">' + value + "</span>");
+            }
+          }
+        });
+      }
+    },
+    error: function error(result) {
+      $(".appointment-slot-data").html("");
+      $(".book-appointment-message").css("display", "block");
+      var response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
+      $(".book-appointment-message").html(response).delay(5000).hide("slow");
+      if ($(".no-time-slot").hasClass("d-none")) {
+        $(".no-time-slot").removeClass("d-none");
+      }
+    }
+  });
+});
+listenClick(".time-slot", function () {
+  if ($(".time-slot").hasClass("activeSlot")) {
+    $(".time-slot").removeClass("activeSlot");
+    $(this).addClass("activeSlot");
+  } else {
+    $(this).addClass("activeSlot");
+  }
+  var fromToTime = $(this).attr("data-id").split("-");
+  var fromTime = fromToTime[0];
+  var toTime = fromToTime[1];
+  $("#timeSlot").val("");
+  $("#toTime").val("");
+  $("#timeSlot").val(fromTime);
+  $("#toTime").val(toTime);
+});
+var serviceIdExist = $("#FrontAppointmentServiceId").val();
+listenChange("#appointmentDoctorId", function (e) {
+  e.preventDefault();
+  $("#payableAmountText").addClass("d-none");
+  $("#chargeId").val("");
+  $("#payableAmount").val("");
+  $("#templateAppointmentDate").val("");
+  $("#addFees").val("");
+  $(".appointment-slot-data").html("");
+  $(".no-time-slot").removeClass("d-none");
+  $(dateEle).removeAttr("disabled");
+  $.ajax({
+    url: route("get-service"),
+    type: "GET",
+    data: {
+      appointmentDoctorId: $(this).val()
+    },
+    success: function success(result) {
+      if (result.success) {
+        $(dateEle).removeAttr("disabled");
+        $("#FrontAppointmentServiceId").empty();
+        $("#FrontAppointmentServiceId").append($('<option value=""></option>').text(Lang.get("js.select_service")));
+        $.each(result.data, function (i, v) {
+          $("#FrontAppointmentServiceId").append($("<option></option>").attr("value", v.id).attr("selected", v.id == serviceIdExist).text(v.name));
+        });
+        if (serviceIdExist && $("#FrontAppointmentServiceId").val()) {
+          $("#payableAmountText").removeClass("d-none");
+        }
+      }
+    }
+  });
+});
+listenChange("#FrontAppointmentServiceId", function () {
+  if ($(this).val() == "") {
+    $("#payableAmountText").addClass("d-none");
+    return;
+  }
+  $.ajax({
+    url: route("get-charge"),
+    type: "GET",
+    data: {
+      chargeId: $(this).val()
+    },
+    success: function success(result) {
+      if (result.success) {
+        $("#payableAmountText").removeClass("d-none");
+        $("#payableAmount").text(currencyIcon + " " + getFormattedPrice(result.data.charges));
+        frontPayableAmount = result.data.charges;
+        frontCharge = result.data.charges;
+      }
+    }
+  });
+});
+listenSubmit("#frontAppointmentBook", function (e) {
+  e.preventDefault();
+  var firstName = $("#template-medical-first_name").val().trim();
+  var lastName = $("#template-medical-last_name").val().trim();
+  var email = $("#template-medical-email").val().trim();
+  var doctor = $("#appointmentDoctorId").val().trim();
+  var services = $("#FrontAppointmentServiceId").val().trim();
+  var appointmentDate = $("#templateAppointmentDate").val().trim();
+  var paymentType = $("#paymentMethod").val().trim();
+  $(".book-appointment-message").css("display", "block");
+  if (!$("#isPatientAccount").is(":checked")) {
+    if (firstName == "") {
+      response = '<div class="gen alert alert-danger">' + Lang.get("js.first_name_required") + "</div>";
+      $(window).scrollTop($(".appointment-form").offset().top);
+      $(".book-appointment-message").html(response).delay(5000).hide("slow");
+      return false;
+    }
+    if (lastName == "") {
+      response = '<div class="gen alert alert-danger">' + Lang.get("js.last_name_required") + "</div>";
+      $(window).scrollTop($(".appointment-form").offset().top);
+      $(".book-appointment-message").html(response).delay(5000).hide("slow");
+      return false;
+    }
+  }
+  if (email == "") {
+    response = '<div class="gen alert alert-danger">' + Lang.get("js.email_required") + "</div>";
+    $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    $(window).scrollTop($(".appointment-form").offset().top);
+    return false;
+  }
+  if (doctor == "") {
+    response = '<div class="gen alert alert-danger">' + Lang.get("js.doctor_required") + "</div>";
+    $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    $(window).scrollTop($(".appointment-form").offset().top);
+    return false;
+  }
+  if (services == "") {
+    response = '<div class="gen alert alert-danger">' + Lang.get("js.service_required") + "</div>";
+    $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    $(window).scrollTop($(".appointment-form").offset().top);
+    return false;
+  }
+  if (appointmentDate == "") {
+    response = '<div class="gen alert alert-danger">' + Lang.get("js.appointment_date_required") + "</div>";
+    $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    $(window).scrollTop($(".appointment-form").offset().top);
+    return false;
+  }
+  if (paymentType == "") {
+    response = '<div class="gen alert alert-danger">' + Lang.get("js.payment_type_required") + "</div>";
+    $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    $(window).scrollTop($(".appointment-form").offset().top);
+    return false;
+  }
+  var btnSaveEle = $(this).find("#saveBtn");
+  setFrontBtnLoader(btnSaveEle);
+  var frontAppointmentFormData = new FormData($(this)[0]);
+  frontAppointmentFormData.append("payable_amount", frontPayableAmount);
+  var response = '<div class="alert alert-warning alert-dismissable"> ' + Lang.get("js.processing") + "</div>";
+  jQuery(this).find(".book-appointment-message").html(response).show("slow");
+  $.ajax({
+    url: $(this).attr("action"),
+    type: "POST",
+    data: frontAppointmentFormData,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.success) {
+        var appointmentID = result.data.appointmentId;
+        response = '<div class="gen alert alert-success">' + result.message + "</div>";
+        $(".book-appointment-message").html(response).delay(5000).hide("slow");
+        $(window).scrollTop($(".appointment-form").offset().top);
+        $("#frontAppointmentBook")[0].reset();
+        if (result.data.payment_type == manually) {
+          // Turbo.visit(
+          //     route("manually-payment", {
+          //         appointmentId: appointmentID,
+          //     })
+          // );
+          window.location.href = route("manually-payment", {
+            appointmentId: appointmentID
+          });
+        }
+        if (result.data.payment_type == paystack) {
+          return location.href = result.data.redirect_url;
+        }
+        if (result.data.payment_type == authorizeMethod) {
+          window.location.replace(route("authorize.init", {
+            appointmentId: appointmentID
+          }));
+        }
+        if (result.data.payment_type == paytmMethod) {
+          window.location.replace(route("paytm.init", {
+            appointmentId: appointmentID
+          }));
+        }
+        if (result.data.payment_type == paypal) {
+          $.ajax({
+            type: "GET",
+            url: route("paypal.init"),
+            data: {
+              appointmentId: appointmentID
+            },
+            success: function success(result) {
+              if (result.status == 200) {
+                var redirectTo = "";
+                location.href = result.link;
+                $.each(result.result.links, function (key, val) {
+                  if (val.rel == "approve") {
+                    redirectTo = val.href;
+                  }
+                });
+                location.href = redirectTo;
+              }
+            },
+            error: function error(result) {},
+            complete: function complete() {}
+          });
+        }
+        if (result.data.payment_type == razorpayMethod) {
+          $.ajax({
+            type: "POST",
+            url: route("razorpay.init"),
+            data: {
+              _token: csrfToken,
+              appointmentId: appointmentID
+            },
+            success: function success(result) {
+              if (result.success) {
+                var _result$data = result.data,
+                  id = _result$data.id,
+                  amount = _result$data.amount,
+                  name = _result$data.name,
+                  _email = _result$data.email,
+                  contact = _result$data.contact,
+                  country_code = _result$data.country_code;
+                options.amount = amount;
+                options.order_id = id;
+                options.prefill.name = name;
+                options.prefill.email = _email;
+                options.prefill.contact = contact;
+                options.prefill.contact = country_code;
+                options.prefill.appointmentID = appointmentID;
+                var razorPay = new Razorpay(options);
+                razorPay.open();
+                razorPay.on("payment.failed", storeFailedPayment);
+              }
+            },
+            error: function error(result) {},
+            complete: function complete() {}
+          });
+        }
+        if (result.data.payment_type == stripeMethod) {
+          var sessionId = result.data[0].sessionId;
+          stripe.redirectToCheckout({
+            sessionId: sessionId
+          }).then(function (result) {
+            manageAjaxErrors(result);
+          });
+        }
+        if (result.data === manually) {
+          setTimeout(function () {
+            location.reload();
+          }, 1200);
+        }
+      }
+    },
+    error: function error(result) {
+      $(".book-appointment-message").css("display", "block");
+      response = '<div class="gen alert alert-danger">' + result.responseJSON.message + "</div>";
+      $(window).scrollTop($(".appointment-form").offset().top);
+      $(".book-appointment-message").html(response).delay(5000).hide("slow");
+    },
+    complete: function complete() {
+      setFrontBtnLoader(btnSaveEle);
+    }
+  });
+});
+listenClick(".show-more-btn", function () {
+  if ($(".question").hasClass("d-none")) {
+    $(".question").removeClass("d-none");
+    $(".show-more-btn").html("show less");
+  } else {
+    $(".show-content").addClass("d-none");
+    $(".show-more-btn").html("show more");
+  }
+});
+window.setFrontBtnLoader = function (btnLoader) {
+  if (btnLoader.attr("data-old-text")) {
+    btnLoader.html(btnLoader.attr("data-old-text")).prop("disabled", false);
+    btnLoader.removeAttr("data-old-text");
+    return;
+  }
+  btnLoader.attr("data-old-text", btnLoader.text());
+  btnLoader.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop("disabled", true);
+};
+function storeFailedPayment(response) {
+  $.ajax({
+    type: "POST",
+    url: route("razorpay.failed"),
+    data: {
+      data: response
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+      }
+    },
+    error: function error() {}
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/cms/create.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/fronts/cms/create.js ***!
+  \**************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadFrontCMSData);
+function loadFrontCMSData() {
+  $('#cmsShortDescription').on('keyup', function () {
+    $('#cmsShortDescription').attr('maxlength', 800);
+  });
+  $('#cmsShortDescription').attr('maxlength', 800);
+  if (!$('#cmsTermConditionId').length) {
+    return;
+  }
+  var quill1 = new Quill('#cmsTermConditionId', {
+    modules: {
+      toolbar: [[{
+        header: [1, 2, false]
+      }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
+    },
+    placeholder: Lang.get('js.terms_conditions'),
+    theme: 'snow' // or 'bubble'
+  });
+  quill1.on('text-change', function (delta, oldDelta, source) {
+    if (quill1.getText().trim().length === 0) {
+      quill1.setContents([{
+        insert: ''
+      }]);
+    }
+  });
+  if (!$('#cmsPrivacyPolicyId').length) {
+    return;
+  }
+  var quill2 = new Quill('#cmsPrivacyPolicyId', {
+    modules: {
+      toolbar: [[{
+        header: [1, 2, false]
+      }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
+    },
+    placeholder: Lang.get('js.privacy_policy'),
+    theme: 'snow' // or 'bubble'
+  });
+  quill2.on('text-change', function (delta, oldDelta, source) {
+    if (quill2.getText().trim().length === 0) {
+      quill2.setContents([{
+        insert: ''
+      }]);
+    }
+  });
+  var element = document.createElement('textarea');
+  element.innerHTML = $('#cmsTermConditionData').val();
+  quill1.root.innerHTML = element.value;
+  element.innerHTML = $('#cmsPrivacyPolicyData').val();
+  quill2.root.innerHTML = element.value;
+  listenSubmit('#addCMSForm', function () {
+    var title = $('#aboutTitleId').val();
+    var empty = title.trim().replace(/ \r\n\t/g, '') === '';
+    var description = $('#cmsShortDescription').val();
+    var empty2 = description.trim().replace(/ \r\n\t/g, '') === '';
+    if (empty) {
+      displayErrorMessage(Lang.get('js.title_no_white_space'));
+      return false;
+    }
+    if (empty2) {
+      displayErrorMessage(Lang.get('js.description_no_white_space'));
+      return false;
+    }
+    if ($('#aboutExperience').val() === '') {
+      displayErrorMessage(Lang.get('js.experience_required'));
+      return false;
+    }
+    var element = document.createElement('textarea');
+    var editor_content_1 = quill1.root.innerHTML;
+    element.innerHTML = editor_content_1;
+    var editor_content_2 = quill2.root.innerHTML;
+    if (quill1.getText().trim().length === 0) {
+      displayErrorMessage(Lang.get('js.Terms_Conditions_required'));
+      return false;
+    }
+    if (quill2.getText().trim().length === 0) {
+      displayErrorMessage(Lang.get('js.privacy_policy_required'));
+      return false;
+    }
+    $('#termData').val(JSON.stringify(editor_content_1));
+    $('#privacyData').val(JSON.stringify(editor_content_2));
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/enquiries/enquiry.js":
+/*!*********************************************************!*\
+  !*** ./resources/assets/js/fronts/enquiries/enquiry.js ***!
+  \*********************************************************/
+/***/ (() => {
+
+listenClick('#enquiryResetFilter', function () {
+  var allEnquiry = $('#allEnquiry').val();
+  $('#enquiriesStatus').val(allEnquiry).trigger('change');
+  hideDropdownManually($('#enquiryFilterBtn'), $('.dropdown-menu'));
+});
+listenChange('#enquiriesStatus', function () {
+  Livewire.dispatch('changeStatusFilter', {
+    value: $(this).val()
+  });
+});
+listenClick('.enquiry-delete-btn', function () {
+  var enquiryRecordId = $(this).attr('data-id');
+  deleteItem(route('enquiries.destroy', enquiryRecordId), Lang.get('js.enquiry'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/faqs/faqs.js":
+/*!*************************************************!*\
+  !*** ./resources/assets/js/fronts/faqs/faqs.js ***!
+  \*************************************************/
+/***/ (() => {
+
+listenClick('.faq-delete-btn', function (event) {
+  var faqRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('faqs.destroy', faqRecordId), Lang.get('js.faqs'));
+});
+listenClick('.accordion-button', function (event) {
+  var tohide = $(this).attr("data-bs-target");
+  if (!$(this).hasClass('custom-class')) {
+    $(this).addClass('custom-class');
+    $(tohide).addClass('show');
+    $(tohide).removeClass('hide');
+    $(this).attr("aria-expanded", "true");
+  } else {
+    $(this).attr("aria-expanded", "false");
+    $(this).addClass('collapsed');
+    $(tohide).removeClass('show');
+    $(tohide).addClass('hide');
+    $(this).removeClass('custom-class');
+    $(this).css("box-shadow", "none");
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/front_home/front-home.js":
+/*!*************************************************************!*\
+  !*** ./resources/assets/js/fronts/front_home/front-home.js ***!
+  \*************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadFrontHomeData);
+function loadFrontHomeData() {
+  var frontAppointmentDate = '#frontAppointmentDate';
+  if (!$(frontAppointmentDate).length) {
+    return;
+  }
+  $(frontAppointmentDate).datepicker({
+    format: 'yyyy-mm-dd',
+    startDate: new Date(),
+    todayHighlight: true
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/front_patient_testimonials/create-edit.js":
+/*!******************************************************************************!*\
+  !*** ./resources/assets/js/fronts/front_patient_testimonials/create-edit.js ***!
+  \******************************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadFrontTestimonialData);
+function loadFrontTestimonialData() {
+  if (!$('#shortDescription').length) {
+    return;
+  }
+  $('#shortDescription').on('keyup', function () {
+    $('#shortDescription').attr('maxlength', 111);
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/front_patient_testimonials/front_patient_testimonials.js":
+/*!*********************************************************************************************!*\
+  !*** ./resources/assets/js/fronts/front_patient_testimonials/front_patient_testimonials.js ***!
+  \*********************************************************************************************/
+/***/ (() => {
+
+listenClick('.front-testimonial-delete-btn', function (event) {
+  var testimonialRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('front-patient-testimonials.destroy', testimonialRecordId), Lang.get('js.front_patient_testimonials'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/medical-contact/enquiry.js":
+/*!***************************************************************!*\
+  !*** ./resources/assets/js/fronts/medical-contact/enquiry.js ***!
+  \***************************************************************/
+/***/ (() => {
+
+// listenSubmit('#enquiryForm', function (e) {
+//     e.preventDefault()
+//     let btnLoader = $(this).find('button[type="submit"]')
+//     // setBtnLoader(btnLoader)
+//     $.ajax({
+//         url: route('enquiries.store'),
+//         type: 'POST',
+//         data: $(this).serialize(),
+//         success: function (result) {
+//             if (result.success) {
+//              
+//                 $('#enquiryForm')[0].reset()
+//                
+//             }
+//         },
+//         error: function (error) {
+//             // toastr.error(error.responseJSON.message)
+//         },
+//     })
+// })
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/sliders/create-edit-slider.js":
+/*!******************************************************************!*\
+  !*** ./resources/assets/js/fronts/sliders/create-edit-slider.js ***!
+  \******************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadSliderData);
+function loadSliderData() {
+  if (!$('#shortDescription').length) {
+    return;
+  }
+  listenKeyup('#shortDescription', function () {
+    $('#sliderShortDescription').attr('maxlength', 55);
+  });
+  if (!$('#sliderShortDescription').length) {
+    return;
+  }
+  $('#sliderShortDescription').attr('maxlength', 55);
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/sliders/slider.js":
+/*!******************************************************!*\
+  !*** ./resources/assets/js/fronts/sliders/slider.js ***!
+  \******************************************************/
+/***/ (() => {
+
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/subscribers/create.js":
+/*!**********************************************************!*\
+  !*** ./resources/assets/js/fronts/subscribers/create.js ***!
+  \**********************************************************/
+/***/ (() => {
+
+listenSubmit('#subscribeForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('subscribe.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        $('.subscribeForm-message').append('' + '<div class="gen alert alert-success">' + Lang.get("js.subscriber_creat") + '</div>').delay(5000);
+        setTimeout(function () {
+          $('.subscribeForm-message').empty();
+          $('#subscribeForm')[0].reset();
+        }, 3000);
+      }
+    },
+    error: function error(_error) {
+      $('.subscribeForm-message').append('' + '<div class="err alert alert-danger">' + Lang.get("js.email_already_exist") + '</div>').delay(5000);
+      setTimeout(function () {
+        $('.subscribeForm-message').empty();
+        $('#subscribeForm')[0].reset();
+      }, 3000);
+    },
+    complete: function complete() {}
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/fronts/subscribers/subscriber.js":
+/*!**************************************************************!*\
+  !*** ./resources/assets/js/fronts/subscribers/subscriber.js ***!
+  \**************************************************************/
+/***/ (() => {
+
+listenClick('.subscriber-delete-btn', function () {
+  var subscriberId = $(this).attr('data-id');
+  deleteItem(route('subscribers.destroy', subscriberId), Lang.get('js.subscribers'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/google_calendar/google_calendar.js":
+/*!****************************************************************!*\
+  !*** ./resources/assets/js/google_calendar/google_calendar.js ***!
+  \****************************************************************/
+/***/ (() => {
+
+listenClick('#syncGoogleCalendar', function () {
+  var btnSubmitEle = $(this);
+  setAdminBtnLoader(btnSubmitEle);
+  $.ajax({
+    url: route('syncGoogleCalendarList'),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          location.reload();
+        }, 1200);
+      }
+    },
+    complete: function complete() {
+      setAdminBtnLoader(btnSubmitEle);
+    }
+  });
+});
+listenSubmit('#googleCalendarForm', function (e) {
+  e.preventDefault();
+  if (!$('.google-calendar').is(':checked')) {
+    displayErrorMessage(Lang.get('js.select_calendar'));
+    return;
+  }
+  var url = '';
+  if (!isEmpty($('#googleCalendarDoctorRole').val())) {
+    url = route('doctors.appointmentGoogleCalendar.store');
+  } else if (!isEmpty($('#googleCalendarPatientRole').val())) {
+    url = route('patients.appointmentGoogleCalendar.store');
+  }
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          location.reload();
+        }, 1200);
+      }
+    },
+    error: function error(_error) {
+      displayErrorMessage(_error.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/live_consultations/live_consultations.js":
+/*!**********************************************************************!*\
+  !*** ./resources/assets/js/live_consultations/live_consultations.js ***!
+  \**********************************************************************/
+/***/ (() => {
+
+// document.addEventListener('DOMContentLoaded', loadLiveConsultationDate)
+
+Livewire.hook("element.init", function () {
+  loadLiveConsultationDate();
+  if ($('#doctorLiveConsultantStatus').length) {
+    $('#doctorLiveConsultantStatus').select2();
+  }
+});
+function loadLiveConsultationDate() {
+  if (!$('#consultationDate').length) {
+    return;
+  }
+  var lang = $('.currentLanguage').val();
+  $('#consultationDate').flatpickr({
+    "locale": lang,
+    enableTime: true,
+    minDate: new Date(),
+    dateFormat: 'Y-m-d H:i'
+  });
+  if (!$('.edit-consultation-date').length) {
+    return;
+  }
+  $('.edit-consultation-date').flatpickr({
+    "locale": lang,
+    enableTime: true,
+    minDate: new Date(),
+    dateFormat: 'Y-m-d H:i'
+  });
+}
+var liveConsultationTableName = '#liveConsultationTable';
+listenClick('#addLiveConsultationBtn', function () {
+  resetModalForm('#addNewForm');
+  $('#addDoctorID').trigger('change');
+  var lang = $('.currentLanguage').val();
+  $('#patientName').trigger('change');
+  $('#consultationDate').flatpickr({
+    "locale": lang,
+    enableTime: true,
+    minDate: new Date(),
+    dateFormat: 'Y-m-d H:i',
+    disableMobile: 'true'
+  });
+  $('#addModal').modal('show').appendTo('body');
+});
+listenSubmit('#addNewForm', function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find('#btnSave');
+  loadingButton.button('loading');
+  setAdminBtnLoader(loadingButton);
+  $.ajax({
+    url: route('doctors.live-consultations.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#addModal').modal('hide');
+        Livewire.dispatch('refresh');
+        setTimeout(function () {
+          loadingButton.button('reset');
+        }, 2500);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+      setTimeout(function () {
+        loadingButton.button('reset');
+      }, 2000);
+    },
+    complete: function complete() {
+      setAdminBtnLoader(loadingButton);
+    }
+  });
+});
+listenClick('#liveConsultationResetFilter', function () {
+  $('#statusArr').val(3).trigger('change');
+});
+listenChange('.doctorLiveConsultantStatus', function () {
+  Livewire.dispatch("changeStatusFilter", {
+    value: $(this).val()
+  });
+});
+listenSubmit('#editForm', function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find('#btnEditSave');
+  loadingButton.button('loading');
+  setAdminBtnLoader(loadingButton);
+  var id = $('#liveConsultationId').val();
+  $.ajax({
+    url: route('doctors.live-consultations.destroy', id),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#editModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      setAdminBtnLoader(loadingButton);
+      loadingButton.button('reset');
+    }
+  });
+});
+listenChange('.consultation-change-status', function (e) {
+  e.preventDefault();
+  var statusId = $(this).val();
+  $.ajax({
+    url: route('doctors.live.consultation.change.status'),
+    type: 'POST',
+    data: {
+      statusId: statusId,
+      id: $(this).attr('data-id')
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.start-btn', function (event) {
+  var StartLiveConsultationId = $(event.currentTarget).attr('data-id');
+  startRenderData(StartLiveConsultationId);
+});
+listenClick('.live-consultation-edit-btn', function (event) {
+  var editLiveConsultationId = $(event.currentTarget).attr('data-id');
+  editRenderData(editLiveConsultationId);
+});
+window.editRenderData = function (id) {
+  $.ajax({
+    url: route('doctors.live-consultations.edit', id),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        var liveConsultation = result.data;
+        $('#liveConsultationId').val(liveConsultation.id);
+        $('.edit-consultation-title').val(liveConsultation.consultation_title);
+        $('.edit-consultation-date').val(moment(liveConsultation.consultation_date).format('YYYY-MM-DD H:mm'));
+        $('.edit-consultation-duration-minutes').val(liveConsultation.consultation_duration_minutes);
+        $('.edit-patient-name').val(liveConsultation.patient_id).trigger('change');
+        $('.edit-doctor-name').val(liveConsultation.doctor_id).trigger('change');
+        $('.host-enable,.host-disabled').prop('checked', false);
+        if (liveConsultation.host_video == true) {
+          $('.host-enable').prop('checked', true).val(1);
+        } else {
+          $('.host-disabled').prop('checked', true).val(1);
+        }
+        $('.client-enable,.client-disabled').prop('checked', false);
+        if (liveConsultation.participant_video == true) {
+          $('.client-enable').prop('checked', true).val(1);
+        } else {
+          $('.client-disabled').prop('checked', true).val(1);
+        }
+        $('.edit-consultation-type').val(liveConsultation.type).trigger('change');
+        $('.edit-consultation-type-number').val(liveConsultation.type_number).trigger('change');
+        $('.edit-description').val(liveConsultation.description);
+        $('#editModal').appendTo('body').modal('show');
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+};
+window.startRenderData = function (id) {
+  $.ajax({
+    url: $('#doctorRole').val() ? route('doctors.live.consultation.get.live.status', id) : route('patients.live.consultation.get.live.status', id),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        var liveConsultation = result.data;
+        $('#startLiveConsultationId').val(liveConsultation.liveConsultation.id);
+        $('.start-modal-title').text(liveConsultation.liveConsultation.consultation_title);
+        $('.host-name').text(liveConsultation.liveConsultation.user.full_name);
+        $('.date').text(moment(liveConsultation.liveConsultation.consultation_date).format('LT') + ', ' + moment(liveConsultation.liveConsultation.consultation_date).format('Do MMM, Y'));
+        $('.minutes').text(liveConsultation.liveConsultation.consultation_duration_minutes);
+        $('#startModal').find('.status').append(liveConsultation.zoomLiveData.status === 'started' ? $('.status').text('Started') : $('.status').text('Awaited'));
+        $('.start').attr('href', $('#patientRole').val() ? liveConsultation.liveConsultation.meta.join_url : liveConsultation.zoomLiveData.status === 'started' ? $('.start').addClass('disabled') : liveConsultation.liveConsultation.meta.start_url);
+        $('#startModal').appendTo('body').modal('show');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+};
+listenClick('.live-consultation-delete-btn', function (event) {
+  var liveConsultationId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('doctors.live-consultations.destroy', liveConsultationId), Lang.get('js.live_consultations'));
+});
+listenClick('.consultation-show-data', function (event) {
+  var consultationId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    url: $('#doctorRole').val() ? route('doctors.live-consultations.show', consultationId) : route('patients.live-consultations.show', consultationId),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        var liveConsultation = result.data.liveConsultation;
+        var showModal = $('#showModal');
+        $('#startLiveConsultationId').val(liveConsultation.id);
+        $('#consultationTitle').text(liveConsultation.consultation_title);
+        $('#consultationDates').text(moment(liveConsultation.consultation_date).format('LT') + ', ' + moment(liveConsultation.consultation_date).format('Do MMM, Y'));
+        $('#consultationDurationMinutes').text(liveConsultation.consultation_duration_minutes);
+        $('#consultationPatient').text(liveConsultation.patient.user.full_name);
+        $('#consultationDoctor').text(liveConsultation.doctor.user.full_name);
+        liveConsultation.host_video === 0 ? $('#consultationHostVideo').text('Disable') : $('#consultationHostVideo').text('Enable');
+        liveConsultation.participant_video === 0 ? $('#consultationParticipantVideo').text('Disable') : $('#consultationParticipantVideo').text('Enable');
+        isEmpty(liveConsultation.description) ? $('#consultationDescription').text('N/A') : $('#consultationDescription').text(liveConsultation.description);
+        showModal.modal('show').appendTo('body');
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+});
+listenClick('#doctorLiveConsultantResetFilter', function () {
+  $('#doctorLiveConsultantStatus').val(3).trigger('change');
+  hideDropdownManually($('#doctorLiveConsultantFilterBtn'), $('.dropdown-menu'));
+});
+listenClick('.add-credential', function () {
+  if ($('.ajaxCallIsRunning').val()) {
+    return;
+  }
+  ajaxCallInProgress();
+  var userId = $('#zoomUserId').val();
+  renderUserZoomData(userId);
+});
+function renderUserZoomData(id) {
+  $.ajax({
+    url: 'user-zoom-credential/' + id + '/fetch',
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        var userZoomData = result.data;
+        if (!isEmpty(userZoomData)) {
+          $('#zoomApiKey').val(userZoomData.zoom_api_key);
+          $('#zoomApiSecret').val(userZoomData.zoom_api_secret);
+        }
+        $('#addCredential').modal('show');
+        ajaxCallCompleted();
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+}
+listenSubmit('#addZoomForm', function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find('#btnZoomSave');
+  loadingButton.button('loading');
+  $.ajax({
+    url: $('#zoomCredentialCreateUrl').val(),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#addCredential').modal('hide');
+        setTimeout(function () {
+          loadingButton.button('reset');
+        }, 2500);
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/medicine_bills/medicine_bill.js":
+/*!*************************************************************!*\
+  !*** ./resources/assets/js/medicine_bills/medicine_bill.js ***!
+  \*************************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadSaleMedicineCreate);
+var uniquePrescriptionId = "";
+function loadSaleMedicineCreate() {
+  if (!$("#medicineUniqueId").length) {
+    return;
+  }
+  $(".medicinePurchaseId").select2({
+    width: "100%"
+  });
+  $(".medicine_bill_date").flatpickr({
+    enableTime: true,
+    defaultDate: new Date(),
+    dateFormat: "Y-m-d H:i"
+  });
+  $(".edit_medicine_bill_date").flatpickr({
+    enableTime: true,
+    dateFormat: "Y-m-d H:i"
+  });
+  $(".medicineBillExpiryDate").flatpickr({
+    minDate: new Date(),
+    dateFormat: "Y-m-d"
+  });
+  $(".medicine-payment-mode").select2({
+    width: "100%"
+  });
+  $(".medicineBillCategoriesId").select2({
+    width: "100%"
+  });
+}
+listenChange(".medicineBillCategoriesId", function () {
+  var categoryId = $(this).val();
+  var currentRow = $(this).closest("tr");
+  var medicineId = currentRow.find('.purchaseMedicineId');
+  var medicineAvlQty = currentRow.find('.medicineTotalQuantity');
+  var medicineSalePrice = currentRow.find('.medicineBill-sale-price');
+  if (categoryId == "") {
+    $(medicineId).find("option").remove();
+    $(medicineId).append($("<option></option>").attr("placeholder", "").text(Lang.get("js.select_medicine")));
+    $(medicineAvlQty).text('0');
+    return false;
+  }
+  $.ajax({
+    type: "get",
+    url: route("get-medicine-category", categoryId),
+    success: function success(result) {
+      var array = result.data.medicine;
+      $(medicineId).find("option").remove();
+      $(medicineId).attr("required", true);
+      $(medicineId).append($('<option value="">Select Medicine</option>'));
+      $.each(array, function (key, value) {
+        $(medicineId).append($('<option></option>').attr('value', key).text(value));
+      });
+      $(medicineAvlQty).text('0');
+      $(medicineSalePrice).val('0.00');
+    }
+  });
+});
+listenChange(".medicinePurchaseId", function () {
+  var currentRow = $(this).closest("tr");
+  var medicineId = $(this).val();
+  var uniqueId = $(this).attr("data-id");
+  var salePriceId = currentRow.find(".medicineBill-sale-price");
+  var QuantityPriceId = currentRow.find(".medicineTotalQuantity");
+  if (medicineId == "" || medicineId == Lang.get("js.select_medicine")) {
+    $(salePriceId).val("0.00");
+    $(QuantityPriceId).text("0");
+    return false;
+  }
+  $.ajax({
+    type: "get",
+    url: route("get-medicine", medicineId),
+    success: function success(result) {
+      $(salePriceId).val(result.data.selling_price.toFixed(2));
+      var currentqty = currentRow.find(".medicineBill-quantity").val();
+      var price = currentRow.find(".medicineBill-sale-price").val();
+      var currentamount = parseFloat(price * currentqty);
+      currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
+      var taxEle = $(".medicineBill-tax");
+      var elements = $(".medicine-bill-amount");
+      var total = 0.0;
+      var totalTax = 0;
+      var netAmount = 0;
+      var discount = 0;
+      var amount = 0;
+      for (var i = 0; i < elements.length; i++) {
+        total += parseFloat(elements[i].value);
+        discount = $(".medicineBill-discount").val();
+        if (taxEle[i].value != 0 && taxEle[i].value != "") {
+          totalTax += elements[i].value * taxEle[i].value / 100;
+        } else {
+          amount += parseFloat(elements[i].value);
+        }
+      }
+      discount = discount == "" ? 0 : discount;
+      netAmount = parseFloat(total) + parseFloat(totalTax);
+      netAmount = parseFloat(netAmount) - parseFloat(discount);
+      if (discount > total && $(this).hasClass("medicineBill-discount")) {
+        discount = discount.slice(0, -1);
+        displayErrorMessage(Lang.get("js.the_discount_shoul"));
+        $("#discountAmount").val(discount);
+        return false;
+      }
+      if (discount > total) {
+        netAmount = 0;
+      }
+      $("#total").val(total.toFixed(2));
+      $("#medicineTotalTaxId").val(totalTax.toFixed(2));
+      $("#netAmount").val(netAmount.toFixed(2));
+      $(QuantityPriceId).text(result.data.available_quantity);
+    }
+  });
+});
+listenClick(".add-medicine-btn-medicine-bill", function () {
+  uniquePrescriptionId = $("#medicineUniqueId").val();
+  var data = {
+    medicinesCategories: JSON.parse($("#showMedicineCategoriesMedicineBill").val()),
+    medicines: JSON.parse($(".associatePurchaseMedicines").val()),
+    uniqueId: uniquePrescriptionId
+  };
+  var prescriptionMedicineHtml = prepareTemplateRender("#medicineBillTemplate", data);
+  $(".medicine-bill-container").append(prescriptionMedicineHtml);
+  dropdownToSelecte2(".medicinePurchaseId");
+  dropdownToSelecteCategories2(".medicinebillCategories");
+  expiryDateFlatePicker(".medicinebillCategories");
+  $(".purchaseMedicineExpiryDate").flatpickr({
+    minDate: new Date(),
+    dateFormat: "Y-m-d"
+  });
+  uniquePrescriptionId++;
+  $("#medicineUniqueId").val(uniquePrescriptionId);
+});
+var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.select_medicine'),
+    width: "100%"
+  });
+};
+var dropdownToSelecteCategories2 = function dropdownToSelecteCategories2(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.select_category'),
+    width: "100%"
+  });
+};
+var expiryDateFlatePicker = function expiryDateFlatePicker(selector) {
+  $(".medicineBillExpiryDate").flatpickr({
+    minDate: new Date(),
+    dateFormat: "Y-m-d"
+  });
+};
+listenKeyup(".medicineBill-quantity,.medicineBill-price,.medicineBill-tax,.medicineBill-discount,.medicineBill-sale-price", function () {
+  var value = $(this).val();
+  $(this).val(value.replace(/[^0-9\.]/g, ""));
+  var currentRow = $(this).closest("tr");
+  var currentqty = currentRow.find(".medicineBill-quantity").val();
+  var price = currentRow.find(".medicineBill-sale-price").val();
+  var currentamount = parseFloat(price * currentqty);
+  currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
+  var taxEle = $(".medicineBill-tax");
+  var elements = $(".medicine-bill-amount");
+  var total = 0.0;
+  var totalTax = 0;
+  var netAmount = 0;
+  var discount = 0;
+  var amount = 0;
+  var qty = $(".medicineBill-quantity");
+  var PreviousQty = $(".previous-quantity");
+  for (var i = 0; i < elements.length; i++) {
+    total += parseFloat(elements[i].value);
+    discount = $(".medicineBill-discount").val();
+    if ($("#medicineBillStatus").val() == 1) {
+      if (parseInt(qty[i].value) > parseInt(PreviousQty[i].value)) {
+        var qtyRollback = qty[i].value.slice(0, -1);
+        currentRow.find(".medicineBill-quantity").val(qtyRollback);
+        currentqty = currentRow.find(".medicineBill-quantity").val();
+        price = currentRow.find(".medicineBill-sale-price").val();
+        currentamount = parseFloat(price * currentqty);
+        currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2));
+        displayErrorMessage(Lang.get("js.update_quantity"));
+        return false;
+      }
+    }
+    if (taxEle[i].value != 0 && taxEle[i].value != "") {
+      if (taxEle[i].value > 99) {
+        var taxAmount = taxEle[i].value.slice(0, -1);
+        currentRow.find(".medicineBill-tax").val(taxAmount);
+        displayErrorMessage(Lang.get("js.tax_should_be"));
+        $("#discountAmount").val(discount);
+        return false;
+      }
+      totalTax += elements[i].value * taxEle[i].value / 100;
+    } else {
+      amount += parseFloat(elements[i].value);
+    }
+  }
+  discount = discount == "" ? 0 : discount;
+  netAmount = parseFloat(total) + parseFloat(totalTax);
+  netAmount = parseFloat(netAmount) - parseFloat(discount);
+  if (discount > total && $(this).hasClass("medicineBill-discount")) {
+    discount = discount.slice(0, -1);
+    displayErrorMessage(Lang.get("js.the_discount_shoul"));
+    $("#discountAmount").val(discount);
+    return false;
+  }
+  if (discount > total) {
+    netAmount = 0;
+  }
+  $("#total").val(total.toFixed(2));
+  $("#medicineTotalTaxId").val(totalTax.toFixed(2));
+  $("#netAmount").val(netAmount.toFixed(2));
+});
+listenSubmit("#CreateMedicineBillForm", function (e) {
+  e.preventDefault();
+  var netAmount = "#netAmount";
+  if ($("#total").val() < $("#discountAmount").val()) {
+    displayErrorMessage(Lang.get("js.the_discount_shoul"));
+    return false;
+  } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
+    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
+    return false;
+  } else if ($(netAmount).val() == 0) {
+    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
+    return false;
+  } else if ($(".medicineBill-quantity").val() == 0 || $(".medicineBill-quantity").val() == null || $(".medicineBill-quantity").val() == "") {
+    displayErrorMessage(Lang.get("js.quantity_should"));
+    return false;
+  }
+  $(this)[0].submit();
+});
+listenClick(".add-patient-modal", function () {
+  $("#addPatientModal").appendTo("body").modal("show");
+});
+listenSubmit("#addPatientForm", function (e) {
+  e.preventDefault();
+  processingBtn("#addPatientForm", "#patientBtnSave", "loading");
+  $("#patientBtnSave").attr("disabled", true);
+  $.ajax({
+    url: route("store.patient"),
+    type: "POST",
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        $("#prescriptionPatientId").find("option").remove();
+        $("#prescriptionPatientId").append($("<option></option>").attr("placeholder", "").text(Lang.get("js.select_patient")));
+        $.each(result.data, function (i, v) {
+          $("#prescriptionPatientId").append($("<option></option>").attr("value", i).text(v));
+        });
+        displaySuccessMessage(result.message);
+        $("#addPatientModal").modal("hide");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      $("#patientBtnSave").attr("disabled", false);
+      processingBtn("#addPatientForm", "#patientBtnSave");
+    }
+  });
+});
+listen('hidden.bs.modal', "#addPatientModal", function () {
+  resetModalForm("#addPatientForm", "#patientErrorsBox");
+});
+listenClick(".medicine-bill-delete-btn", function (event) {
+  var id = $(event.currentTarget).attr("data-id");
+  deleteItem(route("medicine-bills.destroy", id), Lang.get("js.medicine_bill"));
+});
+listenSubmit("#MedicinebillForm", function (e) {
+  e.preventDefault();
+  var netAmount = "#netAmount";
+  if (parseFloat($("#total").val()) < parseFloat($("#discountAmount").val())) {
+    displayErrorMessage(Lang.get("js.the_discount_shoul"));
+    return false;
+  } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
+    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
+    return false;
+  } else if ($(netAmount).val() == 0) {
+    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
+    return false;
+  } else if ($(".medicineBill-quantity").val() == 0 || $(".medicineBill-quantity").val() == null || $(".medicineBill-quantity").val() == "") {
+    displayErrorMessage(Lang.get("js.quantity_should"));
+    return false;
+  }
+  $medicineBillId = $("#medicineBillId").val();
+  $.ajax({
+    url: route("medicine-bills.update", $medicineBillId),
+    type: "post",
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          // Turbo.visit(route("medicine-bills.index")); // true
+          window.location.href = route("medicine-bills.index");
+        }, 2000);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick(".delete-medicine-bill-item", function () {
+  var currentRow = $(this).closest("tr");
+  var currentRowAmount = currentRow.find(".medicine-bill-amount").val();
+  var currentRowTax = currentRow.find(".medicineBill-tax").val();
+  var currentTaxAmount = parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
+  var updatedTax = parseFloat($("#medicineTotalTaxId").val()) - parseFloat(currentTaxAmount);
+  $("#medicineTotalTaxId").val(updatedTax.toFixed(2));
+  var updatedTotalAmount = parseFloat($("#total").val()) - parseFloat(currentRowAmount);
+  $("#total").val(updatedTotalAmount.toFixed(2));
+  var amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
+  var updateNetAmount = parseFloat($("#netAmount").val()) - parseFloat(amountSubfromNetAmt);
+  $("#netAmount").val(updateNetAmount.toFixed(2));
+  $(this).parents("tr").remove();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/medicines/medicines.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/medicines/medicines.js ***!
+  \****************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadMedicineCreateData);
+"use strict";
+function loadMedicineCreateData() {
+  $('#medicineCategoryId,#medicineBrandId').select2({
+    width: '100%'
+  });
+  listenClick(".showMedicineBtn", function (event) {
+    event.preventDefault();
+    var medicineId = $(event.currentTarget).attr("data-id");
+    renderMedicineData(medicineId);
+  });
+  function renderMedicineData(id) {
+    $.ajax({
+      url: route("medicines.show.modal", id),
+      type: "GET",
+      success: function success(result) {
+        if (result.success) {
+          $("#showMedicineName").text(result.data.name);
+          $("#showMedicineBrand").text(result.data.brand_name);
+          $("#showMedicineCategory").text(result.data.category_name);
+          $("#showMedicineSaltComposition").text(result.data.salt_composition);
+          $("#showMedicineSellingPrice").text(result.data.selling_price);
+          $("#showMedicineBuyingPrice").text(result.data.buying_price);
+          $("#showMedicineQuanity").text(addCommas(result.data.quantity));
+          $("#showMedicineAvailableQuanity").text(addCommas(result.data.available_quantity));
+          $("#showMedicineSideEffects").text(result.data.side_effects);
+          moment.locale($("#medicineLanguage").val());
+          var createDate = moment(result.data.created_at);
+          $("#showMedicineCreatedOn").text(createDate.fromNow());
+          $("#showMedicineUpdatedOn").text(moment(result.data.updated_at).fromNow());
+          $("#showMedicineDescription").text(result.data.description);
+          setValueOfEmptySpan();
+          $("#showMedicine").appendTo("body").modal("show");
+        }
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON.message);
+      }
+    });
+  }
+}
+listenClick(".deleteMedicineBtn", function (event) {
+  var id = $(event.currentTarget).attr("data-id");
+  medicineDeleteItem(route("check.use.medicine", id), Lang.get("js.medicine"));
+});
+window.medicineDeleteItem = function (url, header) {
+  var tableId = null;
+  var callFunction = null;
+  $.ajax({
+    url: url,
+    type: "GET",
+    success: function success(result) {
+      if (result.success) {
+        var popUpText = result.data.result == true ? Lang.get('js.the_medicine_already_in_use') : Lang.get('js.are_you_sure') + ' "' + header + '"?';
+        swal({
+          title: Lang.get('js.deleted'),
+          text: popUpText,
+          icon: 'warning',
+          buttons: {
+            confirm: Lang.get('js.yes'),
+            cancel: Lang.get('js.no')
+          }
+        }).then(function (popResult) {
+          if (popResult) {
+            deleteMedicineAjax($("#indexMedicineUrl").val() + "/" + result.data.id, tableId = null, header, callFunction = null);
+          }
+        });
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+};
+function deleteMedicineAjax(url) {
+  var tableId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var header = arguments.length > 2 ? arguments[2] : undefined;
+  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  $.ajax({
+    url: url,
+    type: "DELETE",
+    dataType: "json",
+    success: function success(obj) {
+      if (obj.success && obj.data) {
+        swal({
+          title: obj.message,
+          text: Lang.get('js.are_you_sure') + ' "' + header + '"?',
+          icon: sweetAlertIcon,
+          timer: 3000,
+          buttons: {
+            confirm: Lang.get('js.yes'),
+            cancel: Lang.get('js.no')
+          }
+        }).then(function (result) {
+          if (result) {
+            $.ajax({
+              url: url,
+              type: "DELETE",
+              dataType: "json",
+              data: {
+                canDeleteCheck: "yes"
+              },
+              success: function success(obj) {},
+              error: function error(data) {
+                swal({
+                  title: "",
+                  text: data.responseJSON.message,
+                  confirmButtonColor: "#009ef7",
+                  icon: "error",
+                  timer: 5000,
+                  buttons: {
+                    confirm: Lang.get('js.ok')
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+      if (obj.success && !obj.data) {
+        Livewire.dispatch("resetPage");
+        swal({
+          icon: "success",
+          title: Lang.get('js.deleted'),
+          confirmButtonColor: "#f62947",
+          text: header + " " + Lang.get('js.has_been'),
+          timer: 2000,
+          buttons: {
+            confirm: Lang.get('js.ok')
+          }
+        });
+        if (callFunction) {
+          eval(callFunction);
+        }
+      }
+    },
+    error: function error(data) {
+      swal({
+        title: "",
+        text: data.responseJSON.message,
+        confirmButtonColor: "#009ef7",
+        icon: "error",
+        timer: 5000,
+        buttons: {
+          confirm: Lang.get('js.ok')
+        }
+      });
+    }
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/assets/js/patient_visits/patient-visit.js":
+/*!*************************************************************!*\
+  !*** ./resources/assets/js/patient_visits/patient-visit.js ***!
+  \*************************************************************/
+/***/ (() => {
+
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/patients/create-edit.js":
+/*!*****************************************************!*\
+  !*** ./resources/assets/js/patients/create-edit.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
+
+document.addEventListener('DOMContentLoaded', loadPatientData);
+function loadPatientData() {
+  loadPatientDob();
+  loadPatientCountry();
+  loadPatientprofileCountry();
+}
+function loadPatientDob() {
+  var patientDob = '.patient-dob';
+  var lang = $('.currentLanguage').val();
+  if (!$(patientDob).length) {
+    return;
+  }
+  $(patientDob).flatpickr({
+    "locale": lang,
+    maxDate: new Date(),
+    disableMobile: true
+  });
+}
+function loadPatientCountry() {
+  if (!$('#editPatientCountryId').length) {
+    return;
+  }
+  $('#patientCountryId').val($('#editPatientCountryId').val()).trigger('change');
+  setTimeout(function () {
+    $('#patientStateId').val($('#editPatientStateId').val()).trigger('change');
+  }, 400);
+  setTimeout(function () {
+    $('#patientCityId').val($('#editPatientCityId').val()).trigger('change');
+  }, 700);
+}
+function loadPatientprofileCountry() {
+  if (!$('#editPatientProfileCountryId').length) {
+    return;
+  }
+  $('#patientProfileCountryId').val($('#editPatientProfileCountryId').val()).trigger('change');
+  setTimeout(function () {
+    $('#patientProfileStateId').val($('#editPatientProfileStateId').val()).trigger('change');
+  }, 400);
+  setTimeout(function () {
+    $('#patientProfileCityId').val($('#editPatientProfileCityId').val()).trigger('change');
+  }, 700);
+}
+listenChange('input[type=radio][name=gender]', function () {
+  var file = $('#profilePicture').val();
+  if (isEmpty(file)) {
+    if (this.value == 1) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
+    } else if (this.value == 2) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
+    }
+  }
+});
+listenChange('#patientCountryId', function () {
+  $('#patientStateId').empty();
+  $('#patientCityId').empty();
+  $.ajax({
+    url: route('get-state'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      data: $(this).val()
+    },
+    success: function success(data) {
+      $('#patientStateId').empty();
+      $('#patientCityId').empty();
+      $('#patientStateId').append($('<option value=""></option>').text('Select State'));
+      $('#patientCityId').append($('<option value=""></option>').text('Select City'));
+      $.each(data.data, function (i, v) {
+        $('#patientStateId').append($('<option></option>').attr('value', i).text(v));
+      });
+    }
+  });
+});
+listenChange('#patientProfileCountryId', function () {
+  $('#patientProfileStateId').empty();
+  $('#patientProfileCityId').empty();
+  $.ajax({
+    url: route('get-state'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      data: $(this).val()
+    },
+    success: function success(data) {
+      $('#patientProfileStateId').empty();
+      $('#patientProfileCityId').empty();
+      $('#patientProfileStateId').append($('<option value=""></option>').text('Select State'));
+      $('#patientProfileCityId').append($('<option value=""></option>').text('Select City'));
+      $.each(data.data, function (i, v) {
+        $('#patientProfileStateId').append($('<option></option>').attr('value', i).text(v));
+      });
+    }
+  });
+});
+listenChange('#patientProfileStateId', function () {
+  $('#patientProfileCityId').empty();
+  $.ajax({
+    url: route('get-city'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      state: $(this).val()
+    },
+    success: function success(data) {
+      $('#patientProfileCityId').empty();
+      $('#patientProfileCityId').append($('<option value=""></option>').text('Select City'));
+      $.each(data.data, function (i, v) {
+        $('#patientProfileCityId').append($('<option></option>').attr('value', i).text(v));
+      });
+      if ($('#patientProfileIsEdit').val() && $('#editPatientProfileCityId').val()) {
+        $('#patientProfileCityId').val($('#editPatientProfileCityId').val()).trigger('change');
+      }
+    }
+  });
+});
+listenChange('#patientStateId', function () {
+  $('#patientCityId').empty();
+  $.ajax({
+    url: route('get-city'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      state: $(this).val()
+    },
+    success: function success(data) {
+      $('#patientCityId').empty();
+      $('#patientCityId').append($('<option value=""></option>').text('Select City'));
+      $.each(data.data, function (i, v) {
+        $('#patientCityId').append($('<option></option>').attr('value', i).text(v));
+      });
+      if ($('#patientIsEdit').val() && $('#editPatientCityId').val()) {
+        $('#patientCityId').val($('#editPatientCityId').val()).trigger('change');
+      }
+    }
+  });
+});
+listenSubmit('#createPatientForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenSubmit('#editPatientForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenClick('.removeAvatarIcon', function () {
+  var backgroundImg = $('#patientBackgroundImg').val();
+  $('#bgImage').css('background-image', '');
+  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
+  $('#removeAvatar').addClass('hide');
+  $('#tooltip287851').addClass('hide');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/patients/detail.js":
+/*!************************************************!*\
+  !*** ./resources/assets/js/patients/detail.js ***!
+  \************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadPatientShowAppointmentDate)
+
+var patientShowApptmentFilterDate = $("#patientShowPageAppointmentDate");
+var patientShowApptmentStart = moment().startOf("week");
+var patientShowApptmentEnd = moment().endOf("week");
+Livewire.hook("element.init", function () {
+  loadPatientShowAppointmentDate();
+  if ($("#patientShowPageAppointmentStatus").length) {
+    $("#patientShowPageAppointmentStatus").select2();
+  }
+  if ($(".patient-show-apptment-status-change").length) {
+    $(".patient-show-apptment-status-change").select2();
+  }
+  if (patientShowApptmentStart != undefined && patientShowApptmentEnd != undefined) {
+    cb(patientShowApptmentStart, patientShowApptmentEnd);
+  }
+});
+function loadPatientShowAppointmentDate() {
+  if (!$("#patientShowPageAppointmentDate").length) {
+    return;
+  }
+
+  // let patientShowApptmentStart = moment().startOf("week");
+  // let patientShowApptmentEnd = moment().endOf("week");
+
+  $("#patientShowPageAppointmentDate").daterangepicker({
+    startDate: patientShowApptmentStart,
+    endDate: patientShowApptmentEnd,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  //cb
+  );
+
+  // cb(patientShowApptmentStart, patientShowApptmentEnd);
+}
+function cb(start, end) {
+  $("#patientShowPageAppointmentDate").val(start.format("YYYY-MM-DD") + " - " + end.format("YYYY-MM-DD"));
+}
+listenClick(".patient-show-apptment-delete-btn", function (event) {
+  var patientShowApptmentRecordId = $(event.currentTarget).attr("data-id");
+  var patientShowApptmentUrl = !isEmpty($("#patientRolePatientDetail").val()) ? route("patients.appointments.destroy", patientShowApptmentRecordId) : route("appointments.destroy", patientShowApptmentRecordId);
+  deleteItem(patientShowApptmentUrl, "Appointment");
+});
+listenChange(".patient-show-apptment-status-change", function () {
+  var patientShowAppointmentStatus = $(this).val();
+  var patientShowAppointmentId = $(this).attr("data-id");
+  var currentData = $(this);
+  $.ajax({
+    url: route("change-status", patientShowAppointmentId),
+    type: "POST",
+    data: {
+      appointmentId: patientShowAppointmentId,
+      appointmentStatus: patientShowAppointmentStatus
+    },
+    success: function success(result) {
+      $(currentData).children("option.booked").addClass("hide");
+      Livewire.dispatch("refresh");
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick("#patientAppointmentResetFilter", function () {
+  $("#patientShowPageAppointmentStatus").val(1).trigger("change");
+  $("#patientShowPageAppointmentDate").val(moment().startOf("week").format("MM/DD/YYYY") + " - " + moment().endOf("week").format("MM/DD/YYYY")).trigger("change");
+});
+listenChange("#patientShowPageAppointmentDate", function () {
+  Livewire.dispatch("changeDateFilter", {
+    date: $(this).val()
+  });
+});
+listenChange("#patientShowPageAppointmentStatus", function () {
+  // Livewire.dispatch('changeDateFilter',
+  //     $('#patientShowPageAppointmentDate').val())
+  Livewire.dispatch("changeStatusFilter", {
+    status: $(this).val()
+  });
+});
+
+// document.addEventListener('livewire:load', function () {
+//     window.livewire.hook('message.processed', () => {
+//         if ($('#patientShowPageAppointmentStatus').length) {
+//             $('#patientShowPageAppointmentStatus').select2()
+//         }
+//         if ($('.patient-show-apptment-status-change').length) {
+//             $('.patient-show-apptment-status-change').select2()
+//         }
+//     })
+// })
+
+/***/ }),
+
+/***/ "./resources/assets/js/patients/doctor-patient-appointment.js":
+/*!********************************************************************!*\
+  !*** ./resources/assets/js/patients/doctor-patient-appointment.js ***!
+  \********************************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadDoctorPanelApptmentFilteDate);
+var doctorPanelApptmentFilterDate = $('#doctorAppointmentDateFilter');
+function loadDoctorPanelApptmentFilteDate() {
+  if (!doctorPanelApptmentFilterDate.length) {
+    return;
+  }
+  var doctorPanelApptmentStart = moment().startOf('week');
+  var doctorPanelApptmentEnd = moment().endOf('week');
+  function cb(start, end) {
+    doctorPanelApptmentFilterDate.html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+  }
+  doctorPanelApptmentFilterDate.daterangepicker({
+    startDate: doctorPanelApptmentStart,
+    endDate: doctorPanelApptmentEnd,
+    ranges: {
+      'Today': [moment(), moment()],
+      'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+      'This Week': [moment().startOf('week'), moment().endOf('week')],
+      'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+      'This Month': [moment().startOf('month'), moment().endOf('month')],
+      'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    }
+  }, cb);
+  cb(doctorPanelApptmentStart, doctorPanelApptmentEnd);
+}
+listenClick('.doctor-panel-delete-btn', function (event) {
+  var doctorPanelApptmentRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('patients.appointments.destroy', doctorPanelApptmentRecordId), 'Appointment');
+});
+listenChange('.doctor-panel-status-change', function () {
+  var appointmentStatus = $(this).val();
+  var appointmentId = $(this).attr('data-id');
+  var currentData = $(this);
+  $.ajax({
+    url: route('doctors.change-status', appointmentId),
+    type: 'POST',
+    data: {
+      appointmentId: appointmentId,
+      appointmentStatus: appointmentStatus
+    },
+    success: function success(result) {
+      $(currentData).children('option.booked').addClass('hide');
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick('#doctorPanelResetFilter', function () {
+  $('#appointmentStatus').val(book).trigger('change');
+  $('#doctorAppointmentDateFilter').val(moment().format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY')).trigger('change');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/patients/patients.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/patients/patients.js ***!
+  \**************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadAppointmentFilterDate)
+
+var patientFilterDate = "#patientDateFilter";
+var patientStart = moment().subtract(100, "years");
+var patientEnd = moment();
+Livewire.hook("element.init", function () {
+  loadAppointmentFilterDate();
+  if (patientStart != undefined && patientEnd != undefined) {
+    cb(patientStart, patientEnd);
+  }
+});
+function loadAppointmentFilterDate() {
+  if (!$(patientFilterDate).length) {
+    return;
+  }
+  var timeRange = $("#patientDateFilter");
+  // let patientStart = moment().subtract(100, "years");
+  // let patientEnd = moment();
+
+  timeRange.daterangepicker({
+    startDate: patientStart,
+    endDate: patientEnd,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.all"), [moment().subtract(100, "years"), moment()]), Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  //  cb
+  );
+
+  // cb(patientStart, patientEnd)
+
+  timeRange.on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    patientStart = picker.startDate;
+    patientEnd = picker.endDate;
+  });
+}
+function cb(start, end) {
+  $("#patientDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
+}
+listenClick(".patient-delete-btn", function () {
+  var patientId = $(this).attr("data-id");
+  deleteItem(route("patients.destroy", patientId), Lang.get("js.patient"));
+});
+listenChange(".patient-email-verified", function (e) {
+  var patientRecordId = $(e.currentTarget).attr("data-id");
+  var value = $(this).is(":checked") ? 1 : 0;
+  $.ajax({
+    type: "POST",
+    url: route("emailVerified"),
+    data: {
+      id: patientRecordId,
+      value: value
+    },
+    success: function success(result) {
+      Livewire.dispatch("refresh");
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick(".patient-email-verification", function (event) {
+  var userId = $(event.currentTarget).attr("data-id");
+  $.ajax({
+    type: "POST",
+    url: route("resend.email.verification", userId),
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      setTimeout(function () {
+        window.location.reload();
+        // Turbo.visit(window.location.href);
+      }, 5000);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/prescriptions/create-edit.js":
+/*!**********************************************************!*\
+  !*** ./resources/assets/js/prescriptions/create-edit.js ***!
+  \**********************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadPrescriptionCreate);
+var uniquePrescriptionId = 1;
+function loadPrescriptionCreate() {
+  if (!$('#prescriptionPatientId').length && !$('#editPrescriptionPatientId').length) {
+    return;
+  }
+  $('#prescriptionPatientId,#editPrescriptionPatientId,#filter_status,#prescriptionDoctorId,#editPrescriptionDoctorId,#prescriptionTime,#prescriptionMedicineCategoryId,#prescriptionMedicineBrandId,.prescriptionMedicineId,.prescriptionMedicineMealId,#editPrescriptionTime').select2({
+    width: '100%'
+  });
+  $('#prescriptionMedicineBrandId, #prescriptionMedicineBrandId').select2({
+    width: '100%',
+    dropdownParent: $('#add_new_medicine')
+  });
+  $('#prescriptionPatientId,#editPrescriptionPatientId').first().focus();
+}
+;
+listenSubmit('#createPrescription, #editPrescription', function () {
+  $('.btnPrescriptionSave').attr('disabled', true);
+});
+listenClick(".add-medicine", function () {
+  $("#add_new_medicine").appendTo("body").modal("show");
+});
+listenSubmit('#createMedicineFromPrescription', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('prescription.medicine.store'),
+    method: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      $('#add_new_medicine').modal('hide');
+      $(".medicineTable").load(location.href + " .medicineTable");
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listen('hidden.bs.modal', '#add_new_medicine', function () {
+  resetModalForm('#createMedicineFromPrescription', '#medicinePrescriptionErrorBox');
+});
+var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.select_medicine'),
+    width: '100%'
+  });
+};
+var dropdownToSelecteDuration2 = function dropdownToSelecteDuration2(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.select_duration'),
+    width: '100%'
+  });
+};
+var dropdownToSelecteInterVal = function dropdownToSelecteInterVal(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.dose_interval'),
+    width: '100%'
+  });
+};
+listenClick('.delete-prescription-medicine-item', function () {
+  $(this).parents('tr').remove();
+  // resetPrescriptionMedicineItemIndex()
+});
+listenClick('.add-medicine-btn', function () {
+  uniquePrescriptionId++;
+  $('#prescriptionUniqueId').val(uniquePrescriptionId);
+  var data = {
+    'medicines': JSON.parse($('.associatePrescriptionMedicines').val()),
+    'meals': JSON.parse($('.associatePrescriptionMeals').val()),
+    'doseDuration': JSON.parse($('.DoseDurationId').val()),
+    'doseInterVal': JSON.parse($('.DoseInterValId').val()),
+    'uniqueId': uniquePrescriptionId
+  };
+  var prescriptionMedicineHtml = prepareTemplateRender('#prescriptionMedicineTemplate', data);
+  $('.prescription-medicine-container').append(prescriptionMedicineHtml);
+  dropdownToSelecte2('.prescriptionMedicineId');
+  dropdownToSelecte2('.prescriptionMedicineMealId');
+  dropdownToSelecteDuration2('.DoseDurationIdTemplate');
+  dropdownToSelecteInterVal('.DoseInterValIdTemplate');
+});
+var resetPrescriptionMedicineItemIndex = function resetPrescriptionMedicineItemIndex() {
+  var index = 1;
+  if (index - 1 == 0) {
+    var data = {
+      'medicines': JSON.parse($('.associatePrescriptionMedicines').val()),
+      'meals': JSON.parse($('.associatePrescriptionMeals').val()),
+      'doseDuration': JSON.parse($('.DoseDurationId').val()),
+      'doseInterVal': JSON.parse($('.DoseInterValId').val()),
+      'uniqueId': uniquePrescriptionId
+    };
+    var packageServiceItemHtml = prepareTemplateRender('#prescriptionMedicineTemplate', data);
+    $('.prescription-medicine-container').append(packageServiceItemHtml);
+    dropdownToSelecte2('.prescriptionMedicineId');
+    dropdownToSelecte2('.prescriptionMedicineMealId');
+    dropdownToSelecteDuration2('.DoseDurationIdTemplate');
+    dropdownToSelecteInterVal('.DoseInterValIdTemplate');
+    uniquePrescriptionId++;
+  }
+};
+listenChange('.quantityget', function () {
+  var medicineId = $(this).val();
+  var currentRow = $(this).closest("tr");
+  var uniqueId = $(this).attr("data-id");
+  var salePriceId = currentRow.find('.quantityshow');
+  var totalPriceId = currentRow.find('.totalqty');
+  if (medicineId == "" || medicineId == Lang.get("js.select_medicine")) {
+    $(totalPriceId).addClass("d-none");
+    $(salePriceId).addClass("d-none");
+    return false;
+  }
+  $.ajax({
+    type: "get",
+    url: route("get-medicine", medicineId),
+    success: function success(result) {
+      $(totalPriceId).removeClass("d-none");
+      $(salePriceId).removeClass("d-none");
+      $(totalPriceId).attr("class", "text-success totalqty");
+      $('#quantityshow' + uniqueId).text(result.data.available_quantity);
+      if ($(salePriceId).text() == null) {
+        $(totalPriceId).attr("class", "text-success totalqty d-none");
+      }
+      if ($(salePriceId).text() != null) {
+        $(totalPriceId).attr("class", "text-success totalqty");
+        $(".extra-margin-tr").css("margin-top", "21px");
+        $(".extrm").css("margin-top", "21px");
+      }
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/prescriptions/prescriptions.js":
+/*!************************************************************!*\
+  !*** ./resources/assets/js/prescriptions/prescriptions.js ***!
+  \************************************************************/
+/***/ (() => {
+
+listenClick('.delete-prescription-btn', function (event) {
+  var prescriptionId = $(event.currentTarget).attr('data-id');
+  deleteItem(route("prescriptions.destroy", prescriptionId), Lang.get('js.prescription'));
+});
+listenChange('.prescriptionStatus', function (event) {
+  var prescriptionId = $(event.currentTarget).attr('data-id');
+  prescriptionUpdateStatus(prescriptionId);
+});
+function prescriptionUpdateStatus(id) {
+  $.ajax({
+    url: route(prescriptionStatusRoute, id),
+    method: 'post',
+    cache: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        hideDropdownManually($('#prescriptionFilterBtn'), $('#prescriptionFilter'));
+      }
+    }
+  });
+}
+listenClick('#prescriptionResetFilter', function () {
+  $('#prescriptionHead').val('2').trigger('change');
+  hideDropdownManually($('#prescriptionFilterBtn'), $('.dropdown-menu'));
+});
+listenChange('#prescriptionHead', function () {
+  Livewire.dispatch('changeFilter', {
+    value: $(this).val()
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/profile/create-edit.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/profile/create-edit.js ***!
+  \****************************************************/
+/***/ (() => {
+
+listenSubmit('#profileForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenClick('.removeAvatarIcon', function () {
+  $('#bgImage').css('background-image', '');
+  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
+  $('#removeAvatar').addClass('hide');
+  $('#tooltip287851').addClass('hide');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/purchase-medicine/purchase-medicine.js":
+/*!********************************************************************!*\
+  !*** ./resources/assets/js/purchase-medicine/purchase-medicine.js ***!
+  \********************************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadPurchaseMedicineCreate);
+var uniquePrescriptionId = "";
+function loadPurchaseMedicineCreate() {
+  if (!$("#purchaseUniqueId").length) {
+    return;
+  }
+  $(".purchaseMedicineExpiryDate").flatpickr({
+    minDate: new Date(),
+    dateFormat: "Y-m-d"
+  });
+  $("#paymentMode,#paymentMode2").select2({
+    width: "100%"
+  });
+}
+listenClick(".add-medicine-btn-purchase", function () {
+  uniquePrescriptionId = $("#purchaseUniqueId").val();
+  var data = {
+    medicines: JSON.parse($(".associatePurchaseMedicines").val()),
+    uniqueId: uniquePrescriptionId
+  };
+  var prescriptionMedicineHtml = prepareTemplateRender("#purchaseMedicineTemplate", data);
+  $(".prescription-medicine-container").append(prescriptionMedicineHtml);
+  dropdownToSelecte2(".purchaseMedicineId");
+  $(".purchaseMedicineExpiryDate").flatpickr({
+    minDate: new Date(),
+    dateFormat: "Y-m-d"
+  });
+  uniquePrescriptionId++;
+  $("#purchaseUniqueId").val(uniquePrescriptionId);
+});
+var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
+  $(selector).select2({
+    placeholder: Lang.get('js.select_medicine'),
+    width: "100%"
+  });
+};
+listenChange(".purchaseMedicineId", function () {
+  var medicineId = $(this).val();
+  var uniqueId = $(this).attr("data-id");
+  var salePriceId = "#sale_price" + uniqueId;
+  var buyPriceId = "#purchase_price" + uniqueId;
+  if (medicineId == "") {
+    $(salePriceId).val("0.00");
+    $(buyPriceId).val("0.00");
+    return false;
+  }
+  $.ajax({
+    type: "get",
+    url: route("get-medicine", medicineId),
+    success: function success(result) {
+      $(salePriceId).val(result.data.selling_price.toFixed(2));
+      $(buyPriceId).val(result.data.buying_price.toFixed(2));
+    }
+  });
+});
+listenKeyup(".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,.purchase-discount", function () {
+  var value = $(this).val();
+  $(this).val(value.replace(/[^0-9\.]/g, ""));
+  var currentRow = $(this).closest("tr");
+  var currentqty = currentRow.find('.purchase-quantity').val();
+  var price = currentRow.find('.purchase-price').val();
+  var currentamount = parseFloat(price * currentqty);
+  currentRow.find('.purchase-amount').val(currentamount.toFixed(2));
+  var taxEle = $('.purchase-tax');
+  var elements = $('.purchase-amount');
+  var total = 0.00;
+  var totalTax = 0;
+  var netAmount = 0;
+  var discount = 0;
+  var amount = 0;
+  for (var i = 0; i < elements.length; i++) {
+    total += parseFloat(elements[i].value);
+    discount = $('.purchase-discount').val();
+    if (taxEle[i].value != 0 && taxEle[i].value != '') {
+      if (taxEle[i].value > 99) {
+        var taxAmount = taxEle[i].value.slice(0, -1);
+        currentRow.find('.purchase-tax').val(taxAmount);
+        displayErrorMessage(Lang.get("js.tax_should_be"));
+        $("#discountAmount").val(discount);
+        return false;
+      }
+      totalTax += elements[i].value * taxEle[i].value / 100;
+    } else {
+      amount += parseFloat(elements[i].value);
+    }
+  }
+  discount = discount == '' ? 0 : discount;
+  netAmount = parseFloat(total) + parseFloat(totalTax);
+  netAmount = parseFloat(netAmount) - parseFloat(discount);
+  if (discount > total && $(this).hasClass('purchase-discount')) {
+    discount = discount.slice(0, -1);
+    displayErrorMessage(Lang.get("js.the_discount_shoul"));
+    $("#discountAmount").val(discount);
+    return false;
+  }
+  if (discount > total) {
+    netAmount = 0;
+  }
+  $("#total").val(total.toFixed(2));
+  $("#purchaseTaxId").val(totalTax.toFixed(2));
+  $("#netAmount").val(netAmount.toFixed(2));
+  // let value = $(this).val();
+  // $(this).val(value.replace(/[^0-9\.]/g, ""));
+  // var currentRow = $(this).closest("tr");
+  // let currentqty = currentRow.find(".purchase-quantity").val();
+  // let price = currentRow.find(".purchase-price").val();
+  // let medicineBillTax = currentRow.find(".purchase-tax").val();
+  // let currentamount = parseFloat(price * currentqty);
+  // currentRow.find(".amount").val(currentamount.toFixed(2));
+
+  // let y = $(".purchaseMedicineId").length;
+  // let taxEle = $(".purchase-tax");
+  // let elements = $(".amount");
+  // let total = 0.0;
+  // let totalTax = 0;
+  // let netAmount = 0;
+  // let discount = 0;
+  // let amount = 0;
+  // var qty = $(".purchase-quantity");
+
+  // for (let i = 0; i < elements.length; i++) {
+  //     total += parseFloat(elements[i].value);
+  //     discount = $(".purchase-discount").val();
+  //     let taxAmount = $(this).val();
+  //     if (taxEle[i].value != 0 && taxEle[i].value != "") {
+  //         if (taxEle[i].value > 99) {
+  //             let taxAmount = taxEle[i].value.slice(0, -1);
+  //             currentRow.find(".purchase-tax").val(taxAmount);
+  //             displayErrorMessage(
+  //                 Lang.get("Taxes should be less than 100%.")
+  //             );
+  //             $("#discountAmount").val(discount);
+  //             return false;
+  //         }
+  //         totalTax += (elements[i].value * taxEle[i].value) / 100;
+  //         amount += parseFloat(elements[i].value) + parseFloat(totalTax);
+  //     } else {
+  //         amount += parseFloat(elements[i].value);
+  //     }
+  // }
+  // discount = discount == "" ? 0 : discount;
+  // netAmount = parseFloat(amount) - parseFloat(discount);
+  // if (discount > total && $(this).hasClass("purchase-discount")) {
+  //     discount = discount.slice(0, -1);
+  //     displayErrorMessage(
+  //         Lang.get("The discount should be less than the total amount.")
+  //     );
+  //     $("#discountAmount").val(discount);
+  //     return false;
+  // }
+  // if (discount > total) {
+  //     netAmount = 0;
+  // }
+  // $("#total").val(total.toFixed(2));
+  // $("#purchaseTaxId").val(totalTax.toFixed(2));
+  // $("#netAmount").val(netAmount.toFixed(2));
+});
+listenClick(".delete-purchase-medicine-item", function () {
+  var currentRow = $(this).closest("tr");
+  var currentRowAmount = currentRow.find('.purchase-amount').val();
+  var currentRowTax = currentRow.find('.purchase-tax').val();
+  var currentTaxAmount = parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
+  var updatedTax = parseFloat($('#purchaseTaxId').val()) - parseFloat(currentTaxAmount);
+  $('#purchaseTaxId').val(updatedTax.toFixed(2));
+  var updatedTotalAmount = parseFloat($('#total').val()) - parseFloat(currentRowAmount);
+  $('#total').val(updatedTotalAmount.toFixed(2));
+  var amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
+  var updateNetAmount = parseFloat($('#netAmount').val()) - parseFloat(amountSubfromNetAmt);
+  $('#netAmount').val(updateNetAmount.toFixed(2));
+  $(this).parents("tr").remove();
+});
+listenSubmit("#purchaseMedicineFormId", function (e) {
+  e.preventDefault();
+  var y = $("#purchaseUniqueId").val() - 1;
+  var tx = 1;
+  for (var i = 1; i <= y; i++) {
+    var medicinID = "#medicineChooseId" + i;
+    var taxId = "tax" + i;
+    if (typeof $(taxId).val() != "undefined") {
+      if ($(taxId).val() == null || $(taxId).val() == "") {
+        tx = 0;
+      }
+    }
+    if (typeof $(medicinID).val() != "undefined") {
+      if ($(medicinID).val() == null || $(medicinID).val() == "") {
+        displayErrorMessage(Lang.get('js.enter_lot_number'));
+        return false;
+      }
+    }
+    var lotNum = "#lot_no" + i;
+    if (typeof $(lotNum).val() != "undefined") {
+      if ($(lotNum).val() == null || $(lotNum).val() == "") {
+        displayErrorMessage(Lang.get('js.enter_lot_number'));
+        return false;
+      }
+    }
+    var salePrice = "#sale_price" + i;
+    if (typeof $(salePrice).val() != "undefined") {
+      if ($(salePrice).val() == null || $(salePrice).val() == "") {
+        displayErrorMessage(Lang.get('js.enter_sale_price'));
+        return false;
+      }
+    }
+    var purchasePrice = "#purchase_price" + i;
+    if (typeof $(purchasePrice).val() != "undefined") {
+      if ($(purchasePrice).val() == null || $(purchasePrice).val() == "") {
+        displayErrorMessage("Enter purchase price.");
+        return false;
+      } else if ($(purchasePrice).val() == 0) {
+        displayErrorMessage(Lang.get('js.quantity_should'));
+        return false;
+      }
+    }
+    var quantityID = "#quantity" + i;
+    if (typeof $(quantityID).val() != "undefined") {
+      if ($(quantityID).val() == null || $(quantityID).val() == "") {
+        displayErrorMessage("Enter quantity.");
+        return false;
+      } else if ($(quantityID).val() == 0) {
+        displayErrorMessage(Lang.get('js.quantity_should'));
+        return false;
+      }
+    }
+  }
+  var netAmount = "#netAmount";
+  if ($(netAmount).val() == null || $(netAmount).val() == "") {
+    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
+    return false;
+  } else if ($(netAmount).val() == 0) {
+    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
+    return false;
+  }
+  if (tx == 0 && ($("#purchaseTaxId").val() == null || $("#purchaseTaxId").val() == "")) {
+    displayErrorMessage(Lang.get("js.tax_cannot_be_zero_empty"));
+    return false;
+  }
+  $(this)[0].submit();
+});
+listenClick(".purchaseMedicineDelete", function (event) {
+  var id = $(event.currentTarget).attr("data-id");
+  deleteItem(route("medicine-purchase.destroy", id), Lang.get("js.purchase_medicine"));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/reviews/review.js":
+/*!***********************************************!*\
+  !*** ./resources/assets/js/reviews/review.js ***!
+  \***********************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadReviewData);
+function loadReviewData() {
+  var star_rating_width = $('.fill-ratings span').width();
+  $('.star-ratings').width(star_rating_width);
+}
+listenClick('.addReviewBtn', function () {
+  var reviewDoctorId = $(this).attr('data-id');
+  $('#reviewDoctorId').val(reviewDoctorId);
+});
+listenSubmit('#addReviewForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('patients.reviews.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#addReviewModal').modal('hide');
+        setTimeout(function () {
+          location.reload();
+        }, 1200);
+      }
+    },
+    error: function error(_error) {
+      displayErrorMessage(_error.responseJSON.message);
+    }
+  });
+});
+listenClick('.editReviewBtn', function () {
+  var reviewId = $(this).attr('data-id');
+  $.ajax({
+    url: route('patients.reviews.edit', reviewId),
+    type: 'GET',
+    success: function success(result) {
+      $('#editReviewModal').modal('show').appendTo('body');
+      $('#editDoctorId').val(result.data.doctor_id);
+      $('#editReviewId').val(result.data.id);
+      $('#editReview').val(result.data.review);
+      $('#editRating-' + result.data.rating).attr('checked', true);
+    },
+    error: function error(_error2) {
+      displayErrorMessage(_error2.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editReviewForm', function (e) {
+  e.preventDefault();
+  var reviewId = $('#editReviewId').val();
+  $.ajax({
+    url: route('patients.reviews.update', reviewId),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+      $('#editReviewModal').modal('hide');
+      setTimeout(function () {
+        location.reload();
+      }, 1200);
+    },
+    error: function error(_error3) {
+      displayErrorMessage(_error3.responseJSON.message);
+    }
+  });
+});
+listenClick('.addReviewBtn', function () {
+  $('#addReviewModal').modal('show').appendTo('body');
+});
+listen('hidden.bs.modal', '#addReviewModal', function () {
+  $('#reviewDoctorId').val('');
+  resetModalForm('#addReviewForm');
+});
+listen('hidden.bs.modal', '#editReviewModal', function () {
+  $('#editDoctorId').val('');
+  resetModalForm('#editReviewForm');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/roles/create-edit.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/roles/create-edit.js ***!
+  \**************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadRoleData);
+function loadRoleData() {
+  var totalPermissionsCount = parseInt($('#totalPermissions').val() - 1);
+  var checkAllLength = $('.permission:checked').length;
+  var roleIsEdit = $('#roleIsEdit').val();
+  if (roleIsEdit == true) {
+    if (checkAllLength === totalPermissionsCount) {
+      $('#checkAllPermission').prop('checked', true);
+    } else {
+      $('#checkAllPermission').prop('checked', false);
+    }
+  }
+}
+listenClick('#checkAllPermission', function () {
+  if ($('#checkAllPermission').is(':checked')) {
+    $('.permission').each(function () {
+      $(this).prop('checked', true);
+    });
+  } else {
+    $('.permission').each(function () {
+      $(this).prop('checked', false);
+    });
+  }
+});
+listenClick('.permission', function () {
+  var checkAllLength = $('.permission:checked').length;
+  var totalPermissionsCount = parseInt($('#totalPermissions').val() - 1);
+  if (checkAllLength === totalPermissionsCount) {
+    $('#checkAllPermission').prop('checked', true);
+  } else {
+    $('#checkAllPermission').prop('checked', false);
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/roles/roles.js":
+/*!********************************************!*\
+  !*** ./resources/assets/js/roles/roles.js ***!
+  \********************************************/
+/***/ (() => {
+
+listenClick('.role-delete-btn', function (event) {
+  var roleRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('roles.destroy', roleRecordId), Lang.get('js.roles'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/service_categories/service_categories.js":
+/*!**********************************************************************!*\
+  !*** ./resources/assets/js/service_categories/service_categories.js ***!
+  \**********************************************************************/
+/***/ (() => {
+
+listenClick('#createServiceCategory', function () {
+  $('#createServiceCategoryPageModal').modal('show').appendTo('body');
+});
+listen('hidden.bs.modal', '#createServiceCategoryPageModal', function () {
+  resetModalForm('#createServiceCategoryForm', '#createServiceCategoryValidationErrorsBox');
+});
+listen('hidden.bs.modal', '#editServiceCategoryModal', function () {
+  resetModalForm('#editServiceCategoryForm', '#editServiceCategoryValidationErrorsBox');
+});
+listenClick('.service-category-edit-btn', function (event) {
+  var editServiceCategoryId = $(event.currentTarget).attr('data-id');
+  renderData(editServiceCategoryId);
+});
+function renderData(id) {
+  $.ajax({
+    url: route('service-categories.edit', id),
+    type: 'GET',
+    success: function success(result) {
+      $('#serviceCategoryID').val(result.data.id);
+      $('#editServiceCategoryName').val(result.data.name);
+      $('#editServiceCategoryModal').modal('show');
+    }
+  });
+}
+listenSubmit('#createServiceCategoryForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('service-categories.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        Livewire.dispatch('refresh');
+        $('#createServiceCategoryPageModal').modal('hide');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editServiceCategoryForm', function (e) {
+  e.preventDefault();
+  var updateServiceCategoryId = $('#serviceCategoryID').val();
+  $.ajax({
+    url: route('service-categories.update', updateServiceCategoryId),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      $('#editServiceCategoryModal').modal('hide');
+      displaySuccessMessage(result.message);
+      Livewire.dispatch('refresh');
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.service-category-delete-btn', function (event) {
+  var serviceCategoryRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('service-categories.destroy', serviceCategoryRecordId), Lang.get('js.service_category'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/services/create-edit.js":
+/*!*****************************************************!*\
+  !*** ./resources/assets/js/services/create-edit.js ***!
+  \*****************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadServiceData);
+function loadServiceData() {
+  if (!$('.price-input').length) {
+    return;
+  }
+  var price = $('.price-input').val();
+  if (price === '') {
+    $('.price-input').val('');
+  } else {
+    if (/[0-9]+(,[0-9]+)*$/.test(price)) {
+      $('.price-input').val(getFormattedPrice(price));
+      return true;
+    } else {
+      $('.price-input').val(price.replace(/[^0-9 \,]/, ''));
+    }
+  }
+}
+listenClick('#createServiceCategory', function () {
+  $('#serviceCreateServiceCategoryModal').modal('show').appendTo('body');
+});
+listenSubmit('#serviceCreateServiceCategoryForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('service-categories.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#serviceCreateServiceCategoryModal').modal('hide');
+        var data = {
+          id: result.data.id,
+          name: result.data.name
+        };
+        var newOption = new Option(data.name, data.id, false, true);
+        $('#serviceCategory').append(newOption).trigger('change');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      processingBtn('#serviceCreateServiceCategoryForm', '#btnSave');
+    }
+  });
+});
+listen('hidden.bs.modal', '#serviceCreateServiceCategoryModal', function () {
+  resetModalForm('#serviceCreateServiceCategoryForm', '#createServiceCategoryValidationErrorsBox');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/services/services.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/services/services.js ***!
+  \**************************************************/
+/***/ (() => {
+
+listenClick('#serviceResetFilter', function () {
+  $('#servicesStatus').val($('#allServices').val()).trigger('change');
+});
+listenChange('#servicesStatus', function () {
+  Livewire.dispatch('changeStatusFilter', $(this).val());
+});
+listenClick('.service-delete-btn', function (event) {
+  var serviceRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('services.destroy', serviceRecordId), Lang.get('js.service'));
+});
+listenClick('.service-statusbar', function (event) {
+  var recordId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    type: 'PUT',
+    url: route('service.status'),
+    data: {
+      id: recordId
+    },
+    success: function success(result) {
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/settings/settings.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/settings/settings.js ***!
+  \**************************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', loadSettingData);
+var form;
+var phone;
+var prefixCode;
+var loadData = false;
+function loadSettingData() {
+  var settingCountryId = $('#settingCountryId').val();
+  var settingStateId = $('#settingStateId').val();
+  var settingCityId = $('#settingCityId').val();
+  if (settingCountryId != '') {
+    $('#settingCountryId').val(settingCountryId).trigger('change');
+    setTimeout(function () {
+      $('#settingStateId').val(settingStateId).trigger('change');
+    }, 800);
+    setTimeout(function () {
+      $('#settingCityId').val(settingCityId).trigger('change');
+    }, 400);
+    loadData = true;
+  }
+  if (!$('#generalSettingForm').length) {
+    return;
+  }
+  form = document.getElementById('generalSettingForm');
+  phone = document.getElementById('phoneNumber').value;
+  prefixCode = document.getElementById('prefix_code').value;
+  var input = document.querySelector('#defaultCountryData');
+  var intl = window.intlTelInput(input, {
+    initialCountry: defaultCountryCodeValue,
+    separateDialCode: true,
+    geoIpLookup: function geoIpLookup(success, failure) {
+      $.get('https://ipinfo.io', function () {}, 'jsonp').always(function (resp) {
+        var countryCode = resp && resp.country ? resp.country : '';
+        success(countryCode);
+      });
+    },
+    utilsScript: '../../public/assets/js/inttel/js/utils.min.js'
+  });
+  var getCode = intl.selectedCountryData['name'] + ' +' + intl.selectedCountryData['dialCode'];
+  $('#defaultCountryData').val(getCode);
+}
+listenKeyup('#defaultCountryData', function () {
+  var str2 = $(this).val().slice(0, -1) + '';
+  return $(this).val(str2);
+});
+listenClick('.iti__standard', function () {
+  var currentSelectedFlag = $(this).parent().parent().parent().next();
+  $(this).attr('data-country-code');
+  if (currentSelectedFlag.has('#defaultCountryCode')) {
+    $('#defaultCountryCode').val($(this).attr('data-country-code'));
+  }
+  var CountryDataVal = $(this).children('.iti__country-name').text() + ' ' + $(this).children('.iti__dial-code').text();
+  $('#defaultCountryData').val(CountryDataVal);
+});
+listenChange('#settingCountryId', function () {
+  $.ajax({
+    url: route('states-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      settingCountryId: $(this).val()
+    },
+    success: function success(data) {
+      $('#settingStateId').empty();
+      $('#settingCityId').empty();
+      $('#settingStateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
+      $('#settingCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $.each(data.data.states, function (i, v) {
+        $('#settingStateId').append($("<option ".concat(!loadData && i == data.data.state_id ? 'selected' : '', "></option>")).attr('value', i).text(v));
+      });
+    }
+  });
+});
+listenChange('#settingrecaptcha', function () {
+  var settingrechapcha = $('#settingrecaptcha').prop("checked");
+  if (settingrechapcha == false) {
+    $('.recaptcha-field').css('display', 'none');
+  } else {
+    $('.recaptcha-field').css('display', 'block');
+  }
+});
+listenChange('#settingStateId', function () {
+  $('#settingCityId').empty();
+  $.ajax({
+    url: route('cities-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      stateId: $(this).val()
+    },
+    success: function success(data) {
+      $('#settingCityId').empty();
+      $('#settingCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $.each(data.data.cities, function (i, v) {
+        $('#settingCityId').append($("<option ".concat(loadData && i == data.data.city_id ? 'selected' : '', "></option>")).attr('value', i).text(v));
+      });
+    }
+  });
+});
+listenClick('#settingSubmitBtn', function () {
+  var checkedPaymentMethod = $('input[name="payment_gateway[]"]:checked').length;
+  if (!checkedPaymentMethod) {
+    displayErrorMessage(Lang.get('js.select_payment'));
+    return false;
+  }
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+  $("#generalSettingForm")[0].submit();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/smart_patient_cards/smart_patient_cards.js":
+/*!************************************************************************!*\
+  !*** ./resources/assets/js/smart_patient_cards/smart_patient_cards.js ***!
+  \************************************************************************/
+/***/ (() => {
+
+document.addEventListener("DOMContentLoaded", loadAppointmentFilterDate);
+function loadAppointmentFilterDate() {
+  $(".patient_select").css("display", "none");
+  if ($("#header_color").length !== 0) {
+    var header = $("#header_color").val();
+    $(".card-header").css("background-color", header);
+  }
+  $(".generate_smart_patientcard_patient_select").select2({
+    dropdownParent: $("#add_templates_modal")
+  });
+  $(".select_template").select2({
+    dropdownParent: $("#add_templates_modal")
+  });
+}
+listenChange("#card_show_email_switch, #card_show_phone_switch, #card_show_dob_switch, #card_show_blood_group_switch, #card_show_address_switch, #card_show_patient_unique_id_switch, #header_color", function () {
+  var name = $(this).attr("id");
+  var color = $("#header_color").val();
+  switch (name) {
+    case "header_color":
+      $(".card-header").css("background-color", color);
+      break;
+    case "card_show_email_switch":
+      $("#card_show_email").toggleClass("display_show");
+      break;
+    case "card_show_phone_switch":
+      $("#card_show_phone").toggleClass("display_show");
+      break;
+    case "card_show_address_switch":
+      $("#card_show_address").toggleClass("display_show");
+      break;
+    case "card_show_blood_group_switch":
+      $("#card_show_blood_group").toggleClass("display_show");
+      break;
+    case "card_show_dob_switch":
+      $("#card_show_dob").toggleClass("display_show");
+      break;
+    case "card_show_patient_unique_id_switch":
+      $("#card_show_patient_unique_id").toggleClass("display_show");
+      break;
+  }
+});
+listenClick(".smart-patient-card-delete-btn", function (event) {
+  var templateRecordId = $(event.currentTarget).attr("data-id");
+  var templateRecordName = $(event.currentTarget).attr("data-name");
+  deleteItem(route(samartCardDelete, templateRecordId), templateRecordName);
+});
+listenClick(".generate-patient-card-delete-btn", function (event) {
+  var smartCardRecordId = $(event.currentTarget).attr("data-id");
+  var smartCardRecordName = $(event.currentTarget).attr("data-name");
+  deleteItem(route(GeneratePatientCardDelete, smartCardRecordId), smartCardRecordName + " " + Lang.get("js.patient_smart_card_deleted"));
+});
+
+//smart card table index page status
+
+listenChange("#card_email_status, #card_phone_status ,#card_dob_status, #card_blood_group_status, #card_address_status, #card_patient_unique_id_status", function () {
+  var status = $(this).prop("checked") ? 1 : 0;
+  var id = $(this).data("id");
+  var name = $(this).attr("name");
+  $.ajax({
+    type: "PUT",
+    url: route(startcardStatusRoute, id),
+    data: {
+      status: status,
+      changefield: name
+    },
+    success: function success(result) {
+      Livewire.dispatch("refresh");
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenChange(".type_tem", function (event) {
+  var status = $(this).val();
+  $("#prescriptionPatientId").select2({
+    dropdownParent: $("#add_templates_modal")
+  });
+  if (status == 2) {
+    $(".patient_select").css("display", "");
+  } else {
+    $(".patient_select").css("display", "none");
+  }
+});
+listenChange(".card_header_color_change", function (event) {
+  var status = $(this).val();
+  var id = $(this).data("id");
+  $.ajax({
+    type: "PUT",
+    url: route(startcardStatusRoute, id),
+    data: {
+      status: status,
+      changefield: "header_color"
+    },
+    success: function success(result) {
+      Livewire.dispatch("refresh");
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick(".add-templates", function () {
+  $("#add_templates_modal").modal("show").appendTo("body");
+});
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, "");
+  var bigint = parseInt(hex, 16);
+  var r = bigint >> 16 & 255;
+  var g = bigint >> 8 & 255;
+  var b = bigint & 255;
+  return [r, g, b];
+}
+listenClick(".show_patient_card", function () {
+  $("#show_card_modal").modal("show").appendTo("body");
+  var id = $(this).data("id");
+  $.ajax({
+    type: "get",
+    url: route(showPatientSmartCard, id),
+    success: function success(result) {
+      var rgb = hexToRgb(result.data.smart_patient_card.header_color);
+      var luminance = 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2];
+      if (luminance > 128) {
+        $(".clinic_name").addClass("color-black");
+        $(".clinic_address").addClass("color-black");
+      } else {
+        $(".clinic_name").addClass("color-white");
+        $(".clinic_address").addClass("color-white");
+      }
+      $(".patient-card-header").css("background-color", result.data.smart_patient_card.header_color);
+      $(".patient-model-download").css("color", result.data.smart_patient_card.header_color);
+      $("#card_profilePicture").attr("src", result.img);
+      $(".card_name").text(result.data.user.full_name);
+      $(".card_name").css("word-break", "break-word");
+      $(".patient_email").text(result.data.user.email);
+      $(".patient_unique_id").text(result.data.patient_unique_id);
+      $(".clinic_name").text(result.clinic_name);
+      $(".clinic_address").text(result.address_one);
+      if (result.data.smart_patient_card.show_email == 1) {
+        $("#card_show_email").css("display", "");
+        $("#card_show_email").css("word-break", "break-word");
+      } else {
+        $("#card_show_email").css("display", "none");
+      }
+      if (result.data.smart_patient_card.show_phone == 1) {
+        $("#patient_card_show_phone").css("display", "");
+      } else {
+        $("#patient_card_show_phone").css("display", "none");
+      }
+      if (result.data.smart_patient_card.show_dob == 1) {
+        $("#patient_card_show_dob").css("display", "");
+      } else {
+        $("#patient_card_show_dob").css("display", "none");
+      }
+      if (result.data.smart_patient_card.show_blood_group == 1) {
+        $("#patient_card_show_blood_group").css("display", "");
+      } else {
+        $("#patient_card_show_blood_group").css("display", "none");
+      }
+      if (result.data.smart_patient_card.show_address == 1) {
+        $("#patient_card_show_address").css("display", "");
+      } else {
+        $("#patient_card_show_address").css("display", "none");
+      }
+      if (result.data.address.address1 == null) {
+        $("#patient_card_show_address").css("display", "none");
+      } else if (result.data.address.address1 != null && result.data.address.address2 != null) {
+        $(".card_address").text(result.data.address.address1 + "," + result.data.address.address2);
+      } else if (result.data.address.address1 != null) {
+        $(".card_address").text(result.data.address.address1);
+      }
+      if (result.data.smart_patient_card.show_patient_unique_id == 1) {
+        $("#card_show_patient_unique_id").css("display", "");
+      } else {
+        $("#card_show_patient_unique_id").css("display", "none");
+      }
+      if (result.data.user.blood_type != null) {
+        $("#patient_card_show_blood_group").removeClass("d-none");
+        var bloodKey = result.data.user.blood_type;
+        var array = JSON.parse(bloodGroupArray);
+        $(".patient_blood_group").text(array[bloodKey]);
+      }
+      if (result.data.user.blood_type == null) {
+        $("#patient_card_show_blood_group").addClass("d-none");
+      }
+      if (result.data.user.contact != null) {
+        $(".patient_contact").text(result.data.user.contact);
+      } else {
+        $("#patient_card_show_phone").css("display", "none");
+      }
+      if (result.data.user.dob != null) {
+        $(".patient_dob").text(result.data.user.dob);
+      } else {
+        $("#patient_card_show_dob").css("display", "none");
+      }
+    }
+  });
+  $.ajax({
+    type: "get",
+    url: route(smartCardQrCode, id),
+    success: function success(data) {
+      var svgContent = data;
+      $(".svgContainer").html(svgContent);
+    },
+    error: function error() {
+      alert("Failed to load QR code");
+    }
+  });
+});
+listenSubmit("#addtemplateForm", function (event) {
+  event.preventDefault();
+  var loadingButton = jQuery(this).find("#medicineCategorySave");
+  loadingButton.button("loading");
+  if ($(".generate_smart_patientcard_status2").prop("checked")) {
+    if ($(".generate_smart_patientcard_patient_select").val() != "") {
+      $(this)[0].submit();
+    } else {
+      displayErrorMessage(Lang.get("js.please_selest_patient"));
+    }
+  } else {
+    $(this)[0].submit();
+  }
+});
+listenHiddenBsModal("#add_templates_modal", function () {
+  resetModalForm("#addtemplateForm");
+  $(".select_template").trigger("change");
+  $(".generate_smart_patientcard_patient_select").trigger("change");
+  $(".patient_select").css("display", "none");
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/specializations/specializations.js":
+/*!****************************************************************!*\
+  !*** ./resources/assets/js/specializations/specializations.js ***!
+  \****************************************************************/
+/***/ (() => {
+
+listenClick('#createSpecialization', function () {
+  $('#createSpecializationModal').modal('show').appendTo('body');
+});
+listen('hidden.bs.modal', '#createSpecializationModal', function () {
+  resetModalForm('#createSpecializationForm', '#createSpecializationValidationErrorsBox');
+});
+listen('hidden.bs.modal', '#editSpecializationModal', function () {
+  resetModalForm('#editSpecializationForm', '#editSpecializationValidationErrorsBox');
+});
+listenClick('.specialization-edit-btn', function (event) {
+  var editSpecializationId = $(event.currentTarget).attr('data-id');
+  renderData(editSpecializationId);
+});
+function renderData(id) {
+  $.ajax({
+    url: route('specializations.edit', id),
+    type: 'GET',
+    success: function success(result) {
+      $('#specializationID').val(result.data.id);
+      $('#editName').val(result.data.name);
+      $('#editSpecializationModal').modal('show');
+    }
+  });
+}
+listenSubmit('#createSpecializationForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('specializations.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#createSpecializationModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editSpecializationForm', function (e) {
+  e.preventDefault();
+  var updateSpecializationId = $('#specializationID').val();
+  $.ajax({
+    url: route('specializations.update', updateSpecializationId),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      $('#editSpecializationModal').modal('hide');
+      displaySuccessMessage(result.message);
+      Livewire.dispatch('refresh');
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.specialization-delete-btn', function (event) {
+  var specializationRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('specializations.destroy', specializationRecordId), Lang.get('js.specializations'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/staff/create-edit.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/staff/create-edit.js ***!
+  \**************************************************/
+/***/ (() => {
+
+listenChange('input[type=radio][name=gender]', function () {
+  var file = $('#profilePicture').val();
+  if (isEmpty(file)) {
+    if (this.value == 1) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
+    } else if (this.value == 2) {
+      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
+    }
+  }
+});
+listenSubmit('#createStaffForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenSubmit('#editStaffForm', function () {
+  if ($('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
+    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+    return false;
+  }
+});
+listenClick('.removeAvatarIcon', function () {
+  $('#bgImage').css('background-image', '');
+  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
+  $('#removeAvatar').addClass('hide');
+  $('#tooltip287851').addClass('hide');
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/staff/staff.js":
+/*!********************************************!*\
+  !*** ./resources/assets/js/staff/staff.js ***!
+  \********************************************/
+/***/ (() => {
+
+listenClick('.staff-delete-btn', function (event) {
+  var staffRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('staffs.destroy', staffRecordId), Lang.get('js.staff'));
+});
+listenChange('.staff-email-verified', function (e) {
+  var verifyRecordId = $(e.currentTarget).attr('data-id');
+  var value = $(this).is(':checked') ? 1 : 0;
+  $.ajax({
+    type: 'POST',
+    url: route('emailVerified'),
+    data: {
+      id: verifyRecordId,
+      value: value
+    },
+    success: function success(result) {
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    }
+  });
+});
+listenClick('.staff-email-verification', function (event) {
+  var staffVerifyId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    type: 'POST',
+    url: route('resend.email.verification', staffVerifyId),
+    success: function success(result) {
+      Livewire.dispatch('refresh');
+      displaySuccessMessage(result.message);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/states/states.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/states/states.js ***!
+  \**********************************************/
+/***/ (() => {
+
+listenClick('#addState', function () {
+  $('#addStateModal').modal('show').appendTo('body');
+  $('#countryState').select2({
+    dropdownParent: $('#addStateModal')
+  });
+});
+listenSubmit('#addStateForm', function (e) {
+  e.preventDefault();
+  $.ajax({
+    url: route('states.store'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#addStateModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('.state-edit-btn', function (event) {
+  $('#editStateModal').modal('show').appendTo('body');
+  $('#selectCountry').select2({
+    dropdownParent: $('#editStateModal')
+  });
+  var editStateId = $(event.currentTarget).attr('data-id');
+  $('#editStateId').val(editStateId);
+  $.ajax({
+    url: route('states.edit', editStateId),
+    type: 'GET',
+    success: function success(result) {
+      if (result.success) {
+        $('#editStateName').val(result.data.name);
+        $('#selectCountry').val(result.data.country_id).trigger('change');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenSubmit('#editStateForm', function (event) {
+  event.preventDefault();
+  var updateStateId = $('#editStateId').val();
+  $.ajax({
+    url: route('states.update', updateStateId),
+    type: 'PUT',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#editStateModal').modal('hide');
+        Livewire.dispatch('refresh');
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listen('hidden.bs.modal', '#addStateModal', function (e) {
+  $('#addStateForm')[0].reset();
+  $('#countryState').val(null).trigger('change');
+});
+listenClick('.state-delete-btn', function (event) {
+  var stateRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('states.destroy', stateRecordId), Lang.get('js.state'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/transactions/patient-transactions.js":
+/*!******************************************************************!*\
+  !*** ./resources/assets/js/transactions/patient-transactions.js ***!
+  \******************************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+document.addEventListener('DOMContentLoaded', loadPatientTransactionTable);
+var patientTransactionTableName = '#patientTransactionsTable';
+function loadPatientTransactionTable() {
+  if (!$(patientTransactionTableName).length) {
+    return;
+  }
+  var patientTransactionTbl = $(patientTransactionTableName).DataTable({
+    processing: true,
+    serverSide: true,
+    searchDelay: 500,
+    'language': {
+      'lengthMenu': 'Show _MENU_'
+    },
+    'order': [[0, 'desc']],
+    ajax: {
+      url: route('patients.transactions')
+    },
+    columnDefs: [{
+      'targets': [0],
+      'width': '50%'
+    }, {
+      'targets': [1],
+      'width': '18%'
+    }, {
+      'targets': [3],
+      'orderable': false,
+      'searchable': false,
+      'className': 'text-center',
+      'width': '8%'
+    }],
+    columns: [{
+      data: function data(row) {
+        return "<span class=\"badge badge-light-info\">".concat(moment.parseZone(row.created_at).format('Do MMM, Y h:mm A'), "</span>");
+      },
+      name: 'created_at'
+    }, {
+      data: function data(row) {
+        if (row.type == manuallyMethod) {
+          return manually;
+        }
+        if (row.type == stripeMethod) {
+          return stripe;
+        }
+        if (row.type == paystckMethod) {
+          return paystck;
+        }
+        if (row.type == paypalMethod) {
+          return paypal;
+        }
+        if (row.type == razorpayMethod) {
+          return razorpay;
+        }
+        if (row.type == authorizeMethod) {
+          return authorize;
+        }
+        if (row.type == paytmMethod) {
+          return paytm;
+        }
+        return '';
+      },
+      name: 'type'
+    }, {
+      data: function data(row) {
+        return currencyIcon + ' ' + getFormattedPrice(row.amount);
+      },
+      name: 'amount'
+    }, {
+      data: function data(row) {
+        var patientTransactionData = [{
+          'id': row.id,
+          'showUrl': route('patients.transactions.show', row.id)
+        }];
+        return prepareTemplateRender('#transactionsTemplate', patientTransactionData);
+      },
+      name: 'id'
+    }]
+  });
+  handleSearchDatatable(patientTransactionTbl);
+  document.addEventListener('DOMContentLoaded', loadTransactionFilterDate);
+  function loadTransactionFilterDate() {
+    if (!$('#transactionDateFilter').length) {
+      return;
+    }
+    var appointmentStart = moment().startOf('week');
+    var appointmentEnd = moment().endOf('week');
+    function cb(start, end) {
+      $('#transactionDateFilter').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+    }
+    var transactionDatePicker = $('#transactionDateFilter').daterangepicker({
+      startDate: appointmentStart,
+      endDate: appointmentEnd,
+      opens: 'left',
+      showDropdowns: true,
+      locale: {
+        customRangeLabel: Lang.get('js.custom'),
+        applyLabel: Lang.get('js.apply'),
+        cancelLabel: Lang.get('js.cancel'),
+        fromLabel: Lang.get('js.from'),
+        toLabel: Lang.get('js.to'),
+        monthNames: [Lang.get('js.jan'), Lang.get('js.feb'), Lang.get('js.mar'), Lang.get('js.apr'), Lang.get('js.may'), Lang.get('js.jun'), Lang.get('js.jul'), Lang.get('js.aug'), Lang.get('js.sep'), Lang.get('js.oct'), Lang.get('js.nov'), Lang.get('js.dec')],
+        daysOfWeek: [Lang.get('js.sun'), Lang.get('js.mon'), Lang.get('js.tue'), Lang.get('js.wed'), Lang.get('js.thu'), Lang.get('js.fri'), Lang.get('js.sat')]
+      },
+      ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get('js.today'), [moment(), moment()]), Lang.get('js.yesterday'), [moment().subtract(1, 'days'), moment().subtract(1, 'days')]), Lang.get('js.this_week'), [moment().startOf('week'), moment().endOf('week')]), Lang.get('js.last_30_days'), [moment().subtract(29, 'days'), moment()]), Lang.get('js.this_month'), [moment().startOf('month'), moment().endOf('month')]), Lang.get('js.last_month'), [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')])
+    }, cb);
+    cb(appointmentStart, appointmentEnd);
+    transactionDatePicker.on("apply.daterangepicker", function (ev, picker) {
+      Livewire.dispatch("changeDateFilter", {
+        date: $(this).val()
+      });
+    });
+  }
+}
+listenClick('.transaction-statusbar', function (event) {
+  var recordId = $(event.currentTarget).attr('data-id');
+  var acceptPaymentUserId = currentLoginUserId;
+  $.ajax({
+    type: 'PUT',
+    url: route('transaction.status'),
+    data: {
+      id: recordId,
+      acceptPaymentUserId: acceptPaymentUserId
+    },
+    success: function success(result) {
+      if (result.success) {
+        Livewire.dispatch('refresh');
+        displaySuccessMessage(Lang.get('js.status_update'));
+      }
+    },
+    error: function error(result) {
+      Livewire.dispatch('refresh');
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/transactions/transactions.js":
+/*!**********************************************************!*\
+  !*** ./resources/assets/js/transactions/transactions.js ***!
+  \**********************************************************/
+/***/ (() => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// document.addEventListener('DOMContentLoaded', loadTransactionFilterDate)
+
+var appointmentStart = moment().startOf("week");
+var appointmentEnd = moment().endOf("week");
+Livewire.hook("element.init", function () {
+  loadTransactionFilterDate();
+  if ($("#trPaymentMehtod").length) {
+    $("#trPaymentMehtod").select2();
+  }
+  if ($("#transactionStatus").length) {
+    $("#transactionStatus").select2();
+  }
+  if ($("#transactionDoctor").length) {
+    $("#transactionDoctor").select2();
+  }
+  if ($("#transactionServices").length) {
+    $("#transactionServices").select2();
+  }
+  if (appointmentStart != undefined && appointmentEnd != undefined) {
+    cb(appointmentStart, appointmentEnd);
+  }
+});
+function loadTransactionFilterDate() {
+  if (!$("#transactionDateFilter").length) {
+    return;
+  }
+
+  // let appointmentStart = moment().startOf('week')
+  // let appointmentEnd = moment().endOf('week')
+
+  var transactionDatePicker = $("#transactionDateFilter").daterangepicker({
+    startDate: appointmentStart,
+    endDate: appointmentEnd,
+    opens: "left",
+    showDropdowns: true,
+    locale: {
+      customRangeLabel: Lang.get("js.custom"),
+      applyLabel: Lang.get("js.apply"),
+      cancelLabel: Lang.get("js.cancel"),
+      fromLabel: Lang.get("js.from"),
+      toLabel: Lang.get("js.to"),
+      monthNames: [Lang.get("js.jan"), Lang.get("js.feb"), Lang.get("js.mar"), Lang.get("js.apr"), Lang.get("js.may"), Lang.get("js.jun"), Lang.get("js.jul"), Lang.get("js.aug"), Lang.get("js.sep"), Lang.get("js.oct"), Lang.get("js.nov"), Lang.get("js.dec")],
+      daysOfWeek: [Lang.get("js.sun"), Lang.get("js.mon"), Lang.get("js.tue"), Lang.get("js.wed"), Lang.get("js.thu"), Lang.get("js.fri"), Lang.get("js.sat")]
+    },
+    ranges: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, Lang.get("js.today"), [moment(), moment()]), Lang.get("js.yesterday"), [moment().subtract(1, "days"), moment().subtract(1, "days")]), Lang.get("js.this_week"), [moment().startOf("week"), moment().endOf("week")]), Lang.get("js.last_30_days"), [moment().subtract(29, "days"), moment()]), Lang.get("js.this_month"), [moment().startOf("month"), moment().endOf("month")]), Lang.get("js.last_month"), [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")])
+  }
+  // cb
+  );
+
+  //cb(appointmentStart, appointmentEnd);
+
+  transactionDatePicker.on("apply.daterangepicker", function (ev, picker) {
+    var date = picker.startDate.format("DD/MM/YYYY") + " - " + picker.endDate.format("DD/MM/YYYY");
+    Livewire.dispatch("changeDateFilter", {
+      date: date
+    });
+    appointmentStart = picker.startDate;
+    appointmentEnd = picker.endDate;
+  });
+  window.addEventListener("update-item", function (event) {
+    var array = event.detail.data;
+    console.log(array);
+    $("#transactionDoctor").empty();
+    $("#transactionDoctor").append($('<option value=""></option>').text(Lang.get("js.select_doctor")));
+    $.each(array, function (key, value) {
+      $("#transactionDoctor").append($("<option></option>").attr("value", key).text(value));
+    });
+  });
+}
+function cb(start, end) {
+  $("#transactionDateFilter").val(start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"));
+}
+listenChange("#trPaymentMehtod", function () {
+  Livewire.dispatch("paymentFilter", {
+    pType: $(this).val()
+  });
+});
+listenChange("#transactionStatus", function () {
+  Livewire.dispatch("statusFilter", {
+    statusType: $(this).val()
+  });
+});
+listenChange("#transactionDoctor", function () {
+  Livewire.dispatch("doctorFilter", {
+    doctorType: $(this).val()
+  });
+});
+listenChange("#transactionServices", function () {
+  Livewire.dispatch("serviceFilter", {
+    serviceType: $(this).val()
+  });
+});
+listenClick("#transactionResetFilter", function () {
+  $("#trPaymentMehtod").val("").trigger("change");
+  $("#transactionStatus").val("").trigger("change");
+  $("#transactionDoctor,#transactionServices").val("").trigger("change");
+  hideDropdownManually($("#transactionFilterBtn"), $(".dropdown-menu"));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/users/user-profile.js":
+/*!***************************************************!*\
+  !*** ./resources/assets/js/users/user-profile.js ***!
+  \***************************************************/
+/***/ (() => {
+
+listenClick('#changePassword', function () {
+  $('#changePasswordForm')[0].reset();
+  $('.pass-check-meter div.flex-grow-1').removeClass('active');
+  $('#changePasswordModal').modal('show').appendTo('body');
+});
+listenClick('#changeLanguage', function () {
+  $('#changeLanguageModal').modal('show').appendTo('body');
+});
+listenClick('#passwordChangeBtn', function () {
+  $.ajax({
+    url: changePasswordUrl,
+    type: 'PUT',
+    data: $('#changePasswordForm').serialize(),
+    success: function success(result) {
+      $('#changePasswordModal').modal('hide');
+      $('#changePasswordForm')[0].reset();
+      displaySuccessMessage(result.message);
+      setTimeout(function () {
+        location.reload();
+      }, 1000);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+window.printErrorMessage = function (selector, errorResult) {
+  $(selector).show().html('');
+  $(selector).text(errorResult.message);
+};
+listenClick('#emailNotification', function () {
+  $('#emailNotificationModal').modal('show').appendTo('body');
+  if ($('#emailNotificationForm').length) {
+    $('#emailNotificationForm')[0].reset();
+  }
+});
+listenClick('#emailNotificationChange', function () {
+  $.ajax({
+    url: route('emailNotification'),
+    type: 'PUT',
+    data: $('#emailNotificationForm').serialize(),
+    success: function success(result) {
+      $('#emailNotificationModal').modal('hide');
+      displaySuccessMessage(result.message);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+listenClick('#languageChangeBtn', function () {
+  $.ajax({
+    url: updateLanguageURL,
+    type: 'POST',
+    data: $('#changeLanguageForm').serialize(),
+    success: function success(result) {
+      $('#changeLanguageModal').modal('hide');
+      displaySuccessMessage(result.message);
+      window.location.reload();
+      // Turbo.visit(window.location.href);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/visits/create-edit.js":
+/*!***************************************************!*\
+  !*** ./resources/assets/js/visits/create-edit.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
+/* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
+
+document.addEventListener('DOMContentLoaded', loadVisitData);
+function loadVisitData() {
+  var visitDate = '.visit-date';
+  if (!$(visitDate).length) {
+    return;
+  }
+  var lang = $('.currentLanguage').val();
+  $(visitDate).flatpickr({
+    "locale": lang,
+    disableMobile: true
+  });
+}
+listenSubmit('#saveForm', function (e) {
+  e.preventDefault();
+  $('#btnSubmit').attr('disabled', true);
+  $('#saveForm')[0].submit();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/visits/doctor-visit.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/visits/doctor-visit.js ***!
+  \****************************************************/
+/***/ (() => {
+
+listenClick('.doctor-visit-delete-btn', function (event) {
+  var visitDoctorRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('doctors.visits.destroy', visitDoctorRecordId), Lang.get('js.visits'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/visits/show-page.js":
+/*!*************************************************!*\
+  !*** ./resources/assets/js/visits/show-page.js ***!
+  \*************************************************/
+/***/ (() => {
+
+setTimeout(function () {
+  $('.visit-detail-width').parent().parent().addClass('visit-detail-width');
+}, 100);
+
+// Add visit Problem Data
+listenSubmit('#addVisitProblem', function (e) {
+  e.preventDefault();
+  var problemName = $('#problemName').val();
+  var empty = problemName.trim().replace(/ \r\n\t/g, '') === '';
+  if (empty) {
+    displayErrorMessage(Lang.get('js.problem_white_space'));
+    return false;
+  }
+  var btnSubmitEle = $(this).find('#problemSubmitBtn');
+  setAdminBtnLoader(btnSubmitEle);
+  var problemAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.problem') : route('add.problem');
+  $.ajax({
+    url: problemAddUrl,
+    type: 'POST',
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function success(result) {
+      $('ul#problemLists').empty();
+      if (result.data.length > 0) {
+        displaySuccessMessage(result.message);
+        $.each(result.data, function (i, val) {
+          $('#problemName').val('');
+          $('#problemLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.problem_name, "<span class=\"remove-problem\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
+        });
+      } else {
+        $('#problemLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+      }
+    },
+    complete: function complete() {
+      $('#problemSubmitBtn').attr('disabled', false);
+    }
+  });
+});
+
+// Delete Visit Problem Data
+listenClick('.remove-problem', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-id');
+  var problemDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.problem', id) : route('delete.problem', id);
+  $(this).closest('li').remove();
+  $.ajax({
+    url: problemDeleteUrl,
+    type: 'POST',
+    dataType: 'json',
+    success: function success(result) {
+      if (result.success) {
+        if ($('#problemLists li').length < 1) {
+          displaySuccessMessage(result.message);
+          $('#problemLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+        } else {
+          displaySuccessMessage(result.message);
+        }
+      }
+    }
+  });
+});
+
+// Add Visit Observation Data
+listenSubmit('#addVisitObservation', function (e) {
+  e.preventDefault();
+  var observationName = $('#observationName').val();
+  var empty2 = observationName.trim().replace(/ \r\n\t/g, '') === '';
+  if (empty2) {
+    displayErrorMessage(Lang.get('js.observation_white_space'));
+    return false;
+  }
+  var btnSubmitEle = $(this).find('#observationSubmitBtn');
+  setAdminBtnLoader(btnSubmitEle);
+  var observationAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.observation') : route('add.observation');
+  $.ajax({
+    url: observationAddUrl,
+    type: 'POST',
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function success(result) {
+      $('ul#observationLists').empty();
+      if (result.data.length > 0) {
+        displaySuccessMessage(result.message);
+        $.each(result.data, function (i, val) {
+          $('#observationName').val('');
+          $('#observationLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.observation_name, "<span class=\"remove-observation\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
+        });
+      } else {
+        $('#observationLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+      }
+    },
+    complete: function complete() {
+      $('#observationSubmitBtn').attr('disabled', false);
+    }
+  });
+});
+
+// Delete Visit Observation Data
+listenClick('.remove-observation', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-id');
+  var observationDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.observation', id) : route('delete.observation', id);
+  $(this).closest('li').remove();
+  $.ajax({
+    url: observationDeleteUrl,
+    type: 'POST',
+    dataType: 'json',
+    success: function success(result) {
+      if (result.success) {
+        if ($('#observationLists li').length < 1) {
+          displaySuccessMessage(result.message);
+          $('#observationLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+        } else {
+          displaySuccessMessage(result.message);
+        }
+      }
+    }
+  });
+});
+
+// Add visit Note Data
+listenSubmit('#addVisitNote', function (e) {
+  e.preventDefault();
+  var noteName = $('#noteName').val();
+  var empty2 = noteName.trim().replace(/ \r\n\t/g, '') === '';
+  if (empty2) {
+    displayErrorMessage(Lang.get('js.note_white_space'));
+    return false;
+  }
+  var btnSubmitEle = $(this).find('#noteSubmitBtn');
+  setAdminBtnLoader(btnSubmitEle);
+  var noteAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.note') : route('add.note');
+  $.ajax({
+    url: noteAddUrl,
+    type: 'POST',
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function success(result) {
+      $('ul#noteLists').empty();
+      if (result.data.length > 0) {
+        displaySuccessMessage(result.message);
+        $.each(result.data, function (i, val) {
+          $('#noteName').val('');
+          $('#noteLists').append("<li class=\"list-group-item text-break text-wrap d-flex justify-content-between align-items-center py-5\">".concat(val.note_name, "<span class=\"remove-note\" data-bs-toggle=\"tooltip\" data-bs-placement=\"bottom\" title=\"Delete\" data-id=\"").concat(val.id, "\"><a href=\"javascript:void(0)\"><i class=\"fas fa-trash text-danger\"></i></a></span></li>"));
+        });
+      } else {
+        $('#noteLists').append("<p class=\"text-center fw-bold text-muted mt-3\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+      }
+    },
+    complete: function complete() {
+      $('#noteSubmitBtn').attr('disabled', false);
+    }
+  });
+});
+
+// Delete Visit Note Data
+listenClick('.remove-note', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-id');
+  $(this).closest('li').remove();
+  var noteDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.note', id) : route('delete.note', id);
+  $.ajax({
+    url: noteDeleteUrl,
+    type: 'POST',
+    dataType: 'json',
+    success: function success(result) {
+      if (result.success) {
+        if ($('#noteLists li').length < 1) {
+          displaySuccessMessage(result.message);
+          $('#noteLists').append("<p class=\"text-center fw-bold mt-3 text-muted text-gray-600\">".concat($('#noRecordsFoundMSG').val(), "</p>"));
+        } else {
+          displaySuccessMessage(result.message);
+        }
+      }
+    }
+  });
+});
+
+// Add visit Prescription Data
+listenSubmit('#addPrescription', function (e) {
+  e.preventDefault();
+  var btnSubmitEle = $(this).find('#prescriptionSubmitBtn');
+  setAdminBtnLoader(btnSubmitEle);
+  var prescriptionAddUrl = $('#doctorLogin').val() ? route('doctors.visits.add.prescription') : route('add.prescription');
+  $.ajax({
+    url: prescriptionAddUrl,
+    type: 'POST',
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function success(result) {
+      $('#addPrescription')[0].reset();
+      $('.visit-prescriptions').empty();
+      $('#prescriptionId').val('');
+      $.each(result.data, function (i, val) {
+        var data = [{
+          'id': val.id,
+          'name': val.prescription_name,
+          'frequency': val.frequency,
+          'duration': val.duration
+        }];
+        var visitPrescriptionTblData = prepareTemplateRender('#visitsPrescriptionTblTemplate', data);
+        $('.visit-prescriptions').append(visitPrescriptionTblData);
+      });
+      $('#addVisitPrescription').removeClass('show');
+      displaySuccessMessage(result.message);
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      $('#prescriptionSubmitBtn').attr('disabled', false);
+    }
+  });
+});
+
+// Edit Visit Prescription Data
+function renderData(id) {
+  var prescriptionEditUrl = $('#doctorLogin').val() ? route('doctors.visits.edit.prescription', id) : route('edit.prescription', id);
+  $.ajax({
+    url: prescriptionEditUrl,
+    type: 'GET',
+    success: function success(result) {
+      $('#addPrescription')[0].reset();
+      $('#prescriptionId').val(result.data.id);
+      $('#prescriptionNameId').val(result.data.prescription_name);
+      $('#frequencyId').val(result.data.frequency);
+      $('#durationId').val(result.data.duration);
+      $('#descriptionId').val(result.data.description);
+    }
+  });
+}
+listenClick('.edit-prescription-btn', function () {
+  var id = $(this).attr('data-id');
+  if (!$('#addVisitPrescription').hasClass('show')) {
+    $('#addVisitPrescription').addClass('show');
+  }
+  renderData(id);
+});
+
+// Delete Visit Prescription Data
+listenClick('.delete-visit-prescription-btn', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-id');
+  $(this).closest('tr').remove();
+  var prescriptionDeleteUrl = $('#doctorLogin').val() ? route('doctors.visits.delete.prescription', id) : route('delete.prescription', id);
+  $.ajax({
+    url: prescriptionDeleteUrl,
+    type: 'POST',
+    dataType: 'json',
+    success: function success(result) {
+      $('#addPrescription')[0].reset();
+      $('#prescriptionId').val('');
+      if (result.data.length < 1) {
+        $('#addVisitPrescription').removeClass('show');
+        displaySuccessMessage(result.message);
+        $('.visit-prescriptions').append("<tr><td colspan=\"4\" class=\"text-center fw-bold  text-muted text-gray-600\">No data available in table</td></tr>");
+      } else {
+        $('#addVisitPrescription').removeClass('show');
+        displaySuccessMessage(result.message);
+      }
+    }
+  });
+});
+
+// Reset Form JS
+listenClick('.reset-form', function () {
+  $('#addPrescription')[0].reset();
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/visits/visits.js":
+/*!**********************************************!*\
+  !*** ./resources/assets/js/visits/visits.js ***!
+  \**********************************************/
+/***/ (() => {
+
+listenClick('.visit-delete-btn', function (event) {
+  var visitRecordId = $(event.currentTarget).attr('data-id');
+  deleteItem(route('visits.destroy', visitRecordId), Lang.get('js.visits'));
+});
+
+/***/ }),
+
+/***/ "./resources/assets/scss/bill-pdf.scss":
+/*!*********************************************!*\
+  !*** ./resources/assets/scss/bill-pdf.scss ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16392,19 +16027,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/assets/scss/bill-pdf.scss":
-/*!*********************************************!*\
-  !*** ./resources/assets/scss/bill-pdf.scss ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "./resources/assets/scss/prescription-pdf.scss":
 /*!*****************************************************!*\
   !*** ./resources/assets/scss/prescription-pdf.scss ***!
@@ -16422,6 +16044,19 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************!*\
   !*** ./resources/assets/scss/smart-card-pdf.scss ***!
   \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./resources/css/app.css":
+/*!*******************************!*\
+  !*** ./resources/css/app.css ***!
+  \*******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16571,19 +16206,21 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			// add "moreModules" to the modules object,
 /******/ 			// then flag all "chunkIds" as loaded and fire callback
 /******/ 			var moduleId, chunkId, i = 0;
-/******/ 			for(moduleId in moreModules) {
-/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
 /******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
 /******/ 			}
-/******/ 			if(runtime) var result = runtime(__webpack_require__);
 /******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
 /******/ 			for(;i < chunkIds.length; i++) {
 /******/ 				chunkId = chunkIds[i];
 /******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
 /******/ 					installedChunks[chunkId][0]();
 /******/ 				}
-/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 				installedChunks[chunkId] = 0;
 /******/ 			}
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}

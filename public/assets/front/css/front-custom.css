@@ -1,6 +1,6 @@
 @media only screen and (max-width: 991px) {
   .menu-links .nav > li:hover > a,
-.menu-links .nav > li.active > a {
+  .menu-links .nav > li.active > a {
     color: #f17732 !important;
   }
 }
@@ -95,7 +95,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 
 @media (max-width: 375px) {
   .appointment-available,
-.appointment-booked {
+  .appointment-booked {
     width: 100%;
   }
 }
@@ -231,7 +231,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 
 @media (max-width: 365px) {
   .team-member .doctor-appointment-btn,
-.team-member .about-appointment-btn {
+  .team-member .about-appointment-btn {
     margin-left: -25px;
     margin-right: -25px;
   }
@@ -462,25 +462,25 @@ tr {
 }
 
 .book-badge {
-  background-color: #6572ffd9 !important;
+  background-color: rgba(101, 114, 255, 0.8509803922) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-checkin {
-  background-color: #09c074d4 !important;
+  background-color: rgba(9, 192, 116, 0.831372549) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-checkout {
-  background-color: #ffb921d0 !important;
+  background-color: rgba(255, 185, 33, 0.8156862745) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-cancel {
-  background-color: #f62948df !important;
+  background-color: rgba(246, 41, 72, 0.8745098039) !important;
   width: 140px;
   height: 28px;
 }

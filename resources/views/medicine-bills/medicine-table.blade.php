@@ -10,24 +10,22 @@
             {{ Form::select('patient_id', $patients, isset($medicineBill) ? $medicineBill->patient_id : null, ['class' => 'form-select', 'required', 'id' => 'prescriptionPatientId', 'placeholder' => __('messages.medicine_bills.select_patient')]) }}
         </div>
         @if (isset($medicineBill))
-            <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
-                {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
-                <span class="required"></span>
-                {{ Form::text('bill_date', isset($medicineBill->bill_date) ? $medicineBill->bill_date : $medicineBill->updated_at , ['class' => getLogInUser()->thememode ? 'bg-light form-control edit_medicine_bill_date' : 'bg-white form-control edit_medicine_bill_date', 'id' => 'editBillDate', 'autocomplete' => 'off']) }}
-            </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
+            {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
+            <span class="required"></span>
+            {{ Form::text('bill_date', isset($medicineBill->bill_date) ? $medicineBill->bill_date : $medicineBill->updated_at , ['class' => getLogInUser()->thememode ? 'bg-light form-control edit_medicine_bill_date' : 'bg-white form-control edit_medicine_bill_date', 'id' => 'editBillDate', 'autocomplete' => 'off']) }}
+        </div>
         @else
-            <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
-                {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
-                <span class="required"></span>
-                {{ Form::text('bill_date', null, ['class' => getLogInUser()->thememode ? 'bg-light form-control medicine_bill_date' : 'bg-white form-control medicine_bill_date', 'id' => 'medicine_bill_date', 'autocomplete' => 'off']) }}
-            </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
+            {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
+            <span class="required"></span>
+            {{ Form::text('bill_date', null, ['class' => getLogInUser()->thememode ? 'bg-light form-control medicine_bill_date' : 'bg-white form-control medicine_bill_date', 'id' => 'medicine_bill_date', 'autocomplete' => 'off']) }}
+        </div>
         @endif
-        <div class="col-lg-3 col-md-4 col-sm-12">
+        <div class="col-lg-3 col-md-4 col-sm-12 d-none">
             <span class="form-label">{{ __('messages.medicine_bills.payment_status') . ' :' }}</span>
             <label class="form-check form-switch form-switch-sm">
-                <input type="checkbox" name="payment_status" class="form-check-input mt-5" value="1"
-                    {{ !empty($medicineBill->payment_status) == '1' ? 'checked disabled' : '' }}
-                    id="medicineBillPaymentStatus">
+                <input type="checkbox" name="payment_status" class="form-check-input mt-5" value="1" id="medicineBillPaymentStatus" {{ isset($medicineBill) && $medicineBill->payment_status !== '1' ? 'checked' : 'checked' }}>
                 <span class="custom-switch-indicator"></span>
             </label>
         </div>
@@ -43,10 +41,10 @@
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="">{{ __('messages.medicine_categories') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
-                            {{--  <th class="">{{ __('lot no.') }}<span class="required"></span></th>     --}}
+                            {{-- <th class="">{{ __('lot no.') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('messages.purchase_medicine.expiry_date') }}</th>
                             <th class="">{{ __('messages.medicine_bills.sale_price') }}<span class="required"></span></th>
-                            {{--  <th class="">{{ __('Purchase Price') }}<span class="required"></span></th>  --}}
+                            {{-- <th class="">{{ __('Purchase Price') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.tax') }}</th>
                             <th class="">{{ __('messages.purchase_medicine.amount') }}<span class="required"></span></th>
@@ -63,88 +61,90 @@
                     <tbody class="medicine-bill-container">
                         @if (isset($medicineBill))
 
-                            @foreach ($medicineBill->saleMedicine as $key => $saleMedicine)
-                                <tr>
-                                    <td>
-                                        {{ Form::select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->category->id) ? $saleMedicine->medicine->category->id : null   , ['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'placeholder' => __('messages.common.select_category'), 'data-id' => '1', 'data-control' => 'select2']) }}                                      </td>
-                                    <td>
-                                        {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}                                    </td>
-                                    <td>
-                                        {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('messages.purchase_medicine.expiry_date')]) }}
-                                    </td>
-                                    <td>
-                                        {{ Form::text('sale_price[]', number_format($saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicineBill-sale-price price-format ', 'id' => 'medicine_sale_price' . $key + 1, 'required']) }}
-                                    </td>
+                        @foreach ($medicineBill->saleMedicine as $key => $saleMedicine)
+                        <tr>
+                            <td>
+                                {{ Form::select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->category->id) ? $saleMedicine->medicine->category->id : null   , ['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'placeholder' => __('messages.common.select_category'), 'data-id' => '1', 'data-control' => 'select2']) }}
+                            </td>
+                            <td>
+                                {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}
+                            </td>
+                            <td>
+                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('messages.purchase_medicine.expiry_date')]) }}
+                            </td>
+                            <td>
+                                {{ Form::text('sale_price[]', number_format($saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicineBill-sale-price price-format ', 'id' => 'medicine_sale_price' . $key + 1, 'required']) }}
+                            </td>
 
-                                    {{ Form::hidden('quantity1[]', $saleMedicine->sale_quantity, ['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
-                                    <td>
-                                        <div class="input-group">
-                                        {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'required']) }}
-                                        <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1">{{$saleMedicine->medicine->available_quantity}}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            {{ Form::number('tax_medicine[]', $saleMedicine->tax, ['class' => 'form-control medicineBill-tax','id' => 'tax' . $key + 1]) }}
-                                            <span class="input-group-text ms-0" id="amountTypeSymbol">
-                                                {{ __('%') }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{ Form::text('amount[]', number_format($saleMedicine->sale_quantity * $saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount' . $key + 1]) }}
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
-                                            class="delete-medicine-bill-item btn px-1 text-danger fs-3 pe-0">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            {{ Form::hidden('quantity1[]', $saleMedicine->sale_quantity, ['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
+                            <td>
+                                <div class="input-group">
+                                    {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'required']) }}
+                                    <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1">{{$saleMedicine->medicine->available_quantity}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    {{ Form::number('tax_medicine[]', $saleMedicine->tax, ['class' => 'form-control medicineBill-tax','id' => 'tax' . $key + 1]) }}
+                                    <span class="input-group-text ms-0" id="amountTypeSymbol">
+                                        {{ __('%') }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                {{ Form::text('amount[]', number_format($saleMedicine->sale_quantity * $saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount' . $key + 1]) }}
+                            </td>
+                            <td class="text-center">
+                                <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
+                                    class="delete-medicine-bill-item btn px-1 text-danger fs-3 pe-0">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
                         @else
-                            <tr>
-                                <td>
-                                    {{ Form::select('category_id[]', $medicineCategories, null, ['class' => 'form-select medicineBillCategoriesId select2Selector','required','placeholder'=>__('messages.common.select_category'), 'data-id' => 1,'data-control'=>'select2']) }}
-                                </td>
-                                <td>
-                                    {{ Form::select('medicine[]', [], null,['class' => 'form-select medicinePurchaseId purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'c1','data-control'=>'select2','data-id'=>1,'required']) }}
-                                </td>
-                                {{--  <td>
+                        <tr>
+                            <td>
+                                {{ Form::select('category_id[]', $medicineCategories, null, ['class' => 'form-select medicineBillCategoriesId select2Selector','required','placeholder'=>__('messages.common.select_category'), 'data-id' => 1,'data-control'=>'select2']) }}
+                            </td>
+                            <td>
+                                {{ Form::select('medicine[]', [], null,['class' => 'form-select medicinePurchaseId purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'c1','data-control'=>'select2','data-id'=>1,'required']) }}
+                            </td>
+                            {{-- <td>
                         {{ Form::number('lot_no[]', null, ['class' => 'form-control', 'id' => 'lot_no1','required','placeholder'=>'Lot no.']) }}
-                    </td>  --}}
-                                <td>
-                                    {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('messages.purchase_medicine.expiry_date')]) }}
-                                </td>
-                                <td>
-                                    {{ Form::text('sale_price[]', '0.00', ['class' => 'form-control medicineBill-sale-price price-format', 'required', 'id' => 'medicine_sale_price1']) }}
-                                </td>
-                                {{--  <td>
+                            </td> --}}
+                            <td>
+                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('messages.purchase_medicine.expiry_date')]) }}
+                            </td>
+                            <td>
+                                {{ Form::text('sale_price[]', '0.00', ['class' => 'form-control medicineBill-sale-price price-format', 'required', 'id' => 'medicine_sale_price1']) }}
+                            </td>
+                            {{-- <td>
                         {{ Form::number('purchase_price[]', '0.00', ['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1','required' ]) }}
-                    </td>  --}}
-                                <td>
-                                    <div class="input-group">
-                                        {{ Form::number('quantity[]', 0, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'required']) }}
-                                        <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1"></span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        {{ Form::number('tax_medicine[]', 0, ['class' => 'form-control medicineBill-tax', 'id' => 'tax1']) }}
-                                        <span class="input-group-text ms-0" id="amountTypeSymbol">
-                                            {{ __('%') }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    {{ Form::text('amount[]', '0.00', ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount1']) }}
-                                </td>
-                                <td class="text-center">
+                            </td> --}}
+                            <td>
+                                <div class="input-group">
+                                    {{ Form::number('quantity[]', 0, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'required']) }}
+                                    <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    {{ Form::number('tax_medicine[]', 0, ['class' => 'form-control medicineBill-tax', 'id' => 'tax1']) }}
+                                    <span class="input-group-text ms-0" id="amountTypeSymbol">
+                                        {{ __('%') }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                {{ Form::text('amount[]', '0.00', ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount1']) }}
+                            </td>
+                            <td class="text-center">
 
-                                    <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
-                                        class="delete-medicine-bill-item btn px-1 text-danger fs-3 pe-0">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
+                                    class="delete-medicine-bill-item btn px-1 text-danger fs-3 pe-0">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
                         @endif
                     </tbody>
                 </table>
@@ -178,7 +178,7 @@
                         <div>
                             <div class="input-group">
                                 {{ Form::number('tax', isset($medicineBill) ?  number_format($medicineBill->tax_amount,2,'.','') : '0.00', ['class' => 'form-control', 'id' => 'medicineTotalTaxId', 'readonly', 'value' => '0.00']) }}
-                                {{--  <span class="input-group-text ms-0" id="amountTypeSymbol"> {{ __('$') }}</span>  --}}
+                                {{-- <span class="input-group-text ms-0" id="amountTypeSymbol"> {{ __('$') }}</span> --}}
                             </div>
                         </div>
                     </div>

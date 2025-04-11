@@ -43,13 +43,12 @@ class MedicineBillTable extends LivewireTableComponent
 
             return [];
         });
-
     }
 
     public function placeholder()
-   {
-         return view('livewire.smart_patient_cards_skeleton');
-   }
+    {
+        return view('livewire.smart_patient_cards_skeleton');
+    }
 
     public function columns(): array
     {
@@ -64,24 +63,24 @@ class MedicineBillTable extends LivewireTableComponent
                 ->view('medicine-bills.columns.bill_date'),
             Column::make(__('messages.visit.patient'), 'patient_id')->hideIf(1),
             Column::make(__('messages.visit.patient'), 'patient.patientUser.first_name')
-            ->sortable(function (Builder $query, $direction) {
-                return $query->orderBy(User::select('first_name')->whereColumn('id', 'patient.user_id'), $direction);
-            })->searchable()->view('medicine-bills.columns.patient'),
+                ->sortable(function (Builder $query, $direction) {
+                    return $query->orderBy(User::select('first_name')->whereColumn('id', 'patient.user_id'), $direction);
+                })->searchable()->view('medicine-bills.columns.patient'),
             Column::make(__('messages.doctor.doctor'), 'doctor_id')->hideIf(1),
             Column::make(__('messages.doctor.doctor'), 'doctor.doctorUser.first_name')
-            ->sortable(function (Builder $query, $direction) {
-                return $query->orderBy(User::select('first_name')->whereColumn('id', 'doctor.user_id'), $direction);
-            })->searchable()->view('medicine-bills.columns.doctor'),
-            Column::make(__('messages.purchase_medicine.discount'), 'discount')
-                ->sortable()
-                ->searchable()
-                ->view('medicine-bills.columns.discount'),
-            Column::make(__('messages.purchase_medicine.net_amount'), 'net_amount')
-                ->sortable()
-                ->searchable()
-                ->view('medicine-bills.columns.amount'),
-            Column::make(__('messages.medicine_bills.payment_status'), 'payment_status')
-                ->sortable()->view('medicine-bills.columns.payment_status'),
+                ->sortable(function (Builder $query, $direction) {
+                    return $query->orderBy(User::select('first_name')->whereColumn('id', 'doctor.user_id'), $direction);
+                })->searchable()->view('medicine-bills.columns.doctor'),
+            // Column::make(__('messages.purchase_medicine.discount'), 'discount')
+            //     ->sortable()
+            //     ->searchable()
+            //     ->view('medicine-bills.columns.discount'),
+            // Column::make(__('messages.purchase_medicine.net_amount'), 'net_amount')
+            //     ->sortable()
+            //     ->searchable()
+            //     ->view('medicine-bills.columns.amount'),
+            // Column::make(__('messages.medicine_bills.payment_status'), 'payment_status')
+            //     ->sortable()->view('medicine-bills.columns.payment_status'),
             Column::make(__('messages.common.action'), 'id')
                 ->view('medicine-bills.columns.action'),
         ];
@@ -90,6 +89,6 @@ class MedicineBillTable extends LivewireTableComponent
     function builder(): Builder
     {
         /** @var MedicineBill $query */
-        return MedicineBill::with(['patient','doctor.user','doctor.doctorUser','patient.user','patient.patientUser']);
+        return MedicineBill::with(['patient', 'doctor.user', 'doctor.doctorUser', 'patient.user', 'patient.patientUser']);
     }
 }

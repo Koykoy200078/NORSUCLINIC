@@ -1,17 +1,14 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
 /*!***************************************************!*\
   !*** ./resources/assets/js/custom/custom-auth.js ***!
   \***************************************************/
 window.isEmpty = function (value) {
   return value === undefined || value === null || value === '';
 };
-
 $(document).on('click', '.change-type', function (e) {
   var inputField = $(this).siblings();
   var oldType = inputField.attr('type');
   var type = !isEmpty(oldType) ? oldType : 'password';
-
   if (type == 'password') {
     $(this).children().addClass('fa-eye');
     $(this).children().removeClass('fa-eye-slash');

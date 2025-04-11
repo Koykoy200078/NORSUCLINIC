@@ -154,7 +154,7 @@
   z-index: 3;
   border-color: #892b1d !important;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem #fbd5d1;
+  box-shadow: 0 0 0 0.25rem rgb(251, 213, 209);
 }
 .our-faqs-page .accordion-button:not(.collapsed) {
   color: #fd7866 !important;
@@ -164,7 +164,7 @@
 
 @media only screen and (max-width: 991px) {
   .menu-links .nav > li:hover > a,
-.menu-links .nav > li.active > a {
+  .menu-links .nav > li.active > a {
     color: #f17732 !important;
   }
 }
@@ -259,7 +259,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 
 @media (max-width: 375px) {
   .appointment-available,
-.appointment-booked {
+  .appointment-booked {
     width: 100%;
   }
 }
@@ -395,7 +395,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 
 @media (max-width: 365px) {
   .team-member .doctor-appointment-btn,
-.team-member .about-appointment-btn {
+  .team-member .about-appointment-btn {
     margin-left: -25px;
     margin-right: -25px;
   }
@@ -626,25 +626,25 @@ tr {
 }
 
 .book-badge {
-  background-color: #6572ffd9 !important;
+  background-color: rgba(101, 114, 255, 0.8509803922) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-checkin {
-  background-color: #09c074d4 !important;
+  background-color: rgba(9, 192, 116, 0.831372549) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-checkout {
-  background-color: #ffb921d0 !important;
+  background-color: rgba(255, 185, 33, 0.8156862745) !important;
   width: 140px;
   height: 28px;
 }
 
 .book-cancel {
-  background-color: #f62948df !important;
+  background-color: rgba(246, 41, 72, 0.8745098039) !important;
   width: 140px;
   height: 28px;
 }
@@ -780,7 +780,7 @@ tr {
 }
 @media (max-width: 575px) {
   .home-page .services-section .slick-prev,
-.home-page .services-section .slick-next {
+  .home-page .services-section .slick-next {
     width: 40px;
     height: 40px;
   }
@@ -797,7 +797,7 @@ tr {
 }
 @media (max-width: 575px) {
   .home-page .services-section .slick-prev::before,
-.home-page .services-section .slick-next::before {
+  .home-page .services-section .slick-next::before {
     font-size: 20px;
   }
 }
@@ -810,7 +810,7 @@ tr {
   }
 }
 .home-page .services-section .slick-prev::before {
-  content: "";
+  content: "\f104";
 }
 .home-page .services-section .slick-next {
   right: -30px;
@@ -821,7 +821,7 @@ tr {
   }
 }
 .home-page .services-section .slick-next::before {
-  content: "";
+  content: "\f105";
 }
 .home-page .form-control-transparent {
   background-color: transparent !important;
@@ -1101,7 +1101,7 @@ footer .footer-info__footer-icon {
 }
 .testimonial-section .slick-list {
   border-radius: 20px;
-  background: #ffff;
+  background: white;
   box-shadow: 0px 5px 15px #d7dee8;
 }
 .testimonial-section .slick-arrow::before {
@@ -1119,7 +1119,7 @@ footer .footer-info__footer-icon {
   }
 }
 .testimonial-section .slick-prev::before {
-  content: "";
+  content: "\f060";
 }
 .testimonial-section .slick-next {
   right: -140px;
@@ -1130,7 +1130,7 @@ footer .footer-info__footer-icon {
   }
 }
 .testimonial-section .slick-next::before {
-  content: "";
+  content: "\f061";
 }
 .testimonial-section .quotation-mark {
   position: absolute;
@@ -1428,7 +1428,7 @@ h5,
 }
 @media (max-width: 575px) {
   h5,
-.fs-5 {
+  .fs-5 {
     font-size: 20px !important;
   }
 }
@@ -1471,7 +1471,7 @@ h6,
 }
 @media (max-width: 767px) {
   .form-control,
-.form-select {
+  .form-select {
     height: 50px;
     font-size: 16px;
     padding: 15px;
@@ -1482,9 +1482,6 @@ h6,
   box-shadow: none;
 }
 .form-control::-moz-placeholder, .form-select::-moz-placeholder {
-  color: #747b81;
-}
-.form-control:-ms-input-placeholder, .form-select:-ms-input-placeholder {
   color: #747b81;
 }
 .form-control::placeholder,
@@ -1616,9 +1613,6 @@ h6,
   color: #ffffff;
 }
 .form-control-transparent::-moz-placeholder {
-  color: #ffffff;
-}
-.form-control-transparent:-ms-input-placeholder {
   color: #ffffff;
 }
 .form-control-transparent::placeholder {
