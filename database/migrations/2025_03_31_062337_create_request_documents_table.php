@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('informant')->nullable();
             $table->string('emergency_contact')->nullable();
             $table->date('requested_at')->nullable();
-            $table->string('complaints')->nullable();
+            $table->text('complaints')->nullable();
             $table->string('covid_vaccination')->nullable();
             $table->string('comorbidities')->nullable();
             $table->string('allergies')->nullable();
@@ -45,9 +45,9 @@ return new class extends Migration
             $table->string('vital_signs_o2_sat')->nullable();
             $table->string('vital_signs_height')->nullable();
             $table->string('vital_signs_weight')->nullable();
-            $table->string('pertinent_exam')->nullable();
-            $table->string('assessment')->nullable();
-            $table->string('plan')->nullable();
+            $table->text('pertinent_exam')->nullable();
+            $table->text('assessment')->nullable();
+            $table->text('plan')->nullable();
             $table->string('document_type');
             $table->string('consult_mode')->nullable();
             $table->string('nursing_intervention')->nullable();
@@ -57,8 +57,8 @@ return new class extends Migration
             // Medical Certificate Fields
             $table->date('examined_on')->nullable();
             $table->string('request_of')->nullable();
-            $table->string('complaints_diagnosis')->nullable();
-            $table->string('medical_cert_remarks')->nullable();
+            $table->text('complaints_diagnosis')->nullable();
+            $table->text('medical_cert_remarks')->nullable();
             $table->string('doc_lic_no')->nullable();
             $table->string('doc_prt_no')->nullable();
             $table->timestamps();

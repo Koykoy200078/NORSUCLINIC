@@ -268,6 +268,8 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
             'patient-appointments',
             [PatientController::class, 'patientAppointment']
         )->name('patients.appointment');
+
+        Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
     });
 
     // Request Documents

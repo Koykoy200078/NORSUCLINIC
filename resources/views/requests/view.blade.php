@@ -79,7 +79,7 @@
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-black" rows="5" readonly>
+                <textarea id="complaints" name="complaints" class="w-full border-b border-black" rows="5" readonly>
                 {{ $requestDocument->complaints }}
                 </textarea>
             </div>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-black" rows="5" required>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5" required>
                     {{ $requestDocument->pertinent_exam }}
                     </textarea>
                 </div>
@@ -174,7 +174,7 @@
                 <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-black" rows="5" readonly>
+                <textarea id="assessment" name="assessment" class="w-full border-b border-black" rows="5" readonly>
                 {{ $requestDocument->assessment }}
                 </textarea>
             </div>
@@ -186,7 +186,7 @@
                 <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-black" rows="5" readonly>
+                <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5" readonly>
                 {{ $requestDocument->plan }}
                 </textarea>
             </div>

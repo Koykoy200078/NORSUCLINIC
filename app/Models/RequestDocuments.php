@@ -13,7 +13,7 @@ class RequestDocuments extends Model
 
     protected $table = 'request_documents';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'document_type',

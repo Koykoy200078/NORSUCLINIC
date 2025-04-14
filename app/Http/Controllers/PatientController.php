@@ -96,12 +96,21 @@ class PatientController extends AppBaseController
         $patient = $this->patientRepository->getPatientData($patient);
         $appointmentStatus = Appointment::ALL_STATUS;
         $todayDate = Carbon::now()->format('Y-m-d');
-        $data['todayAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where('date', '=',
-            $todayDate)->count();
-        $data['upcomingAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where('date', '>',
-            $todayDate)->count();
-        $data['completedAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where('date', '<',
-            $todayDate)->count();
+        $data['todayAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+            'date',
+            '=',
+            $todayDate
+        )->count();
+        $data['upcomingAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+            'date',
+            '>',
+            $todayDate
+        )->count();
+        $data['completedAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+            'date',
+            '<',
+            $todayDate
+        )->count();
 
         return view('patients.show', compact('patient', 'appointmentStatus', 'data'));
     }
@@ -188,7 +197,9 @@ class PatientController extends AppBaseController
     {
         if ($request->ajax()) {
             return DataTables::of((new PatientDataTable())->getAppointment($request->only([
-                'status', 'patientId', 'filter_date',
+                'status',
+                'patientId',
+                'filter_date',
             ])))->make(true);
         }
 
@@ -197,11 +208,25 @@ class PatientController extends AppBaseController
 
     public function deleteOldPatient()
     {
-       $patients =  Patient::pluck('user_id')->toArray();
+        $patients =  Patient::pluck('user_id')->toArray();
 
-       User::whereType(User::PATIENT)->whereNotIn('id', $patients)->delete();
-
-
+        User::whereType(User::PATIENT)->whereNotIn('id', $patients)->delete();
     }
 
+    public function showMyHistory(Patient $patient)
+    {
+        // Load consultations and related data
+        $patient->load([
+            'appointments.doctor',
+            'requestDocuments' => function ($query) {
+                $query->where('document_type', 'consultation_form');
+            }
+        ]);
+
+        // Fetch all consultations with `consultation_form` type
+        $consultations = $patient->requestDocuments->where('document_type', 'consultation_form');
+
+        // Pass the data to the view
+        return view('patients.view_patient', compact('patient', 'consultations'));
+    }
 }
