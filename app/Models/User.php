@@ -18,78 +18,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
-/**
- * App\Models\User
- *
- * @property int $id
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $contact
- * @property string|null $dob
- * @property int $gender
- * @property int $status
- * @property string|null $language
- * @property Carbon|null $email_verified_at
- * @property string $password
- * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read Address|null $address
- * @property-read Doctor|null $doctor
- * @property-read string $full_name
- * @property-read string $profile_image
- * @property-read MediaCollection|Media[] $media
- * @property-read int|null $media_count
- * @property-read DatabaseNotificationCollection|DatabaseNotification[]
- *     $notifications
- * @property-read int|null $notifications_count
- * @property-read Patient|null $patient
- *
- * @method static \Database\Factories\UserFactory factory(...$parameters)
- * @method static Builder|User newModelQuery()
- * @method static Builder|User newQuery()
- * @method static Builder|User query()
- * @method static Builder|User whereContact($value)
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereDob($value)
- * @method static Builder|User whereEmail($value)
- * @method static Builder|User whereEmailVerifiedAt($value)
- * @method static Builder|User whereFirstName($value)
- * @method static Builder|User whereGender($value)
- * @method static Builder|User whereId($value)
- * @method static Builder|User whereLanguage($value)
- * @method static Builder|User whereLastName($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereStatus($value)
- * @method static Builder|User whereUpdatedAt($value)
- *
- * @property int|null $type
- * @property string|null $blood_type
- * @property-read mixed $role_name
- * @property-read Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read int|null $permissions_count
- * @property-read Collection|Qualification[] $qualifications
- * @property-read int|null $qualifications_count
- * @property-read Collection|\Spatie\Permission\Models\Role[] $roles
- * @property-read int|null $roles_count
- *
- * @method static Builder|User permission($permissions)
- * @method static Builder|User role($roles, $guard = null)
- * @method static Builder|User whereBloodGroup($value)
- * @method static Builder|User whereType($value)
- *
- * @property-read \App\Models\Staff|null $staff
- * @property string|null $country_code
- *
- * @method static Builder|User whereRegionCode($value)
- */
 class User extends Authenticatable implements HasMedia
 {
-    use HasFactory, Notifiable, InteractsWithMedia, HasRoles, Impersonate;
+    use HasFactory, Notifiable, InteractsWithMedia, HasRoles, Impersonate, HasPermissions;
 
     protected $table = 'users';
 
@@ -154,10 +88,10 @@ class User extends Authenticatable implements HasMedia
 
     const ACTIVE = 1;
 
-    const DEACTIVE = 0;
+    const DEACTIVATE = 0;
 
     const STATUS = [
-        self::DEACTIVE => 'Deactive',
+        self::DEACTIVATE => 'Deactivate',
         self::ACTIVE => 'Active',
         self::ALL => 'All',
     ];
@@ -318,5 +252,30 @@ class User extends Authenticatable implements HasMedia
     public function gCredentials(): HasOne
     {
         return $this->hasOne(GoogleCalendarIntegration::class, 'user_id');
+    }
+
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class, 'campus_id');
+    }
+
+    public function college()
+    {
+        return $this->belongsTo(College::class, 'college_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function yearLevel()
+    {
+        return $this->belongsTo(YearLevel::class, 'year_level_id');
+    }
+
+    public function vaccination()
+    {
+        return $this->belongsTo(Vaccination::class, 'vaccination_id');
     }
 }

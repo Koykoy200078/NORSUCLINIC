@@ -46,7 +46,11 @@ class DoctorTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Doctor::with(['user', 'specializations', 'reviews'])->select('doctors.*');
+        $query = Doctor::with([
+            'user:id,first_name,last_name,email,status,email_verified_at',
+            'specializations:id,name',
+            'reviews:id,doctor_id,rating'
+        ])->select('doctors.*');
 
         $query->when(
             $this->statusFilter != '' && $this->statusFilter != User::ALL,

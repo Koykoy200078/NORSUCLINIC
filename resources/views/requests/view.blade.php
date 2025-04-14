@@ -33,7 +33,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="date_of_birth">DATE OF BIRTH</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border-b border-black" value="{{ $requestDocument->date_of_birth }}" readonly>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border-b border-black" value="{{ $requestDocument->date_of_birth ? \Carbon\Carbon::parse($requestDocument->date_of_birth)->format('Y-m-d') : '' }}" readonly>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS</label>
@@ -79,7 +79,7 @@
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-b border-black" rows="5" readonly>
+                <textarea id="complaints" name="complaints" class="w-full border-black" rows="5" readonly>
                 {{ $requestDocument->complaints }}
                 </textarea>
             </div>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5" required>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-black" rows="5" required>
                     {{ $requestDocument->pertinent_exam }}
                     </textarea>
                 </div>
@@ -174,7 +174,7 @@
                 <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black" rows="5" readonly>
+                <textarea id="assessment" name="assessment" class="w-full border-black" rows="5" readonly>
                 {{ $requestDocument->assessment }}
                 </textarea>
             </div>
@@ -186,7 +186,7 @@
                 <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5" readonly>
+                <textarea id="plan" name="plan" class="w-full border-black" rows="5" readonly>
                 {{ $requestDocument->plan }}
                 </textarea>
             </div>
@@ -227,7 +227,7 @@
             <div class="flex items-center my-4">
                 <!-- Left Logo -->
                 <div>
-                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-22 h-22">
+                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-28 h-28">
                 </div>
 
                 <!-- Text Content -->
@@ -239,7 +239,7 @@
 
                 <!-- Right Logo -->
                 <div class="ml-4">
-                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-22 h-22">
+                    <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" class="w-28 h-28">
                 </div>
             </div>
 
@@ -265,7 +265,7 @@
                     <p class="font-semibold">complaints/diagnosis:</p>
                     <div class="border border-gray-300 p-2 h-28 mb-4">
                         <div class="col-span-3">
-                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-b border-black" rows="5" readonly>
+                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="5" readonly>
                             {{ trim($requestDocument->complaints_diagnosis) }}
                             </textarea>
                         </div>
@@ -297,15 +297,14 @@
                 <p class="font-semibold">Remark/s:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-b border-black" rows="5" readonly>
+                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="5" readonly>
                         {{ trim($requestDocument->medical_cert_remarks) }}
                         </textarea>
                     </div>
                 </div>
 
                 <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
-
-                <p class="text-sm">This certificate is issued upon the request of _______________________ for your reference.</p>
+                <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->request_of }}" readonly> for your reference.</p>
 
                 <div class="text-right mt-4 mr-5">
                     <p class="font-semibold">Dr. Mcfael S. Olivoros</p>
@@ -317,4 +316,16 @@
     </div>
     @endif
 </div>
+
+<style>
+    #complaints_diagnosis,
+    #medical_cert_remarks,
+    #complaints,
+    #pertinent_exam,
+    #assessment,
+    #plan,
+    #nursing_intervention {
+        resize: none;
+    }
+</style>
 @endsection

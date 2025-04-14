@@ -138,16 +138,16 @@ if (!function_exists('getDashboardURL')) {
         // Permission-based dashboard URLs
         $permissionDashboardMap = [
             'manage_admin_dashboard' => 'admin/dashboard',
-            'manage_doctors' => 'admin/doctors',
-            'manage_patients' => 'admin/patients',
-            'manage_staff' => 'admin/staff',
-            'manage_appointments' => 'admin/appointments',
-            'manage_patient_visits' => 'admin/visits',
+            'manage_doctors' => 'doctors',
+            'manage_patients' => 'patients',
+            'manage_staff' => 'staff',
+            'manage_appointments' => 'appointments',
+            'manage_patient_visits' => 'visits',
             'manage_settings' => 'admin/settings',
-            'manage_specialties' => 'admin/specializations',
-            'manage_services' => 'admin/services',
-            'manage_front_cms' => 'admin/cms',
-            'manage_transactions' => 'admin/transactions',
+            'manage_specialties' => 'specializations',
+            'manage_services' => 'services',
+            'manage_front_cms' => 'cms',
+            'manage_transactions' => 'transactions',
         ];
 
         // Get all user permissions

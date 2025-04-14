@@ -16,6 +16,7 @@ use App\Repositories\PatientRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RequestDocumentsController extends Controller
 {
@@ -33,8 +34,9 @@ class RequestDocumentsController extends Controller
     public function create(PatientRepository $patientRepository)
     {
         $data = $patientRepository->getData();
+        $user = auth()->user(); // Get the authenticated user
 
-        return view('requests.create', compact('data'));
+        return view('requests.create', compact('data', 'user'));
     }
 
     /**
@@ -45,8 +47,6 @@ class RequestDocumentsController extends Controller
         $data = $request->except('_token');
 
         try {
-            $data['user_id'] = auth()->id();
-
             if ($data['document_type'] === 'medical_certificate') {
                 $this->storeMedicalCertificate($data);
             } elseif ($data['document_type'] === 'consultation_form') {
@@ -79,15 +79,34 @@ class RequestDocumentsController extends Controller
         $data['vital_signs_height'] = $data['vital_signs_height_2'];
         $data['vital_signs_weight'] = $data['vital_signs_weight_2'];
 
+        // Retrieve the user and related IDs
+        $user = User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']);
+        if (!$user) {
+            throw new \Exception('User not found');
+        }
+
+        // Retrieve the names using relationships
+        $data['campus'] = $user->campus->campus_name ?? 'Unknown Campus';
+        $data['college'] = $user->college->college_name ?? 'Unknown College';
+        $data['course'] = $user->course->course_name ?? 'Unknown Course';
+        $data['year_level'] = $user->yearLevel->year_level_name ?? 'Unknown Year Level';
+
         // Insert the data into the database
         RequestDocuments::create([
             'document_type' => $data['document_type'],
+            'document_creator_id' => $data['document_creator_id'], // Use the authenticated user ID
             'user_id' => $data['user_id'],
             'name' => $data['name'],
             'age' => $data['age'],
             'gender' => $data['gender'],
+            'date_of_birth' => $user->dob,
             'address' => $data['address'],
+            'request_of' => $data['request_of'],
             'requested_at' => now()->format('Y-m-d'),
+            'campus' => $data['campus'],
+            'college' => $data['college'],
+            'course' => $data['course'],
+            'year_level' => $data['year_level'],
             'examined_on' => $data['examined_on'],
             'complaints_diagnosis' => $data['complaints_diagnosis'],
             'vital_signs_bp' => $data['vital_signs_bp'],
@@ -117,6 +136,7 @@ class RequestDocumentsController extends Controller
 
         RequestDocuments::create([
             'document_type' => $data['document_type'],
+            'document_creator_id' => $data['document_creator_id'],
             'user_id' => $data['user_id'],
             'name' => $data['name'],
             'age' => $data['age'],

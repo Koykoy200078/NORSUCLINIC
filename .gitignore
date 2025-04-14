@@ -1,26 +1,37 @@
+# Node and package-related files
 /node_modules
-/public/hot
-/public/storage
-/public/css
-/public/js
-/public/backend
-/public/fonts
-/public/vendor
-/public/web
-/storage/*.key
 /vendor
+npm-debug.log
+yarn-error.log
+
+# Environment and configuration files
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
+
+# IDE and editor-specific files
 /.idea
 /.vscode
 .idea
+
+# Public assets and generated files
+/public/hot
+/public/storage
 /public/assets
+/public/backend
+/public/css
+/public/fonts
+/public/js
+/public/vendor
+/public/web
 /public/uploads
 /public/js/app.js
 /public/mix-manifest.json
+
+# Storage and sensitive files
+/storage/*.key
+
+# DEVSENSE-specific files
 /DEVSENSE/packages-cache/authorizenet

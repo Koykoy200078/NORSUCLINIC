@@ -17,47 +17,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\SmartPatientCards;
 
-/**
- * Class Patient
- *
- * @version July 29, 2021, 11:37 am UTC
- *
- * @property int $id
- * @property string $patient_unique_id
- * @property int $user_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- *
- * @method static PatientFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Patient newQuery()
- * @method static Builder|Patient onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Patient query()
- * @method static \Illuminate\Database\Eloquent\Builder|Patient whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient wherePatientUniqueId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient whereUserId($value)
- * @method static Builder|Patient withTrashed()
- * @method static Builder|Patient withoutTrashed()
- *
- * @mixin Model
- *
- * @property-read \App\Models\Address|null $address
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Appointment[] $appointments
- * @property-read int|null $appointments_count
- * @property-read string $profile
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|Media[] $media
- * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @property-read int|null $roles_count
- * @property-read \App\Models\User $user
- *
- * @method static \Illuminate\Database\Eloquent\Builder|Patient permission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient role($roles, $guard = null)
- */
+
 class Patient extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, HasRoles;
@@ -233,5 +193,10 @@ class Patient extends Model implements HasMedia
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function requestDocuments()
+    {
+        return $this->hasMany(RequestDocuments::class, 'user_id', 'user_id');
     }
 }

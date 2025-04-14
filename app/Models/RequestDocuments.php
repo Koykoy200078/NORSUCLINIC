@@ -17,6 +17,7 @@ class RequestDocuments extends Model
 
     protected $fillable = [
         'document_type',
+        'document_creator_id',
         'user_id',
         'name',
         'age',
@@ -55,6 +56,7 @@ class RequestDocuments extends Model
         'nursing_intervention',
         'nursing_incharged_id',
         'examined_on',
+        'request_of',
         'complaints_diagnosis',
         'medical_cert_remarks',
         'doc_lic_no',
@@ -62,8 +64,8 @@ class RequestDocuments extends Model
     ];
 
     protected $casts = [
-        'requested_at' => 'datetime',
-        'examined_on' => 'datetime',
+        'requested_at' => 'date',
+        'examined_on' => 'date',
         'date_of_birth' => 'date',
     ];
 }

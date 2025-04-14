@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Carbon\Carbon;
 use App\Models\Patient;
+use App\Models\RequestDocuments;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -47,7 +48,14 @@ class PatientTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query =  Patient::with(['user', 'appointments'])->withCount('appointments');
+        $query = Patient::with(['user', 'appointments'])
+            ->withCount('appointments');
+
+        // Fix the subquery for request_documents_count
+        $query->withCount(['requestDocuments as request_documents_count' => function ($subQuery) {
+            $subQuery->selectRaw('COUNT(*)')
+                ->whereColumn('request_documents.user_id', 'patients.user_id'); // Corrected reference
+        }]);
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
@@ -56,8 +64,10 @@ class PatientTable extends LivewireTableComponent
             $query->whereDate('patients.created_at', '>=', $startDate);
             $query->whereDate('patients.created_at', '<=', $endDate);
         }
+
         return $query;
     }
+
     public function placeholder()
     {
         return view('livewire.doctor_holiday_skeleton');
@@ -88,6 +98,9 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.doctor_dashboard.total_appointments'), 'id')
                 ->sortable()
                 ->view('patients.components.total_appointments'),
+            Column::make(__('Total Request Documents'), 'id')
+                ->sortable()
+                ->view('patients.components.total_request_documents'),
             Column::make(__('messages.common.email_verified'), 'user.email_verified_at')
                 ->sortable()
                 ->view('patients.components.email_verified'),

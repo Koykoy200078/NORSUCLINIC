@@ -44,10 +44,42 @@ class DefaultUserSeeder extends Seeder
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
                 'time_zone' => '0'
-            ]
+            ],
         ];
 
-        foreach ($users as $key => $user) {
+        // Add 9 doctors
+        for ($i = 0; $i < 9; $i++) {
+            $users[] = [
+                'first_name' => fake()->firstName(),
+                'last_name' => fake()->lastName(),
+                'contact' => fake()->numerify('09#########'),
+                'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
+                'type' => User::DOCTOR,
+                'email' => fake()->unique()->safeEmail(),
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('123456'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ];
+        }
+
+        // Add 999 students (patients)
+        for ($i = 0; $i < 999; $i++) {
+            $users[] = [
+                'first_name' => fake()->firstName(),
+                'last_name' => fake()->lastName(),
+                'contact' => fake()->numerify('09#########'),
+                'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
+                'type' => User::PATIENT,
+                'email' => fake()->unique()->safeEmail(),
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('123456'),
+                'country_code' => '63',
+                'time_zone' => '0'
+            ];
+        }
+
+        foreach ($users as $user) {
             $user = User::create($user);
             if ($user->type == User::DOCTOR) {
                 $doctor = Doctor::create(['user_id' => $user->id]);
@@ -56,7 +88,7 @@ class DefaultUserSeeder extends Seeder
                 $doctor->specializations()->sync($specializationIds);
             }
             if ($user->type == User::PATIENT) {
-                $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'UNIQUE12']);
+                $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'UNIQUE' . $user->id]);
                 $patient->address()->create(['owner_id' => $patient['user_id']]);
             }
         }

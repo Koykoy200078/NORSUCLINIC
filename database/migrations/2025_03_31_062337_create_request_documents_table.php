@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('request_documents', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('document_creator_id');
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->integer('age');
@@ -55,6 +56,7 @@ return new class extends Migration
 
             // Medical Certificate Fields
             $table->date('examined_on')->nullable();
+            $table->string('request_of')->nullable();
             $table->string('complaints_diagnosis')->nullable();
             $table->string('medical_cert_remarks')->nullable();
             $table->string('doc_lic_no')->nullable();
