@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\DeleteAppointmentFromGoogleCalendar;
 use App\Http\Requests\CreateAppointmentRequest;
 use App\Http\Requests\CreateFrontAppointmentRequest;
 use App\Models\Appointment;
@@ -12,9 +11,7 @@ use App\Models\Patient;
 use App\Models\Service;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\UserGoogleAppointment;
 use App\Repositories\AppointmentRepository;
-use App\Repositories\GoogleCalendarRepository;
 use \PDF;
 use Carbon\Carbon;
 use Exception;
@@ -343,13 +340,6 @@ class AppointmentController extends AppBaseController
                 'user_id' => $doctor->user_id,
             ]);
         } elseif ($input['appointmentStatus'] == Appointment::CANCELLED) {
-            $events = UserGoogleAppointment::with(['user'])->where('appointment_id', $appointment->id)->get();
-
-            /** @var GoogleCalendarRepository $repo */
-            $repo = App::make(GoogleCalendarRepository::class);
-
-            $repo->destroy($events);
-
             Notification::create([
                 'title' => Notification::APPOINTMENT_CANCEL_PATIENT_MSG . ' ' . getLogInUser()->full_name,
                 'type' => Notification::CANCELED,
@@ -378,16 +368,6 @@ class AppointmentController extends AppBaseController
         $appointment->update([
             'status' => Appointment::CANCELLED,
         ]);
-
-        $events = UserGoogleAppointment::with('user')
-            ->where('appointment_id', $appointment->id)
-            ->get()
-            ->groupBy('user_id');
-
-        foreach ($events as $userID => $event) {
-            $user = $event[0]->user;
-            DeleteAppointmentFromGoogleCalendar::dispatch($event, $user);
-        }
 
         $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();

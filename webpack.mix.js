@@ -1,4 +1,33 @@
 const mix = require("laravel-mix");
+const fs = require("fs");
+const path = require("path");
+
+// Function to delete directories
+const deleteDirectories = (directories) => {
+    directories.forEach((dir) => {
+        const fullPath = path.resolve(__dirname, dir);
+        if (fs.existsSync(fullPath)) {
+            fs.rmSync(fullPath, { recursive: true, force: true });
+            console.log(`Deleted: ${fullPath}`);
+        }
+    });
+};
+
+// Directories to delete
+const directoriesToDelete = [
+    "public/assets",
+    "public/backend",
+    "public/css",
+    "public/fonts",
+    "public/js",
+    "public/vendor",
+    "public/web",
+    "public/messages.js",
+    "public/mix-manifest.json",
+];
+
+// Delete the directories before the build
+deleteDirectories(directoriesToDelete);
 
 // Copy directories
 mix.copyDirectory("resources/assets/images", "public/assets/image")
@@ -17,10 +46,16 @@ mix.copyDirectory("resources/assets/images", "public/assets/image")
     .copyDirectory("resources/assets/front", "public/assets/front");
 
 // Copy individual files
-mix.copy(
-    "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
-    "public/assets/css/bootstrap-datepicker/bootstrap-datepicker.css"
-)
+mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
+    .copy("resources/css/poppins.css", "public/css/poppins.css")
+    .copy(
+        "resources/assets/front/vendor/font-awesome/css/all.min.css",
+        "public/css/fontawesome.all.min.css"
+    )
+    .copy(
+        "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
+        "public/assets/css/bootstrap-datepicker/bootstrap-datepicker.css"
+    )
     .copy(
         "node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
         "public/assets/js/bootstrap-datepicker/bootstrap-datepicker.js"
@@ -117,7 +152,6 @@ mix.scripts(
         "resources/theme/js/vendor.js",
         "resources/theme/js/plugins.js",
         "resources/messages.js",
-        "node_modules/apexcharts/dist/apexcharts.js",
         "node_modules/intl-tel-input/build/js/utils.js",
         "node_modules/intl-tel-input/build/js/intlTelInput.js",
         "node_modules/quill/dist/quill.js",
@@ -129,7 +163,7 @@ mix.scripts(
             "resources/theme/js/vendor.js",
             "resources/theme/js/plugins.js",
             "public/messages.js",
-            "public/assets/front/vendor/jquery.min.js",
+            "node_modules/jquery/dist/jquery.min.js",
             "public/assets/front/vendor/magnific-popup/jquery.magnific-popup.js",
             "public/assets/front/vendor/bootstrap.bundle.min.js",
             "public/assets/front/vendor/bootstrap-select/js/bootstrap-select.min.js",
@@ -139,7 +173,6 @@ mix.scripts(
             "resources/assets/js/custom/helper.js",
             "node_modules/intl-tel-input/build/js/utils.js",
             "node_modules/intl-tel-input/build/js/intlTelInput.js",
-            "node_modules/apexcharts/dist/apexcharts.js",
             "node_modules/quill/dist/quill.js",
         ],
         "public/js/front-third-party.js"
@@ -212,7 +245,6 @@ mix.js(
         "resources/assets/js/transactions/transactions.js",
         "resources/assets/js/transactions/patient-transactions.js",
         "resources/assets/js/fronts/front_home/front-home.js",
-        "resources/assets/js/google_calendar/google_calendar.js",
         "resources/assets/js/reviews/review.js",
         "resources/assets/front/js/front-language.js",
         "resources/assets/js/custom/create-account.js",

@@ -18,7 +18,7 @@ use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Front\FrontPatientTestimonialController;
 use App\Http\Controllers\Front\SliderController;
 use App\Http\Controllers\Front\SubscribeController;
-use App\Http\Controllers\GoogleCalendarController;
+
 use App\Http\Controllers\HolidayContoller;
 use App\Http\Controllers\LiveConsultationController;
 use App\Http\Controllers\MedicineBillController;
@@ -60,21 +60,6 @@ use App\Http\Controllers\RequestDocumentsController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('google-auth', [GoogleCalendarController::class, 'oauth'])->name('googleAuth');
-Route::get(
-    'sync-google-calendar-list',
-    [GoogleCalendarController::class, 'syncGoogleCalendarList']
-)->name('syncGoogleCalendarList');
-Route::get('google/redirect', [GoogleCalendarController::class, 'redirect']);
-Route::post(
-    'create-google-calendar-patient',
-    [AppointmentController::class, 'createGoogleEventForPatient']
-)->name('createGoogleEventForPatient');
-Route::post(
-    'create-google-calendar-doctor',
-    [AppointmentController::class, 'createGoogleEventForDoctor']
-)->name('createGoogleEventForDoctor');
 
 Route::get('/login', function () {
     return (! Auth::check()) ? view('auth.login') : Redirect::to(getDashboardURL());

@@ -21,10 +21,6 @@
     <a class="nav-link p-0 {{ Request::is('doctors/visits*') ? 'active' : '' }}"
         href="{{ route('doctors.visits.index') }}">{{ __('messages.visits') }}</a>
 </li> -->
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/connect-google-calendar*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}"
-        href="{{ route('doctors.googleCalendar.index') }}">{{ __('messages.setting.connect_google_calendar') }}</a>
-</li>
 <!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/live-consultations*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/live-consultation*') ? 'active' : '' }}"
         href="{{ route('doctors.live-consultations.index') }}">{{ __('messages.live_consultations') }}</a>
@@ -54,10 +50,6 @@
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/transactions*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/transactions*') ? 'active' : '' }}"
         href="{{ route('patients.transactions') }}">{{ __('messages.transactions') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/connect-google-calendar*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}"
-        href="{{ route('patients.googleCalendar.index') }}">{{ __('messages.setting.connect_google_calendar') }}</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/reviews*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/reviews*') ? 'active' : '' }}"

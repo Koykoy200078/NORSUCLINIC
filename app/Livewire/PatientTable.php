@@ -4,8 +4,6 @@ namespace App\Livewire;
 
 use Carbon\Carbon;
 use App\Models\Patient;
-use App\Models\RequestDocuments;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -29,6 +27,9 @@ class PatientTable extends LivewireTableComponent
 
     public string $dateFilter = '';
 
+    /**
+     * Configure the table settings.
+     */
     public function configure(): void
     {
         $this->setPrimaryKey('id')
@@ -46,33 +47,40 @@ class PatientTable extends LivewireTableComponent
         });
     }
 
+    /**
+     * Build the query for the table.
+     */
     public function builder(): Builder
     {
-        $query = Patient::with(['user', 'appointments'])
-            ->withCount('appointments');
+        $query = Patient::with(['user:id,first_name,last_name,email,email_verified_at', 'appointments:id,patient_id'])
+            ->withCount('appointments')
+            ->withCount(['requestDocuments as request_documents_count' => function ($subQuery) {
+                $subQuery->selectRaw('COUNT(*)')
+                    ->whereColumn('request_documents.user_id', 'patients.user_id');
+            }]);
 
-        // Fix the subquery for request_documents_count
-        $query->withCount(['requestDocuments as request_documents_count' => function ($subQuery) {
-            $subQuery->selectRaw('COUNT(*)')
-                ->whereColumn('request_documents.user_id', 'patients.user_id'); // Corrected reference
-        }]);
+        if (!empty($this->dateFilter) && $this->dateFilter != getWeekDate()) {
+            [$startDate, $endDate] = array_map(function ($date) {
+                return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
+            }, explode(' - ', $this->dateFilter));
 
-        if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
-            $timeEntryDate = explode(' - ', $this->dateFilter);
-            $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
-            $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-            $query->whereDate('patients.created_at', '>=', $startDate);
-            $query->whereDate('patients.created_at', '<=', $endDate);
+            $query->whereBetween('patients.created_at', [$startDate, $endDate]);
         }
 
         return $query;
     }
 
+    /**
+     * Define the placeholder view for the table.
+     */
     public function placeholder()
     {
         return view('livewire.doctor_holiday_skeleton');
     }
 
+    /**
+     * Handle the date filter change.
+     */
     public function changeDateFilter($date)
     {
         $this->dateFilter = $date;
@@ -80,20 +88,21 @@ class PatientTable extends LivewireTableComponent
         $this->resetPagination();
     }
 
+    /**
+     * Define the columns for the table.
+     */
     public function columns(): array
     {
         return [
-            Column::make(__('messages.patient.name'), 'user.first_name')->view('patients.components.name')
+            Column::make(__('messages.patient.name'), 'user.first_name')
+                ->view('patients.components.name')
                 ->sortable()
-                ->searchable(
-                    function (Builder $query, $direction) {
-                        return $query->whereHas('user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
-                        });
-                    }
-                ),
-            Column::make(__('messages.patient.name'), 'user.email')
-                ->hideIf('user.email')
+                ->searchable(function (Builder $query, $direction) {
+                    $query->whereHas('user', function (Builder $q) use ($direction) {
+                        $q->whereRaw("TRIM(CONCAT(first_name, ' ', last_name)) LIKE ?", ["%{$direction}%"]);
+                    });
+                }),
+            Column::make(__('messages.patient.email'), 'user.email')
                 ->searchable(),
             Column::make(__('messages.doctor_dashboard.total_appointments'), 'id')
                 ->sortable()
@@ -104,13 +113,17 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.common.email_verified'), 'user.email_verified_at')
                 ->sortable()
                 ->view('patients.components.email_verified'),
-            // Column::make(__('messages.common.impersonate'), 'user.first_name')->view('patients.components.impersonate'),
-            Column::make(__('messages.patient.registered_on'), 'created_at')->view('patients.components.registered_on')
-                ->sortable(),
-            Column::make(__('messages.common.action'), 'user.id')->view('patients.components.action'),
+            Column::make(__('messages.patient.registered_on'), 'created_at')
+                ->sortable()
+                ->view('patients.components.registered_on'),
+            Column::make(__('messages.common.action'), 'user.id')
+                ->view('patients.components.action'),
         ];
     }
 
+    /**
+     * Reset the pagination for the table.
+     */
     public function resetPagination()
     {
         $this->resetPage('patientsPage');

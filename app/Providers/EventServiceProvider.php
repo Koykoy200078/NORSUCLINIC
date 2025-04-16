@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\CreateGoogleAppointment;
-use App\Events\DeleteAppointmentFromGoogleCalendar;
-use App\Listeners\HandleCreatedGoogleAppointment;
-use App\Listeners\HandleDeletedAppointmentFromGoogleCalendar;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,12 +16,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-        DeleteAppointmentFromGoogleCalendar::class => [
-            HandleDeletedAppointmentFromGoogleCalendar::class,
-        ],
-        CreateGoogleAppointment::class => [
-            HandleCreatedGoogleAppointment::class,
         ],
     ];
 

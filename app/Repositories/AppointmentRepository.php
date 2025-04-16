@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Events\CreateGoogleAppointment;
-use App\Http\Controllers\GoogleCalendarController;
 use App\Mail\AppointmentBookedMail;
 use App\Mail\DoctorAppointmentBookMail;
 use App\Mail\PatientAppointmentBookMail;
@@ -33,14 +32,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  */
 class AppointmentRepository extends BaseRepository
 {
-    /**
-     * @var GoogleCalendarController
-     */
-    public function __construct(GoogleCalendarController $googleCalendarController)
-    {
-        $this->googleCalendarController = $googleCalendarController;
-    }
-
     /**
      * @var array
      */

@@ -93,14 +93,6 @@
         <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
     </a>
 </li> -->
-
-<li class="nav-item {{ Request::is('doctors/connect-google-calendar*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('doctors.googleCalendar.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
-        <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
-    </a>
-</li>
 <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
@@ -161,14 +153,6 @@
         <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
     </a>
 </li> -->
-
-<li class="nav-item {{ Request::is('patients/connect-google-calendar*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.googleCalendar.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-day"></i></span>
-        <span class="aside-menu-title">{{ __('messages.setting.connect_google_calendar') }}</span>
-    </a>
-</li>
 @endrole
 @can('manage_doctors')
 <li

@@ -249,11 +249,6 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Staff::class);
     }
 
-    public function gCredentials(): HasOne
-    {
-        return $this->hasOne(GoogleCalendarIntegration::class, 'user_id');
-    }
-
     public function campus()
     {
         return $this->belongsTo(Campus::class, 'campus_id');
