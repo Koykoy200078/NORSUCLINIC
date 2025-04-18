@@ -52,51 +52,13 @@
         @endif
 
         let manually = "{{ \App\Models\Appointment::MANUALLY }}";
-        let paystack = "{{ \App\Models\Appointment::PAYSTACK }}";
         let paypal = "{{ \App\Models\Appointment::PAYPAL }}";
         let stripeMethod = "{{ \App\Models\Appointment::STRIPE }}";
-        let razorpayMethod = "{{ \App\Models\Appointment::RAZORPAY }}";
         let authorizeMethod = "{{ \App\Models\Appointment::AUTHORIZE }}";
         let paytmMethod = "{{ \App\Models\Appointment::PAYTM }}";
 
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         Lang.setLocale(checkLanguageSession);
-
-        let options = {
-            key: "{{ config('payments.razorpay.key') }}",
-            amount: 0, // 100 refers to 1
-            currency: 'PHP',
-            name: "{{ getAppName() }}",
-            order_id: '',
-            description: '',
-            image: '{{ asset(getAppLogo()) }}', // logo here
-            callback_url: "{{ route('razorpay.success') }}",
-            prefill: {
-                email: '', // recipient email here
-                name: '', // recipient name here
-                contact: '', // recipient phone here
-                appointmentID: '', // appointmentID here
-            },
-            readonly: {
-                name: 'true',
-                email: 'true',
-                contact: 'true',
-            },
-            theme: {
-                color: '#4FB281',
-            },
-            modal: {
-                ondismiss: function() {
-                    $('.book-appointment-message').css('display', 'block');
-                    let response =
-                        '<div class="gen alert alert-danger">Appointment created successfully and payment not completed.</div>';
-                    $('.book-appointment-message').html(response).delay(5000).hide('slow');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1500);
-                },
-            },
-        };
     </script>
 
     <!-- Laravel Routes -->

@@ -57,9 +57,6 @@ function loadPatientTransactionTable () {
                     if (row.type == paypalMethod){
                         return paypal;
                     }
-                    if (row.type == razorpayMethod){
-                        return razorpay;
-                    }
                     if (row.type == authorizeMethod){
                         return authorize;
                     }

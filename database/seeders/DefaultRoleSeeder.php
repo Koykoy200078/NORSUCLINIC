@@ -21,6 +21,11 @@ class DefaultRoleSeeder extends Seeder
                 'is_default' => true,
             ],
             [
+                'name' => 'staff',
+                'display_name' => 'Staff',
+                'is_default' => true,
+            ],
+            [
                 'name' => 'doctor',
                 'display_name' => 'Doctor',
                 'is_default' => true,

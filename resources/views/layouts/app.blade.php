@@ -164,38 +164,6 @@
         let currentLoginUserId = "{{ getLogInUserId() }}";
         let bloodGroupArray = @json($bloodGroupArr);
         Lang.setLocale(checkLanguageSession);
-        let options = {
-            key: "{{ config('payments.razorpay.key') }}",
-            amount: 0, // 100 refers to 1
-            currency: 'PHP',
-            name: "{{ getAppName() }}",
-            order_id: '',
-            description: '',
-            image: '{{ asset(getAppLogo()) }}', // logo here
-            callback_url: "{{ route('razorpay.success') }}",
-            prefill: {
-                email: '', // recipient email here
-                name: '', // recipient name here
-                contact: '', // recipient phone here
-                appointmentID: '', // appointmentID here
-            },
-            readonly: {
-                name: 'true',
-                email: 'true',
-                contact: 'true',
-            },
-            theme: {
-                color: '#4FB281',
-            },
-            modal: {
-                ondismiss: function() {
-                    displayErrorMessage(Lang.get('js.appointment_created_payment_not_complete'));
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1500);
-                },
-            },
-        };
     </script>
 </body>
 

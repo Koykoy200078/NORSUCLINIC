@@ -26,11 +26,9 @@ use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PaypalController;
-use App\Http\Controllers\PaystackController;
 use App\Http\Controllers\PayTMController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PurchaseMedicineController;
-use App\Http\Controllers\RazorpayController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\ServiceController;
@@ -97,26 +95,10 @@ Route::get(
 Route::get('/manually-payment', [AppointmentController::class, 'manuallyPayment'])->name('manually-payment');
 Route::put('transaction-status', [TransactionController::class, 'changeTransactionStatus'])->name('transaction.status');
 
-//Paystack Route
-Route::get('paystack-onboard', [PaystackController::class, 'redirectToGateway'])->name('paystack.init');
-Route::get(
-    'paystack-payment-success',
-    [PaystackController::class, 'handleGatewayCallback']
-)->name('paystack.success');
-
 // paypal routes
 Route::get('/paypal-payment', function () {
     return view('payments.paypal.index');
 })->name('paypal.index');
-
-//RazorPay Route
-Route::post('razorpay-onboard', [RazorpayController::class, 'onBoard'])->name('razorpay.init');
-Route::post('razorpay-payment-success', [RazorpayController::class, 'paymentSuccess'])
-    ->name('razorpay.success');
-Route::post('razorpay-payment-failed', [RazorpayController::class, 'paymentFailed'])
-    ->name('razorpay.failed');
-Route::get('razorpay-payment-webhook', [RazorpayController::class, 'paymentSuccessWebHook'])
-    ->name('razorpay.webhook');
 
 Route::get('paypal-onboard', [PaypalController::class, 'onBoard'])->name('paypal.init');
 Route::get('paypal-payment-success', [PaypalController::class, 'success'])->name('paypal.success');

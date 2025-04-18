@@ -84,21 +84,6 @@ class AppointmentController extends AppBaseController
         //     ], 'Stripe ' . __('messages.appointment.session_created_successfully'));
         // }
 
-        // if ($input['payment_type'] == Appointment::PAYSTACK) {
-        //     if (env('PAYSTACK_PUBLIC_KEY') && env('PAYSTACK_SECRET_KEY')) {
-        //         if ($request->isXmlHttpRequest()) {
-        //             return $this->sendResponse([
-        //                 'redirect_url' => route('paystack.init', ['appointmentData' => $appointment]),
-        //                 'payment_type' => $input['payment_type'],
-        //                 'appointmentId' => $appointment->id,
-        //             ], 'Paystack ' . __('messages.appointment.session_created_successfully'));
-        //         }
-        //         return redirect(route('paystack.init'));
-        //     } else {
-        //         return $this->sendError(__('messages.payment_method.paystack') . ' ' . __('messages.paypal.credentials_not_set'));
-        //     }
-        // }
-
         // if ($input['payment_type'] == Appointment::PAYPAL) {
 
         //     if (env('PAYPAL_CLIENT_ID') && env('PAYPAL_SECRET')) {
@@ -112,17 +97,6 @@ class AppointmentController extends AppBaseController
         //         return redirect(route('paypal.init'));
         //     } else {
         //         return $this->sendError(__('messages.payment_method.paypal') . ' ' . __('messages.paypal.credentials_not_set'));
-        //     }
-        // }
-
-        // if ($input['payment_type'] == Appointment::RAZORPAY) {
-        //     if (env('RAZOR_KEY') && env('RAZOR_SECRET')) {
-        //         return $this->sendResponse([
-        //             'payment_type' => $input['payment_type'],
-        //             'appointmentId' => $appointment->id,
-        //         ], 'Razorpay ' . __('messages.appointment.session_created_successfully'));
-        //     } else {
-        //         return $this->sendError(__('messages.payment_method.razorpay') . ' ' . __('messages.paypal.credentials_not_set'));
         //     }
         // }
 
@@ -407,24 +381,6 @@ class AppointmentController extends AppBaseController
                     'appointmentId' => $appointment->id,
                 ], 'Paypal ' . __('messages.appointment.session_created_successfully'));
             }
-        }
-
-        if ($input['payment_type'] == Appointment::PAYSTACK) {
-            if ($request->isXmlHttpRequest()) {
-                return $this->sendResponse([
-                    'redirect_url' => route('paystack.init', ['appointmentData' => $appointment]),
-                    'payment_type' => $input['payment_type'],
-                ], 'Paystck ' . __('messages.appointment.session_created_successfully'));
-            }
-
-            return redirect(route('paystack.init'));
-        }
-
-        if ($input['payment_type'] == Appointment::RAZORPAY) {
-            return $this->sendResponse([
-                'payment_type' => $input['payment_type'],
-                'appointmentId' => $appointment->id,
-            ], 'Razorpay ' . __('messages.appointment.session_created_successfully'));
         }
 
         if ($input['payment_type'] == Appointment::PAYTM) {

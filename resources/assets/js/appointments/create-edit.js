@@ -212,11 +212,6 @@ listenSubmit('#addAppointmentForm', function (e) {
                 $('#addAppointmentForm')[0].reset();
                 $('#addAppointmentForm').val('').trigger('change');
 
-                if (mainResult.data.payment_type == $('#paystackMethod').val()) {
-
-                    return location.href = mainResult.data.redirect_url;
-                }
-
                 if (mainResult.data.payment_type == $('#paytmMethod').val()) {
 
                     window.location.replace(route('paytm.init', { 'appointmentId': appID }));
@@ -261,33 +256,6 @@ listenSubmit('#addAppointmentForm', function (e) {
                         manageAjaxErrors(mainResult);
                     });
                 }
-
-                if (mainResult.data.payment_type == $('#razorpayMethodMethod').val()) {
-                    $.ajax({
-                        type: 'POST',
-                        url: route('razorpay.init'),
-                        data: { 'appointmentId': appID },
-                        success: function (result) {
-                            if (result.success) {
-                                let { id, amount, name, email, contact } = result.data
-                                options.amount = amount
-                                options.order_id = id
-                                options.prefill.name = name
-                                options.prefill.email = email
-                                options.prefill.contact = contact
-                                options.prefill.appointmentID = appID
-
-                                let razorPay = new Razorpay(options)
-                                razorPay.open()
-                                razorPay.on('payment.failed', storeFailedPayment)
-                            }
-                        },
-                        error: function (result) {
-                        },
-                        complete: function () {
-                        },
-                    })
-                }
             }
         },
         error: function (result) {
@@ -300,20 +268,3 @@ listenSubmit('#addAppointmentForm', function (e) {
         },
     });
 });
-
-function storeFailedPayment(response) {
-    $.ajax({
-        type: 'POST',
-        url: route('razorpay.failed'),
-        data: {
-            data: response,
-        },
-        success: function (result) {
-            if (result.success) {
-                displaySuccessMessage(result.message);
-            }
-        },
-        error: function () {
-        },
-    });
-}

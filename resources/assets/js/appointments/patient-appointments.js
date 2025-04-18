@@ -226,9 +226,7 @@ listenClick("#submitBtn", function (event) {
         return false;
     }
     let stripeMethod = 2;
-    let paystackMethod = 3;
     let paypalMethod = 4;
-    let razorpayMethod = 5;
     let authorizeMethod = 6;
     let paytmMethod = 7;
 
@@ -264,12 +262,6 @@ listenClick("#submitBtn", function (event) {
         );
     }
 
-    if (paymentGatewayType == paystackMethod) {
-        window.location.replace(
-            route("paystack.init", { appointmentData: appointmentId })
-        );
-    }
-
     if (paymentGatewayType == authorizeMethod) {
         window.location.replace(
             route("authorize.init", { appointmentId: appointmentId })
@@ -301,52 +293,8 @@ listenClick("#submitBtn", function (event) {
         });
     }
 
-    if (paymentGatewayType == razorpayMethod) {
-        $.ajax({
-            type: "POST",
-            url: route("razorpay.init"),
-            data: { appointmentId: appointmentId },
-            success: function (result) {
-                if (result.success) {
-                    let { id, amount, name, email, contact } = result.data;
-
-                    options.amount = amount;
-                    options.order_id = id;
-                    options.prefill.name = name;
-                    options.prefill.email = email;
-                    options.prefill.contact = contact;
-                    options.prefill.appointmentID = appointmentId;
-
-                    let razorPay = new Razorpay(options);
-                    razorPay.open();
-                    razorPay.on("payment.failed", storeFailedPayment);
-                }
-            },
-            error: function (result) {
-                displayErrorMessage(result.responseJSON.message);
-            },
-            complete: function () {},
-        });
-    }
-
     return false;
 });
-
-function storeFailedPayment(response) {
-    $.ajax({
-        type: "POST",
-        url: route("razorpay.failed"),
-        data: {
-            data: response,
-        },
-        success: function (result) {
-            if (result.success) {
-                displaySuccessMessage(result.message);
-            }
-        },
-        error: function () {},
-    });
-}
 
 listenClick(".payment-btn", function (event) {
     let appointmentId = $(this).attr("data-id");

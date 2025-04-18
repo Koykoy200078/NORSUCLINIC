@@ -1044,7 +1044,6 @@ return [
         'status_change' => 'Status changed successfully.',
         'payment_status_updated' => 'Payment status updated successfully.',
         'operation_performed_success' => 'Operation performed successfully',
-        'paystack_token_expired' => 'The paystack token has expired. Please refresh the page and try again.',
         'default_role_not_delete' => 'Default role do not deleted.',
         'user_role_not_delete' => 'This user role could not be deleted, because it’s assigned to a user.',
         'role_delete' => 'Role deleted successfully.',
@@ -1088,9 +1087,7 @@ return [
 
     'payment_method' => [
         'stripe' => 'Stripe',
-        'paystack' => 'Paystack',
         'paypal' => 'Paypal',
-        'razorpay' => 'Razorpay',
         'authorize' => 'Authorize',
         'paytm' => 'Paytm',
         'mobile_required' => 'Mobile number field is required',

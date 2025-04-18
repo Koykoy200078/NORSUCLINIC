@@ -1,15 +1,6 @@
 <?php
 
 return [
-
-    'paystack' => [
-        'key' => getenv('PAYSTACK_PUBLIC_KEY'),
-        'secret' => getenv('PAYSTACK_SECRET_KEY'),
-        'url' => getenv('PAYSTACK_PAYMENT_URL'),
-
-        'email' => getenv('PAYSTACK_MERCHANT_EMAIL'),
-    ],
-
     'paypal' => [
         'mode' => env('PAYPAL_MODE', 'sandbox'),
         'client_id' => env('PAYPAL_CLIENT_ID'),
@@ -21,11 +12,6 @@ return [
         'locale' => env('PAYPAL_LOCALE', 'en_US'),
         // force gateway language  i.e. it_IT, es_ES, en_US ... (for express checkout only)
         'validate_ssl' => env('PAYPAL_VALIDATE_SSL', true), // Validate SSL when creating api client.
-    ],
-
-    'razorpay' => [
-        'key' => env('RAZOR_KEY'),
-        'secret' => env('RAZOR_SECRET'),
     ],
 
     'authorize' => [

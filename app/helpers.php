@@ -125,6 +125,7 @@ if (!function_exists('getDashboardURL')) {
         // Role-based dashboard URLs
         $roleDashboardMap = [
             'clinic_admin' => 'admin/dashboard',
+            'staff' => 'staff/dashboard',
             'doctor' => 'doctors/dashboard',
         ];
 
@@ -143,7 +144,7 @@ if (!function_exists('getDashboardURL')) {
             'manage_staff' => 'staff',
             'manage_appointments' => 'appointments',
             'manage_patient_visits' => 'visits',
-            'manage_settings' => 'admin/settings',
+            'manage_settings' => 'settings',
             'manage_specialties' => 'specializations',
             'manage_services' => 'services',
             'manage_front_cms' => 'cms',
@@ -164,6 +165,8 @@ if (!function_exists('getDashboardURL')) {
         if (in_array('manage_request_documents', $permissions, true)) {
             if ($user->hasRole('clinic_admin')) {
                 return 'admin/request-documents';
+            } elseif ($user->hasRole('staff')) {
+                return 'staff/request-documents';
             } elseif ($user->hasRole('doctor')) {
                 return 'doctor/request-documents';
             }
@@ -911,122 +914,6 @@ if (!function_exists('paypalCurrencySupports')) {
     }
 }
 
-if (!function_exists('razorpayCurrencySupports')) {
-    function razorpayCurrencySupports()
-    {
-        $rozarpay = [
-            'AED',
-            'ALL',
-            'AMD',
-            'ARS',
-            'AUD',
-            'AWG',
-            'BBD',
-            'BDT',
-            'BMD',
-            'BND',
-            'BOB',
-            'BSD',
-            'BWP',
-            'BZD',
-            'CAD',
-            'CHF',
-            'CNY',
-            'COP',
-            'CRC',
-            'CUP',
-            'CZK',
-            'DKK',
-            'DOP',
-            'DZD',
-            'EGP',
-            'ETB',
-            'EUR',
-            'FJD',
-            'GBP',
-            'GHS',
-            'GIP',
-            'GMD',
-            'GTQ',
-            'GYD',
-            'HKD',
-            'HNL',
-            'HRK',
-            'HTG',
-            'HUF',
-            'IDR',
-            'ILS',
-            'INR',
-            'JMD',
-            'KES',
-            'KGS',
-            'KHR',
-            'KYD',
-            'KZT',
-            'LAK',
-            'LKR',
-            'LRD',
-            'LSL',
-            'MAD',
-            'MDL',
-            'MKD',
-            'MMK',
-            'MNT',
-            'MOP',
-            'MUR',
-            'MVR',
-            'MWK',
-            'MXN',
-            'MYR',
-            'NAD',
-            'NGN',
-            'NIO',
-            'NOK',
-            'NPR',
-            'NZD',
-            'PEN',
-            'PGK',
-            'PHP',
-            'PKR',
-            'QAR',
-            'RUB',
-            'SAR',
-            'SCR',
-            'SEK',
-            'SGD',
-            'SLL',
-            'SOS',
-            'SSP',
-            'SVC',
-            'SZL',
-            'THB',
-            'TTD',
-            'TZS',
-            'USD',
-            'UYU',
-            'UZS',
-            'YER',
-            'ZAR',
-            'TRY'
-        ];
-
-        if (!in_array(strtoupper(getCurrencyCode()), $rozarpay)) {
-            return  false;
-        }
-        return  true;
-    }
-}
-if (!function_exists('paystackCurrencySupports')) {
-    function paystackCurrencySupports()
-    {
-        $paystack = ['NGN', 'USD', 'GHS', 'ZAR', 'KES'];
-
-        if (!in_array(strtoupper(getCurrencyCode()), $paystack)) {
-            return  false;
-        }
-        return  true;
-    }
-}
 if (!function_exists('authorizedCurrencySupports')) {
     function authorizedCurrencySupports()
     {

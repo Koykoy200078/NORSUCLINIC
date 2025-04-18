@@ -17,7 +17,6 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "firebase/php-jwt": "^5.5",
         "gerardojbaez/money": "^0.3.1",
-        "google/apiclient": "^2.6",
         "guzzlehttp/guzzle": "^7.4",
         "lab404/laravel-impersonate": "^1.7.4",
         "laracasts/flash": "^3.2",
@@ -33,14 +32,12 @@
         "opcodesio/log-viewer": "^3.1",
         "rap2hpoutre/laravel-log-viewer": "^2.3",
         "rappasoft/laravel-livewire-tables": "^3.2",
-        "razorpay/razorpay": "^2.8",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.8",
         "srmklive/paypal": "^3.0",
         "stripe/stripe-php": "^7.98",
-        "tightenco/ziggy": "^1.1",
-        "unicodeveloper/laravel-paystack": "^1.1"
+        "tightenco/ziggy": "^1.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

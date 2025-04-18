@@ -449,10 +449,6 @@ listenSubmit("#frontAppointmentBook", function (e) {
                     });
                 }
 
-                if (result.data.payment_type == paystack) {
-                    return (location.href = result.data.redirect_url);
-                }
-
                 if (result.data.payment_type == authorizeMethod) {
                     window.location.replace(
                         route("authorize.init", {
@@ -485,46 +481,6 @@ listenSubmit("#frontAppointmentBook", function (e) {
                                     }
                                 );
                                 location.href = redirectTo;
-                            }
-                        },
-                        error: function (result) {},
-                        complete: function () {},
-                    });
-                }
-
-                if (result.data.payment_type == razorpayMethod) {
-                    $.ajax({
-                        type: "POST",
-                        url: route("razorpay.init"),
-                        data: {
-                            _token: csrfToken,
-                            appointmentId: appointmentID,
-                        },
-                        success: function (result) {
-                            if (result.success) {
-                                let {
-                                    id,
-                                    amount,
-                                    name,
-                                    email,
-                                    contact,
-                                    country_code,
-                                } = result.data;
-
-                                options.amount = amount;
-                                options.order_id = id;
-                                options.prefill.name = name;
-                                options.prefill.email = email;
-                                options.prefill.contact = contact;
-                                options.prefill.contact = country_code;
-                                options.prefill.appointmentID = appointmentID;
-
-                                let razorPay = new Razorpay(options);
-                                razorPay.open();
-                                razorPay.on(
-                                    "payment.failed",
-                                    storeFailedPayment
-                                );
                             }
                         },
                         error: function (result) {},
@@ -591,19 +547,3 @@ window.setFrontBtnLoader = function (btnLoader) {
         )
         .prop("disabled", true);
 };
-
-function storeFailedPayment(response) {
-    $.ajax({
-        type: "POST",
-        url: route("razorpay.failed"),
-        data: {
-            data: response,
-        },
-        success: function (result) {
-            if (result.success) {
-                displaySuccessMessage(result.message);
-            }
-        },
-        error: function () {},
-    });
-}
