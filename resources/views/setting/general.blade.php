@@ -26,6 +26,14 @@
                         {{ Form::text('clinic_name', $setting['clinic_name'], ['class' => 'form-control','placeholder'=>__('messages.setting.clinic_name'),'required']) }}
                     </div>
                 </div>
+                <!-- Landline Number -->
+                <div class="row mb-6">
+                    {{ Form::label('landline_no', __('Landline No').':', ['class' => 'col-lg-4 form-label']) }}
+                    <div class="col-lg-8">
+                        {{ Form::text('landline_no', $setting['landline_no'] ?? null, ['class' => 'form-control', 'placeholder' => __('Input Landline Number'), 'id' => 'landlineNumber']) }}
+                    </div>
+                </div>
+                <!-- End of landline number -->
                 <div class="row mb-6">
                     {{ Form::label('contact_no', __('messages.patient.contact_no').':', ['class' => 'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">

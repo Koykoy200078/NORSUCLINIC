@@ -4,24 +4,41 @@
             <div class="col-lg-4 col-md-6 order-1 order-lg-0">
                 <h5 class="text-white mb-4 pb-1">{{ __('messages.web.contact_us') }}</h5>
                 <div class="footer-info">
+                    @if (!empty(getSettingValue('landline_no')))
                     <div class="d-flex align-items-center footer-info__block mb-3 pb-1">
                         <div class="footer-info__footer-icon fs-5 d-flex align-items-center justify-content-center">
-                            <i class="fa-solid fa-phone text-primary "></i>
+                            <i class="fa-solid fa-phone text-primary"></i>
+                        </div>
+                        <a href="tel:{{ getSettingValue('landline_no') }}"
+                            class="text-decoration-none text-white footer-info__contact-label">
+                            {{ getSettingValue('landline_no') }}
+                        </a>
+                    </div>
+                    @endif
+
+                    @if (!empty(getSettingValue('contact_no')))
+                    <div class="d-flex align-items-center footer-info__block mb-3 pb-1">
+                        <div class="footer-info__footer-icon fs-5 d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-mobile text-primary"></i>
                         </div>
                         <a href="tel:+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}"
                             class="text-decoration-none text-white footer-info__contact-label">
                             +{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}
                         </a>
                     </div>
+                    @endif
+
+                    @if (!empty(getSettingValue('email')))
                     <div class="d-flex align-items-center footer-info__block mb-3 pb-1">
                         <div class="footer-info__footer-icon fs-5 d-flex align-items-center justify-content-center">
-                            <i class="fa-solid fa-envelope text-primary "></i>
+                            <i class="fa-solid fa-envelope text-primary"></i>
                         </div>
-                        <a href="mailto:{{getSettingValue('email')}}"
+                        <a href="mailto:{{ getSettingValue('email') }}"
                             class="text-decoration-none text-white footer-info__contact-label">
                             {{ getSettingValue('email') }}
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 order-2 order-lg-2">

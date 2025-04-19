@@ -30,10 +30,10 @@
                                 <a class="nav-link {{ Request::is('medical-about-us*') ? 'active' : '' }}"
                                     href="{{ route('medicalAboutUs') }}">{{ __('messages.web.about_us') }}</a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link {{ Request::is('medical-contact*') ? 'active' : '' }}"
                                     href="{{ route('medicalContact') }}">{{ __('messages.web.contact_us') }}</a>
-                            </li>
+                            </li> -->
                         </ul>
                         <div class="text-lg-end header-btn-grp ms-xxl-5 ms-lg-3">
                             @if(getLogInUser())
