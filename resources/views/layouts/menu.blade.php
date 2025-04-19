@@ -286,12 +286,12 @@
         <span class="aside-menu-title">{{ __('messages.enquiries') }}</span>
     </a>
 </li>
-<li class="nav-item {{ Request::is('admin/subscribers*') ? 'active' : '' }}">
+<!-- <li class="nav-item {{ Request::is('admin/subscribers*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('subscribers.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fab fa-stripe-s"></i></span>
         <span class="aside-menu-title">{{ __('messages.subscribers') }}</span>
     </a>
-</li>
+</li> -->
 <li
     class="nav-item {{ Request::is('admin/cms*', 'admin/sliders*', 'admin/faqs*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('cms.index') }}">

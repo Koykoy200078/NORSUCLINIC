@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>{{__('messages.city.add_city')}}</h3>
+                <h3>{{__('Add City/Municipalities')}}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>

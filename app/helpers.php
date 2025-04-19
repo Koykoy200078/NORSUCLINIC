@@ -164,6 +164,8 @@ if (!function_exists('getDashboardURL')) {
         if (in_array('manage_request_documents', $permissions, true)) {
             if ($user->hasRole('clinic_admin')) {
                 return 'admin/request-documents';
+            } elseif ($user->hasRole('staff')) {
+                return 'staff/request-documents';
             } elseif ($user->hasRole('doctor')) {
                 return 'doctor/request-documents';
             }
@@ -183,6 +185,8 @@ if (! function_exists('getDoctorSessionURL')) {
     {
         if (Auth::user()->hasRole('clinic_admin')) {
             return 'admin/doctor-sessions';
+        } elseif (Auth::user()->hasRole('staff')) {
+            return 'staff/doctor-sessions';
         } elseif (Auth::user()->hasRole('doctor')) {
             return 'doctors/doctor-sessions';
         } elseif (Auth::user()->hasRole('patient')) {

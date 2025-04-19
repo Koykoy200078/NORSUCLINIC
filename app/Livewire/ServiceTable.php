@@ -44,7 +44,7 @@ class ServiceTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.staff_skeleton');
+        return view('livewire.staff_skeleton');
     }
 
     public function columns(): array
@@ -57,8 +57,6 @@ class ServiceTable extends LivewireTableComponent
             Column::make(__('messages.service.category'), 'serviceCategory.name')->view('services.components.category')
                 ->sortable()
                 ->searchable(),
-            Column::make(__('messages.appointment.service_charge'), 'charges')->view('services.components.service_charge')
-                ->sortable()->searchable(),
             Column::make(__('messages.doctor.status'), 'status')->view('services.components.status')->sortable(),
             Column::make(__('messages.common.action'), 'id')->view('services.components.action'),
         ];
@@ -68,10 +66,12 @@ class ServiceTable extends LivewireTableComponent
     {
         $query = Service::with(['serviceCategory', 'media'])->select('services.*');
 
-        $query->when($this->statusFilter !== '' && $this->statusFilter != Service::ALL,
+        $query->when(
+            $this->statusFilter !== '' && $this->statusFilter != Service::ALL,
             function (Builder $query) {
                 $query->where('status', $this->statusFilter);
-            });
+            }
+        );
 
         return $query;
     }

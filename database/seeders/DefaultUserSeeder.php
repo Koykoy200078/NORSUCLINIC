@@ -63,8 +63,8 @@ class DefaultUserSeeder extends Seeder
             ];
         }
 
-        // Add 999 students (patients)
-        for ($i = 0; $i < 999; $i++) {
+        // Add (patients)
+        for ($i = 0; $i < 10; $i++) {
             $users[] = [
                 'first_name' => fake()->firstName(),
                 'last_name' => fake()->lastName(),

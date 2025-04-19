@@ -6,7 +6,7 @@ use App\Http\Controllers\AppBaseController;
 use App\Models\Doctor;
 use App\Models\Service;
 use App\Models\ServiceCategory;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 

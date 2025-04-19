@@ -88,8 +88,17 @@ class DefaultStaffSeeder extends Seeder
             $user->assignRole($staffRole);
         }
 
-        // Assign all permissions to the staff role
-        $allPermission = Permission::pluck('id');
-        $staffRole->givePermissionTo($allPermission);
+        // Exclude specific permissions for the staff role
+        $excludedPermissions = [
+            'manage_roles',
+            'manage_currencies',
+            'manage_cities',
+            'manage_states',
+            'manage_countries',
+        ];
+
+        // Assign permissions to the staff role, excluding the specified ones
+        $staffPermissions = Permission::whereNotIn('name', $excludedPermissions)->pluck('name');
+        $staffRole->givePermissionTo($staffPermissions);
     }
 }

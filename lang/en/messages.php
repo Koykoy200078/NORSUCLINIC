@@ -20,7 +20,7 @@ return [
     'apps' => 'Apps',
     'countries' => 'Countries',
     'states' => 'Provinces',
-    'cities' => 'Cities',
+    'cities' => 'Cities/Municipalities',
     'doctors' => 'Doctors',
     'service_categories' => 'Service Categories',
     'specializations' => 'Specializations',
