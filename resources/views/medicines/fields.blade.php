@@ -1,16 +1,16 @@
 {{ Form::hidden('currency_symbol', getCurrentCurrency(), ['class' => 'currencySymbol']) }}
 <!-- Name Field -->
 <div class="form-group col-md-6 mb-5">
-    {{ Form::label('name', __('messages.medicine.medicine').(':'), ['class' => 'form-label']) }}
+    {{ Form::label('name', __('Medicine Name').(':'), ['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('name', null, ['class' => 'form-control','minlength' => 2, 'placeholder' =>  __('messages.medicine.medicine'), 'id' => 'medicineNameId']) }}
+    {{ Form::text('name', null, ['class' => 'form-control','minlength' => 2, 'placeholder' =>  __('Medicine Name'), 'id' => 'medicineNameId']) }}
 </div>
 
 <!-- Category Field -->
 <div class="form-group col-md-6 mb-5">
     {{ Form::label('category_id', __('messages.medicine.category').(':'), ['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::select('category_id', $categories, (isset($medicine)) ? $medicine->category_id : null, ['class' => 'form-select', 'placeholder' => __('messages.medicine.category'), 'id' => 'medicineCategoryId']) }}
+    {{ Form::select('category_id', $categories, (isset($medicine)) ? $medicine->category_id : null, ['class' => 'form-select', 'placeholder' => __('Select a category'), 'id' => 'medicineCategoryId']) }}
 </div>
 
 <!-- Quantity Field -->

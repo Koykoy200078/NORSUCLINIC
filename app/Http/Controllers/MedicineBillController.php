@@ -71,8 +71,10 @@ class MedicineBillController extends AppBaseController
         $medicineCategories = $this->medicineBillRepository->getMedicinesCategoriesData();
         $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
 
-        return view('medicine-bills.create',
-            compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineCategoriesList', 'medicineCategories'))->with($data);
+        return view(
+            'medicine-bills.create',
+            compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineCategoriesList', 'medicineCategories')
+        )->with($data);
     }
 
     /**
@@ -86,7 +88,6 @@ class MedicineBillController extends AppBaseController
             flash::error(__('messages.medicine_bills.medicine_not_selected'));
 
             return Redirect::route('medicine-bills.create');
-
         }
         $arr = collect($input['medicine']);
         $duplicateIds = $arr->duplicates();
@@ -107,16 +108,15 @@ class MedicineBillController extends AppBaseController
             $qty = $input['quantity'][$key];
             if ($medicine->available_quantity < $qty) {
                 $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
-                Flash::error(__('messages.medicine_bills.available_quantity').' '.$medicine->name.' '.__('messages.medicine_bills.is').' '.$available.'.');
+                Flash::error(__('messages.medicine_bills.available_quantity') . ' ' . $medicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
 
                 return Redirect::route('medicine-bills.create');
-
             }
         }
 
         // dd($input);
         $medicineBill = MedicineBill::create([
-            'bill_number' => 'BIL'.generateUniqueBillNumber(),
+            'bill_number' => 'BIL' . generateUniqueBillNumber(),
             'patient_id' => $input['patient_id'],
             'net_amount' => $input['net_amount'],
             'discount' => $input['discount'],
@@ -151,10 +151,9 @@ class MedicineBillController extends AppBaseController
                     ]);
                 }
             }
-            Flash::success(__('messages.medicine_bills.medicine_bill').' '.__('messages.medicine.saved_successfully'));
+            Flash::success(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
 
             return Redirect::route('medicine-bills.index');
-
         }
     }
 
@@ -186,9 +185,10 @@ class MedicineBillController extends AppBaseController
         $medicineCategories = $this->medicineBillRepository->getMedicinesCategoriesData();
         $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
 
-        return view('medicine-bills.edit',
-            compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineBill', 'medicineCategoriesList', 'medicineCategories'))->with($data);
-
+        return view(
+            'medicine-bills.edit',
+            compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineBill', 'medicineCategoriesList', 'medicineCategories')
+        )->with($data);
     }
 
     /**
@@ -206,8 +206,7 @@ class MedicineBillController extends AppBaseController
         }
         $this->medicineBillRepository->update($medicineBill, $input);
 
-        return $this->sendSuccess(__('messages.medicine_bills.medicine_bill').' '.__('messages.medicine.saved_successfully'));
-
+        return $this->sendSuccess(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
     }
 
     /**
@@ -220,7 +219,7 @@ class MedicineBillController extends AppBaseController
         $medicineBill->saleMedicine()->delete();
         $medicineBill->delete();
 
-        return $this->sendSuccess(__('messages.medicine_bills.medicine_bill').' '.__('messages.common.deleted_successfully'));
+        return $this->sendSuccess(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.common.deleted_successfully'));
     }
 
     /** Store a newly created Patient in storage.

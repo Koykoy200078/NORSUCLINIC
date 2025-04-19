@@ -141,8 +141,10 @@ class UserController extends AppBaseController
             $cities = getCities($data['stateId']->toArray());
         }
 
-        return view('doctors.edit',
-            compact('user', 'qualifications', 'data', 'doctor', 'countries', 'state', 'cities', 'years', 'bloodGroup'));
+        return view(
+            'doctors.edit',
+            compact('user', 'qualifications', 'data', 'doctor', 'countries', 'state', 'cities', 'years', 'bloodGroup')
+        );
     }
 
     /**
@@ -287,7 +289,9 @@ class UserController extends AppBaseController
     {
         if ($request->ajax()) {
             return DataTables::of((new UserDataTable())->getAppointment($request->only([
-                'status', 'doctorId', 'filter_date',
+                'status',
+                'doctorId',
+                'filter_date',
             ])))->make(true);
         }
 
