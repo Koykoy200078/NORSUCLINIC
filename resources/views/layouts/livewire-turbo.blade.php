@@ -3,7 +3,7 @@
     window.livewire_app_url = '';
     window.livewire_token = 'ALgYiOhEGgqnf91Bd77MObUWdXklhkOwKIJFglLs';
     window.deferLoadingAlpine = function (callback) {
-        window.addEventListener('livewire:load', function () {
+        window.addEventListener('livewire:init', function () {
             callback();
         });
     };

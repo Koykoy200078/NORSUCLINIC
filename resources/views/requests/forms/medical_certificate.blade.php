@@ -2,7 +2,7 @@
     @if($user->type != 3)
     <div class="mb-10">
         <label class="block text-xs" for="user_search">Search User</label>
-        <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name or email">
+        <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name" autocomplete="off">
         <div id="user_search_results" class="absolute bg-white border border-gray-300 w-fit hidden z-10"></div>
     </div>
     @endif

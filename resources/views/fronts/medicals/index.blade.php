@@ -76,8 +76,8 @@ $styleCss = 'style';
                             <li class="mb-2">{{__('messages.web.best_professionals')}}</li>
                             <li class="mb-2">{{__('messages.web.medical_treatment')}}</li>
                         </ul>
-                        <a href="{{ route('medicalContact') }}"
-                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a>
+                        <!-- <a href="{{ route('medicalContact') }}"
+                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a> -->
                     </div>
                 </div>
             </div>

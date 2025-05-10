@@ -299,8 +299,8 @@
         <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
         <span class="d-none">{{ __('messages.cms.cms') }}</span>
         <span class="d-none">{{ __('messages.sliders') }}</span>
-        <span class="d-none">{{ __('messages.faqs') }}</span>
-        <span class="d-none">{{ __('messages.front_patient_testimonials') }}</span>
+        <!-- <span class="d-none">{{ __('messages.faqs') }}</span> -->
+        <!-- <span class="d-none">{{ __('messages.front_patient_testimonials') }}</span> -->
     </a>
 </li>
 @endcan

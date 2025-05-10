@@ -77,7 +77,8 @@ mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
     .copy(
         "vendor/rappasoft/laravel-livewire-tables/resources/js",
         "public/vendor"
-    );
+    )
+    .copy("resources/css/ajax-loader.gif", "public/css");
 
 // Compile and bundle CSS
 mix.styles(
@@ -160,10 +161,11 @@ mix.scripts(
 )
     .scripts(
         [
+            "node_modules/jquery/dist/jquery.js",
+            "node_modules/jquery/dist/jquery.min.js",
             "resources/theme/js/vendor.js",
             "resources/theme/js/plugins.js",
             "public/messages.js",
-            "node_modules/jquery/dist/jquery.min.js",
             "public/assets/front/vendor/magnific-popup/jquery.magnific-popup.js",
             "public/assets/front/vendor/bootstrap.bundle.min.js",
             "public/assets/front/vendor/bootstrap-select/js/bootstrap-select.min.js",
