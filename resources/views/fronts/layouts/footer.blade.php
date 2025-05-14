@@ -53,10 +53,6 @@
                             class="text-decoration-none  mb-2 d-block fw-light {{ Request::is('medical-contact*') ? 'text-black' : 'text-white' }}">{{ __('messages.web.contact_us') }}</a>
                     </li>
                     <li>
-                        <a href="{{ route('front.faqs') }}"
-                            class="text-decoration-none mb-2 d-block fw-light {{ Request::is('faqs*') ? 'text-black' : 'text-white' }}">{{ __('messages.web.faqs') }}</a>
-                    </li>
-                    <li>
                         <a href="{{ route('terms.conditions') }}"
                             class="text-decoration-none mb-2 d-block fw-light {{ Request::is('terms-conditions*') ? 'text-black' : 'text-white' }}">{{ __('messages.terms_conditions') }}</a>
                     </li>

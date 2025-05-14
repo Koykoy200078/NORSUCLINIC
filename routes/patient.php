@@ -3,7 +3,6 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorSessionController;
-use App\Http\Controllers\LiveConsultationController;
 use App\Http\Controllers\PatientAppointmentController;
 use App\Http\Controllers\PatientVisitController;
 use App\Http\Controllers\PrescriptionController;
@@ -12,9 +11,6 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SmartPatientCardsController;
-use App\Http\Controllers\GeneratePatientSmartCardsController;
-use App\Http\Controllers\PatientQrCodeController;
 
 Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUserStatus', 'role:patient')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'patientDashboard'])->name('dashboard');
@@ -63,12 +59,6 @@ Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUs
 
     Route::resource('reviews', ReviewController::class)->except(['delete', 'create']);
 
-    Route::resource('live-consultations', LiveConsultationController::class);
-    Route::get(
-        'live-consultation/{liveConsultation}/start',
-        [LiveConsultationController::class, 'getLiveStatus']
-    )->name('live.consultation.get.live.status');
-
     // Route for Prescription
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
     Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
@@ -77,13 +67,4 @@ Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUs
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
     Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
-
-    //smart patient cardsd
-    Route::resource('smart-patient-cards', SmartPatientCardsController::class);
-    Route::put('card-status/{id}', [SmartPatientCardsController::class, 'changeCardStatus'])->name('card.status');
-
-    Route::resource('generate-patient-smart-cards', GeneratePatientSmartCardsController::class);
-    Route::get('card-detail/{id}', [GeneratePatientSmartCardsController::class, 'cardDelail'])->name('card.detail');
-    Route::get('card-qr-code/{id}', [GeneratePatientSmartCardsController::class, 'cardQr'])->name('card.qr');
-    Route::get('smart_card-pdf/{id}', [GeneratePatientSmartCardsController::class, 'smartCardPdf'])->name('patients.smartCardPdf');
 });

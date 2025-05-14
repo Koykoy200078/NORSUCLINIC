@@ -10,11 +10,7 @@
             <div class="modal-body">
                 <div class="alert alert-danger d-none hide" id="medicineCategoryErrorsBox"></div>
                 <div class="row">
-                    <div class="form-group col-sm-12 mb-5">
-                        {{ Form::label('template_id', __('messages.smart_patient_card.template').':', ['class' => 'form-label']) }}
-                        <span class="required"></span>
-                        {{ Form::select('template_id', $template, null, ['class' => 'form-select io-select2 select_template', 'data-control' => 'select2', 'placeholder' => __('messages.smart_patient_card.select_template'),'required']) }}
-                    </div>
+
                     <div class="col-md-12">
                         <div class="mb-5">
                             <label class="form-label required">

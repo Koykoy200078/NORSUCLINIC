@@ -23,11 +23,11 @@
                         <div class="d-flex justify-content-between">
                             <div class="">
                                 <div class="d-flex mb-3">
-                                    <div class="card-img me-3">
+                                    <!-- <div class="card-img me-3">
                                         <img src="{{ !empty($smart_patient_cards->profile_image) ? $smart_patient_cards->profile_image : asset('web/media/avatars/male.png') }}"
                                             alt="profile-img" class="object-fit-cover" id="card_profilePicture"
                                             width="108px" />
-                                    </div>
+                                    </div> -->
 
                                     <div class="patient-smart-card-user-detail">
                                         <table class="table table-borderless patient-desc mb-0">

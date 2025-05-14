@@ -51,8 +51,8 @@ class StaffRepository extends BaseRepository
      */
     public function getRole()
     {
-        $roles = Role::pluck('display_name', 'id')->except([User::ADMIN, User::DOCTOR, User::PATIENT]);
-
+        return Role::pluck('display_name', 'id');
+        dd($roles);
         return $roles;
     }
 
@@ -85,7 +85,7 @@ class StaffRepository extends BaseRepository
     }
 
     public function update($input, $id)
-      {
+    {
         try {
             DB::beginTransaction();
 

@@ -23,8 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultCurrenciesSeeder::class);
         $this->call(DefaultStaffSeeder::class);
         $this->call(DefaultSliderSeeder::class);
-        $this->call(DefaultFaqsSeeder::class);
-        $this->call(DefaultFrontPatientTestimonialsSeeder::class);
+
         $this->call(AddFieldsSettingTableSeeder::class);
         $this->call(AddTwoFieldsSettingSeeder::class);
         $this->call(AddEmailVerifiedFieldSettingTableSeeder::class);
@@ -33,7 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultPaymentGatewaySeeder::class);
         $this->call(DefaultMedicinePermissionSeeder::class);
         $this->call(DefaultAssignPermissionSeeder::class);
-        $this->call(SmartPatientCardsSeeder::class);
 
 
         $this->call(CampusSeeder::class);

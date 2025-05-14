@@ -13,14 +13,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\EnquiryController;
-use App\Http\Controllers\Front\FaqController;
 use App\Http\Controllers\Front\FrontController;
-use App\Http\Controllers\Front\FrontPatientTestimonialController;
 use App\Http\Controllers\Front\SliderController;
 use App\Http\Controllers\Front\SubscribeController;
 
 use App\Http\Controllers\HolidayContoller;
-use App\Http\Controllers\LiveConsultationController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\NotificationController;
@@ -43,9 +40,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
-use App\Http\Controllers\SmartPatientCardsController;
-use App\Http\Controllers\GeneratePatientSmartCardsController;
-use App\Http\Controllers\PatientQrCodeController;
 use App\Http\Controllers\RequestDocumentsController;
 
 /*
@@ -72,8 +66,6 @@ Route::middleware('setLanguage')->group(function () {
     Route::get('/medical-contact', [FrontController::class, 'medicalContact'])->name('medicalContact');
     Route::get('/terms-conditions', [FrontController::class, 'termsCondition'])->name('terms.conditions');
     Route::get('/privacy-policy', [FrontController::class, 'privacyPolicy'])->name('privacy.policy');
-    Route::get('/faqs', [FrontController::class, 'faq'])->name('front.faqs');
-    Route::get('qr-code/p/{id?}', [PatientQrCodeController::class, 'show'])->name('patient_show');
 });
 //Change language
 Route::post('/change-language', [FrontController::class, 'changeLanguage'])->name('front.change.language');
@@ -161,9 +153,6 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
 
-// Route::get('/patient-qr-code', [PatientQrCodeController::class, 'medicalDoctors'])->name('medicalDoctors');
-// Route::get('qr-code/p/{id}', [PatientQrCodeController::class,'show'])->name('patient_show');
-
 //get States and cities route
 Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
 Route::get('get-cities', [UserController::class, 'getCity'])->name('get-city');
@@ -245,16 +234,6 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
         Route::get('/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('search-users');
         Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
     });
-
-    //smart patient cardsd
-    Route::resource('smart-patient-cards', SmartPatientCardsController::class);
-    Route::put('card-status/{id}', [SmartPatientCardsController::class, 'changeCardStatus'])->name('card.status');
-
-    Route::resource('generate-patient-smart-cards', GeneratePatientSmartCardsController::class);
-    Route::get('card-detail/{id}', [GeneratePatientSmartCardsController::class, 'cardDelail'])->name('card.detail');
-    Route::get('card-qr-code/{id}', [GeneratePatientSmartCardsController::class, 'cardQr'])->name('card.qr');
-    Route::get('smart_card-pdf/{id}', [GeneratePatientSmartCardsController::class, 'smartCardPdf'])->name('admin.smartCardPdf');
-
 
     // Doctor Schedule Routes
     Route::middleware('permission:manage_doctor_sessions')->group(function () {
@@ -338,8 +317,6 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
         Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
         Route::post('cms', [CMSController::class, 'update'])->name('cms.update');
         Route::resource('banner', SliderController::class)->except('create', 'store', 'destroy', 'show');
-        Route::resource('faqs', FaqController::class);
-        Route::resource('front-patient-testimonials', FrontPatientTestimonialController::class);
         Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
         Route::get('enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
         Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('enquiries.destroy');
@@ -401,6 +378,3 @@ require __DIR__ . '/auth.php';
 require __DIR__ . '/doctor.php';
 require __DIR__ . '/patient.php';
 require __DIR__ . '/upgrade.php';
-
-Route::any('zoom/callback', [LiveConsultationController::class, 'zoomCallback']);
-Route::get('zoom/connect', [LiveConsultationController::class, 'connectWithZoom'])->name('zoom.connect');

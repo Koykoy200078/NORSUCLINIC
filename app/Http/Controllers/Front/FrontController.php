@@ -6,8 +6,6 @@ use App\Http\Controllers\AppBaseController;
 use App\Models\ClinicSchedule;
 use App\Models\Doctor;
 use App\Models\DoctorSession;
-use App\Models\Faq;
-use App\Models\FrontPatientTestimonial;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\ServiceCategory;
@@ -35,12 +33,17 @@ class FrontController extends AppBaseController
         $sliders = Slider::with('media')->first();
         $frontMedicalServicesArray = Service::with('media')->whereStatus(Service::ACTIVE)->latest()->get()->toArray();
         $frontMedicalServices = array_chunk($frontMedicalServicesArray, 2);
-        $frontPatientTestimonials = FrontPatientTestimonial::with('media')->latest()->take(6)->get();
         $aboutExperience = Setting::where('key', 'about_experience')->first();
 
-        return view('fronts.medicals.index',
-            compact('doctors', 'sliders', 'frontMedicalServices', 'frontPatientTestimonials',
-                'aboutExperience'));
+        return view(
+            'fronts.medicals.index',
+            compact(
+                'doctors',
+                'sliders',
+                'frontMedicalServices',
+                'aboutExperience'
+            )
+        );
     }
 
     /**
@@ -55,13 +58,14 @@ class FrontController extends AppBaseController
         $data['specializationsCount'] = Specialization::get()->count();
         $clinicSchedules = ClinicSchedule::all();
         $setting = Setting::where('key', 'about_us_image')->first();
-        $frontPatientTestimonials = FrontPatientTestimonial::with('media')->latest()->take(6)->get();
         $doctors = Doctor::with('user', 'appointments', 'specializations')->whereHas('user', function (Builder $query) {
             $query->where('status', User::ACTIVE);
         })->withCount('appointments')->orderBy('appointments_count', 'desc')->take(3)->get();
 
-        return view('fronts.medical_about_us',
-            compact('doctors', 'data', 'setting', 'clinicSchedules', 'frontPatientTestimonials'));
+        return view(
+            'fronts.medical_about_us',
+            compact('doctors', 'data', 'setting', 'clinicSchedules')
+        );
     }
 
     /**
@@ -86,13 +90,17 @@ class FrontController extends AppBaseController
      */
     public function medicalAppointment(): \Illuminate\View\View
     {
-        $faqs = Faq::latest()->get();
+        // $faqs = Faq::latest()->get();
 
-        $appointmentDoctors = Doctor::with('user')->whereIn('id',
-            DoctorSession::pluck('doctor_id')->toArray())->get()->where('user.status',
-                User::ACTIVE)->pluck('user.full_name', 'id');
+        $appointmentDoctors = Doctor::with('user')->whereIn(
+            'id',
+            DoctorSession::pluck('doctor_id')->toArray()
+        )->get()->where(
+            'user.status',
+            User::ACTIVE
+        )->pluck('user.full_name', 'id');
 
-        return view('fronts.medical_appointment', compact('faqs', 'appointmentDoctors'));
+        return view('fronts.medical_appointment', compact('appointmentDoctors')); // 'faqs',
     }
 
     /**
@@ -135,16 +143,6 @@ class FrontController extends AppBaseController
         $privacyPolicy = Setting::pluck('value', 'key')->toArray();
 
         return view('fronts.privacy_policy', compact('privacyPolicy'));
-    }
-
-    /**
-     * @return Application|Factory|View
-     */
-    public function faq(): \Illuminate\View\View
-    {
-        $faqs = Faq::latest()->get();
-
-        return view('fronts.faq', compact('faqs'));
     }
 
     /**

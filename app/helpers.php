@@ -9,7 +9,6 @@ use App\Models\PaymentGateway;
 use App\Models\Setting;
 use App\Models\State;
 use App\Models\User;
-use App\Models\ZoomOAuth;
 use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -881,25 +880,6 @@ if (! function_exists('isRole')) {
         }
 
         return false;
-    }
-}
-
-if (! function_exists('isZoomTokenExpire')) {
-
-    function isZoomTokenExpire()
-    {
-
-        $isExpired = false;
-        $zoomOAuth = ZoomOAuth::where('user_id', Auth::id())->first();
-        $currentTime = Carbon::now();
-
-        $isExpired = is_null($zoomOAuth) == true ? true : $isExpired;
-
-        if (! is_null($zoomOAuth) && $zoomOAuth->updated_at < $currentTime->subMinutes(57)) {
-            $isExpired = true;
-        }
-
-        return $isExpired;
     }
 }
 

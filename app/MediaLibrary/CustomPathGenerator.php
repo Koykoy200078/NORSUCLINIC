@@ -2,7 +2,6 @@
 
 namespace App\MediaLibrary;
 
-use App\Models\FrontPatientTestimonial;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\Setting;
@@ -31,8 +30,6 @@ class CustomPathGenerator implements PathGenerator
                 return str_replace('{PARENT_DIR}', Setting::FAVICON, $path);
             case Slider::SLIDER_IMAGE:
                 return str_replace('{PARENT_DIR}', Slider::SLIDER_IMAGE, $path);
-            case FrontPatientTestimonial::FRONT_PATIENT_PROFILE:
-                return str_replace('{PARENT_DIR}', FrontPatientTestimonial::FRONT_PATIENT_PROFILE, $path);
             case Service::ICON:
                 return str_replace('{PARENT_DIR}', Service::ICON, $path);
             case 'default':

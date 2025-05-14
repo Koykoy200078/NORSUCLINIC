@@ -15,7 +15,6 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
-use App\Models\SmartPatientCards;
 
 
 class Patient extends Model implements HasMedia
@@ -178,11 +177,6 @@ class Patient extends Model implements HasMedia
     public function patientUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function smartPatientCard(): BelongsTo
-    {
-        return $this->belongsTo(SmartPatientCards::class, 'template_id');
     }
 
     public function appointments(): HasMany

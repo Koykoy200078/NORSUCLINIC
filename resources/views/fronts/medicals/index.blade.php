@@ -253,9 +253,5 @@ $styleCss = 'style';
         </div>
     </section>
     <!-- end services section -->
-
-    <!-- start testimonial section -->
-    <!-- @include('fronts.patient_testimonial') -->
-    <!-- end testimonial section -->
 </div>
 @endsection

@@ -26,7 +26,6 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1",
-        "macsidigital/laravel-zoom": "^7.0",
         "mariuzzo/laravel-js-localization": "^1.10",
         "mews/purifier": "^3.4",
         "opcodesio/log-viewer": "^3.1",

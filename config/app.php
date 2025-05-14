@@ -144,18 +144,6 @@ return [
     'cipher' => 'AES-256-CBC',
 
     /*
- | ------------------------------------------------------------------------
- | Zoom API Key
- | ------------------------------------------------------------------------
- | This key is used for the Zoom API calls
- */
-
-    'zoom_api_key' => env('ZOOM_API_KEY'),
-    'zoom_api_secret' => env('ZOOM_API_SECRET'),
-    'zoom_api_url' => env('ZOOM_API_URL', ''),
-    'zoom_callback' => env('ZOOM_REDIRECT_URL', ''),
-
-    /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------

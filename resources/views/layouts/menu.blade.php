@@ -173,34 +173,6 @@
     </a>
 </li>
 @endcan
-<!-- @if (isRole('doctor'))
-<li
-    class="nav-item {{ Request::is('doctors/smart-patient-cards*', 'doctors/generate-patient-smart-cards*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('doctors.smart-patient-cards.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fa-solid fa-id-card"></i></span>
-        <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
-    </a>
-</li>
-@endif -->
-<!-- {{-- @if (isRole('patient'))
-<li class="nav-item {{ Request::is('patients/smart-patient-cards*', 'patients/generate-patient-smart-cards*') ? 'active' : '' }}">
-<a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.generate-patient-smart-cards.index') }}">
-    <span class="aside-menu-icon pe-3"><i class="fa-solid fa-id-card"></i></span>
-    <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
-</a>
-</li>
-@endif --}} -->
-<!-- @if (isRole('clinic_admin'))
-<li
-    class="nav-item {{ Request::is('admin/smart-patient-cards*', 'admin/generate-patient-smart-cards*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('smart-patient-cards.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fa-solid fa-id-card"></i></span>
-        <span class="aside-menu-title">{{ __('messages.smart_patient_card.smart_patient_cards') }}</span>
-    </a>
-</li>
-@endif -->
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_request_documents')
 <li
@@ -286,21 +258,13 @@
         <span class="aside-menu-title">{{ __('messages.enquiries') }}</span>
     </a>
 </li>
-<!-- <li class="nav-item {{ Request::is('admin/subscribers*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('subscribers.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fab fa-stripe-s"></i></span>
-        <span class="aside-menu-title">{{ __('messages.subscribers') }}</span>
-    </a>
-</li> -->
 <li
-    class="nav-item {{ Request::is('admin/cms*', 'admin/sliders*', 'admin/faqs*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*') ? 'active' : '' }}">
+    class="nav-item {{ Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('cms.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>
         <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
         <span class="d-none">{{ __('messages.cms.cms') }}</span>
         <span class="d-none">{{ __('messages.sliders') }}</span>
-        <!-- <span class="d-none">{{ __('messages.faqs') }}</span> -->
-        <!-- <span class="d-none">{{ __('messages.front_patient_testimonials') }}</span> -->
     </a>
 </li>
 @endcan

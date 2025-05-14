@@ -165,10 +165,6 @@
         </div>
     </section>
     <!-- start services counter section -->
-
-    <!-- start testimonial section -->
-    <!-- @include('fronts.patient_testimonial') -->
-    <!-- end testimonial section -->
 </div>
 
 @endsection

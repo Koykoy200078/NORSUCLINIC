@@ -90,48 +90,6 @@
 </li>
 @endcan
 
-@if (isRole('doctor'))
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('doctors/smart-patient-cards*', 'doctors/generate-patient-smart-cards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/smart-patient-cards*') ? 'active' : '' }}"
-        href="{{ route('doctors.smart-patient-cards.index') }}">{{ __('messages.smart_patient_card.smart_patient_card_templates') }}</a>
-</li>
-
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('doctors/smart-patient-cards*', 'doctors/generate-patient-smart-cards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/generate-patient-smart-cards*') ? 'active' : '' }}"
-        href="{{ route('doctors.generate-patient-smart-cards.index') }}">{{ __('messages.smart_patient_card.generate_patient_smart_cards') }}</a>
-</li>
-@endif
-
-@if (isRole('patient'))
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('patients/smart-patient-cards*', 'patients/generate-patient-smart-cards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('patients/generate-patient-smart-cards*') ? 'active' : '' }}"
-        href="{{ route('patients.generate-patient-smart-cards.index') }}">{{ __('messages.smart_patient_card.generate_patient_smart_cards') }}</a>
-</li>
-@endif
-
-@if (isRole('clinic_admin'))
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/smart-patient-cards*', 'admin/generate-patient-smart-cards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/smart-patient-cards*') ? 'active' : '' }}"
-        href="{{ route('smart-patient-cards.index') }}">{{ __('messages.smart_patient_card.smart_patient_card_templates') }}</a>
-</li>
-
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/smart-patient-cards*', 'admin/generate-patient-smart-cards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/generate-patient-smart-cards*') ? 'active' : '' }}"
-        href="{{ route('generate-patient-smart-cards.index') }}">{{ __('messages.smart_patient_card.generate_patient_smart_cards') }}</a>
-</li>
-@endif
-
-
 @can('manage_settings')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
@@ -223,31 +181,18 @@
         href="{{ route('profile.setting') }}">{{ __('messages.user.profile_details') }}</a>
 </li>
 @can('manage_front_cms')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/faqs*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/cms*') ? 'active' : '' }}"
         href="{{ route('cms.index') }}">{{ __('messages.cms.cms') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/faqs*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/banner*') ? 'active' : '' }}"
         href="{{ route('banner.index') }}">{{ __('messages.sliders') }}</a>
 </li>
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/faqs*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/faqs*') ? 'active' : '' }}"
-        href="{{ route('faqs.index') }}">{{ __('messages.faqs') }}</a>
-</li> -->
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/faqs*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/front-patient-testimonials*') ? 'active' : '' }}"
-        href="{{ route('front-patient-testimonials.index') }}">{{ __('messages.front_patient_testimonials') }}</a>
-</li> -->
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/enquiries*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/enquiries*') ? 'active' : '' }}"
         href="{{ route('enquiries.index') }}">{{ __('messages.enquiries') }}</a>
 </li>
-
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/subscribers*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/subscribers*') ? 'active' : '' }}"
-        href="{{ route('subscribers.index') }}">{{ __('messages.subscribers') }}</a>
-</li> -->
 @endcan
 @can('manage_transactions')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/transactions*') ? 'd-none' : '' }}">
