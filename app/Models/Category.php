@@ -17,9 +17,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Brand|null $brand
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Medicine[] $medicines
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
  * @property-read int|null $medicines_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Category newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Category query()
@@ -28,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Category extends Model

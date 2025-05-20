@@ -8,7 +8,7 @@
         <!-- <h1 class="text-lg font-bold">{{__('messages.request.view_request')}}</h1> -->
         <a href="{{ route('request-documents.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
-        <!-- <a href="{{ route('request-documents.export-pdf', $requestDocument->id) }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Print PDF</a> -->
+        <a href="{{ route('request-documents.export-pdf', $requestDocument->id) }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')

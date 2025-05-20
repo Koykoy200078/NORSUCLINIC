@@ -14,7 +14,7 @@ use App\Repositories\MedicineBillRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PatientRepository;
 use App\Repositories\PrescriptionRepository;
-use \PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -155,6 +155,10 @@ class MedicineBillController extends AppBaseController
 
             return Redirect::route('medicine-bills.index');
         }
+
+        // Ensure a return value for all paths
+        Flash::error(__('messages.medicine_bills.something_went_wrong'));
+        return Redirect::route('medicine-bills.create');
     }
 
     /**
@@ -239,7 +243,16 @@ class MedicineBillController extends AppBaseController
     public function convertToPDF($id): Response
     {
         $data = $this->prescriptionRepository->getSettingList();
-        $medicineBill = MedicineBill::with(['saleMedicine.medicine'])->where('id', $id)->first();
+        $medicineBill = MedicineBill::with([
+            'saleMedicine' => function ($q) {
+                $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
+            },
+            'saleMedicine.medicine' => function ($q) {
+                $q->select('id', 'name');
+            },
+            'patient.user:id,first_name,last_name,email,contact,gender,dob',
+            'doctor.user:id,first_name,last_name'
+        ])->findOrFail($id);
 
         $pdf = Pdf::loadView('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
 

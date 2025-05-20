@@ -7,31 +7,25 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Country
+ * App\Models\Country
  *
- * @version July 29, 2021, 10:49 am UTC
- *
- * @property string $name
- * @property string $short_code
  * @property int $id
+ * @property string $name
+ * @property string|null $short_code
  * @property string|null $phone_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $deleted_at
- *
- * @method static \Database\Factories\CountryFactory factory(...$parameters)
+ * @method static \Database\Factories\CountryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Country newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Country newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Country query()
  * @method static \Illuminate\Database\Eloquent\Builder|Country whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Country whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Country whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Country whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Country wherePhoneCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Country whereShortCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Country whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class Country extends Model
 {

@@ -61,9 +61,9 @@
             <tr class="border-bottom fs-6 fw-bolder text-muted">
                 <th class="min-w-175px pb-2">{{ __('messages.medicine_bills.item_name') }}</th>
                 <th class="min-w-70px text-end pb-2">{{ __('messages.medicine.quantity') }}</th>
-                <th class="min-w-70px text-end pb-2">{{ __('messages.medicine_bills.price') }}</th>
-                <th class="min-w-80px text-end pb-2">{{ __('messages.purchase_medicine.tax') }}</th>
-                <th class="min-w-80px text-end pb-2">{{ __('messages.purchase_medicine.amount') }}</th>
+                <th class="min-w-70px text-end pb-2 d-none">{{ __('messages.medicine_bills.price') }}</th>
+                <th class="min-w-80px text-end pb-2 d-none">{{ __('messages.purchase_medicine.tax') }}</th>
+                <th class="min-w-80px text-end pb-2 d-none">{{ __('messages.purchase_medicine.amount') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -71,13 +71,13 @@
             <tr class="text-gray-700 fs-5 text-end">
                 <td class="d-flex align-items-center pt-6 text-gray-700">{{ $saleMedicine->medicine->name }}</td>
                 <td class="pt-6 text-gray-700">{{ $saleMedicine->sale_quantity }}</td>
-                <td class="pt-6 text-gray-700">
+                <td class="pt-6 text-gray-700 d-none">
                     {{ getCurrencyFormat(getCurrencyCode(),$saleMedicine->sale_price ) }}
                 </td>
-                <td class="pt-6 text-dark fw-boldest">
+                <td class="pt-6 text-dark fw-boldest d-none">
                     {{ $saleMedicine->tax.'%' }}
                 </td>
-                <td class="pt-6 text-dark fw-boldest">
+                <td class="pt-6 text-dark fw-boldest d-none">
                     {{ getCurrencyFormat(getCurrencyCode(),$saleMedicine->sale_price * $saleMedicine->sale_quantity) }}
                 </td>
             </tr>
@@ -85,12 +85,12 @@
         </tbody>
     </table>
 </div>
-<div class="col-lg-6 ms-lg-auto mt-4">
+<div class="col-lg-6 ms-lg-auto mt-4 d-none">
     <div class="border-top">
-        <table class="table table-borderless  box-shadow-none mb-0 mt-5 text-end">
+        <table class="table table-borderless box-shadow-none mb-0 mt-5 text-end">
             <tbody>
                 <tr>
-                    <td class="ps-0">{{ __('messages.purchase_medicine.total').(':') }}</td>
+                    <td class=" ps-0">{{ __('messages.purchase_medicine.total').(':') }}</td>
                     <td class="text-gray-900 text-end pe-0">
                         {{ number_format($medicineBill->total,2) }}
                     </td>

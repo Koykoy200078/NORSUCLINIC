@@ -16,54 +16,40 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int|null $doctor_id
  * @property string $model_type
  * @property string $model_id
- * @property int|null $case_id
- * @property int $admission_id
  * @property float $discount
- * @property float $amount
- * @property float $paid_amount
+ * @property float $net_amount
+ * @property float $total
+ * @property float $tax_amount
  * @property int $payment_status
- * @property float $balance_amount
  * @property int $payment_type
  * @property string|null $note
+ * @property string $bill_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Doctor|null $doctor
- * @property-read \App\Models\Patient|null $patient
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SaleMedicine[] $saleMedicine
+ * @property-read \App\Models\Patient $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SaleMedicine> $saleMedicine
  * @property-read int|null $sale_medicine_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill query()
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereAdmissionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBalanceAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBillDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBillNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereCaseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDiscount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDoctorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereModelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereNetAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereNote($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePaidAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePaymentStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePaymentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- *
- * @property float $net_amount
- *
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereNetAmount($value)
- *
- * @property float $total
- * @property float $tax_amount
- *
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereTaxAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class MedicineBill extends Model
 {

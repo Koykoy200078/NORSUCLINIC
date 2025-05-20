@@ -12,6 +12,7 @@ use App\Models\Setting;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**

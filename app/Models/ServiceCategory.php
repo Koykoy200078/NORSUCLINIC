@@ -9,16 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * Class ServiceCategory
+ * App\Models\ServiceCategory
  *
- * @version August 2, 2021, 7:11 am UTC
- *
- * @property string $name
  * @property int $id
+ * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
- * @method static ServiceCategoryFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $activatedServices
+ * @property-read int|null $activated_services_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
+ * @property-read int|null $services_count
+ * @method static \Database\Factories\ServiceCategoryFactory factory($count = null, $state = [])
  * @method static Builder|ServiceCategory newModelQuery()
  * @method static Builder|ServiceCategory newQuery()
  * @method static Builder|ServiceCategory query()
@@ -26,8 +27,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ServiceCategory whereId($value)
  * @method static Builder|ServiceCategory whereName($value)
  * @method static Builder|ServiceCategory whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class ServiceCategory extends Model
 {

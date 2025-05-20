@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $model_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
+ * @property-read \App\Models\Medicine|null $medicine
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine query()
@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine whereModelType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine whereStockUsed($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicine whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class UsedMedicine extends Model

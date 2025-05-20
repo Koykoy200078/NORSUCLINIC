@@ -8,18 +8,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Currency
+ * App\Models\Currency
  *
- * @version August 26, 2021, 6:57 am UTC
- *
+ * @property int $id
  * @property string $currency_name
  * @property string $currency_icon
  * @property string $currency_code
- * @property int $id
+ * @property int $is_default
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
- * @method static \Database\Factories\CurrencyFactory factory(...$parameters)
+ * @method static \Database\Factories\CurrencyFactory factory($count = null, $state = [])
  * @method static Builder|Currency newModelQuery()
  * @method static Builder|Currency newQuery()
  * @method static Builder|Currency query()
@@ -28,9 +26,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Currency whereCurrencyIcon($value)
  * @method static Builder|Currency whereCurrencyName($value)
  * @method static Builder|Currency whereId($value)
+ * @method static Builder|Currency whereIsDefault($value)
  * @method static Builder|Currency whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class Currency extends Model
 {

@@ -38,7 +38,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Doctor|null $doctor
  * @property-read \App\Models\Patient $patient
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription query()
@@ -69,7 +68,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereTendencyBleed($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereTest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Prescription extends Model

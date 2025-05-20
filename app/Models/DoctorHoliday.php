@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Doctor $doctor
- *
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday query()
@@ -25,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DoctorHoliday whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class DoctorHoliday extends Model

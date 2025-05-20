@@ -11,26 +11,23 @@ use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role as roleModal;
 
 /**
- * Class Role
+ * App\Models\Role
  *
- * @version August 5, 2021, 10:43 am UTC
- *
- * @property string $name
  * @property int $id
+ * @property string $name
  * @property string $display_name
  * @property int $is_default
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection|\Spatie\Permission\Models\Permission[] $permissions
+ * @property-read Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read Collection|User[] $users
+ * @property-read Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
- *
- * @method static RoleFactory factory(...$parameters)
+ * @method static \Database\Factories\RoleFactory factory($count = null, $state = [])
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
- * @method static Builder|Role permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
  * @method static Builder|Role query()
  * @method static Builder|Role whereCreatedAt($value)
  * @method static Builder|Role whereDisplayName($value)
@@ -39,7 +36,6 @@ use Spatie\Permission\Models\Role as roleModal;
  * @method static Builder|Role whereIsDefault($value)
  * @method static Builder|Role whereName($value)
  * @method static Builder|Role whereUpdatedAt($value)
- *
  * @mixin Model
  */
 class Role extends roleModal

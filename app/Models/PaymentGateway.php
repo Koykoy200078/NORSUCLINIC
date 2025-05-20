@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $payment_gateway
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway query()
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway wherePaymentGateway($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway wherePaymentGatewayId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class PaymentGateway extends Model

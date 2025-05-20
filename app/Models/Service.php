@@ -14,40 +14,34 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * Class Services
+ * App\Models\Service
  *
- * @version August 2, 2021, 12:09 pm UTC
- *
- * @property string $category
- * @property string $name
- * @property string $charges
- * @property string $doctors
- * @property sting $status
  * @property int $id
+ * @property int $category_id
+ * @property string $name
+ * @property string|null $charges
+ * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
- * @method static ServicesFactory factory(...$parameters)
+ * @property string $short_description
+ * @property-read string $icon
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \App\Models\ServiceCategory $serviceCategory
+ * @property-read Collection<int, \App\Models\Doctor> $serviceDoctors
+ * @property-read int|null $service_doctors_count
  * @method static Builder|Service newModelQuery()
  * @method static Builder|Service newQuery()
  * @method static Builder|Service query()
- * @method static Builder|Service whereCategory($value)
+ * @method static Builder|Service whereCategoryId($value)
  * @method static Builder|Service whereCharges($value)
  * @method static Builder|Service whereCreatedAt($value)
- * @method static Builder|Service whereDoctors($value)
  * @method static Builder|Service whereId($value)
  * @method static Builder|Service whereName($value)
+ * @method static Builder|Service whereShortDescription($value)
  * @method static Builder|Service whereStatus($value)
  * @method static Builder|Service whereUpdatedAt($value)
- *
- * @mixin Model
- *
- * @property string $category_id
- * @property-read ServiceCategory $serviceCategory
- * @property-read Collection|\App\Models\Doctor[] $serviceDoctors
- * @property-read int|null $service_doctors_count
- *
- * @method static Builder|Service whereCategoryId($value)
+ * @mixin \Eloquent
  */
 class Service extends Model implements HasMedia
 {

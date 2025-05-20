@@ -9,22 +9,20 @@ use Illuminate\Support\Carbon;
 /**
  * App\Models\Subscribe
  *
- * @mixin \Eloquent
- *
  * @property int $id
  * @property string $email
- * @property int $subscribe
+ * @property bool $subscribe
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Subscribe query()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereSubscribe($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe query()
+ * @mixin \Eloquent
  */
 class Subscribe extends Model
 {

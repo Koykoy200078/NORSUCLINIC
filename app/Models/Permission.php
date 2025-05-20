@@ -7,17 +7,14 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Role
+ * App\Models\Permission
  *
- * @version August 5, 2021, 10:43 am UTC
- *
- * @property string $name
  * @property int $id
+ * @property string $name
  * @property string $display_name
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
@@ -27,8 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class Permission extends Model
 {

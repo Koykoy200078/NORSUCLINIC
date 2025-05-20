@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $visit_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * @property-read \App\Models\Visit $visit
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation query()
@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation whereObservationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|VisitObservation whereVisitId($value)
- *
  * @mixin \Eloquent
  */
 class VisitObservation extends Model

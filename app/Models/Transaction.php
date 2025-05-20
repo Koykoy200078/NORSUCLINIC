@@ -17,24 +17,28 @@ use Illuminate\Support\Carbon;
  * @property string $appointment_id
  * @property float $amount
  * @property int $type
- * @property string $meta
+ * @property bool|null $status
+ * @property int|null $accepted_by
+ * @property array|null $meta
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
- *
+ * @property-read \App\Models\User|null $acceptedPaymentUser
+ * @property-read \App\Models\Appointment|null $appointment
+ * @property-read \App\Models\User $user
  * @method static Builder|Transaction newModelQuery()
  * @method static Builder|Transaction newQuery()
  * @method static Builder|Transaction query()
+ * @method static Builder|Transaction whereAcceptedBy($value)
  * @method static Builder|Transaction whereAmount($value)
  * @method static Builder|Transaction whereAppointmentId($value)
  * @method static Builder|Transaction whereCreatedAt($value)
  * @method static Builder|Transaction whereId($value)
  * @method static Builder|Transaction whereMeta($value)
+ * @method static Builder|Transaction whereStatus($value)
  * @method static Builder|Transaction whereTransactionId($value)
  * @method static Builder|Transaction whereType($value)
  * @method static Builder|Transaction whereUpdatedAt($value)
  * @method static Builder|Transaction whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class Transaction extends Model
@@ -88,8 +92,7 @@ class Transaction extends Model
     {
         $doctors = Doctor::whereUserId(getLogInUserId())->first();
 
-        return $this->hasOne(Appointment::class, 'appointment_unique_id', 'appointment_id')->where('doctor_id',
-            $doctors->id);
+        return $this->hasOne(Appointment::class, 'appointment_unique_id', 'appointment_id')->where('doctor_id', $doctors->id);
     }
 
     public function acceptedPaymentUser()

@@ -7,6 +7,118 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * App\Models\RequestDocuments
+ *
+ * @property int $id
+ * @property int $document_creator_id
+ * @property int $user_id
+ * @property string $name
+ * @property int $age
+ * @property string $gender
+ * @property string|null $status
+ * @property \Illuminate\Support\Carbon|null $date_of_birth
+ * @property string $address
+ * @property string|null $religion
+ * @property string|null $patient_contact
+ * @property string|null $campus
+ * @property string|null $college
+ * @property string|null $course
+ * @property string|null $year_level
+ * @property string|null $informant
+ * @property string|null $emergency_contact
+ * @property \Illuminate\Support\Carbon|null $requested_at
+ * @property string|null $complaints
+ * @property string|null $covid_vaccination
+ * @property string|null $comorbidities
+ * @property string|null $allergies
+ * @property string|null $admissions_surgeries
+ * @property string|null $maintenance
+ * @property string|null $pregnancy_status
+ * @property string|null $lmp_aog
+ * @property string|null $vital_signs_bp
+ * @property string|null $vital_signs_pr
+ * @property string|null $vital_signs_temp
+ * @property string|null $vital_signs_rr
+ * @property string|null $vital_signs_o2_sat
+ * @property string|null $vital_signs_height
+ * @property string|null $vital_signs_weight
+ * @property string|null $pertinent_exam
+ * @property string|null $assessment
+ * @property string|null $plan
+ * @property string $document_type
+ * @property string|null $consult_mode
+ * @property string|null $nursing_intervention
+ * @property string|null $nursing_incharged_id
+ * @property \Illuminate\Support\Carbon|null $examined_on
+ * @property string|null $request_of
+ * @property string|null $complaints_diagnosis
+ * @property string|null $medical_cert_remarks
+ * @property string|null $doc_lic_no
+ * @property string|null $doc_prt_no
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read int|null $roles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereAdmissionsSurgeries($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereAge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereAllergies($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereAssessment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereCampus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereCollege($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereComorbidities($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereComplaints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereComplaintsDiagnosis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereConsultMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereCourse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereCovidVaccination($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereDateOfBirth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereDocLicNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereDocPrtNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereDocumentCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereDocumentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereEmergencyContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereExaminedOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereInformant($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereLmpAog($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereMaintenance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereMedicalCertRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereNursingInchargedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereNursingIntervention($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments wherePatientContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments wherePertinentExam($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments wherePlan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments wherePregnancyStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereReligion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereRequestOf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereRequestedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsBp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsHeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsO2Sat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsPr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsRr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsTemp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereYearLevel($value)
+ * @mixin \Eloquent
+ */
 class RequestDocuments extends Model
 {
     use HasFactory, InteractsWithMedia, HasRoles;

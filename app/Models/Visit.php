@@ -9,38 +9,38 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Encounter
+ * App\Models\Visit
  *
- * @version September 3, 2021, 7:09 am UTC
- *
- * @property string $doctor
- * @property string $patient
- * @property string $description
  * @property int $id
+ * @property string $visit_date
  * @property int $doctor_id
  * @property int $patient_id
+ * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
- * @method static \Database\Factories\EncounterFactory factory(...$parameters)
+ * @property-read \App\Models\Doctor $doctor
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VisitNote> $notes
+ * @property-read int|null $notes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VisitObservation> $observations
+ * @property-read int|null $observations_count
+ * @property-read \App\Models\Patient $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VisitPrescription> $prescriptions
+ * @property-read int|null $prescriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VisitProblem> $problems
+ * @property-read int|null $problems_count
+ * @property-read \App\Models\Doctor $visitDoctor
+ * @property-read \App\Models\Patient $visitPatient
  * @method static \Illuminate\Database\Eloquent\Builder|Visit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Visit newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Visit query()
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereDoctorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Visit whereEncounterDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Visit wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereUpdatedAt($value)
- *
- * @mixin Model
- *
- * @property string $visit_date
- * @property-read Doctor $visitDoctor
- * @property-read \App\Models\Patient $visitPatient
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Visit whereVisitDate($value)
+ * @mixin \Eloquent
  */
 class Visit extends Model
 {

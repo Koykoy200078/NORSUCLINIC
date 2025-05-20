@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $end_time
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule query()
@@ -24,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClinicSchedule whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class ClinicSchedule extends Model

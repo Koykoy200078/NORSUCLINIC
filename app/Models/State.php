@@ -8,17 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class State
+ * App\Models\State
  *
- * @version July 29, 2021, 11:48 am UTC
- *
+ * @property int $id
  * @property string $name
  * @property int $country_id
- * @property int $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Country $country
- *
  * @method static \Illuminate\Database\Eloquent\Builder|State newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|State newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|State query()
@@ -27,8 +24,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|State whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|State whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|State whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class State extends Model
 {

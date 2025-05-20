@@ -247,9 +247,14 @@ class RequestDocumentsController extends Controller
             // Fetch the request document by ID
             $requestDocument = RequestDocuments::findOrFail($id);
 
-
-            // Pass the data to a Blade view for the PDF
-            $pdf = Pdf::loadView('requests.pdf', compact('requestDocument'));
+            // Choose the PDF layout based on document type
+            if ($requestDocument->document_type === 'medical_certificate') {
+                $view = 'requests.pdf_medical_certificate';
+                $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 396], 'landscape'); // 5.5"x8.5" in points
+            } else {
+                $view = 'requests.pdf_consultation_form';
+                $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 936], 'portrait'); // 8.5"x13"
+            }
 
             // Return the PDF as a download
             return $pdf->download('request_document_' . $id . '.pdf');

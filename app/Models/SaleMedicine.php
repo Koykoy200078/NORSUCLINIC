@@ -13,25 +13,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $medicine_bill_id
  * @property int $medicine_id
  * @property int $sale_quantity
+ * @property float $sale_price
  * @property float $tax
+ * @property string $expiry_date
  * @property float $amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Medicine|null $medicine
+ * @property-read \App\Models\Medicine $medicine
  * @property-read \App\Models\MedicineBill|null $medicineBill
- *
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereExpiryDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereMedicineBillId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereMedicineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereSalePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereSaleQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereTax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleMedicine whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class SaleMedicine extends Model

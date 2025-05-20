@@ -8,18 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class City
+ * App\Models\City
  *
- * @version July 31, 2021, 7:41 am UTC
- *
+ * @property int $id
  * @property string $name
  * @property string $state_id
- * @property int $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read State $state
- *
- * @method static \Database\Factories\CityFactory factory(...$parameters)
+ * @property-read \App\Models\State $state
+ * @method static \Database\Factories\CityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|City newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|City newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|City query()
@@ -28,8 +25,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|City whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereUpdatedAt($value)
- *
- * @mixin Model
+ * @mixin \Eloquent
  */
 class City extends Model
 {

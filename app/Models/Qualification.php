@@ -10,12 +10,11 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $user_id
- * @property string|null $degree
- * @property string|null $university
- * @property string|null $year
+ * @property string $degree
+ * @property string $university
+ * @property string $year
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification query()
@@ -26,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Qualification whereYear($value)
- *
  * @mixin \Eloquent
  */
 class Qualification extends Model

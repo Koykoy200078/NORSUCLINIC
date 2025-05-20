@@ -19,11 +19,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $salt_composition
  * @property string|null $description
  * @property string|null $side_effects
+ * @property string|null $currency_symbol
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Brand|null $brand
  * @property-read \App\Models\Category|null $category
- *
+ * @property-read \App\Models\PrescriptionMedicineModal|null $prescriptionMedicines
+ * @property-read \App\Models\PurchasedMedicine|null $purchasedMedicine
+ * @property-read \App\Models\UsedMedicine|null $usedMedicines
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine query()
@@ -32,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereBuyingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCurrencySymbol($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereName($value)
@@ -40,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereSellingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereSideEffects($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Medicine extends Model

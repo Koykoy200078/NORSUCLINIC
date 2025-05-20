@@ -13,14 +13,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $medicine
  * @property string|null $dosage
  * @property string|null $day
+ * @property int $dose_interval
  * @property string|null $time
  * @property string|null $comment
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Medicine[] $medicines
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
  * @property-read int|null $medicines_count
  * @property-read \App\Models\Prescription $prescription
- *
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal query()
@@ -28,12 +28,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereDay($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereDosage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereDoseInterval($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereMedicine($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal wherePrescriptionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class PrescriptionMedicineModal extends Model

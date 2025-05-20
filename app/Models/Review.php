@@ -16,7 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $rating
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
+ * @property-read \App\Models\Doctor $doctor
+ * @property-read \App\Models\Patient $patient
  * @method static \Illuminate\Database\Eloquent\Builder|Review newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Review newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Review query()
@@ -27,7 +28,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereRating($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereReview($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Review extends Model

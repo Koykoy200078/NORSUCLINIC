@@ -24,17 +24,22 @@ use Illuminate\Support\Str;
  * @property string|null $description
  * @property int $service_id
  * @property string $payable_amount
+ * @property int $payment_type
+ * @property int $payment_method
+ * @property string $appointment_unique_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Doctor $doctor
+ * @property-read mixed $status_name
  * @property-read \App\Models\Patient $patient
  * @property-read \App\Models\Service $services
- * @property-read \App\Models\User $user
- *
- * @method static \Database\Factories\AppointmentFactory factory(...$parameters)
+ * @property-read \App\Models\Transaction|null $transaction
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\AppointmentFactory factory($count = null, $state = [])
  * @method static Builder|Appointment newModelQuery()
  * @method static Builder|Appointment newQuery()
  * @method static Builder|Appointment query()
+ * @method static Builder|Appointment whereAppointmentUniqueId($value)
  * @method static Builder|Appointment whereCreatedAt($value)
  * @method static Builder|Appointment whereDate($value)
  * @method static Builder|Appointment whereDescription($value)
@@ -44,19 +49,14 @@ use Illuminate\Support\Str;
  * @method static Builder|Appointment whereId($value)
  * @method static Builder|Appointment wherePatientId($value)
  * @method static Builder|Appointment wherePayableAmount($value)
+ * @method static Builder|Appointment wherePaymentMethod($value)
+ * @method static Builder|Appointment wherePaymentType($value)
  * @method static Builder|Appointment whereServiceId($value)
  * @method static Builder|Appointment whereStatus($value)
  * @method static Builder|Appointment whereToTime($value)
  * @method static Builder|Appointment whereToTimeType($value)
  * @method static Builder|Appointment whereUpdatedAt($value)
- *
- * @mixin Model
- *
- * @property string $appointment_unique_id
- *
- * @method static Builder|Appointment whereAppointmentUniqueId($value)
- *
- * @property-read mixed $status_name
+ * @mixin \Eloquent
  */
 class Appointment extends Model
 {

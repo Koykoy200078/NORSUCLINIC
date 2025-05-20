@@ -72,7 +72,7 @@
         <td>
             <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
         </td>
-        <td>
+        <td class="d-none">
             <input class="form-control medicineBill-sale-price" required="" value='0.00' name="sale_price[]" id="medicine_sale_price{{:uniqueId}}" type="text">
         </td>
         <td>
@@ -81,13 +81,13 @@
             <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside{{:uniqueId}}"></span>
             </div>
         </td>
-            <td>
+            <td class="d-none">
             <div class="input-group">
             <input type="number" class="form-control medicineBill-tax" value='0'  name="tax_medicine[]"  id="tax{{:uniqueId}}">
              <span class="input-group-text ms-0" id="amountTypeSymbol">%</span>
             </div>
         </td>
-                <td>
+                <td class="d-none">
             <input type="number" class="form-control medicine-bill-amount" readonly required="" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
         </td>purchaseMedicineTemplate
         <td class="text-center">

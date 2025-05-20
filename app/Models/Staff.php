@@ -12,47 +12,22 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * Class Staff
+ * App\Models\Staff
  *
- * @version August 6, 2021, 10:17 am UTC
- *
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $phone_number
- * @property string $password
- * @property string $gender
- * @property string $role
- * @property int $id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- *
- * @method static StaffFactory factory(...$parameters)
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\StaffFactory factory($count = null, $state = [])
  * @method static Builder|Staff newModelQuery()
  * @method static Builder|Staff newQuery()
- * @method static Builder|Staff query()
- * @method static Builder|Staff whereCreatedAt($value)
- * @method static Builder|Staff whereEmail($value)
- * @method static Builder|Staff whereFirstName($value)
- * @method static Builder|Staff whereGender($value)
- * @method static Builder|Staff whereId($value)
- * @method static Builder|Staff whereLastName($value)
- * @method static Builder|Staff wherePassword($value)
- * @method static Builder|Staff wherePhoneNumber($value)
- * @method static Builder|Staff whereUpdatedAt($value)
- *
- * @mixin Model
- *
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|\Spatie\MediaLibrary\MediaCollections\Models\Media[]
- *     $media
- * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @property-read int|null $roles_count
- *
  * @method static Builder|Staff permission($permissions)
+ * @method static Builder|Staff query()
  * @method static Builder|Staff role($roles, $guard = null)
+ * @mixin \Eloquent
  */
 class Staff extends Model implements HasMedia
 {

@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Events\CreateGoogleAppointment;
+// use App\Events\CreateGoogleAppointment;
 use App\Mail\AppointmentBookedMail;
 use App\Mail\DoctorAppointmentBookMail;
 use App\Mail\PatientAppointmentBookMail;
@@ -106,12 +106,12 @@ class AppointmentRepository extends BaseRepository
 
             DB::commit();
 
-            try {
-                CreateGoogleAppointment::dispatch(true, $appointment->id);
-                CreateGoogleAppointment::dispatch(false, $appointment->id);
-            } catch (Exception $exception) {
-                Log::error($exception->getMessage());
-            }
+            // try {
+            //     CreateGoogleAppointment::dispatch(true, $appointment->id);
+            //     CreateGoogleAppointment::dispatch(false, $appointment->id);
+            // } catch (Exception $exception) {
+            //     Log::error($exception->getMessage());
+            // }
 
             return $appointment;
         } catch (Exception $e) {

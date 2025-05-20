@@ -16,25 +16,22 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $id
  * @property string $title
  * @property string $short_description
- * @property int $is_default
- * @property-read string $slider_image
+ * @property bool $is_default
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read MediaCollection|Media[] $media
+ * @property-read string $slider_image
+ * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Slider newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Slider newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Slider query()
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Slider whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereShortDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereUpdatedAt($value)
- *
  * @mixin \Eloquent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|Slider whereIsDefault($value)
  */
 class Slider extends Model implements HasMedia
 {

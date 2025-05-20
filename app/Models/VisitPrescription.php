@@ -14,10 +14,9 @@ use Illuminate\Support\Carbon;
  * @property string $prescription_name
  * @property string $frequency
  * @property string $duration
- * @property mixed $description
+ * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription query()
@@ -29,7 +28,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription wherePrescriptionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|VisitPrescription whereVisitId($value)
- *
  * @mixin \Eloquent
  */
 class VisitPrescription extends Model

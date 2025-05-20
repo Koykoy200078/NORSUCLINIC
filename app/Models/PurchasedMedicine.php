@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Medicine|null $medicines
- *
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine query()
@@ -33,7 +32,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereTax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class PurchasedMedicine extends Model

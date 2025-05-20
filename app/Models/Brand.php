@@ -16,9 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Category|null $category
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Medicine[] $medicines
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
  * @property-read int|null $medicines_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Brand newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand query()
@@ -28,7 +27,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Brand extends Model

@@ -9,7 +9,7 @@ use App\Models\Medicine;
 use App\Models\PurchasedMedicine;
 use App\Models\PurchaseMedicine;
 use App\Models\User;
-use Arr;
+use Illuminate\Support\Arr;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

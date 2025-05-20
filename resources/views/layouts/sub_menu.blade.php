@@ -17,14 +17,6 @@
     <a class="nav-link p-0 {{ Request::is('doctors/doctor-schedule-edit*','doctors/doctor-sessions/create*') ? 'active' : '' }}"
         href="{{ getLoginDoctorSessionUrl() }}">{{ __('messages.doctor_session.my_schedule') }}</a>
 </li>
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/visits*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/visits*') ? 'active' : '' }}"
-        href="{{ route('doctors.visits.index') }}">{{ __('messages.visits') }}</a>
-</li> -->
-<!-- <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/live-consultations*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/live-consultation*') ? 'active' : '' }}"
-        href="{{ route('doctors.live-consultations.index') }}">{{ __('messages.live_consultations') }}</a>
-</li> -->
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/transactions*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/transactions*') ? 'active' : '' }}"
         href="{{ route('doctors.transactions') }}">{{ __('messages.transactions') }}</a>

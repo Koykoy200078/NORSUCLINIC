@@ -8,12 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\Enquiry
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry query()
- *
- * @mixin \Eloquent
- *
  * @property int $id
  * @property string $name
  * @property string $email
@@ -22,8 +16,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $view
- *
+ * @property bool $view
+ * @property string|null $country_code
+ * @property-read string $view_name
+ * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enquiry query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereCountryCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereId($value)
@@ -33,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereView($value)
+ * @mixin \Eloquent
  */
 class Enquiry extends Model
 {

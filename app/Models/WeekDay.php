@@ -20,7 +20,9 @@ use Illuminate\Support\Carbon;
  * @property string $end_time_type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * @property-read \App\Models\DoctorSession $doctorSession
+ * @property-read mixed $full_end_time
+ * @property-read mixed $full_start_time
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay query()
@@ -34,12 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereStartTimeType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereUpdatedAt($value)
- *
  * @mixin Eloquent
- *
- * @property-read mixed $full_end_time
- * @property-read mixed $full_start_time
- * @property-read \App\Models\DoctorSession $doctorSession
  */
 class WeekDay extends Model
 {

@@ -16,34 +16,35 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property float|null $experience
+ * @property string|null $twitter_url
+ * @property string|null $linkedin_url
+ * @property string|null $instagram_url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Specialization[] $specializations
+ * @property-read \App\Models\Address|null $address
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Appointment> $appointments
+ * @property-read int|null $appointments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoctorSession> $doctorSession
+ * @property-read int|null $doctor_session_count
+ * @property-read \App\Models\User $doctorUser
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
+ * @property-read int|null $reviews_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Specialization> $specializations
  * @property-read int|null $specializations_count
+ * @property-read \App\Models\User $testUser
  * @property-read \App\Models\User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor query()
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereExperience($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUserId($value)
- *
- * @mixin \Eloquent
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Appointment[] $appointments
- * @property-read int|null $appointments_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DoctorSession[] $doctorSession
- * @property-read int|null $doctor_session_count
- * @property string|null $twitter_url
- * @property string|null $linkedin_url
- * @property string|null $instagram_url
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereInstagramUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereLinkedinUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereTwitterUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUserId($value)
+ * @mixin \Eloquent
  */
 class Doctor extends Model
 {

@@ -16,15 +16,14 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $doctor_id
- * @property string $session_meeting_time
+ * @property int $session_meeting_time
  * @property string $session_gap
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Doctor $doctor
- * @property-read Collection|WeekDay[] $sessionWeekDays
+ * @property-read \App\Models\Doctor $doctor
+ * @property-read Collection<int, \App\Models\WeekDay> $sessionWeekDays
  * @property-read int|null $session_week_days_count
- *
- * @method static DoctorSessionFactory factory(...$parameters)
+ * @method static \Database\Factories\DoctorSessionFactory factory($count = null, $state = [])
  * @method static Builder|DoctorSession newModelQuery()
  * @method static Builder|DoctorSession newQuery()
  * @method static Builder|DoctorSession query()
@@ -34,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|DoctorSession whereSessionGap($value)
  * @method static Builder|DoctorSession whereSessionMeetingTime($value)
  * @method static Builder|DoctorSession whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class DoctorSession extends Model
 {

@@ -78,21 +78,6 @@
         <span class="aside-menu-title">{{ __('messages.doctor_session.my_schedule') }}</span>
     </a>
 </li>
-<!-- @can('manage_patient_visits')
-<li class="nav-item {{ Request::is('doctors/visits*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.visits.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
-        <span class="aside-menu-title">{{ __('messages.visits') }}</span>
-    </a>
-</li>
-@endcan -->
-<!-- <li class="nav-item {{ Request::is('doctors/live-consultations*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('doctors.live-consultations.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
-        <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
-    </a>
-</li> -->
 <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
