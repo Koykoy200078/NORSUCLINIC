@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
+use Laracasts\Flash\Flash;
 
 class RoleController extends AppBaseController
 {
@@ -55,7 +56,7 @@ class RoleController extends AppBaseController
         $input = $request->all();
         $this->roleRepository->store($input);
 
-        \Flash::success(__('messages.flash.role_create'));
+        Flash::success(__('messages.flash.role_create'));
 
         return redirect(route('roles.index'));
     }
@@ -81,7 +82,7 @@ class RoleController extends AppBaseController
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $this->roleRepository->update($request->all(), $role->id);
-        \Flash::success(__('messages.flash.role_update'));
+        Flash::success(__('messages.flash.role_update'));
 
         return redirect(route('roles.index'));
     }

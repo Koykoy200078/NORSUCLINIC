@@ -10,7 +10,7 @@ use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Transaction;
 use App\Models\User;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

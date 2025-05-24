@@ -7,54 +7,54 @@ use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Transaction;
 use Exception;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use PayPalHttp\HttpException;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use PayPalHttp\HttpException;
 
 class PaypalController extends Controller
 {
     public function onBoard(Request $request): JsonResponse
     {
-      try {
+        try {
 
-         $currencySupport = paypalCurrencySupports();
-         if ($currencySupport === false) {
-            return response()->json(['message' => __('messages.payment_method.paypal') . ' ' . __('messages.flash.currency_not_supported'), 'status' => false]);
-         }
+            $currencySupport = paypalCurrencySupports();
+            if ($currencySupport === false) {
+                return response()->json(['message' => __('messages.payment_method.paypal') . ' ' . __('messages.flash.currency_not_supported'), 'status' => false]);
+            }
 
-        $appointment = Appointment::whereId($request->appointmentId)->first();
+            $appointment = Appointment::whereId($request->appointmentId)->first();
 
-        $provider = new PayPalClient;
+            $provider = new PayPalClient;
 
-        $provider->getAccessToken();
+            $provider->getAccessToken();
 
-        $data = [
-            'intent' => 'CAPTURE',
-            'purchase_units' => [
-                [
-                    'reference_id' => $appointment->id,
-                    'amount' => [
-                        'value' => $appointment->payable_amount,
-                        'currency_code' => getCurrencyCode(),
+            $data = [
+                'intent' => 'CAPTURE',
+                'purchase_units' => [
+                    [
+                        'reference_id' => $appointment->id,
+                        'amount' => [
+                            'value' => $appointment->payable_amount,
+                            'currency_code' => getCurrencyCode(),
+                        ],
                     ],
                 ],
-            ],
-            'application_context' => [
-                'cancel_url' => route('paypal.failed'),
-                'return_url' => route('paypal.success'),
-            ],
-        ];
+                'application_context' => [
+                    'cancel_url' => route('paypal.failed'),
+                    'return_url' => route('paypal.success'),
+                ],
+            ];
 
-        $order = $provider->createOrder($data);
+            $order = $provider->createOrder($data);
 
-        return response()->json(['link' => $order['links'][1]['href'], 'status' => 200]);
-      } catch (Exception $e) {
-         throw new UnprocessableEntityHttpException($e->getMessage());
-      }
+            return response()->json(['link' => $order['links'][1]['href'], 'status' => 200]);
+        } catch (Exception $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
     }
 
     public function failed(): RedirectResponse

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Utils\ResponseUtil;
 use Illuminate\Http\JsonResponse;
-use Response;
+use Illuminate\Support\Facades\Response;
 
 /**
  * @SWG\Swagger(

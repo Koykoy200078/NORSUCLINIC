@@ -7,7 +7,7 @@ use App\Models\Doctor;
 use App\Models\DoctorHoliday;
 use App\Models\User;
 use App\Repositories\HolidayRepository;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -39,8 +39,10 @@ class HolidayContoller extends AppBaseController
      */
     public function create(): View
     {
-        $doctor = Doctor::with('user')->get()->where('user.status', User::ACTIVE)->pluck('user.full_name',
-            'id');
+        $doctor = Doctor::with('user')->get()->where('user.status', User::ACTIVE)->pluck(
+            'user.full_name',
+            'id'
+        );
 
         return view('doctor_holiday.create', compact('doctor'));
     }
@@ -52,19 +54,18 @@ class HolidayContoller extends AppBaseController
     {
         $input = $request->all();
         $isnot = 0;
-        $appointmentdate = Appointment::whereDoctorId($input['doctor_id'])->pluck('date','id');
+        $appointmentdate = Appointment::whereDoctorId($input['doctor_id'])->pluck('date', 'id');
         foreach ($appointmentdate as $key => $value) {
             if ($value == $input['date']) {
                 Flash::error(__('messages.flash.appointment_book'));
                 return back();
-            }
-            else{
+            } else {
                 $isnot = 1;
             }
         }
-        $isdocholiday = DoctorHoliday::whereDoctorId($input['doctor_id'])->pluck('date','id');
+        $isdocholiday = DoctorHoliday::whereDoctorId($input['doctor_id'])->pluck('date', 'id');
 
-        if($isnot == 1 || $isdocholiday){
+        if ($isnot == 1 || $isdocholiday) {
             $holiday = $this->holidayRepository->store($input);
         }
         if ($holiday) {
@@ -143,8 +144,8 @@ class HolidayContoller extends AppBaseController
     {
         $input = $request->all();
         $loginDoctor = User::with('doctor')->whereId(getLogInUserId())->first();
-        $appointment = Appointment::whereDoctorId($loginDoctor->doctor->id)->where('date',$input['date'])->exists();
-        if($appointment){
+        $appointment = Appointment::whereDoctorId($loginDoctor->doctor->id)->where('date', $input['date'])->exists();
+        if ($appointment) {
             Flash::error(__('messages.flash.appointment_book'));
 
             return redirect(route('doctors.holiday-create'));

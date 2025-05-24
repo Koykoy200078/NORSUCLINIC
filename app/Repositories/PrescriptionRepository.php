@@ -11,7 +11,6 @@ use App\Models\Prescription;
 use App\Models\PrescriptionMedicineModal;
 use App\Models\SaleMedicine;
 use App\Models\Setting;
-use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +18,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 
 /**
  * Class PrescriptionRepository
@@ -186,7 +187,7 @@ class PrescriptionRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
-            $prescriptionMedicineArr = \Arr::only($input, $this->model->getFillable());
+            $prescriptionMedicineArr = Arr::only($input, $this->model->getFillable());
             $prescription->update($prescriptionMedicineArr);
             $medicineBill = MedicineBill::with('saleMedicine')->whereModelType(\App\Models\Prescription::class)->whereModelId($prescription->id)->first();
             $prescription->getMedicine()->delete();

@@ -240,23 +240,50 @@ class MedicineBillController extends AppBaseController
         return $this->sendResponse($patients, __('messages.flash.Patient_saved'));
     }
 
-    public function convertToPDF($id): Response
+    public function convertToPDF($id): View // Response
     {
-        $data = $this->prescriptionRepository->getSettingList();
-        $medicineBill = MedicineBill::with([
-            'saleMedicine' => function ($q) {
-                $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
-            },
-            'saleMedicine.medicine' => function ($q) {
-                $q->select('id', 'name');
-            },
-            'patient.user:id,first_name,last_name,email,contact,gender,dob',
-            'doctor.user:id,first_name,last_name'
-        ])->findOrFail($id);
+        // // Cache settings for 5 minutes to reduce DB hits
+        // $data = cache()->remember('prescription_settings', 300, function () {
+        //     return $this->prescriptionRepository->getSettingList();
+        // });
 
-        $pdf = Pdf::loadView('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
+        // // Only select necessary columns for the main model and relationships
+        // $medicineBill = MedicineBill::select('id', 'bill_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
+        //     ->with([
+        //         'saleMedicine' => function ($q) {
+        //             $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
+        //         },
+        //         'saleMedicine.medicine' => function ($q) {
+        //             $q->select('id', 'name');
+        //         },
+        //         'patient.user:id,first_name,last_name,email,contact,gender,dob',
+        //         'doctor.user:id,first_name,last_name'
+        //     ])
+        //     ->findOrFail($id);
 
-        return $pdf->stream('medicine-bill.pdf');
+        // $pdf = Pdf::loadView('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
+
+        // return $pdf->stream('medicine-bill.pdf');
+
+        $data = cache()->remember('prescription_settings', 300, function () {
+            return $this->prescriptionRepository->getSettingList();
+        });
+
+        $medicineBill = MedicineBill::select('id', 'bill_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
+            ->with([
+                'saleMedicine' => function ($q) {
+                    $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
+                },
+                'saleMedicine.medicine' => function ($q) {
+                    $q->select('id', 'name');
+                },
+                'patient.user:id,first_name,last_name,email,contact,gender,dob',
+                'doctor.user:id,first_name,last_name'
+            ])
+            ->findOrFail($id);
+
+        // Use the correct view name here
+        return view('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
     }
 
     public function getMedicineCategory(Category $category): JsonResponse

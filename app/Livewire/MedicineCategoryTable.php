@@ -74,7 +74,7 @@ class MedicineCategoryTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        /** @var Category $query */
+        /** @var Builder $query */
         $query = Category::query()->select('categories.*');
         $query->when(isset($this->statusFilter), function (Builder $q) {
             if (!empty($this->statusFilter)){

@@ -8,7 +8,6 @@ use App\Models\Brand;
 use App\Models\Medicine;
 use App\Repositories\BrandRepository;
 use Exception;
-use Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
+use Laracasts\Flash\Flash;
 
 class BrandController extends AppBaseController
 {
@@ -58,7 +58,7 @@ class BrandController extends AppBaseController
         $input = $request->all();
         $input['phone'] = preparePhoneNumber($input, 'phone');
         $this->brandRepository->create($input);
-        Flash::success(__('messages.medicine_brands').' '.__('messages.medicine.saved_successfully'));
+        Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.saved_successfully'));
 
         return redirect(route('brands.index'));
     }
@@ -93,7 +93,7 @@ class BrandController extends AppBaseController
         $input = $request->all();
         $input['phone'] = preparePhoneNumber($input, 'phone');
         $this->brandRepository->update($input, $brand->id);
-        Flash::success(__('messages.medicine_brands').' '.__('messages.medicine.updated_successfully'));
+        Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.updated_successfully'));
 
         return redirect(route('brands.index'));
     }
@@ -111,10 +111,10 @@ class BrandController extends AppBaseController
         ];
         $result = canDelete($medicineBrandModel, 'brand_id', $brand->id);
         if ($result) {
-            return $this->sendError(__('messages.medicine_brands').' '.__('messages.medicine.cant_be_deleted'));
+            return $this->sendError(__('messages.medicine_brands') . ' ' . __('messages.medicine.cant_be_deleted'));
         }
         $brand->delete($brand->id);
 
-        return $this->sendSuccess(__('messages.medicine_brands').' '.__('messages.medicine.deleted_successfully'));
+        return $this->sendSuccess(__('messages.medicine_brands') . ' ' . __('messages.medicine.deleted_successfully'));
     }
 }

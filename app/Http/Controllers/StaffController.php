@@ -6,7 +6,7 @@ use App\Http\Requests\CreateStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
 use App\Models\User;
 use App\Repositories\StaffRepository;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

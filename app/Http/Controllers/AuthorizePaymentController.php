@@ -7,7 +7,7 @@ use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Transaction;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +16,7 @@ use Illuminate\View\View;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
 use PayPalHttp\HttpException;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class AuthorizePaymentController
@@ -129,9 +130,11 @@ class AuthorizePaymentController extends AppBaseController
                         }
 
                         return redirect(route('appointments.index'));
-                    } catch (HttpException $ex) {
-                        echo $ex->statusCode;
-                        print_r($ex->getMessage());
+                    } catch (\Exception $ex) {
+                        // Log the exception or handle it as needed
+                        Log::error($ex->getMessage());
+                        Flash::error(__('messages.flash.there_were'));
+                        return back()->with('error_msg', __('messages.flash.there_were'));
                     }
                 } else {
                     $message_text = __('messages.flash.there_were');

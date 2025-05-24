@@ -35,6 +35,8 @@ class CustomPathGenerator implements PathGenerator
             case 'default':
                 return '';
         }
+        // Default return if no case matches
+        return '';
     }
 
     public function getPathForConversions(Media $media): string

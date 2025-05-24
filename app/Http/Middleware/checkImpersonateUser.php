@@ -13,7 +13,7 @@ class checkImpersonateUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (\Request::route()->getName() == 'impersonate.leave') {
+        if ($request->route()->getName() == 'impersonate.leave') {
             getLogInUser()->leaveImpersonation();
 
             return redirect()->route('admin.dashboard');

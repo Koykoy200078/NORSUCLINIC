@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
         // Bind the Laravel JS Localization command into the app IOC.
         $this->app->singleton('localization.js', function ($app) {
             $app = $this->app;
-            $laravelMajorVersion = (int) $app::VERSION;
+            $laravelMajorVersion = (int) \Illuminate\Foundation\Application::VERSION;
 
             $files = $app['files'];
 

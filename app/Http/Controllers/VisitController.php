@@ -11,7 +11,7 @@ use App\Models\VisitObservation;
 use App\Models\VisitPrescription;
 use App\Models\VisitProblem;
 use App\Repositories\VisitRepository;
-use Flash;
+use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -159,7 +159,8 @@ class VisitController extends AppBaseController
     {
         $input = $request->all();
         $observation = VisitObservation::create([
-            'observation_name' => $input['observation_name'], 'visit_id' => $input['visit_id'],
+            'observation_name' => $input['observation_name'],
+            'visit_id' => $input['visit_id'],
         ]);
         $observationData = VisitObservation::whereVisitId($input['visit_id'])->get();
 

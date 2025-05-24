@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Flash;
+use Laracasts\Flash\Flash;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
