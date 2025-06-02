@@ -16,13 +16,8 @@
         class="btn px-2 text-primary fs-2" data-turbolinks="false">
         <i class="fa fa-eye" aria-hidden="true"></i>
     </a>
-    @else
-    <a href="javascript:void(0)" title="No Request Documents" data-bs-toggle="tooltip"
-        data-bs-original-title="No Request Documents"
-        class="btn px-2 text-secondary fs-2 disabled" tabindex="-1" aria-disabled="true">
-        <i class="fa fa-eye" aria-hidden="true"></i>
-    </a>
     @endif
+
     <!-- End View Select Patient -->
     <a href="{{ route('patients.edit', $row->id) }}" title="{{ __('messages.common.edit') }}" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.edit') }}"

@@ -188,17 +188,167 @@ class RequestDocumentsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RequestDocuments $requestDocuments)
+    public function edit(RequestDocuments $requestDocument, PatientRepository $patientRepository)
     {
-        //
+        $campuses = Campus::all();
+        $colleges = College::all();
+        $courses = Course::all();
+        $yearLevels = YearLevel::all();
+        $vaccinations = Vaccination::all();
+        $diagnoses = Diagnose::all();
+        $nursingStaff = User::where('type', 'staff')->get(); // adjust as needed
+
+        return view('requests.edit', compact(
+            'requestDocument',
+            'campuses',
+            'colleges',
+            'courses',
+            'yearLevels',
+            'vaccinations',
+            'diagnoses',
+            'nursingStaff'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RequestDocuments $requestDocuments)
+    public function update(Request $request, RequestDocuments $requestDocument)
     {
-        //
+        $data = $request->except(['_token', '_method']);
+
+        try {
+            if ($requestDocument->document_type === 'medical_certificate') {
+                $this->updateMedicalCertificate($requestDocument, $data);
+            } elseif ($requestDocument->document_type === 'consultation_form') {
+                $this->updateConsultationForm($requestDocument, $data);
+            }
+
+            return redirect()->route('request-documents.index')
+                ->with('success', 'Request document updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error in update method: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the request document.');
+        }
+    }
+
+    /**
+     * Update a medical certificate document.
+     */
+    private function updateMedicalCertificate(RequestDocuments $requestDocument, array $data)
+    {
+        // Prepare the data for insertion
+        $data['vital_signs_bp'] = (isset($data['vital_signs_bp_2']) && isset($data['vital_signs_bp_22']))
+            ? $data['vital_signs_bp_2'] . '/' . $data['vital_signs_bp_22']
+            : $requestDocument->vital_signs_bp;
+        $data['vital_signs_pr'] = $data['vital_signs_pr_2'] ?? $requestDocument->vital_signs_pr;
+        $data['vital_signs_rr'] = $data['vital_signs_rr_2'] ?? $requestDocument->vital_signs_rr;
+        $data['vital_signs_temp'] = $data['vital_signs_temp_2'] ?? $requestDocument->vital_signs_temp;
+        $data['vital_signs_height'] = $data['vital_signs_height_2'] ?? $requestDocument->vital_signs_height;
+        $data['vital_signs_weight'] = $data['vital_signs_weight_2'] ?? $requestDocument->vital_signs_weight;
+
+        // Only update user/campus/college/course/year_level if user_id is present
+        if (isset($data['user_id'])) {
+            $user = User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']);
+            if ($user) {
+                $data['campus'] = $user->campus->campus_name ?? $requestDocument->campus;
+                $data['college'] = $user->college->college_name ?? $requestDocument->college;
+                $data['course'] = $user->course->course_name ?? $requestDocument->course;
+                $data['year_level'] = $user->yearLevel->year_level_name ?? $requestDocument->year_level;
+                $data['date_of_birth'] = $user->dob ?? $requestDocument->date_of_birth;
+            } else {
+                $data['campus'] = $requestDocument->campus;
+                $data['college'] = $requestDocument->college;
+                $data['course'] = $requestDocument->course;
+                $data['year_level'] = $requestDocument->year_level;
+                $data['date_of_birth'] = $requestDocument->date_of_birth;
+            }
+        } else {
+            $data['campus'] = $requestDocument->campus;
+            $data['college'] = $requestDocument->college;
+            $data['course'] = $requestDocument->course;
+            $data['year_level'] = $requestDocument->year_level;
+            $data['date_of_birth'] = $requestDocument->date_of_birth;
+        }
+
+        $requestDocument->update([
+            'name' => $data['name'] ?? $requestDocument->name,
+            'age' => $data['age'] ?? $requestDocument->age,
+            'gender' => $data['gender'] ?? $requestDocument->gender,
+            'date_of_birth' => $data['date_of_birth'],
+            'address' => $data['address'] ?? $requestDocument->address,
+            'request_of' => $data['request_of'] ?? $requestDocument->request_of,
+            'examined_on' => $data['examined_on'] ?? $requestDocument->examined_on,
+            'complaints_diagnosis' => $data['complaints_diagnosis'] ?? $requestDocument->complaints_diagnosis,
+            'vital_signs_bp' => $data['vital_signs_bp'],
+            'vital_signs_pr' => $data['vital_signs_pr'],
+            'vital_signs_temp' => $data['vital_signs_temp'],
+            'vital_signs_rr' => $data['vital_signs_rr'],
+            'vital_signs_height' => $data['vital_signs_height'],
+            'vital_signs_weight' => $data['vital_signs_weight'],
+            'medical_cert_remarks' => $data['medical_cert_remarks'] ?? $requestDocument->medical_cert_remarks,
+            'doc_lic_no' => $data['doc_lic_no'] ?? $requestDocument->doc_lic_no,
+            'doc_prt_no' => $data['doc_prt_no'] ?? $requestDocument->doc_prt_no,
+            'campus' => $data['campus'],
+            'college' => $data['college'],
+            'course' => $data['course'],
+            'year_level' => $data['year_level'],
+        ]);
+    }
+
+    /**
+     * Update a consultation form document.
+     */
+    private function updateConsultationForm(RequestDocuments $requestDocument, array $data)
+    {
+        // Map related names for numeric fields using their IDs
+        $data['campus'] = isset($data['campus_id']) ? (Campus::find($data['campus_id'])->campus_name ?? $requestDocument->campus) : $requestDocument->campus;
+        $data['college'] = isset($data['college_id']) ? (College::find($data['college_id'])->college_name ?? $requestDocument->college) : $requestDocument->college;
+        $data['course'] = isset($data['course_id']) ? (Course::find($data['course_id'])->course_name ?? $requestDocument->course) : $requestDocument->course;
+        $data['year_level'] = isset($data['year_level_id']) ? (YearLevel::find($data['year_level_id'])->year_level_name ?? $requestDocument->year_level) : $requestDocument->year_level;
+        $data['covid_vaccination'] = isset($data['vaccination_id']) ? (Vaccination::find($data['vaccination_id'])->vaccination_status ?? $requestDocument->covid_vaccination) : $requestDocument->covid_vaccination;
+        $data['comorbidities'] = isset($data['comorbidities_id']) ? (Diagnose::find($data['comorbidities_id'])->diagnoses ?? $requestDocument->comorbidities) : $requestDocument->comorbidities;
+        $data['nursing_incharge_id'] = $data['nursing_incharged'] ?? $requestDocument->nursing_incharged_id;
+
+        $requestDocument->update([
+            'name' => $data['name'] ?? $requestDocument->name,
+            'age' => $data['age'] ?? $requestDocument->age,
+            'gender' => $data['gender'] ?? $requestDocument->gender,
+            'status' => $data['status'] ?? $requestDocument->status,
+            'date_of_birth' => $data['date_of_birth'] ?? $requestDocument->date_of_birth,
+            'address' => $data['address'] ?? $requestDocument->address,
+            'religion' => $data['religion'] ?? $requestDocument->religion,
+            'patient_contact' => $data['patient_contact'] ?? $requestDocument->patient_contact,
+            'campus' => $data['campus'],
+            'college' => $data['college'],
+            'course' => $data['course'],
+            'year_level' => $data['year_level'],
+            'informant' => $data['informant'] ?? $requestDocument->informant,
+            'emergency_contact' => $data['emergency_contact'] ?? $requestDocument->emergency_contact,
+            'requested_at' => $data['requested_at'] ?? $requestDocument->requested_at,
+            'complaints' => $data['complaints'] ?? $requestDocument->complaints,
+            'covid_vaccination' => $data['covid_vaccination'],
+            'comorbidities' => $data['comorbidities'],
+            'allergies' => $data['allergies'] ?? $requestDocument->allergies,
+            'admissions_surgeries' => $data['admissions_surgeries'] ?? $requestDocument->admissions_surgeries,
+            'maintenance' => $data['maintenance'] ?? $requestDocument->maintenance,
+            'pregnancy_status' => $data['pregnancy_status'] ?? $requestDocument->pregnancy_status,
+            'lmp_aog' => $data['lmp_aog'] ?? $requestDocument->lmp_aog,
+            'vital_signs_bp' => $data['vital_signs_bp'] ?? $requestDocument->vital_signs_bp,
+            'vital_signs_pr' => $data['vital_signs_pr'] ?? $requestDocument->vital_signs_pr,
+            'vital_signs_temp' => $data['vital_signs_temp'] ?? $requestDocument->vital_signs_temp,
+            'vital_signs_rr' => $data['vital_signs_rr'] ?? $requestDocument->vital_signs_rr,
+            'vital_signs_o2_sat' => $data['vital_signs_o2_sat'] ?? $requestDocument->vital_signs_o2_sat,
+            'vital_signs_height' => $data['vital_signs_height'] ?? $requestDocument->vital_signs_height,
+            'vital_signs_weight' => $data['vital_signs_weight'] ?? $requestDocument->vital_signs_weight,
+            'pertinent_exam' => $data['pertinent_exam'] ?? $requestDocument->pertinent_exam,
+            'assessment' => $data['assessment'] ?? $requestDocument->assessment,
+            'plan' => $data['plan'] ?? $requestDocument->plan,
+            'consult_mode' => $data['consult_mode'] ?? $requestDocument->consult_mode,
+            'nursing_intervention' => $data['nursing_intervention'] ?? $requestDocument->nursing_intervention,
+            'nursing_incharged_id' => $data['nursing_incharge_id'],
+        ]);
     }
 
     /**

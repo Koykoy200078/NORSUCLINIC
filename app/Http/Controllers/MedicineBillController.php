@@ -114,7 +114,6 @@ class MedicineBillController extends AppBaseController
             }
         }
 
-        // dd($input);
         $medicineBill = MedicineBill::create([
             'bill_number' => 'BIL' . generateUniqueBillNumber(),
             'patient_id' => $input['patient_id'],

@@ -52,7 +52,6 @@ class StaffRepository extends BaseRepository
     public function getRole()
     {
         return Role::pluck('display_name', 'id');
-        dd($roles);
         return $roles;
     }
 
