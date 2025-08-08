@@ -57,7 +57,7 @@
     <section class="services-counter-section p-t-100 p-b-100">
         <div class="container">
             <div class="bg-white rounded-20 box-shadow py-3 py-sm-0">
-                <div class="row">
+                <div class="row items-center justify-content-center">
                     <div class="col-xl-3 col-6 services-counter-block">
                         <div class="text-center my-4 my-sm-5 pipe">
                             <h4 class="text-primary fs-1 fw-bolder mb-3">{{ $data['specializationsCount'] }}</h4>
@@ -76,12 +76,12 @@
                             <h5 class="mb-0">{{ __('messages.doctors') }}</h5>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-6 services-counter-block">
+                    <!-- <div class="col-xl-3 col-6 services-counter-block">
                         <div class="text-center my-4 my-sm-5 pipe">
                             <h4 class="text-primary fs-1 fw-bolder mb-3">{{ $data['patientsCount'] }}</h4>
                             <h5 class="mb-0">{{ __('messages.web.satisfied_patient') }}</h5>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
