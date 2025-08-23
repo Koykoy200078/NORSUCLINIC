@@ -63,7 +63,7 @@
     <div class="col-lg-6">
         <div class="mb-5">
             {{ Form::label('role', __('messages.staff.role').':', ['class' => 'form-label required']) }}
-            {{ Form::select('role', $roles, isset($staff) ? $staff->roles->first()->id : null, ['class' => 'form-select io-select2','required','data-control'=>'select2','placeholder' => __('messages.staff.select_role')]) }}
+            {{ Form::select('role', $roles, isset($staff) ? $staff->roles->first()->id : 3, ['class' => 'form-select io-select2','required', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role')]) }}
         </div>
     </div>
 

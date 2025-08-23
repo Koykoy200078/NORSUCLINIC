@@ -45,7 +45,7 @@ class DoctorVisitTable extends LivewireTableComponent
                 ->sortable()->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('patient.user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
@@ -60,7 +60,7 @@ class DoctorVisitTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.staff_skeleton');
+        return view('livewire.staff_skeleton');
     }
 
     public function builder(): Builder

@@ -21,7 +21,11 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{ Form::open(['route' => 'medicines.store', 'id' => 'createMedicine']) }}
+                {{ Form::open(['route' => 
+                    isRole('clinic_admin') ? 'medicines.store' : 
+                    (isRole('staff') ? 'staff.medicines.store' : 
+                    (isRole('doctor') ? 'doctors.medicines.store' : 'medicines.store')), 
+                    'id' => 'createMedicine']) }}
                 <div class="row">
                     @include('medicines.fields')
                 </div>

@@ -149,7 +149,7 @@ Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
 
 Route::get('cancel-appointment/{patient_id}/{appointment_unique_id}', [AppointmentController::class, 'cancelAppointment'])->name('cancelAppointment');
 
-Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImpersonateUser', 'permission:manage_admin_dashboard')->group(function () {
+Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImpersonateUser', 'role:clinic_admin', 'permission:manage_admin_dashboard')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
 
@@ -157,7 +157,7 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImper
 Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
 Route::get('get-cities', [UserController::class, 'getCity'])->name('get-city');
 
-Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImpersonateUser')->group(function () {
+Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus', 'checkImpersonateUser', 'role:clinic_admin')->group(function () {
     //Logs
     Route::get('logs', [LogViewerController::class, 'index']);
     //Impersonate
@@ -377,4 +377,5 @@ Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']
 require __DIR__ . '/auth.php';
 require __DIR__ . '/doctor.php';
 require __DIR__ . '/patient.php';
+require __DIR__ . '/staff.php';
 require __DIR__ . '/upgrade.php';

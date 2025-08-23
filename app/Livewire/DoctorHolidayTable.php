@@ -46,7 +46,7 @@ class DoctorHolidayTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.doctor_holiday_skeleton');
+        return view('livewire.doctor_holiday_skeleton');
     }
 
     public function columns(): array
@@ -58,7 +58,7 @@ class DoctorHolidayTable extends LivewireTableComponent
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('doctor.doctorUser', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
@@ -75,17 +75,39 @@ class DoctorHolidayTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = DoctorHoliday::with('doctor')->select('doctor_holidays.*');
-        if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
-            $timeEntryDate = explode(' - ', $this->dateFilter);
-            $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
-            $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('date', [$startDate, $endDate]);
-        } else {
-            $timeEntryDate = explode(' - ', getWeekDate());
-            $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
-            $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('date', [$startDate, $endDate]);
+        $query = DoctorHoliday::with('doctor.doctorUser')->select('doctor_holidays.*');
+
+        // If user is a doctor, only show their own holidays
+        $user = getLoginUser();
+        if ($user && $user->hasRole('doctor')) {
+            // Check if the user has a doctor relationship
+            if ($user->doctor) {
+                $query->where('doctor_id', $user->doctor->id);
+            } else {
+                // If doctor relationship doesn't exist, return no results
+                $query->whereRaw('1 = 0');
+            }
+        }
+        // For admin/staff users, show all holidays (no additional filtering)
+
+        // Only apply a date range filter when an explicit dateFilter is provided.
+        // If dateFilter is empty, return all holidays.
+        if ($this->dateFilter !== '') {
+            // Expecting date range like "d/m/Y - d/m/Y"
+            if (str_contains($this->dateFilter, ' - ')) {
+                $timeEntryDate = explode(' - ', $this->dateFilter);
+                $startDate = Carbon::createFromFormat('d/m/Y', trim($timeEntryDate[0]))->format('Y-m-d');
+                $endDate = Carbon::createFromFormat('d/m/Y', trim($timeEntryDate[1]))->format('Y-m-d');
+                $query->whereBetween('date', [$startDate, $endDate]);
+            } else {
+                // If a single date is provided, filter that exact date
+                try {
+                    $singleDate = Carbon::createFromFormat('d/m/Y', trim($this->dateFilter))->format('Y-m-d');
+                    $query->whereDate('date', $singleDate);
+                } catch (\Exception $e) {
+                    // invalid format — skip filtering
+                }
+            }
         }
 
         return $query;

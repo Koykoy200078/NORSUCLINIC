@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Mail\PatientRegistrationMail;
 use App\Models\Campus;
 use App\Models\City;
 use App\Models\College;
@@ -13,6 +14,8 @@ use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Illuminate\Support\Facades\Session;
@@ -83,6 +86,10 @@ class PatientRepository extends BaseRepository
             $patientArray = Arr::only($input, ['patient_unique_id']);
             $input['type'] = User::PATIENT;
             $input['language'] = Setting::where('key', 'language')->get()->toArray()[0]['value'];
+
+            // Set email as verified with Philippine time
+            $input['email_verified_at'] = now()->setTimezone('Asia/Manila');
+
             // $input['password'] = Hash::make($input['password']);
             $user = User::create($input);
 
@@ -92,6 +99,18 @@ class PatientRepository extends BaseRepository
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
             }
+
+            // Send welcome email to the newly registered patient
+            try {
+                Mail::to($user->email)->send(new PatientRegistrationMail($user, $patient));
+            } catch (\Exception $mailException) {
+                // Log the email error but don't fail the registration
+                Log::warning('Failed to send registration email to patient: ' . $user->email, [
+                    'error' => $mailException->getMessage(),
+                    'patient_id' => $patient->patient_unique_id
+                ]);
+            }
+
             // $user->sendEmailVerificationNotification();
 
             DB::commit();

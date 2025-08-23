@@ -5,9 +5,17 @@
 @section('content')
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
-        <a href="{{ route('request-documents.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        <a href="{{ 
+            isRole('clinic_admin') ? route('request-documents.index') : 
+            (isRole('staff') ? route('staff.request-documents.index') : 
+            (isRole('doctor') ? route('doctors.request-documents.index') : route('request-documents.index')))
+        }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
-        <a href="{{ route('request-documents.export-pdf', $requestDocument->id) }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
+        <a href="{{ 
+            isRole('clinic_admin') ? route('request-documents.export-pdf', $requestDocument->id) : 
+            (isRole('staff') ? route('staff.request-documents.export-pdf', $requestDocument->id) : 
+            (isRole('doctor') ? route('doctors.request-documents.export-pdf', $requestDocument->id) : route('request-documents.export-pdf', $requestDocument->id)))
+        }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
@@ -243,7 +251,11 @@
             </div>
 
             <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
-            <form action="{{ route('request-documents.store') }}" method="POST">
+            <form action="{{ 
+                isRole('clinic_admin') ? route('request-documents.store') : 
+                (isRole('staff') ? route('staff.request-documents.store') : 
+                (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
+            }}" method="POST">
                 @csrf
                 <div class="form-group mb-5 d-none">
                     <label for="document_type">Document Type</label>

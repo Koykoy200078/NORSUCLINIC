@@ -8,7 +8,11 @@
         <h1 class="mb-0 me-1">{{__('messages.patient.details')}}</h1>
         <div class="text-end mt-4 mt-md-0">
             @if(!getLogInUser()->hasRole('doctor'))
-            <a href="{{route('patients.edit',$patient->id)}}">
+            <a href="{{ 
+                isRole('clinic_admin') ? route('patients.edit',$patient->id) : 
+                (isRole('staff') ? route('staff.patients.edit',$patient->id) : 
+                (isRole('doctor') ? route('doctors.patients.edit',$patient->id) : route('patients.edit',$patient->id)))
+            }}">
                 <button type="button" class="btn btn-primary me-4">{{ __('messages.common.edit') }}</button>
             </a>
             @endif

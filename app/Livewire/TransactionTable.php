@@ -20,7 +20,7 @@ class TransactionTable extends LivewireTableComponent
     public $doctorType;
     public $serviceType;
     public string $dateFilter = '';
-    protected $listeners = ['refresh' => '$refresh', 'resetPage','statusFilter','paymentFilter','doctorFilter','serviceFilter','changeDateFilter'];
+    protected $listeners = ['refresh' => '$refresh', 'resetPage', 'statusFilter', 'paymentFilter', 'doctorFilter', 'serviceFilter', 'changeDateFilter'];
     public array $FilterComponent = ['transactions.components.filter', Appointment::PAYMENT_METHOD, Transaction::PAYMENT_STATUS];
     public bool $showFilterOnHeader = true;
     public function configure(): void
@@ -43,31 +43,34 @@ class TransactionTable extends LivewireTableComponent
 
             return [];
         });
-
     }
 
     public function builder(): Builder
     {
-        $query = Transaction::with(['user.patient','appointment']);
+        $query = Transaction::with(['user.patient', 'appointment']);
 
-        $query->when($this->paymentType != '',
+        $query->when(
+            $this->paymentType != '',
             function (Builder $q) {
                 $q->where('transactions.type', '=', $this->paymentType);
-            });
-        $query->when($this->statusType != '',
+            }
+        );
+        $query->when(
+            $this->statusType != '',
             function (Builder $q) {
                 $q->where('transactions.status', '=', $this->statusType);
-            });
-        $query->when($this->serviceType != '',function (Builder $q) {
-            $q->whereHas('appointment', function ($q){
+            }
+        );
+        $query->when($this->serviceType != '', function (Builder $q) {
+            $q->whereHas('appointment', function ($q) {
                 $q->whereHas('services', function ($subQuery) {
                     $subQuery->where('service_id', $this->serviceType);
                 });
             });
         });
-        $query->when($this->doctorType != '',function (Builder $q) {
-            $q->whereHas('appointment', function ($q){
-                $q->where('doctor_id',$this->doctorType);
+        $query->when($this->doctorType != '', function (Builder $q) {
+            $q->whereHas('appointment', function ($q) {
+                $q->where('doctor_id', $this->doctorType);
                 $q->whereHas('services', function ($subQuery) {
                     $subQuery->where('service_id', $this->serviceType);
                 });
@@ -78,20 +81,19 @@ class TransactionTable extends LivewireTableComponent
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
-                $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
-                $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-                $query->whereDate('transactions.created_at','>=', $startDate);
-                $query->whereDate('transactions.created_at','<=', $endDate);
+            $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
+            $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+            $query->whereDate('transactions.created_at', '<=', $endDate);
         } else {
             $timeEntryDate = explode(' - ', getWeekDate());
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-                $query->whereDate('transactions.created_at','>=', $startDate);
-                $query->whereDate('transactions.created_at','<=', $endDate);
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+            $query->whereDate('transactions.created_at', '<=', $endDate);
         }
 
         return $query->select('transactions.*');
-
     }
 
     public function placeholder()
@@ -107,7 +109,7 @@ class TransactionTable extends LivewireTableComponent
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
@@ -116,7 +118,7 @@ class TransactionTable extends LivewireTableComponent
                 ->searchable(),
             Column::make(__('messages.appointment.date'), 'created_at')->view('transactions.components.date')
                 ->sortable(),
-            Column::make(__('messages.appointment.payment_method'), 'type')->view('transactions.components.payment_method'),
+            // Column::make(__('messages.appointment.payment_method'), 'type')->view('transactions.components.payment_method'),
             Column::make(__('messages.appointment.appointment_status'), 'id')
                 ->format(function ($value, $row) {
                     return view('transactions.components.appointment_status')
@@ -128,8 +130,8 @@ class TransactionTable extends LivewireTableComponent
                             'cancel' => Appointment::CANCELLED,
                         ]);
                 }),
-            Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.components.amount')
-                ->sortable()->searchable(),
+            // Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.components.amount')
+            //     ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('transactions.components.action'),
         ];
     }
@@ -139,7 +141,6 @@ class TransactionTable extends LivewireTableComponent
         $this->doctorType = $doctorType;
         $this->setBuilder($this->builder());
         $this->resetPagination();
-
     }
 
     public function serviceFilter($serviceType)
@@ -147,7 +148,7 @@ class TransactionTable extends LivewireTableComponent
         $this->serviceType = $serviceType;
         $this->setBuilder($this->builder());
 
-        $services = Service::with('serviceDoctors.user')->where('id',$serviceType)->get();
+        $services = Service::with('serviceDoctors.user')->where('id', $serviceType)->get();
         $userName = [];
         foreach ($services as $service) {
             foreach ($service->serviceDoctors as $doctor) {
@@ -185,5 +186,4 @@ class TransactionTable extends LivewireTableComponent
     {
         $this->resetPage('transactionsPage');
     }
-
 }

@@ -1,27 +1,25 @@
-document.addEventListener('DOMContentLoaded', loadFrontData)
+document.addEventListener("DOMContentLoaded", loadFrontData);
 
-function loadFrontData () {
-    frontAlertInitialize()
-    loadFrontSlider()
-    loadScroll()
-
+function loadFrontData() {
+    frontAlertInitialize();
+    loadFrontSlider();
+    loadScroll();
 }
 
-function frontAlertInitialize () {
-    $('.alert').delay(5000).slideUp(300)
+function frontAlertInitialize() {
+    $(".alert").delay(5000).slideUp(300);
 }
 
-function loadFrontSlider () {
-
-    $('.services-carousel').slick({
+function loadFrontSlider() {
+    $(".services-carousel").slick({
         dots: false,
-        centerPadding: '0',
+        centerPadding: "0",
         slidesToShow: 1,
         slidesToScroll: 1,
-    })
-    $('.testimonial-carousel').slick({
+    });
+    $(".testimonial-carousel").slick({
         dots: true,
-        centerPadding: '0',
+        centerPadding: "0",
         slidesToShow: 1,
         slidesToScroll: 1,
         responsive: [
@@ -33,13 +31,13 @@ function loadFrontSlider () {
                 },
             },
         ],
-    })
+    });
 }
-function loadScroll () {
-    $(window).scroll(function(){
-        var sticky = $('.header'),
+function loadScroll() {
+    $(window).scroll(function () {
+        var sticky = $(".header"),
             scroll = $(window).scrollTop();
-        if (scroll >= 50) sticky.addClass('fixed');
-        else sticky.removeClass('fixed');
+        if (scroll >= 50) sticky.addClass("fixed");
+        else sticky.removeClass("fixed");
     });
 }

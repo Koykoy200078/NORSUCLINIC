@@ -6,7 +6,11 @@
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-lg font-bold">{{ __('messages.request.create_request') }}</h1>
-        <a href="{{ route('request-documents.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        <a href="{{ 
+            isRole('clinic_admin') ? route('request-documents.index') : 
+            (isRole('staff') ? route('staff.request-documents.index') : 
+            (isRole('doctor') ? route('doctors.request-documents.index') : route('request-documents.index')))
+        }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
 
     <div class="form-group mb-5">

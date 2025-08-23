@@ -24,11 +24,17 @@ class PatientAppointmentTable extends LivewireTableComponent
     public bool $showFilterOnHeader = true;
 
     public array $FilterComponent = [
-        'patients.appointments.components.filter', Appointment::PAYMENT_TYPE_ALL, Appointment::STATUS,
+        'patients.appointments.components.filter',
+        Appointment::PAYMENT_TYPE_ALL,
+        Appointment::STATUS,
     ];
 
     protected $listeners = [
-        'refresh' => '$refresh', 'resetPage', 'changeStatusFilter', 'changeDateFilter', 'changePaymentTypeFilter',
+        'refresh' => '$refresh',
+        'resetPage',
+        'changeStatusFilter',
+        'changeDateFilter',
+        'changePaymentTypeFilter',
         'changePaymentStatusFilter',
     ];
 
@@ -62,22 +68,30 @@ class PatientAppointmentTable extends LivewireTableComponent
     public function builder(): Builder
     {
         $query = Appointment::with([
-            'doctor.user', 'services', 'transaction', 'doctor.reviews',
+            'doctor.user',
+            'services',
+            'transaction',
+            'doctor.reviews',
         ])->where('patient_id', getLoginUser()->patient->id)->select('appointments.*');
 
-        $query->when($this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+        $query->when(
+            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
             function (Builder $q) {
                 if ($this->statusFilter != Appointment::ALL) {
                     $q->where('appointments.status', '=', $this->statusFilter);
                 }
-            });
+            }
+        );
 
-        $query->when($this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
+        $query->when(
+            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
             function (Builder $q) {
                 $q->where('appointments.payment_type', '=', $this->paymentTypeFilter);
-            });
+            }
+        );
 
-        $query->when($this->paymentStatusFilter != '',
+        $query->when(
+            $this->paymentStatusFilter != '',
             function (Builder $q) {
                 if ($this->paymentStatusFilter != Appointment::ALL_PAYMENT) {
                     if ($this->paymentStatusFilter == Appointment::PENDING) {
@@ -86,7 +100,8 @@ class PatientAppointmentTable extends LivewireTableComponent
                         $q->has('transaction', '!=', null);
                     }
                 }
-            });
+            }
+        );
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
@@ -130,34 +145,40 @@ class PatientAppointmentTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.doctor.doctor'),
-                'doctor.user.first_name')->view('patients.appointments.components.doctor')
+            Column::make(
+                __('messages.doctor.doctor'),
+                'doctor.user.first_name'
+            )->view('patients.appointments.components.doctor')
                 ->sortable()
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('doctor.user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
             Column::make(__('messages.patient.name'), 'doctor.user.email')
                 ->hideIf('doctor.user.email')
                 ->searchable(),
-            Column::make(__('messages.appointment.appointment_at'),
-                'date')->view('patients.appointments.components.appointment_at')
+            Column::make(
+                __('messages.appointment.appointment_at'),
+                'date'
+            )->view('patients.appointments.components.appointment_at')
                 ->sortable()->searchable(),
-            Column::make(__('messages.appointment.service_charge'),
-                'services.charges')->view('patients.appointments.components.service_charge')
-                ->sortable()->searchable(),
-            Column::make(__('messages.appointment.payment'), 'payment_type')
-                ->format(function ($value, $row) {
-                    return view('patients.appointments.components.payment')
-                        ->with([
-                            'row' => $row,
-                            'paid' => Appointment::PAID,
-                            'pending' => Appointment::PENDING,
-                        ]);
-                }),
+            // Column::make(
+            //     __('messages.appointment.service_charge'),
+            //     'services.charges'
+            // )->view('patients.appointments.components.service_charge')
+            //     ->sortable()->searchable(),
+            // Column::make(__('messages.appointment.payment'), 'payment_type')
+            //     ->format(function ($value, $row) {
+            //         return view('patients.appointments.components.payment')
+            //             ->with([
+            //                 'row' => $row,
+            //                 'paid' => Appointment::PAID,
+            //                 'pending' => Appointment::PENDING,
+            //             ]);
+            //     }),
             Column::make(__('messages.appointment.status'), 'status')->view('patients.appointments.components.status'),
             Column::make(__('messages.common.action'), 'id')
                 ->format(function ($value, $row) {

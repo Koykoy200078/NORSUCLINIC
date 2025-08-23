@@ -11,6 +11,8 @@ use App\Models\Prescription;
 use App\Repositories\DoctorRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
+use App\Services\PrescriptionService;
+use App\Services\SettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Laracasts\Flash\Flash;
@@ -30,12 +32,16 @@ class PrescriptionController extends AppBaseController
 
     private $medicineRepository;
 
+    private $prescriptionService;
+
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
-        MedicineRepository $medicineRepository
+        MedicineRepository $medicineRepository,
+        PrescriptionService $prescriptionService
     ) {
         $this->prescriptionRepository = $prescriptionRepo;
         $this->medicineRepository = $medicineRepository;
+        $this->prescriptionService = $prescriptionService;
     }
 
     /**
@@ -139,7 +145,7 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        if (getLogInUser()->hasRole('Doctor')) {
+        if (getLogInUser()->hasRole('doctor')) {
             $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId(getLogInUser()->owner_id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return Redirect::back();
@@ -233,7 +239,7 @@ class PrescriptionController extends AppBaseController
             return $this->sendError(__('messages.flash.prescription_not_found'));
         }
 
-        if (getLogInUser()->hasRole('Doctor')) {
+        if (getLogInUser()->hasRole('doctor')) {
             $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId(getLogInUser()->owner_id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return $this->sendError(__('messages.flash.prescription_not_found'));
@@ -262,7 +268,7 @@ class PrescriptionController extends AppBaseController
 
     public function showModal($id): JsonResponse
     {
-        if (getLogInUser()->hasRole('Doctor')) {
+        if (getLogInUser()->hasRole('doctor')) {
             $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->owner_id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return $this->sendError(__('messages.flash.prescription_not_found'));
@@ -291,7 +297,7 @@ class PrescriptionController extends AppBaseController
      */
     public function prescriptionMedicineShowFunction($id)
     {
-        if (getLogInUser()->hasRole('Doctor')) {
+        if (getLogInUser()->hasRole('doctor')) {
             $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->owner_id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return Redirect::back();

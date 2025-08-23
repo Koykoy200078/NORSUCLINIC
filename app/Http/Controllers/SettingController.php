@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Laracasts\Flash\Flash;
 use App\Models\User;
-use Illuminate\Support\Facades\Session;
+use App\Services\SettingsService;
 
 class SettingController extends AppBaseController
 {
@@ -43,7 +43,7 @@ class SettingController extends AppBaseController
      */
     public function index(Request $request): \Illuminate\View\View
     {
-        $setting = Setting::pluck('value', 'key')->toArray();
+        $setting = SettingsService::get();
         $sectionName = ($request->get('section') === null) ? 'general' : $request->get('section');
         $states = $cities = [];
         if (isset($setting['country_id'])) {

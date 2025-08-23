@@ -153,6 +153,7 @@ mix.scripts(
         "resources/theme/js/vendor.js",
         "resources/theme/js/plugins.js",
         "resources/messages.js",
+        "node_modules/apexcharts/dist/apexcharts.min.js",
         "node_modules/intl-tel-input/build/js/utils.js",
         "node_modules/intl-tel-input/build/js/intlTelInput.js",
         "node_modules/quill/dist/quill.js",
@@ -162,10 +163,10 @@ mix.scripts(
     .scripts(
         [
             "node_modules/jquery/dist/jquery.js",
-            "node_modules/jquery/dist/jquery.min.js",
             "resources/theme/js/vendor.js",
             "resources/theme/js/plugins.js",
             "public/messages.js",
+            "node_modules/apexcharts/dist/apexcharts.min.js",
             "public/assets/front/vendor/magnific-popup/jquery.magnific-popup.js",
             "public/assets/front/vendor/bootstrap.bundle.min.js",
             "public/assets/front/vendor/bootstrap-select/js/bootstrap-select.min.js",

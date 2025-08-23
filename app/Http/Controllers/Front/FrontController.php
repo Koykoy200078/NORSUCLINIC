@@ -13,6 +13,7 @@ use App\Models\Setting;
 use App\Models\Slider;
 use App\Models\Specialization;
 use App\Models\User;
+use App\Services\SettingsService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -75,7 +76,7 @@ class FrontController extends AppBaseController
     {
         $data = [];
         $serviceCategories = ServiceCategory::with('activatedServices')->withCount('services')->get();
-        $setting = Setting::pluck('value', 'key')->toArray();
+        $setting = SettingsService::get();
         $services = Service::with('media')->whereStatus(Service::ACTIVE)->latest()->get();
         $data['doctorsCount'] = Doctor::with('user')->get()->where('user.status', true)->count();
         $data['patientsCount'] = Patient::get()->count();
@@ -130,7 +131,7 @@ class FrontController extends AppBaseController
      */
     public function termsCondition(): \Illuminate\View\View
     {
-        $termConditions = Setting::pluck('value', 'key')->toArray();
+        $termConditions = SettingsService::get();
 
         return view('fronts.terms_conditions', compact('termConditions'));
     }
@@ -140,7 +141,7 @@ class FrontController extends AppBaseController
      */
     public function privacyPolicy(): \Illuminate\View\View
     {
-        $privacyPolicy = Setting::pluck('value', 'key')->toArray();
+        $privacyPolicy = SettingsService::get();
 
         return view('fronts.privacy_policy', compact('privacyPolicy'));
     }

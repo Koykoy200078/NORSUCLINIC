@@ -29,6 +29,22 @@ class MedicineController extends AppBaseController
     }
 
     /**
+     * Get the appropriate medicine index route based on user role
+     */
+    private function getMedicineIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('medicines.index');
+        } elseif (isRole('staff')) {
+            return route('staff.medicines.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.medicines.index');
+        }
+
+        return route('medicines.index');
+    }
+
+    /**
      * Display a listing of the Medicine.
      *
      * @param  Request  $request
@@ -67,7 +83,7 @@ class MedicineController extends AppBaseController
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
 
-        return redirect(route('medicines.index'));
+        return redirect($this->getMedicineIndexRoute());
     }
 
     /**
@@ -108,7 +124,7 @@ class MedicineController extends AppBaseController
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.updated_successfully'));
 
-        return redirect(route('medicines.index'));
+        return redirect($this->getMedicineIndexRoute());
     }
 
     /**

@@ -5,11 +5,19 @@
 @section('content')
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
-        <a href="{{ route('request-documents.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        <a href="{{ 
+            isRole('clinic_admin') ? route('request-documents.index') : 
+            (isRole('staff') ? route('staff.request-documents.index') : 
+            (isRole('doctor') ? route('doctors.request-documents.index') : route('request-documents.index')))
+        }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
-    <form action="{{ route('request-documents.update', $requestDocument) }}" method="POST">
+    <form action="{{ 
+        isRole('clinic_admin') ? route('request-documents.update', $requestDocument) : 
+        (isRole('staff') ? route('staff.request-documents.update', $requestDocument) : 
+        (isRole('doctor') ? route('doctors.request-documents.update', $requestDocument) : route('request-documents.update', $requestDocument)))
+    }}" method="POST">
         @csrf
         @method('PUT')
         <div class="grid grid-cols-4 gap-2 pb-2">
@@ -271,7 +279,11 @@
     </form>
 
     @elseif ($requestDocument->document_type == 'medical_certificate')
-    <form action="{{ route('request-documents.update', $requestDocument) }}" method="POST">
+    <form action="{{ 
+        isRole('clinic_admin') ? route('request-documents.update', $requestDocument) : 
+        (isRole('staff') ? route('staff.request-documents.update', $requestDocument) : 
+        (isRole('doctor') ? route('doctors.request-documents.update', $requestDocument) : route('request-documents.update', $requestDocument)))
+    }}" method="POST">
         @csrf
         @method('PUT')
         <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">

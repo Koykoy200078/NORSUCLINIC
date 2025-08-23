@@ -43,7 +43,7 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
     }
     public function placeholder()
     {
-          return view('livewire.appointment_skeleton');
+        return view('livewire.appointment_skeleton');
     }
 
     public function builder(): Builder
@@ -54,12 +54,14 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
             $query = Appointment::with(['doctor.user', 'doctor.reviews'])->where('patient_id', '=', $this->patientId)->whereDoctorId(getLogInUser()->doctor->id)->select('appointments.*');
         }
 
-        $query->when($this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+        $query->when(
+            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
             function (Builder $q) {
                 if ($this->statusFilter != Appointment::ALL) {
                     $q->where('appointments.status', '=', $this->statusFilter);
                 }
-            });
+            }
+        );
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
@@ -96,7 +98,7 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('doctor.user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),

@@ -1,6 +1,9 @@
 @php $styleCss = 'style' @endphp
 <div class="no-record text-center d-none">{{ __('messages.no_matching_records_found') }}</div>
 
+{{-- Dashboard Menu Items - Show appropriate dashboard based on user role --}}
+@if(isRole('clinic_admin'))
+{{-- Admin Dashboard --}}
 @can('manage_admin_dashboard')
 <li class="nav-item {{ Request::is('admin/dashboard*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('admin.dashboard') }}">
@@ -9,33 +12,42 @@
     </a>
 </li>
 @endcan
-
-@role('doctor')
+@elseif(isRole('staff'))
+{{-- Staff Dashboard - Always accessible for staff users --}}
+<li class="nav-item {{ Request::is('staff/dashboard*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.dashboard') }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
+        <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
+    </a>
+</li>
+@elseif(isRole('doctor'))
+{{-- Doctor Dashboard - Only for doctor users --}}
 <li class="nav-item {{ Request::is('doctors/dashboard*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.dashboard') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
         <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
     </a>
 </li>
-@endrole
-
-@role('patient')
+@elseif(isRole('patient'))
+{{-- Patient Dashboard - Only for patient users --}}
 <li class="nav-item {{ Request::is('patients/dashboard*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.dashboard') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
         <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
     </a>
 </li>
-@endrole
+@endif
 
 
 @can('manage_staff')
+@if(getLogInUser()->hasRole('clinic_admin'))
 <li class="nav-item {{ Request::is('admin/staffs*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staffs.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-users"></i></span>
         <span class="aside-menu-title">{{ __('messages.staffs') }}</span>
     </a>
 </li>
+@endif
 @endcan
 
 @role('doctor')
@@ -54,7 +66,7 @@
 <li
     class="nav-item {{ Request::is('doctors/request-documents*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('request-documents.index') }}">
+        href="{{ route('doctors.request-documents.index') }}">
         <span class="aside-menu-icon pe-3">
             <i class="fa-solid fa-file-signature"></i>
         </span>
@@ -114,7 +126,7 @@
 <li
     class="nav-item {{ Request::is('patients/request-documents*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('request-documents.index') }}">
+        href="{{ route('patients.request-documents.index') }}">
         <span class="aside-menu-icon pe-3">
             <i class="fa-solid fa-file-signature"></i>
         </span>
@@ -141,8 +153,15 @@
 @endrole
 @can('manage_doctors')
 <li
-    class="nav-item {{ Request::is('admin/doctors*', 'doctors/doctor-sessions*', 'admin/doctor-sessions*', 'admin/holiday*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.index') }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/doctors*', 'admin/doctor-sessions*', 'admin/holiday*')) ||
+        (isRole('staff') && Request::is('staff/doctors*', 'staff/doctor-sessions*', 'staff/holiday*')) ||
+        Request::is('doctors/doctor-sessions*')
+    ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('doctors.index') : 
+        (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
         <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
         <span class="d-none">{{ __('messages.doctors') }}</span>
@@ -151,8 +170,16 @@
 </li>
 @endcan
 @can('manage_patients')
-<li class="nav-item {{ Request::is('admin/patients*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.index') }}">
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/patients*')) ||
+    (isRole('staff') && Request::is('staff/patients*')) ||
+    (isRole('doctor') && Request::is('doctors/patients*'))
+? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('patients.index') : 
+        (isRole('staff') ? route('staff.patients.index') : 
+        (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-hospital-user"></i></span>
         <span class="aside-menu-title">{{ __('messages.patients') }}</span>
     </a>
@@ -161,9 +188,15 @@
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_request_documents')
 <li
-    class="nav-item {{ Request::is('admin/request-documents*') ? 'active' : '' }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/request-documents*')) ||
+        (isRole('staff') && Request::is('staff/request-documents*'))
+    ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('request-documents.index') }}">
+        href="{{ 
+            isRole('clinic_admin') ? route('request-documents.index') : 
+            (isRole('staff') ? route('staff.request-documents.index') : route('request-documents.index'))
+        }}">
         <span class="aside-menu-icon pe-3">
             <i class="fa-solid fa-file-signature"></i>
         </span>
@@ -173,9 +206,15 @@
 @endcan
 @can('manage_appointments')
 <li
-    class="nav-item {{ Request::is('admin/appointments*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'active' : '' }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/appointments*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*')) ||
+        (isRole('staff') && Request::is('staff/appointments*', 'staff/admin-appointments-calendar*', 'staff/prescriptions*', 'staff/prescription-medicine-show*'))
+    ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('appointments.index') }}">
+        href="{{ 
+            isRole('clinic_admin') ? route('appointments.index') : 
+            (isRole('staff') ? route('staff.appointments.index') : route('appointments.index'))
+        }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointments') }}</span>
     </a>
@@ -184,8 +223,14 @@
 @endif
 @can('manage_medicines')
 <li
-    class="nav-item {{ Request::is('admin/categories*', 'admin/brands*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-bills*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('categories.index') }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/brands*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-bills*')) ||
+        (isRole('staff') && Request::is('staff/categories*', 'staff/brands*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-bills*'))
+    ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('categories.index') : 
+        (isRole('staff') ? route('staff.categories.index') : route('categories.index'))
+    }}">
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>
         <span class="d-none">{{ __('messages.medicine_categories') }}</span>
@@ -199,8 +244,14 @@
 @endcan
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_transactions')
-<li class="nav-item {{ Request::is('admin/transactions*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('transactions') }}">
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/transactions*')) ||
+    (isRole('staff') && Request::is('staff/transactions*'))
+? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('transactions') : 
+        (isRole('staff') ? route('staff.transactions') : route('transactions'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
         <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
     </a>
@@ -218,8 +269,16 @@
 @endcan -->
 @endif
 @can('manage_services')
-<li class="nav-item {{ Request::is('admin/services*', 'admin/service-categories*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('services.index') }}">
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/services*', 'admin/service-categories*')) ||
+    (isRole('staff') && Request::is('staff/services*', 'staff/service-categories*')) ||
+    (isRole('doctor') && Request::is('doctors/services*', 'doctors/service-categories*'))
+? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('services.index') : 
+        (isRole('staff') ? route('staff.services.index') : 
+        (isRole('doctor') ? route('doctors.services.index') : route('services.index')))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-user-cog"></i></span>
         <span class="aside-menu-title">{{ __('messages.services') }}</span>
         <span class="d-none">{{ __('messages.services') }}</span>
@@ -228,24 +287,44 @@
 </li>
 @endcan
 @can('manage_specialties')
-<li class="nav-item {{ Request::is('admin/specializations*') ? 'active' : '' }}">
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/specializations*')) ||
+    (isRole('staff') && Request::is('staff/specializations*')) ||
+    (isRole('doctor') && Request::is('doctors/specializations*'))
+? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('specializations.index') }}">
+        href="{{ 
+            isRole('clinic_admin') ? route('specializations.index') : 
+            (isRole('staff') ? route('staff.specializations.index') : 
+            (isRole('doctor') ? route('doctors.specializations.index') : route('specializations.index')))
+        }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-user-shield"></i></span>
         <span class="aside-menu-title">{{ __('messages.specializations') }}</span>
     </a>
 </li>
 @endcan
 @can('manage_front_cms')
-<li class="nav-item {{ Request::is('admin/enquiries*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('enquiries.index') }}">
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/enquiries*')) ||
+    (isRole('staff') && Request::is('staff/enquiries*'))
+? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('enquiries.index') : 
+        (isRole('staff') ? route('staff.enquiries.index') : route('enquiries.index'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-question-circle"></i></span>
         <span class="aside-menu-title">{{ __('messages.enquiries') }}</span>
     </a>
 </li>
 <li
-    class="nav-item {{ Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('cms.index') }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*')) ||
+        (isRole('staff') && Request::is('staff/cms*', 'staff/sliders*', 'staff/front-medical-services*', 'staff/front-patient-testimonials*'))
+    ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('cms.index') : 
+        (isRole('staff') ? route('staff.cms.index') : route('cms.index'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>
         <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
         <span class="d-none">{{ __('messages.cms.cms') }}</span>
@@ -255,8 +334,14 @@
 @endcan
 @can('manage_settings')
 <li
-    class="nav-item {{ Request::is('admin/settings*', 'admin/roles*', 'admin/currencies*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('setting.index') }}">
+    class="nav-item {{ 
+        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/currencies*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
+        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/currencies*', 'staff/clinic-schedules*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
+    ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('setting.index') : 
+        (isRole('staff') ? route('staff.setting.index') : route('setting.index'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
         <span class="aside-menu-title">{{ __('messages.settings') }}</span>
         <span class="d-none">{{ __('messages.settings') }}</span>

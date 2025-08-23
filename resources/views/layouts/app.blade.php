@@ -127,6 +127,7 @@
     @include('profile.changePassword')
     @include('profile.email_notification')
     @include('profile.changelanguage')
+    <x-modals.delete-confirmation />
 
     <!-- Livewire Scripts -->
     @livewireScripts

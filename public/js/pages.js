@@ -13257,9 +13257,11 @@ listenChange(".patient-email-verified", function (e) {
 });
 listenClick(".patient-email-verification", function (event) {
   var userId = $(event.currentTarget).attr("data-id");
+  var verificationUrl = $(event.currentTarget).attr("data-verification-url");
   $.ajax({
     type: "POST",
-    url: route("resend.email.verification", userId),
+    url: verificationUrl || route("resend.email.verification", userId),
+    // Fallback to original route
     success: function success(result) {
       displaySuccessMessage(result.message);
       setTimeout(function () {

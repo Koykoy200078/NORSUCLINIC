@@ -43,21 +43,26 @@ class DoctorAppointmentTable extends LivewireTableComponent
     }
 
     public function placeholder()
-   {
-         return view('livewire.appointment_skeleton');
-   }
+    {
+        return view('livewire.appointment_skeleton');
+    }
 
     public function builder(): Builder
     {
-        $query = Appointment::with(['patient.user'])->where('doctor_id', '=',
-            $this->doctorId)->select('appointments.*');
+        $query = Appointment::with(['patient.user'])->where(
+            'doctor_id',
+            '=',
+            $this->doctorId
+        )->select('appointments.*');
 
-        $query->when($this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+        $query->when(
+            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
             function (Builder $q) {
                 if ($this->statusFilter != Appointment::ALL) {
                     $q->where('appointments.status', '=', $this->statusFilter);
                 }
-            });
+            }
+        );
 
         if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
             $timeEntryDate = explode(' - ', $this->dateFilter);
@@ -92,18 +97,22 @@ class DoctorAppointmentTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.appointment.patient'),
-                'patient.user.first_name')->view('doctor_appointment.components.patient')
+            Column::make(
+                __('messages.appointment.patient'),
+                'patient.user.first_name'
+            )->view('doctor_appointment.components.patient')
                 ->sortable()
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('patient.user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
-            Column::make(__('messages.appointment.appointment_at'),
-                'date')->view('doctor_appointment.components.appointment_at')
+            Column::make(
+                __('messages.appointment.appointment_at'),
+                'date'
+            )->view('doctor_appointment.components.appointment_at')
                 ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('doctor_appointment.components.action'),
         ];

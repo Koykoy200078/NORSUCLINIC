@@ -132,9 +132,11 @@ listenChange(".patient-email-verified", function (e) {
 
 listenClick(".patient-email-verification", function (event) {
     let userId = $(event.currentTarget).attr("data-id");
+    let verificationUrl = $(event.currentTarget).attr("data-verification-url");
+
     $.ajax({
         type: "POST",
-        url: route("resend.email.verification", userId),
+        url: verificationUrl || route("resend.email.verification", userId), // Fallback to original route
         success: function (result) {
             displaySuccessMessage(result.message);
             setTimeout(function () {

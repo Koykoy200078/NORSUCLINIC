@@ -39,8 +39,10 @@ class DoctorScheduleTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.doctor.doctor'),
-                'doctor.user.first_name')->view('doctor_sessions.components.doctor_name')
+            Column::make(
+                __('messages.doctor.doctor'),
+                'doctor.user.first_name'
+            )->view('doctor_sessions.components.doctor_name')
                 ->sortable(
                     //                    function (Builder $query, $direction) {
                     //                        return $query->whereHas('doctor.user', function (Builder $q) use ($direction) {
@@ -50,15 +52,17 @@ class DoctorScheduleTable extends LivewireTableComponent
                 )->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('doctor.user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
             Column::make(__('messages.visit.doctor'), 'doctor.user.email')
                 ->hideIf('doctor.user.email')
                 ->searchable(),
-            Column::make(__('messages.doctor_session.session_meeting_time'),
-                'session_meeting_time')->view('doctor_sessions.components.schedule_meeting_time')
+            Column::make(
+                __('messages.doctor_session.session_meeting_time'),
+                'session_meeting_time'
+            )->view('doctor_sessions.components.schedule_meeting_time')
                 ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('doctor_sessions.components.action'),
         ];
@@ -66,7 +70,7 @@ class DoctorScheduleTable extends LivewireTableComponent
 
     public function placeholder()
     {
-          return view('livewire.doctor_schedule_skeleton');
+        return view('livewire.doctor_schedule_skeleton');
     }
 
     public function builder(): Builder

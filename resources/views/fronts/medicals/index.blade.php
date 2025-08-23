@@ -32,7 +32,7 @@ $styleCss = 'style';
     <!-- end hero section -->
 
     <!-- start about section -->
-    <section class="about-section p-b-100">
+    <!-- <section class="about-section p-b-100">
         <div class="container">
             <div class="row align-items-center flex-column-reverse flex-xl-row">
                 <div class="col-xxl-6 col-xl-5 after-rectangle-shape position-relative about-left-content left-shape">
@@ -76,13 +76,13 @@ $styleCss = 'style';
                             <li class="mb-2">{{__('messages.web.best_professionals')}}</li>
                             <li class="mb-2">{{__('messages.web.medical_treatment')}}</li>
                         </ul>
-                        <!-- <a href="{{ route('medicalContact') }}"
-                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a> -->
+                        <a href="{{ route('medicalContact') }}"
+                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- end about section -->
 
     <!-- start how-it-work section -->
@@ -203,7 +203,7 @@ $styleCss = 'style';
     <!-- end appointment section -->
 
     <!-- start services section -->
-    <section class="services-section overflow-hidden p-b-100">
+    <!-- <section class="services-section overflow-hidden p-b-100">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-xxl-4">
@@ -242,8 +242,8 @@ $styleCss = 'style';
                                     <p class="paragraph pb-3">
                                         {{ $frontMedicalService[1]['short_description'] }}
                                     </p>
-                                    @endif
                                 </div>
+                                @endif
                             </div>
                         </div>
                         @endforeach
@@ -251,7 +251,7 @@ $styleCss = 'style';
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- end services section -->
 </div>
 @endsection

@@ -19,6 +19,8 @@ use App\DataTables\PatientDataTable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use App\Repositories\PatientRepository;
+use App\Services\PatientService;
+use App\Services\SettingsService;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\CreatePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
@@ -30,9 +32,29 @@ class PatientController extends AppBaseController
     /** @var PatientRepository */
     private $patientRepository;
 
-    public function __construct(PatientRepository $patientRepo)
+    /** @var PatientService */
+    private $patientService;
+
+    public function __construct(PatientRepository $patientRepo, PatientService $patientService)
     {
         $this->patientRepository = $patientRepo;
+        $this->patientService = $patientService;
+    }
+
+    /**
+     * Get the appropriate patient index route based on user role
+     */
+    private function getPatientIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('patients.index');
+        } elseif (isRole('staff')) {
+            return route('staff.patients.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.patients.index');
+        }
+
+        return route('patients.index');
     }
 
     /**
@@ -70,7 +92,7 @@ class PatientController extends AppBaseController
 
         Flash::success(__('messages.flash.patient_create'));
 
-        return redirect(route('patients.index'));
+        return redirect($this->getPatientIndexRoute());
     }
 
     /**
@@ -90,7 +112,7 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect(route('patients.index'));
+            return redirect($this->getPatientIndexRoute());
         }
 
         $patient = $this->patientRepository->getPatientData($patient);
@@ -125,7 +147,7 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect(route('patients.index'));
+            return redirect($this->getPatientIndexRoute());
         }
         $data = $this->patientRepository->getData();
         unset($data['patientUniqueId']);
@@ -145,14 +167,14 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect(route('patients.index'));
+            return redirect($this->getPatientIndexRoute());
         }
 
         $patient = $this->patientRepository->update($input, $patient);
 
         Flash::success(__('messages.flash.patient_update'));
 
-        return redirect(route('patients.index'));
+        return redirect($this->getPatientIndexRoute());
     }
 
     /**
@@ -203,7 +225,7 @@ class PatientController extends AppBaseController
             ])))->make(true);
         }
 
-        return redirect(route('patients.index'));
+        return redirect($this->getPatientIndexRoute());
     }
 
     public function deleteOldPatient()

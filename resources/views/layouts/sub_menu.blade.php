@@ -4,6 +4,13 @@
         href="{{ route('admin.dashboard') }}">{{ __('messages.dashboard') }}</a>
 </li>
 @endcan
+
+@can('manage_staff_dashboard')
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('staff/dashboard*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('staff/dashboard*') ? 'active' : '' }}"
+        href="{{ route('staff.dashboard') }}">{{ __('messages.dashboard') }}</a>
+</li>
+@endcan
 @role('doctor')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/dashboard*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('doctors/dashboard*') ? 'active' : '' }}"
@@ -53,32 +60,67 @@
 </li> -->
 @endrole
 @can('manage_staff')
+@if(getLogInUser()->hasRole('clinic_admin'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/staffs*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/staffs*') ? 'active' : '' }}"
         href="{{ route('staffs.index') }}">{{ __('messages.staffs') }}</a>
 </li>
+@endif
 @endcan
 @can('manage_doctors')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/doctors*') ? 'active' : '' }}"
-        href="{{ route('doctors.index') }}">{{ __('messages.doctors') }}</a>
+    {{ 
+        !(
+            (isRole('clinic_admin') && Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*')) ||
+            (isRole('staff') && Request::is('staff/doctors*', 'staff/doctor-sessions*','staff/holidays*'))
+        ) ? 'd-none' : '' 
+    }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/doctors*')) ||
+        (isRole('staff') && Request::is('staff/doctors*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('doctors.index') : 
+            (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
+        }}">{{ __('messages.doctors') }}</a>
 </li>
 @endcan
 @can('manage_doctor_sessions')
 <li
     class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/doctor-sessions*') ? 'active' : '' }}"
-        href="{{ route('doctor-sessions.index') }}">{{ getLogInUser()->hasRole('doctor') ? __('messages.doctor_session.my_schedule') : __('messages.doctor_sessions') }}</a>
+    {{ 
+        !(
+            (isRole('clinic_admin') && Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*')) ||
+            (isRole('staff') && Request::is('staff/doctors*', 'staff/doctor-sessions*','staff/holidays*'))
+        ) ? 'd-none' : '' 
+    }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/doctor-sessions*')) ||
+        (isRole('staff') && Request::is('staff/doctor-sessions*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('doctor-sessions.index') : 
+            (isRole('staff') ? route('staff.doctor-sessions.index') : route('doctor-sessions.index'))
+        }}">{{ getLogInUser()->hasRole('doctor') ? __('messages.doctor_session.my_schedule') : __('messages.doctor_sessions') }}</a>
 </li>
 @endcan
 @can('manage_patients')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/patients*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/patients*') ? 'active' : '' }}"
-        href="{{ route('patients.index') }}">{{ __('messages.patients') }}</a>
+    {{ 
+        !(
+            (isRole('clinic_admin') && Request::is('admin/patients*')) ||
+            (isRole('staff') && Request::is('staff/patients*'))
+        ) ? 'd-none' : '' 
+    }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/patients*')) ||
+        (isRole('staff') && Request::is('staff/patients*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('patients.index') : 
+            (isRole('staff') ? route('staff.patients.index') : route('patients.index'))
+        }}">{{ __('messages.patients') }}</a>
 </li>
 @endcan
 

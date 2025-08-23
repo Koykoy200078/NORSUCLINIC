@@ -10,7 +10,11 @@
         <a href="{{ route('patients.patient-appointments-index') }}"
             class="btn btn-outline-primary float-end">{{ __('messages.common.back') }}</a>
         @else
-        <a href="{{ route('appointments.index') }}"
+        <a href="{{ 
+            isRole('clinic_admin') ? route('appointments.index') : 
+            (isRole('staff') ? route('staff.appointments.index') : 
+            (isRole('doctor') ? route('doctors.appointments.index') : route('appointments.index')))
+        }}"
             class="btn btn-outline-primary float-end">{{ __('messages.common.back') }}</a>
         @endrole
     </div>

@@ -23,7 +23,7 @@
         <div class="mb-5">
             {{ Form::label('charges', __('messages.service.charges').':', ['class' => 'form-label required']) }}
             <div class="input-group">
-                {{ Form::text('charges', old('charges', '0'), ['class' => 'form-control price-input', 'placeholder' => __('messages.service.charges'), 'step' => 'any', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+                {{ Form::number('charges', old('charges', '0'), ['class' => 'form-control price-input', 'placeholder' => __('messages.service.charges'), 'step' => '0.01', 'min' => '0']) }}
                 <div class="input-group-text">
                     <a class="fw-bolder text-gray-500 text-decoration-none">{{ getCurrencyIcon() }}</a>
                 </div>

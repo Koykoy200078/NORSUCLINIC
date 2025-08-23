@@ -95,6 +95,7 @@ class DefaultStaffSeeder extends Seeder
             'manage_cities',
             'manage_states',
             'manage_countries',
+            'manage_admin_dashboard',  // Staff should not have admin dashboard access
         ];
 
         // Assign permissions to the staff role, excluding the specified ones

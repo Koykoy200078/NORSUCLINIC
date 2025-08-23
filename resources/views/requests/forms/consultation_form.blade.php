@@ -7,7 +7,11 @@
     </div>
     @endif
 
-    <form action="{{ route('request-documents.store') }}" method="POST">
+    <form action="{{ 
+        isRole('clinic_admin') ? route('request-documents.store') : 
+        (isRole('staff') ? route('staff.request-documents.store') : 
+        (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
+    }}" method="POST">
         @csrf
         <div class="form-group mb-5 d-none">
             <label for="document_type">Document Type</label>
@@ -254,12 +258,23 @@
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
 
+        // Set the search route based on user role
+        @if(isRole('clinic_admin'))
+        const searchRoute = '{{ route("search-users") }}';
+        @elseif(isRole('staff'))
+        const searchRoute = '{{ route("staff.request-documents.search-users") }}';
+        @elseif(isRole('doctor'))
+        const searchRoute = '{{ route("doctors.request-documents.search-users") }}';
+        @else
+        const searchRoute = '{{ route("search-users") }}';
+        @endif
+
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {
                 const query = userSearchInput.value;
 
                 if (query.length > 1) {
-                    fetch(`{{ route('search-users') }}?query=${query}`)
+                    fetch(`${searchRoute}?query=${query}`)
                         .then(response => response.json())
                         .then(data => {
                             userSearchResults.innerHTML = '';
@@ -281,7 +296,7 @@
 
                                 option.addEventListener('click', function() {
                                     const patientData = JSON.parse(this.dataset.patient);
-                                    console.log('Patient Data:', patientData);
+                                    
                                     document.getElementById('user_id').value = patientData.user.id;
                                     document.getElementById('name').value = `${patientData.user.first_name} ${patientData.user.last_name}`;
                                     document.getElementById('age').value = calculateAge(patientData.user.dob);

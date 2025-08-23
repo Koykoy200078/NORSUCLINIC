@@ -188,46 +188,48 @@
                     </div>
                 </div>
 
-                <div class="card-header px-0">
+                {{--
+                    <div class="card-header px-0">
                     <div class="d-flex align-items-center justify-content-center">
                         <h3 class="m-0">{{__('messages.appointment.payment_method')}}
-                        </h3>
-                    </div>
-                </div>
+                </h3>
+            </div>
+        </div>
 
-                <div class="card-body">
-                    <div class="row mb-6">
-                        <div class="table-responsive px-0">
-                            <table>
-                                <tbody class="d-flex flex-wrap">
-                                    @foreach($paymentGateways as $key => $paymentGateway)
-                                    <tr class="w-100 d-flex justify-content-between">
-                                        <td class="p-2">
-                                            <div class="form-check form-check-custom">
-                                                <input class="form-check-input" type="checkbox" value="{{$key}}"
-                                                    name="payment_gateway[]"
-                                                    id="{{$key}}" {{in_array($paymentGateway, $selectedPaymentGateways) ?'checked':''}} />
-                                                <label class="form-label" for="{{$key}}">
-                                                    {{$paymentGateway}}
-                                                </label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- Submit Field -->
-                    <div class="form-group col-sm-12">
-                        {{ Form::submit(__('messages.user.save_changes'),['class' => 'btn btn-primary','id'=>'settingSubmitBtn']) }}
-                    </div>
+        <div class="card-body">
+            <div class="row mb-6">
+                <div class="table-responsive px-0">
+                    <table>
+                        <tbody class="d-flex flex-wrap">
+                            @foreach($paymentGateways as $key => $paymentGateway)
+                            <tr class="w-100 d-flex justify-content-between">
+                                <td class="p-2">
+                                    <div class="form-check form-check-custom">
+                                        <input class="form-check-input" type="checkbox" value="{{$key}}"
+                                            name="payment_gateway[]"
+                                            id="{{$key}}" {{in_array($paymentGateway, $selectedPaymentGateways) ?'checked':''}} />
+                                        <label class="form-label" for="{{$key}}">
+                                            {{$paymentGateway}}
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        {{ Form::close() }}
+        --}}
+        <div class="row">
+            <!-- Submit Field -->
+            <div class="form-group col-sm-12">
+                {{ Form::submit(__('messages.user.save_changes'),['class' => 'btn btn-primary','id'=>'settingSubmitBtn']) }}
+            </div>
+        </div>
     </div>
+</div>
+{{ Form::close() }}
+</div>
 </div>
 @endsection

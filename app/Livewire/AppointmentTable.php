@@ -26,7 +26,12 @@ class AppointmentTable extends LivewireTableComponent
     public array $FilterComponent = ['appointments.components.filter', Appointment::PAYMENT_TYPE_ALL, Appointment::STATUS];
 
     protected $listeners = [
-        'refresh' => '$refresh', 'resetPage', 'changeStatusFilter', 'changePaymentTypeFilter', 'changeDateFilter',  'changePaymentStatusFilter',
+        'refresh' => '$refresh',
+        'resetPage',
+        'changeStatusFilter',
+        'changePaymentTypeFilter',
+        'changeDateFilter',
+        'changePaymentStatusFilter',
     ];
 
     public string $paymentTypeFilter = '';
@@ -55,29 +60,39 @@ class AppointmentTable extends LivewireTableComponent
     }
 
     public function placeholder()
-   {
-         return view('livewire.appointment_skeleton');
-   }
+    {
+        return view('livewire.appointment_skeleton');
+    }
 
     public function builder(): Builder
     {
         $query = Appointment::with([
-            'doctor.user', 'patient.user', 'services', 'transaction', 'doctor.reviews', 'doctor.user.media',
+            'doctor.user',
+            'patient.user',
+            'services',
+            'transaction',
+            'doctor.reviews',
+            'doctor.user.media',
         ]);
 
-        $query->when($this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+        $query->when(
+            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
             function (Builder $q) {
                 if ($this->statusFilter != Appointment::ALL) {
                     $q->where('appointments.status', '=', $this->statusFilter);
                 }
-            });
+            }
+        );
 
-        $query->when($this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
+        $query->when(
+            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
             function (Builder $q) {
                 $q->where('payment_type', '=', $this->paymentTypeFilter);
-            });
+            }
+        );
 
-        $query->when($this->paymentStatusFilter != '',
+        $query->when(
+            $this->paymentStatusFilter != '',
             function (Builder $q) {
                 if ($this->paymentStatusFilter != Appointment::ALL_PAYMENT) {
                     if ($this->paymentStatusFilter == Appointment::PENDING) {
@@ -86,18 +101,24 @@ class AppointmentTable extends LivewireTableComponent
                         $q->has('transaction', '!=', null);
                     }
                 }
-            });
+            }
+        );
 
-        if ($this->dateFilter != '' && $this->dateFilter != getWeekDate()) {
-            $timeEntryDate = explode(' - ', $this->dateFilter);
-            $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
-            $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('date', [$startDate, $endDate]);
-        } else {
-            $timeEntryDate = explode(' - ', getWeekDate());
-            $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
-            $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('date', [$startDate, $endDate]);
+        // Only filter by date when a date range/value is explicitly provided.
+        if (!empty($this->dateFilter)) {
+            try {
+                if (str_contains($this->dateFilter, ' - ')) {
+                    $parts = explode(' - ', $this->dateFilter);
+                    $startDate = Carbon::createFromFormat('d/m/Y', trim($parts[0]))->format('Y-m-d');
+                    $endDate = Carbon::createFromFormat('d/m/Y', trim($parts[1]))->format('Y-m-d');
+                    $query->whereBetween('date', [$startDate, $endDate]);
+                } else {
+                    $singleDate = Carbon::createFromFormat('d/m/Y', trim($this->dateFilter))->format('Y-m-d');
+                    $query->whereDate('date', $singleDate);
+                }
+            } catch (\Exception $e) {
+                // Invalid format — skip date filtering
+            }
         }
 
         if (getLoginUser()->hasRole('patient')) {
@@ -123,7 +144,7 @@ class AppointmentTable extends LivewireTableComponent
 
     public function changePaymentStatusFilter($type)
     {
-        $this->paymentTypeFilter = $type;
+        $this->paymentStatusFilter = $type;
         $this->setBuilder($this->builder());
         $this->resetPagination();
     }
@@ -145,7 +166,7 @@ class AppointmentTable extends LivewireTableComponent
                 ->searchable(
                     function (Builder $query, $direction) {
                         return $query->whereHas('doctor.doctorUser', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name,' ',last_name,' ')) like '%{$direction}%'");
+                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
                         });
                     }
                 ),
@@ -164,8 +185,10 @@ class AppointmentTable extends LivewireTableComponent
             Column::make(__('messages.appointment.patient'), 'patient.patientUser.email')
                 ->hideIf('patient.patientUser.email')
                 ->searchable(),
-            Column::make(__('messages.appointment.appointment_at'),
-                'date')->view('appointments.components.appointment_at')
+            Column::make(
+                __('messages.appointment.appointment_at'),
+                'date'
+            )->view('appointments.components.appointment_at')
                 ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('appointments.components.action'),
         ];

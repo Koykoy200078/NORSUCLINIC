@@ -74,6 +74,10 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Admin Dashboard',
             ],
             [
+                'name' => 'manage_staff_dashboard',
+                'display_name' => 'Manage Staff Dashboard',
+            ],
+            [
                 'name' => 'manage_front_cms',
                 'display_name' => 'Manage Front CMS',
             ],
@@ -88,7 +92,7 @@ class DefaultPermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create($permission);
+            Permission::firstOrCreate(['name' => $permission['name']], $permission);
         }
     }
 }

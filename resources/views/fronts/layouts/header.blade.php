@@ -37,10 +37,13 @@
                         </ul>
                         <div class="text-lg-end header-btn-grp ms-xxl-5 ms-lg-3">
                             @if(getLogInUser())
-                            @if(getLogInUser()->hasRole('doctor'))
+                            @if(isRole('doctor'))
                             <a href="{{ route('doctors.dashboard') }}"
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
-                            @elseif(getLogInUser()->hasRole('patient'))
+                            @elseif(isRole('staff'))
+                            <a href="{{ route('staff.dashboard') }}"
+                                class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
+                            @elseif(isRole('patient'))
                             <a href="{{ route('patients.dashboard') }}"
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
                             @else

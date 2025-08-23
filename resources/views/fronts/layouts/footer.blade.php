@@ -62,20 +62,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-lg-4 col-12 order-0 order-lg-3 mb-4 mb-lg-0">
-                <h5 class="text-white mb-4 pb-1">{{ __('messages.web.subscribe') }}</h5>
-                <div class="footer-subcribe">
-                    {{ Form::open(['id'=>'subscribeForm' , 'class' => 'subscribe-form subscription-form']) }}
-                    <div class="subscribeForm-message"></div>
-                    <div class="input-group mb-md-3">
-                        {{ Form::email('email',null, ['class' => 'form-control form-control-transparent','id'=>'email', 'placeholder' => __('messages.web.enter_your_email'), 'required']) }}
-                        <button type="submit" class="input-group-text" id="basic-addon2">
-                            <i class="fa-solid fa-paper-plane text-primary"></i>
-                        </button>
-                    </div>
-                    {{ Form::close() }}
-                </div>
-            </div>
+
             <div class="col-12 order-4 border-top-primary text-center mt-lg-5 mt-4">
                 <p class="text-white fw-light py-4 mb-0">{{__('messages.web.all_rights_reserved')}} © {{ date('Y') }} {{ getAppName() }}</p>
             </div>

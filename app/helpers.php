@@ -51,13 +51,20 @@ if (! function_exists('getAppLogo')) {
      */
     function getAppLogo()
     {
-        static $setting;
-        if (empty($setting)) {
+        try {
+            // Try to get logo setting using the same method as getSettingValue
+            $logoValue = getSettingValue('logo');
 
-            $setting = Setting::all()->keyBy('key');
+            if (!empty($logoValue)) {
+                return $logoValue;
+            }
+
+            // Return default logo path if no logo setting found
+            return 'assets/image/norsu_logo.png';
+        } catch (Exception $e) {
+            // If any error occurs, return default logo
+            return 'assets/image/norsu_logo.png';
         }
-
-        return $setting['logo']->value;
     }
 }
 
@@ -125,7 +132,9 @@ if (!function_exists('getDashboardURL')) {
         // Role-based dashboard URLs
         $roleDashboardMap = [
             'clinic_admin' => 'admin/dashboard',
+            'staff' => 'staff/dashboard',
             'doctor' => 'doctors/dashboard',
+            'patient' => 'patients/dashboard',
         ];
 
         // Check if the user has a specific role and return the corresponding dashboard URL
@@ -135,7 +144,7 @@ if (!function_exists('getDashboardURL')) {
             }
         }
 
-        // Permission-based dashboard URLs
+        // Permission-based dashboard URLs for admin users
         $permissionDashboardMap = [
             'manage_admin_dashboard' => 'admin/dashboard',
             'manage_doctors' => 'admin/doctors',
@@ -154,9 +163,12 @@ if (!function_exists('getDashboardURL')) {
         $permissions = $user->getAllPermissions()->pluck('name')->toArray();
 
         // Check if the user has a specific permission and return the corresponding dashboard URL
-        foreach ($permissionDashboardMap as $permission => $url) {
-            if (in_array($permission, $permissions, true)) {
-                return $url;
+        // Only for admin users, staff have their own dedicated routes
+        if ($user->hasRole('clinic_admin')) {
+            foreach ($permissionDashboardMap as $permission => $url) {
+                if (in_array($permission, $permissions, true)) {
+                    return $url;
+                }
             }
         }
 
@@ -364,22 +376,7 @@ if (! function_exists('getSettingValue')) {
      */
     function getSettingValue($key)
     {
-        static $setting;
-
-        if (empty($setting)) {
-            $setting = Setting::all()->keyBy('key');
-        }
-
-        // Check and update the URL for specific keys
-        if (in_array($key, ['about_image_1', 'about_image_2', 'about_image_3']) && isset($setting[$key])) {
-            $value = $setting[$key]->value;
-            if (str_starts_with($value, 'http://localhost')) {
-                $value = request()->getSchemeAndHttpHost() . parse_url($value, PHP_URL_PATH);
-            }
-            return $value;
-        }
-
-        return $setting[$key]->value;
+        return \App\Services\SettingsService::get($key);
     }
 }
 
@@ -866,7 +863,7 @@ if (! function_exists('getLoggedinDoctor')) {
      */
     function getLoggedinDoctor()
     {
-        return Auth::user()->hasRole(['Doctor']);
+        return Auth::user()->hasRole(['doctor']);
     }
 }
 
@@ -881,6 +878,75 @@ if (! function_exists('isRole')) {
         }
 
         return false;
+    }
+}
+
+if (! function_exists('getRouteByRole')) {
+    /**
+     * Get route based on user role
+     * @param string $baseName
+     * @param array $parameters
+     * @return string
+     */
+    function getRouteByRole(string $baseName, array $parameters = []): string
+    {
+        $user = getLogInUser();
+
+        if ($user->hasRole('clinic_admin')) {
+            $routeName = 'admin.' . $baseName;
+        } elseif ($user->hasRole('staff')) {
+            $routeName = 'staff.' . $baseName;
+        } elseif ($user->hasRole('doctor')) {
+            $routeName = 'doctors.' . $baseName;
+        } elseif ($user->hasRole('patient')) {
+            $routeName = 'patients.' . $baseName;
+        } else {
+            $routeName = $baseName;
+        }
+
+        return route($routeName, $parameters);
+    }
+}
+
+if (! function_exists('getVisitRoute')) {
+    /**
+     * Get visit route based on user role
+     * @param string $action
+     * @param array $parameters
+     * @return string
+     */
+    function getVisitRoute(string $action, array $parameters = []): string
+    {
+        $user = getLogInUser();
+
+        if ($user->hasRole('doctor')) {
+            return route('doctors.visits.' . $action, $parameters);
+        } elseif ($user->hasRole('staff')) {
+            return route('staff.visits.' . $action, $parameters);
+        } else {
+            return route('visits.' . $action, $parameters);
+        }
+    }
+}
+
+if (! function_exists('getPrescriptionRoute')) {
+    /**
+     * Get prescription route based on user role
+     * @param string $action
+     * @param array $parameters
+     * @return string
+     */
+    function getPrescriptionRoute(string $action, array $parameters = []): string
+    {
+        $user = getLogInUser();
+
+        if ($user->hasRole('doctor')) {
+            return route('doctors.prescriptions.' . $action, $parameters);
+        } elseif ($user->hasRole('staff')) {
+            return route('staff.prescriptions.' . $action, $parameters);
+        } else {
+            return route('prescriptions.' . $action, $parameters);
+        }
     }
 }
 

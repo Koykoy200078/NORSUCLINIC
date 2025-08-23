@@ -396,4 +396,34 @@ class DashboardRepository
 
         return [$monthWiseRecords2, $monthWiseRecords1, $monthWiseRecords3];
     }
+
+    /**
+     * Staff Dashboard Data
+     * @return array
+     */
+    public function getStaffData(): array
+    {
+        $todayDate = Carbon::now()->format('Y-m-d');
+
+        // Staff can see similar data to admin but with some restrictions
+        $data['patients'] = Patient::with(['user', 'appointments'])
+            ->withCount('appointments')
+            ->whereRaw('Date(created_at) = CURDATE()')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(5);
+
+        $data['totalDoctorCount'] = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
+        $data['totalPatientCount'] = User::toBase()->whereType(User::PATIENT)->count();
+        $data['totalAppointmentCount'] = Appointment::count();
+        $data['todayAppointmentCount'] = Appointment::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(Appointment::BOOKED)->count();
+        $data['totalRegisteredPatientCount'] = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
+        $data['servicesArr'] = Service::toBase()->whereStatus(true)->pluck('name', 'id')->toArray();
+        $data['serviceCategoriesArr'] = ServiceCategory::toBase()->pluck('name', 'id')->toArray();
+        $data['doctorArr'] = Doctor::with('user')->get()->pluck('user.full_name', 'id')->toArray();
+
+        $data['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
+        $data['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
+
+        return $data;
+    }
 }
