@@ -91,7 +91,7 @@
                 (isRole('staff') ? route('staff.appointments.create') : 
                 (isRole('doctor') ? route('doctors.appointments.create') : route('appointments.create')))
             }}">
-                    {{ __('messages.appointment.add_new_appointment') }}
+                    {{ __('messages.appointment.add_new_appointment')  }}
                 </a>
             </div>
         </div>

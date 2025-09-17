@@ -74,6 +74,7 @@ class AppointmentController extends AppBaseController
         $input = $request->all();
         $appointment = $this->appointmentRepository->store($input);
 
+        // Dont remove this commented code, will be used later for payment gateway
         // if ($input['payment_type'] == Appointment::STRIPE) {
         //     $result = $this->appointmentRepository->createSession($appointment);
 
@@ -126,6 +127,10 @@ class AppointmentController extends AppBaseController
 
         if (getLogInUser()->hasRole('patient')) {
             $url = route('patients.patient-appointments-index');
+        } elseif (getLogInUser()->hasRole('staff')) {
+            $url = route('staff.appointments.index');
+        } elseif (getLogInUser()->hasRole('doctor')) {
+            $url = route('doctors.appointments');
         }
         $data = [
             'url' => $url,
@@ -163,8 +168,12 @@ class AppointmentController extends AppBaseController
 
             if (getLogInUser()->hasRole('patient')) {
                 return redirect(route('patients.patient-appointments-index'));
+            } elseif (getLogInUser()->hasRole('staff')) {
+                return redirect(route('staff.appointments.index'));
+            } elseif (getLogInUser()->hasRole('doctor')) {
+                return redirect(route('doctors.appointments'));
             } else {
-                return redirect(route('admin.appointments.index'));
+                return redirect(route('appointments.index'));
             }
         }
 
@@ -497,6 +506,10 @@ class AppointmentController extends AppBaseController
 
         if (getLogInUser()->hasRole('patient')) {
             return redirect(route('patients.patient-appointments-index'));
+        } elseif (getLogInUser()->hasRole('staff')) {
+            return redirect(route('staff.appointments.index'));
+        } elseif (getLogInUser()->hasRole('doctor')) {
+            return redirect(route('doctors.appointments'));
         }
 
         return redirect(route('appointments.index'));
@@ -650,8 +663,11 @@ class AppointmentController extends AppBaseController
         }
 
         if (getLogInUser()->hasRole('doctor')) {
-
             return redirect(route('doctors.appointments'));
+        }
+
+        if (getLogInUser()->hasRole('staff')) {
+            return redirect(route('staff.appointments.index'));
         }
 
         return redirect(route('appointments.index'));

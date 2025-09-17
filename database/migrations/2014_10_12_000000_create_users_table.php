@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('contact')->nullable();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_no')->nullable();
+            $table->string('emergency_relationship')->nullable();
             $table->date('dob')->nullable();
             $table->integer('gender')->nullable();
             $table->boolean('status')->default(1);

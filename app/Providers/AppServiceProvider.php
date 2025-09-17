@@ -42,10 +42,25 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        // Force HTTPS in production
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
-        } else {
-            URL::forceScheme('http');
         }
+
+        // Force HTTPS when using ngrok or when FORCE_HTTPS is enabled
+        if (env('FORCE_HTTPS', false) || $this->isNgrokRequest()) {
+            URL::forceScheme('https');
+            request()->server->set('HTTPS', 'on');
+        }
+    }
+
+    /**
+     * Check if the request is coming from ngrok
+     */
+    private function isNgrokRequest(): bool
+    {
+        $host = request()->getHost();
+        return str_contains($host, 'ngrok') || str_contains($host, 'ngrok-free.app');
     }
 }

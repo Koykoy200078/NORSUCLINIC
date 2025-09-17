@@ -6,7 +6,6 @@
         <div id="user_search_results" class="absolute bg-white border border-gray-300 w-full hidden z-10"></div>
     </div>
     @endif
-
     <form action="{{ 
         isRole('clinic_admin') ? route('request-documents.store') : 
         (isRole('staff') ? route('staff.request-documents.store') : 
@@ -79,7 +78,7 @@
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
-                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" required>
+                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" value="{{ $user->type == 3 ? ($user->emergency_contact_name . ' / ' . $user->emergency_contact_no . ($user->emergency_relationship ? ' (' . $user->emergency_relationship . ')' : '')) : '' }}" required>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -258,15 +257,16 @@
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
 
-        // Set the search route based on user role
+        // Set the search route based on user role  
+        let searchRoute = '';
         @if(isRole('clinic_admin'))
-        const searchRoute = '{{ route("search-users") }}';
+        searchRoute = '{{ route("search-users") }}';
         @elseif(isRole('staff'))
-        const searchRoute = '{{ route("staff.request-documents.search-users") }}';
+        searchRoute = '{{ route("staff.request-documents.search-users") }}';
         @elseif(isRole('doctor'))
-        const searchRoute = '{{ route("doctors.request-documents.search-users") }}';
+        searchRoute = '{{ route("doctors.request-documents.search-users") }}';
         @else
-        const searchRoute = '{{ route("search-users") }}';
+        searchRoute = '{{ route("search-users") }}';
         @endif
 
         if (userSearchInput) {
@@ -296,7 +296,7 @@
 
                                 option.addEventListener('click', function() {
                                     const patientData = JSON.parse(this.dataset.patient);
-                                    
+
                                     document.getElementById('user_id').value = patientData.user.id;
                                     document.getElementById('name').value = `${patientData.user.first_name} ${patientData.user.last_name}`;
                                     document.getElementById('age').value = calculateAge(patientData.user.dob);
@@ -304,7 +304,7 @@
                                     document.getElementById('date_of_birth').value = patientData.user.dob || '';
                                     document.getElementById('vaccination_id').value = patientData.user.vaccination_id || '';
                                     document.getElementById('patient_contact').value = patientData.user.contact;
-                                    document.getElementById('emergency_contact').value = `${patientData.user.emergency_contact_name}/${patientData.user.emergency_contact_no}`;
+                                    document.getElementById('emergency_contact').value = `${patientData.user.emergency_contact_name}/${patientData.user.emergency_contact_no}${patientData.user.emergency_relationship ? ' (' + patientData.user.emergency_relationship + ')' : ''}`;
                                     document.getElementById('campus_id').value = patientData.user.campus_id;
                                     document.getElementById('college_id').value = patientData.user.college_id;
                                     document.getElementById('course_id').value = patientData.user.course_id;

@@ -53,8 +53,10 @@ class RequestDocumentsController extends Controller
                 $this->storeConsultationForm($data);
             }
 
-            // Return a success response
-            return redirect()->route('request-documents.index')
+            // Return a success response with role-based redirect
+            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
+
+            return redirect()->route($redirectRoute)
                 ->with('success', 'Request document created successfully.');
         } catch (\Exception $e) {
             // Log the error for debugging
@@ -224,7 +226,10 @@ class RequestDocumentsController extends Controller
                 $this->updateConsultationForm($requestDocument, $data);
             }
 
-            return redirect()->route('request-documents.index')
+            // Return a success response with role-based redirect
+            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
+
+            return redirect()->route($redirectRoute)
                 ->with('success', 'Request document updated successfully.');
         } catch (\Exception $e) {
             Log::error('Error in update method: ' . $e->getMessage());
@@ -376,7 +381,7 @@ class RequestDocumentsController extends Controller
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             })
                 ->select('id', 'patient_unique_id', 'user_id')
-                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,campus_id,college_id,course_id,year_level_id,vaccination_id', 'address' => function ($query) {
+                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id', 'address' => function ($query) {
                     $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'postal_code');
                 }])
                 ->get();

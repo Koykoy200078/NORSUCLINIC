@@ -85,10 +85,11 @@ class PatientRepository extends BaseRepository
             $input['email'] = setEmailLowerCase($input['email']);
             $patientArray = Arr::only($input, ['patient_unique_id']);
             $input['type'] = User::PATIENT;
-            $input['language'] = Setting::where('key', 'language')->get()->toArray()[0]['value'];
+            $languageSetting = Setting::where('key', 'language')->first();
+            $input['language'] = $languageSetting ? $languageSetting->value : 'en';
 
             // Set email as verified with Philippine time
-            $input['email_verified_at'] = now()->setTimezone('Asia/Manila');
+            $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
 
             // $input['password'] = Hash::make($input['password']);
             $user = User::create($input);
@@ -117,6 +118,7 @@ class PatientRepository extends BaseRepository
 
             return true;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
@@ -150,7 +152,7 @@ class PatientRepository extends BaseRepository
                 'backgroundImg',
             ]));
 
-            if (isset($patient->address)) {
+            if ($patient->address()->exists()) {
                 $patient->address()->update($addressInputArray);
             } else {
                 $patient->address()->create($addressInputArray);
@@ -158,7 +160,6 @@ class PatientRepository extends BaseRepository
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $patient->clearMediaCollection(Patient::PROFILE);
-                $patient->media()->delete();
                 $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
             }
 
@@ -166,6 +167,7 @@ class PatientRepository extends BaseRepository
 
             return true;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }

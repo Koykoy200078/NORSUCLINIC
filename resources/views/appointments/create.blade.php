@@ -30,13 +30,15 @@
             {{ Form::hidden(null, \App\Models\Appointment::PAYPAL,['id' => 'paypalMethod']) }}
             {{ Form::hidden(null, \App\Models\Appointment::MANUALLY,['id' => 'manuallyMethod']) }}
             {{ Form::hidden(null, \App\Models\Appointment::STRIPE,['id' => 'stripeMethod']) }}
-            @if(getLogInUser()->hasRole('patient') || getLogInUser()->hasRole('doctor'))
+            @if(getLogInUser()->hasRole('patient') || getLogInUser()->hasRole('doctor') || getLogInUser()->hasRole('staff'))
             @if (getLogInUser()->hasRole('patient'))
             {{ Form::open(['route' => 'patients.appointments.store','id' => 'addAppointmentForm']) }}
-            @else((getLogInUser()->hasRole('doctor')))
+            @elseif(getLogInUser()->hasRole('doctor'))
             {{ Form::open(['route' => 'doctors.appointments.store','id' => 'addAppointmentForm']) }}
+            @elseif(getLogInUser()->hasRole('staff'))
+            {{ Form::open(['route' => 'staff.appointments.store','id' => 'addAppointmentForm']) }}
             @endif
-            @else(getLogInUser()->hasRole('admin'))
+            @else
             {{ Form::open(['route' => 'appointments.store', 'id' => 'addAppointmentForm']) }}
             @endif
             @include('appointments.fields')

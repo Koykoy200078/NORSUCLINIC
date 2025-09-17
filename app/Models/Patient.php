@@ -148,6 +148,9 @@ class Patient extends Model implements HasMedia
         'password' => 'nullable|same:password_confirmation|min:6',
         'postal_code' => 'nullable',
         'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
+        'emergency_contact_name' => 'nullable',
+        'emergency_contact_no' => 'nullable',
+        'emergency_relationship' => 'nullable|string',
     ];
 
     /**
@@ -159,6 +162,9 @@ class Patient extends Model implements HasMedia
         'first_name' => 'required',
         'last_name' => 'required',
         'profile' => 'nullable|mimes:jpeg,jpg,png',
+        'emergency_contact_name' => 'nullable',
+        'emergency_contact_no' => 'nullable',
+        'emergency_relationship' => 'nullable|string',
     ];
 
     protected $appends = ['profile'];

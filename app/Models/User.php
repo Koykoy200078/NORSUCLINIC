@@ -130,6 +130,7 @@ class User extends Authenticatable implements HasMedia
         'contact',
         'emergency_contact_name',
         'emergency_contact_no',
+        'emergency_relationship',
         'dob',
         'gender',
         'status',
@@ -230,6 +231,7 @@ class User extends Authenticatable implements HasMedia
 
         'emergency_contact_name' => 'nullable',
         'emergency_contact_no' => 'nullable',
+        'emergency_relationship' => 'nullable|string',
         'campus_id' => 'nullable',
         'college_id' => 'nullable',
         'course_id' => 'nullable',
@@ -263,6 +265,7 @@ class User extends Authenticatable implements HasMedia
         'middle_name' => 'string',
         'emergency_contact_name' => 'string',
         'emergency_contact_no' => 'string',
+        'emergency_relationship' => 'string',
         'campus_id' => 'integer',
         'college_id' => 'integer',
         'course_id' => 'integer',
