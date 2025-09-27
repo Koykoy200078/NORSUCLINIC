@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('diagnoses', function (Blueprint $table) {
             $table->id();
-            $table->string('diagnoses')->unique();
+            $table->string('diagnoses', 125)->unique(); // Reduced for MySQL unique key limit
             $table->timestamps();
         });
     }
