@@ -94,7 +94,9 @@ class UserController extends AppBaseController
 
         Flash::success(__('messages.flash.doctor_create'));
 
-        return redirect(route('doctors.index'));
+        $indexRoute = isRole('clinic_admin') ? 'doctors.index' : (isRole('staff') ? 'staff.doctors.index' : 'doctors.index');
+
+        return redirect(route($indexRoute));
     }
 
     /**
@@ -295,7 +297,9 @@ class UserController extends AppBaseController
             ])))->make(true);
         }
 
-        return redirect(route('doctors.index'));
+        $indexRoute = isRole('clinic_admin') ? 'doctors.index' : (isRole('staff') ? 'staff.doctors.index' : 'doctors.index');
+
+        return redirect(route($indexRoute));
     }
 
     public function changeDoctorStatus(Request $request): JsonResponse

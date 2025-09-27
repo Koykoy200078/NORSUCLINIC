@@ -1,0 +1,438 @@
+// NORSUCLINIC Database Schema
+// Generated for dbdiagram.io
+// This represents the complete relational model of the NORSUCLINIC system
+
+Project NORSUCLINIC {
+  database_type: 'MySQL'
+  Note: 'Comprehensive Hospital/Clinic Management System Database Schema'
+}
+
+// ==========================================
+// CORE USER MANAGEMENT TABLES
+// ==========================================
+
+Table users {
+  id bigint [pk, increment]
+  first_name varchar(255)
+  middle_name varchar(255) [null]
+  last_name varchar(255)
+  email varchar(191) [unique, null]
+  contact varchar(255) [null]
+  emergency_contact_name varchar(255) [null]
+  emergency_contact_no varchar(255) [null]
+  emergency_relationship varchar(255) [null]
+  dob date [null]
+  gender int [null]
+  status boolean [default: 1]
+  language varchar(255) [default: 'en', null]
+  email_verified_at timestamp [null]
+  password varchar(255) [null]
+  type int [null]
+  blood_type varchar(255) [null]
+  country_code varchar(255) [null]
+  campus_id int [ref: > campuses.id, null]
+  college_id int [ref: > colleges.id, null]
+  course_id int [ref: > courses.id, null]
+  year_level_id int [ref: > year_levels.id, null]
+  vaccination_id int [ref: > vaccinations.id, null]
+  remember_token varchar(100) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Central user table for all system users (doctors, patients, staff)'
+}
+
+Table doctors {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  experience double [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Doctor-specific information linked to users table'
+}
+
+Table patients {
+  id int [pk, increment]
+  patient_unique_id varchar(191) [unique]
+  user_id bigint [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Patient-specific information with unique patient ID'
+}
+
+// ==========================================
+// EDUCATIONAL INSTITUTION TABLES
+// ==========================================
+
+Table campuses {
+  id bigint [pk, increment]
+  campus_name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Campus/branch locations'
+}
+
+Table colleges {
+  id bigint [pk, increment]
+  college_name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Colleges within the institution'
+}
+
+Table courses {
+  id bigint [pk, increment]
+  course_name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Academic courses/programs'
+}
+
+Table year_levels {
+  id bigint [pk, increment]
+  year_level_name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Academic year levels (1st year, 2nd year, etc.)'
+}
+
+Table vaccinations {
+  id bigint [pk, increment]
+  vaccination_status varchar(255) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'COVID vaccination status tracking'
+}
+
+// ==========================================
+// MEDICAL SERVICES & SPECIALIZATIONS
+// ==========================================
+
+Table service_categories {
+  id bigint [pk, increment]
+  name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Categories for medical services'
+}
+
+Table services {
+  id bigint [pk, increment]
+  category_id bigint [ref: > service_categories.id]
+  name varchar(255)
+  charges double [null]
+  status boolean [default: 1]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medical services offered by the clinic'
+}
+
+Table specializations {
+  id bigint [pk, increment]
+  name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medical specializations (Cardiology, Neurology, etc.)'
+}
+
+// ==========================================
+// APPOINTMENTS & VISITS
+// ==========================================
+
+Table appointments {
+  id bigint [pk, increment]
+  doctor_id bigint [ref: > doctors.id]
+  patient_id int [ref: > patients.id]
+  date varchar(255)
+  from_time varchar(255)
+  from_time_type varchar(255)
+  to_time varchar(255)
+  to_time_type varchar(255)
+  status boolean [default: 1]
+  description text [null]
+  service_id bigint [ref: > services.id]
+  payable_amount varchar(255)
+  appointment_unique_id varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Patient appointment bookings'
+}
+
+Table visits {
+  id bigint [pk, increment]
+  visit_date varchar(255)
+  doctor_id bigint [ref: > doctors.id]
+  patient_id int [ref: > patients.id]
+  description text [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Actual patient visits/consultations'
+}
+
+// ==========================================
+// PRESCRIPTIONS & MEDICAL RECORDS
+// ==========================================
+
+Table prescriptions {
+  id bigint [pk, increment]
+  appointment_id bigint [ref: > appointments.id]
+  patient_id int [ref: > patients.id]
+  doctor_id bigint [ref: > doctors.id, null]
+  food_allergies varchar(255) [null]
+  tendency_bleed varchar(255) [null]
+  heart_disease varchar(255) [null]
+  high_blood_pressure varchar(255) [null]
+  diabetic varchar(255) [null]
+  surgery varchar(255) [null]
+  accident varchar(255) [null]
+  others varchar(255) [null]
+  medical_history varchar(255) [null]
+  current_medication varchar(255) [null]
+  female_pregnancy varchar(255) [null]
+  breast_feeding varchar(255) [null]
+  health_insurance varchar(255) [null]
+  low_income varchar(255) [null]
+  reference varchar(255) [null]
+  status boolean [null]
+  plus_rate varchar(100) [null]
+  temperature varchar(100) [null]
+  problem_description varchar(100) [null]
+  test varchar(100) [null]
+  advice varchar(100) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medical prescriptions and patient health information'
+}
+
+Table diagnoses {
+  id bigint [pk, increment]
+  diagnoses varchar(255) [unique]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medical diagnoses reference table'
+}
+
+// ==========================================
+// DOCUMENT MANAGEMENT
+// ==========================================
+
+Table request_documents {
+  id bigint [pk, increment]
+  document_creator_id bigint
+  user_id bigint [ref: > users.id]
+  name varchar(255)
+  age int
+  gender varchar(255)
+  status varchar(255) [null]
+  date_of_birth date [null]
+  address varchar(255)
+  religion varchar(255) [null]
+  patient_contact varchar(255) [null]
+  campus varchar(255) [null]
+  college varchar(255) [null]
+  course varchar(255) [null]
+  year_level varchar(255) [null]
+  informant varchar(255) [null]
+  emergency_contact varchar(255) [null]
+  requested_at date [null]
+  complaints text [null]
+  covid_vaccination varchar(255) [null]
+  comorbidities varchar(255) [null]
+  allergies varchar(255) [null]
+  admissions_surgeries varchar(255) [null]
+  maintenance varchar(255) [null]
+  pregnancy_status varchar(255) [null]
+  lmp_aog varchar(255) [null]
+  vital_signs_bp varchar(255) [null]
+  vital_signs_pr varchar(255) [null]
+  vital_signs_temp varchar(255) [null]
+  vital_signs_rr varchar(255) [null]
+  vital_signs_o2_sat varchar(255) [null]
+  vital_signs_height varchar(255) [null]
+  vital_signs_weight varchar(255) [null]
+  pertinent_exam text [null]
+  assessment text [null]
+  plan text [null]
+  document_type varchar(255)
+  consult_mode varchar(255) [null]
+  nursing_intervention varchar(255) [null]
+  nursing_incharged_id varchar(255) [null]
+  examined_on date [null]
+  request_of varchar(255) [null]
+  complaints_diagnosis text [null]
+  medical_cert_remarks text [null]
+  doc_lic_no varchar(255) [null]
+  doc_prt_no varchar(255) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medical certificates and document requests'
+}
+
+// ==========================================
+// PHARMACY & MEDICINE MANAGEMENT
+// ==========================================
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medicine categories'
+}
+
+Table brands {
+  id bigint [pk, increment]
+  name varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medicine brands/manufacturers'
+}
+
+Table medicines {
+  id bigint [pk, increment]
+  category_id bigint [ref: > categories.id, null]
+  brand_id bigint [ref: > brands.id, null]
+  name varchar(255)
+  selling_price double
+  buying_price double
+  quantity int
+  available_quantity int
+  salt_composition varchar(255)
+  description text [null]
+  side_effects text [null]
+  currency_symbol varchar(100) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medicine inventory and details'
+}
+
+// ==========================================
+// LOCATION & GEOGRAPHY
+// ==========================================
+
+Table countries {
+  id bigint [pk, increment]
+  name varchar(255)
+  short_code varchar(255) [null]
+  phone_code varchar(255) [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Country reference data'
+}
+
+Table states {
+  id bigint [pk, increment]
+  name varchar(255)
+  country_id bigint [ref: > countries.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'State/province reference data'
+}
+
+Table cities {
+  id bigint [pk, increment]
+  name varchar(255)
+  state_id bigint [ref: > states.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'City reference data'
+}
+
+// ==========================================
+// MANY-TO-MANY RELATIONSHIP TABLES
+// ==========================================
+
+Table doctor_specialization {
+  id bigint [pk, increment]
+  doctor_id bigint [ref: > doctors.id]
+  specialization_id bigint [ref: > specializations.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Many-to-many relationship: doctors can have multiple specializations'
+}
+
+Table service_doctor {
+  id bigint [pk, increment]
+  service_id bigint [ref: > services.id]
+  doctor_id bigint [ref: > doctors.id]
+  
+  Note: 'Many-to-many relationship: doctors can provide multiple services'
+}
+
+// ==========================================
+// ADDITIONAL SYSTEM TABLES
+// ==========================================
+
+Table settings {
+  id bigint [pk, increment]
+  key varchar(255)
+  value text [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'System configuration settings'
+}
+
+Table media {
+  id bigint [pk, increment]
+  model_type varchar(255)
+  model_id bigint
+  uuid varchar(255) [null]
+  collection_name varchar(255)
+  name varchar(255)
+  file_name varchar(255)
+  mime_type varchar(255) [null]
+  disk varchar(255)
+  conversions_disk varchar(255) [null]
+  size bigint
+  manipulations json
+  custom_properties json
+  generated_conversions json
+  responsive_images json
+  order_column int [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'File attachments and media storage'
+}
+
+Table notifications {
+  id char(36) [pk]
+  type varchar(255)
+  notifiable_type varchar(255)
+  notifiable_id bigint
+  data text
+  read_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'System notifications'
+}
+
+// ==========================================
+// NOTES
+// ==========================================
+// All foreign key relationships are defined inline within table definitions
+// No additional Ref: statements needed as they would create duplicates

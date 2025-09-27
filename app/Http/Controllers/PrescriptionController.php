@@ -22,6 +22,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PrescriptionController extends AppBaseController
 {
@@ -145,8 +147,9 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        if (getLogInUser()->hasRole('doctor')) {
-            $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId(getLogInUser()->owner_id)->exists();
+        $user = getLogInUser();
+        if ($user && $user->hasRole('doctor')) {
+            $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId($user->doctor->id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return Redirect::back();
             }
@@ -240,7 +243,7 @@ class PrescriptionController extends AppBaseController
         }
 
         if (getLogInUser()->hasRole('doctor')) {
-            $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId(getLogInUser()->owner_id)->exists();
+            $patientPrescriptionHasDoctor = Prescription::whereId($prescription->id)->whereDoctorId(getLogInUser()->doctor->id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return $this->sendError(__('messages.flash.prescription_not_found'));
             }
@@ -269,7 +272,7 @@ class PrescriptionController extends AppBaseController
     public function showModal($id): JsonResponse
     {
         if (getLogInUser()->hasRole('doctor')) {
-            $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->owner_id)->exists();
+            $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->doctor->id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return $this->sendError(__('messages.flash.prescription_not_found'));
             }
@@ -298,7 +301,7 @@ class PrescriptionController extends AppBaseController
     public function prescriptionMedicineShowFunction($id)
     {
         if (getLogInUser()->hasRole('doctor')) {
-            $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->owner_id)->exists();
+            $patientPrescriptionHasDoctor = Prescription::whereId($id)->whereDoctorId(getLogInUser()->doctor->id)->exists();
             if (! $patientPrescriptionHasDoctor) {
                 return Redirect::back();
             }
@@ -315,14 +318,103 @@ class PrescriptionController extends AppBaseController
 
     public function convertToPDF($id): \Illuminate\Http\Response
     {
-        $data = $this->prescriptionRepository->getSettingList();
+        try {
+            // Get settings
+            $data = $this->prescriptionRepository->getSettingList();
 
-        $prescription = $this->prescriptionRepository->getData($id);
+            // Load prescription with all required relationships
+            $prescriptionModel = Prescription::with([
+                'patient.user',
+                'doctor.user',
+                'doctor.address',
+                'getMedicine.medicines',
+                'appointment'
+            ])->findOrFail($id);
 
-        $medicines = $this->prescriptionRepository->getMedicineData($id);
+            // Prepare patient information
+            $patientInfo = [
+                'name' => $prescriptionModel->patient->user->full_name ?? '',
+                'address' => $prescriptionModel->patient->address ?? $prescriptionModel->patient->user->address ?? '',
+                'age' => null,
+                'date' => \Carbon\Carbon::parse($prescriptionModel->created_at)->format('M d, Y')
+            ];
 
-        $pdf = Pdf::loadView('prescriptions.prescription_pdf', compact('prescription', 'medicines', 'data'));
+            // Calculate age if DOB exists
+            if ($prescriptionModel->patient->user->dob) {
+                $patientInfo['age'] = \Carbon\Carbon::parse($prescriptionModel->patient->user->dob)
+                    ->diff(\Carbon\Carbon::now())->y . ' years';
+            }
 
-        return $pdf->stream($prescription['prescription']->patient->user->full_name . '-' . $prescription['prescription']->id);
+            // Prepare prescription content
+            $prescriptionContent = [];
+
+            if ($prescriptionModel->problem_description) {
+                $prescriptionContent['problem'] = $prescriptionModel->problem_description;
+            }
+
+            if (!$prescriptionModel->getMedicine->isEmpty()) {
+                $medications = [];
+                foreach ($prescriptionModel->getMedicine as $medicine) {
+                    $medications[] = [
+                        'name' => $medicine->medicines->name ?? 'N/A',
+                        'dosage' => $medicine->dosage,
+                        'timing' => ($medicine->time == 0) ? 'after meal' : 'before meal',
+                        'duration' => $medicine->day . ' days'
+                    ];
+                }
+                $prescriptionContent['medications'] = $medications;
+            }
+
+            if ($prescriptionModel->test) {
+                $prescriptionContent['tests'] = $prescriptionModel->test;
+            }
+
+            if ($prescriptionModel->advice) {
+                $prescriptionContent['advice'] = $prescriptionModel->advice;
+            }
+
+            // Prepare doctor information
+            $doctorInfo = [
+                'name' => $prescriptionModel->doctor->user->full_name ?? '',
+                'specialty' => $prescriptionModel->doctor->specialist ?? '',
+                'contact' => $prescriptionModel->doctor->user->contact ?? '',
+                'email' => $prescriptionModel->doctor->user->email ?? ''
+            ];
+
+            // Prepare signature information
+            $signatureInfo = [
+                'date' => \Carbon\Carbon::parse($prescriptionModel->created_at)->format('M d, Y'),
+                'doctor_name' => $prescriptionModel->doctor->user->full_name ?? ''
+            ];
+
+
+            // Create PDF with optimized settings
+            $pdf = Pdf::loadView('prescriptions.prescription_pdf', compact(
+                'patientInfo',
+                'prescriptionContent',
+                'doctorInfo',
+                'signatureInfo',
+                'data'
+            ));
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->setOptions([
+                'dpi' => 150,
+                'defaultFont' => 'sans-serif',
+                'isRemoteEnabled' => false,
+            ]);
+
+            // Return inline PDF
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="prescription-' . $id . '.pdf"');
+        } catch (\Exception $e) {
+            Log::error('PDF generation failed: ' . $e->getMessage(), [
+                'prescription_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response('PDF generation failed: ' . $e->getMessage(), 500)
+                ->header('Content-Type', 'text/plain');
+        }
     }
 }

@@ -359,8 +359,8 @@ if (! function_exists('getStatusClassName')) {
         $classNames = [
             'bg-status-canceled',
             'bg-status-booked',
-            'bg-status-checkIn',
-            'bg-status-checkOut',
+            'bg-status-accepted',
+            'bg-status-finished',
         ];
 
         $index = $status % 4;
@@ -871,9 +871,8 @@ if (! function_exists('isRole')) {
 
     function isRole(string $role)
     {
-
-        if (getLogInUser()->hasRole($role)) {
-
+        $user = getLogInUser();
+        if ($user && $user->hasRole($role)) {
             return true;
         }
 

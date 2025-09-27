@@ -174,7 +174,7 @@ class DashboardRepository
             'date',
             '=',
             $todayDate
-        )->whereStatus(Appointment::CHECK_OUT)->count();
+        )->whereStatus(Appointment::FINISHED)->count();
         $data['todayAppointmentCount'] = Appointment::wherePatientId($patientId)->where(
             'date',
             '=',
@@ -241,7 +241,7 @@ class DashboardRepository
 
         foreach ($months as $month => $monthName) {
             $monthWiseRecords[$monthName] = $appointments->where('month', $month)
-                ->where('status', Appointment::CHECK_OUT)
+                ->where('status', Appointment::FINISHED)
                 ->when($serviceId, function ($query, $serviceId) {
                     return $query->where('service_id', $serviceId);
                 })
@@ -278,7 +278,7 @@ class DashboardRepository
 
         $patientappointments = Appointment::with(['patient.user', 'user', 'services'])
             ->where('patient_id', $patientId)
-            ->whereStatus(Appointment::CHECK_OUT)
+            ->whereStatus(Appointment::FINISHED)
             ->select(DB::raw('MONTH(date) as month,appointments.*'))->get();
 
 

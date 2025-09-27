@@ -26,7 +26,7 @@ class PatientDashboardSidebarTable extends Component
          'date',
          '=',
          $todayDate
-      )->whereStatus(Appointment::CHECK_OUT)->count();
+      )->whereStatus(Appointment::FINISHED)->count();
       $this->todayAppointmentCount = Appointment::wherePatientId($patientId)->where(
          'date',
          '=',

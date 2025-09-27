@@ -44,21 +44,21 @@
                                     <option class="booked" disabled value="{{ $book}}" {{$appointment['data']->status ==
                                                 $book ? 'selected' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[1]))}}
                                     </option>
-                                    <option value="{{ $checkIn}}" {{$appointment['data']->status ==
-                                                $checkIn ? 'selected' : ''}} {{$appointment['data']->status == $checkIn
+                                    <option value="{{ $accepted}}" {{$appointment['data']->status ==
+                                                $accepted ? 'selected' : ''}} {{$appointment['data']->status == $accepted
                                         ? 'selected'
-                                        : ''}} {{( $appointment['data']->status == $cancel || $appointment['data']->status == $checkOut)
+                                        : ''}} {{( $appointment['data']->status == $cancel || $appointment['data']->status == $finished)
                                         ? 'disabled'
                                         : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[2]))}}
                                     </option>
-                                    <option value="{{ $checkOut}}" {{$appointment['data']->status ==
-                                                $checkOut ? 'selected' : ''}} {{($appointment['data']->status == $cancel ||
+                                    <option value="{{ $finished}}" {{$appointment['data']->status ==
+                                                $finished ? 'selected' : ''}} {{($appointment['data']->status == $cancel ||
                                         $appointment['data']->status == $book) ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[3]))}}
                                     </option>
                                     <option value="{{$cancel}}" {{$appointment['data']->status ==
-                                                $cancel ? 'selected' : ''}} {{$appointment['data']->status == $checkIn
+                                                $cancel ? 'selected' : ''}} {{$appointment['data']->status == $accepted
                                         ? 'disabled'
-                                        : ''}} {{$appointment['data']->status == $checkOut ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[4]))}}
+                                        : ''}} {{$appointment['data']->status == $finished ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[4]))}}
                                     </option>
                                 </select>
                             </div>
@@ -146,6 +146,7 @@
                             {{Form::hidden('doctorUrl',url('doctors'),['id'=>'indexPrescriptionDoctorUrl'])}}
                             {{Form::hidden('patientUrl',route('patients.index'),['id'=>'indexPrescriptionPatientUrl'])}}
                             {{ Form::hidden('prescriptionLang',__('messages.prescription.prescription'), ['id' => 'prescriptionLang']) }}
+                            {{ Form::hidden('prescriptionStatusRoute', 'prescription.status', ['id' => 'prescriptionStatusRoute']) }}
                         </div>
                     </div>
                 </div>

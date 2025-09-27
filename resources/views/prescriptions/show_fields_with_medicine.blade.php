@@ -21,37 +21,37 @@
             <label for="name" class="pb-2 fs-5 text-gray-600 me-1">{{ __('messages.common.age') }}:</label>
             <span class="fs-5 text-gray-800">
                 @if($prescription['prescription']->patient->user->dob)
-                    {{ \Carbon\Carbon::parse($prescription['prescription']->patient->user->dob)->diff(\Carbon\Carbon::now())->y }}
-                    {{ __('messages.common.years') }}
+                {{ \Carbon\Carbon::parse($prescription['prescription']->patient->user->dob)->diff(\Carbon\Carbon::now())->y }}
+                {{ __('messages.common.years') }}
                 @else
-                    N/A
+                N/A
                 @endif
             </span>
         </div>
     </div>
     <div class="col-md-4 co-12 mt-md-0 mt-5">
         @if(empty($prescription['prescription']->doctor->address->address1) && empty($prescription['prescription']->doctor->address->address2) && empty($prescription['prescription']->doctor->address->city))
-            {{ __('messages.common.n/a') }}
+        {{ __('messages.common.n/a') }}
         @else
-            {{ !empty($prescription['prescription']->doctor->address->address1) ? $prescription['prescription']->doctor->address->address1 : '' }}
-            {{ !empty($prescription['prescription']->doctor->address->address2) ? !empty($prescription['prescription']->doctor->address->address1) ? ',' : '' : '' }}
-            {{ empty($prescription['prescription']->doctor->address->address1) || !empty($prescription['prescription']->doctor->address->address2)  ? !empty($prescription['prescription']->doctor->address->address2) ? $prescription['prescription']->doctor->address->address2  : '' : ''  }}
-            {{ !empty($prescription['prescription']->doctor->address->city) ? ',' : '' }}
-            @if(!empty($prescription['prescription']->doctor->address->city))
-                <br>
-            @endif
-            {{ !empty($prescription['prescription']->doctor->address->city) ? $prescription['prescription']->doctor->address->city : '' }}
-            {{ !empty($prescription['prescription']->doctor->address->zip) ? ',' : '' }}
-            @if($prescription['prescription']->doctor->address->zip)
-                <br>
-            @endif
-            {{ !empty($prescription['prescription']->doctor->address->zip) ? $prescription['prescription']->doctor->address->zip : '' }}
-            <p class="text-gray-600 mb-3">
-                {{ !empty($prescription['prescription']->doctor->user->phone) ? $prescription['prescription']->doctor->user->phone : '' }}
-            </p>
-            <p class="text-gray-600 mb-3">
-                {{ !empty($prescription['prescription']->doctor->user->email) ? $prescription['prescription']->doctor->user->email : '' }}
-            </p>
+        {{ !empty($prescription['prescription']->doctor->address->address1) ? $prescription['prescription']->doctor->address->address1 : '' }}
+        {{ !empty($prescription['prescription']->doctor->address->address2) ? !empty($prescription['prescription']->doctor->address->address1) ? ',' : '' : '' }}
+        {{ empty($prescription['prescription']->doctor->address->address1) || !empty($prescription['prescription']->doctor->address->address2)  ? !empty($prescription['prescription']->doctor->address->address2) ? $prescription['prescription']->doctor->address->address2  : '' : ''  }}
+        {{ !empty($prescription['prescription']->doctor->address->city) ? ',' : '' }}
+        @if(!empty($prescription['prescription']->doctor->address->city))
+        <br>
+        @endif
+        {{ !empty($prescription['prescription']->doctor->address->city) ? $prescription['prescription']->doctor->address->city : '' }}
+        {{ !empty($prescription['prescription']->doctor->address->zip) ? ',' : '' }}
+        @if($prescription['prescription']->doctor->address->zip)
+        <br>
+        @endif
+        {{ !empty($prescription['prescription']->doctor->address->zip) ? $prescription['prescription']->doctor->address->zip : '' }}
+        <p class="text-gray-600 mb-3">
+            {{ !empty($prescription['prescription']->doctor->user->phone) ? $prescription['prescription']->doctor->user->phone : '' }}
+        </p>
+        <p class="text-gray-600 mb-3">
+            {{ !empty($prescription['prescription']->doctor->user->email) ? $prescription['prescription']->doctor->user->email : '' }}
+        </p>
         @endif
     </div>
     <div class="col-12 px-0">
@@ -60,25 +60,25 @@
     <div class="col-md-4 col-sm-6 co-12">
         <h6>{{ __('messages.prescription.problem') }}:</h6>
         @if($prescription['prescription']->problem_description != null)
-            <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->problem_description }}</p>
+        <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->problem_description }}</p>
         @else
-            {{ __('messages.common.n/a') }}
+        {{ __('messages.common.n/a') }}
         @endif
     </div>
     <div class="col-md-4 col-sm-6 co-12 mt-sm-0 mt-5">
         <h6>{{ __('messages.prescription.test') }}:</h6>
         @if($prescription['prescription']->test != null)
-            <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->test }}</p>
+        <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->test }}</p>
         @else
-            {{ __('messages.common.n/a') }}
+        {{ __('messages.common.n/a') }}
         @endif
     </div>
     <div class="col-md-4 col-sm-6 co-12 mt-md-0 mt-5">
         <h6>{{ __('messages.prescription.advice') }}:</h6>
         @if($prescription['prescription']->advice != null)
-            <p class="text-gray-600  mb-2 fs-4">{{ $prescription['prescription']->advice }}</p>
+        <p class="text-gray-600  mb-2 fs-4">{{ $prescription['prescription']->advice }}</p>
         @else
-            N/A
+        N/A
         @endif
     </div>
     <div class="col-12 mt-6">
@@ -86,36 +86,35 @@
         <div class="table-responsive">
             <table class="table box-shadow-none">
                 <thead>
-                <tr>
-                    <th scope="col">{{ __('messages.prescription.medicine_name') }}</th>
-                    <th scope="col">{{ __('messages.medicine.dosage') }}</th>
-                    <th scope="col">{{ __('messages.prescription.duration') }}</th>
-                    <th scope="col">{{ __('messages.medicine_bills.dose_interval') }}</th>
-                </tr>
+                    <tr>
+                        <th scope="col">{{ __('messages.prescription.medicine_name') }}</th>
+                        <th scope="col">{{ __('messages.medicine.dosage') }}</th>
+                        <th scope="col">{{ __('messages.prescription.duration') }}</th>
+                        <th scope="col">{{ __('messages.medicine_bills.dose_interval') }}</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @if(empty($medicines))
+                    @if(empty($medicines))
                     {{ __('messages.common.n/a') }}
-                @else
+                    @else
                     @foreach($prescription['prescription']->getMedicine as $medicine)
-                        @foreach($medicine->medicines as $medi)
-                                <tr>
-                                    <td class="py-4 border-bottom-0">{{ $medi->name }}</td>
-                                    <td class="py-4 border-bottom-0">
-                                        {{ $medicine->dosage }}
-                                        @if($medicine->time == 0)
-                                            (After Meal)
-                                        @else
-                                            (Before Meal)
-                                        @endif
-                                    </td>
-                                    <td class="py-4 border-bottom-0">{{ $medicine->day }} Day</td>
-                                    <td class="py-4 border-bottom-0">{{ App\Models\Prescription::DOSE_INTERVAL[$medicine->dose_interval] }}</td>
-                                </tr>
-                            @break
-                        @endforeach
+                    @if($medicine->medicines)
+                    <tr>
+                        <td class="py-4 border-bottom-0">{{ $medicine->medicines->name ?? 'N/A' }}</td>
+                        <td class="py-4 border-bottom-0">
+                            {{ $medicine->dosage }}
+                            @if($medicine->time == 0)
+                            (After Meal)
+                            @else
+                            (Before Meal)
+                            @endif
+                        </td>
+                        <td class="py-4 border-bottom-0">{{ $medicine->day }} Day</td>
+                        <td class="py-4 border-bottom-0">{{ App\Models\Prescription::DOSE_INTERVAL[$medicine->dose_interval] }}</td>
+                    </tr>
+                    @endif
                     @endforeach
-                @endif
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -124,14 +123,14 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap mt-5">
             <h4 class="mb-0 me-3 mt-3">
                 @if($prescription['prescription']->next_visit_qty != null)
-                    {{ __('messages.prescription.next_visit') }} : {{ $prescription['prescription']->next_visit_qty }}
-                    @if($prescription['prescription']->next_visit_time == 0)
-                        {{ __('messages.prescription.days') }}
-                    @elseif($prescription['prescription']->next_visit_time == 1)
-                        {{ __('messages.admin_dashboard.month') }}
-                    @else
-                        {{ __('messages.doctor.year') }}
-                    @endif
+                {{ __('messages.prescription.next_visit') }} : {{ $prescription['prescription']->next_visit_qty }}
+                @if($prescription['prescription']->next_visit_time == 0)
+                {{ __('messages.prescription.days') }}
+                @elseif($prescription['prescription']->next_visit_time == 1)
+                {{ __('messages.admin_dashboard.month') }}
+                @else
+                {{ __('messages.doctor.year') }}
+                @endif
                 @endif
             </h4>
             <div class="mt-3">

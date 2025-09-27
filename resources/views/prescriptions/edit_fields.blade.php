@@ -1,8 +1,8 @@
 <div class="row mb-5">
     {{ Form::hidden('appointment_id', $appointmentId) }}
     {{ Form::hidden('patient_id', $appointment->patient->id) }}
-    @if(Auth::user()->hasRole('Doctor'))
-        <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">
+    @if(Auth::user() && Auth::user()->hasRole('Doctor'))
+    <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">
     @else
     {{ Form::hidden('doctor_id', $appointment->doctor->id, null, ['class' => 'form-select', 'required', 'id' => 'prescriptionDoctorId', 'placeholder' => __('messages.common.select_doctor')]) }}
     @endif
@@ -30,7 +30,7 @@
             <br>
             <div class="form-check form-check-solid form-switch fv-row">
                 <input name="status" class="form-check-input is-active cursor-pointer" value="1"
-                       type="checkbox" {{(isset($prescription) && ($prescription->status)) ? 'checked' : ''}}>
+                    type="checkbox" {{(isset($prescription) && ($prescription->status)) ? 'checked' : ''}}>
                 <label class="form-check-label" for="allowmarketing"></label>
             </div>
         </div>

@@ -21,12 +21,11 @@ class MedicineRepository extends BaseRepository
         'name',
         'selling_price',
         'buying_price',
-        'generic_name',
-        'batch_no',
-        'effect',
-        'betch_no',
-        'qty',
-        'mfg_date',
+        'salt_composition',
+        'description',
+        'side_effects',
+        'quantity',
+        'available_quantity',
     ];
 
     /**

@@ -110,8 +110,8 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
                         ->with([
                             'row' => $row,
                             'book' => Appointment::BOOKED,
-                            'checkIn' => Appointment::CHECK_IN,
-                            'checkOut' => Appointment::CHECK_OUT,
+                            'accepted' => Appointment::ACCEPTED,
+                            'finished' => Appointment::FINISHED,
                             'cancel' => Appointment::CANCELLED,
                         ]);
                 }),

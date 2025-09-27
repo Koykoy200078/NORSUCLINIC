@@ -69,5 +69,5 @@ class Notification extends Model
 
     const APPOINTMENT_PAYMENT_DONE_PATIENT_MSG = 'Your appointment payment has been successful';
 
-    const APPOINTMENT_CHECKOUT_PATIENT_MSG = 'Your Appointment has been checkout by';
+    const APPOINTMENT_CHECKOUT_PATIENT_MSG = 'Your Appointment has been finished by';
 }

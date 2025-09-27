@@ -183,7 +183,7 @@ class PatientController extends AppBaseController
     public function destroy(Patient $patient): JsonResponse
     {
         $existAppointment = Appointment::wherePatientId($patient->id)
-            ->whereNotIn('status', [Appointment::CANCELLED, Appointment::CHECK_OUT])
+            ->whereNotIn('status', [Appointment::CANCELLED, Appointment::FINISHED])
             ->exists();
 
         $existVisit = Visit::wherePatientId($patient->id)->exists();

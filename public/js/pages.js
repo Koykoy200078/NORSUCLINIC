@@ -7107,23 +7107,23 @@ listenSubmit("#appointmentPaymentStatusForm", function (event) {
   \******************************************************/
 /***/ (() => {
 
-document.addEventListener('DOMContentLoaded', loadAppointmentCalendar);
+document.addEventListener("DOMContentLoaded", loadAppointmentCalendar);
 var popover;
 var popoverState = false;
 var appointmentStatusId = null;
 var calendar;
 var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  patientName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
+  id: "",
+  uId: "",
+  eventName: "",
+  patientName: "",
+  eventDescription: "",
+  eventStatus: "",
+  startDate: "",
+  endDate: "",
   amount: 0,
-  service: '',
-  doctorName: ''
+  service: "",
+  doctorName: ""
 };
 
 // View event variables
@@ -7133,35 +7133,51 @@ function loadAppointmentCalendar() {
   init();
 }
 var initCalendarApp = function initCalendarApp() {
-  if (!$('#adminAppointmentCalendar').length) {
+  if (!$("#adminAppointmentCalendar").length) {
     return;
   }
-  if (usersRole == 'patient') {
+  if (usersRole == "patient") {
     return;
   }
-  var calendarEl = document.getElementById('adminAppointmentCalendar');
-  var lang = $('.currentLanguage').val();
+  var calendarEl = document.getElementById("adminAppointmentCalendar");
+  var lang = $(".currentLanguage").val();
   calendar = new FullCalendar.Calendar(calendarEl, {
     locale: lang,
-    themeSystem: 'bootstrap5',
+    themeSystem: "bootstrap5",
     height: 750,
     buttonText: {
-      today: Lang.get('js.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
+      today: Lang.get("js.today"),
+      day: Lang.get("js.day"),
+      month: Lang.get("js.month")
     },
     headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
+      left: "title",
+      center: "prev,next today",
+      right: "dayGridDay,dayGridMonth"
     },
     initialDate: new Date(),
-    timeZone: 'UTC',
+    timeZone: "Asia/Manila",
     dayMaxEvents: true,
     events: function events(info, successCallback, failureCallback) {
+      // Determine the correct route based on user role
+      var calendarRoute;
+      switch (usersRole) {
+        case 'staff':
+          calendarRoute = route('staff.appointments.calendar');
+          break;
+        case 'doctor':
+          calendarRoute = route('doctors.appointments.calendar');
+          break;
+        case 'patient':
+          calendarRoute = route('patient.appointments.calendar');
+          break;
+        default:
+          calendarRoute = route('appointments.calendar'); // admin route
+          break;
+      }
       $.ajax({
-        url: route('appointments.calendar'),
-        type: 'GET',
+        url: calendarRoute,
+        type: "GET",
         data: info,
         success: function success(result) {
           if (result.success) {
@@ -7169,7 +7185,13 @@ var initCalendarApp = function initCalendarApp() {
           }
         },
         error: function error(result) {
-          displayErrorMessage(result.responseJSON.message);
+          var errorMessage = 'An error occurred while loading calendar data.';
+          if (result.responseJSON && result.responseJSON.message) {
+            errorMessage = result.responseJSON.message;
+          } else if (result.responseText) {
+            errorMessage = result.responseText;
+          }
+          displayErrorMessage(errorMessage);
           failureCallback();
         }
       });
@@ -7217,10 +7239,10 @@ var initCalendarApp = function initCalendarApp() {
   calendar.render();
 };
 var init = function init() {
-  if (!$('#eventModal').length) {
+  if (!$("#eventModal").length) {
     return;
   }
-  var viewElement = document.getElementById('eventModal');
+  var viewElement = document.getElementById("eventModal");
   viewModal = new bootstrap.Modal(viewElement);
   viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
   viewPatientName = viewElement.querySelector('[data-calendar="event_patient_name"]');
@@ -7253,19 +7275,19 @@ var initPopovers = function initPopovers(element) {
   hidePopovers();
 
   // Generate popover content
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '<div class="fw-bolder mb-2"><b>Patient</b>: ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+  var startDate = data.allDay ? moment(data.startDate).format("Do MMM, YYYY") : moment(data.startDate).format("Do MMM, YYYY - h:mm a");
+  var endDate = data.allDay ? moment(data.endDate).format("Do MMM, YYYY") : moment(data.endDate).format("Do MMM, YYYY - h:mm a");
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '<div class="fw-bolder mb-2"><b>Patient</b>: ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + "</div>";
 
   // Popover options
   var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
+    container: "body",
+    trigger: "manual",
+    boundary: "window",
+    placement: "auto",
     dismiss: true,
     html: true,
-    title: 'Appointment Details',
+    title: "Appointment Details",
     content: popoverHtml
   };
 };
@@ -7280,34 +7302,34 @@ var hidePopovers = function hidePopovers() {
 
 // Handle view event
 var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
+  $(".fc-popover").addClass("hide");
   viewModal.show();
 
   // Detect all day event
   var eventNameMod;
   var startDateMod;
   var endDateMod;
-  var book = $('#bookCalenderConst').val();
-  var checkIn = $('#checkInCalenderConst').val();
-  var checkOut = $('#checkOutCalenderConst').val();
-  var cancel = $('#cancelCalenderConst').val();
-  eventNameMod = '';
+  var book = $("#bookCalenderConst").val();
+  var accepted = $("#acceptedCalenderConst").val();
+  var finished = $("#finishedOutCalenderConst").val();
+  var cancel = $("#cancelCalenderConst").val();
+  eventNameMod = "";
   startDateMod = moment(data.startDate).utc().format("DD MMM, YYYY - h:mm A");
-  endDateMod = moment(data.endDate).utc().format('DD MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod;
+  endDateMod = moment(data.endDate).utc().format("DD MMM, YYYY - h:mm A");
+  viewEndDate.innerText = ": " + endDateMod;
+  viewStartDate.innerText = ": " + startDateMod;
 
   // Populate view data
-  viewEventName.innerText = Lang.get('js.doctor') + data.doctorName;
-  viewPatientName.innerText = Lang.get('js.patient') + data.patientName;
+  viewEventName.innerText = Lang.get("js.doctor") + ": " + data.doctorName;
+  viewPatientName.innerText = Lang.get("js.patient") + ": " + data.patientName;
   $(viewEventStatus).empty();
-  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
-  $(viewEventStatus).val(data.eventStatus).trigger('change');
+  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? "selected" : "", ">").concat(Lang.get("js.booked"), "</option>\n<option value=\"").concat(accepted, "\" ").concat(data.eventStatus == accepted ? "selected" : "", " ").concat(data.eventStatus == accepted ? "selected" : "", "\n    ").concat(data.eventStatus == cancel || data.eventStatus == finished ? "disabled" : "", ">").concat(Lang.get("js.check_in"), "</option>\n<option value=\"").concat(finished, "\" ").concat(data.eventStatus == finished ? "selected" : "", "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? "disabled" : "", ">").concat(Lang.get("js.check_out"), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? "selected" : "", " ").concat(data.eventStatus == accepted ? "disabled" : "", "\n   ").concat(data.eventStatus == finished ? "disabled" : "", ">").concat(Lang.get("js.cancelled"), "</option>\n"));
+  $(viewEventStatus).val(data.eventStatus).trigger("change");
   viewAmount.innerText = addCommas(data.amount);
   viewUId.innerText = data.uId;
   viewService.innerText = data.service;
 };
-listenChange('#changeAppointmentStatus', function () {
+listenChange("#changeAppointmentStatus", function () {
   if (!$(this).val()) {
     return false;
   }
@@ -7316,17 +7338,38 @@ listenChange('#changeAppointmentStatus', function () {
   if (parseInt(appointmentStatus) === data.eventStatus) {
     return false;
   }
+
+  // Determine the correct change-status route based on user role
+  var changeStatusRoute;
+  switch (usersRole) {
+    case 'staff':
+      changeStatusRoute = route('staff.change-status', appointmentId);
+      break;
+    case 'doctor':
+      changeStatusRoute = route('doctors.change-status', appointmentId);
+      break;
+    default:
+      changeStatusRoute = route('change-status', appointmentId); // admin route
+      break;
+  }
   $.ajax({
-    url: route('change-status', appointmentId),
-    type: 'POST',
+    url: changeStatusRoute,
+    type: "POST",
     data: {
       appointmentId: appointmentId,
       appointmentStatus: appointmentStatus
     },
     success: function success(result) {
       displaySuccessMessage(result.message);
-      $('#eventModal').modal('hide');
+      $("#eventModal").modal("hide");
       calendar.refetchEvents();
+    },
+    error: function error(result) {
+      var errorMessage = 'An error occurred while changing appointment status.';
+      if (result.responseJSON && result.responseJSON.message) {
+        errorMessage = result.responseJSON.message;
+      }
+      displayErrorMessage(errorMessage);
     }
   });
 });
@@ -7834,59 +7877,59 @@ listen("hidden.bs.modal", "#paymentGatewayModal", function (e) {
   \**************************************************************/
 /***/ (() => {
 
-document.addEventListener('DOMContentLoaded', loadPatientAppointmentCalendar);
+document.addEventListener("DOMContentLoaded", loadPatientAppointmentCalendar);
 var popover;
 var popoverState = false;
 var calendar;
 var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
+  id: "",
+  uId: "",
+  eventName: "",
+  eventDescription: "",
+  eventStatus: "",
+  startDate: "",
+  endDate: "",
   amount: 0,
-  service: '',
-  doctorName: ''
+  service: "",
+  doctorName: ""
 };
 
 // View event variables
 var viewEventName, viewEventDescription, viewEventStatus, viewStartDate, viewEndDate, viewModal, viewEditButton, viewDeleteButton, viewService, viewUId, viewAmount;
 function loadPatientAppointmentCalendar() {
-  if (!$('#appointmentCalendar').length) {
+  if (!$("#appointmentCalendar").length) {
     return;
   }
   initCalendarApp();
   init();
 }
 var initCalendarApp = function initCalendarApp() {
-  if (usersRole != 'patient') {
+  if (usersRole != "patient") {
     return;
   }
-  var lang = $('.currentLanguage').val();
-  var calendarEl = document.getElementById('appointmentCalendar');
+  var lang = $(".currentLanguage").val();
+  var calendarEl = document.getElementById("appointmentCalendar");
   calendar = new FullCalendar.Calendar(calendarEl, {
     locale: lang,
-    themeSystem: 'bootstrap5',
+    themeSystem: "bootstrap5",
     height: 750,
     buttonText: {
-      today: Lang.get('js.datepicker.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
+      today: Lang.get("js.datepicker.today"),
+      day: Lang.get("js.day"),
+      month: Lang.get("js.month")
     },
     headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
+      left: "title",
+      center: "prev,next today",
+      right: "dayGridDay,dayGridMonth"
     },
     initialDate: new Date(),
-    timeZone: 'UTC',
+    timeZone: "Asia/Manila",
     dayMaxEvents: true,
     events: function events(info, successCallback, failureCallback) {
       $.ajax({
-        url: route('patients.appointments.calendar'),
-        type: 'GET',
+        url: route("patients.appointments.calendar"),
+        type: "GET",
         data: info,
         success: function success(result) {
           if (result.success) {
@@ -7941,10 +7984,10 @@ var initCalendarApp = function initCalendarApp() {
   calendar.render();
 };
 var init = function init() {
-  if (!$('#patientEventModal').length) {
+  if (!$("#patientEventModal").length) {
     return;
   }
-  var viewElement = document.getElementById('patientEventModal');
+  var viewElement = document.getElementById("patientEventModal");
   viewModal = new bootstrap.Modal(viewElement);
   viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
   viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
@@ -7975,19 +8018,19 @@ var initPopovers = function initPopovers(element) {
   hidePopovers();
 
   // Generate popover content
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+  var startDate = data.allDay ? moment(data.startDate).format("Do MMM, YYYY") : moment(data.startDate).format("Do MMM, YYYY - h:mm a");
+  var endDate = data.allDay ? moment(data.endDate).format("Do MMM, YYYY") : moment(data.endDate).format("Do MMM, YYYY - h:mm a");
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Doctor</b>: ' + data.doctorName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + "</div>";
 
   // Popover options
   var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
+    container: "body",
+    trigger: "manual",
+    boundary: "window",
+    placement: "auto",
     dismiss: true,
     html: true,
-    title: 'Appointment Details',
+    title: "Appointment Details",
     content: popoverHtml
   };
 };
@@ -8002,21 +8045,21 @@ var hidePopovers = function hidePopovers() {
 
 // Handle view event
 var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
+  $(".fc-popover").addClass("hide");
   viewModal.show();
 
   // Detect all day event
   var eventNameMod;
   var startDateMod;
   var endDateMod;
-  eventNameMod = '';
-  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
-  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod;
+  eventNameMod = "";
+  startDateMod = moment(data.startDate).utc().format("Do MMM, YYYY - h:mm A");
+  endDateMod = moment(data.endDate).utc().format("Do MMM, YYYY - h:mm A");
+  viewEndDate.innerText = ": " + endDateMod;
+  viewStartDate.innerText = ": " + startDateMod;
 
   // Populate view data
-  viewEventName.innerText = 'Doctor: ' + data.doctorName;
+  viewEventName.innerText = "Doctor: " + data.doctorName;
   $(viewEventStatus).val(data.eventStatus);
   viewAmount.innerText = addCommas(data.amount);
   viewUId.innerText = data.uId;
@@ -10369,22 +10412,22 @@ listenClick('#doctorMonthData', function () {
   \*************************************************************/
 /***/ (() => {
 
-document.addEventListener('DOMContentLoaded', loadDoctorAppointmentCalendar);
+document.addEventListener("DOMContentLoaded", loadDoctorAppointmentCalendar);
 var popover;
 var popoverState = false;
 var appointmentStatusId = null;
 var doctorAppointmentCalendar;
 var data = {
-  id: '',
-  uId: '',
-  eventName: '',
-  eventDescription: '',
-  eventStatus: '',
-  startDate: '',
-  endDate: '',
+  id: "",
+  uId: "",
+  eventName: "",
+  eventDescription: "",
+  eventStatus: "",
+  startDate: "",
+  endDate: "",
   amount: 0,
-  service: '',
-  patientName: ''
+  service: "",
+  patientName: ""
 };
 
 // View event variables
@@ -10394,35 +10437,35 @@ function loadDoctorAppointmentCalendar() {
   init();
 }
 var initCalendarApp = function initCalendarApp() {
-  if (usersRole != 'doctor') {
+  if (usersRole != "doctor") {
     return;
   }
-  var calendarEl = document.getElementById('doctorAppointmentCalendar');
+  var calendarEl = document.getElementById("doctorAppointmentCalendar");
   if (!$(calendarEl).length) {
     return;
   }
-  var lang = $('.currentLanguage').val();
+  var lang = $(".currentLanguage").val();
   doctorAppointmentCalendar = new FullCalendar.Calendar(calendarEl, {
     locale: lang,
-    themeSystem: 'bootstrap5',
+    themeSystem: "bootstrap5",
     height: 750,
     buttonText: {
-      today: Lang.get('js.today'),
-      day: Lang.get('js.day'),
-      month: Lang.get('js.month')
+      today: Lang.get("js.today"),
+      day: Lang.get("js.day"),
+      month: Lang.get("js.month")
     },
     headerToolbar: {
-      left: 'title',
-      center: 'prev,next today',
-      right: 'dayGridDay,dayGridMonth'
+      left: "title",
+      center: "prev,next today",
+      right: "dayGridDay,dayGridMonth"
     },
     initialDate: new Date(),
-    timeZone: 'UTC',
+    timeZone: "UTC",
     dayMaxEvents: true,
     events: function events(info, successCallback, failureCallback) {
       $.ajax({
-        url: route('doctors.appointments.calendar'),
-        type: 'GET',
+        url: route("doctors.appointments.calendar"),
+        type: "GET",
         data: info,
         success: function success(result) {
           if (result.success) {
@@ -10478,10 +10521,10 @@ var initCalendarApp = function initCalendarApp() {
   doctorAppointmentCalendar.render();
 };
 var init = function init() {
-  if (!$('#doctorAppointmentCalendarModal').length) {
+  if (!$("#doctorAppointmentCalendarModal").length) {
     return;
   }
-  var viewElement = document.getElementById('doctorAppointmentCalendarModal');
+  var viewElement = document.getElementById("doctorAppointmentCalendarModal");
   viewModal = new bootstrap.Modal(viewElement);
   viewEventName = viewElement.querySelector('[data-calendar="event_name"]');
   viewEventDescription = viewElement.querySelector('[data-calendar="event_description"]');
@@ -10511,19 +10554,19 @@ var initPopovers = function initPopovers(element) {
   hidePopovers();
 
   // Generate popover content
-  var startDate = data.allDay ? moment(data.startDate).format('Do MMM, YYYY') : moment(data.startDate).format('Do MMM, YYYY - h:mm a');
-  var endDate = data.allDay ? moment(data.endDate).format('Do MMM, YYYY') : moment(data.endDate).format('Do MMM, YYYY - h:mm a');
-  var popoverHtml = '<div class="fw-bolder mb-2"><b>Patient:</b> ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + '</div>';
+  var startDate = data.allDay ? moment(data.startDate).format("Do MMM, YYYY") : moment(data.startDate).format("Do MMM, YYYY - h:mm a");
+  var endDate = data.allDay ? moment(data.endDate).format("Do MMM, YYYY") : moment(data.endDate).format("Do MMM, YYYY - h:mm a");
+  var popoverHtml = '<div class="fw-bolder mb-2"><b>Patient:</b> ' + data.patientName + '</div><div class="fs-7"><span class="fw-bold">Start:</span> ' + startDate + '</div><div class="fs-7 mb-4"><span class="fw-bold">End:</span> ' + endDate + "</div>";
 
   // Popover options
   var options = {
-    container: 'body',
-    trigger: 'manual',
-    boundary: 'window',
-    placement: 'auto',
+    container: "body",
+    trigger: "manual",
+    boundary: "window",
+    placement: "auto",
     dismiss: true,
     html: true,
-    title: 'Appointment Details',
+    title: "Appointment Details",
     content: popoverHtml
   };
 };
@@ -10538,33 +10581,33 @@ var hidePopovers = function hidePopovers() {
 
 // Handle view event
 var handleViewEvent = function handleViewEvent() {
-  $('.fc-popover').addClass('hide');
+  $(".fc-popover").addClass("hide");
   viewModal.show();
 
   // Detect all day event
   var eventNameMod;
   var startDateMod;
   var endDateMod;
-  var book = $('#bookCalenderConst').val();
-  var checkIn = $('#checkInCalenderConst').val();
-  var checkOut = $('#checkOutCalenderConst').val();
-  var cancel = $('#cancelCalenderConst').val();
-  eventNameMod = '';
-  startDateMod = moment(data.startDate).utc().format('Do MMM, YYYY - h:mm A');
-  endDateMod = moment(data.endDate).utc().format('Do MMM, YYYY - h:mm A');
-  viewEndDate.innerText = ': ' + endDateMod;
-  viewStartDate.innerText = ': ' + startDateMod;
+  var book = $("#bookCalenderConst").val();
+  var accepted = $("#acceptedCalenderConst").val();
+  var finished = $("#finishedOutCalenderConst").val();
+  var cancel = $("#cancelCalenderConst").val();
+  eventNameMod = "";
+  startDateMod = moment(data.startDate).utc().format("Do MMM, YYYY - h:mm A");
+  endDateMod = moment(data.endDate).utc().format("Do MMM, YYYY - h:mm A");
+  viewEndDate.innerText = ": " + endDateMod;
+  viewStartDate.innerText = ": " + startDateMod;
 
   // Populate view data
-  viewEventName.innerText = 'Patient: ' + data.patientName;
+  viewEventName.innerText = "Patient: " + data.patientName;
   $(viewEventStatus).empty();
-  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? 'selected' : '', ">").concat(Lang.get('js.booked'), "</option>\n<option value=\"").concat(checkIn, "\" ").concat(data.eventStatus == checkIn ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.check_in'), "</option>\n<option value=\"").concat(checkOut, "\" ").concat(data.eventStatus == checkOut ? 'selected' : '', "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? 'disabled' : '', ">").concat(Lang.get('js.check_out'), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? 'selected' : '', " ").concat(data.eventStatus == checkIn ? 'disabled' : '', "\n   ").concat(data.eventStatus == checkOut ? 'disabled' : '', ">").concat(Lang.get('js.cancelled'), "</option>\n"));
-  $(viewEventStatus).val(data.eventStatus).trigger('change');
+  $(viewEventStatus).append("\n<option class=\"booked\" disabled value=\"".concat(book, "\" ").concat(data.eventStatus == book ? "selected" : "", ">").concat(Lang.get("js.booked"), "</option>\n<option value=\"").concat(accepted, "\" ").concat(data.eventStatus == accepted ? "selected" : "", " ").concat(data.eventStatus == accepted ? "selected" : "", "\n    ").concat(data.eventStatus == cancel || data.eventStatus == finished ? "disabled" : "", ">").concat(Lang.get("js.check_in"), "</option>\n<option value=\"").concat(finished, "\" ").concat(data.eventStatus == finished ? "selected" : "", "\n    ").concat(data.eventStatus == cancel || data.eventStatus == book ? "disabled" : "", ">").concat(Lang.get("js.check_out"), "</option>\n<option value=\"").concat(cancel, "\" ").concat(data.eventStatus == cancel ? "selected" : "", " ").concat(data.eventStatus == accepted ? "disabled" : "", "\n   ").concat(data.eventStatus == finished ? "disabled" : "", ">").concat(Lang.get("js.cancelled"), "</option>\n"));
+  $(viewEventStatus).val(data.eventStatus).trigger("change");
   viewAmount.innerText = addCommas(data.amount);
   viewUId.innerText = data.uId;
   viewService.innerText = data.service;
 };
-listenChange('.doctor-apptnt-calendar-status-change', function () {
+listenChange(".doctor-apptnt-calendar-status-change", function () {
   if (!$(this).val()) {
     return false;
   }
@@ -10574,15 +10617,15 @@ listenChange('.doctor-apptnt-calendar-status-change', function () {
     return false;
   }
   $.ajax({
-    url: route('doctors.change-status', appointmentId),
-    type: 'POST',
+    url: route("doctors.change-status", appointmentId),
+    type: "POST",
     data: {
       appointmentId: appointmentId,
       appointmentStatus: appointmentStatus
     },
     success: function success(result) {
       displaySuccessMessage(result.message);
-      $('#doctorAppointmentCalendarModal').modal('hide');
+      $("#doctorAppointmentCalendarModal").modal("hide");
       doctorAppointmentCalendar.refetchEvents();
     }
   });
@@ -13421,33 +13464,34 @@ listenChange('.quantityget', function () {
   \************************************************************/
 /***/ (() => {
 
-listenClick('.delete-prescription-btn', function (event) {
-  var prescriptionId = $(event.currentTarget).attr('data-id');
-  deleteItem(route("prescriptions.destroy", prescriptionId), Lang.get('js.prescription'));
+listenClick(".delete-prescription-btn", function (event) {
+  var prescriptionId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("prescriptions.destroy", prescriptionId), Lang.get("js.prescription"));
 });
-listenChange('.prescriptionStatus', function (event) {
-  var prescriptionId = $(event.currentTarget).attr('data-id');
+listenChange(".prescriptionStatus", function (event) {
+  var prescriptionId = $(event.currentTarget).attr("data-id");
   prescriptionUpdateStatus(prescriptionId);
 });
 function prescriptionUpdateStatus(id) {
+  var prescriptionStatusRoute = $("#prescriptionStatusRoute").val() || "prescription.status";
   $.ajax({
     url: route(prescriptionStatusRoute, id),
-    method: 'post',
+    method: "post",
     cache: false,
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
-        hideDropdownManually($('#prescriptionFilterBtn'), $('#prescriptionFilter'));
+        hideDropdownManually($("#prescriptionFilterBtn"), $("#prescriptionFilter"));
       }
     }
   });
 }
-listenClick('#prescriptionResetFilter', function () {
-  $('#prescriptionHead').val('2').trigger('change');
-  hideDropdownManually($('#prescriptionFilterBtn'), $('.dropdown-menu'));
+listenClick("#prescriptionResetFilter", function () {
+  $("#prescriptionHead").val("2").trigger("change");
+  hideDropdownManually($("#prescriptionFilterBtn"), $(".dropdown-menu"));
 });
-listenChange('#prescriptionHead', function () {
-  Livewire.dispatch('changeFilter', {
+listenChange("#prescriptionHead", function () {
+  Livewire.dispatch("changeFilter", {
     value: $(this).val()
   });
 });
@@ -13514,7 +13558,7 @@ listenClick(".add-medicine-btn-purchase", function () {
 });
 var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
   $(selector).select2({
-    placeholder: Lang.get('js.select_medicine'),
+    placeholder: Lang.get("js.select_medicine"),
     width: "100%"
   });
 };
@@ -13532,7 +13576,8 @@ listenChange(".purchaseMedicineId", function () {
     type: "get",
     url: route("get-medicine", medicineId),
     success: function success(result) {
-      $(salePriceId).val(result.data.selling_price.toFixed(2));
+      // Set sale_price to default 0.00 since field is intentionally hidden
+      $(salePriceId).val("0.00");
       $(buyPriceId).val(result.data.buying_price.toFixed(2));
     }
   });
@@ -13541,24 +13586,24 @@ listenKeyup(".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,
   var value = $(this).val();
   $(this).val(value.replace(/[^0-9\.]/g, ""));
   var currentRow = $(this).closest("tr");
-  var currentqty = currentRow.find('.purchase-quantity').val();
-  var price = currentRow.find('.purchase-price').val();
+  var currentqty = currentRow.find(".purchase-quantity").val();
+  var price = currentRow.find(".purchase-price").val();
   var currentamount = parseFloat(price * currentqty);
-  currentRow.find('.purchase-amount').val(currentamount.toFixed(2));
-  var taxEle = $('.purchase-tax');
-  var elements = $('.purchase-amount');
-  var total = 0.00;
+  currentRow.find(".purchase-amount").val(currentamount.toFixed(2));
+  var taxEle = $(".purchase-tax");
+  var elements = $(".purchase-amount");
+  var total = 0.0;
   var totalTax = 0;
   var netAmount = 0;
   var discount = 0;
   var amount = 0;
   for (var i = 0; i < elements.length; i++) {
     total += parseFloat(elements[i].value);
-    discount = $('.purchase-discount').val();
-    if (taxEle[i].value != 0 && taxEle[i].value != '') {
+    discount = $(".purchase-discount").val();
+    if (taxEle[i].value != 0 && taxEle[i].value != "") {
       if (taxEle[i].value > 99) {
         var taxAmount = taxEle[i].value.slice(0, -1);
-        currentRow.find('.purchase-tax').val(taxAmount);
+        currentRow.find(".purchase-tax").val(taxAmount);
         displayErrorMessage(Lang.get("js.tax_should_be"));
         $("#discountAmount").val(discount);
         return false;
@@ -13568,10 +13613,10 @@ listenKeyup(".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,
       amount += parseFloat(elements[i].value);
     }
   }
-  discount = discount == '' ? 0 : discount;
+  discount = discount == "" ? 0 : discount;
   netAmount = parseFloat(total) + parseFloat(totalTax);
   netAmount = parseFloat(netAmount) - parseFloat(discount);
-  if (discount > total && $(this).hasClass('purchase-discount')) {
+  if (discount > total && $(this).hasClass("purchase-discount")) {
     discount = discount.slice(0, -1);
     displayErrorMessage(Lang.get("js.the_discount_shoul"));
     $("#discountAmount").val(discount);
@@ -13641,16 +13686,16 @@ listenKeyup(".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,
 });
 listenClick(".delete-purchase-medicine-item", function () {
   var currentRow = $(this).closest("tr");
-  var currentRowAmount = currentRow.find('.purchase-amount').val();
-  var currentRowTax = currentRow.find('.purchase-tax').val();
+  var currentRowAmount = currentRow.find(".purchase-amount").val();
+  var currentRowTax = currentRow.find(".purchase-tax").val();
   var currentTaxAmount = parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
-  var updatedTax = parseFloat($('#purchaseTaxId').val()) - parseFloat(currentTaxAmount);
-  $('#purchaseTaxId').val(updatedTax.toFixed(2));
-  var updatedTotalAmount = parseFloat($('#total').val()) - parseFloat(currentRowAmount);
-  $('#total').val(updatedTotalAmount.toFixed(2));
+  var updatedTax = parseFloat($("#purchaseTaxId").val()) - parseFloat(currentTaxAmount);
+  $("#purchaseTaxId").val(updatedTax.toFixed(2));
+  var updatedTotalAmount = parseFloat($("#total").val()) - parseFloat(currentRowAmount);
+  $("#total").val(updatedTotalAmount.toFixed(2));
   var amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
-  var updateNetAmount = parseFloat($('#netAmount').val()) - parseFloat(amountSubfromNetAmt);
-  $('#netAmount').val(updateNetAmount.toFixed(2));
+  var updateNetAmount = parseFloat($("#netAmount").val()) - parseFloat(amountSubfromNetAmt);
+  $("#netAmount").val(updateNetAmount.toFixed(2));
   $(this).parents("tr").remove();
 });
 listenSubmit("#purchaseMedicineFormId", function (e) {
@@ -13667,31 +13712,34 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
     }
     if (typeof $(medicinID).val() != "undefined") {
       if ($(medicinID).val() == null || $(medicinID).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_lot_number'));
+        displayErrorMessage(Lang.get("js.enter_lot_number"));
         return false;
       }
     }
     var lotNum = "#lot_no" + i;
     if (typeof $(lotNum).val() != "undefined") {
       if ($(lotNum).val() == null || $(lotNum).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_lot_number'));
+        displayErrorMessage(Lang.get("js.enter_lot_number"));
         return false;
       }
     }
-    var salePrice = "#sale_price" + i;
-    if (typeof $(salePrice).val() != "undefined") {
-      if ($(salePrice).val() == null || $(salePrice).val() == "") {
-        displayErrorMessage(Lang.get('js.enter_sale_price'));
-        return false;
-      }
-    }
+
+    // Sale price validation removed - field is intentionally hidden with default value 0.00
+    // let salePrice = "#sale_price" + i;
+    // if (typeof $(salePrice).val() != "undefined") {
+    //     if ($(salePrice).val() == null || $(salePrice).val() == "") {
+    //         displayErrorMessage(Lang.get('js.enter_sale_price'));
+    //         return false;
+    //     }
+    // }
+
     var purchasePrice = "#purchase_price" + i;
     if (typeof $(purchasePrice).val() != "undefined") {
       if ($(purchasePrice).val() == null || $(purchasePrice).val() == "") {
         displayErrorMessage("Enter purchase price.");
         return false;
       } else if ($(purchasePrice).val() == 0) {
-        displayErrorMessage(Lang.get('js.quantity_should'));
+        displayErrorMessage(Lang.get("js.quantity_should"));
         return false;
       }
     }
@@ -13701,7 +13749,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
         displayErrorMessage("Enter quantity.");
         return false;
       } else if ($(quantityID).val() == 0) {
-        displayErrorMessage(Lang.get('js.quantity_should'));
+        displayErrorMessage(Lang.get("js.quantity_should"));
         return false;
       }
     }

@@ -18,8 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $comment
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
- * @property-read int|null $medicines_count
+ * @property-read \App\Models\Medicine|null $medicines
  * @property-read \App\Models\Prescription $prescription
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PrescriptionMedicineModal newQuery()
@@ -72,17 +71,15 @@ class PrescriptionMedicineModal extends Model
      *
      * @var array
      */
-    public static $rules = [
-
-    ];
+    public static $rules = [];
 
     public function prescription(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Prescription::class, 'prescription_id');
     }
 
-    public function medicines(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function medicines(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasMany(Medicine::class, 'id', 'medicine');
+        return $this->belongsTo(Medicine::class, 'medicine', 'id');
     }
 }

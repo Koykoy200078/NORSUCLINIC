@@ -369,7 +369,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 }
 
 .qrcode-option {
-  color: #747B81 !important;
+  color: #747b81 !important;
   font-weight: 500;
   border: 2px solid black !important;
   padding: 13px 25px !important;
@@ -386,7 +386,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 }
 
 .qrcode-option.active {
-  color: #FE8065 !important;
+  color: #fe8065 !important;
   font-weight: 500;
   background: linear-gradient(117.85deg, #fe8065 0%, #f74d6c 100%) !important;
   border-color: transparent;
@@ -432,12 +432,12 @@ tr {
 
 .patient-email:hover,
 .patient-contact:hover {
-  color: #F74D6B !important;
+  color: #f74d6b !important;
 }
 
 .patient-email,
 .patient-contact {
-  color: #6C757D !important;
+  color: #6c757d !important;
 }
 
 .nav-tabs {

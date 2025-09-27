@@ -189,8 +189,8 @@ class AppointmentController extends AppBaseController
                 ->with([
                     'all' => Appointment::ALL,
                     'book' => Appointment::BOOKED,
-                    'checkIn' => Appointment::CHECK_IN,
-                    'checkOut' => Appointment::CHECK_OUT,
+                    'accepted' => Appointment::ACCEPTED,
+                    'finished' => Appointment::FINISHED,
                     'cancel' => Appointment::CANCELLED,
                 ]);
         }
@@ -311,14 +311,14 @@ class AppointmentController extends AppBaseController
         // $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         $doctor = Doctor::whereId($appointment->doctor_id)->with('user')->first();
-        if ($input['appointmentStatus'] == Appointment::CHECK_OUT) {
+        if ($input['appointmentStatus'] == Appointment::FINISHED) {
             Notification::create([
                 'title' => Notification::APPOINTMENT_CHECKOUT_PATIENT_MSG . ' ' . getLogInUser()->full_name,
                 'type' => Notification::CHECKOUT,
                 'user_id' => $patient->user_id,
             ]);
             Notification::create([
-                'title' => $patient->user->full_name . '\'s appointment check out by ' . getLogInUser()->full_name . ' at ' . $fullTime,
+                'title' => $patient->user->full_name . '\'s appointment finished by ' . getLogInUser()->full_name . ' at ' . $fullTime,
                 'type' => Notification::CHECKOUT,
                 'user_id' => $doctor->user_id,
             ]);

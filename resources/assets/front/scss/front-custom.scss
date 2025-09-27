@@ -1,5 +1,5 @@
-.menu-links .nav>li:hover>a,
-.menu-links .nav>li.active>a {
+.menu-links .nav > li:hover > a,
+.menu-links .nav > li.active > a {
     @media only screen and (max-width: 991px) {
         color: #f17732 !important;
     }
@@ -19,7 +19,7 @@ footer .ft-contact .contact-bx .contact-number .number {
     }
 }
 
-.menu-links .nav>li>a {
+.menu-links .nav > li > a {
     @media (min-width: 1080px) and (max-width: 1340px) {
         padding: 45px 12px !important;
         font-size: 15px;
@@ -51,13 +51,13 @@ footer .ft-contact .contact-bx .contact-number .number {
     }
 }
 
-.menu-links .nav>li:hover a i {
+.menu-links .nav > li:hover a i {
     transform: unset;
 }
 
 .menu-links {
     .nav {
-        &>li {
+        & > li {
             .mega-menu {
                 li {
                     a {
@@ -240,7 +240,6 @@ footer .ft-contact .contact-bx .contact-number .number {
             background: #5d5dc2 !important;
         }
     }
-
 }
 
 .contact-bx {
@@ -262,7 +261,6 @@ footer .ft-contact .contact-bx .contact-number .number {
 }
 
 .team-member {
-
     .doctor-appointment-btn,
     .about-appointment-btn {
         @media (max-width: 365px) {
@@ -324,19 +322,35 @@ footer .ft-contact .contact-bx .contact-number .number {
     tbody tr {
         .today {
             background-color: #e8e8e8 !important;
-            background-image: linear-gradient(to bottom, #e8e8e8, #e8e8e8) !important;
+            background-image: linear-gradient(
+                to bottom,
+                #e8e8e8,
+                #e8e8e8
+            ) !important;
 
             &:hover {
                 background-color: #dedede !important;
-                background-image: linear-gradient(to bottom, #dedede, #dedede) !important;
+                background-image: linear-gradient(
+                    to bottom,
+                    #dedede,
+                    #dedede
+                ) !important;
             }
         }
 
         .today.active {
-            background-image: linear-gradient(to bottom, #565acf, #565acf) !important;
+            background-image: linear-gradient(
+                to bottom,
+                #565acf,
+                #565acf
+            ) !important;
 
             &:hover {
-                background-image: linear-gradient(to bottom, #494db0, #494db0) !important;
+                background-image: linear-gradient(
+                    to bottom,
+                    #494db0,
+                    #494db0
+                ) !important;
             }
         }
     }
@@ -360,7 +374,7 @@ footer .ft-contact .contact-bx .contact-number .number {
 }
 
 .datepicker table tr th {
-    height: 32px
+    height: 32px;
 }
 
 .testimonial-image {
@@ -368,7 +382,7 @@ footer .ft-contact .contact-bx .contact-number .number {
     max-width: 120px !important;
 }
 
-.image-circle>img {
+.image-circle > img {
     border-radius: 50%;
 }
 
@@ -380,11 +394,10 @@ footer .ft-contact .contact-bx .contact-number .number {
 .g-recaptcha {
     @media (max-width: 375px) {
         transform: scale(0.85) !important;
-        -webkit-transform: scale(0.80) !important;
+        -webkit-transform: scale(0.8) !important;
         transform-origin: 0 0 !important;
         -webkit-transform-origin: 0 0 !important;
     }
-
 }
 
 .image.image-mini img {
@@ -392,7 +405,7 @@ footer .ft-contact .contact-bx .contact-number .number {
     height: 50px !important;
 }
 
-.image>img {
+.image > img {
     width: 100% !important;
     flex-shrink: 0 !important;
     display: inline-block !important;
@@ -400,36 +413,31 @@ footer .ft-contact .contact-bx .contact-number .number {
     object-fit: cover !important;
 }
 
-
-
-
-
-
-
 .qrcodeimg {
     width: 110px !important;
     height: 110px !important;
     object-fit: cover;
 }
-.qrcode-option-ul{
+.qrcode-option-ul {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-.qrcode-option-li{
+.qrcode-option-li {
     margin: 0px 20px 0px 0px !important;
     @media (max-width: 375px) {
         margin: 0px 5px 0px 0px !important;
     }
 }
 .qrcode-option {
-    color: #747B81 !important;
+    color: #747b81 !important;
     font-weight: 500;
     border: 2px solid black !important;
     padding: 13px 25px !important;
     border-radius: 50px !important;
 
     border: 1px solid transparent !important;
-    background: linear-gradient(#ffffff 0 0) padding-box, linear-gradient(to right, #fe8065, #f74d6c) border-box !important;
+    background: linear-gradient(#ffffff 0 0) padding-box,
+        linear-gradient(to right, #fe8065, #f74d6c) border-box !important;
     color: #f74d6c !important;
     transition: all 0.3s ease-in-out !important;
 
@@ -439,14 +447,14 @@ footer .ft-contact .contact-bx .contact-number .number {
 }
 
 .qrcode-option.active {
-    color: #FE8065 !important;
+    color: #fe8065 !important;
     font-weight: 500;
     background: linear-gradient(117.85deg, #fe8065 0%, #f74d6c 100%) !important;
     border-color: transparent;
     color: #ffffff !important;
     transition: all 0.3s ease-in-out !important;
 }
-.qr-patient-appointment-name{
+.qr-patient-appointment-name {
     margin-top: 6px;
     @media (max-width: 425px) {
         margin-top: 0px;
@@ -479,19 +487,19 @@ tr {
 }
 .patient-email:hover,
 .patient-contact:hover {
-    color: #F74D6B !important;
+    color: #f74d6b !important;
 }
 
 .patient-email,
 .patient-contact {
-    color: #6C757D !important;
+    color: #6c757d !important;
 }
 
 .nav-tabs {
     border-bottom: none;
 }
 
-.header-qr-appontment>th {
+.header-qr-appontment > th {
     font-size: 17px;
 
     @media (max-width: 375px) {
@@ -499,7 +507,7 @@ tr {
     }
 }
 
-.table>:not(:first-child) {
+.table > :not(:first-child) {
     border-top: 0px solid #c8c8c8 !important;
 }
 
@@ -538,17 +546,16 @@ tr {
 .qr-appointment-name {
     font-size: 15px;
 }
-.qr-code-name
-{
+.qr-code-name {
     font-size: 15px;
     @media (max-width: 375px) {
         width: 250px;
     }
 }
 
-.qr-patient-detal-show{
+.qr-patient-detal-show {
     color: red;
 }
-.qr-doctor-img{
+.qr-doctor-img {
     object-fit: cover;
 }

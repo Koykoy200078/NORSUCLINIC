@@ -49,6 +49,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
         Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
         Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
+        Route::get('appointments-calendar-view', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar-view');
         Route::get('appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
     });
 
@@ -58,11 +59,19 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     });
 
-    // Doctor Management (Limited - staff can view but not create/edit)
+    // Doctor Management (Staff can manage doctors)
     Route::middleware('permission:manage_doctors')->group(function () {
         Route::get('doctors', [UserController::class, 'index'])->name('doctors.index');
+        Route::get('doctors/create', [UserController::class, 'create'])->name('doctors.create');
+        Route::post('doctors', [UserController::class, 'store'])->name('doctors.store');
         Route::get('doctors/{doctor}', [UserController::class, 'show'])->name('doctors.show');
+        Route::get('doctors/{doctor}/edit', [UserController::class, 'edit'])->name('doctors.edit');
+        Route::match(['PUT', 'PATCH'], 'doctors/{doctor}', [UserController::class, 'update'])->name('doctors.update');
+        Route::delete('doctors/{doctor}', [UserController::class, 'destroy'])->name('doctors.destroy');
+        Route::get('doctor/session', [UserController::class, 'sessionData'])->name('doctors.session');
         Route::get('doctors-appointment', [UserController::class, 'doctorAppointment'])->name('doctors.appointment');
+        Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
+        Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
     });
 
     // Patient Visits (Staff can manage visits)

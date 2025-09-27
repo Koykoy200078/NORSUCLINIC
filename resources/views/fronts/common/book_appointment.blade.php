@@ -126,7 +126,7 @@
             </div>
         </div>
     </div>
-    <div class="text-center col-12">
+    <div class="d-none text-center col-12">
         <p class="text-uppercase mb-sm-4 mb-0 d-none"
             id="payableAmountText">{{__('messages.appointment.payable_amount')}} : <span class="fw-bold" id="payableAmount">{{__('messages.common.n/a')}}</span>
         </p>

@@ -22,7 +22,7 @@ class ReviewController extends AppBaseController
     public function index(): \Illuminate\View\View
     {
         $patient = Patient::whereUserId(getLogInUserId())->first();
-        $doctorIds = Appointment::wherePatientId($patient['id'])->whereStatus(Appointment::CHECK_OUT)->pluck('doctor_id')->toArray();
+        $doctorIds = Appointment::wherePatientId($patient['id'])->whereStatus(Appointment::FINISHED)->pluck('doctor_id')->toArray();
         $doctors = Doctor::with('user', 'specializations', 'reviews')
             ->whereIn('id', $doctorIds)
             ->get();

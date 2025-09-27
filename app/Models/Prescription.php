@@ -219,6 +219,11 @@ class Prescription extends Model
         return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 
+    public function appointment(): BelongsTo
+    {
+        return $this->belongsTo(Appointment::class, 'appointment_id');
+    }
+
     public function getMedicine(): HasMany
     {
         return $this->hasMany(PrescriptionMedicineModal::class);

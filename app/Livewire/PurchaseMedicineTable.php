@@ -36,13 +36,12 @@ class PurchaseMedicineTable extends LivewireTableComponent
 
             return [];
         });
-
     }
 
     public function placeholder()
-   {
-         return view('livewire.staff_skeleton');
-   }
+    {
+        return view('livewire.staff_skeleton');
+    }
 
     public function columns(): array
     {
@@ -51,14 +50,14 @@ class PurchaseMedicineTable extends LivewireTableComponent
                 ->sortable()->searchable()->view('purchase-medicines.columns.purchase_number'),
             Column::make(__('messages.purchase_medicine.total'), 'total')
                 ->sortable()->searchable()->view('purchase-medicines.columns.total'),
-            Column::make(__('messages.purchase_medicine.tax'), 'tax')
-                ->sortable()->searchable()->view('purchase-medicines.columns.tax'),
+            // Column::make(__('messages.purchase_medicine.tax'), 'tax')
+            //     ->sortable()->searchable()->view('purchase-medicines.columns.tax'),
             Column::make(__('messages.purchase_medicine.discount'), 'discount')
                 ->sortable()->searchable()->view('purchase-medicines.columns.discount'),
             Column::make(__('messages.purchase_medicine.net_amount'), 'net_amount')
                 ->sortable()->searchable()->view('purchase-medicines.columns.net_amount'),
-            Column::make(__('messages.purchase_medicine.payment_mode'), 'payment_type')
-                ->sortable()->searchable()->view('purchase-medicines.columns.payment_type'),
+            // Column::make(__('messages.purchase_medicine.payment_mode'), 'payment_type')
+            //     ->sortable()->searchable()->view('purchase-medicines.columns.payment_type'),
             Column::make(__('messages.common.action'), 'id')->view('purchase-medicines.columns.action'),
         ];
     }

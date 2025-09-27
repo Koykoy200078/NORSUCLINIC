@@ -185,7 +185,7 @@ class PatientAppointmentTable extends LivewireTableComponent
                     return view('patients.appointments.components.action')
                         ->with([
                             'row' => $row,
-                            'checkOut' => Appointment::CHECK_OUT,
+                            'finished' => Appointment::FINISHED,
                             'cancel' => Appointment::CANCELLED,
                         ]);
                 }),

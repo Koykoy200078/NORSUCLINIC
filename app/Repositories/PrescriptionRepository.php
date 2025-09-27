@@ -70,7 +70,7 @@ class PrescriptionRepository extends BaseRepository
     public function getPatients(): \Illuminate\Support\Collection
     {
         $user = Auth::user();
-        if ($user->hasRole('Doctor')) {
+        if ($user && $user->hasRole('Doctor')) {
             $patients = getPatientsList($user->owner_id);
         } else {
             $patients = Patient::with('user')
@@ -107,7 +107,7 @@ class PrescriptionRepository extends BaseRepository
                 Notification::NOTIFICATION_TYPE['Prescription'],
                 $patient->user_id,
                 Notification::NOTIFICATION_FOR[Notification::PATIENT],
-                $patient->user->full_name.' your prescription has been created.',
+                $patient->user->full_name . ' your prescription has been created.',
             ]);
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
@@ -121,7 +121,8 @@ class PrescriptionRepository extends BaseRepository
         return $data;
     }
 
-    public function getMedicinesQuantity() {
+    public function getMedicinesQuantity()
+    {
         $data = Medicine::where('available_quantity', '>', 0)->pluck('quantity')->toArray();
         return $data;
     }
@@ -135,7 +136,7 @@ class PrescriptionRepository extends BaseRepository
             $qty = 0;
             if (isset($input['medicine'])) {
                 $medicineBill = MedicineBill::create([
-                    'bill_number' => 'BIL'.generateUniqueBillNumber(),
+                    'bill_number' => 'BIL' . generateUniqueBillNumber(),
                     'patient_id' => $input['patient_id'],
                     'doctor_id' => $input['doctor_id'],
                     'model_type' => \App\Models\Prescription::class,
@@ -226,10 +227,8 @@ class PrescriptionRepository extends BaseRepository
                     //  'discount'=>$input['discount'],
                     //  'tax_amount'=>$input['tax'],
                 ]);
-
             }
             DB::commit();
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -241,27 +240,40 @@ class PrescriptionRepository extends BaseRepository
 
     public function getData($id): array
     {
-        $data['prescription'] = Prescription::with('patient', 'doctor', 'getMedicine.medicines')
-            ->findOrFail($id);
+        $data['prescription'] = Prescription::with([
+            'patient.user',
+            'doctor.user',
+            'doctor.address',
+            'getMedicine.medicines.category',
+            'getMedicine.medicines.brand',
+            'appointment'
+        ])->findOrFail($id);
 
         return $data;
     }
 
     public function getMedicineData($id): array
     {
-        $data = $this->getData($id)['prescription'];
-        $medicines = [];
-        foreach ($data->getMedicine as $medicine) {
-            $data['medicine'] = Medicine::where('id', $medicine->medicine)->get();
-            array_push($medicines, $data['medicine']);
-        }
+        // Get prescription with all medicine data in one query using eager loading
+        $prescription = Prescription::with([
+            'getMedicine' => function ($query) {
+                $query->with(['medicines' => function ($medicineQuery) {
+                    $medicineQuery->select('id', 'name', 'category_id', 'brand_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
+                }]);
+            }
+        ])->findOrFail($id);
 
-        return $medicines;
+        // Return the prescription with loaded medicine data
+        // No need to transform - keep the original structure that the view expects
+        return [$prescription];
     }
 
     public function getSettingList(): array
     {
-        $settings = Setting::pluck('value', 'key')->toArray();
+        // Cache settings for 1 hour since they rarely change
+        $settings = cache()->remember('clinic_settings', 3600, function () {
+            return Setting::pluck('value', 'key')->toArray();
+        });
 
         return $settings;
     }

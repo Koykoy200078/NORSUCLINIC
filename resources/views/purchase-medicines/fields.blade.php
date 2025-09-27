@@ -8,7 +8,7 @@
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.lot_no') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.expiry_date') }}</th>
-                            <th class="">{{ __('messages.medicine_bills.sale_price') }}<span class="required"></span></th>
+                            {{-- <th class="">{{ __('messages.medicine_bills.sale_price') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('messages.common.purchase_price') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.tax') }}</th>
@@ -32,9 +32,11 @@
                             <td>
                                 {{ Form::text('expiry_date[]', null, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date1','placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}
                             </td>
-                            <td>
+                            {{--
+                                <td>
                                 {{ Form::number('sale_price[]', '0.00',['class' => 'form-control prescriptionMedicineMealId', 'readonly','id' => 'sale_price1','required']) }}
                             </td>
+                            --}}
                             <td>
                                 {{ Form::number('purchase_price[]', '0.00', ['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1','required' ]) }}
                             </td>

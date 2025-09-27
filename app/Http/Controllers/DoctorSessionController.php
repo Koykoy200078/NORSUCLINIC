@@ -179,7 +179,7 @@ class DoctorSessionController extends AppBaseController
         }
 
         $appointments = Appointment::whereDoctorId($doctorId)->whereIn('status',
-            [Appointment::BOOKED, Appointment::CHECK_IN, Appointment::CHECK_OUT])->get();
+            [Appointment::BOOKED, Appointment::ACCEPTED, Appointment::FINISHED])->get();
         $bookedSlot = [];
         $bookingSlot = [];
         foreach ($appointments as $appointment) {

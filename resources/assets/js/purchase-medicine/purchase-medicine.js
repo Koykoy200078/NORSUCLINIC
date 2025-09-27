@@ -35,7 +35,7 @@ listenClick(".add-medicine-btn-purchase", function () {
 });
 const dropdownToSelecte2 = (selector) => {
     $(selector).select2({
-        placeholder: Lang.get('js.select_medicine'),
+        placeholder: Lang.get("js.select_medicine"),
         width: "100%",
     });
 };
@@ -55,7 +55,8 @@ listenChange(".purchaseMedicineId", function () {
         type: "get",
         url: route("get-medicine", medicineId),
         success: function (result) {
-            $(salePriceId).val(result.data.selling_price.toFixed(2));
+            // Set sale_price to default 0.00 since field is intentionally hidden
+            $(salePriceId).val("0.00");
             $(buyPriceId).val(result.data.buying_price.toFixed(2));
         },
     });
@@ -64,58 +65,52 @@ listenChange(".purchaseMedicineId", function () {
 listenKeyup(
     ".purchase-quantity,.purchase-price,purchase-quantity,.purchase-tax,.purchase-discount",
     function () {
-
         let value = $(this).val();
         $(this).val(value.replace(/[^0-9\.]/g, ""));
         var currentRow = $(this).closest("tr");
-        let  currentqty = currentRow.find('.purchase-quantity').val()
-        let  price = currentRow.find('.purchase-price').val();
-        let  currentamount =  parseFloat(price * currentqty);
-        currentRow.find('.purchase-amount').val(currentamount.toFixed(2))
-        let taxEle = $('.purchase-tax');
-        let elements = $('.purchase-amount');
-        let total = 0.00;
+        let currentqty = currentRow.find(".purchase-quantity").val();
+        let price = currentRow.find(".purchase-price").val();
+        let currentamount = parseFloat(price * currentqty);
+        currentRow.find(".purchase-amount").val(currentamount.toFixed(2));
+        let taxEle = $(".purchase-tax");
+        let elements = $(".purchase-amount");
+        let total = 0.0;
         let totalTax = 0;
         let netAmount = 0;
         let discount = 0;
         let amount = 0;
-        for (let i=0; i< elements.length; i++){
-        total+= parseFloat(elements[i].value);
-        discount = $('.purchase-discount').val();
-        if(taxEle[i].value!= 0 && taxEle[i].value!='')
-        {
-            if (taxEle[i].value > 99) {
-                let taxAmount = taxEle[i].value.slice(0,-1);
-                currentRow.find('.purchase-tax').val(taxAmount);
-                displayErrorMessage(
-                    Lang.get("js.tax_should_be")
-                );
-                $("#discountAmount").val(discount);
-                return false;
+        for (let i = 0; i < elements.length; i++) {
+            total += parseFloat(elements[i].value);
+            discount = $(".purchase-discount").val();
+            if (taxEle[i].value != 0 && taxEle[i].value != "") {
+                if (taxEle[i].value > 99) {
+                    let taxAmount = taxEle[i].value.slice(0, -1);
+                    currentRow.find(".purchase-tax").val(taxAmount);
+                    displayErrorMessage(Lang.get("js.tax_should_be"));
+                    $("#discountAmount").val(discount);
+                    return false;
+                }
+                totalTax += (elements[i].value * taxEle[i].value) / 100;
+            } else {
+                amount += parseFloat(elements[i].value);
             }
-            totalTax += elements[i].value * taxEle[i].value/100;
-        }else{
-            amount += parseFloat(elements[i].value);
         }
-    }
-        discount = discount== '' ? 0 : discount;
+        discount = discount == "" ? 0 : discount;
         netAmount = parseFloat(total) + parseFloat(totalTax);
-        netAmount =  parseFloat(netAmount)-parseFloat(discount);
-        if(discount > total && $(this).hasClass('purchase-discount')){
-            discount = discount.slice(0,-1);
-            displayErrorMessage(
-                Lang.get("js.the_discount_shoul")
-                );
+        netAmount = parseFloat(netAmount) - parseFloat(discount);
+        if (discount > total && $(this).hasClass("purchase-discount")) {
+            discount = discount.slice(0, -1);
+            displayErrorMessage(Lang.get("js.the_discount_shoul"));
             $("#discountAmount").val(discount);
             return false;
         }
-        if(discount > total){
+        if (discount > total) {
             netAmount = 0;
         }
 
-         $("#total").val(total.toFixed(2));
-         $("#purchaseTaxId").val(totalTax.toFixed(2));
-         $("#netAmount").val(netAmount.toFixed(2));
+        $("#total").val(total.toFixed(2));
+        $("#purchaseTaxId").val(totalTax.toFixed(2));
+        $("#netAmount").val(netAmount.toFixed(2));
         // let value = $(this).val();
         // $(this).val(value.replace(/[^0-9\.]/g, ""));
         // var currentRow = $(this).closest("tr");
@@ -171,25 +166,28 @@ listenKeyup(
         // $("#total").val(total.toFixed(2));
         // $("#purchaseTaxId").val(totalTax.toFixed(2));
         // $("#netAmount").val(netAmount.toFixed(2));
-
-    });
+    }
+);
 
 listenClick(".delete-purchase-medicine-item", function () {
-
     let currentRow = $(this).closest("tr");
-    let  currentRowAmount = currentRow.find('.purchase-amount').val()
-    let  currentRowTax = currentRow.find('.purchase-tax').val()
-    let  currentTaxAmount = parseFloat(currentRowAmount)*parseFloat(currentRowTax/100);
-    let updatedTax= parseFloat($('#purchaseTaxId').val())-parseFloat(currentTaxAmount)
+    let currentRowAmount = currentRow.find(".purchase-amount").val();
+    let currentRowTax = currentRow.find(".purchase-tax").val();
+    let currentTaxAmount =
+        parseFloat(currentRowAmount) * parseFloat(currentRowTax / 100);
+    let updatedTax =
+        parseFloat($("#purchaseTaxId").val()) - parseFloat(currentTaxAmount);
 
-    $('#purchaseTaxId').val(updatedTax.toFixed(2));
-    let updatedTotalAmount  = parseFloat($('#total').val())-parseFloat(currentRowAmount);
-    $('#total').val(updatedTotalAmount.toFixed(2))
-    let amountSubfromNetAmt = parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
+    $("#purchaseTaxId").val(updatedTax.toFixed(2));
+    let updatedTotalAmount =
+        parseFloat($("#total").val()) - parseFloat(currentRowAmount);
+    $("#total").val(updatedTotalAmount.toFixed(2));
+    let amountSubfromNetAmt =
+        parseFloat(currentTaxAmount) + parseFloat(currentRowAmount);
 
-
-    let updateNetAmount =  parseFloat($('#netAmount').val())- parseFloat(amountSubfromNetAmt);
-    $('#netAmount').val(updateNetAmount.toFixed(2));
+    let updateNetAmount =
+        parseFloat($("#netAmount").val()) - parseFloat(amountSubfromNetAmt);
+    $("#netAmount").val(updateNetAmount.toFixed(2));
     $(this).parents("tr").remove();
 });
 
@@ -209,25 +207,26 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
         }
         if (typeof $(medicinID).val() != "undefined") {
             if ($(medicinID).val() == null || $(medicinID).val() == "") {
-                displayErrorMessage(Lang.get('js.enter_lot_number'));
+                displayErrorMessage(Lang.get("js.enter_lot_number"));
                 return false;
             }
         }
         let lotNum = "#lot_no" + i;
         if (typeof $(lotNum).val() != "undefined") {
             if ($(lotNum).val() == null || $(lotNum).val() == "") {
-                displayErrorMessage(Lang.get('js.enter_lot_number'));
+                displayErrorMessage(Lang.get("js.enter_lot_number"));
                 return false;
             }
         }
 
-        let salePrice = "#sale_price" + i;
-        if (typeof $(salePrice).val() != "undefined") {
-            if ($(salePrice).val() == null || $(salePrice).val() == "") {
-                displayErrorMessage(Lang.get('js.enter_sale_price'));
-                return false;
-            }
-        }
+        // Sale price validation removed - field is intentionally hidden with default value 0.00
+        // let salePrice = "#sale_price" + i;
+        // if (typeof $(salePrice).val() != "undefined") {
+        //     if ($(salePrice).val() == null || $(salePrice).val() == "") {
+        //         displayErrorMessage(Lang.get('js.enter_sale_price'));
+        //         return false;
+        //     }
+        // }
 
         let purchasePrice = "#purchase_price" + i;
         if (typeof $(purchasePrice).val() != "undefined") {
@@ -238,7 +237,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
                 displayErrorMessage("Enter purchase price.");
                 return false;
             } else if ($(purchasePrice).val() == 0) {
-                displayErrorMessage(Lang.get('js.quantity_should'));
+                displayErrorMessage(Lang.get("js.quantity_should"));
                 return false;
             }
         }
@@ -248,7 +247,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
                 displayErrorMessage("Enter quantity.");
                 return false;
             } else if ($(quantityID).val() == 0) {
-                displayErrorMessage(Lang.get('js.quantity_should'));
+                displayErrorMessage(Lang.get("js.quantity_should"));
                 return false;
             }
         }
@@ -256,14 +255,11 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
 
     let netAmount = "#netAmount";
     if ($(netAmount).val() == null || $(netAmount).val() == "") {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_empty")
-        );        return false;
+        displayErrorMessage(Lang.get("js.net_amount_not_empty"));
+        return false;
     } else if ($(netAmount).val() == 0) {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_zero")
-        );
-       return false;
+        displayErrorMessage(Lang.get("js.net_amount_not_zero"));
+        return false;
     }
 
     if (

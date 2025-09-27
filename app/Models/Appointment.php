@@ -100,25 +100,25 @@ class Appointment extends Model
 
     const BOOKED = 1;
 
-    const CHECK_IN = 2;
+    const ACCEPTED = 2;
 
-    const CHECK_OUT = 3;
+    const FINISHED = 3;
 
     const CANCELLED = 4;
 
     const STATUS = [
         self::ALL => 'All',
         self::BOOKED => 'Booked',
-        self::CHECK_IN => 'Check In',
-        self::CHECK_OUT => 'Check Out',
+        self::ACCEPTED => 'Accepted',
+        self::FINISHED => 'Finished',
         self::CANCELLED => 'Cancelled',
     ];
 
     const ALL_STATUS = [
         self::ALL => 'All',
         self::BOOKED => 'Booked',
-        self::CHECK_IN => 'Check In',
-        self::CHECK_OUT => 'Check Out',
+        self::ACCEPTED => 'Accepted',
+        self::FINISHED => 'Finished',
         self::CANCELLED => 'Cancelled',
     ];
 

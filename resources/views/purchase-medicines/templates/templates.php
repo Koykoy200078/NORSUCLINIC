@@ -37,7 +37,7 @@
 
 <script id="prescriptionActionTemplate" type="text/x-jsrender">
 
-      <a href="#" title="<?php echo __('messages.common.view') ?>" data-id="{{:id}}" class="btn show-btn px-2 text-info fs-3 ps-0 py-2" data-bs-toggle="tooltip">
+    <a href="#" title="<?php echo __('messages.common.view') ?>" data-id="{{:id}}" class="btn show-btn px-2 text-info fs-3 ps-0 py-2" data-bs-toggle="tooltip">
             <i class="fas fa-eye fs-5"></i>
         </a>
         <a href="{{:url}}" title="<?php echo __('messages.common.edit') ?>" class="btn px-0 text-primary fs-3 py-2">
@@ -66,8 +66,8 @@
         <td>
             <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>"  required="" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
         </td>
-        <td>
-            <input class="form-control" required="" value='0.00' name="sale_price[]"  readonly id="sale_price{{:uniqueId}}" type="text">
+        <td class="d-none">
+            <input class="form-control" value='0.00' name="sale_price[]"  readonly id="sale_price{{:uniqueId}}" type="text">
         </td>
         <td>
             <input type="number" class="form-control purchase-price" required="" value='0.00' readonly id="purchase_price{{:uniqueId}}" name="purchase_price[]">

@@ -2,224 +2,433 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <title>{{ getAppName() }} </title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{ getAppName() }}</title>
     <style>
         @font-face {
-            font-family: "Poppins";
-            src: url("/theme/fonts/Poppins-Regular.ttf")format(truetype);
+            font-family: 'Poppins';
+            src: url('/theme/fonts/Poppins-Regular.ttf') format(truetype);
             font-style: normal;
             font-weight: 400;
             font-display: swap;
         }
 
-        .text-center {
-            text-align: center !important;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .text-end {
-            text-align: end !important;
+        body {
+            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #2d3748;
+            background: #ffffff;
+            padding: 10px;
         }
 
-        .custom-font-family {
-            font-family: DejaVu Sans, Poppins, "Helvetica", Arial, "Liberation Sans", sans-serif !important;
+        .document {
+            max-width: 190mm;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .w-100 {
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 30px 40px 25px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .logo img {
             width: 100%;
+            height: auto;
+            object-fit: contain;
         }
 
-        .w-50 {
-            width: 50%;
+        .clinic-info h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 2px;
+            letter-spacing: -0.5px;
         }
 
-        .verticalLine {
-            height: 100px;
-            border-right: 1px solid #D9D9D9;
+        .clinic-info .tagline {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 400;
+        }
 
+        .document-type {
+            text-align: right;
+        }
+
+        .document-type h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .document-type .date {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .content {
+            padding: 30px 40px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+
+        .detail-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .detail-card::before {
+            content: '';
             position: absolute;
-            right: 50%;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 12px 12px 0 0;
         }
 
-        .border-bottom {
-            border-bottom: 1px solid rgb(139, 135, 135);
+        .detail-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .bg-gray {
-            background-color: #F4F4F4;
-            ;
+        .detail-card h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
-        .font-color {
-            color: #5E5E5E;
-            ;
-
+        .detail-row {
+            margin-bottom: 12px;
         }
 
-        .p-2 {
-            padding: 6px;
-        }
-
-        .mb-0 {
+        .detail-row:last-child {
             margin-bottom: 0;
         }
 
-        body,
-        h1,
-        h3 {
-            font-family: "Poppins", sans-serif !important;
-            font-size: 0.875rem !important;
-            font-weight: lighter !important;
-            line-height: normal !important;
+        .detail-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
         }
 
-        h1 {
-            font-size: 26px !important;
+        .detail-value {
+            font-size: 10px;
+            color: #2d3748;
+            font-weight: 500;
+            word-break: break-word;
         }
 
-        .fw-bold {
-            font-weight: bold !important;
+        .appointment-section {
+            background: #f7fafc;
+            border-radius: 5px;
+            padding: 6px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .appointment-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .appointment-title h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .appointment-title .subtitle {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .appointment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .appointment-item {
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .appointment-item .icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .appointment-item .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .appointment-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .description-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .description-section h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #38a169;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .description-section h3::before {
+            content: '📝';
+            font-size: 16px;
+        }
+
+        .description-section p {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 40px;
+            text-align: center;
+        }
+
+        .footer .divider {
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
+            margin: 0 auto 15px;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: #718096;
+            font-weight: 400;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: #ffffff;
+            }
+
+            .document {
+                box-shadow: none;
+                /* max-width: 100%; */
+            }
         }
     </style>
 </head>
 
 <body>
-    <div>
-        <table class="table w-100">
-            <tbody>
-                <tr>
-                    <td class="w-50 text-center">
-                        <img src="{{ getAppLogo() }}" style="width:70px;margin-left:70%;margin-bottom:40px;">
-                        </img>
-                    </td>
-                    <h1 style="margin-right:100%;margin-top:10px;">{{ getAppName() }}</h1>
-                </tr>
-            </tbody>
-        </table>
-        <div class="border-bottom">
-            <table class="table w-100">
-                <tr>
-                    <td class="w-50 verticalLine">
-                        <table class="table w-100 ">
-                            <tbody>
-                                <tr>
-                                    <th>Doctor Name:</th>
-                                    <td class="font-color">{{ $datas->doctor->user->full_name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Doctor Email:</th>
-                                    <td class="font-color">{{ $datas->doctor->user->email }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Services:</th>
-                                    <td class="font-color">{{ $datas->services->name }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td class="w-50">
-                        <table class="table w-100 " style="padding-left:50px;">
-                            <tbody>
-                                <tr>
-                                    <th>Patient Name:</th>
-                                    <td class="font-color">{{ $datas->patient->user->full_name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Patient Email:</th>
-                                    <td class="font-color">{{ $datas->patient->user->email }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Payment Method:</th>
-                                    <td class="font-color">{{ \App\Models\Appointment::PAYMENT_METHOD[$datas->payment_method] }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Payment Status:</th>
-                                    <td class="font-color">{{ \App\Models\Appointment::PAYMENT_TYPE[$datas->payment_type] }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+    <div class="document">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="{{ getAppLogo() }}" alt="Clinic Logo" />
+                    </div>
+                    <div class="clinic-info">
+                        <h1>{{ getAppName() }}</h1>
+                        <div class="tagline">Prioritizing your wellness at NORSU Clinic.</div>
+                    </div>
+                </div>
+                <div class="document-type">
+                    <h2>Visit Record</h2>
+                    <div class="date">{{ \Carbon\Carbon::now()->format('M d, Y') }}</div>
+                </div>
+            </div>
         </div>
 
-        <table class="table w-100">
-            <tr>
-                <td class="w-50 text-end">
-                    <table class="table" style="margin-left:auto;margin-top:20px;width:50%;">
-                        <tr>
-                            <th>Appointment Date:</th>
-                        </tr>
-                        <tr>
-                            <td class="font-color">{{\Carbon\Carbon::parse($datas->date)->isoFormat('MMM DD, YYYY')}}</td>
-                        </tr>
-                    </table>
-                </td>
-                <td class="w-50">
-                    <table class="table" style="margin-left:50px;margin-top:20px;width:50%;">
-                        <tr>
-                            <th>Appointment Time:</th>
-                        </tr>
-                        <tr>
-                            <td class="font-color">{{ $datas->from_time }} {{ $datas->from_time_type }} To {{ $datas->to_time }}
-                                {{ $datas->to_time_type }}
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-
-        <table class="table w-100">
-            <tr>
-                <td class="w-50" style="padding-right:50px;">
-                    <div class="bg-gray p-2" style="margin-top:10px;">
-                        <p class="mb-0 font-color">Invoice Amount In Words</p>
-                        <p class="mb-0">{{ getAmountToWord($datas->payable_amount) }}</p>
+        <!-- Content -->
+        <div class="content">
+            <!-- Details Grid -->
+            <div class="details-grid">
+                <div class="detail-card">
+                    <h3>Attending Physician</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">Doctor Name</div>
+                        <div class="detail-value">{{ $datas->doctor->user->full_name }}</div>
                     </div>
-                </td>
-                <td class="w-50" style="padding-left:50px;">
-                    <table class="table w-100">
-                        <tbody>
-                            <tr>
-                                <th style="padding-left:10px">Amount:</th>
-                            </tr>
-                            <tr class="font-color">
-                                <td style="padding-left:10px">Charge:</td>
-                                <td class="custom-font-family text-end " style="padding-right: 20px">
-                                    {{ getCurrencyIcon() . $datas->services->charges }}
-                                </td>
-                            </tr>
-                            <tr class="font-color">
-                                <td style="padding-left:10px">Extra Charge:</td>
-                                <td class="custom-font-family text-end " style="padding-right: 20px">
-                                    {{ getCurrencyIcon() . $datas->payable_amount - $datas->services->charges }}
-                                </td>
-                            </tr>
-                            <tr class="bg-gray">
-                                <th class="" style="padding-left:10px">Payable Amount:</th>
-                                <td class="custom-font-family text-end" style="padding-right: 20px">
-                                    {{ getCurrencyFormat(getCurrencyCode(), $datas->payable_amount) }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        </table>
-        <div>
+                    <div class="detail-row">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value">{{ $datas->doctor->user->email }}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Specialty</div>
+                        <div class="detail-value">{{ $datas->services->name }}</div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h3>Patient Information</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">Patient Name</div>
+                        <div class="detail-value">{{ $datas->patient->user->full_name }}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value">{{ $datas->patient->user->email }}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Visit ID</div>
+                        <div class="detail-value">#{{ str_pad($datas->id, 6, '0', STR_PAD_LEFT) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Section -->
+            <div class="appointment-section">
+                <div class="appointment-title">
+                    <h3>Appointment Schedule</h3>
+                    <div class="subtitle">Visit date and time details</div>
+                </div>
+                <div class="appointment-grid">
+                    <div class="appointment-item">
+                        <div class="icon">📅</div>
+                        <div class="label">Visit Date</div>
+                        <div class="value">{{\Carbon\Carbon::parse($datas->date)->format('M d, Y')}}</div>
+                    </div>
+                    <div class="appointment-item">
+                        <div class="icon">🕐</div>
+                        <div class="label">Time Slot</div>
+                        <div class="value">
+                            {{ $datas->from_time }} {{ $datas->from_time_type }} - {{ $datas->to_time }} {{
+								$datas->to_time_type }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
             @if ($datas->description)
-            <h3 class="fw-bold">Description:</h3>
-            <p class="content1 w-10">
-                {!! nl2br($datas->description) !!}
-            </p>
+            <div class="description-section">
+                <h3>Clinical Notes</h3>
+                <p>{!! nl2br($datas->description) !!}</p>
+            </div>
             @endif
         </div>
-</body>
 
+        <!-- Footer -->
+        <div class="footer">
+            <div class="divider"></div>
+            <div class="footer-text">
+                This document was generated electronically on {{ \Carbon\Carbon::now()->format('F j, Y
+					\a\t g:i A') }}
+            </div>
+        </div>
+    </div>
+</body>
 
 </html>

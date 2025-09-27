@@ -68,21 +68,17 @@ class DoctorsTransactionTable extends LivewireTableComponent
                 ->searchable(),
             Column::make(__('messages.appointment.date'), 'created_at')->view('transactions.doctor_panel.components.date')
                 ->sortable(),
-            Column::make(__('messages.appointment.payment_method'), 'type')->view('transactions.doctor_panel.components.payment_method')
-                ->sortable()->searchable(),
             Column::make(__('messages.appointment.appointment_status'), 'id')
                 ->format(function ($value, $row) {
                     return view('transactions.components.appointment_status')
                         ->with([
                             'row' => $row,
                             'book' => Appointment::BOOKED,
-                            'checkIn' => Appointment::CHECK_IN,
-                            'checkOut' => Appointment::CHECK_OUT,
+                            'accepted' => Appointment::ACCEPTED,
+                            'finished' => Appointment::FINISHED,
                             'cancel' => Appointment::CANCELLED,
                         ]);
                 }),
-            Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.doctor_panel.components.amount')
-                ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('transactions.doctor_panel.components.action'),
         ];
     }
