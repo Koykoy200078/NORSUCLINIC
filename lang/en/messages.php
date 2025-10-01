@@ -1159,7 +1159,7 @@ return [
     ],
 
     'purchase_medicine' => [
-        'purchase_number' => 'Purchase Number',
+        'purchase_number' => 'Procure Number',
         'total' => 'Total',
         'discount' => 'Discount',
         'tax_amount' => 'Tax Amount',
@@ -1169,8 +1169,8 @@ return [
         'note' => 'Note',
         'purchase_medicine' => 'Procure Medicine',
         'purchase_medicines' => 'Procure Medicines',
-        'purchase_medicine_details' => 'Purchase Medicine Details',
-        'purchase_medicine_overview' => 'Purchase Medicine Overview',
+        'purchase_medicine_details' => 'Procure Medicine Details',
+        'purchase_medicine_overview' => 'Procure Medicine Overview',
         'lot_no' => 'Lot no.',
         'tax' => 'Tax',
         'quantity' => 'Quantity',
@@ -1180,7 +1180,7 @@ return [
         'dose_duration' => 'Dose Duration',
         'actions' => 'Actions',
         'export_to_excel' => 'Export to Excel',
-        'purchased_medicine_success' => 'Medicine purchased successfully',
+        'purchased_medicine_success' => 'Medicine Procure successfully',
     ],
 
     'used_medicine' => [

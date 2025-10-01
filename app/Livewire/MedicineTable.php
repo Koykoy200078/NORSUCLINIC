@@ -62,6 +62,8 @@ class MedicineTable extends LivewireTableComponent
                 ->view('medicines.templates.columns.avalable_quantity')
                 ->searchable()
                 ->sortable(),
+            Column::make('Expiration', 'id')
+                ->view('medicines.templates.columns.expiration'),
             // Column::make(__('messages.medicine.selling_price'), 'selling_price')
             //     ->view('medicines.templates.columns.selling_price')
             //     ->searchable()
@@ -77,7 +79,6 @@ class MedicineTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        /** @var Medicine $query */
-        return Medicine::with('category', 'brand')->select('medicines.*');
+        return Medicine::query()->with(['category', 'brand']);
     }
 }

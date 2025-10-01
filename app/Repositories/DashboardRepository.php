@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class CityRepository
@@ -24,30 +25,55 @@ class DashboardRepository
     public function getData(): array
     {
         $todayDate = Carbon::now()->format('Y-m-d');
-        $data['patients'] = Patient::with(['user', 'appointments'])
+
+        // Cache expensive queries for 5 minutes
+        $cacheKey = 'admin_dashboard_data_' . $todayDate;
+
+        $data = Cache::remember($cacheKey, 300, function () use ($todayDate) {
+            $cachedData = [];
+
+            // Optimized queries with proper indexing
+            $cachedData['totalDoctorCount'] = User::where('type', User::DOCTOR)
+                ->where('status', User::ACTIVE)
+                ->count();
+
+            $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
+            $cachedData['totalAppointmentCount'] = Appointment::count();
+
+            $cachedData['todayAppointmentCount'] = Appointment::where('date', $todayDate)
+                ->where('status', Appointment::BOOKED)
+                ->count();
+
+            $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
+                ->whereDate('created_at', $todayDate)
+                ->count();
+
+            $cachedData['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
+            $cachedData['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
+
+            // Use cached settings and optimized queries
+            $cachedData['servicesArr'] = Cache::remember('active_services', 600, function () {
+                return Service::where('status', true)->pluck('name', 'id')->toArray();
+            });
+
+            $cachedData['serviceCategoriesArr'] = Cache::remember('service_categories', 600, function () {
+                return ServiceCategory::pluck('name', 'id')->toArray();
+            });
+
+            $cachedData['doctorArr'] = Cache::remember('doctors_list', 600, function () {
+                return Doctor::with('user:id,first_name,last_name')->get()
+                    ->pluck('user.full_name', 'id')->toArray();
+            });
+
+            return $cachedData;
+        });
+
+        // Get patients separately as they need fresh data
+        $data['patients'] = Patient::with(['user:id,first_name,last_name', 'appointments:id,patient_id'])
             ->withCount('appointments')
-            ->whereRaw('Date(created_at) = CURDATE()')
+            ->whereDate('created_at', $todayDate)
             ->orderBy('created_at', 'DESC')
             ->paginate(5);
-        $data['totalDoctorCount'] = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
-        $data['totalPatientCount'] = User::toBase()->whereType(User::PATIENT)->count();
-        $data['totalAppointmentCount'] = Appointment::count();
-        $data['todayAppointmentCount'] = Appointment::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(Appointment::BOOKED)->count();
-        $data['totalRegisteredPatientCount'] = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
-        $data['servicesArr'] = Service::toBase()->whereStatus(true)->pluck('name', 'id')->toArray();
-        $data['serviceCategoriesArr'] = ServiceCategory::toBase()->pluck('name', 'id')->toArray();
-        $data['doctorArr'] = Doctor::with('user')->get()->pluck('user.full_name', 'id')->toArray();
-
-        $data['upcomingAppointmentCount'] = Appointment::where(
-            'date',
-            '>',
-            $todayDate
-        )->count();
-        $data['tomorrowAppointmentCount'] = Appointment::where(
-            'date',
-            '',
-            $todayDate
-        )->count();
 
         return $data;
     }
@@ -60,26 +86,33 @@ class DashboardRepository
     {
         $doctorId = getLogInUser()->doctor->id;
         $todayDate = Carbon::now()->format('Y-m-d');
-        $appointments['records'] = Appointment::with(['patient.user'])
+
+        // Cache doctor stats for 5 minutes
+        $cacheKey = "doctor_stats_{$doctorId}_{$todayDate}";
+
+        $appointments = Cache::remember($cacheKey, 300, function () use ($doctorId, $todayDate) {
+            return [
+                'totalAppointmentCount' => Appointment::where('doctor_id', $doctorId)
+                    ->whereNotIn('status', [Appointment::CANCELLED])
+                    ->count(),
+                'todayAppointmentCount' => Appointment::where('doctor_id', $doctorId)
+                    ->where('date', $todayDate)
+                    ->whereNotIn('status', [Appointment::CANCELLED])
+                    ->count(),
+                'upcomingAppointmentCount' => Appointment::where('doctor_id', $doctorId)
+                    ->where('date', '>', $todayDate)
+                    ->where('status', Appointment::BOOKED)
+                    ->count(),
+            ];
+        });
+
+        // Get today's appointments with optimized eager loading
+        $appointments['records'] = Appointment::with(['patient.user:id,first_name,last_name'])
             ->where('doctor_id', $doctorId)
-            ->whereStatus(Appointment::BOOKED)
+            ->where('status', Appointment::BOOKED)
             ->whereDate('date', Carbon::today())
             ->orderBy('date', 'ASC')
             ->paginate(5);
-        $appointments['totalAppointmentCount'] = Appointment::whereDoctorId($doctorId)->whereNotIn(
-            'status',
-            [Appointment::CANCELLED]
-        )->count();
-        $appointments['todayAppointmentCount'] = Appointment::whereDoctorId($doctorId)->where(
-            'date',
-            '=',
-            $todayDate
-        )->whereNotIn('status', [Appointment::CANCELLED])->count();
-        $appointments['upcomingAppointmentCount'] = Appointment::whereDoctorId($doctorId)->where(
-            'date',
-            '>',
-            $todayDate
-        )->whereStatus(Appointment::BOOKED)->count();
 
         return $appointments;
     }
@@ -405,24 +438,54 @@ class DashboardRepository
     {
         $todayDate = Carbon::now()->format('Y-m-d');
 
-        // Staff can see similar data to admin but with some restrictions
-        $data['patients'] = Patient::with(['user', 'appointments'])
+        // Reuse admin dashboard cache since staff sees similar data
+        $cacheKey = 'staff_dashboard_data_' . $todayDate;
+
+        $data = Cache::remember($cacheKey, 300, function () use ($todayDate) {
+            $cachedData = [];
+
+            // Optimized queries with proper indexing
+            $cachedData['totalDoctorCount'] = User::where('type', User::DOCTOR)
+                ->where('status', User::ACTIVE)
+                ->count();
+
+            $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
+            $cachedData['totalAppointmentCount'] = Appointment::count();
+
+            $cachedData['todayAppointmentCount'] = Appointment::where('date', $todayDate)
+                ->where('status', Appointment::BOOKED)
+                ->count();
+
+            $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
+                ->whereDate('created_at', $todayDate)
+                ->count();
+
+            $cachedData['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
+            $cachedData['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
+
+            // Reuse cached lookups
+            $cachedData['servicesArr'] = Cache::remember('active_services', 600, function () {
+                return Service::where('status', true)->pluck('name', 'id')->toArray();
+            });
+
+            $cachedData['serviceCategoriesArr'] = Cache::remember('service_categories', 600, function () {
+                return ServiceCategory::pluck('name', 'id')->toArray();
+            });
+
+            $cachedData['doctorArr'] = Cache::remember('doctors_list', 600, function () {
+                return Doctor::with('user:id,first_name,last_name')->get()
+                    ->pluck('user.full_name', 'id')->toArray();
+            });
+
+            return $cachedData;
+        });
+
+        // Get patients separately as they need fresh data
+        $data['patients'] = Patient::with(['user:id,first_name,last_name', 'appointments:id,patient_id'])
             ->withCount('appointments')
-            ->whereRaw('Date(created_at) = CURDATE()')
+            ->whereDate('created_at', $todayDate)
             ->orderBy('created_at', 'DESC')
             ->paginate(5);
-
-        $data['totalDoctorCount'] = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
-        $data['totalPatientCount'] = User::toBase()->whereType(User::PATIENT)->count();
-        $data['totalAppointmentCount'] = Appointment::count();
-        $data['todayAppointmentCount'] = Appointment::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(Appointment::BOOKED)->count();
-        $data['totalRegisteredPatientCount'] = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
-        $data['servicesArr'] = Service::toBase()->whereStatus(true)->pluck('name', 'id')->toArray();
-        $data['serviceCategoriesArr'] = ServiceCategory::toBase()->pluck('name', 'id')->toArray();
-        $data['doctorArr'] = Doctor::with('user')->get()->pluck('user.full_name', 'id')->toArray();
-
-        $data['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
-        $data['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
 
         return $data;
     }

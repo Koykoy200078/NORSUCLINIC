@@ -125,4 +125,14 @@ class Medicine extends Model
     {
         return $this->belongsTo(PurchasedMedicine::class);
     }
+
+    /**
+     * Get the earliest expiry date for this medicine from purchased medicines
+     */
+    public function getEarliestExpiryDateAttribute()
+    {
+        return PurchasedMedicine::where('medicine_id', $this->id)
+            ->whereNotNull('expiry_date')
+            ->min('expiry_date');
+    }
 }

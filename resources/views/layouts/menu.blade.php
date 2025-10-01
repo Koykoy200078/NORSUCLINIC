@@ -233,6 +233,12 @@
     }}">
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>
+        @php
+        $expiringCount = getExpiringMedicinesCount();
+        @endphp
+        @if($expiringCount > 0)
+        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $expiringCount }}</span>
+        @endif
         <span class="d-none">{{ __('messages.medicine_categories') }}</span>
         <span class="d-none">{{ __('messages.medicine_brands') }}</span>
         <span class="d-none">{{ __('messages.medicines') }}</span>

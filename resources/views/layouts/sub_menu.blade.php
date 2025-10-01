@@ -143,13 +143,6 @@
         href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a>
 </li>
 @endcan
-@can('manage_currencies')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/currencies*') ? 'active' : '' }}"
-        href="{{ route('currencies.index') }}">{{ __('messages.currencies') }}</a>
-</li>
-@endcan
 @can('manage_countries')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">

@@ -52,6 +52,23 @@ return [
         'file' => [
             'driver' => 'file',
             'path' => storage_path('framework/cache/data'),
+            'lock_path' => storage_path('framework/cache/locks'),  // Added for better performance
+        ],
+
+        // Optimized cache stores for performance
+        'dashboard' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/dashboard'),
+        ],
+
+        'settings' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/settings'),
+        ],
+
+        'file' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/data'),
             'lock_path' => storage_path('framework/cache/data'),
         ],
 
@@ -106,6 +123,6 @@ return [
     |
     */
 
-    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
+    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_'),
 
 ];

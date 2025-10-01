@@ -6,6 +6,7 @@ use App\Models\DoctorSession;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\PaymentGateway;
+use App\Models\PurchasedMedicine;
 use App\Models\Setting;
 use App\Models\State;
 use App\Models\User;
@@ -25,7 +26,14 @@ if (! function_exists('getLogInUser')) {
      */
     function getLogInUser()
     {
-        return Auth::user();
+        // Cache user for request lifecycle to avoid repeated Auth::user() calls
+        static $cachedUser;
+
+        if ($cachedUser === null) {
+            $cachedUser = Auth::user();
+        }
+
+        return $cachedUser;
     }
 }
 
@@ -116,75 +124,66 @@ if (! function_exists('getCities')) {
 if (!function_exists('getDashboardURL')) {
     /**
      * Get the dashboard URL based on the user's role or permissions.
+     * Cached for performance on repeated calls.
      *
      * @return string
      */
     function getDashboardURL()
     {
+        // Cache dashboard URL for request lifecycle
+        static $cachedDashboardUrl;
+
+        if ($cachedDashboardUrl !== null) {
+            return $cachedDashboardUrl;
+        }
+
         // Get the authenticated user
-        $user = Auth::user();
+        $user = getLogInUser();
 
         // Return the default home URL if no user is authenticated
         if (!$user) {
-            return RouteServiceProvider::HOME;
+            $cachedDashboardUrl = RouteServiceProvider::HOME;
+            return $cachedDashboardUrl;
         }
 
-        // Role-based dashboard URLs
-        $roleDashboardMap = [
-            'clinic_admin' => 'admin/dashboard',
-            'staff' => 'staff/dashboard',
-            'doctor' => 'doctors/dashboard',
-            'patient' => 'patients/dashboard',
-        ];
-
-        // Check if the user has a specific role and return the corresponding dashboard URL
-        foreach ($roleDashboardMap as $role => $url) {
-            if ($user->hasRole($role)) {
-                return $url;
-            }
-        }
-
-        // Permission-based dashboard URLs for admin users
-        $permissionDashboardMap = [
-            'manage_admin_dashboard' => 'admin/dashboard',
-            'manage_doctors' => 'admin/doctors',
-            'manage_patients' => 'admin/patients',
-            'manage_staff' => 'admin/staff',
-            'manage_appointments' => 'admin/appointments',
-            'manage_patient_visits' => 'admin/visits',
-            'manage_settings' => 'admin/settings',
-            'manage_specialties' => 'admin/specializations',
-            'manage_services' => 'admin/services',
-            'manage_front_cms' => 'admin/cms',
-            'manage_transactions' => 'admin/transactions',
-        ];
-
-        // Get all user permissions
-        $permissions = $user->getAllPermissions()->pluck('name')->toArray();
-
-        // Check if the user has a specific permission and return the corresponding dashboard URL
-        // Only for admin users, staff have their own dedicated routes
+        // Role-based dashboard URLs - check most common roles first
         if ($user->hasRole('clinic_admin')) {
-            foreach ($permissionDashboardMap as $permission => $url) {
-                if (in_array($permission, $permissions, true)) {
-                    return $url;
+            $cachedDashboardUrl = 'admin/dashboard';
+        } elseif ($user->hasRole('staff')) {
+            $cachedDashboardUrl = 'staff/dashboard';
+        } elseif ($user->hasRole('doctor')) {
+            $cachedDashboardUrl = 'doctors/dashboard';
+        } elseif ($user->hasRole('patient')) {
+            $cachedDashboardUrl = 'patients/dashboard';
+        } else {
+            // Fallback to permission-based check for admin users only
+            if ($user->hasRole('clinic_admin')) {
+                $permissions = Cache::remember("user_permissions_{$user->id}", 300, function () use ($user) {
+                    return $user->getAllPermissions()->pluck('name')->toArray();
+                });
+
+                $permissionDashboardMap = [
+                    'manage_admin_dashboard' => 'admin/dashboard',
+                    'manage_doctors' => 'admin/doctors',
+                    'manage_patients' => 'admin/patients',
+                    'manage_staff' => 'admin/staff',
+                    'manage_appointments' => 'admin/appointments',
+                ];
+
+                foreach ($permissionDashboardMap as $permission => $url) {
+                    if (in_array($permission, $permissions, true)) {
+                        $cachedDashboardUrl = $url;
+                        break;
+                    }
                 }
             }
-        }
 
-        // Special handling for 'manage_request_documents' permission
-        if (in_array('manage_request_documents', $permissions, true)) {
-            if ($user->hasRole('clinic_admin')) {
-                return 'admin/request-documents';
-            } elseif ($user->hasRole('staff')) {
-                return 'staff/request-documents';
-            } elseif ($user->hasRole('doctor')) {
-                return 'doctor/request-documents';
+            if (!isset($cachedDashboardUrl)) {
+                $cachedDashboardUrl = RouteServiceProvider::HOME;
             }
         }
 
-        // Return the default home URL if no role or permission matches
-        return RouteServiceProvider::HOME;
+        return $cachedDashboardUrl;
     }
 }
 
@@ -1055,5 +1054,31 @@ if (!function_exists('paytmCurrencySupports')) {
             return  false;
         }
         return  true;
+    }
+}
+
+if (!function_exists('getExpiringMedicinesCount')) {
+    /**
+     * Get count of medicines expiring within a month
+     *
+     * @return int
+     */
+    function getExpiringMedicinesCount()
+    {
+        // Cache the result for 1 hour to avoid repeated database queries
+        return Cache::remember('expiring_medicines_count', 3600, function () {
+            $oneMonthFromNow = Carbon::now()->addMonth();
+            $today = Carbon::now();
+
+            // Count unique medicines that have purchased batches expiring within a month
+            // and still have available quantity
+            return PurchasedMedicine::whereNotNull('expiry_date')
+                ->whereBetween('expiry_date', [$today, $oneMonthFromNow])
+                ->whereHas('medicines', function ($query) {
+                    $query->where('available_quantity', '>', 0);
+                })
+                ->distinct('medicine_id')
+                ->count('medicine_id');
+        });
     }
 }
