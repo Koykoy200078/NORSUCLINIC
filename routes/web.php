@@ -373,7 +373,6 @@ Route::prefix('admin')->middleware('auth', 'xss', 'checkUserStatus')->group(func
 
 Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']);
 
-// Temporary test route for prescription edit (REMOVE IN PRODUCTION)
 require __DIR__ . '/auth.php';
 require __DIR__ . '/doctor.php';
 require __DIR__ . '/patient.php';

@@ -208,11 +208,7 @@ class PrescriptionController extends AppBaseController
         }
 
         foreach ($input['medicine'] as $key => $value) {
-            // dump($prescriptionMedicineArray);
-            // dump($inputdoseAndMedicine);
             $result = array_intersect($prescriptionMedicineArray, $inputdoseAndMedicine);
-            // dump($result);
-            // dd(!array_key_exists($input['medicine'][$key], $result));
             $medicine = Medicine::find($input['medicine'][$key]);
             $qty = $input['day'][$key] * $input['dose_interval'][$key];
 

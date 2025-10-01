@@ -1,7 +1,6 @@
 @php
 $data = null;
 @endphp
-{{-- @dd($prescription->medicines[0]->quantity) --}}
 <div class="row">
     <div class="col-sm-12">
         <div class="table-responsive-sm medicineTable">

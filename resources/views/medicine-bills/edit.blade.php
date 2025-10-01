@@ -21,9 +21,7 @@
                 <div class="alert alert-danger d-none hide" id="validationErrorsBox"></div>
             </div>
         </div>
-        {{-- @dd($medicineBill)  --}}
         <div class="card">
-            {{-- @dd($medicineCategoriesList)  --}}
             <div class="card-body">
                 {{Form::hidden('uniqueId',count($medicineBill->saleMedicine)+1,['id'=>'medicineUniqueId'])}}
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}

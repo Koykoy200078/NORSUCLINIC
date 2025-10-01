@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Transaction;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -131,8 +132,8 @@ class PaypalController extends Controller
 
             return redirect(route('appointments.index'));
         } catch (HttpException $ex) {
-            echo $ex->statusCode;
-            print_r($ex->getMessage());
+            Log::error('PayPal error: ' . $ex->getMessage());
+            return redirect(route('appointments.index'))->with('error', 'Payment processing failed.');
         }
     }
 }
