@@ -209,7 +209,7 @@
 
                 <div class="float-end mt-5">
                     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
-                    <a href="{!! route('medicine-bills.index') !!}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
+                    <a href="{!! route('medicine-history.index') !!}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
             </div>
         </div>

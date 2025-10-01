@@ -1,10 +1,10 @@
 @if(!isRole('doctor'))
 <div class="d-flex align-items-center justify-content-center">
-    <a href="{{ route('medicine-bills.show', [$row->id]) }}"
+    <a href="{{ route('medicine-history.show', [$row->id]) }}"
         class='btn px-2 text-primary fs-3 ps-0'> <i class="fas fa-eye text-success"></i></a>
     {{-- @if(isset($row->payment_status) && $row->payment_status == false)  --}}
     <a
-        href="{{ route('medicine-bills.edit', [$row->id]) }}"
+        href="{{ route('medicine-history.edit', [$row->id]) }}"
         title="<?php echo __('messages.common.edit') ?>" class="btn px-2 edit-btn text-primary fs-3 py-2">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>

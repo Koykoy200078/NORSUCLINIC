@@ -5,7 +5,7 @@
         class="btn btn-success ms-auto text-white">{{ __('messages.medicine_bills.print_bill') }}</a>
 </div>
 <div class="m-0">
-    <div class="fs-3 text-gray-800 mb-8"> #{{ $medicineBill->bill_number }}</div>
+    <div class="fs-3 text-gray-800 mb-8"> #{{ $medicineBill->history_number }}</div>
     <div class="row g-5 mb-11">
         <div class="col-sm-3">
             <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').':' }}</div>

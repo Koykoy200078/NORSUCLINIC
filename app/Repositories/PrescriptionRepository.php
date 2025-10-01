@@ -136,7 +136,7 @@ class PrescriptionRepository extends BaseRepository
             $qty = 0;
             if (isset($input['medicine'])) {
                 $medicineBill = MedicineBill::create([
-                    'bill_number' => 'BIL' . generateUniqueBillNumber(),
+                    'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $input['patient_id'],
                     'doctor_id' => $input['doctor_id'],
                     'model_type' => \App\Models\Prescription::class,

@@ -30,7 +30,7 @@ class PurchaseMedicineRepository extends BaseRepository
     protected $fieldSearchable = [
         'purchase_numeber',
         'purchase_date',
-        'bill_number',
+        'history_number',
         'supplier_name',
     ];
 
@@ -92,7 +92,6 @@ class PurchaseMedicineRepository extends BaseRepository
         $data['categories'] = Category::all()->pluck('name', 'id')->toArray();
 
         return $data;
-
     }
 
     /**

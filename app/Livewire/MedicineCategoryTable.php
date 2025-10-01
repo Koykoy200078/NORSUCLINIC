@@ -31,6 +31,12 @@ class MedicineCategoryTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setDefaultSort('categories.created_at', 'desc')
             ->setQueryStringStatus(false);
+
+        // Hide add button for doctor users
+        if (isRole('doctor')) {
+            $this->showButtonOnHeader = false;
+        }
+
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {
                 return [
@@ -46,9 +52,9 @@ class MedicineCategoryTable extends LivewireTableComponent
     }
 
     public function placeholder()
-   {
-         return view('livewire.medicine_category_skeleton');
-   }
+    {
+        return view('livewire.medicine_category_skeleton');
+    }
 
     public function changeFilter($value)
     {
@@ -60,16 +66,22 @@ class MedicineCategoryTable extends LivewireTableComponent
 
     public function columns(): array
     {
-        return [
+        $columns = [
             Column::make(__('messages.common.name'), 'name')
                 ->view('categories.templates.columns.name')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.common.active'), 'is_active')
-                ->view('categories.templates.columns.is_active')
-                ->sortable(),
-            Column::make(__('messages.common.action'), 'id')->view('categories.action'),
         ];
+
+        // Only show Active and Action columns for non-doctor users
+        if (!isRole('doctor')) {
+            $columns[] = Column::make(__('messages.common.active'), 'is_active')
+                ->view('categories.templates.columns.is_active')
+                ->sortable();
+            $columns[] = Column::make(__('messages.common.action'), 'id')->view('categories.action');
+        }
+
+        return $columns;
     }
 
     public function builder(): Builder
@@ -77,7 +89,7 @@ class MedicineCategoryTable extends LivewireTableComponent
         /** @var Builder $query */
         $query = Category::query()->select('categories.*');
         $query->when(isset($this->statusFilter), function (Builder $q) {
-            if (!empty($this->statusFilter)){
+            if (!empty($this->statusFilter)) {
                 if ($this->statusFilter == 0) {
                 } else {
                     if ($this->statusFilter == 2) {

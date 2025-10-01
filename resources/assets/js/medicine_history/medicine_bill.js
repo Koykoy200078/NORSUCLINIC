@@ -35,9 +35,9 @@ listenChange(".medicineBillCategoriesId", function () {
     let categoryId = $(this).val();
 
     let currentRow = $(this).closest("tr");
-    let medicineId = currentRow.find('.purchaseMedicineId');
-    let medicineAvlQty = currentRow.find('.medicineTotalQuantity');
-    let medicineSalePrice = currentRow.find('.medicineBill-sale-price');
+    let medicineId = currentRow.find(".purchaseMedicineId");
+    let medicineAvlQty = currentRow.find(".medicineTotalQuantity");
+    let medicineSalePrice = currentRow.find(".medicineBill-sale-price");
 
     if (categoryId == "") {
         $(medicineId).find("option").remove();
@@ -46,7 +46,7 @@ listenChange(".medicineBillCategoriesId", function () {
                 .attr("placeholder", "")
                 .text(Lang.get("js.select_medicine"))
         );
-        $(medicineAvlQty).text('0');
+        $(medicineAvlQty).text("0");
 
         return false;
     }
@@ -57,14 +57,17 @@ listenChange(".medicineBillCategoriesId", function () {
             let array = result.data.medicine;
             $(medicineId).find("option").remove();
             $(medicineId).attr("required", true);
-            $(medicineId).append($('<option value="">Select Medicine</option>'));
+            $(medicineId).append(
+                $('<option value="">Select Medicine</option>')
+            );
             $.each(array, function (key, value) {
-                $(medicineId).append($('<option></option>').attr('value', key).text(value));
-
+                $(medicineId).append(
+                    $("<option></option>").attr("value", key).text(value)
+                );
             });
 
-            $(medicineAvlQty).text('0');
-            $(medicineSalePrice).val('0.00');
+            $(medicineAvlQty).text("0");
+            $(medicineSalePrice).val("0.00");
         },
     });
 });
@@ -88,7 +91,9 @@ listenChange(".medicinePurchaseId", function () {
             let currentqty = currentRow.find(".medicineBill-quantity").val();
             let price = currentRow.find(".medicineBill-sale-price").val();
             let currentamount = parseFloat(price * currentqty);
-            currentRow.find(".medicine-bill-amount").val(currentamount.toFixed(2))
+            currentRow
+                .find(".medicine-bill-amount")
+                .val(currentamount.toFixed(2));
             let taxEle = $(".medicineBill-tax");
             let elements = $(".medicine-bill-amount");
             let total = 0.0;
@@ -110,9 +115,7 @@ listenChange(".medicinePurchaseId", function () {
             netAmount = parseFloat(netAmount) - parseFloat(discount);
             if (discount > total && $(this).hasClass("medicineBill-discount")) {
                 discount = discount.slice(0, -1);
-                displayErrorMessage(
-                    Lang.get("js.the_discount_shoul")
-                );
+                displayErrorMessage(Lang.get("js.the_discount_shoul"));
                 $("#discountAmount").val(discount);
                 return false;
             }
@@ -122,7 +125,7 @@ listenChange(".medicinePurchaseId", function () {
             $("#total").val(total.toFixed(2));
             $("#medicineTotalTaxId").val(totalTax.toFixed(2));
             $("#netAmount").val(netAmount.toFixed(2));
-            $(QuantityPriceId).text(result.data.available_quantity)
+            $(QuantityPriceId).text(result.data.available_quantity);
         },
     });
 });
@@ -154,13 +157,13 @@ listenClick(".add-medicine-btn-medicine-bill", function () {
 });
 const dropdownToSelecte2 = (selector) => {
     $(selector).select2({
-        placeholder: Lang.get('js.select_medicine'),
+        placeholder: Lang.get("js.select_medicine"),
         width: "100%",
     });
 };
 const dropdownToSelecteCategories2 = (selector) => {
     $(selector).select2({
-        placeholder: Lang.get('js.select_category'),
+        placeholder: Lang.get("js.select_category"),
         width: "100%",
     });
 };
@@ -205,9 +208,7 @@ listenKeyup(
                     currentRow
                         .find(".medicine-bill-amount")
                         .val(currentamount.toFixed(2));
-                    displayErrorMessage(
-                        Lang.get("js.update_quantity")
-                    );
+                    displayErrorMessage(Lang.get("js.update_quantity"));
                     return false;
                 }
             }
@@ -215,9 +216,7 @@ listenKeyup(
                 if (taxEle[i].value > 99) {
                     let taxAmount = taxEle[i].value.slice(0, -1);
                     currentRow.find(".medicineBill-tax").val(taxAmount);
-                    displayErrorMessage(
-                        Lang.get("js.tax_should_be")
-                    );
+                    displayErrorMessage(Lang.get("js.tax_should_be"));
                     $("#discountAmount").val(discount);
                     return false;
                 }
@@ -231,9 +230,7 @@ listenKeyup(
         netAmount = parseFloat(netAmount) - parseFloat(discount);
         if (discount > total && $(this).hasClass("medicineBill-discount")) {
             discount = discount.slice(0, -1);
-            displayErrorMessage(
-                Lang.get("js.the_discount_shoul")
-            );
+            displayErrorMessage(Lang.get("js.the_discount_shoul"));
             $("#discountAmount").val(discount);
             return false;
         }
@@ -251,19 +248,13 @@ listenSubmit("#CreateMedicineBillForm", function (e) {
     let netAmount = "#netAmount";
 
     if ($("#total").val() < $("#discountAmount").val()) {
-        displayErrorMessage(
-            Lang.get("js.the_discount_shoul")
-        );
+        displayErrorMessage(Lang.get("js.the_discount_shoul"));
         return false;
     } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_empty")
-        );
+        displayErrorMessage(Lang.get("js.net_amount_not_empty"));
         return false;
     } else if ($(netAmount).val() == 0) {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_zero")
-        );
+        displayErrorMessage(Lang.get("js.net_amount_not_zero"));
         return false;
     } else if (
         $(".medicineBill-quantity").val() == 0 ||
@@ -316,7 +307,7 @@ listenSubmit("#addPatientForm", function (e) {
     });
 });
 
-listen('hidden.bs.modal', "#addPatientModal", function () {
+listen("hidden.bs.modal", "#addPatientModal", function () {
     resetModalForm("#addPatientForm", "#patientErrorsBox");
 });
 
@@ -324,7 +315,7 @@ listenClick(".medicine-bill-delete-btn", function (event) {
     let id = $(event.currentTarget).attr("data-id");
 
     deleteItem(
-        route("medicine-bills.destroy", id),
+        route("medicine-history.destroy", id),
         Lang.get("js.medicine_bill")
     );
 });
@@ -336,19 +327,13 @@ listenSubmit("#MedicinebillForm", function (e) {
     if (
         parseFloat($("#total").val()) < parseFloat($("#discountAmount").val())
     ) {
-        displayErrorMessage(
-            Lang.get("js.the_discount_shoul")
-        );
+        displayErrorMessage(Lang.get("js.the_discount_shoul"));
         return false;
     } else if ($(netAmount).val() == null || $(netAmount).val() == "") {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_empty")
-        );
+        displayErrorMessage(Lang.get("js.net_amount_not_empty"));
         return false;
     } else if ($(netAmount).val() == 0) {
-        displayErrorMessage(
-            Lang.get("js.net_amount_not_zero")
-        );
+        displayErrorMessage(Lang.get("js.net_amount_not_zero"));
         return false;
     } else if (
         $(".medicineBill-quantity").val() == 0 ||
@@ -360,15 +345,15 @@ listenSubmit("#MedicinebillForm", function (e) {
     }
     $medicineBillId = $("#medicineBillId").val();
     $.ajax({
-        url: route("medicine-bills.update", $medicineBillId),
+        url: route("medicine-history.update", $medicineBillId),
         type: "post",
         data: $(this).serialize(),
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    // Turbo.visit(route("medicine-bills.index")); // true
-                    window.location.href = route("medicine-bills.index");
+                    // Turbo.visit(route("medicine-history.index")); // true
+                    window.location.href = route("medicine-history.index");
                 }, 2000);
             }
         },

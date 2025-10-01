@@ -176,29 +176,23 @@ class Prescription extends Model
     ];
 
     const ONE_TIME = 1;
-
     const TWO_TIME = 2;
-
     const THREE_TIME = 3;
-
     const FOUR_TIME = 4;
+    const FIVE_TIME = 5;
 
     const DOSE_INTERVAL = [
-
         self::ONE_TIME => 'Every Morning',
-        self::TWO_TIME => 'Every Morning & Evening',
-        self::THREE_TIME => 'Three times a day',
-        self::FOUR_TIME => '4 times a day',
+        self::TWO_TIME => 'Every Evening',
+        self::THREE_TIME => 'Every Morning & Evening',
+        self::FOUR_TIME => 'Three times a day',
+        self::FIVE_TIME => '4 times a day'
     ];
 
     const ONE_DAY = 1;
-
     const THREE_DAY = 3;
-
     const ONE_WEEK = 7;
-
     const TWO_WEEK = 14;
-
     const ONE_MONTH = 30;
 
     const DOSE_DURATION = [

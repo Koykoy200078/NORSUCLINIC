@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1"></h1>
-        <a href="{{ route('medicine-bills.index') }}"
+        <a href="{{ route('medicine-history.index') }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -27,14 +27,14 @@
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::model($medicineBill, ['route' => ['medicine-bills.update', $medicineBill->id], 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
-                {{-- @include('medicine-bills.fields')  --}}
+                {{ Form::model($medicineBill, ['route' => ['medicine-history.update', $medicineBill->id], 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
+                {{-- @include('medicine-history.fields')  --}}
                 <div class="row">
-                    @include('medicine-bills.medicine-table')
+                    @include('medicine-history.medicine-table')
                 </div>
                 {{ Form::close() }}
             </div>
-            @include('medicine-bills.templates.templates')
+            @include('medicine-history.templates.templates')
         </div>
     </div>
     {{-- </div>

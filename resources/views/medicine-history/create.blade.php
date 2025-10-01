@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">@yield('title')</h1>
-        <a href="{{ route('medicine-bills.index') }}"
+        <a href="{{ route('medicine-history.index') }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -26,15 +26,15 @@
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::open(['route' => 'medicine-bills.store', 'id' => 'CreateMedicineBillForm']) }}
-                @include('medicine-bills.medicine-table')
+                {{ Form::open(['route' => 'medicine-history.store', 'id' => 'CreateMedicineBillForm']) }}
+                @include('medicine-history.medicine-table')
                 {{ Form::close() }}
             </div>
         </div>
     </div>
 </div>
-@include('medicine-bills.templates.templates')
-@include('medicine-bills.add_patient_modal')
+@include('medicine-history.templates.templates')
+@include('medicine-history.add_patient_modal')
 {{-- {{Form::hidden('billSaveUrl',route('bills.store'),['id'=>'createBillSaveUrl','class'=>'billSaveUrl'])}}
 {{Form::hidden('billUrl',route('bills.index'),['id'=>'createBillUrl','class'=>'billUrl'])}}
 {{Form::hidden('associateMedicines',json_encode($associateMedicines),['id'=>'createBillAssociateMedicines','class'=>'associateMedicines'])}}

@@ -55,7 +55,7 @@
                         <h3 class="text-gray-900 mb-0">{{ __('messages.common.filter_option') }}</h3>
                     </div>
                     <div class="p-5">
-                        <div class="mb-5">
+                        <div class="d-none mb-5">
                             <label for="filterBtn" class="form-label">{{ __('messages.appointment.payment') }}:</label>
                             {{ Form::select(
                                 'payment_type',

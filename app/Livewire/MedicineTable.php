@@ -23,6 +23,12 @@ class MedicineTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setDefaultSort('medicines.created_at', 'desc')
             ->setQueryStringStatus(false);
+
+        // Hide add button for doctor users
+        if (isRole('doctor')) {
+            $this->showButtonOnHeader = false;
+        }
+
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
             if ($column->isField('name') || $column->isField('selling_price') || $column->isField('buying_price')) {
                 return [
@@ -50,7 +56,7 @@ class MedicineTable extends LivewireTableComponent
 
     public function columns(): array
     {
-        return [
+        $columns = [
             Column::make(__('messages.medicine.medicine'), 'name')
                 ->view('medicines.templates.columns.name')
                 ->searchable()
@@ -72,9 +78,14 @@ class MedicineTable extends LivewireTableComponent
                 ->view('medicines.templates.columns.buying_price')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.common.action'), 'id')->view('medicines.action'),
-
         ];
+
+        // Only show Action column for non-doctor users
+        if (!isRole('doctor')) {
+            $columns[] = Column::make(__('messages.common.action'), 'id')->view('medicines.action');
+        }
+
+        return $columns;
     }
 
     public function builder(): Builder

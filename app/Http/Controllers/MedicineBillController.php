@@ -53,7 +53,7 @@ class MedicineBillController extends AppBaseController
     public function index(): View
     {
 
-        return view('medicine-bills.index');
+        return view('medicine-history.index');
     }
 
     /**
@@ -72,7 +72,7 @@ class MedicineBillController extends AppBaseController
         $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
 
         return view(
-            'medicine-bills.create',
+            'medicine-history.create',
             compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineCategoriesList', 'medicineCategories')
         )->with($data);
     }
@@ -87,7 +87,7 @@ class MedicineBillController extends AppBaseController
 
             flash::error(__('messages.medicine_bills.medicine_not_selected'));
 
-            return Redirect::route('medicine-bills.create');
+            return Redirect::route('medicine-history.create');
         }
         $arr = collect($input['medicine']);
         $duplicateIds = $arr->duplicates();
@@ -102,7 +102,7 @@ class MedicineBillController extends AppBaseController
 
                     Flash::error(__('messages.medicine_bills.duplicate_medicine'));
 
-                    return Redirect::route('medicine-bills.create');
+                    return Redirect::route('medicine-history.create');
                 }
             }
             $qty = $input['quantity'][$key];
@@ -110,12 +110,12 @@ class MedicineBillController extends AppBaseController
                 $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
                 Flash::error(__('messages.medicine_bills.available_quantity') . ' ' . $medicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
 
-                return Redirect::route('medicine-bills.create');
+                return Redirect::route('medicine-history.create');
             }
         }
 
         $medicineBill = MedicineBill::create([
-            'bill_number' => 'BIL' . generateUniqueBillNumber(),
+            'history_number' => 'HIS' . generateUniqueHistoryNumber(),
             'patient_id' => $input['patient_id'],
             'net_amount' => $input['net_amount'],
             'discount' => $input['discount'],
@@ -152,12 +152,12 @@ class MedicineBillController extends AppBaseController
             }
             Flash::success(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
 
-            return Redirect::route('medicine-bills.index');
+            return Redirect::route('medicine-history.index');
         }
 
         // Ensure a return value for all paths
         Flash::error(__('messages.medicine_bills.something_went_wrong'));
-        return Redirect::route('medicine-bills.create');
+        return Redirect::route('medicine-history.create');
     }
 
     /**
@@ -169,7 +169,7 @@ class MedicineBillController extends AppBaseController
     {
         $medicineBill->load(['saleMedicine.medicine']);
 
-        return view('medicine-bills.show', compact('medicineBill'));
+        return view('medicine-history.show', compact('medicineBill'));
     }
 
     /**
@@ -189,7 +189,7 @@ class MedicineBillController extends AppBaseController
         $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
 
         return view(
-            'medicine-bills.edit',
+            'medicine-history.edit',
             compact('patients', 'doctors', 'medicines', 'medicineList', 'mealList', 'medicineBill', 'medicineCategoriesList', 'medicineCategories')
         )->with($data);
     }
@@ -247,7 +247,7 @@ class MedicineBillController extends AppBaseController
         // });
 
         // // Only select necessary columns for the main model and relationships
-        // $medicineBill = MedicineBill::select('id', 'bill_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
+        // $medicineBill = MedicineBill::select('id', 'history_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
         //     ->with([
         //         'saleMedicine' => function ($q) {
         //             $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
@@ -260,7 +260,7 @@ class MedicineBillController extends AppBaseController
         //     ])
         //     ->findOrFail($id);
 
-        // $pdf = Pdf::loadView('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
+        // $pdf = Pdf::loadView('medicine-history.medicine_bill_pdf', compact('medicineBill', 'data'));
 
         // return $pdf->stream('medicine-bill.pdf');
 
@@ -268,7 +268,7 @@ class MedicineBillController extends AppBaseController
             return $this->prescriptionRepository->getSettingList();
         });
 
-        $medicineBill = MedicineBill::select('id', 'bill_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
+        $medicineBill = MedicineBill::select('id', 'history_number', 'bill_date', 'patient_id', 'doctor_id', 'total', 'tax_amount', 'discount', 'net_amount')
             ->with([
                 'saleMedicine' => function ($q) {
                     $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax');
@@ -282,7 +282,7 @@ class MedicineBillController extends AppBaseController
             ->findOrFail($id);
 
         // Use the correct view name here
-        return view('medicine-bills.medicine_bill_pdf', compact('medicineBill', 'data'));
+        return view('medicine-history.medicine_bill_pdf', compact('medicineBill', 'data'));
     }
 
     public function getMedicineCategory(Category $category): JsonResponse

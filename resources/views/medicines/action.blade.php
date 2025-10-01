@@ -1,8 +1,10 @@
+@if(!isRole('doctor'))
 <a href="{{route('medicines.edit',$row->id)}}" title="<?php echo __('messages.common.edit') ?>"
    class=" btn px-1 text-primary fs-3 ps-0">
-                <i class="fa-solid fa-pen-to-square"></i>
+   <i class="fa-solid fa-pen-to-square"></i>
 </a>
-<a  title="<?php echo __('messages.common.delete') ?>" data-id="{{$row->id}}" wire:key="{{$row->id}}"
+<a title="<?php echo __('messages.common.delete') ?>" data-id="{{$row->id}}" wire:key="{{$row->id}}"
    class="deleteMedicineBtn  btn px-1 text-danger fs-3 ps-0">
-                  <i class="fa-solid fa-trash"></i>
+   <i class="fa-solid fa-trash"></i>
 </a>
+@endif

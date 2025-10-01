@@ -234,12 +234,14 @@
 @can('manage_medicines')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/brands*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-bills*')) ||
-        (isRole('staff') && Request::is('staff/categories*', 'staff/brands*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-bills*'))
+        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/brands*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*', 'staff/brands*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
+        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/brands*', 'doctors/medicines*', 'doctors/medicine-purchase*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('categories.index') : 
-        (isRole('staff') ? route('staff.categories.index') : route('categories.index'))
+        (isRole('staff') ? route('staff.categories.index') : 
+        (isRole('doctor') ? route('doctors.categories.index') : route('categories.index')))
     }}">
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>

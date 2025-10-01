@@ -33,7 +33,7 @@
                     <tr>
                         <td colspan="2">
                             <span class="font-weight-bold patient-detail-heading">{{ __('messages.medicine_bills.bill_id') }}:</span>
-                            #{{ $medicineBill->bill_number }}
+                            #{{ $medicineBill->history_number }}
                             <br>
                             <span class="font-weight-bold patient-detail-heading">{{ __('messages.medicine_bills.bill_date') }}:</span>
                             {{ \Carbon\Carbon::parse($medicineBill->bill_date)->format('jS M,Y g:i A') }}

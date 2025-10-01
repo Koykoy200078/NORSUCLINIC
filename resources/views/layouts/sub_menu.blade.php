@@ -3,9 +3,9 @@
     <a class="nav-link p-0 {{ Request::is('admin/dashboard*') ? 'active' : '' }}"
         href="{{ route('admin.dashboard') }}">{{ __('messages.dashboard') }}</a>
 </li>
-@endcan
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/categories*','doctors/brands*','doctors/medicines*','doctors/medicine-history*') ? 'd-none' : '' }}">@endcan
 
-@can('manage_staff_dashboard')
+    @can('manage_staff_dashboard')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('staff/dashboard*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('staff/dashboard*') ? 'active' : '' }}"
         href="{{ route('staff.dashboard') }}">{{ __('messages.dashboard') }}</a>
@@ -220,40 +220,127 @@
 </li>
 @endcan
 @can('manage_medicines')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/categories*') ? 'active' : '' }}"
-        href="{{ route('categories.index') }}">
+@if(isRole('clinic_admin') || isRole('staff'))
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/categories*')) ||
+        (isRole('staff') && Request::is('staff/categories*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('categories.index') : 
+            (isRole('staff') ? route('staff.categories.index') : route('categories.index'))
+        }}">
         {{ __('messages.medicine_categories') }}
     </a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/brands*') ? 'active' : '' }}"
-        href="{{ route('brands.index') }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/brands*')) ||
+        (isRole('staff') && Request::is('staff/brands*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('brands.index') : 
+            (isRole('staff') ? route('staff.brands.index') : route('brands.index'))
+        }}">
         {{ __('messages.medicine_brands') }}
     </a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/medicines*') ? 'active' : '' }}"
-        href="{{ route('medicines.index') }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/medicines*')) ||
+        (isRole('staff') && Request::is('staff/medicines*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('medicines.index') : 
+            (isRole('staff') ? route('staff.medicines.index') : route('medicines.index'))
+        }}">
         {{ __('messages.medicines') }}
     </a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/medicine-purchase*') ? 'active' : '' }}"
-        href="{{ route('medicine-purchase.index') }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/medicine-purchase*')) ||
+        (isRole('staff') && Request::is('staff/medicine-purchase*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('medicine-purchase.index') : 
+            (isRole('staff') ? route('staff.medicine-purchase.index') : route('medicine-purchase.index'))
+        }}">
         {{ __('messages.purchase_medicine.purchase_medicines') }}
     </a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/used-medicine*') ? 'active' : '' }}"
-        href="{{ route('used-medicine.index') }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/used-medicine*')) ||
+        (isRole('staff') && Request::is('staff/used-medicine*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('used-medicine.index') : 
+            (isRole('staff') ? route('staff.used-medicine.index') : route('used-medicine.index'))
+        }}">
         {{ __('messages.used_medicine.used_medicines') }}
     </a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ (!Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-bills*')) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/medicine-bills*') ? 'active' : '' }}"
-        href="{{ route('medicine-bills.index') }}">
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/brands*','admin/medicines*','admin/medicine-purchase*','admin/used-medicine*','admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/brands*','staff/medicines*','staff/medicine-purchase*','staff/used-medicine*','staff/medicine-history*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/medicine-history*'))
+    ? 'active' : '' }}"
+        href="{{ 
+            isRole('clinic_admin') ? route('medicine-history.index') : 
+            (isRole('staff') ? route('staff.medicine-history.index') : route('medicine-history.index'))
+        }}">
         {{ __('messages.medicine_bills.medicine_bills') }}
     </a>
 </li>
+@elseif(isRole('doctor'))
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/categories*','doctors/brands*','doctors/medicines*','doctors/medicine-history*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/categories*') ? 'active' : '' }}"
+        href="{{ route('doctors.categories.index') }}">
+        {{ __('messages.medicine_categories') }}
+    </a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/categories*','doctors/brands*','doctors/medicines*','doctors/medicine-history*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/brands*') ? 'active' : '' }}"
+        href="{{ route('doctors.brands.index') }}">
+        {{ __('messages.medicine_brands') }}
+    </a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/categories*','doctors/brands*','doctors/medicines*','doctors/medicine-history*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/medicines*') ? 'active' : '' }}"
+        href="{{ route('doctors.medicines.index') }}">
+        {{ __('messages.medicines') }}
+    </a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/categories*','doctors/brands*','doctors/medicines*','doctors/medicine-history*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/medicine-history*') ? 'active' : '' }}"
+        href="{{ route('doctors.medicine-history.index') }}">
+        History
+    </a>
+</li>
+@endif
 @endcan

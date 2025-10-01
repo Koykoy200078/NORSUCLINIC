@@ -10,9 +10,9 @@
         <div class="text-end mt-4 mt-md-0">
             @if(isset($medicineBill->payment_status) && $medicineBill->payment_status == false)
             <a class="btn btn-primary edit-btn"
-                href="{{route('medicine-bills.edit', ['medicine_bill' => $medicineBill->id]) }}">{{ __('messages.common.edit') }}</a>
+                href="{{route('medicine-history.edit', ['medicine_bill' => $medicineBill->id]) }}">{{ __('messages.common.edit') }}</a>
             @endif
-            <a href="{{route('medicine-bills.index')}}"
+            <a href="{{route('medicine-history.index')}}"
                 class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
         </div>
     </div>
@@ -23,7 +23,7 @@
     <div class="d-flex flex-column">
         <div class="card">
             <div class="card-body">
-                @include('medicine-bills.show_fields')
+                @include('medicine-history.show_fields')
             </div>
         </div>
     </div>

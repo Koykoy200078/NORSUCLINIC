@@ -254,7 +254,7 @@ mix.js(
         "resources/assets/js/brands/brands.js",
         "resources/assets/js/medicines/medicines.js",
         "resources/assets/js/purchase-medicine/purchase-medicine.js",
-        "resources/assets/js/medicine_bills/medicine_bill.js",
+        "resources/assets/js/medicine_history/medicine_bill.js",
         "resources/assets/js/prescriptions/create-edit.js",
         "resources/assets/js/prescriptions/prescriptions.js",
     ],

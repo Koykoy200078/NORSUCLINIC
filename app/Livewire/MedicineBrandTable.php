@@ -22,6 +22,12 @@ class MedicineBrandTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setDefaultSort('brands.created_at', 'desc')
             ->setQueryStringStatus(false);
+
+        // Hide add button for doctor users
+        if (isRole('doctor')) {
+            $this->showButtonOnHeader = false;
+        }
+
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {
                 return [
@@ -37,13 +43,13 @@ class MedicineBrandTable extends LivewireTableComponent
     }
 
     public function placeholder()
-   {
-         return view('livewire.smart_patient_cards_skeleton');
-   }
+    {
+        return view('livewire.smart_patient_cards_skeleton');
+    }
 
     public function columns(): array
     {
-        return [
+        $columns = [
             Column::make(__('messages.medicine.brand'), 'name')
                 ->view('brands.templates.columns.name')
                 ->searchable()
@@ -56,7 +62,13 @@ class MedicineBrandTable extends LivewireTableComponent
                 ->view('brands.templates.columns.phone')
                 ->sortable()
                 ->searchable(),
-            Column::make(__('messages.common.action'), 'id')->view('brands.action'),
         ];
+
+        // Only show Action column for non-doctor users
+        if (!isRole('doctor')) {
+            $columns[] = Column::make(__('messages.common.action'), 'id')->view('brands.action');
+        }
+
+        return $columns;
     }
 }

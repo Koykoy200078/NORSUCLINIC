@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * App\Models\MedicineBill
  *
  * @property int $id
- * @property string $bill_number
+ * @property string $history_number
  * @property int $patient_id
  * @property int|null $doctor_id
  * @property string $model_type
@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill query()
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBillDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBillNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereHistoryNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDiscount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDoctorId($value)
@@ -58,7 +58,7 @@ class MedicineBill extends Model
     protected $table = 'medicine_bills';
 
     protected $fillable = [
-        'bill_number',
+        'history_number',
         'patient_id',
         'doctor_id',
         'model_type',

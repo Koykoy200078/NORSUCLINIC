@@ -764,15 +764,26 @@ if (! function_exists('getPatientUniqueId')) {
     }
 }
 
-if (! function_exists('generateUniqueBillNumber')) {
+if (! function_exists('generateUniqueHistoryNumber')) {
 
-    function generateUniqueBillNumber()
+    function generateUniqueHistoryNumber()
     {
         do {
             $code = random_int(1000, 9999);
-        } while (\App\Models\MedicineBill::where('bill_number', '=', $code)->first());
+        } while (\App\Models\MedicineBill::where('history_number', '=', $code)->first());
 
         return $code;
+    }
+}
+
+if (! function_exists('generateUniqueBillNumber')) {
+    /**
+     * @deprecated Use generateUniqueHistoryNumber() instead
+     * @return int
+     */
+    function generateUniqueBillNumber()
+    {
+        return generateUniqueHistoryNumber();
     }
 }
 

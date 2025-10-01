@@ -12414,10 +12414,10 @@ listenClick('.subscriber-delete-btn', function () {
 
 /***/ }),
 
-/***/ "./resources/assets/js/medicine_bills/medicine_bill.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/js/medicine_bills/medicine_bill.js ***!
-  \*************************************************************/
+/***/ "./resources/assets/js/medicine_history/medicine_bill.js":
+/*!***************************************************************!*\
+  !*** ./resources/assets/js/medicine_history/medicine_bill.js ***!
+  \***************************************************************/
 /***/ (() => {
 
 document.addEventListener("DOMContentLoaded", loadSaleMedicineCreate);
@@ -12684,7 +12684,7 @@ listen('hidden.bs.modal', "#addPatientModal", function () {
 });
 listenClick(".medicine-bill-delete-btn", function (event) {
   var id = $(event.currentTarget).attr("data-id");
-  deleteItem(route("medicine-bills.destroy", id), Lang.get("js.medicine_bill"));
+  deleteItem(route("medicine-history.destroy", id), Lang.get("js.medicine_bill"));
 });
 listenSubmit("#MedicinebillForm", function (e) {
   e.preventDefault();
@@ -12704,15 +12704,15 @@ listenSubmit("#MedicinebillForm", function (e) {
   }
   $medicineBillId = $("#medicineBillId").val();
   $.ajax({
-    url: route("medicine-bills.update", $medicineBillId),
+    url: route("medicine-history.update", $medicineBillId),
     type: "post",
     data: $(this).serialize(),
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          // Turbo.visit(route("medicine-bills.index")); // true
-          window.location.href = route("medicine-bills.index");
+          // Turbo.visit(route("medicine-history.index")); // true
+          window.location.href = route("medicine-history.index");
         }, 2000);
       }
     },
@@ -15442,7 +15442,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/brands/brands.js")))
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/medicines/medicines.js")))
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/purchase-medicine/purchase-medicine.js")))
-/******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/medicine_bills/medicine_bill.js")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/medicine_history/medicine_bill.js")))
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/prescriptions/create-edit.js")))
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/js/prescriptions/prescriptions.js")))
 /******/ 	__webpack_require__.O(undefined, ["assets/css/smart-card-pdf","assets/css/prescription-pdf","assets/css/bill-pdf","assets/css/pages","assets/css/custom-pages-dark","css/app","css/front-pages","assets/front/css/about","assets/front/css/front-custom"], () => (__webpack_require__("./resources/assets/scss/custom-pages-dark.scss")))
