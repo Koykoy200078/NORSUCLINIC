@@ -30,6 +30,11 @@
             {{ Form::hidden('edit_state_id', isset($user->address->state_id) ? $user->address->state_id:null,['id' => 'doctorStateId']) }}
             {{ Form::hidden('edit_city_id', isset($user->address->city_id) ? $user->address->city_id:null,['id' => 'doctorCityId']) }}
             {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'doctorBackgroundImg']) }}
+            {{-- Add redirect URL based on user role --}}
+            {{ Form::hidden('doctorIndexRedirectUrl', 
+                   isRole('clinic_admin') ? route('doctors.index') : 
+                   (isRole('staff') ? route('staff.doctors.index') : route('doctors.index')),
+                   ['id' => 'doctorIndexRedirectUrl']) }}
             @include('doctors.edit-fields')
             {{ Form::close() }}
             @include('doctors.templates.templates')

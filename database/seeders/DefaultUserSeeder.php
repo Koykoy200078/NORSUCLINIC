@@ -48,20 +48,20 @@ class DefaultUserSeeder extends Seeder
         ];
 
         // Add 9 doctors
-        for ($i = 0; $i < 9; $i++) {
-            $users[] = [
-                'first_name' => fake()->firstName(),
-                'last_name' => fake()->lastName(),
-                'contact' => fake()->numerify('09#########'),
-                'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
-                'type' => User::DOCTOR,
-                'email' => fake()->unique()->safeEmail(),
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('123456'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ];
-        }
+        // for ($i = 0; $i < 9; $i++) {
+        //     $users[] = [
+        //         'first_name' => fake()->firstName(),
+        //         'last_name' => fake()->lastName(),
+        //         'contact' => fake()->numerify('09#########'),
+        //         'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
+        //         'type' => User::DOCTOR,
+        //         'email' => fake()->unique()->safeEmail(),
+        //         'email_verified_at' => Carbon::now(),
+        //         'password' => Hash::make('123456'),
+        //         'country_code' => '63',
+        //         'time_zone' => '0'
+        //     ];
+        // }
 
         // Add (patients)
         // for ($i = 0; $i < 10; $i++) {

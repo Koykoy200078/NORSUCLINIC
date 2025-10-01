@@ -264,7 +264,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'checkImpersonateU
         Route::post(
             'appointments/{appointment}',
             [AppointmentController::class, 'changeStatus']
-        )->name('change-status');
+        )->name('admin.change-status');
         Route::post(
             'appointments-payment/{id}',
             [AppointmentController::class, 'changePaymentStatus']

@@ -16,6 +16,7 @@ use \PDF;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
@@ -291,22 +292,24 @@ class AppointmentController extends AppBaseController
     /**
      * @return mixed
      */
-    public function changeStatus(Request $request)
+    public function changeStatus(Request $request, Appointment $appointment)
     {
         $input = $request->all();
 
         if (getLogInUser()->hasRole('doctor')) {
-            $doctor = Appointment::whereId($input['appointmentId'])->whereDoctorId(getLogInUser()->doctor->id);
+            $doctor = Appointment::whereId($appointment->id)->whereDoctorId(getLogInUser()->doctor->id);
             if (! $doctor->exists()) {
                 return $this->sendError(__('messages.common.not_allow__assess_record'));
             }
         }
 
-        $appointment = Appointment::findOrFail($input['appointmentId']);
-
         $appointment->update([
             'status' => $input['appointmentStatus'],
         ]);
+
+        // Clear appointment count cache for the doctor
+        Cache::forget('doctor_booked_appointments_' . $appointment->doctor->user_id);
+
         $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         // $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
@@ -351,6 +354,9 @@ class AppointmentController extends AppBaseController
         $appointment->update([
             'status' => Appointment::CANCELLED,
         ]);
+
+        // Clear appointment count cache for the doctor
+        Cache::forget('doctor_booked_appointments_' . $appointment->doctor->user_id);
 
         $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();

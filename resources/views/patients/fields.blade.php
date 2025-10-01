@@ -119,9 +119,15 @@
         </div>
     </div>
 
-    <!-- Student Information -->
+    <!-- Patient Information -->
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.student.student_information') }}</div>
     <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="form-check">
+                {{ Form::checkbox('is_employee', 1, !empty($patient->user) && in_array($patient->user->year_level_id, [1, 2, 3]), ['class' => 'form-check-input', 'id' => 'isEmployeeCheckbox']) }}
+                {{ Form::label('is_employee', __('messages.student.is_employee'), ['class' => 'form-check-label']) }}
+            </div>
+        </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('campus_id',__('messages.student.campus').':',['class'=>'form-label']) }}
             {{ Form::select('campus_id', $data['campuses'] ,!empty($patient->user) ? $patient->user->campus_id : null, ['placeholder' => __('messages.student.select_campus'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Campus",'data-control'=>'select2']) }}
@@ -137,10 +143,76 @@
             {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label']) }}
-            {{ Form::select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null, ['placeholder' => __('messages.student.select_year_level'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level",'data-control'=>'select2']) }}
+            {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label', 'id' => 'yearLevelLabel']) }}
+            {{ Form::select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null, ['placeholder' => __('messages.student.select_year_level'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level",'data-control'=>'select2', 'id' => 'yearLevelSelect']) }}
         </div>
     </div>
+
+    {{-- Hidden inputs to store original year level data --}}
+    {{ Form::hidden('all_year_levels', json_encode($data['year_levels']), ['id' => 'allYearLevels']) }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isEmployeeCheckbox = document.getElementById('isEmployeeCheckbox');
+            const yearLevelSelect = document.getElementById('yearLevelSelect');
+            const yearLevelLabel = document.getElementById('yearLevelLabel');
+            const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value);
+
+            // Split year levels based on the seeder data
+            // Employee levels: Staff, Faculty, Guest (first 3 items)
+            // Student levels: 1st Year to 6th Year (remaining items)
+            const employeeYearLevels = {};
+            const studentYearLevels = {};
+
+            let count = 0;
+            Object.entries(allYearLevels).forEach(([id, name]) => {
+                if (count < 3) {
+                    employeeYearLevels[id] = name;
+                } else {
+                    studentYearLevels[id] = name;
+                }
+                count++;
+            });
+
+            function updateYearLevelOptions() {
+                const isEmployee = isEmployeeCheckbox.checked;
+                const currentValue = $(yearLevelSelect).val();
+
+                // Update label and placeholder text
+                if (isEmployee) {
+                    yearLevelLabel.textContent = '{{ __("messages.student.position") }}:';
+                    $(yearLevelSelect).attr('aria-label', 'Select a Position');
+                } else {
+                    yearLevelLabel.textContent = '{{ __("messages.student.year_level") }}:';
+                    $(yearLevelSelect).attr('aria-label', 'Select a Year Level');
+                }
+
+                // Clear current options
+                $(yearLevelSelect).empty();
+
+                // Add appropriate placeholder
+                const placeholderText = isEmployee ? '{{ __("messages.student.select_position") }}' : '{{ __("messages.student.select_year_level") }}';
+                $(yearLevelSelect).append('<option value="">' + placeholderText + '</option>');
+
+                // Add appropriate options based on checkbox state
+                const optionsToShow = isEmployee ? employeeYearLevels : studentYearLevels;
+
+                Object.entries(optionsToShow).forEach(([value, text]) => {
+                    const option = new Option(text, value, false, value == currentValue);
+                    $(yearLevelSelect).append(option);
+                });
+
+                // Refresh Select2
+                $(yearLevelSelect).trigger('change');
+            }
+
+            // Initialize on page load
+            updateYearLevelOptions();
+
+            // Update when checkbox changes
+            isEmployeeCheckbox.addEventListener('change', updateYearLevelOptions);
+        });
+    </script>
 
     <div>
         {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}

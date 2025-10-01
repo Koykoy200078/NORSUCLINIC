@@ -147,20 +147,6 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
                 'date'
             )->view('doctor_appointment.doctor_panel.components.appointment_at')
                 ->sortable()->searchable(),
-            // Column::make(
-            //     __('messages.appointment.service_charge'),
-            //     'services.charges'
-            // )->view('doctor_appointment.doctor_panel.components.service_charge')
-            //     ->sortable()->searchable(),
-            // Column::make(__('messages.appointment.payment'), 'id')
-            //     ->format(function ($value, $row) {
-            //         return view('doctor_appointment.doctor_panel.components.payment')
-            //             ->with([
-            //                 'row' => $row,
-            //                 'paid' => Appointment::PAID,
-            //                 'pending' => Appointment::PENDING,
-            //             ]);
-            //     }),
             Column::make(__('messages.appointment.status'), 'id')
                 ->format(function ($value, $row) {
                     return view('doctor_appointment.doctor_panel.components.status')

@@ -163,24 +163,67 @@ listenChange(".appointment-status-change", function () {
     let appointmentId = $(this).attr("data-id");
     let currentData = $(this);
 
+    // Determine the correct route name based on current URL path
+    let currentPath = window.location.pathname;
+    let routeName = "change-status"; // default to admin
+
+    console.log("Current URL path:", currentPath);
+
+    if (currentPath.includes("/staff/")) {
+        routeName = "staff.change-status";
+    } else if (
+        currentPath.includes("/doctor/") ||
+        currentPath.includes("/doctors/")
+    ) {
+        routeName = "doctors.change-status";
+    }
+
+    console.log(
+        "Detected route name:",
+        routeName,
+        "for appointment:",
+        appointmentId
+    );
+
+    // Generate the URL manually to be absolutely sure
+    let baseUrl = window.location.origin;
+    let url;
+
+    if (routeName === "staff.change-status") {
+        url = baseUrl + "/staff/appointments/" + appointmentId;
+    } else if (routeName === "doctors.change-status") {
+        // Use the actual path structure from the current URL
+        if (currentPath.includes("/doctors/")) {
+            url = baseUrl + "/doctors/appointments/" + appointmentId;
+        } else {
+            url = baseUrl + "/doctor/appointments/" + appointmentId;
+        }
+    } else {
+        url = baseUrl + "/admin/appointments/" + appointmentId;
+    }
+
+    console.log("Generated URL:", url);
+
     $.ajax({
-        url: route("change-status", appointmentId),
+        url: url,
         type: "POST",
         data: {
             appointmentId: appointmentId,
             appointmentStatus: appointmentStatus,
+            _token: $('meta[name="csrf-token"]').attr("content"),
         },
-        _success: function (result) {
+        success: function (result) {
             $(currentData).children("option.booked").addClass("hide");
             window.location.reload();
-            // Turbo.visit(window.location.href);
             displaySuccessMessage(result.message);
         },
-        get success() {
-            return this._success;
-        },
-        set success(value) {
-            this._success = value;
+        error: function (xhr, status, error) {
+            console.error("Error changing status:", xhr.responseText);
+            console.error("Status:", status, "Error:", error);
+            console.error("URL used:", url);
+            displayErrorMessage(
+                "Error changing appointment status: " + xhr.responseText
+            );
         },
     });
 });

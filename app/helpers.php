@@ -218,11 +218,11 @@ if (! function_exists('getDoctorSessionTime')) {
 
 if (! function_exists('getSlotByGap')) {
 
-    function getSlotByGap($startTime, $endTime)
+    function getSlotByGap($startTime, $endTime, $gap = 15)
     {
         $period = new CarbonPeriod(
             $startTime,
-            '15 minutes',
+            $gap . ' minutes',
             $endTime
         ); // for create use 24 hours format later change format
         $slots = [];
@@ -1079,6 +1079,39 @@ if (!function_exists('getExpiringMedicinesCount')) {
                 })
                 ->distinct('medicine_id')
                 ->count('medicine_id');
+        });
+    }
+}
+
+if (!function_exists('getDoctorBookedAppointmentsCount')) {
+    /**
+     * Get count of booked appointments for the current doctor
+     *
+     * @return int
+     */
+    function getDoctorBookedAppointmentsCount()
+    {
+        // Only show count for doctors
+        if (!isRole('doctor')) {
+            return 0;
+        }
+
+        $user = getLogInUser();
+        if (!$user) {
+            return 0;
+        }
+
+        // Cache the result for 2 minutes to allow for more frequent updates
+        return Cache::remember('doctor_booked_appointments_' . $user->id, 120, function () use ($user) {
+            $doctor = $user->doctor;
+
+            if (!$doctor) {
+                return 0;
+            }
+
+            return \App\Models\Appointment::where('doctor_id', $doctor->id)
+                ->where('status', \App\Models\Appointment::BOOKED)
+                ->count();
         });
     }
 }

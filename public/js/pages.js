@@ -7014,24 +7014,53 @@ listenChange(".appointment-status-change", function () {
   var appointmentStatus = $(this).val();
   var appointmentId = $(this).attr("data-id");
   var currentData = $(this);
+
+  // Determine the correct route name based on current URL path
+  var currentPath = window.location.pathname;
+  var routeName = "change-status"; // default to admin
+
+  console.log("Current URL path:", currentPath);
+  if (currentPath.includes("/staff/")) {
+    routeName = "staff.change-status";
+  } else if (currentPath.includes("/doctor/") || currentPath.includes("/doctors/")) {
+    routeName = "doctors.change-status";
+  }
+  console.log("Detected route name:", routeName, "for appointment:", appointmentId);
+
+  // Generate the URL manually to be absolutely sure
+  var baseUrl = window.location.origin;
+  var url;
+  if (routeName === "staff.change-status") {
+    url = baseUrl + "/staff/appointments/" + appointmentId;
+  } else if (routeName === "doctors.change-status") {
+    // Use the actual path structure from the current URL
+    if (currentPath.includes("/doctors/")) {
+      url = baseUrl + "/doctors/appointments/" + appointmentId;
+    } else {
+      url = baseUrl + "/doctor/appointments/" + appointmentId;
+    }
+  } else {
+    url = baseUrl + "/admin/appointments/" + appointmentId;
+  }
+  console.log("Generated URL:", url);
   $.ajax({
-    url: route("change-status", appointmentId),
+    url: url,
     type: "POST",
     data: {
       appointmentId: appointmentId,
-      appointmentStatus: appointmentStatus
+      appointmentStatus: appointmentStatus,
+      _token: $('meta[name="csrf-token"]').attr("content")
     },
-    _success: function _success(result) {
+    success: function success(result) {
       $(currentData).children("option.booked").addClass("hide");
       window.location.reload();
-      // Turbo.visit(window.location.href);
       displaySuccessMessage(result.message);
     },
-    get success() {
-      return this._success;
-    },
-    set success(value) {
-      this._success = value;
+    error: function error(xhr, status, _error) {
+      console.error("Error changing status:", xhr.responseText);
+      console.error("Status:", status, "Error:", _error);
+      console.error("URL used:", url);
+      displayErrorMessage("Error changing appointment status: " + xhr.responseText);
     }
   });
 });
@@ -11221,7 +11250,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
 
-document.addEventListener('DOMContentLoaded', loadDoctorData);
+document.addEventListener("DOMContentLoaded", loadDoctorData);
 var isDefault = false;
 var deletedQualifications = [];
 var degree;
@@ -11231,79 +11260,79 @@ var updateId;
 var primaryId;
 var qualification = [];
 var id = 1;
-$('.showQualification').hide();
+$(".showQualification").hide();
 function loadDoctorData() {
   loadDoctorDate();
 }
 function loadDoctorDate() {
-  var doctorDob = '.doctor-dob';
-  var lang = $('.currentLanguage').val();
-  $('.showQualification').slideUp();
+  var doctorDob = ".doctor-dob";
+  var lang = $(".currentLanguage").val();
+  $(".showQualification").slideUp();
   if (!$(doctorDob).length) {
     return;
   }
   $(doctorDob).flatpickr({
-    "locale": lang,
+    locale: lang,
     maxDate: new Date(),
     disableMobile: true
   });
-  if (!$('#doctorCountryId').val()) {
+  if (!$("#doctorCountryId").val()) {
     return;
   }
-  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
+  $("#editDoctorCountryId").val($("#doctorCountryId").val()).trigger("change");
   setTimeout(function () {
-    $('#editDoctorStateId').val($('#doctorStateId').val()).trigger('change');
+    $("#editDoctorStateId").val($("#doctorStateId").val()).trigger("change");
   }, 400);
   setTimeout(function () {
-    $('#editDoctorCityId').val($('#doctorCityId').val()).trigger('change');
+    $("#editDoctorCityId").val($("#doctorCityId").val()).trigger("change");
   }, 7000);
 }
-listenClick('#addQualification', function () {
+listenClick("#addQualification", function () {
   isDefault = false;
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('').trigger('change');
-  $('.showQualification').slideToggle(500);
+  $(".degree").val("");
+  $(".university").val("");
+  $(".year").val("").trigger("change");
+  $(".showQualification").slideToggle(500);
 });
-listenClick('#cancelQualification', function () {
-  $('.showQualification').slideUp(500);
+listenClick("#cancelQualification", function () {
+  $(".showQualification").slideUp(500);
 });
-listenClick('#ResetForm', function () {
-  window.location.href = route('doctors.index');
+listenClick("#ResetForm", function () {
+  window.location.href = route("doctors.index");
 });
-listenClick('#saveQualification', function (e) {
+listenClick("#saveQualification", function (e) {
   e.preventDefault();
-  degree = $('.degree').val();
-  university = $('.university').val();
-  year = $('.year').val();
-  var existId = $('#doctorQualificationTbl tr:last-child td:first-child').data('value');
+  degree = $(".degree").val();
+  university = $(".university").val();
+  year = $(".year").val();
+  var existId = $("#doctorQualificationTbl tr:last-child td:first-child").data("value");
   existId++;
   if (existId) {
     id = existId;
   }
   var prepareData = {
-    'id': primaryId,
-    'degree': degree,
-    'year': year,
-    'university': university
+    id: primaryId,
+    degree: degree,
+    year: year,
+    university: university
   };
   var data = {
-    'id': id,
-    'degree': degree,
-    'year': year,
-    'university': university
+    id: id,
+    degree: degree,
+    year: year,
+    university: university
   };
-  var emptyDegree = $('.degree').val().trim().replace(/ \r\n\t/g, '') === '';
-  var emptyUniversity = $('.university').val().trim().replace(/ \r\n\t/g, '') === '';
-  var emptyYear = $('.year').val().trim().replace(/ \r\n\t/g, '') === '';
+  var emptyDegree = $(".degree").val().trim().replace(/ \r\n\t/g, "") === "";
+  var emptyUniversity = $(".university").val().trim().replace(/ \r\n\t/g, "") === "";
+  var emptyYear = $(".year").val().trim().replace(/ \r\n\t/g, "") === "";
   if (emptyDegree) {
-    displayErrorMessage(Lang.get('js.degree_required'));
+    displayErrorMessage(Lang.get("js.degree_required"));
     return false;
   } else if (emptyUniversity) {
-    displayErrorMessage(Lang.get('js.university_required'));
+    displayErrorMessage(Lang.get("js.university_required"));
     return false;
   } else if (emptyYear) {
-    displayErrorMessage(Lang.get('js.year_required'));
+    displayErrorMessage(Lang.get("js.year_required"));
     return false;
   }
   if (updateId == null) {
@@ -11311,119 +11340,124 @@ listenClick('#saveQualification', function (e) {
   } else {
     qualification[updateId - 1] = prepareData;
   }
-  var qualificationHtml = prepareTemplateRender('#qualificationTemplateData', data);
+  var qualificationHtml = prepareTemplateRender("#qualificationTemplateData", data);
   if (isDefault == false) {
-    $('tbody').append(qualificationHtml);
+    $("tbody").append(qualificationHtml);
     id++;
   } else if (isDefault == true) {
     var _data = {
-      'id': updateId,
-      'degree': degree,
-      'year': year,
-      'university': university
+      id: updateId,
+      degree: degree,
+      year: year,
+      university: university
     };
-    var updateQualificationHtml = prepareTemplateRender('#qualificationTemplateData', _data);
-    var table = $('table tbody');
-    $(table).find('tr').each(function (i, v) {
+    var updateQualificationHtml = prepareTemplateRender("#qualificationTemplateData", _data);
+    var table = $("table tbody");
+    $(table).find("tr").each(function (i, v) {
       i = i + 1;
       if (i == updateId) {
-        $('tbody').find(v).replaceWith(updateQualificationHtml);
+        $("tbody").find(v).replaceWith(updateQualificationHtml);
       }
     });
   }
-  $('.showQualification').slideUp(500);
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('');
+  $(".showQualification").slideUp(500);
+  $(".degree").val("");
+  $(".university").val("");
+  $(".year").val("");
 });
-listenClick('.delete-btn-qualification', function (event) {
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('').trigger('change');
+listenClick(".delete-btn-qualification", function (event) {
+  $(".degree").val("");
+  $(".university").val("");
+  $(".year").val("").trigger("change");
   qualification.pop([0]);
-  $('.showQualification').slideUp(500);
+  $(".showQualification").slideUp(500);
   var Ele = $(this);
-  var qualificationID = $(this).attr('data-id');
-  var header = Lang.get('js.qualification');
+  var qualificationID = $(this).attr("data-id");
+  var header = Lang.get("js.qualification");
   swal({
-    title: Lang.get('js.delete') + ' !',
-    text: Lang.get('js.are_you_sure') + ' "' + header + '" ?',
+    title: Lang.get("js.delete") + " !",
+    text: Lang.get("js.are_you_sure") + ' "' + header + '" ?',
     buttons: {
-      confirm: Lang.get('js.yes'),
-      cancel: Lang.get('js.no')
+      confirm: Lang.get("js.yes"),
+      cancel: Lang.get("js.no")
     },
     reverseButtons: true,
-    icon: 'warning'
+    icon: "warning"
   }).then(function (result) {
     if (result == true) {
       deletedQualifications.push(qualificationID);
-      $('#deletedQualifications').val(deletedQualifications);
-      Ele.closest('tr')[0].remove();
+      $("#deletedQualifications").val(deletedQualifications);
+      Ele.closest("tr")[0].remove();
       swal({
-        icon: 'success',
-        title: Lang.get('js.deleted'),
-        text: header + Lang.get('js.has_been'),
+        icon: "success",
+        title: Lang.get("js.deleted"),
+        text: header + Lang.get("js.has_been"),
         timer: 2000
       });
     }
   });
 });
-listenClick('.edit-btn-qualification', function () {
-  $('.degree').val('');
-  $('.university').val('');
-  $('.year').val('');
-  updateId = $(this).attr('data-id');
-  primaryId = $(this).data('primary-id');
-  var currentRow = $(this).closest('tr');
-  var currentDegree = currentRow.find('td:eq(1)').text();
-  var currentCollage = currentRow.find('td:eq(2)').text();
-  var currentYear = currentRow.find('td:eq(3)').text();
-  $('.degree').val(currentDegree);
-  $('.university').val(currentCollage);
-  $('.year').val(currentYear).trigger('change');
+listenClick(".edit-btn-qualification", function () {
+  $(".degree").val("");
+  $(".university").val("");
+  $(".year").val("");
+  updateId = $(this).attr("data-id");
+  primaryId = $(this).data("primary-id");
+  var currentRow = $(this).closest("tr");
+  var currentDegree = currentRow.find("td:eq(1)").text();
+  var currentCollage = currentRow.find("td:eq(2)").text();
+  var currentYear = currentRow.find("td:eq(3)").text();
+  $(".degree").val(currentDegree);
+  $(".university").val(currentCollage);
+  $(".year").val(currentYear).trigger("change");
   isDefault = true;
-  $('.showQualification').slideToggle(500);
+  $(".showQualification").slideToggle(500);
 });
-listenSubmit('#editDoctorForm', function (e) {
-  var twitterUrl = $('#twitterUrl').val();
-  var linkedinUrl = $('#linkedinUrl').val();
-  var instagramUrl = $('#instagramUrl').val();
+listenSubmit("#editDoctorForm", function (e) {
+  var twitterUrl = $("#twitterUrl").val();
+  var linkedinUrl = $("#linkedinUrl").val();
+  var instagramUrl = $("#instagramUrl").val();
   var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
   var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
   var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
-  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
+  var twitterCheck = twitterUrl == "" ? true : twitterUrl.match(twitterExp) ? true : false;
   if (!twitterCheck) {
-    displayErrorMessage(Lang.get('js.valid_twitter'));
+    displayErrorMessage(Lang.get("js.valid_twitter"));
     return false;
   }
-  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
+  var linkedInCheck = linkedinUrl == "" ? true : linkedinUrl.match(linkedinExp) ? true : false;
   if (!linkedInCheck) {
-    displayErrorMessage(Lang.get('js.valid_linkedin'));
+    displayErrorMessage(Lang.get("js.valid_linkedin"));
     return false;
   }
-  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
+  var instagramCheck = instagramUrl == "" ? true : instagramUrl.match(instagramExp) ? true : false;
   if (!instagramCheck) {
-    displayErrorMessage(Lang.get('js.valid_instagram'));
+    displayErrorMessage(Lang.get("js.valid_instagram"));
     return false;
   }
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+  if ($("#error-msg").text() !== "") {
+    $("#phoneNumber").focus();
+    displayErrorMessage(Lang.get("js.contact_number") + $("#error-msg").text());
     return false;
   }
   e.preventDefault();
   var doctorFormData = new FormData($(this)[0]);
-  var editDoctorId = $('#editDoctorId').val();
-  doctorFormData.append('qualifications', JSON.stringify(qualification));
+  var editDoctorId = $("#editDoctorId").val();
+  doctorFormData.append("qualifications", JSON.stringify(qualification));
+
+  // Get the form's action URL instead of hardcoding the route
+  var formAction = $(this).attr("action");
   $.ajax({
-    url: route('doctors.update', editDoctorId),
-    type: 'POST',
+    url: formAction,
+    type: "POST",
     data: doctorFormData,
     contentType: false,
     processData: false,
     success: function success(result) {
       if (result.success) {
-        window.location.href = route('doctors.index');
+        // Get redirect URL from a hidden input that will be set in the blade template
+        var redirectUrl = $("#doctorIndexRedirectUrl").val();
+        window.location.href = redirectUrl || route("doctors.index");
       }
     },
     error: function error(result) {
@@ -11431,106 +11465,106 @@ listenSubmit('#editDoctorForm', function (e) {
     }
   });
 });
-listenChange('input[type=radio][name=gender]', function () {
-  var file = $('#profilePicture').val();
+listenChange("input[type=radio][name=gender]", function () {
+  var file = $("#profilePicture").val();
   if (isEmpty(file)) {
     if (this.value == 1) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + manAvatar + ')');
+      $(".image-input-wrapper").attr("style", "background-image:url(" + manAvatar + ")");
     } else if (this.value == 2) {
-      $('.image-input-wrapper').attr('style', 'background-image:url(' + womanAvatar + ')');
+      $(".image-input-wrapper").attr("style", "background-image:url(" + womanAvatar + ")");
     }
   }
 });
-listenChange('#editDoctorCountryId', function () {
-  var doctorIsEdit = $('#doctorIsEdit').val();
+listenChange("#editDoctorCountryId", function () {
+  var doctorIsEdit = $("#doctorIsEdit").val();
   $.ajax({
-    url: route('get-state'),
-    type: 'get',
-    dataType: 'json',
+    url: route("get-state"),
+    type: "get",
+    dataType: "json",
     data: {
       data: $(this).val()
     },
     success: function success(data) {
-      $('#editDoctorStateId').empty();
-      $('#editDoctorCityId').empty();
+      $("#editDoctorStateId").empty();
+      $("#editDoctorCityId").empty();
       //
-      $('#editDoctorStateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
-      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $("#editDoctorStateId").append($('<option value=""></option>').text(Lang.get("js.select_state")));
+      $("#editDoctorCityId").append($('<option value=""></option>').text(Lang.get("js.select_city")));
       $.each(data.data, function (i, v) {
-        $('#editDoctorStateId').append($('<option></option>').attr('value', i).text(v));
+        $("#editDoctorStateId").append($("<option></option>").attr("value", i).text(v));
       });
-      if (doctorIsEdit && $('#doctorStateId').val()) {
-        $('#stateId').val($('#doctorStateId').val()).trigger('change');
+      if (doctorIsEdit && $("#doctorStateId").val()) {
+        $("#stateId").val($("#doctorStateId").val()).trigger("change");
       }
     }
   });
 });
-listenChange('#editDoctorStateId', function () {
-  var doctorIsEdit = $('#doctorIsEdit').val();
+listenChange("#editDoctorStateId", function () {
+  var doctorIsEdit = $("#doctorIsEdit").val();
   $.ajax({
-    url: route('get-city'),
-    type: 'get',
-    dataType: 'json',
+    url: route("get-city"),
+    type: "get",
+    dataType: "json",
     data: {
       state: $(this).val(),
-      country: $('#editDoctorCountryId').val()
+      country: $("#editDoctorCountryId").val()
     },
     success: function success(data) {
-      $('#editDoctorCityId').empty();
-      $('#editDoctorCityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $("#editDoctorCityId").empty();
+      $("#editDoctorCityId").append($('<option value=""></option>').text(Lang.get("js.select_city")));
       $.each(data.data, function (i, v) {
-        $('#editDoctorCityId').append($('<option ></option>').attr('value', i).text(v));
+        $("#editDoctorCityId").append($("<option ></option>").attr("value", i).text(v));
       });
-      if (doctorIsEdit && $('#doctorCityId').val()) {
-        $('#cityId').val($('#doctorCityId').val()).trigger('change');
+      if (doctorIsEdit && $("#doctorCityId").val()) {
+        $("#cityId").val($("#doctorCityId").val()).trigger("change");
       }
     }
   });
 });
-if ($('#doctorIsEdit').val() && $('#doctorCountryId').val()) {
-  $('#editDoctorCountryId').val($('#doctorCountryId').val()).trigger('change');
+if ($("#doctorIsEdit").val() && $("#doctorCountryId").val()) {
+  $("#editDoctorCountryId").val($("#doctorCountryId").val()).trigger("change");
 }
-listenKeyup('#twitterUrl', function () {
+listenKeyup("#twitterUrl", function () {
   this.value = this.value.toLowerCase();
 });
-listenKeyup('#linkedinUrl', function () {
+listenKeyup("#linkedinUrl", function () {
   this.value = this.value.toLowerCase();
 });
-listenKeyup('#instagramUrl', function () {
+listenKeyup("#instagramUrl", function () {
   this.value = this.value.toLowerCase();
 });
-listenSubmit('#createDoctorForm', function () {
-  var twitterUrl = $('#twitterUrl').val();
-  var linkedinUrl = $('#linkedinUrl').val();
-  var instagramUrl = $('#instagramUrl').val();
+listenSubmit("#createDoctorForm", function () {
+  var twitterUrl = $("#twitterUrl").val();
+  var linkedinUrl = $("#linkedinUrl").val();
+  var instagramUrl = $("#instagramUrl").val();
   var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i);
   var linkedinExp = new RegExp(/^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
   var instagramExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i);
-  var twitterCheck = twitterUrl == '' ? true : twitterUrl.match(twitterExp) ? true : false;
+  var twitterCheck = twitterUrl == "" ? true : twitterUrl.match(twitterExp) ? true : false;
   if (!twitterCheck) {
-    displayErrorMessage(Lang.get('js.valid_twitter'));
+    displayErrorMessage(Lang.get("js.valid_twitter"));
     return false;
   }
-  var linkedInCheck = linkedinUrl == '' ? true : linkedinUrl.match(linkedinExp) ? true : false;
+  var linkedInCheck = linkedinUrl == "" ? true : linkedinUrl.match(linkedinExp) ? true : false;
   if (!linkedInCheck) {
-    displayErrorMessage(Lang.get('js.valid_linkedin'));
+    displayErrorMessage(Lang.get("js.valid_linkedin"));
     return false;
   }
-  var instagramCheck = instagramUrl == '' ? true : instagramUrl.match(instagramExp) ? true : false;
+  var instagramCheck = instagramUrl == "" ? true : instagramUrl.match(instagramExp) ? true : false;
   if (!instagramCheck) {
-    displayErrorMessage(Lang.get('js.valid_instagram'));
+    displayErrorMessage(Lang.get("js.valid_instagram"));
     return false;
   }
-  if ($('#error-msg').text() !== '') {
-    $('#phoneNumber').focus();
-    displayErrorMessage(Lang.get('js.contact_number') + $('#error-msg').text());
+  if ($("#error-msg").text() !== "") {
+    $("#phoneNumber").focus();
+    displayErrorMessage(Lang.get("js.contact_number") + $("#error-msg").text());
     return false;
   }
 });
-listenClick('.removeAvatarIcon', function () {
-  $('#bgImage').css('background-image', '');
-  $('#bgImage').css('background-image', 'url(' + backgroundImg + ')');
-  $('#removeAvatar').remove();
+listenClick(".removeAvatarIcon", function () {
+  $("#bgImage").css("background-image", "");
+  $("#bgImage").css("background-image", "url(" + backgroundImg + ")");
+  $("#removeAvatar").remove();
 });
 
 /***/ }),

@@ -178,13 +178,15 @@ class DoctorSessionController extends AppBaseController
             return $this->sendError(__('messages.flash.no_available_slots'));
         }
 
-        $appointments = Appointment::whereDoctorId($doctorId)->whereIn('status',
-            [Appointment::BOOKED, Appointment::ACCEPTED, Appointment::FINISHED])->get();
+        $appointments = Appointment::whereDoctorId($doctorId)->whereIn(
+            'status',
+            [Appointment::BOOKED, Appointment::ACCEPTED, Appointment::FINISHED]
+        )->get();
         $bookedSlot = [];
         $bookingSlot = [];
         foreach ($appointments as $appointment) {
             if ($appointment->date == $request->date) {
-                $bookedSlot[] = $appointment->from_time.' '.$appointment->from_time_type.' - '.$appointment->to_time.' '.$appointment->to_time_type;
+                $bookedSlot[] = $appointment->from_time . ' ' . $appointment->from_time_type . ' - ' . $appointment->to_time . ' ' . $appointment->to_time_type;
             }
         }
 
@@ -201,10 +203,14 @@ class DoctorSessionController extends AppBaseController
             foreach ($slots as $key => $slot) {
                 $key--;
                 if ($key != 0) {
-                    $slotStartTime = date('h:i A',
-                        strtotime('+'.$gap * $key.' minutes', strtotime($slot[0])));
-                    $slotEndTime = date('h:i A',
-                        strtotime('+'.$gap * $key.' minutes', strtotime($slot[1])));
+                    $slotStartTime = date(
+                        'h:i A',
+                        strtotime('+' . $gap * $key . ' minutes', strtotime($slot[0]))
+                    );
+                    $slotEndTime = date(
+                        'h:i A',
+                        strtotime('+' . $gap * $key . ' minutes', strtotime($slot[1]))
+                    );
                     if (strtotime($doctorWeekDaySession->full_end_time) < strtotime($slotEndTime)) {
                         break;
                     }
@@ -217,19 +223,20 @@ class DoctorSessionController extends AppBaseController
                                 break;
                             }
 
-                            if (in_array(($slotStartTime.' - '.$slotEndTime), $bookingSlot)) {
+                            if (in_array(($slotStartTime . ' - ' . $slotEndTime), $bookingSlot)) {
                                 break;
                             }
-                            $bookingSlot[] = $slotStartTime.' - '.$slotEndTime;
+                            $bookingSlot[] = $slotStartTime . ' - ' . $slotEndTime;
                         }
                     }
                 } else {
                     if (($isSameWeekDay && strtotime($slot[0]) > strtotime(date('h:i A'))) || ! $isSameWeekDay) {
-                        if (in_array((date('h:i A', strtotime($slot[0])).' - '.date('h:i A', strtotime($slot[1]))),
-                            $bookingSlot)) {
+                        if (in_array((date('h:i A', strtotime($slot[0])) . ' - ' . date('h:i A', strtotime($slot[1]))),
+                            $bookingSlot
+                        )) {
                             break;
                         }
-                        $bookingSlot[] = date('h:i A', strtotime($slot[0])).' - '.date('h:i A', strtotime($slot[1]));
+                        $bookingSlot[] = date('h:i A', strtotime($slot[0])) . ' - ' . date('h:i A', strtotime($slot[1]));
                     }
                 }
             }
@@ -258,10 +265,12 @@ class DoctorSessionController extends AppBaseController
         $time = [];
         while (strtotime($startTime) <= strtotime($endTime)) {
             $start = $startTime;
-            $end = date('H:i', strtotime('+'.$interval.' minutes', strtotime($startTime)));
-            $startTime = date('H:i', strtotime('+'.$interval.' minutes', strtotime($startTime)));
-            if (! Carbon::createFromFormat('H:i', $start)->isBetween($carbonStart,
-                $carbonEnd) || ! Carbon::createFromFormat('H:i', $end)->isBetween($carbonStart, $carbonEnd)) {
+            $end = date('H:i', strtotime('+' . $interval . ' minutes', strtotime($startTime)));
+            $startTime = date('H:i', strtotime('+' . $interval . ' minutes', strtotime($startTime)));
+            if (! Carbon::createFromFormat('H:i', $start)->isBetween(
+                $carbonStart,
+                $carbonEnd
+            ) || ! Carbon::createFromFormat('H:i', $end)->isBetween($carbonStart, $carbonEnd)) {
                 break;
             }
             $i++;
@@ -285,11 +294,17 @@ class DoctorSessionController extends AppBaseController
      */
     public function getSlotByGap(Request $request)
     {
-        $gap = $request->get('gap');
+        $gap = $request->get('gap', 15); // Default to 15 minutes if not provided
         $day = $request->get('day');
         $clinicSchedule = ClinicSchedule::whereDayOfWeek($day)->first();
-        $slots = getSlotByGap($clinicSchedule->start_time, $clinicSchedule->end_time);
-        $html = view('doctor_sessions.slot', ['slots' => $slots, 'day' => $day])->render();
+
+        // Check if clinic schedule exists for the given day
+        if (!$clinicSchedule) {
+            return $this->sendError(__('messages.flash.clinic_schedule_not_found'));
+        }
+
+        $slots = getSlotByGap($clinicSchedule->start_time, $clinicSchedule->end_time, $gap);
+        $html = view('doctor_sessions.slot', ['slot' => $slots, 'day' => $day])->render();
 
         return $this->sendResponse($html, __('messages.flash.retrieve'));
     }

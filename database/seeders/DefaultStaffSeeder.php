@@ -32,55 +32,7 @@ class DefaultStaffSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'country_code' => '63',
                 'time_zone' => '0'
-            ],
-            [
-                'first_name' => 'Jane',
-                'last_name' => 'Smith',
-                'contact' => '0987654321',
-                'gender' => User::FEMALE,
-                'type' => User::STAFF,
-                'email' => 'jane.smith@gmail.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password123'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ],
-            [
-                'first_name' => 'Alice',
-                'last_name' => 'Johnson',
-                'contact' => '1122334455',
-                'gender' => User::FEMALE,
-                'type' => User::STAFF,
-                'email' => 'alice.johnson@gmail.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password123'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ],
-            [
-                'first_name' => 'Bob',
-                'last_name' => 'Brown',
-                'contact' => '2233445566',
-                'gender' => User::MALE,
-                'type' => User::STAFF,
-                'email' => 'bob.brown@gmail.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password123'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ],
-            [
-                'first_name' => 'Charlie',
-                'last_name' => 'Davis',
-                'contact' => '3344556677',
-                'gender' => User::MALE,
-                'type' => User::STAFF,
-                'email' => 'charlie.davis@gmail.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password123'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ],
+            ]
         ];
 
         foreach ($staffMembers as $staffData) {

@@ -180,6 +180,9 @@
 </div>
 <div class="d-flex mt-4">
     <button type="submit" class="btn btn-primary">{{__('messages.common.save')}}</button>&nbsp;&nbsp;&nbsp;
-    <a href="{{route('doctors.index')}}" type="reset" id="ResetForm"
+    <a href="{{ 
+                   isRole('clinic_admin') ? route('doctors.index') : 
+                   (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
+               }}" type="reset" id="ResetForm"
         class="btn btn-secondary">{{__('messages.common.discard')}}</a>
 </div>

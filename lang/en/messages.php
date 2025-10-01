@@ -486,7 +486,7 @@ return [
     ],
 
     'student' => [
-        'student_information' => 'Student Information',
+        'student_information' => 'Patient Information',
         'college' => 'College',
         'select_college' => 'Select College',
         'course' => 'Course',
@@ -495,6 +495,9 @@ return [
         'select_campus' => 'Select Campus',
         'year_level' => 'Year Level',
         'select_year_level' => 'Select Year Level',
+        'position' => 'Position',
+        'select_position' => 'Select Position',
+        'is_employee' => 'Is Employee/Staff/Faculty/Guest',
     ],
 
     'country' => [
@@ -941,6 +944,7 @@ return [
         'schedule_update' => 'Schedule updated successfully.',
         'schedule_delete' => 'Schedule deleted successfully.',
         'schedule_not_found' => 'Schedule not found.',
+        'clinic_schedule_not_found' => 'Clinic schedule not found for the selected day.',
         'retrieve' => 'Retrieved successfully.',
         'doctor_session_not_found' => 'Doctor Session not found.',
         'no_available_slots' => 'There is no available slots on given date.',

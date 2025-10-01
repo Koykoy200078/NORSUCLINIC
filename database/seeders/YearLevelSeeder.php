@@ -15,6 +15,15 @@ class YearLevelSeeder extends Seeder
     {
         $year_level = [
             [
+                'year_level_name' => 'Staff',
+            ],
+            [
+                'year_level_name' => 'Faculty',
+            ],
+            [
+                'year_level_name' => 'Guest',
+            ],
+            [
                 'year_level_name' => '1st Year',
             ],
             [

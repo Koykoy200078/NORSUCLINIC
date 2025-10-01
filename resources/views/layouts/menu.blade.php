@@ -56,6 +56,16 @@
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.appointments') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
+        @if(isRole('doctor') && auth()->user()->doctor)
+        @php
+        $bookedCount = \App\Models\Appointment::where('doctor_id', auth()->user()->doctor->id)
+        ->where('status', \App\Models\Appointment::BOOKED)
+        ->count();
+        @endphp
+        @if($bookedCount > 0)
+        <span class="badge bg-warning rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $bookedCount }}</span>
+        @endif
+        @endif
         <span class="d-none">{{ __('messages.appointments') }}</span>
         <span class="d-none">{{ __('messages.patients') }}</span>
     </a>
@@ -234,7 +244,16 @@
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>
         @php
-        $expiringCount = getExpiringMedicinesCount();
+        // Direct database query for real-time count of medicines expiring within a month
+        $oneMonthFromNow = \Carbon\Carbon::now()->addMonth();
+        $today = \Carbon\Carbon::now();
+        $expiringCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
+        ->whereBetween('expiry_date', [$today, $oneMonthFromNow])
+        ->whereHas('medicines', function ($query) {
+        $query->where('available_quantity', '>', 0);
+        })
+        ->distinct('medicine_id')
+        ->count('medicine_id');
         @endphp
         @if($expiringCount > 0)
         <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $expiringCount }}</span>

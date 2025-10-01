@@ -46,7 +46,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Appointment Management (Staff can manage appointments)
     Route::middleware('permission:manage_appointments')->group(function () {
         Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
+        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('staff.change-status');
         Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
         Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
         Route::get('appointments-calendar-view', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar-view');
