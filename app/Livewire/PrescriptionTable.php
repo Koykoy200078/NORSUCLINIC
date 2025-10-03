@@ -87,19 +87,30 @@ class PrescriptionTable extends LivewireTableComponent
     {
         /** @var Prescription $query */
         if (! getLoggedinDoctor()) {
-            $query = Prescription::query()->select('prescriptions.*')->with('patient', 'doctor');
+            $query = Prescription::query()->select('prescriptions.*')->with([
+                'patient:id,user_id',
+                'patient.patientUser:id,first_name,last_name',
+                'doctor:id,user_id',
+                'doctor.doctorUser:id,first_name,last_name'
+            ]);
         } else {
             $doctorId = Doctor::where('user_id', getLogInUserId())->first();
-            $query = Prescription::query()->select('prescriptions.*')->with('patient', 'doctor')->where('doctor_id',
-                $doctorId->id);
+            $query = Prescription::query()->select('prescriptions.*')->with([
+                'patient:id,user_id',
+                'patient.patientUser:id,first_name,last_name',
+                'doctor:id,user_id',
+                'doctor.doctorUser:id,first_name,last_name'
+            ])->where('doctor_id', $doctorId->id);
         }
         $query->when(! empty($this->appointMentId), function (Builder $q) {
             $q->whereAppointmentId($this->appointMentId);
         });
-      $query->when($this->statusFilter !== '' && $this->statusFilter != Prescription::STATUS_ALL,
+        $query->when(
+            $this->statusFilter !== '' && $this->statusFilter != Prescription::STATUS_ALL,
             function (Builder $query) {
                 return $query->where('prescriptions.status', $this->statusFilter);
-            });
+            }
+        );
         return $query;
     }
 }

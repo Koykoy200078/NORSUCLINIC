@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -20,9 +21,10 @@ return new class extends Migration
 
         // Add indexes for Appointment table to optimize dashboard queries
         Schema::table('appointments', function (Blueprint $table) {
-            $table->index(['date', 'status'], 'idx_appointments_date_status');
-            $table->index(['doctor_id', 'date', 'status'], 'idx_appointments_doctor_date_status');
-            $table->index(['patient_id', 'date', 'status'], 'idx_appointments_patient_date_status');
+            // Use raw SQL for date prefix index to avoid 1000 byte limit on VARCHAR date column
+            DB::statement('CREATE INDEX idx_appointments_date_status ON appointments (date(50), status)');
+            $table->index(['doctor_id', 'status'], 'idx_appointments_doctor_status');
+            $table->index(['patient_id', 'status'], 'idx_appointments_patient_status');
             $table->index(['created_at', 'status'], 'idx_appointments_created_status');
         });
 
@@ -60,9 +62,9 @@ return new class extends Migration
         });
 
         Schema::table('appointments', function (Blueprint $table) {
-            $table->dropIndex('idx_appointments_date_status');
-            $table->dropIndex('idx_appointments_doctor_date_status');
-            $table->dropIndex('idx_appointments_patient_date_status');
+            DB::statement('DROP INDEX IF EXISTS idx_appointments_date_status ON appointments');
+            $table->dropIndex('idx_appointments_doctor_status');
+            $table->dropIndex('idx_appointments_patient_status');
             $table->dropIndex('idx_appointments_created_status');
         });
 

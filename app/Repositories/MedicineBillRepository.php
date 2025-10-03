@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class DoctorRepository
@@ -79,7 +80,7 @@ class MedicineBillRepository extends BaseRepository
                         if ($updatedMedicine->available_quantity < $input['quantity'][$key]) {
                             $available = $updatedMedicine->available_quantity == null ? 0 : $updatedMedicine->available_quantity;
 
-                            throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity').' '.$updatedMedicine->name.' '.__('messages.medicine_bills.is').' '.$available.'.');
+                            throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity') . ' ' . $updatedMedicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
                         }
                     }
                 }
@@ -124,7 +125,7 @@ class MedicineBillRepository extends BaseRepository
                 if ($input['payment_status'] == true && $medicine->available_quantity < $qty && $medicineBill->payment_status == 0) {
                     $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
 
-                    throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity').' '.$medicine->name.' '.__('messages.medicine_bills.is').' '.$available.'.');
+                    throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity') . ' ' . $medicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
                 }
                 if (! is_null($saleMedicine) && $input['payment_status'] == 1 && $medicineBill['payment_status'] == 1) {
                     $PreviousQty = $saleMedicine->sale_quantity == null ? 0 : $saleMedicine->sale_quantity;
@@ -138,9 +139,8 @@ class MedicineBillRepository extends BaseRepository
                 if (! array_key_exists($input['medicine'][$key], $result) && $medicine->available_quantity < $qty && $input['payment_status'] == false) {
                     $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
 
-                    throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity').' '.$medicine->name.' '.__('messages.medicine_bills.is').' '.$available.'.');
+                    throw new UnprocessableEntityHttpException(__('messages.medicine_bills.available_quantity') . ' ' . $medicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
                 }
-
             }
             $medicineBill->saleMedicine()->delete();
 
@@ -177,7 +177,6 @@ class MedicineBillRepository extends BaseRepository
                 }
             }
             DB::commit();
-
         } catch (Exception $e) {
             DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
@@ -188,24 +187,30 @@ class MedicineBillRepository extends BaseRepository
 
     public function getPatients(): Collection
     {
-        $patients = Patient::with('patientUser')
-            ->whereHas('patientUser', function (Builder $query) {
-                $query->where('status', 1);
-            })->get()->pluck('patientUser.full_name', 'id')->sort();
+        $patients = Cache::remember('active_patients_medicine_bill', 600, function () {
+            return Patient::with('patientUser:id,first_name,last_name,status')
+                ->whereHas('patientUser', function (Builder $query) {
+                    $query->where('status', 1);
+                })->get()->pluck('patientUser.full_name', 'id')->sort();
+        });
 
         return $patients;
     }
 
     public function getMedicines()
     {
-        $data['medicines'] = Medicine::all()->pluck('name', 'id')->toArray();
+        $data['medicines'] = Cache::remember('medicines_list', 600, function () {
+            return Medicine::pluck('name', 'id')->toArray();
+        });
 
         return $data;
     }
 
     public function getSettingList(): array
     {
-        $settings = Setting::pluck('value', 'key')->toArray();
+        $settings = Cache::remember('app_settings', 3600, function () {
+            return Setting::pluck('value', 'key')->toArray();
+        });
 
         return $settings;
     }
@@ -213,15 +218,21 @@ class MedicineBillRepository extends BaseRepository
     public function getDoctors(): Doctor
     {
         /** @var Doctor $doctors */
-        $doctors = Doctor::with('doctorUser')->get()->where('doctorUser.status', '=', 1)->pluck('doctorUser.full_name',
-            'id')->sort();
+        $doctors = Cache::remember('active_doctors_medicine_bill', 600, function () {
+            return Doctor::with('doctorUser:id,first_name,last_name,status')
+                ->whereHas('doctorUser', function (Builder $query) {
+                    $query->where('status', 1);
+                })->get()->pluck('doctorUser.full_name', 'id')->sort();
+        });
 
         return $doctors;
     }
 
     public function getMedicinesCategoriesData(): Collection
     {
-        return Category::where('is_active', '=', 1)->pluck('name', 'id');
+        return Cache::remember('active_medicine_categories', 600, function () {
+            return Category::where('is_active', '=', 1)->pluck('name', 'id');
+        });
     }
 
     public function getMedicineCategoriesList(): array

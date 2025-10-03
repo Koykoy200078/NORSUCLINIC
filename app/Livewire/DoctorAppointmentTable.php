@@ -49,7 +49,10 @@ class DoctorAppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Appointment::with(['patient.user'])->where(
+        $query = Appointment::with([
+            'patient:id,user_id',
+            'patient.user:id,first_name,last_name'
+        ])->where(
             'doctor_id',
             '=',
             $this->doctorId

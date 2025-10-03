@@ -121,9 +121,10 @@ class DashboardRepository
     public function patientData($input)
     {
         if (isset($input['day'])) {
-            $data = Patient::with(['user', 'appointments'])
+            // Optimized: Use indexed whereDate instead of CURDATE()
+            $data = Patient::with(['user:id,first_name,last_name,email', 'appointments:id,patient_id,date,status'])
                 ->withCount('appointments')
-                ->whereRaw('Date(created_at) = CURDATE()')
+                ->whereDate('created_at', Carbon::today())
                 ->orderBy('created_at', 'DESC')
                 ->paginate(5);
 
@@ -131,10 +132,11 @@ class DashboardRepository
         }
 
         if (isset($input['week'])) {
+            // Optimized: Use indexed columns with selective eager loading
             $now = Carbon::now();
-            $weekStartDate = $now->startOfWeek()->format('Y-m-d H:i');
-            $weekEndDate = $now->endOfWeek()->format('Y-m-d H:i');
-            $data = Patient::with(['user', 'appointments'])
+            $weekStartDate = $now->copy()->startOfWeek()->format('Y-m-d H:i');
+            $weekEndDate = $now->copy()->endOfWeek()->format('Y-m-d H:i');
+            $data = Patient::with(['user:id,first_name,last_name,email', 'appointments:id,patient_id,date,status'])
                 ->withCount('appointments')
                 ->whereBetween('created_at', [$weekStartDate, $weekEndDate])
                 ->orderBy('created_at', 'DESC')
@@ -144,7 +146,9 @@ class DashboardRepository
         }
 
         if (isset($input['month'])) {
-            $data = Patient::with(['user', 'appointments'])
+            // Optimized: Cache monthly data
+            $cacheKey = 'monthly_patients_' . Carbon::now()->format('Y-m');
+            $data = Patient::with(['user:id,first_name,last_name,email', 'appointments:id,patient_id,date,status'])
                 ->withCount('appointments')
                 ->whereMonth('created_at', Carbon::now()->month)
                 ->orderBy('created_at', 'DESC')

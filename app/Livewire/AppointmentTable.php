@@ -66,13 +66,14 @@ class AppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
+        // Optimized eager loading with selective columns
         $query = Appointment::with([
-            'doctor.user',
-            'patient.user',
-            'services',
-            'transaction',
-            'doctor.reviews',
-            'doctor.user.media',
+            'doctor.user:id,first_name,last_name,email,status',
+            'patient.user:id,first_name,last_name,email',
+            'services:id,name,charges',
+            'transaction:id,appointment_id,amount,status',
+            'doctor.reviews:id,doctor_id,rating',
+            'doctor.user.media'
         ]);
 
         $query->when(

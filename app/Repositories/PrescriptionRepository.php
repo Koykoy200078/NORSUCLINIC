@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Arr;
 
 /**
@@ -73,10 +74,12 @@ class PrescriptionRepository extends BaseRepository
         if ($user && $user->hasRole('Doctor')) {
             $patients = getPatientsList($user->owner_id);
         } else {
-            $patients = Patient::with('user')
-                ->whereHas('user', function (Builder $query) {
-                    $query->where('status', 1);
-                })->get()->pluck('user.full_name', 'id')->sort();
+            $patients = Cache::remember('active_patients_prescription', 600, function () {
+                return Patient::with('user:id,first_name,last_name,status')
+                    ->whereHas('user', function (Builder $query) {
+                        $query->where('status', 1);
+                    })->get()->pluck('user.full_name', 'id')->sort();
+            });
         }
 
         return $patients;
@@ -281,7 +284,12 @@ class PrescriptionRepository extends BaseRepository
     public function getDoctors()
     {
         /** @var Doctor $doctors */
-        $doctors = Doctor::with('doctorUser')->get()->where('doctorUser.status', '=', 1)->pluck('doctorUser.full_name', 'id')->sort();
+        $doctors = Cache::remember('active_doctors_prescription', 600, function () {
+            return Doctor::with('doctorUser:id,first_name,last_name,status')
+                ->whereHas('doctorUser', function (Builder $query) {
+                    $query->where('status', 1);
+                })->get()->pluck('doctorUser.full_name', 'id')->sort();
+        });
 
         return $doctors;
     }

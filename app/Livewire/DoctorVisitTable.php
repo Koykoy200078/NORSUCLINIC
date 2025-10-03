@@ -65,7 +65,12 @@ class DoctorVisitTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return Visit::with(['patient.user', 'doctor.reviews'])->where('doctor_id', getLoginUser()->doctor->id)
+        return Visit::with([
+            'patient:id,user_id',
+            'patient.user:id,first_name,last_name,email',
+            'doctor:id,user_id',
+            'doctor.reviews:id,doctor_id,rating'
+        ])->where('doctor_id', getLoginUser()->doctor->id)
             ->select('visits.*');
     }
 }

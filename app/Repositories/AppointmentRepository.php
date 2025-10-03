@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -202,11 +203,20 @@ class AppointmentRepository extends BaseRepository
 
     public function getData(): array
     {
-        $data['doctors'] = Doctor::with('user')->get()->where('user.status', User::ACTIVE)->pluck(
-            'user.full_name',
-            'id'
-        );
-        $data['patients'] = Patient::with('user')->get()->pluck('user.full_name', 'id');
+        // Optimized: Cache frequently accessed dropdown data
+        $data['doctors'] = Cache::remember('active_doctors_list', 600, function () {
+            return Doctor::with('user:id,first_name,last_name,status')
+                ->whereHas('user', function ($query) {
+                    $query->where('status', User::ACTIVE);
+                })
+                ->get()
+                ->pluck('user.full_name', 'id');
+        });
+
+        $data['patients'] = Cache::remember('patients_list', 600, function () {
+            return Patient::with('user:id,first_name,last_name')->get()->pluck('user.full_name', 'id');
+        });
+
         $data['patientStatus'] = Appointment::PATIENT_STATUS;
         $data['services'] = Service::whereStatus(Service::ACTIVE)->pluck('name', 'id');
 

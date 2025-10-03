@@ -125,7 +125,7 @@
                     </div>
                     <div class="card-toolbar">
                         <label class="form-check form-check-custom form-check-sm form-check-solid">
-                            <input class="form-check-input group-permission-check" type="checkbox" value="" data-group="{{ str_replace(' ', '_', strtolower($groupName)) }}" />
+                            <input class="form-check-input group-permission-check" type="checkbox" value="" data-group="{{ \Illuminate\Support\Str::slug($groupName, '_') }}" />
                             <span class="form-check-label fw-bold text-gray-700">
                                 Select All
                             </span>
@@ -139,7 +139,7 @@
                         <div class="col-lg-12 mb-4">
                             <div class="form-check form-check-custom form-check-solid p-3 bg-light-primary rounded">
                                 <div class="d-flex align-items-start">
-                                    <input class="form-check-input permission group-{{ str_replace(' ', '_', strtolower($groupName)) }} mt-1"
+                                    <input class="form-check-input permission group-{{ \Illuminate\Support\Str::slug($groupName, '_') }} mt-1"
                                         {{isset($selectedPermissions[$permission->id]) == $permission->id ?'checked':''}}
                                         type="checkbox"
                                         value="{{$permission->id}}"

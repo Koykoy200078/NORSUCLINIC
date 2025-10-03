@@ -12452,13 +12452,13 @@ function loadSaleMedicineCreate() {
 listenChange(".medicineBillCategoriesId", function () {
   var categoryId = $(this).val();
   var currentRow = $(this).closest("tr");
-  var medicineId = currentRow.find('.purchaseMedicineId');
-  var medicineAvlQty = currentRow.find('.medicineTotalQuantity');
-  var medicineSalePrice = currentRow.find('.medicineBill-sale-price');
+  var medicineId = currentRow.find(".purchaseMedicineId");
+  var medicineAvlQty = currentRow.find(".medicineTotalQuantity");
+  var medicineSalePrice = currentRow.find(".medicineBill-sale-price");
   if (categoryId == "") {
     $(medicineId).find("option").remove();
     $(medicineId).append($("<option></option>").attr("placeholder", "").text(Lang.get("js.select_medicine")));
-    $(medicineAvlQty).text('0');
+    $(medicineAvlQty).text("0");
     return false;
   }
   $.ajax({
@@ -12470,10 +12470,10 @@ listenChange(".medicineBillCategoriesId", function () {
       $(medicineId).attr("required", true);
       $(medicineId).append($('<option value="">Select Medicine</option>'));
       $.each(array, function (key, value) {
-        $(medicineId).append($('<option></option>').attr('value', key).text(value));
+        $(medicineId).append($("<option></option>").attr("value", key).text(value));
       });
-      $(medicineAvlQty).text('0');
-      $(medicineSalePrice).val('0.00');
+      $(medicineAvlQty).text("0");
+      $(medicineSalePrice).val("0.00");
     }
   });
 });
@@ -12553,13 +12553,13 @@ listenClick(".add-medicine-btn-medicine-bill", function () {
 });
 var dropdownToSelecte2 = function dropdownToSelecte2(selector) {
   $(selector).select2({
-    placeholder: Lang.get('js.select_medicine'),
+    placeholder: Lang.get("js.select_medicine"),
     width: "100%"
   });
 };
 var dropdownToSelecteCategories2 = function dropdownToSelecteCategories2(selector) {
   $(selector).select2({
-    placeholder: Lang.get('js.select_category'),
+    placeholder: Lang.get("js.select_category"),
     width: "100%"
   });
 };
@@ -12679,7 +12679,7 @@ listenSubmit("#addPatientForm", function (e) {
     }
   });
 });
-listen('hidden.bs.modal', "#addPatientModal", function () {
+listen("hidden.bs.modal", "#addPatientModal", function () {
   resetModalForm("#addPatientForm", "#patientErrorsBox");
 });
 listenClick(".medicine-bill-delete-btn", function (event) {

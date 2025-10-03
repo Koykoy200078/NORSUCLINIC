@@ -100,6 +100,11 @@ class MedicineBillTable extends LivewireTableComponent
     function builder(): Builder
     {
         /** @var MedicineBill $query */
-        return MedicineBill::with(['patient', 'doctor.user', 'doctor.doctorUser', 'patient.user', 'patient.patientUser']);
-    }
+        // Optimized eager loading with selective columns
+        return MedicineBill::with([
+            'patient:id,user_id',
+            'patient.patientUser:id,first_name,last_name',
+            'doctor:id,user_id',
+            'doctor.doctorUser:id,first_name,last_name'
+        ]);
 }
