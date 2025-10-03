@@ -13,32 +13,43 @@ return new class extends Migration
     public function up(): void
     {
         // Drop problematic indexes if they exist
-        Schema::table('appointments', function (Blueprint $table) {
-            try {
-                // Try to drop the problematic composite indexes that exceed key length
-                DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_date_status');
-            } catch (\Exception $e) {
-                // Index doesn't exist, continue
-            }
+        try {
+            DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_date_status');
+        } catch (\Exception $e) {
+            // Index doesn't exist, continue
+        }
 
-            try {
-                DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_doctor_date_status');
-            } catch (\Exception $e) {
-                // Index doesn't exist, continue
-            }
+        try {
+            DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_doctor_date_status');
+        } catch (\Exception $e) {
+            // Index doesn't exist, continue
+        }
 
-            try {
-                DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_patient_date_status');
-            } catch (\Exception $e) {
-                // Index doesn't exist, continue
-            }
-        });
+        try {
+            DB::statement('ALTER TABLE appointments DROP INDEX IF EXISTS idx_appointments_patient_date_status');
+        } catch (\Exception $e) {
+            // Index doesn't exist, continue
+        }
 
-        // Add optimized indexes with prefix length for VARCHAR date column
-        DB::statement('CREATE INDEX idx_appointments_date_50 ON appointments (date(50))');
-        DB::statement('CREATE INDEX idx_appointments_date_status_opt ON appointments (date(50), status)');
-        DB::statement('CREATE INDEX idx_appointments_doctor_status ON appointments (doctor_id, status)');
-        DB::statement('CREATE INDEX idx_appointments_patient_status ON appointments (patient_id, status)');
+        // Create optimized indexes only if they don't exist
+        $existingIndexes = DB::select("SHOW INDEX FROM appointments WHERE Key_name IN ('idx_appointments_date_50', 'idx_appointments_date_status_opt', 'idx_appointments_doctor_status', 'idx_appointments_patient_status')");
+        $existingIndexNames = array_unique(array_column($existingIndexes, 'Key_name'));
+
+        if (!in_array('idx_appointments_date_50', $existingIndexNames)) {
+            DB::statement('CREATE INDEX idx_appointments_date_50 ON appointments (date(50))');
+        }
+
+        if (!in_array('idx_appointments_date_status_opt', $existingIndexNames)) {
+            DB::statement('CREATE INDEX idx_appointments_date_status_opt ON appointments (date(50), status)');
+        }
+
+        if (!in_array('idx_appointments_doctor_status', $existingIndexNames)) {
+            DB::statement('CREATE INDEX idx_appointments_doctor_status ON appointments (doctor_id, status)');
+        }
+
+        if (!in_array('idx_appointments_patient_status', $existingIndexNames)) {
+            DB::statement('CREATE INDEX idx_appointments_patient_status ON appointments (patient_id, status)');
+        }
     }
 
     /**
