@@ -107,4 +107,5 @@ class MedicineBillTable extends LivewireTableComponent
             'doctor:id,user_id',
             'doctor.doctorUser:id,first_name,last_name'
         ]);
+    }
 }

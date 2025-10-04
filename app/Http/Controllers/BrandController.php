@@ -28,6 +28,22 @@ class BrandController extends AppBaseController
     }
 
     /**
+     * Get the appropriate brand index route based on user role
+     */
+    private function getBrandIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('brands.index');
+        } elseif (isRole('staff')) {
+            return route('staff.brands.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.brands.index');
+        }
+
+        return route('brands.index');
+    }
+
+    /**
      * Display a listing of the Brand.
      *
      * @param  Request  $request
@@ -60,7 +76,7 @@ class BrandController extends AppBaseController
         $this->brandRepository->create($input);
         Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.saved_successfully'));
 
-        return redirect(route('brands.index'));
+        return redirect($this->getBrandIndexRoute());
     }
 
     /**
@@ -95,7 +111,7 @@ class BrandController extends AppBaseController
         $this->brandRepository->update($input, $brand->id);
         Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.updated_successfully'));
 
-        return redirect(route('brands.index'));
+        return redirect($this->getBrandIndexRoute());
     }
 
     /**

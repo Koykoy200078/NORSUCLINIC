@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-3">@yield('title')</h1>
-        <a href="{{ route('medicines.index') }}"
+        <a href="{{ isRole('clinic_admin') ? route('medicines.index') : (isRole('staff') ? route('staff.medicines.index') : route('doctors.medicines.index')) }}"
             class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
     </div>
 </div>

@@ -53,6 +53,15 @@ class PurchaseMedicineController extends AppBaseController
         $this->prchaseMedicineRepository->store($input);
         flash::success(__('messages.purchase_medicine.purchased_medicine_success'));
 
+        // Redirect based on user role
+        if (isRole('clinic_admin')) {
+            return redirect(route('medicine-purchase.index'));
+        } elseif (isRole('staff')) {
+            return redirect(route('staff.medicine-purchase.index'));
+        } elseif (isRole('doctor')) {
+            return redirect(route('doctors.medicine-purchase.index'));
+        }
+
         return redirect(route('medicine-purchase.index'));
     }
 

@@ -27,6 +27,32 @@ class HolidayContoller extends AppBaseController
     }
 
     /**
+     * Get the appropriate holiday index route based on user role (for admin/staff only)
+     */
+    private function getHolidayIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('holidays.index');
+        } elseif (isRole('staff')) {
+            return route('staff.holidays.index');
+        }
+        return route('holidays.index');
+    }
+
+    /**
+     * Get the appropriate holiday create route based on user role (for admin/staff only)
+     */
+    private function getHolidayCreateRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('holidays.create');
+        } elseif (isRole('staff')) {
+            return route('staff.holidays.create');
+        }
+        return route('holidays.create');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(): View
@@ -71,11 +97,11 @@ class HolidayContoller extends AppBaseController
         if ($holiday) {
             Flash::success(__('messages.flash.doctor_holiday'));
 
-            return redirect(route('holidays.index'));
+            return redirect($this->getHolidayIndexRoute());
         } else {
             Flash::error(__('messages.flash.holiday_already_is_exist'));
 
-            return redirect(route('holidays.create'));
+            return redirect($this->getHolidayCreateRoute());
         }
     }
 

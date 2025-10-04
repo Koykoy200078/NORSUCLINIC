@@ -36,6 +36,21 @@ class DoctorSessionController extends AppBaseController
     }
 
     /**
+     * Get the appropriate doctor session index route based on user role
+     */
+    private function getDoctorSessionIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('doctor-sessions.index');
+        } elseif (isRole('staff')) {
+            return route('staff.doctor-sessions.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.doctor-sessions.index');
+        }
+        return route('doctor-sessions.index');
+    }
+
+    /**
      * Display a listing of the DoctorSession.
      *
      * @return Application|Factory|View
@@ -83,7 +98,7 @@ class DoctorSessionController extends AppBaseController
         if (empty($doctorSession)) {
             Flash::error(__('messages.flash.doctor_session_not_found'));
 
-            return redirect(getDoctorSessionURL());
+            return redirect($this->getDoctorSessionIndexRoute());
         }
 
         return view('doctor_sessions.show', compact('doctorSession'));
@@ -106,7 +121,7 @@ class DoctorSessionController extends AppBaseController
         if (empty($doctorSession)) {
             Flash::error(__('messages.flash.schedule_not_found'));
 
-            return redirect(route('doctor-sessions.index'));
+            return redirect($this->getDoctorSessionIndexRoute());
         }
 
         $sessionWeekDays = $doctorSession->sessionWeekDays;
@@ -318,7 +333,7 @@ class DoctorSessionController extends AppBaseController
         if (empty($doctorSession)) {
             Flash::error(__('messages.flash.schedule_not_found'));
 
-            return redirect(route('doctor-sessions.index'));
+            return redirect($this->getDoctorSessionIndexRoute());
         }
 
         $doctorsList = $this->doctorSessionRepository->getSyncList();

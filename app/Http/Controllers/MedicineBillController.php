@@ -35,6 +35,38 @@ class MedicineBillController extends AppBaseController
 
     private $medicineBillRepository;
 
+    /**
+     * Get the appropriate medicine-history index route based on user role
+     */
+    private function getMedicineHistoryIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('medicine-history.index');
+        } elseif (isRole('staff')) {
+            return route('staff.medicine-history.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.medicine-history.index');
+        }
+
+        return route('medicine-history.index');
+    }
+
+    /**
+     * Get the appropriate medicine-history create route based on user role
+     */
+    private function getMedicineHistoryCreateRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('medicine-history.create');
+        } elseif (isRole('staff')) {
+            return route('staff.medicine-history.create');
+        } elseif (isRole('doctor')) {
+            return route('doctors.medicine-history.create');
+        }
+
+        return route('medicine-history.create');
+    }
+
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
         MedicineRepository $medicineRepository,
@@ -87,7 +119,7 @@ class MedicineBillController extends AppBaseController
 
             flash::error(__('messages.medicine_bills.medicine_not_selected'));
 
-            return Redirect::route('medicine-history.create');
+            return redirect($this->getMedicineHistoryCreateRoute());
         }
         $arr = collect($input['medicine']);
         $duplicateIds = $arr->duplicates();
@@ -102,7 +134,7 @@ class MedicineBillController extends AppBaseController
 
                     Flash::error(__('messages.medicine_bills.duplicate_medicine'));
 
-                    return Redirect::route('medicine-history.create');
+                    return redirect($this->getMedicineHistoryCreateRoute());
                 }
             }
             $qty = $input['quantity'][$key];
@@ -110,7 +142,7 @@ class MedicineBillController extends AppBaseController
                 $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
                 Flash::error(__('messages.medicine_bills.available_quantity') . ' ' . $medicine->name . ' ' . __('messages.medicine_bills.is') . ' ' . $available . '.');
 
-                return Redirect::route('medicine-history.create');
+                return redirect($this->getMedicineHistoryCreateRoute());
             }
         }
 
@@ -152,12 +184,12 @@ class MedicineBillController extends AppBaseController
             }
             Flash::success(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
 
-            return Redirect::route('medicine-history.index');
+            return redirect($this->getMedicineHistoryIndexRoute());
         }
 
         // Ensure a return value for all paths
         Flash::error(__('messages.medicine_bills.something_went_wrong'));
-        return Redirect::route('medicine-history.create');
+        return redirect($this->getMedicineHistoryCreateRoute());
     }
 
     /**

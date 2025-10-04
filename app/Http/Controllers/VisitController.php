@@ -30,6 +30,21 @@ class VisitController extends AppBaseController
     }
 
     /**
+     * Get the appropriate visit index route based on user role
+     */
+    private function getVisitIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('visits.index');
+        } elseif (isRole('staff')) {
+            return route('staff.visits.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.visits.index');
+        }
+        return route('visits.index');
+    }
+
+    /**
      * @return Application|Factory|View
      */
     public function index(): \Illuminate\View\View
@@ -57,11 +72,7 @@ class VisitController extends AppBaseController
 
         Flash::success(__('messages.flash.visit_create'));
 
-        if (getLoginUser()->hasRole('doctor')) {
-            return redirect(route('doctors.visits.index'));
-        }
-
-        return redirect(route('visits.index'));
+        return redirect($this->getVisitIndexRoute());
     }
 
     /**
@@ -89,7 +100,7 @@ class VisitController extends AppBaseController
         if (getLogInUser()->hasRole('doctor')) {
             $doctor = Visit::whereId($visit->id)->whereDoctorId(getLogInUser()->doctor->id);
             if (! $doctor->exists()) {
-                return redirect(route('doctors.visits.index'));
+                return redirect($this->getVisitIndexRoute());
             }
         }
 
@@ -108,11 +119,7 @@ class VisitController extends AppBaseController
 
         Flash::success(__('messages.flash.visit_update'));
 
-        if (getLoginUser()->hasRole('doctor')) {
-            return redirect(route('doctors.visits.index'));
-        }
-
-        return redirect(route('visits.index'));
+        return redirect($this->getVisitIndexRoute());
     }
 
     public function destroy(Visit $visit): mixed

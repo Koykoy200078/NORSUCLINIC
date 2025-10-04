@@ -7,16 +7,17 @@
     </a>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <li>
-            <a href="{{ route('medicines.create') }}"
+            <a href="{{ isRole('clinic_admin') ? route('medicines.create') : (isRole('staff') ? route('staff.medicines.create') : route('doctors.medicines.create')) }}"
                 class="dropdown-item  px-5">{{ __('messages.medicine.new_medicine') }}</a>
         </li>
-        <li>
-            <a href="{{ route('medicines.excel') }}"
-                class="dropdown-item  px-5">{{ __('messages.common.export_to_excel') }}</a>
-        </li>
+        {{-- Excel export not implemented for medicines module --}}
+        {{-- <li>
+            <a href="{{ isRole('clinic_admin') ? route('medicines.excel') : (isRole('staff') ? route('staff.medicines.excel') : route('doctors.medicines.excel')) }}"
+        class="dropdown-item px-5">{{ __('messages.common.export_to_excel') }}</a>
+        </li> --}}
     </ul>
     @else
-    <a href="{{ route('medicines.create') }}"
+    <a href="{{ isRole('clinic_admin') ? route('medicines.create') : (isRole('staff') ? route('staff.medicines.create') : route('doctors.medicines.create')) }}"
         class="btn btn-primary">{{ __('messages.medicine.new_medicine') }}</a>
     @endif
 </div>

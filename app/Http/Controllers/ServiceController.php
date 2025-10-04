@@ -27,6 +27,21 @@ class ServiceController extends AppBaseController
     }
 
     /**
+     * Get the appropriate service index route based on user role
+     */
+    private function getServiceIndexRoute(): string
+    {
+        if (isRole('clinic_admin')) {
+            return route('services.index');
+        } elseif (isRole('staff')) {
+            return route('staff.services.index');
+        } elseif (isRole('doctor')) {
+            return route('doctors.services.index');
+        }
+        return route('services.index');
+    }
+
+    /**
      * @return Application|Factory|View
      */
     public function index(): \Illuminate\View\View
@@ -60,7 +75,7 @@ class ServiceController extends AppBaseController
 
         Flash::success(__('messages.flash.service_create'));
 
-        return redirect(route('services.index'));
+        return redirect($this->getServiceIndexRoute());
     }
 
     /**
@@ -87,7 +102,7 @@ class ServiceController extends AppBaseController
 
         Flash::success(__('messages.flash.service_update'));
 
-        return redirect(route('services.index'));
+        return redirect($this->getServiceIndexRoute());
     }
 
     /**

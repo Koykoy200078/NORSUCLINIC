@@ -10,7 +10,7 @@
 
         @else
         <div class="text-end mt-4 mt-md-0">
-            <a href="{{ url()->previous() }}"
+            <a href="{{ isRole('clinic_admin') ? route('doctor-sessions.index') : route('staff.doctor-sessions.index') }}"
                 class="btn btn-outline-primary" id="btnBack">{{ __('messages.common.back') }}</a>
         </div>
         @endif

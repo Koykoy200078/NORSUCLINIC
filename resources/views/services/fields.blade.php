@@ -86,7 +86,7 @@
     </div>
     <div>
         {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
-        <a href="{{route('services.index')}}" type="reset"
+        <a href="{{ isRole('clinic_admin') ? route('services.index') : (isRole('staff') ? route('staff.services.index') : route('doctors.services.index')) }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>
 </div>

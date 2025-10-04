@@ -10,9 +10,9 @@
         <div class="text-end mt-4 mt-md-0">
             @if(isset($medicineBill->payment_status) && $medicineBill->payment_status == false)
             <a class="btn btn-primary edit-btn"
-                href="{{route('medicine-history.edit', ['medicine_bill' => $medicineBill->id]) }}">{{ __('messages.common.edit') }}</a>
+                href="{{ isRole('clinic_admin') ? route('medicine-history.edit', ['medicine_bill' => $medicineBill->id]) : (isRole('staff') ? route('staff.medicine-history.edit', ['medicine_bill' => $medicineBill->id]) : route('doctors.medicine-history.edit', ['medicine_bill' => $medicineBill->id])) }}">{{ __('messages.common.edit') }}</a>
             @endif
-            <a href="{{route('medicine-history.index')}}"
+            <a href="{{ isRole('clinic_admin') ? route('medicine-history.index') : (isRole('staff') ? route('staff.medicine-history.index') : route('doctors.medicine-history.index')) }}"
                 class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
         </div>
     </div>
