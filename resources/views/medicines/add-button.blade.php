@@ -1,4 +1,4 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <div class="dropdown">
     @if(Auth::user()->hasRole('Pharmacist'))
     <a href="#" class="btn btn-primary" id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -21,4 +21,3 @@
         class="btn btn-primary">{{ __('messages.medicine.new_medicine') }}</a>
     @endif
 </div>
-@endif

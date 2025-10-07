@@ -20,6 +20,11 @@ class PatientService
     public function createPatient(array $data): Patient
     {
         return DB::transaction(function () use ($data) {
+            // If is_employee is checked, set course_id to null
+            if (isset($data['is_employee']) && $data['is_employee']) {
+                $data['course_id'] = null;
+            }
+
             // Create user first
             $user = User::create([
                 'first_name' => $data['first_name'],
@@ -77,6 +82,11 @@ class PatientService
     public function updatePatient(Patient $patient, array $data): Patient
     {
         return DB::transaction(function () use ($patient, $data) {
+            // If is_employee is checked, set course_id to null
+            if (isset($data['is_employee']) && $data['is_employee']) {
+                $data['course_id'] = null;
+            }
+
             // Update user data
             $userData = [
                 'first_name' => $data['first_name'],

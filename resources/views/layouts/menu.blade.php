@@ -52,7 +52,7 @@
 
 @role('doctor')
 @can('manage_appointments')
-<li class="nav-item {{ Request::is('doctors/appointments*', 'doctors/patient*') ? 'active' : '' }}">
+<li class="nav-item {{ Request::is('doctors/appointments*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.appointments') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>

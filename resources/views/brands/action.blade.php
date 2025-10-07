@@ -1,4 +1,4 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <div class="d-flex justify-content-center me-4">
     <a href="{{ 
     isRole('clinic_admin') ? route('brands.edit', $row->id) : 
@@ -13,4 +13,3 @@
         <i class="fa-solid fa-trash"></i>
     </a>
 </div>
-@endif

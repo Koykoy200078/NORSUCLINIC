@@ -33,7 +33,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Appointment Management (Doctors can fully manage appointments)
     Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['index', 'edit', 'update']);
+        // Full CRUD access - removed view-only restrictions
+        Route::resource('appointments', AppointmentController::class);
         Route::get('appointments', [AppointmentController::class, 'doctorAppointment'])->name('appointments');
         Route::get('appointments-calendar', [AppointmentController::class, 'doctorAppointmentCalendar'])->name('appointments.calendar');
         Route::get('appointments/{appointment}', [AppointmentController::class, 'appointmentDetail'])->name('appointment.detail');
@@ -84,7 +85,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     });
 
     // Route for Prescription
-    Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
+    // Full CRUD access - excluded create/edit from resource as they need appointment context
+    Route::resource('prescriptions', PrescriptionController::class)->except(['create', 'edit']);
     Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
     Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');

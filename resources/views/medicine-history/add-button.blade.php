@@ -1,3 +1,2 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <a href="{{ isRole('clinic_admin') ? route('medicine-history.create') : (isRole('staff') ? route('staff.medicine-history.create') : route('doctors.medicine-history.create')) }}" class="btn btn-primary">{{__('messages.medicine_bills.add_medicine_bill')}}</a>
-@endif

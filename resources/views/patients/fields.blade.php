@@ -138,9 +138,9 @@
             {{ Form::select('college_id', $data['colleges'] ,!empty($patient->user) ? $patient->user->college_id : null, ['placeholder' => __('messages.student.select_college'),'class' => 'form-select io-select2', 'aria-label'=>"Select a College",'data-control'=>'select2']) }}
         </div>
 
-        <div class="col-md-6 mb-7">
+        <div class="col-md-6 mb-7" id="courseFieldContainer">
             {{ Form::label('course_id',__('messages.student.course').':',['class'=>'form-label']) }}
-            {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2']) }}
+            {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2', 'id' => 'courseSelect']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label', 'id' => 'yearLevelLabel']) }}
@@ -156,6 +156,8 @@
             const isEmployeeCheckbox = document.getElementById('isEmployeeCheckbox');
             const yearLevelSelect = document.getElementById('yearLevelSelect');
             const yearLevelLabel = document.getElementById('yearLevelLabel');
+            const courseFieldContainer = document.getElementById('courseFieldContainer');
+            const courseSelect = document.getElementById('courseSelect');
             const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value);
 
             // Split year levels based on the seeder data
@@ -178,11 +180,20 @@
                 const isEmployee = isEmployeeCheckbox.checked;
                 const currentValue = $(yearLevelSelect).val();
 
-                // Update label and placeholder text
+                // Show/hide course field based on checkbox
                 if (isEmployee) {
+                    // Hide course field and clear its value
+                    courseFieldContainer.style.display = 'none';
+                    $(courseSelect).val(null).trigger('change');
+
+                    // Update year level label and placeholder
                     yearLevelLabel.textContent = '{{ __("messages.student.position") }}:';
                     $(yearLevelSelect).attr('aria-label', 'Select a Position');
                 } else {
+                    // Show course field
+                    courseFieldContainer.style.display = 'block';
+
+                    // Update year level label and placeholder
                     yearLevelLabel.textContent = '{{ __("messages.student.year_level") }}:';
                     $(yearLevelSelect).attr('aria-label', 'Select a Year Level');
                 }

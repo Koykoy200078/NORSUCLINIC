@@ -1,4 +1,4 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <div class="dropdown">
     @if(Auth::user()->hasRole('Pharmacist'))
     <a href="#" class="btn btn-primary" id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -9,7 +9,7 @@
         <li>
             <a href="{{ 
                 isRole('clinic_admin') ? route('brands.create') : 
-                (isRole('staff') ? route('staff.brands.create') : route('brands.create')) 
+                (isRole('staff') ? route('staff.brands.create') : route('doctors.brands.create')) 
             }}"
                 class="dropdown-item  px-5">{{ __('messages.medicine.new_medicine_brand') }}</a>
         </li>
@@ -26,9 +26,8 @@
     @else
     <a href="{{ 
         isRole('clinic_admin') ? route('brands.create') : 
-        (isRole('staff') ? route('staff.brands.create') : route('brands.create')) 
+        (isRole('staff') ? route('staff.brands.create') : route('doctors.brands.create')) 
     }}"
         class="btn btn-primary">{{ __('messages.medicine.new_medicine_brand') }}</a>
     @endif
 </div>
-@endif

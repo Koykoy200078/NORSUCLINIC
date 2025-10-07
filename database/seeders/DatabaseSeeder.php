@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultMedicinePermissionSeeder::class);
         $this->call(DefaultAssignPermissionSeeder::class);
 
+        // Set default role permissions based on current database state
+        $this->call(RolePermissionsSeeder::class);
 
         $this->call(CampusSeeder::class);
         $this->call(CollegeSeeder::class);

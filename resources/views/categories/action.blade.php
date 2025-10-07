@@ -1,4 +1,4 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <div class="d-flex justify-content-end w-75 ps-125 text-center">
     <a title="{{__('messages.common.edit')}}" data-id="{{ $row->id }}"
         class="btn px-1 text-primary fs-3 ps-0 category-edit-btn">
@@ -9,4 +9,3 @@
         <i class="fa-solid fa-trash"></i>
     </a>
 </div>
-@endif

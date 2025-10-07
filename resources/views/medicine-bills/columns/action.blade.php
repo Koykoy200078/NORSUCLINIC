@@ -1,4 +1,4 @@
-@if(!isRole('doctor'))
+{{-- Full CRUD access for all roles including doctors --}}
 <div class="d-flex align-items-center justify-content-center">
     <a href="{{ route('medicine-bills.show', [$row->id]) }}"
         class='btn px-2 text-primary fs-3 ps-0'> <i class="fas fa-eye text-success"></i></a>
@@ -16,4 +16,3 @@
     </a>
     {{-- @endif  --}}
 </div>
-@endif
