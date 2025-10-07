@@ -101,6 +101,8 @@ class UserRepository extends BaseRepository
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::DOCTOR;
             $input['language'] = Setting::where('key', 'language')->get()->toArray()[0]['value'];
+            // Set email as verified with Philippine time
+            $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
             $doctor = User::create($input);
             $doctor->assignRole('doctor');
             $doctor->address()->create($addressInputArray);

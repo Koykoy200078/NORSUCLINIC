@@ -150,6 +150,13 @@ class PatientRepository extends BaseRepository
                 'edit_patient_state_id',
                 'edit_patient_city_id',
                 'backgroundImg',
+                // Employee-related fields that don't exist in users table
+                'is_employee',
+                'campus_id',
+                'college_id',
+                'course_id',
+                'year_level_id',
+                'all_year_levels',
             ]));
 
             if ($patient->address()->exists()) {
@@ -168,6 +175,12 @@ class PatientRepository extends BaseRepository
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('PatientRepository::update failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'patient_id' => $patient->id ?? 'unknown',
+                'input' => array_diff_key($input, array_flip(['profile', 'password'])),
+            ]);
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }

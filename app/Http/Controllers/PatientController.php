@@ -160,7 +160,7 @@ class PatientController extends AppBaseController
      *
      * @return Application|Redirector|RedirectResponse
      */
-    public function update(Patient $patient, UpdatePatientRequest $request): RedirectResponse
+    public function update(UpdatePatientRequest $request, Patient $patient): RedirectResponse
     {
         $input = request()->except(['_method', '_token', 'patient_unique_id']);
 
