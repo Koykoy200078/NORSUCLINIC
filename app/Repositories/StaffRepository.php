@@ -63,6 +63,8 @@ class StaffRepository extends BaseRepository
             $input['email'] = setEmailLowerCase($input['email']);
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::STAFF;
+            // Set email as verified with Philippine time
+            $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
             $staff = User::create($input);
 
             if (isset($input['role']) && ! empty($input['role'])) {
