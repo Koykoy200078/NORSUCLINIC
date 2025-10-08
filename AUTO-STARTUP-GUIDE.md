@@ -13,19 +13,22 @@ This guide will help you set up automatic startup for your NORSUCLINIC developme
 ## 📁 Files Created
 
 ### 1. **startup-dev-environment.bat** (Recommended for manual use)
-- Batch file with visual feedback
-- Shows progress in console window
-- Best for troubleshooting
+
+-   Batch file with visual feedback
+-   Shows progress in console window
+-   Best for troubleshooting
 
 ### 2. **startup-dev-environment.ps1** (PowerShell version)
-- Colored output with better error handling
-- More detailed status messages
-- Requires PowerShell execution policy adjustment
+
+-   Colored output with better error handling
+-   More detailed status messages
+-   Requires PowerShell execution policy adjustment
 
 ### 3. **startup-silent.vbs** (For silent auto-start)
-- Runs the batch file in the background
-- No console window appears
-- Best for Windows Startup folder
+
+-   Runs the batch file in the background
+-   No console window appears
+-   Best for Windows Startup folder
 
 ---
 
@@ -38,27 +41,28 @@ This method starts the development environment when you log in to Windows.
 #### Steps:
 
 1. **Press `Win + R`** and type:
-   ```
-   shell:startup
-   ```
-   Press Enter. This opens your Startup folder.
+
+    ```
+    shell:startup
+    ```
+
+    Press Enter. This opens your Startup folder.
 
 2. **Create a shortcut:**
-   - Right-click in the Startup folder → **New** → **Shortcut**
-   
+    - Right-click in the Startup folder → **New** → **Shortcut**
 3. **For VISIBLE console (recommended for testing):**
-   - Target: `D:\Projects\NORSUCLINIC\startup-dev-environment.bat`
-   - Name: `NORSUCLINIC Dev Server`
-   
+    - Target: `D:\Projects\NORSUCLINIC\startup-dev-environment.bat`
+    - Name: `NORSUCLINIC Dev Server`
 4. **For SILENT background startup:**
-   - Target: `D:\Projects\NORSUCLINIC\startup-silent.vbs`
-   - Name: `NORSUCLINIC Dev Server (Silent)`
+
+    - Target: `D:\Projects\NORSUCLINIC\startup-silent.vbs`
+    - Name: `NORSUCLINIC Dev Server (Silent)`
 
 5. **Click Finish!**
 
 6. **Test it:**
-   - Double-click the shortcut to test
-   - Restart your computer to verify auto-start
+    - Double-click the shortcut to test
+    - Restart your computer to verify auto-start
 
 ---
 
@@ -69,53 +73,60 @@ This method gives you more options like delay start, run only on AC power, etc.
 #### Steps:
 
 1. **Open Task Scheduler:**
-   - Press `Win + R`, type: `taskschd.msc`, press Enter
+
+    - Press `Win + R`, type: `taskschd.msc`, press Enter
 
 2. **Create Basic Task:**
-   - Click **"Create Basic Task"** in the right panel
-   - Name: `NORSUCLINIC Development Server`
-   - Description: `Auto-start WAMP and Laravel development server`
-   - Click **Next**
+
+    - Click **"Create Basic Task"** in the right panel
+    - Name: `NORSUCLINIC Development Server`
+    - Description: `Auto-start WAMP and Laravel development server`
+    - Click **Next**
 
 3. **Trigger:**
-   - Select **"When I log on"**
-   - Click **Next**
+
+    - Select **"When I log on"**
+    - Click **Next**
 
 4. **Action:**
-   - Select **"Start a program"**
-   - Click **Next**
+
+    - Select **"Start a program"**
+    - Click **Next**
 
 5. **Program/Script:**
-   - **For visible console:**
-     ```
-     D:\Projects\NORSUCLINIC\startup-dev-environment.bat
-     ```
-   
-   - **For silent background:**
-     ```
-     wscript.exe
-     ```
-     **Add arguments:**
-     ```
-     "D:\Projects\NORSUCLINIC\startup-silent.vbs"
-     ```
+
+    - **For visible console:**
+
+        ```
+        D:\Projects\NORSUCLINIC\startup-dev-environment.bat
+        ```
+
+    - **For silent background:**
+        ```
+        wscript.exe
+        ```
+        **Add arguments:**
+        ```
+        "D:\Projects\NORSUCLINIC\startup-silent.vbs"
+        ```
 
 6. **Start in (optional):**
-   ```
-   D:\Projects\NORSUCLINIC
-   ```
+
+    ```
+    D:\Projects\NORSUCLINIC
+    ```
 
 7. **Click Finish**
 
 8. **Advanced Settings (Optional):**
-   - Right-click the task → **Properties**
-   - **General tab:**
-     - ✅ Run whether user is logged on or not
-     - ✅ Run with highest privileges
-   - **Triggers tab:**
-     - Edit trigger → **Delay task for:** `30 seconds` (gives WAMP time to start)
-   - **Conditions tab:**
-     - ⬜ Start only if computer is on AC power (uncheck this)
+    - Right-click the task → **Properties**
+    - **General tab:**
+        - ✅ Run whether user is logged on or not
+        - ✅ Run with highest privileges
+    - **Triggers tab:**
+        - Edit trigger → **Delay task for:** `30 seconds` (gives WAMP time to start)
+    - **Conditions tab:**
+        - ⬜ Start only if computer is on AC power (uncheck this)
 
 ---
 
@@ -126,16 +137,17 @@ If you don't want auto-start but want easy access:
 1. **Right-click on Desktop** → **New** → **Shortcut**
 
 2. **Target:**
-   ```
-   D:\Projects\NORSUCLINIC\startup-dev-environment.bat
-   ```
+
+    ```
+    D:\Projects\NORSUCLINIC\startup-dev-environment.bat
+    ```
 
 3. **Name:** `Start NORSUCLINIC Server`
 
 4. **Optional - Custom Icon:**
-   - Right-click shortcut → **Properties**
-   - Click **Change Icon**
-   - Browse to an icon file or use built-in Windows icons
+    - Right-click shortcut → **Properties**
+    - Click **Change Icon**
+    - Browse to an icon file or use built-in Windows icons
 
 ---
 
@@ -146,6 +158,7 @@ If you don't want auto-start but want easy access:
 Edit `startup-dev-environment.bat` or `startup-dev-environment.ps1` to change:
 
 #### **WAMP Installation Path:**
+
 ```batch
 REM In .bat file (line ~25):
 if exist "C:\wamp64\wampmanager.exe" (
@@ -155,6 +168,7 @@ $WampPath = "C:\wamp64\wampmanager.exe"
 ```
 
 #### **Server IP Address:**
+
 ```batch
 REM In .bat file (last line):
 php artisan serve --host=192.168.180.100
@@ -165,6 +179,7 @@ $ServerPort = "8000"
 ```
 
 #### **Startup Delay:**
+
 ```batch
 REM In .bat file (line ~43):
 timeout /t 15 /nobreak >nul
@@ -178,20 +193,24 @@ Start-Sleep -Seconds 15
 ## 🧪 Testing
 
 ### Test the Batch File:
+
 ```cmd
 D:\Projects\NORSUCLINIC\startup-dev-environment.bat
 ```
 
 ### Test the PowerShell Script:
+
 ```powershell
 cd D:\Projects\NORSUCLINIC
 .\startup-dev-environment.ps1
 ```
 
 ### Test Silent VBS:
+
 Double-click `startup-silent.vbs` - nothing should appear, but check:
-- WAMP icon in system tray
-- Open browser: `http://192.168.180.100:8000`
+
+-   WAMP icon in system tray
+-   Open browser: `http://192.168.180.100:8000`
 
 ---
 
@@ -200,13 +219,15 @@ Double-click `startup-silent.vbs` - nothing should appear, but check:
 ### **Issue: PowerShell script won't run**
 
 **Solution:** Enable script execution (run as Administrator):
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### **Issue: WAMP doesn't start**
 
-**Solution:** 
+**Solution:**
+
 1. Check WAMP path in script matches your installation
 2. Make sure no other Apache/MySQL is running
 3. Run WAMP manually first to check for errors
@@ -214,6 +235,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### **Issue: Cache not clearing**
 
 **Solution:**
+
 1. Make sure PHP is in your PATH environment variable
 2. Try running manually: `php artisan cache:clear`
 3. Restart WAMP after running the script
@@ -221,16 +243,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### **Issue: Laravel server says "Address already in use"**
 
 **Solution:**
+
 1. Another process is using port 8000
 2. Change port in script: `--port=8001`
 3. Or kill the process:
-   ```powershell
-   Get-Process -Name php | Stop-Process -Force
-   ```
+    ```powershell
+    Get-Process -Name php | Stop-Process -Force
+    ```
 
 ### **Issue: Task Scheduler task doesn't run**
 
 **Solution:**
+
 1. Right-click task → Run (test manually)
 2. Check task history for error messages
 3. Make sure "Run with highest privileges" is checked
@@ -269,6 +293,7 @@ Laravel Development Server Started!
 ## 🔥 Quick Commands Reference
 
 ### Manual Cache Clear:
+
 ```bash
 php artisan cache:clear
 php artisan config:clear
@@ -279,16 +304,19 @@ php artisan optimize:clear
 ```
 
 ### Start Laravel Server Manually:
+
 ```bash
 php artisan serve --host=192.168.180.100 --port=8000
 ```
 
 ### Stop All PHP Processes:
+
 ```powershell
 Get-Process -Name php | Stop-Process -Force
 ```
 
 ### Check if WAMP is Running:
+
 ```powershell
 Get-Process -Name wampmanager, httpd, mysqld
 ```
@@ -297,11 +325,11 @@ Get-Process -Name wampmanager, httpd, mysqld
 
 ## 📝 Notes
 
-- **First Run:** The script waits 15 seconds for WAMP to fully start. Adjust if needed.
-- **OPcache:** Caches are cleared automatically to prevent the "display_name" error you experienced.
-- **Network Access:** Using `192.168.180.100` allows other devices on your network to access the app.
-- **Console Window:** Use the `.vbs` file if you don't want to see the console window.
-- **Stopping the Server:** Press `Ctrl+C` in the console window or close the window.
+-   **First Run:** The script waits 15 seconds for WAMP to fully start. Adjust if needed.
+-   **OPcache:** Caches are cleared automatically to prevent the "display_name" error you experienced.
+-   **Network Access:** Using `192.168.180.100` allows other devices on your network to access the app.
+-   **Console Window:** Use the `.vbs` file if you don't want to see the console window.
+-   **Stopping the Server:** Press `Ctrl+C` in the console window or close the window.
 
 ---
 
@@ -319,11 +347,11 @@ Get-Process -Name wampmanager, httpd, mysqld
 
 After setup, verify:
 
-- [ ] WAMP icon appears in system tray (green)
-- [ ] Browser opens `http://192.168.180.100:8000` successfully
-- [ ] No "display_name" errors appear
-- [ ] Staff edit page works: `http://192.168.180.100:8000/admin/staffs/3/edit`
-- [ ] Can update staff without 422 errors
+-   [ ] WAMP icon appears in system tray (green)
+-   [ ] Browser opens `http://192.168.180.100:8000` successfully
+-   [ ] No "display_name" errors appear
+-   [ ] Staff edit page works: `http://192.168.180.100:8000/admin/staffs/3/edit`
+-   [ ] Can update staff without 422 errors
 
 ---
 

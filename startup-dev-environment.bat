@@ -47,7 +47,7 @@ REM ============================================================
 echo [2/4] Navigating to project directory...
 echo.
 
-cd /d "D:\Projects\NORSUCLINIC"
+cd /d "C:\Users\User\Desktop\Clinic\NORSUCLINIC"
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to navigate to project directory!
     pause
@@ -84,8 +84,11 @@ echo - Clearing compiled services...
 php artisan clear-compiled
 
 REM Optimize (optional - uncomment if needed)
-REM echo - Optimizing application...
-REM php artisan optimize:clear
+echo - Optimizing clear application...
+php artisan optimize:clear
+
+echo - Optimizing application...
+php artisan optimize
 
 echo.
 echo All caches cleared successfully!
