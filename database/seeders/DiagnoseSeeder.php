@@ -15,6 +15,9 @@ class DiagnoseSeeder extends Seeder
     {
         $diagnose = [
             [
+                'diagnoses' => 'None',
+            ],
+            [
                 'diagnoses' => 'Tuberculosis (TB)',
             ],
             [

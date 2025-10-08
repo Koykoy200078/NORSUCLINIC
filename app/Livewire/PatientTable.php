@@ -57,6 +57,16 @@ class PatientTable extends LivewireTableComponent
             ->withCount(['requestDocuments as request_documents_count' => function ($subQuery) {
                 $subQuery->selectRaw('COUNT(*)')
                     ->whereColumn('request_documents.user_id', 'patients.user_id');
+            }])
+            ->withCount(['requestDocuments as medical_certificate_count' => function ($subQuery) {
+                $subQuery->selectRaw('COUNT(*)')
+                    ->whereColumn('request_documents.user_id', 'patients.user_id')
+                    ->where('request_documents.document_type', 'medical_certificate');
+            }])
+            ->withCount(['requestDocuments as consultation_form_count' => function ($subQuery) {
+                $subQuery->selectRaw('COUNT(*)')
+                    ->whereColumn('request_documents.user_id', 'patients.user_id')
+                    ->where('request_documents.document_type', 'consultation_form');
             }]);
 
         if (!empty($this->dateFilter) && $this->dateFilter != getWeekDate()) {
@@ -107,9 +117,10 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.doctor_dashboard.total_appointments'), 'id')
                 ->sortable()
                 ->view('patients.components.total_appointments'),
-            Column::make(__('Total Request Documents'), 'id')
-                ->sortable()
-                ->view('patients.components.total_request_documents'),
+            Column::make(__('Medical Certificates'), 'id')
+                ->view('patients.components.medical_certificate_count'),
+            Column::make(__('Consultation Forms'), 'id')
+                ->view('patients.components.consultation_form_count'),
             Column::make(__('messages.common.email_verified'), 'user.email_verified_at')
                 ->sortable()
                 ->view('patients.components.email_verified'),

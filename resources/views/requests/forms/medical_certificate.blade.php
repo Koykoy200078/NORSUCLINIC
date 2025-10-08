@@ -95,7 +95,7 @@
             <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" required> for your reference.</p>
 
             <div class="text-right mt-4 mr-5">
-                <p class="font-semibold">Dr. Mcfael S. Olivoros</p>
+                <p class="font-semibold">Dr. Michael S. Oliveros</p>
                 <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="0113005" required></p>
                 <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" required></p>
             </div>
