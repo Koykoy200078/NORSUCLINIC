@@ -179,17 +179,22 @@ class PatientController extends AppBaseController
 
     /**
      * Remove the specified Patient from storage.
+     * Note: Cascade delete is handled in Patient model's boot() method
      */
     public function destroy(Patient $patient): JsonResponse
     {
+        // Check if patient has active appointments
         $existAppointment = Appointment::wherePatientId($patient->id)
             ->whereNotIn('status', [Appointment::CANCELLED, Appointment::FINISHED])
             ->exists();
 
+        // Check if patient has visits
         $existVisit = Visit::wherePatientId($patient->id)->exists();
 
+        // Check if patient has transactions
         $transactions = Transaction::whereUserId($patient->user_id)->exists();
 
+        // Prevent deletion if patient has active data
         if ($existAppointment || $existVisit || $transactions) {
             return $this->sendError(__('messages.flash.patient_used'));
         }
@@ -197,15 +202,22 @@ class PatientController extends AppBaseController
         try {
             DB::beginTransaction();
 
+            // Simply delete the patient
+            // Cascade delete will automatically handle:
+            // - All appointments (cancelled/finished)
+            // - All consultation forms
+            // - All medical certificates
+            // - All reviews
+            // - User account
+            // - Address
+            // - Media files
             $patient->delete();
-            $patient->media()->delete();
-            $patient->user()->delete();
-            $patient->address()->delete();
 
             DB::commit();
 
-            return $this->sendSuccess(__('messages.flash.patient_delete'));
+            return $this->sendSuccess('Patient and all related data deleted successfully!');
         } catch (Exception $e) {
+            DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
@@ -240,15 +252,16 @@ class PatientController extends AppBaseController
         // Load consultations and related data
         $patient->load([
             'appointments.doctor',
-            'requestDocuments' => function ($query) {
-                $query->where('document_type', 'consultation_form');
-            }
+            'requestDocuments'
         ]);
 
         // Fetch all consultations with `consultation_form` type
         $consultations = $patient->requestDocuments->where('document_type', 'consultation_form');
 
+        // Fetch all medical certificates
+        $medicalCertificates = $patient->requestDocuments->where('document_type', 'medical_certificate');
+
         // Pass the data to the view
-        return view('patients.view_patient', compact('patient', 'consultations'));
+        return view('patients.view_patient', compact('patient', 'consultations', 'medicalCertificates'));
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -119,7 +121,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereYearLevel($value)
  * @mixin \Eloquent
  */
-class RequestDocuments extends Model
+class RequestDocuments extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, HasRoles;
 
@@ -173,11 +175,93 @@ class RequestDocuments extends Model
         'medical_cert_remarks',
         'doc_lic_no',
         'doc_prt_no',
+        'consultation_images',
     ];
 
     protected $casts = [
         'requested_at' => 'date',
         'examined_on' => 'date',
         'date_of_birth' => 'date',
+        'consultation_images' => 'array',
     ];
+
+    /**
+     * Boot the model and set up event listeners for cascade delete
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When a request document is being deleted, delete all associated media files
+        static::deleting(function ($requestDocument) {
+            // Delete all uploaded images from storage
+            // This will delete files from: storage/app/public/consultation_images/[PatientName]/[Timestamp]/
+
+            // Get consultation images and ensure it's an array
+            $consultationImages = $requestDocument->consultation_images;
+
+            // If it's a string (JSON), decode it
+            if (is_string($consultationImages)) {
+                $consultationImages = json_decode($consultationImages, true);
+            }
+
+            // If it's null or empty, skip
+            if (!$consultationImages || !is_array($consultationImages)) {
+                return;
+            }
+
+            // Now safely iterate through images
+            foreach ($consultationImages as $imageData) {
+                // Delete the physical file
+                if (isset($imageData['path'])) {
+                    Storage::disk('public')->delete($imageData['path']);
+                }
+            }
+
+            // Try to delete the empty folders (optional)
+            // Extract folder path from first image
+            if (count($consultationImages) > 0) {
+                $firstImagePath = $consultationImages[0]['path'] ?? null;
+                if ($firstImagePath) {
+                    $folderPath = dirname($firstImagePath);
+                    // Delete folder if empty
+                    $files = Storage::disk('public')->files($folderPath);
+                    if (empty($files)) {
+                        Storage::disk('public')->deleteDirectory($folderPath);
+
+                        // Try to delete parent folder (PatientName) if empty
+                        $parentFolder = dirname($folderPath);
+                        $parentFiles = Storage::disk('public')->allFiles($parentFolder);
+                        if (empty($parentFiles)) {
+                            Storage::disk('public')->deleteDirectory($parentFolder);
+                        }
+                    }
+                }
+            }
+
+            // Also clear media library collection (if any media was added there)
+            $requestDocument->clearMediaCollection('consultation_images');
+        });
+    }
+
+    /**
+     * Register media collections for consultation images
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('consultation_images')
+            ->useDisk('public');
+    }
+
+    /**
+     * Get custom path for media storage using patient name and timestamp
+     */
+    public function getMediaPath(string $conversion = ''): string
+    {
+        // Create folder structure: consultation_images/PatientName/YYYY-MM-DD_HH-MM-SS/
+        $patientName = str_replace(' ', '_', $this->name);
+        $timestamp = now()->format('Y-m-d_H-i-s');
+
+        return "consultation_images/{$patientName}/{$timestamp}";
+    }
 }

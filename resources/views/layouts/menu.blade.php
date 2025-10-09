@@ -196,24 +196,6 @@
 </li>
 @endcan
 @if (!isRole('doctor') && !isRole('patient'))
-@can('manage_request_documents')
-<li
-    class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/request-documents*')) ||
-        (isRole('staff') && Request::is('staff/request-documents*'))
-    ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ 
-            isRole('clinic_admin') ? route('request-documents.index') : 
-            (isRole('staff') ? route('staff.request-documents.index') : route('request-documents.index'))
-        }}">
-        <span class="aside-menu-icon pe-3">
-            <i class="fa-solid fa-file-signature"></i>
-        </span>
-        <span class="aside-menu-title">Request Documents</span>
-    </a>
-</li>
-@endcan
 @can('manage_appointments')
 <li
     class="nav-item {{ 

@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Laracasts\Flash\Flash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -176,14 +177,31 @@ class UserController extends AppBaseController
 
         try {
             DB::beginTransaction();
-            $doctor->user->delete();
-            $doctor->user->media()->delete();
-            $doctor->user->address()->delete();
-            $doctor->user->doctor()->delete();
+
+            // Store user reference
+            $user = $doctor->user;
+
+            // Delete related records first
+            if ($user->media) {
+                $user->media()->delete();
+            }
+
+            if ($user->address) {
+                $user->address()->delete();
+            }
+
+            // Delete doctor record
+            $doctor->delete();
+
+            // Finally delete user
+            $user->delete();
+
             DB::commit();
 
             return $this->sendSuccess(__('messages.flash.doctor_delete'));
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting doctor: ' . $e->getMessage());
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }

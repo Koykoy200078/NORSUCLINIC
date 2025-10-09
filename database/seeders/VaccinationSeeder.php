@@ -15,11 +15,20 @@ class VaccinationSeeder extends Seeder
     {
         $vaccination = [
             [
+                'vaccination_status' => 'Fully Vaccinated with Booster Shot',
+            ],
+            [
                 'vaccination_status' => 'Fully Vaccinated',
+            ],
+            [
+                'vaccination_status' => 'Partially Vaccinated',
             ],
             [
                 'vaccination_status' => 'Not-Vaccinated',
             ],
+            [
+                'vaccination_status' => 'Unknown',
+            ]
         ];
 
         Vaccination::insert($vaccination);

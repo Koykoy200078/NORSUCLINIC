@@ -22,7 +22,22 @@ class CampusSeeder extends Seeder
             ],
             [
                 'campus_name' => 'Pamplona Campus',
-            ]
+            ],
+            [
+                'campus_name' => 'Guihulngan Campus',
+            ],
+            [
+                'campus_name' => 'Mabinay Campus',
+            ],
+            [
+                'campus_name' => 'Bais Campus',
+            ],
+            [
+                'campus_name' => 'Siaton Campus',
+            ],
+            [
+                'campus_name' => 'Bayawan-Sta. Catalina Campus',
+            ],
         ];
 
         Campus::insert($campus);

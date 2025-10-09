@@ -21,7 +21,15 @@
         data-bs-original-title="Edit" data-turbolinks="false">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
-    <a href="javascript:void(0)" data-id="{{ $row->id }}" title="{{ __('messages.common.delete') }}" class="btn px-2 text-danger fs-2 doctor-delete-btn" data-bs-toggle="tooltip"
+    <a href="javascript:void(0)"
+        data-id="{{ $row->id }}"
+        data-delete-url="{{ 
+            isRole('clinic_admin') ? route('doctors.destroy', $row->id) : 
+            (isRole('staff') ? route('staff.doctors.destroy', $row->id) : route('doctors.destroy', $row->id))
+        }}"
+        title="{{ __('messages.common.delete') }}"
+        class="btn px-2 text-danger fs-2 doctor-delete-btn"
+        data-bs-toggle="tooltip"
         data-bs-original-title="Delete">
         <i class="fa-solid fa-trash"></i>
     </a>

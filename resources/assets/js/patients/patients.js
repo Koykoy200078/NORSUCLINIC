@@ -110,7 +110,13 @@ function cb(start, end) {
 
 listenClick(".patient-delete-btn", function () {
     let patientId = $(this).attr("data-id");
-    deleteItem(route("patients.destroy", patientId), Lang.get("js.patient"));
+    let deleteUrl = $(this).attr("data-delete-url");
+
+    // Use the role-based delete URL from the button's data attribute
+    // Falls back to admin route if not specified
+    let url = deleteUrl || route("patients.destroy", patientId);
+
+    deleteItem(url, Lang.get("js.patient"));
 });
 
 listenChange(".patient-email-verified", function (e) {

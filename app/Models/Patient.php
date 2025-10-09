@@ -171,6 +171,49 @@ class Patient extends Model implements HasMedia
 
     protected $with = ['media'];
 
+    /**
+     * Boot the model and set up event listeners for cascade delete
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When a patient is being deleted, delete all related data
+        static::deleting(function ($patient) {
+            // Delete all appointments
+            $patient->appointments()->delete();
+
+            // Delete all reviews
+            $patient->reviews()->delete();
+
+            // Delete all request documents (consultation forms, medical certificates)
+            // Use get()->each() to trigger deleting events on each document
+            // This ensures images are deleted from storage
+            $patient->requestDocuments()->get()->each(function ($document) {
+                $document->delete();
+            });
+
+            // Delete the associated user account
+            if ($patient->user) {
+                // Delete user's address
+                if ($patient->user->address) {
+                    $patient->user->address->delete();
+                }
+
+                // Delete the user
+                $patient->user->delete();
+            }
+
+            // Delete patient's address if exists
+            if ($patient->address) {
+                $patient->address->delete();
+            }
+
+            // Delete media files (profile images, etc.)
+            $patient->clearMediaCollection(self::PROFILE);
+        });
+    }
+
     public static function generatePatientUniqueId(): string
     {
         $patientUniqueId = Str::random(8);

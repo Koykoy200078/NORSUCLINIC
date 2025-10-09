@@ -480,6 +480,7 @@ return [
 
     'request' => [
         'request' => 'Request Document',
+        'patient_data' => 'Patient Data',
         'create_request' => 'Create Request Form',
         'edit_request' => 'Edit Request Form',
         'view_request' => 'View Request Form',

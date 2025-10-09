@@ -20,6 +20,12 @@
     }}" method="POST">
         @csrf
         @method('PUT')
+
+        <!-- Hidden field to carry patient_id from query parameter -->
+        @if(request('patient_id'))
+        <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
+        @endif
+
         <div class="grid grid-cols-4 gap-2 pb-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME</label>
@@ -286,6 +292,12 @@
     }}" method="POST">
         @csrf
         @method('PUT')
+
+        <!-- Hidden field to carry patient_id from query parameter -->
+        @if(request('patient_id'))
+        <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
+        @endif
+
         <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
             <div class="flex items-center my-4">
                 <!-- Left Logo -->

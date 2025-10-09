@@ -11662,47 +11662,47 @@ document.addEventListener('livewire:load', function () {
   \************************************************/
 /***/ (() => {
 
-listenClick('#doctorResetFilter', function () {
-  var firstDate = moment(moment().startOf('week'), "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
-  var lastDate = moment(moment().endOf('week'), "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
-  $('#doctorPanelAppointmentDate').val(firstDate + " - " + lastDate).trigger('change');
-  $('#doctorPanelPaymentType').val(0).trigger('change');
-  $('#doctorPanelAppointmentStatus').val(3).trigger('change');
-  $('#doctorStatus').val(2).trigger('change');
-  hideDropdownManually($('#doctorFilterBtn'), $('.dropdown-menu'));
+listenClick("#doctorResetFilter", function () {
+  var firstDate = moment(moment().startOf("week"), "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+  var lastDate = moment(moment().endOf("week"), "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+  $("#doctorPanelAppointmentDate").val(firstDate + " - " + lastDate).trigger("change");
+  $("#doctorPanelPaymentType").val(0).trigger("change");
+  $("#doctorPanelAppointmentStatus").val(3).trigger("change");
+  $("#doctorStatus").val(2).trigger("change");
+  hideDropdownManually($("#doctorFilterBtn"), $(".dropdown-menu"));
 });
-listenChange('#doctorStatus', function () {
+listenChange("#doctorStatus", function () {
   Livewire.dispatch("changeStatusFilter", {
     value: $(this).val()
   });
 });
 Livewire.hook("element.init", function () {
-  if ($('#doctorStatus').length) {
-    $('#doctorStatus').select2();
+  if ($("#doctorStatus").length) {
+    $("#doctorStatus").select2();
   }
 });
-listenClick('.doctor-delete-btn', function () {
-  var userId = $(this).attr('data-id');
-  var deleteUserUrl = route('doctors.destroy', userId);
-  deleteItem(deleteUserUrl, Lang.get('js.doctor'));
+listenClick(".doctor-delete-btn", function () {
+  var userId = $(this).attr("data-id");
+  var deleteUserUrl = $(this).attr("data-delete-url");
+  deleteItem(deleteUserUrl, Lang.get("js.doctor"));
 });
-listenClick('.add-qualification', function () {
-  var userId = $(this).attr('data-id');
-  $('#qualificationID').val(userId);
-  $('#qualificationModal').modal('show');
+listenClick(".add-qualification", function () {
+  var userId = $(this).attr("data-id");
+  $("#qualificationID").val(userId);
+  $("#qualificationModal").modal("show");
 });
-listenSubmit('#qualificationForm', function (e) {
+listenSubmit("#qualificationForm", function (e) {
   e.preventDefault();
   $.ajax({
-    url: route('add.qualification'),
-    type: 'POST',
+    url: route("add.qualification"),
+    type: "POST",
     data: $(this).serialize(),
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
-        $('#year').val(null).trigger('change');
-        $('#qualificationModal').modal('hide');
-        Livewire.dispatch('refresh');
+        $("#year").val(null).trigger("change");
+        $("#qualificationModal").modal("hide");
+        Livewire.dispatch("refresh");
       }
     },
     error: function error(result) {
@@ -11710,29 +11710,29 @@ listenSubmit('#qualificationForm', function (e) {
     }
   });
 });
-listen('hidden.bs.modal', '#qualificationModal', function () {
-  resetModalForm('#qualificationForm');
-  $('#year').val(null).trigger('change');
+listen("hidden.bs.modal", "#qualificationModal", function () {
+  resetModalForm("#qualificationForm");
+  $("#year").val(null).trigger("change");
 });
-listenClick('.doctor-status', function (event) {
-  var doctorRecordId = $(event.currentTarget).attr('data-id');
+listenClick(".doctor-status", function (event) {
+  var doctorRecordId = $(event.currentTarget).attr("data-id");
   $.ajax({
-    type: 'PUT',
-    url: route('doctor.status'),
+    type: "PUT",
+    url: route("doctor.status"),
     data: {
       id: doctorRecordId
     },
     success: function success(result) {
-      Livewire.dispatch('refresh');
+      Livewire.dispatch("refresh");
       displaySuccessMessage(result.message);
     }
   });
 });
-listenClick('.doctor-email-verification', function (event) {
-  var userId = $(event.currentTarget).attr('data-id');
+listenClick(".doctor-email-verification", function (event) {
+  var userId = $(event.currentTarget).attr("data-id");
   $.ajax({
-    type: 'POST',
-    url: route('resend.email.verification', userId),
+    type: "POST",
+    url: route("resend.email.verification", userId),
     success: function success(result) {
       displaySuccessMessage(result.message);
       setTimeout(function () {
@@ -11745,28 +11745,28 @@ listenClick('.doctor-email-verification', function (event) {
     }
   });
 });
-listenClick('#qualificationSaveBtn', function () {
-  $('#qualificationForm').trigger('submit');
+listenClick("#qualificationSaveBtn", function () {
+  $("#qualificationForm").trigger("submit");
 });
-listenChange('.doctor-email-verified', function (e) {
-  var recordId = $(e.currentTarget).attr('data-id');
-  var value = $(this).is(':checked') ? 1 : 0;
+listenChange(".doctor-email-verified", function (e) {
+  var recordId = $(e.currentTarget).attr("data-id");
+  var value = $(this).is(":checked") ? 1 : 0;
   $.ajax({
-    type: 'POST',
-    url: route('emailVerified'),
+    type: "POST",
+    url: route("emailVerified"),
     data: {
       id: recordId,
       value: value
     },
     success: function success(result) {
-      Livewire.dispatch('refresh');
+      Livewire.dispatch("refresh");
       displaySuccessMessage(result.message);
     }
   });
 });
 Livewire.hook("element.init", function () {
-  if ($('#enquiriesStatus').length) {
-    $('#enquiriesStatus').select2();
+  if ($("#enquiriesStatus").length) {
+    $("#enquiriesStatus").select2();
   }
 });
 
@@ -13314,7 +13314,12 @@ function cb(start, end) {
 }
 listenClick(".patient-delete-btn", function () {
   var patientId = $(this).attr("data-id");
-  deleteItem(route("patients.destroy", patientId), Lang.get("js.patient"));
+  var deleteUrl = $(this).attr("data-delete-url");
+
+  // Use the role-based delete URL from the button's data attribute
+  // Falls back to admin route if not specified
+  var url = deleteUrl || route("patients.destroy", patientId);
+  deleteItem(url, Lang.get("js.patient"));
 });
 listenChange(".patient-email-verified", function (e) {
   var patientRecordId = $(e.currentTarget).attr("data-id");

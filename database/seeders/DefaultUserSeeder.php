@@ -31,53 +31,8 @@ class DefaultUserSeeder extends Seeder
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
                 'time_zone' => '0',
-            ],
-            // Doctor
-            [
-                'first_name' => 'Adam',
-                'last_name' => 'Diaz',
-                'contact' => '1234567890',
-                'gender' => User::MALE,
-                'type' => User::DOCTOR,
-                'email' => 'doctor@norsuclinic.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('123456'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ],
+            ]
         ];
-
-        // Add 9 doctors
-        // for ($i = 0; $i < 9; $i++) {
-        //     $users[] = [
-        //         'first_name' => fake()->firstName(),
-        //         'last_name' => fake()->lastName(),
-        //         'contact' => fake()->numerify('09#########'),
-        //         'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
-        //         'type' => User::DOCTOR,
-        //         'email' => fake()->unique()->safeEmail(),
-        //         'email_verified_at' => Carbon::now(),
-        //         'password' => Hash::make('123456'),
-        //         'country_code' => '63',
-        //         'time_zone' => '0'
-        //     ];
-        // }
-
-        // Add (patients)
-        // for ($i = 0; $i < 10; $i++) {
-        //     $users[] = [
-        //         'first_name' => fake()->firstName(),
-        //         'last_name' => fake()->lastName(),
-        //         'contact' => fake()->numerify('09#########'),
-        //         'gender' => fake()->randomElement([User::MALE, User::FEMALE]),
-        //         'type' => User::PATIENT,
-        //         'email' => fake()->unique()->safeEmail(),
-        //         'email_verified_at' => Carbon::now(),
-        //         'password' => Hash::make('123456'),
-        //         'country_code' => '63',
-        //         'time_zone' => '0'
-        //     ];
-        // }
 
         foreach ($users as $user) {
             $user = User::create($user);

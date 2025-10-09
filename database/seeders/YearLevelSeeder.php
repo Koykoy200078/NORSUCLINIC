@@ -39,7 +39,7 @@ class YearLevelSeeder extends Seeder
                 'year_level_name' => '5th Year',
             ],
             [
-                'year_level_name' => '6th Year',
+                'year_level_name' => '6th Year and more',
             ],
         ];
 

@@ -35,7 +35,6 @@ class CollegeSeeder extends Seeder
             [
                 'college_name' => 'College of Criminal Justice Education (CCJE)',
             ],
-
             [
                 'college_name' => 'College of Industrial Technology (CIT)',
             ],

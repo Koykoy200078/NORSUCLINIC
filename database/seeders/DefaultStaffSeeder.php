@@ -17,41 +17,41 @@ class DefaultStaffSeeder extends Seeder
     public function run(): void
     {
         // Create the staff role if it doesn't exist
-        $staffRole = Role::firstOrCreate(['name' => 'staff', 'display_name' => 'Staff']);
+        // $staffRole = Role::firstOrCreate(['name' => 'staff', 'display_name' => 'Staff']);
 
         // Generate 5 staff members
-        $staffMembers = [
-            [
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'contact' => '1234567890',
-                'gender' => User::MALE,
-                'type' => User::STAFF,
-                'email' => 'john.doe@gmail.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password123'),
-                'country_code' => '63',
-                'time_zone' => '0'
-            ]
-        ];
+        // $staffMembers = [
+        //     [
+        //         'first_name' => 'John',
+        //         'last_name' => 'Doe',
+        //         'contact' => '1234567890',
+        //         'gender' => User::MALE,
+        //         'type' => User::STAFF,
+        //         'email' => 'john.doe@gmail.com',
+        //         'email_verified_at' => Carbon::now(),
+        //         'password' => Hash::make('password123'),
+        //         'country_code' => '63',
+        //         'time_zone' => '0'
+        //     ]
+        // ];
 
-        foreach ($staffMembers as $staffData) {
-            $user = User::create($staffData);
-            $user->assignRole($staffRole);
-        }
+        // foreach ($staffMembers as $staffData) {
+        //     $user = User::create($staffData);
+        //     $user->assignRole($staffRole);
+        // }
 
         // Exclude specific permissions for the staff role
-        $excludedPermissions = [
-            'manage_roles',
-            'manage_currencies',
-            'manage_cities',
-            'manage_states',
-            'manage_countries',
-            'manage_admin_dashboard',  // Staff should not have admin dashboard access
-        ];
+        // $excludedPermissions = [
+        //     'manage_roles',
+        //     'manage_currencies',
+        //     'manage_cities',
+        //     'manage_states',
+        //     'manage_countries',
+        //     'manage_admin_dashboard',  // Staff should not have admin dashboard access
+        // ];
 
         // Assign permissions to the staff role, excluding the specified ones
-        $staffPermissions = Permission::whereNotIn('name', $excludedPermissions)->pluck('name');
-        $staffRole->givePermissionTo($staffPermissions);
+        // $staffPermissions = Permission::whereNotIn('name', $excludedPermissions)->pluck('name');
+        // $staffRole->givePermissionTo($staffPermissions);
     }
 }

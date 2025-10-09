@@ -10,7 +10,7 @@
         isRole('clinic_admin') ? route('request-documents.store') : 
         (isRole('staff') ? route('staff.request-documents.store') : 
         (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
-    }}" method="POST">
+    }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group mb-5 d-none">
             <label for="document_type">Document Type</label>
@@ -19,11 +19,14 @@
             </select>
         </div>
 
+        <!-- Hidden field to trigger redirect to patient history -->
+        <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
+
         <div class="grid grid-cols-4 gap-2 pb-2">
             <div class="col-span-1 d-none">
                 <label class="block text-xs" for="name">ID<span class="text-red-500">*</span></label>
                 <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ auth()->user()->id }}" readonly required>
-                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black" readonly required>
+                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ request('user_id') ?? ($user->type == 3 ? $user->id : '') }}" readonly required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME<span class="text-red-500">*</span></label>
@@ -83,7 +86,7 @@
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block text-xs" for="requested_at">REQUEST DATE<span class="text-red-500">*</span></label>
+                <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
                 <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" max="{{ date('Y-m-d') }}" required>
             </div>
             <div class="col-span-3">
@@ -104,7 +107,12 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities">Comorbidities</label>
-                        {{ Form::select('comorbidities_id', $data['comorbidities'], null, ['id' => 'comorbidities_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Comorbidities']) }}
+                        <select name="comorbidities_id" id="comorbidities_id" class="w-full border-b border-black">
+                            <option value="none">None</option>
+                            @foreach($data['comorbidities'] as $key => $value)
+                            <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
@@ -149,20 +157,20 @@
                         <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" required>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_rr">RR<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" required>
+                        <label class="block text-xs" for="vital_signs_rr">RR</label>
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="breaths/min">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat<span class="text-red-500">*</span></label>
                         <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" required>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_weight">Weight<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" required>
+                        <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
+                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" placeholder="kg">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_height">Height<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" required>
+                        <label class="block text-xs" for="vital_signs_height">Height (cm)</label>
+                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" placeholder="cm">
                     </div>
                 </div>
                 <div class="col-span-5">
@@ -235,6 +243,23 @@
             </div>
         </div>
 
+        <!-- Image Upload Section -->
+        <div class="grid grid-cols-4 gap-2 py-2">
+            <div class="col-span-1">
+                <label class="block">Upload Images</label>
+                <small class="text-gray-500">Max 5MB per image</small>
+            </div>
+            <div class="col-span-3">
+                <input type="file" id="consultation_images" name="consultation_images[]"
+                    class="w-full border border-gray-300 rounded p-2"
+                    accept="image/jpeg,image/png,image/jpg,image/gif"
+                    multiple>
+                <small class="text-gray-500">You can select multiple images (JPEG, PNG, JPG, GIF)</small>
+
+                <!-- Image Preview Container -->
+                <div id="image_preview_container" class="mt-4 grid grid-cols-3 gap-4"></div>
+            </div>
+        </div>
 
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
             Submit
@@ -250,10 +275,157 @@
     #nursing_intervention {
         resize: none;
     }
+
+    .image-preview-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .remove-image-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .remove-image-btn:hover {
+        background-color: #dc2626;
+    }
+
+    .image-size-error {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Pre-fill user_id if coming from patient history
+        @if(request('user_id') && $patient)
+        document.getElementById('user_id').value = '{{ request("user_id") }}';
+        @endif
+
+        // Auto-fill PERTINENT EXAM when Complaint/s is filled
+        const complaintsField = document.getElementById('complaints');
+        const pertinentExamField = document.getElementById('pertinent_exam');
+
+        if (complaintsField && pertinentExamField) {
+            complaintsField.addEventListener('input', function() {
+                pertinentExamField.value = this.value;
+            });
+        }
+
+        // Image Upload Preview and Validation
+        const imageInput = document.getElementById('consultation_images');
+        const previewContainer = document.getElementById('image_preview_container');
+        const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+        let selectedFiles = [];
+
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                previewContainer.innerHTML = ''; // Clear previous previews
+                selectedFiles = []; // Reset selected files
+
+                // Create a new FileList to store valid files
+                const dataTransfer = new DataTransfer();
+
+                files.forEach((file, index) => {
+                    // Validate file size
+                    if (file.size > maxFileSize) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'col-span-3 image-size-error';
+                        errorDiv.textContent = `Error: ${file.name} exceeds 5MB limit (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+                        previewContainer.appendChild(errorDiv);
+                        return; // Skip this file
+                    }
+
+                    // Add valid file to the list
+                    selectedFiles.push(file);
+                    dataTransfer.items.add(file);
+
+                    // Create preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'image-preview-wrapper';
+
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.className = 'image-preview';
+                        img.alt = file.name;
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image-btn';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.type = 'button';
+                        removeBtn.onclick = function() {
+                            // Remove from selectedFiles array
+                            const fileIndex = selectedFiles.indexOf(file);
+                            if (fileIndex > -1) {
+                                selectedFiles.splice(fileIndex, 1);
+                            }
+
+                            // Update the file input
+                            const newDataTransfer = new DataTransfer();
+                            selectedFiles.forEach(f => newDataTransfer.items.add(f));
+                            imageInput.files = newDataTransfer.files;
+
+                            // Remove preview
+                            wrapper.remove();
+
+                            // Show message if no images
+                            if (selectedFiles.length === 0) {
+                                previewContainer.innerHTML = '<p class="text-gray-500 col-span-3">No images selected</p>';
+                            }
+                        };
+
+                        const fileInfo = document.createElement('small');
+                        fileInfo.className = 'text-gray-600 block mt-1';
+                        fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+
+                        wrapper.appendChild(img);
+                        wrapper.appendChild(removeBtn);
+                        wrapper.appendChild(fileInfo);
+                        previewContainer.appendChild(wrapper);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+
+                // Update the file input with only valid files
+                imageInput.files = dataTransfer.files;
+
+                // Show message if no valid files
+                if (selectedFiles.length === 0 && files.length > 0) {
+                    const noValidFiles = document.createElement('p');
+                    noValidFiles.className = 'text-red-500 col-span-3';
+                    noValidFiles.textContent = 'No valid images selected. All files exceeded 5MB limit.';
+                    previewContainer.appendChild(noValidFiles);
+                }
+            });
+        }
+
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
 

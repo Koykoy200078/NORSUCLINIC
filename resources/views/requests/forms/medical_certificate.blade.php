@@ -1,5 +1,6 @@
 <div>
-    @if($user->type != 3)
+    @if($user->type != 3 && !request('user_id'))
+    <!-- Only show user search for consultation forms, not for medical certificates with user_id -->
     <div class="mb-10">
         <label class="block text-xs" for="user_search">Search User</label>
         <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name" autocomplete="off">
@@ -46,6 +47,8 @@
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is to certify that Mr./Ms.
                     <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ auth()->user()->id }}" readonly required>
                     <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" readonly required>
+                    <!-- Hidden field to indicate redirect to patient history -->
+                    <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
                     <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? $user->first_name . ' ' . $user->last_name : '' }}" readonly required>,
                     <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required> yrs old,
                     <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" readonly required> a resident of
@@ -115,6 +118,11 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Pre-fill user_id if coming from patient history
+        @if(request('user_id') && $patient)
+        document.getElementById('user_id').value = '{{ request("user_id") }}';
+        @endif
+
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
 

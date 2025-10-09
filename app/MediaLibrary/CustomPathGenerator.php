@@ -17,7 +17,7 @@ class CustomPathGenerator implements PathGenerator
 {
     public function getPath(Media $media): string
     {
-        $path = '{PARENT_DIR}'.DIRECTORY_SEPARATOR.$media->id.DIRECTORY_SEPARATOR;
+        $path = '{PARENT_DIR}' . DIRECTORY_SEPARATOR . $media->id . DIRECTORY_SEPARATOR;
 
         switch ($media->collection_name) {
             case User::PROFILE:
@@ -32,6 +32,14 @@ class CustomPathGenerator implements PathGenerator
                 return str_replace('{PARENT_DIR}', Slider::SLIDER_IMAGE, $path);
             case Service::ICON:
                 return str_replace('{PARENT_DIR}', Service::ICON, $path);
+            case 'consultation_images':
+                // Get custom upload path from media properties
+                $uploadPath = $media->getCustomProperty('upload_path');
+                if ($uploadPath) {
+                    return $uploadPath . DIRECTORY_SEPARATOR;
+                }
+                // Fallback to default structure
+                return 'consultation_images' . DIRECTORY_SEPARATOR . $media->model_id . DIRECTORY_SEPARATOR;
             case 'default':
                 return '';
         }
@@ -41,11 +49,11 @@ class CustomPathGenerator implements PathGenerator
 
     public function getPathForConversions(Media $media): string
     {
-        return $this->getPath($media).'thumbnails/';
+        return $this->getPath($media) . 'thumbnails/';
     }
 
     public function getPathForResponsiveImages(Media $media): string
     {
-        return $this->getPath($media).'rs-images/';
+        return $this->getPath($media) . 'rs-images/';
     }
 }

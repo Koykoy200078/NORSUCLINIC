@@ -13,6 +13,7 @@ class RequestDocumentTable extends DataTableComponent
     public bool $showFilterOnHeader = false;
     public bool $showButtonOnHeader = true;
     public string $buttonComponent = 'requests.components.table-buttons';
+    public ?int $patientId = null; // Add patient ID filter
 
     public function configure(): void
     {
@@ -32,6 +33,15 @@ class RequestDocumentTable extends DataTableComponent
 
         if ($user->type == 3) { // Patient
             $query->where('user_id', $user->id);
+        } elseif ($user->type == 1 || $user->type == 4) { // Admin or Staff
+            // If patient_id is set, filter by that patient's consultation forms only
+            if ($this->patientId) {
+                $query->where('user_id', $this->patientId)
+                    ->where('document_type', 'consultation_form');
+            } else {
+                // For Admin/Staff viewing "Patient Data", show only consultation forms
+                $query->where('document_type', 'consultation_form');
+            }
         }
 
         return $query;

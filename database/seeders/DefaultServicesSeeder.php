@@ -144,13 +144,13 @@ class DefaultServicesSeeder extends Seeder
             ],
         ];
 
-        $doctor = Doctor::firstOrfail();
+        // $doctor = Doctor::firstOrfail();
 
         foreach ($input as $data) {
             $image = $data['icon'];
             unset($data['icon']);
             $service = Service::create($data);
-            $service->serviceDoctors()->sync($doctor->id);
+            // $service->serviceDoctors()->sync($doctor->id);
         }
     }
 }

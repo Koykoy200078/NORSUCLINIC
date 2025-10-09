@@ -31,12 +31,28 @@ class RequestDocumentsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(PatientRepository $patientRepository)
+    public function create(PatientRepository $patientRepository, Request $request)
     {
         $data = $patientRepository->getData();
         $user = auth()->user(); // Get the authenticated user
 
-        return view('requests.create', compact('data', 'user'));
+        // If user_id is provided (from patient history), get that patient's data
+        if ($request->has('user_id')) {
+            $userId = $request->get('user_id');
+            $user = \App\Models\User::with('patient.address')->find($userId);
+
+            if (!$user) {
+                return redirect()->back()->with('error', 'Patient not found.');
+            }
+        }
+
+        // Get patient data if user is a patient or user_id is provided
+        $patient = null;
+        if ($user && $user->type == 3) {
+            $patient = $user->patient;
+        }
+
+        return view('requests.create', compact('data', 'user', 'patient'));
     }
 
     /**
@@ -53,7 +69,32 @@ class RequestDocumentsController extends Controller
                 $this->storeConsultationForm($data);
             }
 
-            // Return a success response with role-based redirect
+            // Check if we should redirect to patient history
+            if ($request->has('redirect_to_patient') && $request->redirect_to_patient) {
+                $user = User::find($data['user_id']);
+                if ($user && $user->patient) {
+                    $patientId = $user->patient->id;
+
+                    // Determine success message based on document type
+                    $successMessage = $data['document_type'] === 'medical_certificate'
+                        ? 'Medical certificate created successfully.'
+                        : 'Consultation form created successfully.';
+
+                    // Role-based patient history redirect
+                    if (isRole('clinic_admin')) {
+                        return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
+                            ->with('success', $successMessage);
+                    } elseif (isRole('staff')) {
+                        return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
+                            ->with('success', $successMessage);
+                    } elseif (isRole('doctor')) {
+                        return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                            ->with('success', $successMessage);
+                    }
+                }
+            }
+
+            // Default: Return to request documents index with role-based redirect
             $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
 
             return redirect()->route($redirectRoute)
@@ -64,7 +105,7 @@ class RequestDocumentsController extends Controller
 
             // Return an error response
             return redirect()->back()
-                ->with('error', 'An error occurred while creating the request document.');
+                ->with('error', 'An error occurred while creating the request document: ' . $e->getMessage());
         }
     }
 
@@ -81,10 +122,14 @@ class RequestDocumentsController extends Controller
         $data['vital_signs_height'] = $data['vital_signs_height_2'];
         $data['vital_signs_weight'] = $data['vital_signs_weight_2'];
 
+        // Log the user_id for debugging
+        Log::info('Attempting to create medical certificate for user_id: ' . ($data['user_id'] ?? 'NULL'));
+
         // Retrieve the user and related IDs
         $user = User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']);
         if (!$user) {
-            throw new \Exception('User not found');
+            Log::error('User not found with ID: ' . ($data['user_id'] ?? 'NULL'));
+            throw new \Exception('User not found. Please select a patient.');
         }
 
         // Retrieve the names using relationships
@@ -134,9 +179,9 @@ class RequestDocumentsController extends Controller
         $data['course'] = Course::find($data['course_id'])->course_name ?? 'Unknown Course';
         $data['year_level'] = YearLevel::find($data['year_level_id'])->year_level_name ?? 'Unknown Year Level';
         $data['vaccination_id'] = Vaccination::find($data['vaccination_id'])->vaccination_status ?? 'Unknown Vaccination';
-        $data['comorbidities_id'] = Diagnose::find($data['comorbidities_id'])->diagnoses ?? 'Unknown Comorbidity';
+        $data['comorbidities_id'] = isset($data['comorbidities_id']) && $data['comorbidities_id'] ? Diagnose::find($data['comorbidities_id'])->diagnoses ?? 'None' : 'None';
 
-        RequestDocuments::create([
+        $requestDocument = RequestDocuments::create([
             'document_type' => $data['document_type'],
             'document_creator_id' => $data['document_creator_id'],
             'user_id' => $data['user_id'],
@@ -158,18 +203,18 @@ class RequestDocumentsController extends Controller
             'complaints' => $data['complaints'],
             'covid_vaccination' => $data['vaccination_id'],
             'comorbidities' => $data['comorbidities_id'],
-            'allergies' => $data['allergies'],
-            'admissions_surgeries' => $data['admissions_surgeries'],
-            'maintenance' => $data['maintenance'],
-            'pregnancy_status' => $data['pregnancy_status'],
-            'lmp_aog' => $data['lmp_aog'],
+            'allergies' => $data['allergies'] ?? null,
+            'admissions_surgeries' => $data['admissions_surgeries'] ?? null,
+            'maintenance' => $data['maintenance'] ?? null,
+            'pregnancy_status' => $data['pregnancy_status'] ?? null,
+            'lmp_aog' => $data['lmp_aog'] ?? null,
             'vital_signs_bp' => $data['vital_signs_bp'],
             'vital_signs_pr' => $data['vital_signs_pr'],
             'vital_signs_temp' => $data['vital_signs_temp'],
-            'vital_signs_rr' => $data['vital_signs_rr'],
+            'vital_signs_rr' => $data['vital_signs_rr'] ?? null,
             'vital_signs_o2_sat' => $data['vital_signs_o2_sat'],
-            'vital_signs_height' => $data['vital_signs_height'],
-            'vital_signs_weight' => $data['vital_signs_weight'],
+            'vital_signs_height' => $data['vital_signs_height'] ?? null,
+            'vital_signs_weight' => $data['vital_signs_weight'] ?? null,
             'pertinent_exam' => $data['pertinent_exam'],
             'assessment' => $data['assessment'],
             'plan' => $data['plan'],
@@ -177,6 +222,42 @@ class RequestDocumentsController extends Controller
             'nursing_intervention' => $data['nursing_intervention'],
             'nursing_incharged_id' => $data['nursing_incharged'],
         ]);
+
+        // Handle image uploads with custom path (Patient Name/Timestamp)
+        if (request()->hasFile('consultation_images')) {
+            // Create folder name from patient full name and timestamp
+            $patientName = str_replace(' ', '_', $data['name']); // Replace spaces with underscores
+            $timestamp = now()->format('Y-m-d_H-i-s'); // e.g., 2025-10-09_14-30-45
+            $folderPath = "consultation_images/{$patientName}/{$timestamp}";
+
+            $uploadedImages = [];
+
+            foreach (request()->file('consultation_images') as $image) {
+                // Validate file size (5MB max)
+                if ($image->getSize() <= 5 * 1024 * 1024) {
+                    $fileName = $image->getClientOriginalName();
+
+                    // Store image directly to storage/app/public/consultation_images/[PatientName]/[Timestamp]/
+                    $image->storeAs($folderPath, $fileName, 'public');
+
+                    // Add to array for database storage
+                    $uploadedImages[] = [
+                        'path' => $folderPath . '/' . $fileName,
+                        'name' => $fileName,
+                        'size' => $image->getSize(),
+                        'uploaded_at' => now()->toDateTimeString(),
+                    ];
+                }
+            }
+
+            // Save image paths to database as JSON
+            if (!empty($uploadedImages)) {
+                $requestDocument->consultation_images = json_encode($uploadedImages);
+                $requestDocument->save();
+            }
+        }
+
+        return $requestDocument;
     }
 
     /**
@@ -226,7 +307,24 @@ class RequestDocumentsController extends Controller
                 $this->updateConsultationForm($requestDocument, $data);
             }
 
-            // Return a success response with role-based redirect
+            // Check if we have a redirect_patient_id (from patient history page)
+            if ($request->has('redirect_patient_id')) {
+                $patientId = $request->input('redirect_patient_id');
+
+                // Redirect back to patient history
+                if (isRole('clinic_admin')) {
+                    return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Request document updated successfully.');
+                } elseif (isRole('staff')) {
+                    return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Request document updated successfully.');
+                } elseif (isRole('doctor')) {
+                    return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Request document updated successfully.');
+                }
+            }
+
+            // Default: Redirect to request documents index
             $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
 
             return redirect()->route($redirectRoute)
@@ -359,10 +457,54 @@ class RequestDocumentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RequestDocuments $requestDocuments)
+    public function destroy(RequestDocuments $request_document)
     {
+        try {
+            Log::info('Destroy method called', [
+                'certificate_id' => $request_document->id,
+                'has_redirect_patient_id' => request()->has('redirect_patient_id'),
+                'redirect_patient_id' => request()->input('redirect_patient_id'),
+                'request_all' => request()->all()
+            ]);
 
-        //
+            // Delete the request document
+            $request_document->delete();
+
+            Log::info('Certificate deleted successfully', ['certificate_id' => $request_document->id]);
+
+            // Check if we have a redirect_patient_id (from patient history page)
+            if (request()->has('redirect_patient_id')) {
+                $patientId = request()->input('redirect_patient_id');
+
+                Log::info('Redirecting to patient history', ['patient_id' => $patientId]);
+
+                // Redirect back to patient history
+                if (isRole('clinic_admin')) {
+                    return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Medical certificate deleted successfully.');
+                } elseif (isRole('staff')) {
+                    return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Medical certificate deleted successfully.');
+                } elseif (isRole('doctor')) {
+                    return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                        ->with('success', 'Medical certificate deleted successfully.');
+                }
+            }
+
+            Log::info('Redirecting to documents index');
+
+            // Default: Redirect to request documents index
+            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' :
+                'request-documents.index'));
+
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Request document deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting request document: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', 'An error occurred while deleting the document.');
+        }
     }
 
 
@@ -411,7 +553,13 @@ class RequestDocumentsController extends Controller
                 $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 936], 'portrait'); // 8.5"x13"
             }
 
-            // Return the PDF as a download
+            // Check if request wants to stream (for printing) or download
+            if (request()->has('action') && request()->get('action') === 'print') {
+                // Stream PDF for printing (opens in browser)
+                return $pdf->stream('request_document_' . $id . '.pdf');
+            }
+
+            // Default: Return the PDF as a download
             return $pdf->download('request_document_' . $id . '.pdf');
         } catch (\Exception $e) {
             // Log the error and redirect back with an error message
