@@ -36,10 +36,10 @@ Patient Data
 <div class="container">
     <!-- Patient Summary -->
     <div class="card mb-4">
-        <div class="card-header">
+        <div class="card-header" style="margin-left: -5px;">
             <h3>Patient Summary</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="margin-top: -35px;">
             <div class="row">
                 <div class="col-md-4">
                     <p><strong>Name:</strong> {{ $patient->user->first_name }} {{ $patient->user->last_name }}</p>
@@ -89,7 +89,7 @@ Patient Data
         </div>
         <div class="card-body p-1" style="margin-top: -20px;">
             @if($consultations->isEmpty())
-            <p class="text-muted">No consultation records found.</p>
+            <p class="text-muted" style="margin-left: 25px;">No consultation records found.</p>
             @else
             @php
             // Define normal ranges for vital signs
@@ -122,6 +122,7 @@ Patient Data
                             <th>Oxygen Saturation</th>
                             <th>Height</th>
                             <th>Weight</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,6 +154,44 @@ Patient Data
                             <td>{{ $consultation->vital_signs_o2_sat ? $consultation->vital_signs_o2_sat . '%' : 'N/A' }}</td>
                             <td>{{ $consultation->vital_signs_height ? $consultation->vital_signs_height . 'cm' : 'N/A' }}</td>
                             <td>{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    @if(isRole('clinic_admin'))
+                                    <a href="{{ route('request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    @elseif(isRole('staff'))
+                                    <a href="{{ route('staff.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('staff.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    @elseif(isRole('doctor'))
+                                    <a href="{{ route('doctors.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('doctors.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -168,7 +207,7 @@ Patient Data
         </div>
         <div class="card-body p-1" style="margin-top: -20px;">
             @if($medicalCertificates->isEmpty())
-            <p class="text-muted">No medical certificates found.</p>
+            <p class="text-muted" style="margin-left: 25px;">No medical certificates found.</p>
             @else
             <table class="table table-striped">
                 <thead>
@@ -240,7 +279,7 @@ Patient Data
         <div class="card-header">
             <h3>Compare Consultations</h3>
         </div>
-        <div class="card-body" style="margin-top: -30px; min-height: fit-content;">
+        <div class="card-body" style="margin-top: -30px; margin-left: 5px; min-height: fit-content;">
             <form method="GET" action="">
                 <div class="row">
                     <div class="col-md-12">
@@ -255,7 +294,7 @@ Patient Data
                         <small class="text-muted">Hold down the Ctrl (Windows) or Command (Mac) key to select multiple dates.</small>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-3">Compare</button>
+                <button type="submit" class="btn btn-success mt-3">Select</button>
             </form>
         </div>
     </div>
@@ -424,12 +463,12 @@ Patient Data
 
                                     @if(isset($image['path']))
                                     @php
-                                    // Images are stored directly in public/uploads/consultation_images/
+                                    // Images are stored in public/uploads/consultation_images/
                                     // Path in DB: consultation_images/PatientName/Timestamp/filename.jpg
                                     // Physical path: public/uploads/consultation_images/PatientName/Timestamp/filename.jpg
                                     // Public URL: http://domain/uploads/consultation_images/PatientName/Timestamp/filename.jpg
                                     $imagePath = public_path('uploads/' . $image['path']);
-                                    $imageUrl = url('uploads/' . $image['path']);
+                                    $imageUrl = asset('uploads/' . $image['path']);
                                     @endphp
 
                                     @if(file_exists($imagePath))

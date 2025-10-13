@@ -14,15 +14,11 @@ class YearLevelSeeder extends Seeder
     public function run(): void
     {
         $year_level = [
+            // Employee/Staff/Faculty positions
             [
-                'year_level_name' => 'Staff',
+                'year_level_name' => 'Employee',
             ],
-            [
-                'year_level_name' => 'Faculty',
-            ],
-            [
-                'year_level_name' => 'Guest',
-            ],
+            // Student year levels
             [
                 'year_level_name' => '1st Year',
             ],
@@ -40,6 +36,10 @@ class YearLevelSeeder extends Seeder
             ],
             [
                 'year_level_name' => '6th Year and more',
+            ],
+            // Guest (separate from Employee)
+            [
+                'year_level_name' => 'Guest',
             ],
         ];
 

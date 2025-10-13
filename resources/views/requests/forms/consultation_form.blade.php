@@ -60,21 +60,40 @@
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #<span class="text-red-500">*</span></label>
                 <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ $user->type == 3 ? $user->contact : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
             </div>
-            <div class="col-span-1">
-                <label class="block text-xs" for="campus">CAMPUS<span class="text-red-500">*</span></label>
-                {{ Form::select('campus_id', $data['campuses'], $user->type == 3 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Campus', 'required']) }}
+
+            <!-- Campus Field (for Students only) - Auto-filled if available -->
+            <div class="col-span-1" id="campus_field">
+                <label class="block text-xs" for="campus">CAMPUS</label>
+                {{ Form::select('campus_id', $data['campuses'], $user->type == 3 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Campus']) }}
             </div>
-            <div class="col-span-1">
-                <label class="block text-xs" for="college">COLLEGE<span class="text-red-500">*</span></label>
-                {{ Form::select('college_id', $data['colleges'], $user->type == 3 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select College', 'required']) }}
+
+            <!-- College Field (for Students and Faculty) - Auto-filled if available -->
+            <div class="col-span-1" id="college_field">
+                <label class="block text-xs" for="college">COLLEGE</label>
+                {{ Form::select('college_id', $data['colleges'], $user->type == 3 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select College']) }}
             </div>
-            <div class="col-span-1">
-                <label class="block text-xs" for="course_year">COURSE & YEAR<span class="text-red-500">*</span></label>
+
+            <!-- Course & Year Field (for Students only) - Auto-filled if available -->
+            <div class="col-span-1" id="course_year_field">
+                <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
-                    {{ Form::select('course_id', $data['courses'], $user->type == 3 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Course', 'required']) }}
-                    {{ Form::select('year_level_id', $data['year_levels'], $user->type == 3 ? $user->year_level_id : null, ['id' => 'year_level_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Year Level', 'required']) }}
+                    {{ Form::select('course_id', $data['courses'], $user->type == 3 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Course']) }}
+                    {{ Form::select('year_level_id', $data['year_levels'], $user->type == 3 ? $user->year_level_id : null, ['id' => 'year_level_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Year Level']) }}
                 </div>
             </div>
+
+            <!-- Department Field (for Faculty only) - Auto-filled if available -->
+            <div class="col-span-1" id="department_field" style="display: none;">
+                <label class="block text-xs" for="department">DEPARTMENT</label>
+                {{ Form::select('department_id', $data['departments'] ?? [], $user->type == 3 ? $user->department_id : null, ['id' => 'department_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Department']) }}
+            </div>
+
+            <!-- Office Field (for Staff only) - Auto-filled if available -->
+            <div class="col-span-1" id="office_field" style="display: none;">
+                <label class="block text-xs" for="office">OFFICE</label>
+                {{ Form::select('office_id', $data['offices'] ?? [], $user->type == 3 ? $user->office_id : null, ['id' => 'office_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Office']) }}
+            </div>
+
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
                 <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="Student">
@@ -146,15 +165,15 @@
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_bp">BP<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" required>
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" placeholder="mmHg" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_pr">PR<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" required>
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" placeholder="bpm" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_temp">Temp<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" required>
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" placeholder="°C" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
@@ -162,7 +181,7 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" required>
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" placeholder="%" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
@@ -325,6 +344,46 @@
         document.getElementById('user_id').value = '{{ request("user_id") }}';
         @endif
 
+        // Field visibility management based on year_level_id
+        const yearLevelSelect = document.getElementById('year_level_id');
+        const campusField = document.getElementById('campus_field');
+        const collegeField = document.getElementById('college_field');
+        const courseYearField = document.getElementById('course_year_field');
+        const departmentField = document.getElementById('department_field');
+        const officeField = document.getElementById('office_field');
+
+        function updateFieldsVisibility() {
+            const yearLevelId = yearLevelSelect ? yearLevelSelect.value : '';
+
+            // Hide all fields first
+            campusField.style.display = 'none';
+            collegeField.style.display = 'none';
+            courseYearField.style.display = 'none';
+            departmentField.style.display = 'none';
+            officeField.style.display = 'none';
+
+            if (yearLevelId == '1') {
+                // Employee - need to determine if Faculty or Staff
+                // For now, show both department and office, user can fill what's applicable
+                collegeField.style.display = 'block';
+                departmentField.style.display = 'block';
+                officeField.style.display = 'block';
+            } else if (yearLevelId == '8') {
+                // Guest - no additional fields needed
+            } else if (yearLevelId >= '2' && yearLevelId <= '7') {
+                // Student (1st-6th year) - show all student fields
+                campusField.style.display = 'block';
+                collegeField.style.display = 'block';
+                courseYearField.style.display = 'block';
+            }
+        }
+
+        // Run on page load if year level is already selected
+        if (yearLevelSelect) {
+            updateFieldsVisibility();
+            yearLevelSelect.addEventListener('change', updateFieldsVisibility);
+        }
+
         // Auto-fill PERTINENT EXAM when Complaint/s is filled
         const complaintsField = document.getElementById('complaints');
         const pertinentExamField = document.getElementById('pertinent_exam');
@@ -477,10 +536,23 @@
                                     document.getElementById('vaccination_id').value = patientData.user.vaccination_id || '';
                                     document.getElementById('patient_contact').value = patientData.user.contact;
                                     document.getElementById('emergency_contact').value = `${patientData.user.emergency_contact_name}/${patientData.user.emergency_contact_no}${patientData.user.emergency_relationship ? ' (' + patientData.user.emergency_relationship + ')' : ''}`;
-                                    document.getElementById('campus_id').value = patientData.user.campus_id;
-                                    document.getElementById('college_id').value = patientData.user.college_id;
-                                    document.getElementById('course_id').value = patientData.user.course_id;
-                                    document.getElementById('year_level_id').value = patientData.user.year_level_id;
+
+                                    // Fill student fields
+                                    document.getElementById('campus_id').value = patientData.user.campus_id || '';
+                                    document.getElementById('college_id').value = patientData.user.college_id || '';
+                                    document.getElementById('course_id').value = patientData.user.course_id || '';
+                                    document.getElementById('year_level_id').value = patientData.user.year_level_id || '';
+
+                                    // Fill employee fields
+                                    if (document.getElementById('department_id')) {
+                                        document.getElementById('department_id').value = patientData.user.department_id || '';
+                                    }
+                                    if (document.getElementById('office_id')) {
+                                        document.getElementById('office_id').value = patientData.user.office_id || '';
+                                    }
+
+                                    // Update field visibility based on year level
+                                    updateFieldsVisibility();
 
                                     if (patientData.address) {
                                         document.getElementById('address').value = `${patientData.address.address1}`;

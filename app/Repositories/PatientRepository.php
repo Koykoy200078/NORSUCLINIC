@@ -64,6 +64,8 @@ class PatientRepository extends BaseRepository
         $data['colleges'] = College::toBase()->pluck('college_name', 'id');
         $data['courses'] = Course::toBase()->pluck('course_name', 'id');
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
+        $data['offices'] = \App\Models\Office::toBase()->pluck('office_name', 'id');
+        $data['departments'] = \App\Models\Department::toBase()->pluck('department_name', 'id');
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
@@ -82,7 +84,7 @@ class PatientRepository extends BaseRepository
             );
 
             $input['patient_unique_id'] = Str::upper($input['patient_unique_id']);
-            $input['email'] = setEmailLowerCase($input['email']);
+            $input['email'] = !empty($input['email']) ? setEmailLowerCase($input['email']) : null;
             $patientArray = Arr::only($input, ['patient_unique_id']);
             $input['type'] = User::PATIENT;
             $languageSetting = Setting::where('key', 'language')->first();
@@ -91,8 +93,24 @@ class PatientRepository extends BaseRepository
             // Set email as verified with Philippine time
             $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
 
+            // Remove non-database fields before creating user
+            $userInput = Arr::except($input, [
+                'address1',
+                'address2',
+                'city_id',
+                'state_id',
+                'country_id',
+                'postal_code',
+                'patient_unique_id',
+                'profile',
+                'is_employee',
+                'is_guest',
+                'position_type',
+                'all_year_levels',
+            ]);
+
             // $input['password'] = Hash::make($input['password']);
-            $user = User::create($input);
+            $user = User::create($userInput);
 
             $patient = $user->patient()->create($patientArray);
             $address = $patient->address()->create($addressInputArray);

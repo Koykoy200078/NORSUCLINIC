@@ -52,7 +52,7 @@ class PatientTable extends LivewireTableComponent
      */
     public function builder(): Builder
     {
-        $query = Patient::with(['user:id,first_name,last_name,email,email_verified_at', 'appointments:id,patient_id'])
+        $query = Patient::with(['user:id,first_name,last_name,email,email_verified_at,year_level_id', 'appointments:id,patient_id'])
             ->withCount('appointments')
             ->withCount(['requestDocuments as request_documents_count' => function ($subQuery) {
                 $subQuery->selectRaw('COUNT(*)')
@@ -112,7 +112,7 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.doctor_dashboard.total_appointments'), 'id')
                 ->sortable()
                 ->view('patients.components.total_appointments'),
-            Column::make(__('Consultation Forms'), 'id')
+            Column::make(__('Total Consultations'), 'id')
                 ->view('patients.components.consultation_form_count'),
             Column::make(__('messages.patient.registered_on'), 'created_at')
                 ->sortable()

@@ -498,7 +498,7 @@ return [
         'select_year_level' => 'Select Year Level',
         'position' => 'Position',
         'select_position' => 'Select Position',
-        'is_employee' => 'Is Employee/Staff/Faculty/Guest',
+        'is_employee' => 'Is Staff/Faculty',
     ],
 
     'country' => [

@@ -122,27 +122,54 @@
     <!-- Patient Information -->
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.student.student_information') }}</div>
     <div class="row">
-        <div class="col-md-12 mb-5">
+        <div class="col-md-6 mb-5">
             <div class="form-check">
-                {{ Form::checkbox('is_employee', 1, !empty($patient->user) && in_array($patient->user->year_level_id, [1, 2, 3]), ['class' => 'form-check-input', 'id' => 'isEmployeeCheckbox']) }}
+                {{ Form::checkbox('is_employee', 1, !empty($patient->user) && $patient->user->year_level_id == 1, ['class' => 'form-check-input', 'id' => 'isEmployeeCheckbox']) }}
                 {{ Form::label('is_employee', __('messages.student.is_employee'), ['class' => 'form-check-label']) }}
             </div>
         </div>
-        <div class="col-md-6 mb-7">
+        <div class="col-md-6 mb-5">
+            <div class="form-check">
+                {{ Form::checkbox('is_guest', 1, !empty($patient->user) && $patient->user->year_level_id == 8, ['class' => 'form-check-input', 'id' => 'isGuestCheckbox']) }}
+                {{ Form::label('is_guest', __('Is Guest'), ['class' => 'form-check-label']) }}
+            </div>
+        </div>
+
+        <!-- Employee Position Field (Faculty/Staff) -->
+        <div class="col-md-6 mb-7" id="positionFieldContainer" style="display: none;">
+            {{ Form::label('position_type', __('Position').':',['class'=>'form-label']) }}
+            {{ Form::select('position_type', ['faculty' => 'Faculty', 'staff' => 'Staff'], null, ['placeholder' => 'Select Position','class' => 'form-select io-select2', 'aria-label'=>"Select Position",'data-control'=>'select2', 'id' => 'positionTypeSelect']) }}
+        </div>
+
+        <div class="col-md-6 mb-7" id="campusFieldContainer">
             {{ Form::label('campus_id',__('messages.student.campus').':',['class'=>'form-label']) }}
             {{ Form::select('campus_id', $data['campuses'] ,!empty($patient->user) ? $patient->user->campus_id : null, ['placeholder' => __('messages.student.select_campus'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Campus",'data-control'=>'select2']) }}
         </div>
 
-        <div class="col-md-6 mb-7">
+        <div class="col-md-6 mb-7" id="collegeFieldContainer">
             {{ Form::label('college_id',__('messages.student.college').':',['class'=>'form-label']) }}
             {{ Form::select('college_id', $data['colleges'] ,!empty($patient->user) ? $patient->user->college_id : null, ['placeholder' => __('messages.student.select_college'),'class' => 'form-select io-select2', 'aria-label'=>"Select a College",'data-control'=>'select2']) }}
         </div>
 
+        <!-- Course field (for Students) -->
         <div class="col-md-6 mb-7" id="courseFieldContainer">
-            {{ Form::label('course_id',__('messages.student.course').':',['class'=>'form-label']) }}
+            {{ Form::label('course_id',__('messages.student.course').':',['class'=>'form-label', 'id' => 'courseFieldLabel']) }}
             {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2', 'id' => 'courseSelect']) }}
         </div>
-        <div class="col-md-6 mb-7">
+
+        <!-- Department field (for Faculty - uses departments dropdown) -->
+        <div class="col-md-6 mb-7" id="departmentFieldContainer" style="display: none;">
+            {{ Form::label('department_id',__('Department').':',['class'=>'form-label']) }}
+            {{ Form::select('department_id', $data['departments'] ?? [], !empty($patient->user) ? $patient->user->department_id : null, ['placeholder' => 'Select Department','class' => 'form-select io-select2', 'aria-label'=>"Select Department",'data-control'=>'select2', 'id' => 'departmentSelect']) }}
+        </div>
+
+        <!-- Office field (for Staff only) -->
+        <div class="col-md-6 mb-7" id="officeFieldContainer" style="display: none;">
+            {{ Form::label('office_id',__('Office').':',['class'=>'form-label']) }}
+            {{ Form::select('office_id', $data['offices'] ?? [], !empty($patient->user) ? $patient->user->office_id : null, ['placeholder' => 'Select Office','class' => 'form-select io-select2', 'aria-label'=>"Select Office",'data-control'=>'select2', 'id' => 'officeSelect']) }}
+        </div>
+
+        <div class="col-md-6 mb-7" id="yearLevelFieldContainer">
             {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label', 'id' => 'yearLevelLabel']) }}
             {{ Form::select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null, ['placeholder' => __('messages.student.select_year_level'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level",'data-control'=>'select2', 'id' => 'yearLevelSelect']) }}
         </div>
@@ -154,74 +181,176 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const isEmployeeCheckbox = document.getElementById('isEmployeeCheckbox');
+            const isGuestCheckbox = document.getElementById('isGuestCheckbox');
             const yearLevelSelect = document.getElementById('yearLevelSelect');
             const yearLevelLabel = document.getElementById('yearLevelLabel');
+            const yearLevelFieldContainer = document.getElementById('yearLevelFieldContainer');
             const courseFieldContainer = document.getElementById('courseFieldContainer');
             const courseSelect = document.getElementById('courseSelect');
+            const courseFieldLabel = document.getElementById('courseFieldLabel');
+            const campusFieldContainer = document.getElementById('campusFieldContainer');
+            const collegeFieldContainer = document.getElementById('collegeFieldContainer');
+            const positionFieldContainer = document.getElementById('positionFieldContainer');
+            const positionTypeSelect = document.getElementById('positionTypeSelect');
+            const departmentFieldContainer = document.getElementById('departmentFieldContainer');
+            const departmentSelect = document.getElementById('departmentSelect');
+            const officeFieldContainer = document.getElementById('officeFieldContainer');
+            const officeSelect = document.getElementById('officeSelect');
+            const collegeSelect = document.querySelector('#collegeFieldContainer select[name="college_id"]');
+            const campusSelect = document.querySelector('#campusFieldContainer select[name="campus_id"]');
+
             const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value);
 
-            // Split year levels based on the seeder data
-            // Employee levels: Staff, Faculty, Guest (first 3 items)
-            // Student levels: 1st Year to 6th Year (remaining items)
+            // Split year levels:
+            // Employee (position 1), Student year levels (2-7), Guest (position 8)
             const employeeYearLevels = {};
             const studentYearLevels = {};
+            const guestYearLevels = {};
 
             let count = 0;
             Object.entries(allYearLevels).forEach(([id, name]) => {
-                if (count < 3) {
+                count++;
+                if (count === 1) {
+                    // Employee
                     employeeYearLevels[id] = name;
+                } else if (count === 8) {
+                    // Guest
+                    guestYearLevels[id] = name;
                 } else {
+                    // Student (2-7)
                     studentYearLevels[id] = name;
                 }
-                count++;
             });
 
-            function updateYearLevelOptions() {
+            function updateFieldsDisplay() {
                 const isEmployee = isEmployeeCheckbox.checked;
-                const currentValue = $(yearLevelSelect).val();
+                const isGuest = isGuestCheckbox.checked;
+                const positionType = $(positionTypeSelect).val();
 
-                // Show/hide course field based on checkbox
-                if (isEmployee) {
-                    // Hide course field and clear its value
-                    courseFieldContainer.style.display = 'none';
-                    $(courseSelect).val(null).trigger('change');
-
-                    // Update year level label and placeholder
-                    yearLevelLabel.textContent = '{{ __("messages.student.position") }}:';
-                    $(yearLevelSelect).attr('aria-label', 'Select a Position');
-                } else {
-                    // Show course field
-                    courseFieldContainer.style.display = 'block';
-
-                    // Update year level label and placeholder
-                    yearLevelLabel.textContent = '{{ __("messages.student.year_level") }}:';
-                    $(yearLevelSelect).attr('aria-label', 'Select a Year Level');
+                // Prevent both checkboxes from being checked
+                if (isEmployee && isGuest) {
+                    if (this === isEmployeeCheckbox) {
+                        isGuestCheckbox.checked = false;
+                    } else {
+                        isEmployeeCheckbox.checked = false;
+                    }
                 }
 
-                // Clear current options
+                // Update which year level options to show
+                const currentValue = $(yearLevelSelect).val();
                 $(yearLevelSelect).empty();
 
-                // Add appropriate placeholder
-                const placeholderText = isEmployee ? '{{ __("messages.student.select_position") }}' : '{{ __("messages.student.select_year_level") }}';
-                $(yearLevelSelect).append('<option value="">' + placeholderText + '</option>');
+                let placeholderText, optionsToShow;
 
-                // Add appropriate options based on checkbox state
-                const optionsToShow = isEmployee ? employeeYearLevels : studentYearLevels;
+                if (isEmployee) {
+                    optionsToShow = employeeYearLevels;
+                    yearLevelFieldContainer.style.display = 'none';
+                    positionFieldContainer.style.display = 'block';
+                    campusFieldContainer.style.display = 'none';
 
-                Object.entries(optionsToShow).forEach(([value, text]) => {
-                    const option = new Option(text, value, false, value == currentValue);
-                    $(yearLevelSelect).append(option);
-                });
+                    // Show/hide fields based on position type
+                    if (positionType === 'faculty') {
+                        // Faculty: Show College and Department, hide Course and Office
+                        collegeFieldContainer.style.display = 'block';
+                        departmentFieldContainer.style.display = 'block';
+                        courseFieldContainer.style.display = 'none';
+                        officeFieldContainer.style.display = 'none';
+                        $(courseSelect).val(null);
+                        $(officeSelect).val(null);
+                        $(campusSelect).val(null);
+                    } else if (positionType === 'staff') {
+                        // Staff: Show Office only, hide College, Course and Department
+                        collegeFieldContainer.style.display = 'none';
+                        departmentFieldContainer.style.display = 'none';
+                        courseFieldContainer.style.display = 'none';
+                        officeFieldContainer.style.display = 'block';
+                        $(courseSelect).val(null);
+                        $(departmentSelect).val(null);
+                        $(collegeSelect).val(null);
+                        $(campusSelect).val(null);
+                    } else {
+                        // No position selected - hide all conditional fields
+                        collegeFieldContainer.style.display = 'none';
+                        courseFieldContainer.style.display = 'none';
+                        departmentFieldContainer.style.display = 'none';
+                        officeFieldContainer.style.display = 'none';
+                    }
+                } else if (isGuest) {
+                    optionsToShow = guestYearLevels;
+                    yearLevelFieldContainer.style.display = 'none';
+                    positionFieldContainer.style.display = 'none';
+                    campusFieldContainer.style.display = 'none';
+                    collegeFieldContainer.style.display = 'none';
+                    courseFieldContainer.style.display = 'none';
+                    departmentFieldContainer.style.display = 'none';
+                    officeFieldContainer.style.display = 'none';
 
-                // Refresh Select2
-                $(yearLevelSelect).trigger('change');
+                    // Clear all fields - no dropdowns needed for guests
+                    $(courseSelect).val(null);
+                    $(officeSelect).val(null);
+                    $(positionTypeSelect).val(null);
+                    $(departmentSelect).val(null);
+
+                    // Automatically select guest year level without showing dropdown
+                    $(yearLevelSelect).empty();
+                    Object.entries(guestYearLevels).forEach(([value, text]) => {
+                        const option = new Option(text, value, true, true);
+                        $(yearLevelSelect).append(option);
+                    });
+
+                    return; // Exit early - no need to populate dropdowns
+                } else {
+                    // Student
+                    optionsToShow = studentYearLevels;
+                    placeholderText = '{{ __("messages.student.select_year_level") }}';
+                    yearLevelFieldContainer.style.display = 'block';
+                    positionFieldContainer.style.display = 'none';
+                    campusFieldContainer.style.display = 'block';
+                    collegeFieldContainer.style.display = 'block';
+                    courseFieldContainer.style.display = 'block';
+                    departmentFieldContainer.style.display = 'none';
+                    officeFieldContainer.style.display = 'none';
+
+                    // Clear employee fields
+                    $(positionTypeSelect).val(null);
+                    $(officeSelect).val(null);
+                    $(departmentSelect).val(null);
+                }
+
+                // Populate year level dropdown if not hidden
+                if (yearLevelFieldContainer.style.display !== 'none') {
+                    $(yearLevelSelect).append('<option value="">' + placeholderText + '</option>');
+                    Object.entries(optionsToShow).forEach(([value, text]) => {
+                        const option = new Option(text, value, false, value == currentValue);
+                        $(yearLevelSelect).append(option);
+                    });
+                } else {
+                    // Automatically select the appropriate year level
+                    if (isEmployee) {
+                        Object.entries(employeeYearLevels).forEach(([value, text]) => {
+                            const option = new Option(text, value, true, true);
+                            $(yearLevelSelect).append(option);
+                        });
+                    } else if (isGuest) {
+                        Object.entries(guestYearLevels).forEach(([value, text]) => {
+                            const option = new Option(text, value, true, true);
+                            $(yearLevelSelect).append(option);
+                        });
+                    }
+                }
+
+                // Year level select is already initialized with Select2, no need to refresh
             }
 
             // Initialize on page load
-            updateYearLevelOptions();
+            updateFieldsDisplay();
 
-            // Update when checkbox changes
-            isEmployeeCheckbox.addEventListener('change', updateYearLevelOptions);
+            // Update when checkboxes change
+            isEmployeeCheckbox.addEventListener('change', updateFieldsDisplay);
+            isGuestCheckbox.addEventListener('change', updateFieldsDisplay);
+
+            // Update when position type changes (using off/on to prevent multiple bindings)
+            $(positionTypeSelect).off('change').on('change', updateFieldsDisplay);
         });
     </script>
 

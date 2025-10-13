@@ -35,6 +35,8 @@ return new class extends Migration
             $table->integer('course_id')->nullable();
             $table->integer('year_level_id')->nullable();
             $table->integer('vaccination_id')->nullable();
+            $table->integer('office_id')->nullable(); // For Staff positions
+            $table->integer('department_id')->nullable(); // For Faculty positions - references departments table
             $table->rememberToken();
             $table->timestamps();
         });

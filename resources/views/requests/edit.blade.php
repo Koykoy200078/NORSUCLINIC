@@ -17,7 +17,7 @@
         isRole('clinic_admin') ? route('request-documents.update', $requestDocument) : 
         (isRole('staff') ? route('staff.request-documents.update', $requestDocument) : 
         (isRole('doctor') ? route('doctors.request-documents.update', $requestDocument) : route('request-documents.update', $requestDocument)))
-    }}" method="POST">
+    }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -278,6 +278,63 @@
             </div>
         </div>
 
+        <!-- Image Upload Section -->
+        <div class="grid grid-cols-4 gap-2 py-2 mt-4">
+            <div class="col-span-1">
+                <label class="block font-semibold">Consultation Images</label>
+                <small class="text-gray-500">Max 5MB per image</small>
+            </div>
+            <div class="col-span-3">
+                <!-- Display existing images -->
+                @if($requestDocument->consultation_images)
+                @php
+                $existingImages = is_string($requestDocument->consultation_images)
+                ? json_decode($requestDocument->consultation_images, true)
+                : $requestDocument->consultation_images;
+                @endphp
+
+                @if(is_array($existingImages) && count($existingImages) > 0)
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-2">Current Images:</label>
+                    <div class="grid grid-cols-3 gap-4" id="existing_images_container">
+                        @foreach($existingImages as $index => $image)
+                        <div class="image-preview-wrapper" data-image-index="{{ $index }}">
+                            <img src="{{ asset('uploads/' . $image['path']) }}"
+                                alt="{{ $image['name'] }}"
+                                class="image-preview">
+                            <button type="button" class="remove-existing-image-btn"
+                                data-image-index="{{ $index }}"
+                                onclick="removeExistingImage({{ $index }})">
+                                ×
+                            </button>
+                            <small class="text-gray-600 block mt-1">
+                                {{ $image['name'] }} ({{ number_format($image['size'] / 1024 / 1024, 2) }}MB)
+                            </small>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Hidden field to track removed images -->
+                <input type="hidden" name="removed_images" id="removed_images" value="">
+                @endif
+                @endif
+
+                <!-- Upload new images -->
+                <div class="mt-4">
+                    <label class="block text-sm font-semibold mb-2">Add New Images:</label>
+                    <input type="file" id="consultation_images" name="consultation_images[]"
+                        class="w-full border border-gray-300 rounded p-2"
+                        accept="image/jpeg,image/png,image/jpg,image/gif"
+                        multiple>
+                    <small class="text-gray-500">You can select multiple images (JPEG, PNG, JPG, GIF)</small>
+
+                    <!-- Image Preview Container for new images -->
+                    <div id="image_preview_container" class="mt-4 grid grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="flex justify-end mt-6">
             <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded">Update</button>
@@ -391,5 +448,160 @@
     #nursing_intervention {
         resize: none;
     }
+
+    .image-preview-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .remove-image-btn,
+    .remove-existing-image-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .remove-image-btn:hover,
+    .remove-existing-image-btn:hover {
+        background-color: #dc2626;
+    }
+
+    .image-size-error {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+    }
 </style>
+
+<script>
+    // Track removed existing images
+    let removedImages = [];
+
+    function removeExistingImage(index) {
+        if (confirm('Are you sure you want to remove this image?')) {
+            // Add to removed list
+            removedImages.push(index);
+            document.getElementById('removed_images').value = JSON.stringify(removedImages);
+
+            // Remove from DOM
+            const imageWrapper = document.querySelector(`[data-image-index="${index}"]`);
+            if (imageWrapper) {
+                imageWrapper.remove();
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image Upload Preview and Validation for new images
+        const imageInput = document.getElementById('consultation_images');
+        const previewContainer = document.getElementById('image_preview_container');
+        const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+        let selectedFiles = [];
+
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                previewContainer.innerHTML = ''; // Clear previous previews
+                selectedFiles = []; // Reset selected files
+
+                // Create a new FileList to store valid files
+                const dataTransfer = new DataTransfer();
+
+                files.forEach((file, index) => {
+                    // Validate file size
+                    if (file.size > maxFileSize) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'col-span-3 image-size-error';
+                        errorDiv.textContent = `Error: ${file.name} exceeds 5MB limit (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+                        previewContainer.appendChild(errorDiv);
+                        return; // Skip this file
+                    }
+
+                    // Add valid file to the list
+                    selectedFiles.push(file);
+                    dataTransfer.items.add(file);
+
+                    // Create preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'image-preview-wrapper';
+
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.className = 'image-preview';
+                        img.alt = file.name;
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image-btn';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.type = 'button';
+                        removeBtn.onclick = function() {
+                            // Remove from selectedFiles array
+                            const fileIndex = selectedFiles.indexOf(file);
+                            if (fileIndex > -1) {
+                                selectedFiles.splice(fileIndex, 1);
+                            }
+
+                            // Update the file input
+                            const newDataTransfer = new DataTransfer();
+                            selectedFiles.forEach(f => newDataTransfer.items.add(f));
+                            imageInput.files = newDataTransfer.files;
+
+                            // Remove preview
+                            wrapper.remove();
+
+                            // Show message if no images
+                            if (selectedFiles.length === 0) {
+                                previewContainer.innerHTML = '<p class="text-gray-500 col-span-3">No new images selected</p>';
+                            }
+                        };
+
+                        const fileInfo = document.createElement('small');
+                        fileInfo.className = 'text-gray-600 block mt-1';
+                        fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+
+                        wrapper.appendChild(img);
+                        wrapper.appendChild(removeBtn);
+                        wrapper.appendChild(fileInfo);
+                        previewContainer.appendChild(wrapper);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+
+                // Update the file input with only valid files
+                imageInput.files = dataTransfer.files;
+
+                // Show message if no valid files
+                if (selectedFiles.length === 0 && files.length > 0) {
+                    const noValidFiles = document.createElement('p');
+                    noValidFiles.className = 'text-red-500 col-span-3';
+                    noValidFiles.textContent = 'No valid images selected. All files exceeded 5MB limit.';
+                    previewContainer.appendChild(noValidFiles);
+                }
+            });
+        }
+    });
+</script>
 @endsection

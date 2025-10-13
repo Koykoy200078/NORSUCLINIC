@@ -147,7 +147,9 @@ class User extends Authenticatable implements HasMedia
         'college_id',
         'course_id',
         'year_level_id',
-        'vaccination_id'
+        'vaccination_id',
+        'office_id',
+        'department_id',
     ];
 
     const LANGUAGES = [

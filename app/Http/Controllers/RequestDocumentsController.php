@@ -34,6 +34,11 @@ class RequestDocumentsController extends Controller
     public function create(PatientRepository $patientRepository, Request $request)
     {
         $data = $patientRepository->getData();
+
+        // Add departments and offices data
+        $data['departments'] = \App\Models\Department::toBase()->pluck('department_name', 'id');
+        $data['offices'] = \App\Models\Office::toBase()->pluck('office_name', 'id');
+
         $user = auth()->user(); // Get the authenticated user
 
         // If user_id is provided (from patient history), get that patient's data
@@ -237,8 +242,16 @@ class RequestDocumentsController extends Controller
                 if ($image->getSize() <= 5 * 1024 * 1024) {
                     $fileName = $image->getClientOriginalName();
 
-                    // Store image directly to storage/app/public/consultation_images/[PatientName]/[Timestamp]/
-                    $image->storeAs($folderPath, $fileName, 'public');
+                    // Store image directly to public/uploads/consultation_images/[PatientName]/[Timestamp]/
+                    $destinationPath = public_path('uploads/' . $folderPath);
+
+                    // Create directory if it doesn't exist
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0777, true);
+                    }
+
+                    // Move the file
+                    $image->move($destinationPath, $fileName);
 
                     // Add to array for database storage
                     $uploadedImages[] = [
@@ -452,6 +465,78 @@ class RequestDocumentsController extends Controller
             'nursing_intervention' => $data['nursing_intervention'] ?? $requestDocument->nursing_intervention,
             'nursing_incharged_id' => $data['nursing_incharge_id'],
         ]);
+
+        // Handle image updates
+        $this->handleImageUpdates($requestDocument, $data);
+    }
+
+    /**
+     * Handle image uploads and removals for consultation form updates
+     */
+    private function handleImageUpdates(RequestDocuments $requestDocument, array $data)
+    {
+        // Get existing images
+        $existingImages = $requestDocument->consultation_images
+            ? (is_string($requestDocument->consultation_images)
+                ? json_decode($requestDocument->consultation_images, true)
+                : $requestDocument->consultation_images)
+            : [];
+
+        // Handle removed images
+        if (isset($data['removed_images']) && !empty($data['removed_images'])) {
+            $removedIndices = json_decode($data['removed_images'], true);
+
+            if (is_array($removedIndices)) {
+                foreach ($removedIndices as $index) {
+                    if (isset($existingImages[$index])) {
+                        // Delete the physical file from public/uploads/
+                        $filePath = public_path('uploads/' . $existingImages[$index]['path']);
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        }
+                        // Remove from array
+                        unset($existingImages[$index]);
+                    }
+                }
+                // Re-index array
+                $existingImages = array_values($existingImages);
+            }
+        }
+
+        // Handle new image uploads
+        if (request()->hasFile('consultation_images')) {
+            $patientName = str_replace(' ', '_', $requestDocument->name);
+            $timestamp = now()->format('Y-m-d_H-i-s');
+            $folderPath = "consultation_images/{$patientName}/{$timestamp}";
+            $destinationPath = public_path('uploads/' . $folderPath);
+
+            // Create directory if it doesn't exist
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            foreach (request()->file('consultation_images') as $image) {
+                // Validate file size (5MB max)
+                if ($image->getSize() <= 5 * 1024 * 1024) {
+                    $fileName = $image->getClientOriginalName();
+
+                    // Move image to public/uploads/
+                    $image->move($destinationPath, $fileName);
+
+                    // Add to existing images array
+                    $existingImages[] = [
+                        'path' => $folderPath . '/' . $fileName,
+                        'name' => $fileName,
+                        'size' => $image->getSize(),
+                        'uploaded_at' => now()->toDateTimeString(),
+                    ];
+                }
+            }
+        }
+
+        // Update database with modified images array
+        $requestDocument->consultation_images = !empty($existingImages) ? json_encode($existingImages) : null;
+        $requestDocument->save();
     }
 
     /**
