@@ -1,1 +1,1 @@
-{{ $row->medicine->name }}
+{{ $row->medicine_name }}

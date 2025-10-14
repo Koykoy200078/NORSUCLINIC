@@ -1,1 +1,1 @@
-{{ $row->sale_quantity }}
+{{ $row->quantity }}

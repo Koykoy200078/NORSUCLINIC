@@ -214,6 +214,15 @@
             </div>
             <div class="col-span-3">
                 <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5" required></textarea>
+
+                <!-- Medicine Selection for Plan -->
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Add Medicines to Plan:</label>
+                    <button type="button" id="add_plan_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                    <div id="plan_medicines_container" class="mt-2 space-y-2"></div>
+                </div>
             </div>
         </div>
 
@@ -232,6 +241,15 @@
             </div>
             <div class="col-span-3">
                 <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black" rows="5" required></textarea>
+
+                <!-- Medicine Selection for Nursing Intervention -->
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Add Medicines to Nursing Intervention:</label>
+                    <button type="button" id="add_nursing_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                    <div id="nursing_medicines_container" class="mt-2 space-y-2"></div>
+                </div>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -334,6 +352,50 @@
         color: #ef4444;
         font-size: 12px;
         margin-top: 4px;
+    }
+
+    /* Medicine selection styles */
+    .medicine-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr auto;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background-color: #f9fafb;
+        border-radius: 0.375rem;
+        align-items: center;
+    }
+
+    .medicine-row select,
+    .medicine-row input {
+        padding: 0.375rem 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .remove-medicine-btn {
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .remove-medicine-btn:hover {
+        background-color: #dc2626;
+    }
+
+    .medicine-stock-info {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.125rem;
+    }
+
+    .medicine-stock-warning {
+        color: #ef4444;
+        font-weight: 600;
     }
 </style>
 
@@ -592,6 +654,140 @@
                 age--;
             }
             return age;
+        }
+
+        // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
+
+        // Fetch medicines from API
+        let medicinesData = [];
+
+        async function fetchMedicines() {
+            try {
+                const response = await fetch('/api/medicines');
+                const data = await response.json();
+                medicinesData = data;
+            } catch (error) {
+                console.error('Error fetching medicines:', error);
+            }
+        }
+
+        // Call on page load
+        fetchMedicines();
+
+        let planMedicineCounter = 0;
+        let nursingMedicineCounter = 0;
+
+        // Add medicine for Plan
+        document.getElementById('add_plan_medicine_btn').addEventListener('click', function() {
+            addMedicineRow('plan', planMedicineCounter++);
+        });
+
+        // Add medicine for Nursing Intervention
+        document.getElementById('add_nursing_medicine_btn').addEventListener('click', function() {
+            addMedicineRow('nursing', nursingMedicineCounter++);
+        });
+
+        function addMedicineRow(type, index) {
+            const container = type === 'plan' ?
+                document.getElementById('plan_medicines_container') :
+                document.getElementById('nursing_medicines_container');
+
+            const row = document.createElement('div');
+            row.className = 'medicine-row';
+            row.dataset.type = type;
+            row.dataset.index = index;
+
+            // Medicine select
+            const medicineSelect = document.createElement('select');
+            medicineSelect.name = `medicines[${type}][${index}][medicine_id]`;
+            medicineSelect.className = 'medicine-select';
+            medicineSelect.required = true;
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select Medicine';
+            medicineSelect.appendChild(defaultOption);
+
+            medicinesData.forEach(medicine => {
+                const option = document.createElement('option');
+                option.value = medicine.id;
+                option.textContent = `${medicine.name} (Stock: ${medicine.available_quantity})`;
+                option.dataset.stock = medicine.available_quantity;
+                option.dataset.name = medicine.name;
+                medicineSelect.appendChild(option);
+            });
+
+            // Quantity input
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.name = `medicines[${type}][${index}][quantity]`;
+            quantityInput.placeholder = 'Qty';
+            quantityInput.min = '1';
+            quantityInput.value = '1';
+            quantityInput.required = true;
+
+            // Dosage instructions
+            const dosageInput = document.createElement('input');
+            dosageInput.type = 'text';
+            dosageInput.name = `medicines[${type}][${index}][dosage_instructions]`;
+            dosageInput.placeholder = 'Dosage instructions (e.g., 1 tablet 3x a day)';
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-medicine-btn';
+            removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+            });
+
+            // Stock validation
+            medicineSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const stock = parseInt(selectedOption.dataset.stock || 0);
+                const medicineName = selectedOption.dataset.name || '';
+
+                // Update max quantity
+                quantityInput.max = stock;
+
+                // Show stock warning if low
+                const existingWarning = row.querySelector('.medicine-stock-info');
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+
+                if (stock <= 0) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ ${medicineName} is out of stock!`;
+                    row.appendChild(warning);
+                    medicineSelect.value = '';
+                } else if (stock < 10) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ Low stock: Only ${stock} units available`;
+                    row.appendChild(warning);
+                }
+            });
+
+            // Quantity validation
+            quantityInput.addEventListener('input', function() {
+                const selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
+                const stock = parseInt(selectedOption.dataset.stock || 0);
+                const quantity = parseInt(this.value || 0);
+
+                if (quantity > stock) {
+                    this.value = stock;
+                    alert(`Only ${stock} units available for this medicine.`);
+                }
+            });
+
+            row.appendChild(medicineSelect);
+            row.appendChild(quantityInput);
+            row.appendChild(dosageInput);
+            row.appendChild(removeBtn);
+
+            container.appendChild(row);
         }
     });
 </script>

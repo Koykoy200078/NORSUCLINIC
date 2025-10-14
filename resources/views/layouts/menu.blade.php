@@ -228,19 +228,32 @@
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>
         @php
-        // Direct database query for real-time count of medicines expiring within a month
-        $oneMonthFromNow = \Carbon\Carbon::now()->addMonth();
+        // Count medicines expiring within 7 days (Critical - Red badge)
+        $sevenDaysFromNow = \Carbon\Carbon::now()->addDays(7);
         $today = \Carbon\Carbon::now();
-        $expiringCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
-        ->whereBetween('expiry_date', [$today, $oneMonthFromNow])
+        $criticalCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
+        ->whereBetween('expiry_date', [$today, $sevenDaysFromNow])
+        ->whereHas('medicines', function ($query) {
+        $query->where('available_quantity', '>', 0);
+        })
+        ->distinct('medicine_id')
+        ->count('medicine_id');
+
+        // Count medicines expiring within 8-30 days (Warning - Yellow badge)
+        $eightDaysFromNow = \Carbon\Carbon::now()->addDays(8);
+        $oneMonthFromNow = \Carbon\Carbon::now()->addDays(30);
+        $warningCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
+        ->whereBetween('expiry_date', [$eightDaysFromNow, $oneMonthFromNow])
         ->whereHas('medicines', function ($query) {
         $query->where('available_quantity', '>', 0);
         })
         ->distinct('medicine_id')
         ->count('medicine_id');
         @endphp
-        @if($expiringCount > 0)
-        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $expiringCount }}</span>
+        @if($criticalCount > 0)
+        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Critical: {{ $criticalCount }} medicine(s) expiring in 7 days or less">{{ $criticalCount }}</span>
+        @elseif($warningCount > 0)
+        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Warning: {{ $warningCount }} medicine(s) expiring within 30 days">{{ $warningCount }}</span>
         @endif
         <span class="d-none">{{ __('messages.medicine_categories') }}</span>
         <span class="d-none">{{ __('messages.medicine_brands') }}</span>

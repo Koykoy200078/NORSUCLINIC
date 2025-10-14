@@ -64,26 +64,17 @@
             <input class="form-control" placeholder="<?php echo __('messages.purchase_medicine.lot_no') ?>" required="" name="lot_no[]" type="text" id="lot_no{{:uniqueId}}">
         </td>
         <td>
-            <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>"  required="" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
-        </td>
-        <td class="d-none">
-            <input class="form-control" value='0.00' name="sale_price[]"  readonly id="sale_price{{:uniqueId}}" type="text">
+            <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
         </td>
         <td>
-            <input type="number" class="form-control purchase-price" required="" value='0.00' readonly id="purchase_price{{:uniqueId}}" name="purchase_price[]">
-        </td>
-                <td>
             <input type="number" class="form-control purchase-quantity" required="" value='0' name="quantity[]"  id="quantity{{:uniqueId}}">
         </td>
-            <td>
-            <div class="input-group flex-nowrap">
-            <input type="number" class="form-control purchase-tax" value='0'  name="tax_medicine[]"  id="tax{{:uniqueId}}">
-             <span class="input-group-text ms-0" id="amountTypeSymbol">%</span>
-            </div>
-        </td>
-                <td>
-            <input type="number" class="form-control  purchase-amount" readonly required="" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
-        </td>purchaseMedicineTemplate
+        
+        <!-- Hidden fields for purchase price, tax, and amount -->
+        <input type="hidden" class="purchase-price" value='0.00' name="purchase_price[]" id="purchase_price{{:uniqueId}}">
+        <input type="hidden" class="purchase-tax" value='0' name="tax_medicine[]" id="tax{{:uniqueId}}">
+        <input type="hidden" class="purchase-amount" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
+        
         <td class="text-center">
             <a href="javascript:void(0)" title="<?php echo __('messages.common.delete') ?>"
                class="delete-purchase-medicine-item btn px-1 text-danger fs-3 pe-0">

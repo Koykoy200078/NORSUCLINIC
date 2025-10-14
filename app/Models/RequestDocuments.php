@@ -264,4 +264,12 @@ class RequestDocuments extends Model implements HasMedia
 
         return "consultation_images/{$patientName}/{$timestamp}";
     }
+
+    /**
+     * Get the medicines used in this consultation.
+     */
+    public function consultationMedicines()
+    {
+        return $this->hasMany(ConsultationMedicine::class, 'request_document_id');
+    }
 }

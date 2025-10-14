@@ -69,15 +69,7 @@ class MedicineTable extends LivewireTableComponent
                 ->searchable()
                 ->sortable(),
             Column::make('Expiration', 'id')
-                ->view('medicines.templates.columns.expiration'),
-            // Column::make(__('messages.medicine.selling_price'), 'selling_price')
-            //     ->view('medicines.templates.columns.selling_price')
-            //     ->searchable()
-            //     ->sortable(),
-            Column::make(__('messages.medicine.buying_price'), 'buying_price')
-                ->view('medicines.templates.columns.buying_price')
-                ->searchable()
-                ->sortable(),
+                ->view('medicines.templates.columns.expiration')
         ];
 
         // Only show Action column for non-doctor users

@@ -1,0 +1,1 @@
+{{ $row->nurse_incharged ?? 'N/A' }}

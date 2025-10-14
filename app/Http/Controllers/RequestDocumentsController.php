@@ -230,45 +230,61 @@ class RequestDocumentsController extends Controller
 
         // Handle image uploads with custom path (Patient Name/Timestamp)
         if (request()->hasFile('consultation_images')) {
-            // Create folder name from patient full name and timestamp
-            $patientName = str_replace(' ', '_', $data['name']); // Replace spaces with underscores
-            $timestamp = now()->format('Y-m-d_H-i-s'); // e.g., 2025-10-09_14-30-45
-            $folderPath = "consultation_images/{$patientName}/{$timestamp}";
+            try {
+                // Create folder name from patient full name and timestamp
+                $patientName = str_replace(' ', '_', $data['name']); // Replace spaces with underscores
+                $timestamp = now()->format('Y-m-d_H-i-s'); // e.g., 2025-10-09_14-30-45
+                $folderPath = "consultation_images/{$patientName}/{$timestamp}";
 
-            $uploadedImages = [];
+                $uploadedImages = [];
 
-            foreach (request()->file('consultation_images') as $image) {
-                // Validate file size (5MB max)
-                if ($image->getSize() <= 5 * 1024 * 1024) {
-                    $fileName = $image->getClientOriginalName();
+                foreach (request()->file('consultation_images') as $image) {
+                    try {
+                        // Get file size before moving (important: must be done before move())
+                        $fileSize = $image->getSize();
 
-                    // Store image directly to public/uploads/consultation_images/[PatientName]/[Timestamp]/
-                    $destinationPath = public_path('uploads/' . $folderPath);
+                        // Validate file size (5MB max)
+                        if ($fileSize <= 5 * 1024 * 1024) {
+                            $fileName = $image->getClientOriginalName();
 
-                    // Create directory if it doesn't exist
-                    if (!file_exists($destinationPath)) {
-                        mkdir($destinationPath, 0777, true);
+                            // Store image directly to public/uploads/consultation_images/[PatientName]/[Timestamp]/
+                            $destinationPath = public_path('uploads/' . $folderPath);
+
+                            // Create directory if it doesn't exist
+                            if (!file_exists($destinationPath)) {
+                                mkdir($destinationPath, 0777, true);
+                            }
+
+                            // Move the file
+                            $image->move($destinationPath, $fileName);
+
+                            // Add to array for database storage (use stored size, not getSize() after move)
+                            $uploadedImages[] = [
+                                'path' => $folderPath . '/' . $fileName,
+                                'name' => $fileName,
+                                'size' => $fileSize,
+                                'uploaded_at' => now()->toDateTimeString(),
+                            ];
+                        }
+                    } catch (\Exception $e) {
+                        // Log individual file upload error but continue with other files
+                        \Log::error('Error uploading consultation image: ' . $e->getMessage());
                     }
-
-                    // Move the file
-                    $image->move($destinationPath, $fileName);
-
-                    // Add to array for database storage
-                    $uploadedImages[] = [
-                        'path' => $folderPath . '/' . $fileName,
-                        'name' => $fileName,
-                        'size' => $image->getSize(),
-                        'uploaded_at' => now()->toDateTimeString(),
-                    ];
                 }
-            }
 
-            // Save image paths to database as JSON
-            if (!empty($uploadedImages)) {
-                $requestDocument->consultation_images = json_encode($uploadedImages);
-                $requestDocument->save();
+                // Save image paths to database as JSON
+                if (!empty($uploadedImages)) {
+                    $requestDocument->consultation_images = json_encode($uploadedImages);
+                    $requestDocument->save();
+                }
+            } catch (\Exception $e) {
+                // Log error but don't fail the entire consultation form submission
+                \Log::error('Error handling consultation images: ' . $e->getMessage());
             }
         }
+
+        // Handle medicine deduction
+        $this->handleMedicineDeduction($requestDocument, $data);
 
         return $requestDocument;
     }
@@ -537,6 +553,72 @@ class RequestDocumentsController extends Controller
         // Update database with modified images array
         $requestDocument->consultation_images = !empty($existingImages) ? json_encode($existingImages) : null;
         $requestDocument->save();
+    }
+
+    /**
+     * Handle medicine deduction from inventory
+     */
+    private function handleMedicineDeduction(RequestDocuments $requestDocument, array $data)
+    {
+        if (!isset($data['medicines']) || !is_array($data['medicines'])) {
+            return;
+        }
+
+        // Process medicines from both Plan and Nursing Intervention
+        foreach ($data['medicines'] as $usedFor => $medicines) {
+            if (!is_array($medicines)) {
+                continue;
+            }
+
+            foreach ($medicines as $medicineData) {
+                if (empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
+                    continue;
+                }
+
+                $medicineId = $medicineData['medicine_id'];
+                $quantity = (int) $medicineData['quantity'];
+                $dosageInstructions = $medicineData['dosage_instructions'] ?? null;
+
+                // Find the medicine
+                $medicine = \App\Models\Medicine::find($medicineId);
+
+                if (!$medicine) {
+                    continue;
+                }
+
+                // Check if enough stock is available
+                if ($medicine->available_quantity < $quantity) {
+                    throw new \Exception("Insufficient stock for {$medicine->name}. Available: {$medicine->available_quantity}, Requested: {$quantity}");
+                }
+
+                // Deduct from available quantity
+                $medicine->available_quantity -= $quantity;
+                $medicine->save();
+
+                // Clear medicine cache to ensure UI updates immediately
+                cache()->forget('medicine_' . $medicineId);
+                cache()->forget('medicines_list');
+
+                // Record the medicine usage in consultation_medicines table
+                \App\Models\ConsultationMedicine::create([
+                    'request_document_id' => $requestDocument->id,
+                    'medicine_id' => $medicineId,
+                    'quantity' => $quantity,
+                    'used_for' => $usedFor, // 'plan' or 'nursing'
+                    'dosage_instructions' => $dosageInstructions,
+                ]);
+
+                // Log the medicine deduction
+                \Log::info('Medicine deducted from inventory', [
+                    'consultation_id' => $requestDocument->id,
+                    'medicine_id' => $medicineId,
+                    'medicine_name' => $medicine->name,
+                    'quantity_used' => $quantity,
+                    'remaining_stock' => $medicine->available_quantity,
+                    'used_for' => $usedFor,
+                ]);
+            }
+        }
     }
 
     /**

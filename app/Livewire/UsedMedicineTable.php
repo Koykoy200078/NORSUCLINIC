@@ -2,67 +2,57 @@
 
 namespace App\Livewire;
 
-use App\Models\Medicine;
-use App\Models\MedicineBill;
-use App\Models\SaleMedicine;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\UsedMedicineView;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 #[Lazy]
 class UsedMedicineTable extends LivewireTableComponent
 {
+    protected $model = UsedMedicineView::class;
+
     public bool $showFilterOnHeader = false;
 
     public bool $showButtonOnHeader = false;
-
-    protected $model = MedicineBill::class;
 
     protected $listeners = ['refresh' => '$refresh', 'resetPage'];
 
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('sale_medicines.created_at', 'desc')
+            ->setDefaultSort('created_at', 'desc')
             ->setQueryStringStatus(false);
     }
 
-   public function placeholder()
-   {
-         return view('livewire.used_medicine_skeleton');
-   }
+    public function placeholder()
+    {
+        return view('livewire.used_medicine_skeleton');
+    }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'medicine_bill_id')
+            Column::make('Id', 'id')
                 ->sortable()->hideIf(1),
-            Column::make(__('messages.medicines'), 'medicine_id')
-                ->sortable(function(Builder $query, $direction) {
-                    return $query->orderBy(Medicine::select('name')->whereColumn('id', 'sale_medicines.medicine_id'), $direction);
-                })->searchable(
-                    function (Builder $query, $direction) {
-                        return $query->whereHas('medicine', function (Builder $q) use ($direction) {
-                            $q->whereRaw("name like '%{$direction}%'");
-                        });
-                    }
-                )->view('used-medicine.columns.medicine'),
-            Column::make(__('messages.used_medicine.used_quantity'), 'sale_quantity')
-                ->sortable()->searchable()->view('used-medicine.columns.quantity'),
-            Column::make('Model id', 'medicineBill.model_id')
-                ->sortable()->hideIf(1),
-            Column::make(__('messages.used_medicine.used_at'), 'medicineBill.model_type')
-                ->sortable()->searchable()->view('used-medicine.columns.used_at'),
+            Column::make(__('messages.medicines'), 'medicine_name')
+                ->sortable()->searchable(),
+            Column::make(__('messages.used_medicine.used_quantity'), 'quantity')
+                ->sortable()->searchable(),
+            Column::make(__('messages.used_medicine.used_at'), 'source')
+                ->sortable(),
+            Column::make('Patient', 'patient_name')
+                ->sortable()->searchable(),
+            Column::make('Nurse In Charge', 'nurse_incharged')
+                ->sortable()->searchable(),
             Column::make(__('messages.appointment.date'), 'created_at')
-                ->sortable()->searchable()->view('used-medicine.columns.date'),
-
+                ->sortable()->searchable(),
         ];
     }
 
     public function builder(): Builder
     {
-        return SaleMedicine::with(['medicineBill', 'medicine'])->whereHas('medicineBill', function (Builder $q) {
-            $q->where('payment_status', true);
-        });
+        return UsedMedicineView::query();
     }
 }

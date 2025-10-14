@@ -50,6 +50,12 @@ class PurchaseMedicineController extends AppBaseController
     {
 
         $input = $request->all();
+
+        // Generate unique purchase number if not provided
+        if (empty($input['purchase_no'])) {
+            $input['purchase_no'] = generateUniquePurchaseNumber();
+        }
+
         $this->prchaseMedicineRepository->store($input);
         flash::success(__('messages.purchase_medicine.purchased_medicine_success'));
 

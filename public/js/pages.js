@@ -13793,14 +13793,17 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
       }
     }
   }
-  var netAmount = "#netAmount";
-  if ($(netAmount).val() == null || $(netAmount).val() == "") {
-    displayErrorMessage(Lang.get("js.net_amount_not_empty"));
-    return false;
-  } else if ($(netAmount).val() == 0) {
-    displayErrorMessage(Lang.get("js.net_amount_not_zero"));
-    return false;
-  }
+
+  // Net amount validation removed - field is intentionally set to 0 since price fields are hidden
+  // let netAmount = "#netAmount";
+  // if ($(netAmount).val() == null || $(netAmount).val() == "") {
+  //     displayErrorMessage(Lang.get("js.net_amount_not_empty"));
+  //     return false;
+  // } else if ($(netAmount).val() == 0) {
+  //     displayErrorMessage(Lang.get("js.net_amount_not_zero"));
+  //     return false;
+  // }
+
   if (tx == 0 && ($("#purchaseTaxId").val() == null || $("#purchaseTaxId").val() == "")) {
     displayErrorMessage(Lang.get("js.tax_cannot_be_zero_empty"));
     return false;
