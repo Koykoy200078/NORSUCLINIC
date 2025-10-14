@@ -31,3 +31,4 @@
     </div>
 @endsection
 {{-- JS File :- assets/js/category/category-details-edit.js --}}
+

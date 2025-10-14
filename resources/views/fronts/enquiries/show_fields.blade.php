@@ -31,3 +31,4 @@
                                     {{\Carbon\Carbon::parse($enquiry->updated_at)->diffForHumans()}}</span>
     </div>
 </div>
+

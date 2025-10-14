@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -31,3 +31,4 @@ class AdminDashBoardTable extends Component
         return view('livewire.admin-dash-board-table');
     }
 }
+

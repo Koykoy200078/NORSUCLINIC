@@ -22,7 +22,7 @@
                             {{ Form::select(
                                 'payment_type',
                                 collect($filterHeads[0])->toArray(),
-                                \App\Models\Appointment::PAYMENT_TYPE_ALL,
+                                \App\Models\PatientQueue::PAYMENT_TYPE_ALL,
                                 ['class' => 'form-control form-control-solid form-select','placeholder'=>__('messages.doctor_session.all'), 'data-control' => 'select2', 'id' => 'trPaymentMehtod'],
                             ) }}
                         </div>
@@ -59,3 +59,5 @@
             </div>
         </div>
     </div>
+
+

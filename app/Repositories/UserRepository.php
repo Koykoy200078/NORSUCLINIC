@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\DataTable\UserDataTable;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Campus;
 use App\Models\City;
 use App\Models\College;
@@ -325,14 +325,14 @@ class UserRepository extends BaseRepository
         $doctor['data'] = Doctor::with(['user.address', 'specializations', 'appointments.patient.user'])->whereId($input->id)->first();
         $doctor['doctorSession'] = DoctorSession::whereDoctorId($input->id)->get();
         //        $doctor['appointments'] = DataTables::of((new UserDataTable())->getAppointment($input->id))->make(true);
-        $doctor['appointmentStatus'] = Appointment::ALL_STATUS;
-        $doctor['totalAppointmentCount'] = Appointment::whereDoctorId($input->id)->count();
-        $doctor['todayAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
+        $doctor['appointmentStatus'] = PatientQueue::ALL_STATUS;
+        $doctor['totalAppointmentCount'] = PatientQueue::whereDoctorId($input->id)->count();
+        $doctor['todayAppointmentCount'] = PatientQueue::whereDoctorId($input->id)->where(
             'date',
             '=',
             $todayDate
         )->count();
-        $doctor['upcomingAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
+        $doctor['upcomingAppointmentCount'] = PatientQueue::whereDoctorId($input->id)->where(
             'date',
             '>',
             $todayDate

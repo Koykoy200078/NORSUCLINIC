@@ -8,7 +8,7 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateChangePasswordRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Doctor;
 use App\Models\DoctorSession;
 use App\Models\Patient;
@@ -108,7 +108,7 @@ class UserController extends AppBaseController
     public function show(Doctor $doctor)
     {
         if (getLogInUser()->hasRole('patient')) {
-            $doctorAppointment = Appointment::whereDoctorId($doctor->id)->wherePatientId(getLogInUser()->patient->id);
+            $doctorAppointment = PatientQueue::whereDoctorId($doctor->id)->wherePatientId(getLogInUser()->patient->id);
             if (!$doctorAppointment->exists()) {
                 return redirect()->back();
             }
@@ -168,7 +168,7 @@ class UserController extends AppBaseController
      */
     public function destroy(Doctor $doctor): JsonResponse
     {
-        $existAppointment = Appointment::whereDoctorId($doctor->id)->exists();
+        $existAppointment = PatientQueue::whereDoctorId($doctor->id)->exists();
         $existVisit = Visit::whereDoctorId($doctor->id)->exists();
 
         if ($existAppointment || $existVisit) {
@@ -409,3 +409,4 @@ class UserController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.theme_change'));
     }
 }
+

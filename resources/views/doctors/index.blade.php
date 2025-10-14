@@ -11,3 +11,4 @@
         @include('doctors.qualification-modal')
     </div>
 @endsection
+

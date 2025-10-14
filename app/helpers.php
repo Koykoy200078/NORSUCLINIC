@@ -167,7 +167,7 @@ if (!function_exists('getDashboardURL')) {
                     'manage_doctors' => 'admin/doctors',
                     'manage_patients' => 'admin/patients',
                     'manage_staff' => 'admin/staff',
-                    'manage_appointments' => 'admin/appointments',
+                    'manage_patient_queues' => 'admin/patient-queues',
                 ];
 
                 foreach ($permissionDashboardMap as $permission => $url) {
@@ -571,7 +571,7 @@ if (! function_exists('getAllPaymentStatus')) {
      */
     function getAllPaymentStatus()
     {
-        $paymentGateway = \App\Models\Appointment::PAYMENT_METHOD;
+        $paymentGateway = \App\Models\PatientQueue::PAYMENT_METHOD;
 
         $selectedPaymentGateway = PaymentGateway::pluck('payment_gateway', 'payment_gateway_id')->toArray();
 
@@ -589,7 +589,7 @@ if (! function_exists('getPaymentGateway')) {
     function getPaymentGateway()
     {
 
-        $paymentGateway = \App\Models\Appointment::PAYMENT_GATEWAY;
+        $paymentGateway = \App\Models\PatientQueue::PAYMENT_GATEWAY;
         $selectedPaymentGateway = PaymentGateway::pluck('payment_gateway')->toArray();
 
         $paymentGatewayToReturn = array_intersect($paymentGateway, $selectedPaymentGateway);
@@ -1120,8 +1120,8 @@ if (!function_exists('getDoctorBookedAppointmentsCount')) {
                 return 0;
             }
 
-            return \App\Models\Appointment::where('doctor_id', $doctor->id)
-                ->where('status', \App\Models\Appointment::BOOKED)
+            return \App\Models\PatientQueue::where('doctor_id', $doctor->id)
+                ->where('status', \App\Models\PatientQueue::BOOKED)
                 ->count();
         });
     }

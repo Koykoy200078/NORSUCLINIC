@@ -81,3 +81,4 @@
         @include($component->getConfigurableAreaFor('after-toolbar'), $component->getParametersForConfigurableArea('after-toolbar'))
     </div>
 @endif
+

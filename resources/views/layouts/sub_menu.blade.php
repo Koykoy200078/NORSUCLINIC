@@ -226,10 +226,10 @@
         }}">{{ __('messages.service_categories') }}</a>
 </li>
 @endcan
-@can('manage_appointments')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/appointments*','admin/admin-appointments-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/appointments*','admin/admin-appointments-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'active' : '' }}"
-        href="{{ route('appointments.index') }}">{{ __('messages.appointments') }}</a>
+@can('manage_patient_queues')
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/patient-queues*','admin/admin-patient-queues-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/patient-queues*','admin/admin-patient-queues-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'active' : '' }}"
+        href="{{ route('patient-queues.index') }}">{{ __('messages.appointments') }}</a>
 </li>
 @endcan
 <!-- @can('manage_patient_visits')

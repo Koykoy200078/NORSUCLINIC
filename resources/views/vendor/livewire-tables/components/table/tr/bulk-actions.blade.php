@@ -139,3 +139,4 @@
         </x-livewire-tables::table.tr.plain>
     @endif
 @endif
+

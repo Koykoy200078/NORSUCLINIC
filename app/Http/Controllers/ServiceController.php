@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateServicesRequest;
 use App\Http\Requests\UpdateServicesRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Service;
 use App\Repositories\ServicesRepository;
 use Illuminate\Contracts\Foundation\Application;
@@ -110,7 +110,7 @@ class ServiceController extends AppBaseController
      */
     public function destroy(Service $service): JsonResponse
     {
-        $checkRecord = Appointment::whereServiceId($service->id)->exists();
+        $checkRecord = PatientQueue::whereServiceId($service->id)->exists();
 
         if ($checkRecord) {
             return $this->sendError(__('messages.flash.service_use'));
@@ -149,3 +149,4 @@ class ServiceController extends AppBaseController
         return $this->sendResponse($status, __('messages.flash.status_update'));
     }
 }
+

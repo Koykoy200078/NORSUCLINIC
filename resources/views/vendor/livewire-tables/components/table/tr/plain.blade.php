@@ -22,3 +22,4 @@
         {{ $slot }}
     </tr>
 @endif
+

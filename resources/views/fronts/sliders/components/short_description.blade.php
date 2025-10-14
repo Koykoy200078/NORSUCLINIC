@@ -1,1 +1,2 @@
 {{ $row->short_description }}
+

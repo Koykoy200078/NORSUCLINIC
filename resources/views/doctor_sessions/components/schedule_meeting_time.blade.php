@@ -3,3 +3,4 @@
 @else
     <span class="badge bg-primary">{{ $row->session_meeting_time." ".__('messages.common.minutes') }}</span>
 @endif
+

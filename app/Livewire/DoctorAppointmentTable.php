@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -13,15 +13,15 @@ class DoctorAppointmentTable extends LivewireTableComponent
 {
     public $doctorId;
 
-    protected $model = Appointment::class;
+    protected $model = PatientQueue::class;
 
     public bool $showFilterOnHeader = true;
 
-    public array $FilterComponent = ['doctor_appointment.components.filter', Appointment::STATUS];
+    public array $FilterComponent = ['doctor_appointment.components.filter', PatientQueue::STATUS];
 
     protected $listeners = ['refresh' => '$refresh', 'resetPage', 'changeDoctorStatusFilter', 'changeDateFilter'];
 
-    public int $statusFilter = Appointment::BOOKED;
+    public int $statusFilter = PatientQueue::BOOKED;
 
     public string $dateFilter = '';
 
@@ -49,20 +49,20 @@ class DoctorAppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Appointment::with([
+        $query = PatientQueue::with([
             'patient:id,user_id',
             'patient.user:id,first_name,last_name'
         ])->where(
             'doctor_id',
             '=',
             $this->doctorId
-        )->select('appointments.*');
+        )->select('patient_queues.*');
 
         $query->when(
-            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+            $this->statusFilter != '' && $this->statusFilter != PatientQueue::ALL_STATUS,
             function (Builder $q) {
-                if ($this->statusFilter != Appointment::ALL) {
-                    $q->where('appointments.status', '=', $this->statusFilter);
+                if ($this->statusFilter != PatientQueue::ALL) {
+                    $q->where('patient_queues.status', '=', $this->statusFilter);
                 }
             }
         );
@@ -71,12 +71,12 @@ class DoctorAppointmentTable extends LivewireTableComponent
             $timeEntryDate = explode(' - ', $this->dateFilter);
             $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         } else {
             $timeEntryDate = explode(' - ', getWeekDate());
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         }
 
         return $query;

@@ -31,3 +31,4 @@
         </div>
     </x-livewire-tables::table.td.plain>
 @endif
+

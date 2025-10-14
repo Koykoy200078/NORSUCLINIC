@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\MedicineController;
@@ -32,16 +32,16 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     )->name('appointment.dashboard');
 
     // Appointment Management (Doctors can fully manage appointments)
-    Route::middleware('permission:manage_appointments')->group(function () {
+    Route::middleware('permission:manage_patient_queues')->group(function () {
         // Full CRUD access - removed view-only restrictions
-        Route::resource('appointments', AppointmentController::class);
-        Route::get('appointments', [AppointmentController::class, 'doctorAppointment'])->name('appointments');
-        Route::get('appointments-calendar', [AppointmentController::class, 'doctorAppointmentCalendar'])->name('appointments.calendar');
-        Route::get('appointments/{appointment}', [AppointmentController::class, 'appointmentDetail'])->name('appointment.detail');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointment.detail');
+        Route::resource('patient-queues', PatientQueueController::class);
+        Route::get('patient-queues', [PatientQueueController::class, 'doctorAppointment'])->name('patient-queues');
+        Route::get('appointments-calendar', [PatientQueueController::class, 'doctorAppointmentCalendar'])->name('appointments.calendar');
+        Route::get('patient-queues/{appointment}', [PatientQueueController::class, 'appointmentDetail'])->name('appointment.detail');
+        Route::get('appointment-pdf/{id}', [PatientQueueController::class, 'appointmentPdf'])->name('appointmentPdf');
+        Route::post('patient-queues/{appointment}', [PatientQueueController::class, 'changeStatus'])->name('change-status');
+        Route::post('appointments-payment/{id}', [PatientQueueController::class, 'changePaymentStatus'])->name('change-payment-status');
+        Route::get('patient-queues/{appointment}', [PatientQueueController::class, 'show'])->name('appointment.detail');
     });
 
     // Doctor Session Management (Doctors can manage their sessions)
@@ -87,8 +87,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     // Route for Prescription
     // Full CRUD access - excluded create/edit from resource as they need appointment context
     Route::resource('prescriptions', PrescriptionController::class)->except(['create', 'edit']);
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patient-queues/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('patient-queues/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -150,3 +150,4 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
     });
 });
+

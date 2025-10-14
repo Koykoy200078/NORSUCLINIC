@@ -22,3 +22,4 @@
     <label class="pb-2 fs-4 text-gray-600">{{ __('messages.patient.last_updated') }}</label>
     <span class="fs-4 text-gray-800">{{$staff->updated_at->diffForHumans()}}</span>
 </div>
+

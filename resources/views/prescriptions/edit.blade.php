@@ -64,3 +64,4 @@
     </div>
 @endsection
 {{--    <script src="{{mix('assets/js/prescriptions/create-edit.js')}}"></script>--}}
+

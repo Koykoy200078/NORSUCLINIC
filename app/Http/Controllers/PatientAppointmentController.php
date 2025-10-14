@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Setting;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -17,10 +17,11 @@ class PatientAppointmentController extends AppBaseController
     public function index(): \Illuminate\View\View
     {
         $allPaymentStatus = getAllPaymentStatus();
-        $paymentStatus = Arr::except($allPaymentStatus, [Appointment::MANUALLY]);
+        $paymentStatus = Arr::except($allPaymentStatus, [PatientQueue::MANUALLY]);
         $paymentGateway = getPaymentGateway();
         $logo = Setting::where('key', 'logo')->pluck('value');
 
         return view('patients.appointments.index', compact('paymentStatus', 'paymentGateway','logo'));
     }
 }
+

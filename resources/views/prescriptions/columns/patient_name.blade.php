@@ -13,3 +13,4 @@
         <span>{{$row->patient->patientUser->email}}</span>
     </div>
 </div>
+

@@ -5,3 +5,4 @@
     <span class="badge bg-light-success">{{ App\Models\MedicineBill::PAYMENT_STATUS_ARRAY[$row->payment_status] }}</span>
     @endif
 </div>
+

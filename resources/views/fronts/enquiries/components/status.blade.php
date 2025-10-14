@@ -3,3 +3,4 @@
 @else
     <div class="badge bg-danger">{{ __('messages.common.unread') }}</div>
 @endif
+

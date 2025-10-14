@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -11,7 +11,7 @@ use Livewire\Attributes\Lazy;
 #[Lazy]
 class DoctorPanelAppointmentTable extends LivewireTableComponent
 {
-    protected $model = Appointment::class;
+    protected $model = PatientQueue::class;
 
     public bool $showFilterOnHeader = true;
 
@@ -21,8 +21,8 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
 
     public array $FilterComponent = [
         'doctor_appointment.doctor_panel.components.filter',
-        Appointment::PAYMENT_TYPE_ALL,
-        Appointment::STATUS,
+        PatientQueue::PAYMENT_TYPE_ALL,
+        PatientQueue::STATUS,
     ];
 
     protected $listeners = [
@@ -41,7 +41,7 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
 
     public string $dateFilter = '';
 
-    public int $statusFilter = Appointment::BOOKED;
+    public int $statusFilter = PatientQueue::BOOKED;
 
     public function configure(): void
     {
@@ -67,24 +67,24 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Appointment::with(['patient.user', 'services', 'transaction'])->where(
+        $query = PatientQueue::with(['patient.user', 'services', 'transaction'])->where(
             'doctor_id',
             getLoginUser()->doctor->id
-        )->select('appointments.*');
+        )->select('patient_queues.*');
 
         $query->when(
-            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+            $this->statusFilter != '' && $this->statusFilter != PatientQueue::ALL_STATUS,
             function (Builder $q) {
-                if ($this->statusFilter != Appointment::ALL) {
-                    $q->where('appointments.status', '=', $this->statusFilter);
+                if ($this->statusFilter != PatientQueue::ALL) {
+                    $q->where('patient_queues.status', '=', $this->statusFilter);
                 }
             }
         );
 
         $query->when(
-            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
+            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != PatientQueue::ALL_PAYMENT,
             function (Builder $q) {
-                $q->where('appointments.payment_type', '=', $this->paymentTypeFilter);
+                $q->where('patient_queues.payment_type', '=', $this->paymentTypeFilter);
             }
         );
 
@@ -92,12 +92,12 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
             $timeEntryDate = explode(' - ', $this->dateFilter);
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         } else {
             $timeEntryDate = explode(' - ', getWeekDate());
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         }
 
         return $query;
@@ -152,10 +152,10 @@ class DoctorPanelAppointmentTable extends LivewireTableComponent
                     return view('doctor_appointment.doctor_panel.components.status')
                         ->with([
                             'row' => $row,
-                            'book' => Appointment::BOOKED,
-                            'accepted' => Appointment::ACCEPTED,
-                            'finished' => Appointment::FINISHED,
-                            'cancel' => Appointment::CANCELLED,
+                            'book' => PatientQueue::BOOKED,
+                            'accepted' => PatientQueue::ACCEPTED,
+                            'finished' => PatientQueue::FINISHED,
+                            'cancel' => PatientQueue::CANCELLED,
                         ]);
                 }),
             Column::make(__('messages.common.action'), 'id')->view('doctor_appointment.doctor_panel.components.action'),

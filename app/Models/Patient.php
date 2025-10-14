@@ -267,7 +267,7 @@ class Patient extends Model implements HasMedia
 
     public function appointments(): HasMany
     {
-        return $this->hasMany(Appointment::class, 'patient_id');
+        return $this->hasMany(PatientQueue::class, 'patient_id');
     }
 
     public function reviews(): HasMany

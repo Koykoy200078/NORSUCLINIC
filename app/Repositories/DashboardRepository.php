@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Service;
@@ -38,18 +38,18 @@ class DashboardRepository
                 ->count();
 
             $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
-            $cachedData['totalAppointmentCount'] = Appointment::count();
+            $cachedData['totalAppointmentCount'] = PatientQueue::count();
 
-            $cachedData['todayAppointmentCount'] = Appointment::where('date', $todayDate)
-                ->where('status', Appointment::BOOKED)
+            $cachedData['todayAppointmentCount'] = PatientQueue::where('date', $todayDate)
+                ->where('status', PatientQueue::BOOKED)
                 ->count();
 
             $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
                 ->whereDate('created_at', $todayDate)
                 ->count();
 
-            $cachedData['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
-            $cachedData['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
+            $cachedData['upcomingAppointmentCount'] = PatientQueue::where('date', '>', $todayDate)->count();
+            $cachedData['tomorrowAppointmentCount'] = PatientQueue::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
 
             // Use cached settings and optimized queries
             $cachedData['servicesArr'] = Cache::remember('active_services', 600, function () {
@@ -92,24 +92,24 @@ class DashboardRepository
 
         $appointments = Cache::remember($cacheKey, 300, function () use ($doctorId, $todayDate) {
             return [
-                'totalAppointmentCount' => Appointment::where('doctor_id', $doctorId)
-                    ->whereNotIn('status', [Appointment::CANCELLED])
+                'totalAppointmentCount' => PatientQueue::where('doctor_id', $doctorId)
+                    ->whereNotIn('status', [PatientQueue::CANCELLED])
                     ->count(),
-                'todayAppointmentCount' => Appointment::where('doctor_id', $doctorId)
+                'todayAppointmentCount' => PatientQueue::where('doctor_id', $doctorId)
                     ->where('date', $todayDate)
-                    ->whereNotIn('status', [Appointment::CANCELLED])
+                    ->whereNotIn('status', [PatientQueue::CANCELLED])
                     ->count(),
-                'upcomingAppointmentCount' => Appointment::where('doctor_id', $doctorId)
+                'upcomingAppointmentCount' => PatientQueue::where('doctor_id', $doctorId)
                     ->where('date', '>', $todayDate)
-                    ->where('status', Appointment::BOOKED)
+                    ->where('status', PatientQueue::BOOKED)
                     ->count(),
             ];
         });
 
         // Get today's appointments with optimized eager loading
-        $appointments['records'] = Appointment::with(['patient.user:id,first_name,last_name'])
+        $appointments['records'] = PatientQueue::with(['patient.user:id,first_name,last_name'])
             ->where('doctor_id', $doctorId)
-            ->where('status', Appointment::BOOKED)
+            ->where('status', PatientQueue::BOOKED)
             ->whereDate('date', Carbon::today())
             ->orderBy('date', 'ASC')
             ->paginate(5);
@@ -168,9 +168,9 @@ class DashboardRepository
 
         if (isset($input['day'])) {
 
-            $data = Appointment::with(['patient.user', 'user', 'services'])
+            $data = PatientQueue::with(['patient.user', 'user', 'services'])
                 ->where('doctor_id', $doctorId)
-                ->whereStatus(Appointment::BOOKED)
+                ->whereStatus(PatientQueue::BOOKED)
                 ->whereDate('date', Carbon::today())
                 ->orderBy('date', 'ASC')
                 ->paginate(10);
@@ -181,9 +181,9 @@ class DashboardRepository
             $now = Carbon::now();
             $weekStartDate = $now->startOfWeek()->format('Y-m-d');
             $weekEndDate = $now->endOfWeek()->format('Y-m-d');
-            $data = Appointment::with(['patient.user', 'user', 'services'])
+            $data = PatientQueue::with(['patient.user', 'user', 'services'])
                 ->where('doctor_id', $doctorId)
-                ->whereStatus(Appointment::BOOKED)
+                ->whereStatus(PatientQueue::BOOKED)
                 ->whereBetween('date', [$weekStartDate, $weekEndDate])
                 ->orderBy('date', 'ASC')
                 ->paginate(10);
@@ -192,9 +192,9 @@ class DashboardRepository
         }
 
         if (isset($input['month'])) {
-            $data = Appointment::with(['patient.user', 'user', 'services'])
+            $data = PatientQueue::with(['patient.user', 'user', 'services'])
                 ->where('doctor_id', $doctorId)
-                ->whereStatus(Appointment::BOOKED)
+                ->whereStatus(PatientQueue::BOOKED)
                 ->whereMonth('date', Carbon::now()->month)
                 ->orderBy('date', 'ASC')
                 ->paginate(10);
@@ -207,37 +207,37 @@ class DashboardRepository
     {
         $todayDate = Carbon::now()->format('Y-m-d');
         $patientId = getLogInUser()->patient->id;
-        $todayCompleted = Appointment::wherePatientId($patientId)->where(
+        $todayCompleted = PatientQueue::wherePatientId($patientId)->where(
             'date',
             '=',
             $todayDate
-        )->whereStatus(Appointment::FINISHED)->count();
-        $data['todayAppointmentCount'] = Appointment::wherePatientId($patientId)->where(
+        )->whereStatus(PatientQueue::FINISHED)->count();
+        $data['todayAppointmentCount'] = PatientQueue::wherePatientId($patientId)->where(
             'date',
             '=',
             $todayDate
         )->count();
-        $data['upcomingAppointmentCount'] = Appointment::wherePatientId($patientId)->where(
+        $data['upcomingAppointmentCount'] = PatientQueue::wherePatientId($patientId)->where(
             'date',
             '>',
             $todayDate
-        )->whereNotIn('status', [Appointment::CANCELLED])->count();
-        $data['pastCompletedAppointmentCount'] = Appointment::wherePatientId($patientId)->where(
+        )->whereNotIn('status', [PatientQueue::CANCELLED])->count();
+        $data['pastCompletedAppointmentCount'] = PatientQueue::wherePatientId($patientId)->where(
             'date',
             '<',
             $todayDate
         )->count();
         $data['completedAppointmentCount'] = $data['pastCompletedAppointmentCount'] + $todayCompleted;
-        $data['todayAppointment'] = Appointment::with(['patient.user', 'doctor.user', 'services'])
+        $data['todayAppointment'] = PatientQueue::with(['patient.user', 'doctor.user', 'services'])
             ->wherePatientId($patientId)
-            ->whereStatus(Appointment::BOOKED)
+            ->whereStatus(PatientQueue::BOOKED)
             ->where('date', '=', $todayDate)
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
 
-        $data['upcomingAppointment'] = Appointment::with(['patient.user', 'doctor.user', 'services'])
+        $data['upcomingAppointment'] = PatientQueue::with(['patient.user', 'doctor.user', 'services'])
             ->wherePatientId($patientId)
-            ->whereStatus(Appointment::BOOKED)
+            ->whereStatus(PatientQueue::BOOKED)
             ->where('date', '>', $todayDate)
             ->paginate(10);
 
@@ -246,8 +246,8 @@ class DashboardRepository
 
     public function getAppointmentChartData($input): array
     {
-        $appointments = Appointment::with('services')->whereYear('created_at', Carbon::now()->year)
-            ->select(DB::raw('MONTH(created_at) as month,appointments.*'))->get();
+        $appointments = PatientQueue::with('services')->whereYear('created_at', Carbon::now()->year)
+            ->select(DB::raw('MONTH(created_at) as month,patient_queues.*'))->get();
 
         $transactions = Transaction::with(['user', 'appointment'])
             ->whereStatus('1')
@@ -278,7 +278,7 @@ class DashboardRepository
 
         foreach ($months as $month => $monthName) {
             $monthWiseRecords[$monthName] = $appointments->where('month', $month)
-                ->where('status', Appointment::FINISHED)
+                ->where('status', PatientQueue::FINISHED)
                 ->when($serviceId, function ($query, $serviceId) {
                     return $query->where('service_id', $serviceId);
                 })
@@ -313,10 +313,10 @@ class DashboardRepository
     {
         $patientId = getLogInUser()->patient->id;
 
-        $patientappointments = Appointment::with(['patient.user', 'user', 'services'])
+        $patientappointments = PatientQueue::with(['patient.user', 'user', 'services'])
             ->where('patient_id', $patientId)
-            ->whereStatus(Appointment::FINISHED)
-            ->select(DB::raw('MONTH(date) as month,appointments.*'))->get();
+            ->whereStatus(PatientQueue::FINISHED)
+            ->select(DB::raw('MONTH(date) as month,patient_queues.*'))->get();
 
 
         $transactions = Transaction::with(['user', 'appointment'])
@@ -364,10 +364,10 @@ class DashboardRepository
     {
         $doctorId = getLogInUser()->doctor->id;
 
-        $doctorappointments = Appointment::with(['patient.user', 'user', 'services'])
+        $doctorappointments = PatientQueue::with(['patient.user', 'user', 'services'])
             ->where('doctor_id', $doctorId)
             ->whereYear('created_at', Carbon::now()->year)
-            ->select(DB::raw('MONTH(date) as month,appointments.*'))->get();
+            ->select(DB::raw('MONTH(date) as month,patient_queues.*'))->get();
 
         $transactions = Transaction::with(['user', 'appointment'])
             ->whereHas('appointment', function ($query) use ($doctorId) {
@@ -454,18 +454,18 @@ class DashboardRepository
                 ->count();
 
             $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
-            $cachedData['totalAppointmentCount'] = Appointment::count();
+            $cachedData['totalAppointmentCount'] = PatientQueue::count();
 
-            $cachedData['todayAppointmentCount'] = Appointment::where('date', $todayDate)
-                ->where('status', Appointment::BOOKED)
+            $cachedData['todayAppointmentCount'] = PatientQueue::where('date', $todayDate)
+                ->where('status', PatientQueue::BOOKED)
                 ->count();
 
             $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
                 ->whereDate('created_at', $todayDate)
                 ->count();
 
-            $cachedData['upcomingAppointmentCount'] = Appointment::where('date', '>', $todayDate)->count();
-            $cachedData['tomorrowAppointmentCount'] = Appointment::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
+            $cachedData['upcomingAppointmentCount'] = PatientQueue::where('date', '>', $todayDate)->count();
+            $cachedData['tomorrowAppointmentCount'] = PatientQueue::where('date', Carbon::tomorrow()->format('Y-m-d'))->count();
 
             // Reuse cached lookups
             $cachedData['servicesArr'] = Cache::remember('active_services', 600, function () {

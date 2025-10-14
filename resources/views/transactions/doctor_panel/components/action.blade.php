@@ -1,4 +1,4 @@
-@if($row->appointment->status == \App\Models\Appointment::CANCELLED)
+@if($row->appointment->status == \App\Models\PatientQueue::CANCELLED)
     <div class="d-flex justify-content-center">
         <a href="{{ route('doctors.transactions.show', $row->id) }}"
             class="btn px-1 text-primary fs-3" title="{{ __('messages.common.show') }}" data-bs-toggle="tooltip"
@@ -21,3 +21,5 @@
         </a>
     </div>
 @endif
+
+

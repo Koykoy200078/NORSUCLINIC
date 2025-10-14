@@ -3,3 +3,4 @@
         <img src="{{ $row->slider_image }}" alt="user" class="user-img" loading="lazy">
     </div>
 </div>
+

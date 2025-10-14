@@ -42,7 +42,7 @@
         'icon' => 'fas fa-stethoscope',
         'description' => 'Core medical practice management and patient care operations',
         'permissions' => [
-        'manage_appointments' => 'Schedule, modify, and cancel patient appointments across the system',
+        'manage_patient_queues' => 'Schedule, modify, and manage patient queue entries across the system',
         'manage_patient_visits' => 'Record and manage patient visits, consultations, and medical interactions',
         'manage_doctor_sessions' => 'Configure doctor availability, working hours, and session schedules',
         'manage_request_documents' => 'Handle patient document requests, medical certificates, and official forms'

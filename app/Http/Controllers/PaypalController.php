@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Transaction;
@@ -27,7 +27,7 @@ class PaypalController extends Controller
                 return response()->json(['message' => __('messages.payment_method.paypal') . ' ' . __('messages.flash.currency_not_supported'), 'status' => false]);
             }
 
-            $appointment = Appointment::whereId($request->appointmentId)->first();
+            $appointment = PatientQueue::whereId($request->appointmentId)->first();
 
             $provider = new PayPalClient;
 
@@ -95,7 +95,7 @@ class PaypalController extends Controller
             $appointmentID = $response['purchase_units'][0]['reference_id'];
 
             //            $transactionID = $response->result->id;
-            $appointment = Appointment::whereId($appointmentID)->first();
+            $appointment = PatientQueue::whereId($appointmentID)->first();
             $patient = Patient::with('user')->whereId($appointment->patient_id)->first();
 
             $transaction = [
@@ -103,15 +103,15 @@ class PaypalController extends Controller
                 'transaction_id' => $response['purchase_units'][0]['payments']['captures'][0]['id'],
                 'appointment_id' => $appointment['appointment_unique_id'],
                 'amount' => intval($appointment['payable_amount']),
-                'type' => Appointment::PAYPAL,
+                'type' => PatientQueue::PAYPAL,
                 'meta' => json_encode($response),
             ];
 
             Transaction::create($transaction);
 
             $appointment->update([
-                'payment_method' => Appointment::PAYPAL,
-                'payment_type' => Appointment::PAID,
+                'payment_method' => PatientQueue::PAYPAL,
+                'payment_type' => PatientQueue::PAID,
             ]);
 
             Flash::success(__('messages.flash.appointment_created_payment_complete'));
@@ -137,3 +137,4 @@ class PaypalController extends Controller
         }
     }
 }
+

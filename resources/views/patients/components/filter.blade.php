@@ -33,3 +33,4 @@
         placeholder="{{ __('messages.common.pick_date_range') }}" id="patientDateFilter" />
     </div>
 </div>
+

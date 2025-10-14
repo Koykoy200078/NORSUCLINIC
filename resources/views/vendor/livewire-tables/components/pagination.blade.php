@@ -152,3 +152,4 @@
 @if ($component->hasConfigurableAreaFor('after-pagination'))
     @include($component->getConfigurableAreaFor('after-pagination'), $component->getParametersForConfigurableArea('after-pagination'))
 @endif
+

@@ -26,3 +26,4 @@
         </x-livewire-tables::table.td.plain>
     @endforeach
 </x-livewire-tables::table.tr.plain>
+

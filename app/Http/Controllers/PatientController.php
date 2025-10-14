@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\Patient;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -103,7 +103,7 @@ class PatientController extends AppBaseController
     public function show(Patient $patient)
     {
         if (getLogInUser()->hasRole('doctor')) {
-            $doctor = Appointment::wherePatientId($patient->id)->whereDoctorId(getLogInUser()->doctor->id);
+            $doctor = PatientQueue::wherePatientId($patient->id)->whereDoctorId(getLogInUser()->doctor->id);
             if (! $doctor->exists()) {
                 return redirect()->back();
             }
@@ -116,19 +116,19 @@ class PatientController extends AppBaseController
         }
 
         $patient = $this->patientRepository->getPatientData($patient);
-        $appointmentStatus = Appointment::ALL_STATUS;
+        $appointmentStatus = PatientQueue::ALL_STATUS;
         $todayDate = Carbon::now()->format('Y-m-d');
-        $data['todayAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+        $data['todayAppointmentCount'] = PatientQueue::wherePatientId($patient['id'])->where(
             'date',
             '=',
             $todayDate
         )->count();
-        $data['upcomingAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+        $data['upcomingAppointmentCount'] = PatientQueue::wherePatientId($patient['id'])->where(
             'date',
             '>',
             $todayDate
         )->count();
-        $data['completedAppointmentCount'] = Appointment::wherePatientId($patient['id'])->where(
+        $data['completedAppointmentCount'] = PatientQueue::wherePatientId($patient['id'])->where(
             'date',
             '<',
             $todayDate
@@ -184,8 +184,8 @@ class PatientController extends AppBaseController
     public function destroy(Patient $patient): JsonResponse
     {
         // Check if patient has active appointments
-        $existAppointment = Appointment::wherePatientId($patient->id)
-            ->whereNotIn('status', [Appointment::CANCELLED, Appointment::FINISHED])
+        $existAppointment = PatientQueue::wherePatientId($patient->id)
+            ->whereNotIn('status', [PatientQueue::CANCELLED, PatientQueue::FINISHED])
             ->exists();
 
         // Check if patient has visits
@@ -265,3 +265,4 @@ class PatientController extends AppBaseController
         return view('patients.view_patient', compact('patient', 'consultations', 'medicalCertificates'));
     }
 }
+

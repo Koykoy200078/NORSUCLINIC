@@ -38,3 +38,4 @@
     </div>
     <livewire:medicine-category-details-table categoryDetails="{{$category->id}}"/>
 </div>
+

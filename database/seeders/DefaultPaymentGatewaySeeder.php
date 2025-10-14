@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\PaymentGateway;
 use Illuminate\Database\Seeder;
 
@@ -15,24 +15,24 @@ class DefaultPaymentGatewaySeeder extends Seeder
     {
         $paymentGateways = [
             [
-                'payment_gateway_id' => Appointment::MANUALLY,
-                'payment_gateway' => Appointment::PAYMENT_METHOD[1],
+                'payment_gateway_id' => PatientQueue::MANUALLY,
+                'payment_gateway' => PatientQueue::PAYMENT_METHOD[1],
             ],
             // [
-            //     'payment_gateway_id' => Appointment::STRIPE,
-            //     'payment_gateway' => Appointment::PAYMENT_METHOD[2],
+            //     'payment_gateway_id' => PatientQueue::STRIPE,
+            //     'payment_gateway' => PatientQueue::PAYMENT_METHOD[2],
             // ],
             // [
-            //     'payment_gateway_id' => Appointment::PAYPAL,
-            //     'payment_gateway' => Appointment::PAYMENT_METHOD[4],
+            //     'payment_gateway_id' => PatientQueue::PAYPAL,
+            //     'payment_gateway' => PatientQueue::PAYMENT_METHOD[4],
             // ],
             // [
-            //     'payment_gateway_id' => Appointment::AUTHORIZE,
-            //     'payment_gateway' => Appointment::PAYMENT_METHOD[6],
+            //     'payment_gateway_id' => PatientQueue::AUTHORIZE,
+            //     'payment_gateway' => PatientQueue::PAYMENT_METHOD[6],
             // ],
             // [
-            //     'payment_gateway_id' => Appointment::PAYTM,
-            //     'payment_gateway' => Appointment::PAYMENT_METHOD[7],
+            //     'payment_gateway_id' => PatientQueue::PAYTM,
+            //     'payment_gateway' => PatientQueue::PAYMENT_METHOD[7],
             // ],
 
         ];

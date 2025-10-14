@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Setting;
@@ -67,18 +67,18 @@ class TransactionController extends AppBaseController
         $input = $request->all();
 
         $transaction = Transaction::findOrFail($input['id']);
-        $appointment = Appointment::where('appointment_unique_id', $transaction->appointment_id)->first();
+        $appointment = PatientQueue::where('appointment_unique_id', $transaction->appointment_id)->first();
 
         if (getLogInUser()->hasrole('doctor')) {
-            $doctor = Appointment::where('appointment_unique_id', $transaction->appointment_id)->whereDoctorId(getLogInUser()->doctor->id);
+            $doctor = PatientQueue::where('appointment_unique_id', $transaction->appointment_id)->whereDoctorId(getLogInUser()->doctor->id);
             if (! $doctor->exists()) {
                 return $this->sendError(__('messages.common.not_allow__assess_record'));
             }
         }
 
         $appointment->update([
-            'payment_method' => Appointment::MANUALLY,
-            'payment_type' => Appointment::PAID,
+            'payment_method' => PatientQueue::MANUALLY,
+            'payment_type' => PatientQueue::PAID,
         ]);
 
         $transaction->update([
@@ -91,7 +91,7 @@ class TransactionController extends AppBaseController
         $fullTime = $appointment->from_time.''.$appointment->from_time_type.' - '.$appointment->to_time.''.$appointment->to_time_type.' '.' '.Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         Notification::create([
-            'title' => $appointmentNotification->acceptedPaymentUser->full_name.' changed the payment status '.Appointment::PAYMENT_TYPE[Appointment::PENDING].' to '.Appointment::PAYMENT_TYPE[$appointment->payment_type].' for appointment '.$fullTime,
+            'title' => $appointmentNotification->acceptedPaymentUser->full_name.' changed the payment status '.PatientQueue::PAYMENT_TYPE[PatientQueue::PENDING].' to '.PatientQueue::PAYMENT_TYPE[$appointment->payment_type].' for appointment '.$fullTime,
             'type' => Notification::PAYMENT_DONE,
             'user_id' => $patient->user_id,
         ]);
@@ -99,3 +99,4 @@ class TransactionController extends AppBaseController
         return $this->sendSuccess(__("messages.flash.status_update"));
     }
 }
+

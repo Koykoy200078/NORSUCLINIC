@@ -1,1 +1,2 @@
 {{ $row->currency_icon }}
+

@@ -12,3 +12,4 @@
     @if (isset($filters['search']) && strlen($filters['search']))
     @endif
 </div>
+

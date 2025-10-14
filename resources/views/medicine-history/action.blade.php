@@ -12,3 +12,4 @@ title="<?php echo __('messages.common.edit') ?>"
     <i class="fa-solid fa-trash"></i>
 </a>
 
+

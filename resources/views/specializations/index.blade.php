@@ -12,3 +12,4 @@
     @include('specializations.create-modal')
     @include('specializations.edit-modal')
 @endsection
+

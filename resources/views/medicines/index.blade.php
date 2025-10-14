@@ -27,3 +27,4 @@
     {{-- assets/js/custom/input_price_format.js --}}
     {{-- assets/js/medicines/medicines.js --}}
 @endsection
+

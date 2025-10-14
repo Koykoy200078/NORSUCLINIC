@@ -1,1 +1,2 @@
 {{ $row->paid_amount }}
+

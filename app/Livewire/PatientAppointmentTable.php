@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -13,7 +13,7 @@ class PatientAppointmentTable extends LivewireTableComponent
 {
     public $doctorId;
 
-    protected $model = Appointment::class;
+    protected $model = PatientQueue::class;
 
     public bool $showButtonOnHeader = true;
 
@@ -25,8 +25,8 @@ class PatientAppointmentTable extends LivewireTableComponent
 
     public array $FilterComponent = [
         'patients.appointments.components.filter',
-        Appointment::PAYMENT_TYPE_ALL,
-        Appointment::STATUS,
+        PatientQueue::PAYMENT_TYPE_ALL,
+        PatientQueue::STATUS,
     ];
 
     protected $listeners = [
@@ -38,7 +38,7 @@ class PatientAppointmentTable extends LivewireTableComponent
         'changePaymentStatusFilter',
     ];
 
-    public int $statusFilter = Appointment::BOOKED;
+    public int $statusFilter = PatientQueue::BOOKED;
 
     public string $paymentTypeFilter = '';
 
@@ -67,36 +67,36 @@ class PatientAppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Appointment::with([
+        $query = PatientQueue::with([
             'doctor.user',
             'services',
             'transaction',
             'doctor.reviews',
-        ])->where('patient_id', getLoginUser()->patient->id)->select('appointments.*');
+        ])->where('patient_id', getLoginUser()->patient->id)->select('patient_queues.*');
 
         $query->when(
-            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+            $this->statusFilter != '' && $this->statusFilter != PatientQueue::ALL_STATUS,
             function (Builder $q) {
-                if ($this->statusFilter != Appointment::ALL) {
-                    $q->where('appointments.status', '=', $this->statusFilter);
+                if ($this->statusFilter != PatientQueue::ALL) {
+                    $q->where('patient_queues.status', '=', $this->statusFilter);
                 }
             }
         );
 
         $query->when(
-            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
+            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != PatientQueue::ALL_PAYMENT,
             function (Builder $q) {
-                $q->where('appointments.payment_type', '=', $this->paymentTypeFilter);
+                $q->where('patient_queues.payment_type', '=', $this->paymentTypeFilter);
             }
         );
 
         $query->when(
             $this->paymentStatusFilter != '',
             function (Builder $q) {
-                if ($this->paymentStatusFilter != Appointment::ALL_PAYMENT) {
-                    if ($this->paymentStatusFilter == Appointment::PENDING) {
+                if ($this->paymentStatusFilter != PatientQueue::ALL_PAYMENT) {
+                    if ($this->paymentStatusFilter == PatientQueue::PENDING) {
                         $q->has('transaction', '=', null);
-                    } elseif ($this->paymentStatusFilter == Appointment::PAID) {
+                    } elseif ($this->paymentStatusFilter == PatientQueue::PAID) {
                         $q->has('transaction', '!=', null);
                     }
                 }
@@ -107,12 +107,12 @@ class PatientAppointmentTable extends LivewireTableComponent
             $timeEntryDate = explode(' - ', $this->dateFilter);
             $startDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::createFromFormat('d/m/Y', $timeEntryDate[0])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         } else {
             $timeEntryDate = explode(' - ', getWeekDate());
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         }
 
         return $query;
@@ -175,8 +175,8 @@ class PatientAppointmentTable extends LivewireTableComponent
             //         return view('patients.appointments.components.payment')
             //             ->with([
             //                 'row' => $row,
-            //                 'paid' => Appointment::PAID,
-            //                 'pending' => Appointment::PENDING,
+            //                 'paid' => PatientQueue::PAID,
+            //                 'pending' => PatientQueue::PENDING,
             //             ]);
             //     }),
             Column::make(__('messages.appointment.status'), 'status')->view('patients.appointments.components.status'),
@@ -185,8 +185,8 @@ class PatientAppointmentTable extends LivewireTableComponent
                     return view('patients.appointments.components.action')
                         ->with([
                             'row' => $row,
-                            'finished' => Appointment::FINISHED,
-                            'cancel' => Appointment::CANCELLED,
+                            'finished' => PatientQueue::FINISHED,
+                            'cancel' => PatientQueue::CANCELLED,
                         ]);
                 }),
         ];

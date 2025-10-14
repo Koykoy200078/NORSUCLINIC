@@ -12,3 +12,4 @@
         <span class="fs-6">{{$row->email}}</span>
     </div>
 </div>
+

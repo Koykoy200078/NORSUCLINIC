@@ -37,7 +37,7 @@
         </span>
     </div>
 
-    @if(!empty($transaction['data']->type) && $transaction['data']->type == \App\Models\Appointment::MANUALLY && $transaction['data']->acceptedPaymentUser)
+    @if(!empty($transaction['data']->type) && $transaction['data']->type == \App\Models\PatientQueue::MANUALLY && $transaction['data']->acceptedPaymentUser)
     <div class="col-md-6 d-flex flex-column">
         <label for="name" class="pb-2 fs-4 text-gray-600">Accepted By
             :</label>
@@ -45,3 +45,4 @@
     </div>
     @endif
 </div>
+

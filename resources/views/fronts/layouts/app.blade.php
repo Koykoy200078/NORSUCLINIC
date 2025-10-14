@@ -51,11 +51,11 @@
         stripe = Stripe("{{ config('services.stripe.key') }}");
         @endif
 
-        let manually = "{{ \App\Models\Appointment::MANUALLY }}";
-        let paypal = "{{ \App\Models\Appointment::PAYPAL }}";
-        let stripeMethod = "{{ \App\Models\Appointment::STRIPE }}";
-        let authorizeMethod = "{{ \App\Models\Appointment::AUTHORIZE }}";
-        let paytmMethod = "{{ \App\Models\Appointment::PAYTM }}";
+        let manually = "{{ \App\Models\PatientQueue::MANUALLY }}";
+        let paypal = "{{ \App\Models\PatientQueue::PAYPAL }}";
+        let stripeMethod = "{{ \App\Models\PatientQueue::STRIPE }}";
+        let authorizeMethod = "{{ \App\Models\PatientQueue::AUTHORIZE }}";
+        let paytmMethod = "{{ \App\Models\PatientQueue::PAYTM }}";
 
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         Lang.setLocale(checkLanguageSession);
@@ -77,3 +77,4 @@
 </body>
 
 </html>
+

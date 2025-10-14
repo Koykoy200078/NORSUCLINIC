@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -21,7 +21,7 @@ class TransactionTable extends LivewireTableComponent
     public $serviceType;
     public string $dateFilter = '';
     protected $listeners = ['refresh' => '$refresh', 'resetPage', 'statusFilter', 'paymentFilter', 'doctorFilter', 'serviceFilter', 'changeDateFilter'];
-    public array $FilterComponent = ['transactions.components.filter', Appointment::PAYMENT_METHOD, Transaction::PAYMENT_STATUS];
+    public array $FilterComponent = ['transactions.components.filter', PatientQueue::PAYMENT_METHOD, Transaction::PAYMENT_STATUS];
     public bool $showFilterOnHeader = true;
     public function configure(): void
     {
@@ -124,10 +124,10 @@ class TransactionTable extends LivewireTableComponent
                     return view('transactions.components.appointment_status')
                         ->with([
                             'row' => $row,
-                            'book' => Appointment::BOOKED,
-                            'accepted' => Appointment::ACCEPTED,
-                            'finished' => Appointment::FINISHED,
-                            'cancel' => Appointment::CANCELLED,
+                            'book' => PatientQueue::BOOKED,
+                            'accepted' => PatientQueue::ACCEPTED,
+                            'finished' => PatientQueue::FINISHED,
+                            'cancel' => PatientQueue::CANCELLED,
                         ]);
                 }),
             // Column::make(__('messages.doctor_appointment.amount'), 'amount')->view('transactions.components.amount')
@@ -187,3 +187,4 @@ class TransactionTable extends LivewireTableComponent
         $this->resetPage('transactionsPage');
     }
 }
+

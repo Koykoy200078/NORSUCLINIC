@@ -5,3 +5,4 @@
             {{ __('messages.currency.add_currency') }}</a>
     </div>
 </div>
+

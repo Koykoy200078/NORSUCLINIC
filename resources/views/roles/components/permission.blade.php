@@ -3,3 +3,4 @@
 @empty
     {{__('messages.common.n/a')}}
 @endforelse
+

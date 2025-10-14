@@ -1,1 +1,3 @@
-{{ \App\Models\Appointment::PAYMENT_METHOD[$row->type] }}
+{{ \App\Models\PatientQueue::PAYMENT_METHOD[$row->type] }}
+
+

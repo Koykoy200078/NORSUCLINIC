@@ -37,3 +37,4 @@
 <div>
     {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2']) }}
 </div>
+

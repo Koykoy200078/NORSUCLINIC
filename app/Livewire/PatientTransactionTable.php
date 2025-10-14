@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -19,7 +19,7 @@ class PatientTransactionTable extends LivewireTableComponent
     public $statusType;
     public string $dateFilter = '';
     public bool $showFilterOnHeader = true;
-    public array $FilterComponent = ['transactions.components.filter', Appointment::PAYMENT_METHOD, Transaction::PAYMENT_STATUS];
+    public array $FilterComponent = ['transactions.components.filter', PatientQueue::PAYMENT_METHOD, Transaction::PAYMENT_STATUS];
 
 
     public function configure(): void
@@ -121,3 +121,4 @@ class PatientTransactionTable extends LivewireTableComponent
         $this->resetPage('transactionsPage');
     }
 }
+

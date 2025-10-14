@@ -42,3 +42,4 @@
            class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>
 </div>
+

@@ -151,3 +151,4 @@
 <a href="{{ route('doctors.doctor.schedule.edit') }}" class="d-none" id="btnBack">
     {{ __('messages.common.back') }} </a>
 </div>
+

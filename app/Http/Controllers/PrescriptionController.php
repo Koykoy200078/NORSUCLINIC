@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\CreatePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Medicine;
 use App\Models\Prescription;
 use App\Repositories\DoctorRepository;
@@ -62,7 +62,7 @@ class PrescriptionController extends AppBaseController
         $mealList = $this->medicineRepository->getMealList();
         $doseDuration = $this->medicineRepository->getDoseDurationList();
         $doseInverval = $this->medicineRepository->getDoseInterValList();
-        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
+        $appointment = PatientQueue::with('doctor', 'patient')->find($appointmentId);
 
         return view(
             'prescriptions.create',
@@ -155,7 +155,7 @@ class PrescriptionController extends AppBaseController
             }
         }
 
-        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
+        $appointment = PatientQueue::with('doctor', 'patient')->find($appointmentId);
 
         $patients = $this->prescriptionRepository->getPatients();
         $doctors = $this->prescriptionRepository->getDoctors();
@@ -414,3 +414,4 @@ class PrescriptionController extends AppBaseController
         }
     }
 }
+

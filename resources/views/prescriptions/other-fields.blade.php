@@ -28,3 +28,4 @@
     <a href="{{ url()->previous() }}"
         class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
 </div>
+

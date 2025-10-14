@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateFrontAppointmentRequest extends FormRequest
@@ -20,7 +20,7 @@ class CreateFrontAppointmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = Appointment::$rules;
+        $rules = PatientQueue::$rules;
         unset($rules['patient_id']);
         $rules['email'] = 'required|email|max:255|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix';
 
@@ -38,3 +38,4 @@ class CreateFrontAppointmentRequest extends FormRequest
         ];
     }
 }
+

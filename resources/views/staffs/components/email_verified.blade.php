@@ -3,3 +3,4 @@
            value=""
             {{ !empty($row->email_verified_at) ? 'checked disabled' : ''}}/>
 </div>
+

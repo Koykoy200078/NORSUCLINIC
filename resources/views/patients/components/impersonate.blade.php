@@ -3,3 +3,4 @@
                         'impersonate', $row->user->id)}}">
     {{__('messages.common.impersonate')}}
 </a>
+

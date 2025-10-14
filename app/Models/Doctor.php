@@ -125,7 +125,7 @@ class Doctor extends Model
 
     public function appointments(): HasMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(PatientQueue::class);
     }
 
     public function address(): MorphOne

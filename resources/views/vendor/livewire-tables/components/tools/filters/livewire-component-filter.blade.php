@@ -3,3 +3,4 @@
 
     <livewire:dynamic-component :is="$livewireComponent" :filterKey="$filter->getKey()" :key="'filterComponents-'.$filter->getKey()" wire:model.live="filterComponents.{{ $filter->getKey() }}" />
 </div>
+

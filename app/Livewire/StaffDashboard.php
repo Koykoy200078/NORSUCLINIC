@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -22,7 +22,7 @@ class StaffDashboard extends Component
         // Staff can see the same metrics as admin but with appropriate access control
         $this->totalDoctorCount = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
         $this->totalPatientCount = User::toBase()->whereType(User::PATIENT)->count();
-        $this->todayAppointmentCount = Appointment::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(Appointment::BOOKED)->count();
+        $this->todayAppointmentCount = PatientQueue::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(PatientQueue::BOOKED)->count();
         $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
     }
 
@@ -36,3 +36,4 @@ class StaffDashboard extends Component
         return view('livewire.staff-dashboard');
     }
 }
+

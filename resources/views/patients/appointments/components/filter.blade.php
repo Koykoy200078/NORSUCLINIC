@@ -3,13 +3,13 @@
         <div class="d-flex justify-content-end">
             <div class="d-flex align-items-center">
                 <span class="badge bg-primary badge-circle me-1 slot-color-dot"></span>
-                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[1]))}}</span>
+                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[1]))}}</span>
                 <span class="badge bg-success badge-circle me-1 slot-color-dot"></span>
-                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[2]))}}</span>
+                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[2]))}}</span>
                 <span class="badge bg-warning badge-circle me-1 slot-color-dot"></span>
-                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[3]))}}</span>
+                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[3]))}}</span>
                 <span class="badge bg-danger badge-circle me-1 slot-color-dot"></span>
-                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[4]))}}</span>
+                <span class="me-4">{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[4]))}}</span>
             </div>
         </div>
     </div>
@@ -18,19 +18,19 @@
     <div class="d-flex flex-wrap align-items-center justify-content-end mt-3">
         <div class="d-flex align-items-center mb-xxl-0 mb-3 ms-3">
             <span class="badge bg-primary badge-circle me-1 slot-color-dot"></span>
-            <span class="">{{ __('messages.common.' . strtolower(\App\Models\Appointment::STATUS[1])) }}</span>
+            <span class="">{{ __('messages.common.' . strtolower(\App\Models\PatientQueue::STATUS[1])) }}</span>
         </div>
         <div class="d-flex align-items-center mb-xxl-0 mb-3 ms-3">
             <span class="badge bg-success badge-circle me-1 slot-color-dot"></span>
-            <span class="">{{ __('messages.common.' . strtolower(\App\Models\Appointment::STATUS[2])) }}</span>
+            <span class="">{{ __('messages.common.' . strtolower(\App\Models\PatientQueue::STATUS[2])) }}</span>
         </div>
         <div class="d-flex align-items-center mb-xxl-0 mb-3 ms-3">
             <span class="badge bg-warning badge-circle me-1 slot-color-dot"></span>
-            <span class="">{{ __('messages.common.' . strtolower(\App\Models\Appointment::STATUS[3])) }}</span>
+            <span class="">{{ __('messages.common.' . strtolower(\App\Models\PatientQueue::STATUS[3])) }}</span>
         </div>
         <div class="d-flex align-items-center mb-xxl-0 mb-3 ms-3">
             <span class="badge bg-danger badge-circle me-1 slot-color-dot"></span>
-            <span class="">{{ __('messages.common.' . strtolower(\App\Models\Appointment::STATUS[4])) }}</span>
+            <span class="">{{ __('messages.common.' . strtolower(\App\Models\PatientQueue::STATUS[4])) }}</span>
         </div>
     </div>
 
@@ -55,11 +55,11 @@
                     <div class="p-5">
                         <div class="mb-5">
                             <label for="filterBtn" class="form-label">{{ __('messages.appointment.payment') }}:</label>
-                            {{ Form::select('payment_type', collect($filterHeads[0])->toArray(), \App\Models\Appointment::ALL_PAYMENT, ['class' => 'form-control form-control-solid form-select', 'data-control' => 'select2', 'id' => 'patientPaymentStatus']) }}
+                            {{ Form::select('payment_type', collect($filterHeads[0])->toArray(), \App\Models\PatientQueue::ALL_PAYMENT, ['class' => 'form-control form-control-solid form-select', 'data-control' => 'select2', 'id' => 'patientPaymentStatus']) }}
                         </div>
                         <div class="mb-5">
                             <label for="filterBtn" class="form-label">{{ __('messages.doctor.status') }}:</label>
-                            {{ Form::select('status', collect($filterHeads[1])->toArray(), \App\Models\Appointment::BOOKED, ['class' => 'form-control form-control-solid form-select', 'data-control' => 'select2', 'id' => 'patientAppointmentStatus']) }}
+                            {{ Form::select('status', collect($filterHeads[1])->toArray(), \App\Models\PatientQueue::BOOKED, ['class' => 'form-control form-control-solid form-select', 'data-control' => 'select2', 'id' => 'patientAppointmentStatus']) }}
                         </div>
                         <div class="d-flex justify-content-end">
                             <button type="reset" class="btn btn-secondary"
@@ -83,3 +83,5 @@
         </div>
     </div>
 </div>
+
+

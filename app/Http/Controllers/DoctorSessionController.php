@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateDoctorSessionRequest;
 use App\Http\Requests\UpdateDoctorSessionRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\ClinicSchedule;
 use App\Models\DoctorHoliday;
 use App\Models\DoctorSession;
@@ -193,9 +193,9 @@ class DoctorSessionController extends AppBaseController
             return $this->sendError(__('messages.flash.no_available_slots'));
         }
 
-        $appointments = Appointment::whereDoctorId($doctorId)->whereIn(
+        $appointments = PatientQueue::whereDoctorId($doctorId)->whereIn(
             'status',
-            [Appointment::BOOKED, Appointment::ACCEPTED, Appointment::FINISHED]
+            [PatientQueue::BOOKED, PatientQueue::ACCEPTED, PatientQueue::FINISHED]
         )->get();
         $bookedSlot = [];
         $bookingSlot = [];
@@ -343,3 +343,4 @@ class DoctorSessionController extends AppBaseController
         return view('doctor_sessions.edit', compact('doctorSession', 'doctorsList', 'sessionWeekDays'));
     }
 }
+

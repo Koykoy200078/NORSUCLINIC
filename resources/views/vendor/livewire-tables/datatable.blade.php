@@ -89,3 +89,4 @@
         @includeIf($customView)
     </x-livewire-tables::wrapper>
 </div>
+

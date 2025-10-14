@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\MedicineController;
@@ -44,13 +44,13 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     });
 
     // Appointment Management (Staff can manage appointments)
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('staff.change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::get('appointments-calendar-view', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar-view');
-        Route::get('appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
+    Route::middleware('permission:manage_patient_queues')->group(function () {
+        Route::resource('patient-queues', PatientQueueController::class)->except(['edit', 'update']);
+        Route::post('patient-queues/{appointment}', [PatientQueueController::class, 'changeStatus'])->name('staff.change-status');
+        Route::post('appointments-payment/{id}', [PatientQueueController::class, 'changePaymentStatus'])->name('change-payment-status');
+        Route::get('appointment-pdf/{id}', [PatientQueueController::class, 'appointmentPdf'])->name('appointmentPdf');
+        Route::get('appointments-calendar-view', [PatientQueueController::class, 'appointmentCalendar'])->name('appointments.calendar-view');
+        Route::get('appointments-calendar', [PatientQueueController::class, 'appointmentCalendar'])->name('appointments.calendar');
     });
 
     // Transaction Management (View only for staff)
@@ -117,8 +117,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Prescription Management (Staff can assist with prescriptions)
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patient-queues/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('patient-queues/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -198,3 +198,4 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('countries/{country}', [CountryController::class, 'show'])->name('countries.show');
     });
 });
+

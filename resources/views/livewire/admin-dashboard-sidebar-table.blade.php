@@ -1,7 +1,7 @@
 <div>
     <div class="columns-xxl-12 col-xl-12 col-md-12 mb-5">
         <div class="widget">
-            <a href="{{ route('appointments.index') }}" class="text-decoration-none">
+            <a href="{{ route('patient-queues.index') }}" class="text-decoration-none">
                 <div
                     class="admin-wiget-appointment-card1 rounded-10 p-xxl-8 px-7 py-10 d-flex align-items-center justify-content-between mb-5">
                     <div class="text-start text-dark">
@@ -17,7 +17,7 @@
             </a>
         </div>
         <div class="widget">
-            <a href="{{ route('appointments.index') }}" class="text-decoration-none">
+            <a href="{{ route('patient-queues.index') }}" class="text-decoration-none">
                 <div
                     class="admin-wiget-appointment-card3 rounded-10 p-xxl-8 px-7 py-10 d-flex align-items-center justify-content-between mb-5">
                     <div class="text-start text-dark">

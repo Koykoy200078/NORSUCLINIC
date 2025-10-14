@@ -22,8 +22,8 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Patients',
             ],
             [
-                'name' => 'manage_appointments',
-                'display_name' => 'Manage Appointments',
+                'name' => 'manage_patient_queues',
+                'display_name' => 'Manage Patient Queue',
             ],
             [
                 'name' => 'manage_patient_visits',

@@ -3,3 +3,4 @@
            id="flexSwitch20x30" value=""
             {{$row->status == 1 ?'checked':''}} />
 </div>
+

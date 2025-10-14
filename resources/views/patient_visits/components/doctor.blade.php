@@ -44,3 +44,4 @@
         <span class="fs-6">{{$row->visitDoctor->user->email}}</span>
     </div>
 </div>
+

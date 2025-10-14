@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Patient;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -13,17 +13,17 @@ use Livewire\Attributes\Lazy;
 #[Lazy]
 class AppointmentTable extends LivewireTableComponent
 {
-    protected $model = Appointment::class;
+    protected $model = PatientQueue::class;
 
     public bool $showButtonOnHeader = true;
 
     protected string $tableName = 'appointments';
 
-    public string $buttonComponent = 'appointments.components.add_button';
+    public string $buttonComponent = 'patient_queues.components.add_button';
 
     public bool $showFilterOnHeader = true;
 
-    public array $FilterComponent = ['appointments.components.filter', Appointment::PAYMENT_TYPE_ALL, Appointment::STATUS];
+    public array $FilterComponent = ['patient_queues.components.filter', PatientQueue::PAYMENT_TYPE_ALL, PatientQueue::STATUS];
 
     protected $listeners = [
         'refresh' => '$refresh',
@@ -40,7 +40,7 @@ class AppointmentTable extends LivewireTableComponent
 
     public string $dateFilter = '';
 
-    public $statusFilter = Appointment::BOOKED;
+    public $statusFilter = PatientQueue::BOOKED;
 
     public function configure(): void
     {
@@ -67,7 +67,7 @@ class AppointmentTable extends LivewireTableComponent
     public function builder(): Builder
     {
         // Optimized eager loading with selective columns
-        $query = Appointment::with([
+        $query = PatientQueue::with([
             'doctor.user:id,first_name,last_name,email,status',
             'patient.user:id,first_name,last_name,email',
             'services:id,name,charges',
@@ -77,16 +77,16 @@ class AppointmentTable extends LivewireTableComponent
         ]);
 
         $query->when(
-            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+            $this->statusFilter != '' && $this->statusFilter != PatientQueue::ALL_STATUS,
             function (Builder $q) {
-                if ($this->statusFilter != Appointment::ALL) {
-                    $q->where('appointments.status', '=', $this->statusFilter);
+                if ($this->statusFilter != PatientQueue::ALL) {
+                    $q->where('patient_queues.status', '=', $this->statusFilter);
                 }
             }
         );
 
         $query->when(
-            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != Appointment::ALL_PAYMENT,
+            $this->paymentTypeFilter != '' && $this->paymentTypeFilter != PatientQueue::ALL_PAYMENT,
             function (Builder $q) {
                 $q->where('payment_type', '=', $this->paymentTypeFilter);
             }
@@ -95,10 +95,10 @@ class AppointmentTable extends LivewireTableComponent
         $query->when(
             $this->paymentStatusFilter != '',
             function (Builder $q) {
-                if ($this->paymentStatusFilter != Appointment::ALL_PAYMENT) {
-                    if ($this->paymentStatusFilter == Appointment::PENDING) {
+                if ($this->paymentStatusFilter != PatientQueue::ALL_PAYMENT) {
+                    if ($this->paymentStatusFilter == PatientQueue::PENDING) {
                         $q->has('transaction', '=', null);
-                    } elseif ($this->paymentStatusFilter == Appointment::PAID) {
+                    } elseif ($this->paymentStatusFilter == PatientQueue::PAID) {
                         $q->has('transaction', '!=', null);
                     }
                 }
@@ -126,7 +126,7 @@ class AppointmentTable extends LivewireTableComponent
             $query->where('patient_id', getLoginUser()->patient->id);
         }
 
-        return $query->select('appointments.*');
+        return $query->select('patient_queues.*');
     }
 
     public function changeStatusFilter($status)
@@ -162,7 +162,7 @@ class AppointmentTable extends LivewireTableComponent
         return [
 
             Column::make(__('messages.visit.doctor'), 'doctor.doctorUser.first_name')
-                ->view('appointments.components.doctor_name')
+                ->view('patient_queues.components.doctor_name')
                 ->sortable()
                 ->searchable(
                     function (Builder $query, $direction) {
@@ -172,7 +172,7 @@ class AppointmentTable extends LivewireTableComponent
                     }
                 ),
             Column::make(__('messages.appointment.patient'), 'patient.patientUser.first_name')
-                ->view('appointments.components.patient_name')
+                ->view('patient_queues.components.patient_name')
                 ->sortable(function (Builder $query, $direction) {
                     return $query->orderBy(User::select('first_name')->whereColumn('id', 'patient.user_id'), $direction);
                 })
@@ -189,9 +189,9 @@ class AppointmentTable extends LivewireTableComponent
             Column::make(
                 __('messages.appointment.appointment_at'),
                 'date'
-            )->view('appointments.components.appointment_at')
+            )->view('patient_queues.components.appointment_at')
                 ->sortable()->searchable(),
-            Column::make(__('messages.common.action'), 'id')->view('appointments.components.action'),
+            Column::make(__('messages.common.action'), 'id')->view('patient_queues.components.action'),
         ];
     }
 

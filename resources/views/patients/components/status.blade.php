@@ -4,23 +4,24 @@
         data-control="select2"
         data-id="{{$row->id}}">
         <option class="booked" disabled value="{{ $book}}" {{$row->status ==
-                    $book ? 'selected' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[1]))}}
+                    $book ? 'selected' : ''}}>{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[1]))}}
         </option>
         <option value="{{ $accepted}}" {{$row->status ==
                     $accepted ? 'selected' : ''}} {{$row->status == $accepted
             ? 'selected'
             : ''}} {{( $row->status == $cancel || $row->status == $finished)
             ? 'disabled'
-            : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[2]))}}
+            : ''}}>{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[2]))}}
         </option>
         <option value="{{ $finished}}" {{$row->status ==
                     $finished ? 'selected' : ''}} {{($row->status == $cancel ||
-            $row->status == $book) ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[3]))}}
+            $row->status == $book) ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[3]))}}
         </option>
         <option value="{{$cancel}}" {{$row->status ==
                     $cancel ? 'selected' : ''}} {{$row->status == $accepted
             ? 'disabled'
-            : ''}} {{$row->status == $finished ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\Appointment::STATUS[4]))}}
+            : ''}} {{$row->status == $finished ? 'disabled' : ''}}>{{__('messages.common.'.strtolower(\App\Models\PatientQueue::STATUS[4]))}}
         </option>
     </select>
 </div>
+

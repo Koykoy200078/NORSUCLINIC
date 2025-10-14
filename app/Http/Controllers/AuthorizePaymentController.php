@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
@@ -27,7 +27,7 @@ class AuthorizePaymentController extends AppBaseController
     {
 
         $appointmentId = $request->appointmentId;
-        $appointment = Appointment::whereId($appointmentId)->first();
+        $appointment = PatientQueue::whereId($appointmentId)->first();
         $doctorName = Doctor::with('user')->whereId($appointment->doctor_id)->first();
         $months = getMonth();
 
@@ -45,7 +45,7 @@ class AuthorizePaymentController extends AppBaseController
             return redirect(route('appointments.index'));
          }
         $appointmentId = $input['appointmentId'];
-        $appointment = Appointment::whereId($appointmentId)->first();
+        $appointment = PatientQueue::whereId($appointmentId)->first();
 
         /* Create a merchantAuthenticationType object with authentication details
           retrieved from the constants file */
@@ -102,15 +102,15 @@ class AuthorizePaymentController extends AppBaseController
                             'transaction_id' => $tresponse->getTransId(),
                             'appointment_id' => $appointment['appointment_unique_id'],
                             'amount' => intval($appointment['payable_amount']),
-                            'type' => Appointment::AUTHORIZE,
+                            'type' => PatientQueue::AUTHORIZE,
                             'meta' => json_encode($tresponse),
                         ];
 
                         Transaction::create($transaction);
 
                         $appointment->update([
-                            'payment_method' => Appointment::AUTHORIZE,
-                            'payment_type' => Appointment::PAID,
+                            'payment_method' => PatientQueue::AUTHORIZE,
+                            'payment_type' => PatientQueue::PAID,
                         ]);
 
                         Flash::success(__('messages.flash.appointment_created_payment_complete'));
@@ -186,3 +186,4 @@ class AuthorizePaymentController extends AppBaseController
         return redirect(route('appointments.index'));
     }
 }
+

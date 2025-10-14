@@ -5,3 +5,4 @@
                 {{ __('messages.common.n/a') }}
     @endif
 </div>
+

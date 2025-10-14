@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -16,12 +16,12 @@ class AdminDashboardSidebarTable extends Component
    public function mount()
    {
       $todayDate = Carbon::now()->format('Y-m-d');
-      $this->upcomingAppointmentCount = Appointment::where(
+      $this->upcomingAppointmentCount = PatientQueue::where(
          'date',
          '>',
          $todayDate
       )->count();
-      $this->totalAppointmentCount = Appointment::count();
+      $this->totalAppointmentCount = PatientQueue::count();
    }
 
    public function placeholder()
@@ -33,3 +33,4 @@ class AdminDashboardSidebarTable extends Component
       return view('livewire.admin-dashboard-sidebar-table');
    }
 }
+

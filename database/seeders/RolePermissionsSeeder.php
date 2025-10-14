@@ -26,7 +26,7 @@ class RolePermissionsSeeder extends Seeder
         // UPDATED: Removed view-only restrictions, doctors now have full CRUD access
         $rolePermissions = [
             'doctor' => [
-                'manage_appointments',
+                'manage_patient_queues',
                 'manage_doctor_sessions',
                 'manage_doctors_holiday',
                 'manage_medicines',
@@ -38,7 +38,7 @@ class RolePermissionsSeeder extends Seeder
                 'manage_transactions',
             ],
             'staff' => [
-                'manage_appointments',
+                'manage_patient_queues',
                 'manage_doctor_sessions',
                 'manage_doctors',
                 'manage_doctors_holiday',
@@ -165,3 +165,4 @@ class RolePermissionsSeeder extends Seeder
         }
     }
 }
+

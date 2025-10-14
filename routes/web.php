@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorizePaymentController;
 use App\Http\Controllers\BrandController;
@@ -76,15 +76,15 @@ Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])->name(
 //Stripe route
 Route::get(
     '/medical-payment-success',
-    [AppointmentController::class, 'paymentSuccess']
+    [PatientQueueController::class, 'paymentSuccess']
 )->name('medical-appointment-payment-success');
 Route::get(
     '/medical-payment-failed',
-    [AppointmentController::class, 'handleFailedPayment']
+    [PatientQueueController::class, 'handleFailedPayment']
 )->name('medical-appointment-failed-payment');
 
 // Manually payment route
-Route::get('/manually-payment', [AppointmentController::class, 'manuallyPayment'])->name('manually-payment');
+Route::get('/manually-payment', [PatientQueueController::class, 'manuallyPayment'])->name('manually-payment');
 Route::put('transaction-status', [TransactionController::class, 'changeTransactionStatus'])->name('transaction.status');
 
 // paypal routes
@@ -117,18 +117,18 @@ Route::get('get-service', [ServiceController::class, 'getService'])->name('get-s
 Route::get('get-charge', [ServiceController::class, 'getCharge'])->name('get-charge');
 Route::post(
     'front-appointment-book',
-    [AppointmentController::class, 'frontAppointmentBook']
+    [PatientQueueController::class, 'frontAppointmentBook']
 )->name('front.appointment.book');
 Route::post(
     'medical-appointment',
-    [AppointmentController::class, 'frontHomeAppointmentBook']
+    [PatientQueueController::class, 'frontHomeAppointmentBook']
 )->name('front.home.appointment.book');
-Route::get('get-patient-name', [AppointmentController::class, 'getPatientName'])->name('get-patient-name');
+Route::get('get-patient-name', [PatientQueueController::class, 'getPatientName'])->name('get-patient-name');
 //change Language
 Route::post('update-language', [UserController::class, 'updateLanguage'])->name('change-language');
 
-Route::get('doctor-appointment/{doctor}', [AppointmentController::class, 'doctorBookAppointment'])->name('doctorBookAppointment');
-Route::get('service-appointment/{service}', [AppointmentController::class, 'serviceBookAppointment'])->name('serviceBookAppointment');
+Route::get('doctor-appointment/{doctor}', [PatientQueueController::class, 'doctorBookAppointment'])->name('doctorBookAppointment');
+Route::get('service-appointment/{service}', [PatientQueueController::class, 'serviceBookAppointment'])->name('serviceBookAppointment');
 
 Route::post(
     '/notification/{notification}/read',
@@ -147,7 +147,7 @@ Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
     Route::put('/email-notification', [UserController::class, 'emailNotification'])->name('emailNotification');
 });
 
-Route::get('cancel-appointment/{patient_id}/{appointment_unique_id}', [AppointmentController::class, 'cancelAppointment'])->name('cancelAppointment');
+Route::get('cancel-appointment/{patient_id}/{appointment_unique_id}', [PatientQueueController::class, 'cancelAppointment'])->name('cancelAppointment');
 
 //get States and cities route
 Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
@@ -253,12 +253,12 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     });
 
     // Appointment route
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('admin.change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('admin.appointmentPdf');
-        Route::get('admin-appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
+    Route::middleware('permission:manage_patient_queues')->group(function () {
+        Route::resource('patient-queues', PatientQueueController::class)->except(['edit', 'update']);
+        Route::post('patient-queues/{appointment}', [PatientQueueController::class, 'changeStatus'])->name('admin.change-status');
+        Route::post('appointments-payment/{id}', [PatientQueueController::class, 'changePaymentStatus'])->name('change-payment-status');
+        Route::get('appointment-pdf/{id}', [PatientQueueController::class, 'appointmentPdf'])->name('admin.appointmentPdf');
+        Route::get('admin-appointments-calendar', [PatientQueueController::class, 'appointmentCalendar'])->name('appointments.calendar');
         Route::get('transactions', [TransactionController::class, 'index'])->name('transactions');
         Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     });
@@ -296,8 +296,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Prescription Management
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patient-queues/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('patient-queues/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -350,12 +350,12 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     });
 
     // Appointment Management
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::get('appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
+    Route::middleware('permission:manage_patient_queues')->group(function () {
+        Route::resource('patient-queues', PatientQueueController::class)->except(['edit', 'update']);
+        Route::post('patient-queues/{appointment}', [PatientQueueController::class, 'changeStatus'])->name('change-status');
+        Route::post('appointments-payment/{id}', [PatientQueueController::class, 'changePaymentStatus'])->name('change-payment-status');
+        Route::get('appointment-pdf/{id}', [PatientQueueController::class, 'appointmentPdf'])->name('appointmentPdf');
+        Route::get('appointments-calendar', [PatientQueueController::class, 'appointmentCalendar'])->name('appointments.calendar');
     });
 
     // Transaction Management
@@ -414,8 +414,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Prescription Management
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patient-queues/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('patient-queues/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -492,13 +492,13 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail');
 
     // Appointment Management
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class);
-        Route::get('appointments', [AppointmentController::class, 'doctorAppointment'])->name('appointments');
-        Route::get('appointments-calendar', [AppointmentController::class, 'doctorAppointmentCalendar'])->name('appointments.calendar');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
+    Route::middleware('permission:manage_patient_queues')->group(function () {
+        Route::resource('patient-queues', PatientQueueController::class);
+        Route::get('patient-queues', [PatientQueueController::class, 'doctorAppointment'])->name('patient-queues');
+        Route::get('appointments-calendar', [PatientQueueController::class, 'doctorAppointmentCalendar'])->name('appointments.calendar');
+        Route::get('appointment-pdf/{id}', [PatientQueueController::class, 'appointmentPdf'])->name('appointmentPdf');
+        Route::post('patient-queues/{appointment}', [PatientQueueController::class, 'changeStatus'])->name('change-status');
+        Route::post('appointments-payment/{id}', [PatientQueueController::class, 'changePaymentStatus'])->name('change-payment-status');
     });
 
     // Doctor Session Management
@@ -544,8 +544,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Prescription Management
     Route::resource('prescriptions', PrescriptionController::class)->except(['create', 'edit']);
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patient-queues/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('patient-queues/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');

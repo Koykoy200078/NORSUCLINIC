@@ -2,3 +2,4 @@
     <i class="fa-solid fa-face-frown me-5"></i>
     {{$error}}
 </div>
+

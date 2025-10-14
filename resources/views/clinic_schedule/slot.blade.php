@@ -9,3 +9,4 @@
     {{ Form::select('clinicEndTimes['.$day.']', $slots, isset($clinicSchedule) ? $clinicSchedule->end_time :  $slots[array_key_last($slots)],['class' => 'form-select io-select2', 'data-control'=>'select2']) }}
     </div>
 </div>
+

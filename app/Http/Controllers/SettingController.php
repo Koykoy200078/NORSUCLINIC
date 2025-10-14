@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateSettingRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Currency;
@@ -55,7 +55,7 @@ class SettingController extends AppBaseController
         $countries = Country::toBase()->pluck('name', 'id');
         $specialties = Specialization::orderBy('name', 'asc')->pluck('name', 'id');
         $currencies = Currency::toBase()->pluck('currency_name', 'id');
-        $paymentGateways = Appointment::PAYMENT_METHOD;
+        $paymentGateways = PatientQueue::PAYMENT_METHOD;
         $languages = User::LANGUAGES;
         $courentlanguage = Setting::where('key', 'language')->get()->toArray()[0]['value'];
         $selectedPaymentGateways = PaymentGateway::pluck('payment_gateway')->toArray();
@@ -97,7 +97,7 @@ class SettingController extends AppBaseController
                 PaymentGateway::updateOrCreate(
                     ['payment_gateway_id' => $paymentGateway],
                     [
-                        'payment_gateway' => Appointment::PAYMENT_METHOD[$paymentGateway],
+                        'payment_gateway' => PatientQueue::PAYMENT_METHOD[$paymentGateway],
                     ]
                 );
             }
@@ -141,3 +141,4 @@ class SettingController extends AppBaseController
         return $this->sendResponse($data, __('messages.flash.cities_retrieve'));
     }
 }
+

@@ -24,3 +24,4 @@
         {{ $slot }}
     </td>
 @endif
+

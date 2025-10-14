@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
@@ -22,7 +22,7 @@ class ReviewController extends AppBaseController
     public function index(): \Illuminate\View\View
     {
         $patient = Patient::whereUserId(getLogInUserId())->first();
-        $doctorIds = Appointment::wherePatientId($patient['id'])->whereStatus(Appointment::FINISHED)->pluck('doctor_id')->toArray();
+        $doctorIds = PatientQueue::wherePatientId($patient['id'])->whereStatus(PatientQueue::FINISHED)->pluck('doctor_id')->toArray();
         $doctors = Doctor::with('user', 'specializations', 'reviews')
             ->whereIn('id', $doctorIds)
             ->get();
@@ -36,7 +36,7 @@ class ReviewController extends AppBaseController
      */
     public function store(CreateReviewRequest $request)
     {
-        $canReview = Appointment::wherePatientId(getLogInUser()->patient->id)->whereDoctorId($request->doctor_id);
+        $canReview = PatientQueue::wherePatientId(getLogInUser()->patient->id)->whereDoctorId($request->doctor_id);
         if (! $canReview->exists()) {
             return $this->sendError(__('messages.common.not_allow__assess_record'));
         }
@@ -77,3 +77,4 @@ class ReviewController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.review_edit'));
     }
 }
+

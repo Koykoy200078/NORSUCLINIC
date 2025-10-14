@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Anand\LaravelPaytmWallet\Facades\PaytmWallet;
 use App\Http\Requests\CreatePaytmDetailRequest;
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
@@ -28,7 +28,7 @@ class PayTMController extends AppBaseController
     public function initiate(Request $request): View
     {
         $appointmentId = $request->appointmentId;
-        $appointment = Appointment::whereId($appointmentId)->first();
+        $appointment = PatientQueue::whereId($appointmentId)->first();
         $doctor = Doctor::with('user')->whereId($appointment->doctor_id)->first();
         $patient = Patient::with('user')->whereId($appointment->patient_id)->first();
 
@@ -42,7 +42,7 @@ class PayTMController extends AppBaseController
     {
         $input = $request->all();
         $appointmentId = $request->appointmentId;
-        $appointment = Appointment::whereId($appointmentId)->first();
+        $appointment = PatientQueue::whereId($appointmentId)->first();
         $patient = Patient::with('user')->whereId($appointment->patient_id)->first();
         $payment = PaytmWallet::with('receive');
         $loginUserId = getLogInUser() ? getLogInUserId() : '';
@@ -74,7 +74,7 @@ class PayTMController extends AppBaseController
 
         // update the db data as per result from api call
         if ($transaction->isSuccessful()) {
-            $appointment = Appointment::whereId($appointmentId)->first();
+            $appointment = PatientQueue::whereId($appointmentId)->first();
             $patient = Patient::with('user')->whereId($appointment->patient_id)->first();
 
             $transaction = [
@@ -82,15 +82,15 @@ class PayTMController extends AppBaseController
                 'transaction_id' => $response['TXNID'],
                 'appointment_id' => $appointment['appointment_unique_id'],
                 'amount' => $appointment['payable_amount'],
-                'type' => Appointment::PAYTM,
+                'type' => PatientQueue::PAYTM,
                 'meta' => json_encode($response),
             ];
 
             Transaction::create($transaction);
 
             $appointment->update([
-                'payment_method' => Appointment::PAYTM,
-                'payment_type' => Appointment::PAID,
+                'payment_method' => PatientQueue::PAYTM,
+                'payment_type' => PatientQueue::PAID,
             ]);
 
             Flash::success(__('messages.flash.appointment_created_payment_complete'));
@@ -156,3 +156,4 @@ class PayTMController extends AppBaseController
         return redirect(route('appointments.index'));
     }
 }
+

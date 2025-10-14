@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
+use App\Models\PatientQueue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -13,15 +13,15 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
 {
     public $patientId;
 
-    protected $model = Appointment::class;
+    protected $model = PatientQueue::class;
 
     public bool $showFilterOnHeader = true;
 
-    public array $FilterComponent = ['patients.appointment_filter', Appointment::STATUS];
+    public array $FilterComponent = ['patients.appointment_filter', PatientQueue::STATUS];
 
     protected $listeners = ['refresh' => '$refresh', 'resetPage', 'changeStatusFilter', 'changeDateFilter'];
 
-    public int $statusFilter = Appointment::BOOKED;
+    public int $statusFilter = PatientQueue::BOOKED;
 
     public string $dateFilter = '';
 
@@ -48,17 +48,17 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = Appointment::with('doctor')->where('patient_id', '=', $this->patientId)->select('appointments.*');
+        $query = PatientQueue::with('doctor')->where('patient_id', '=', $this->patientId)->select('patient_queues.*');
 
         if (getLogInUser()->hasRole('doctor')) {
-            $query = Appointment::with(['doctor.user', 'doctor.reviews'])->where('patient_id', '=', $this->patientId)->whereDoctorId(getLogInUser()->doctor->id)->select('appointments.*');
+            $query = PatientQueue::with(['doctor.user', 'doctor.reviews'])->where('patient_id', '=', $this->patientId)->whereDoctorId(getLogInUser()->doctor->id)->select('patient_queues.*');
         }
 
         $query->when(
-            $this->statusFilter != '' && $this->statusFilter != Appointment::ALL_STATUS,
+            $this->statusFilter != '' && $this->statusFilter != PatientQueue::ALL_STATUS,
             function (Builder $q) {
-                if ($this->statusFilter != Appointment::ALL) {
-                    $q->where('appointments.status', '=', $this->statusFilter);
+                if ($this->statusFilter != PatientQueue::ALL) {
+                    $q->where('patient_queues.status', '=', $this->statusFilter);
                 }
             }
         );
@@ -67,12 +67,12 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
             $timeEntryDate = explode(' - ', $this->dateFilter);
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         } else {
             $timeEntryDate = explode(' - ', getWeekDate());
             $startDate = Carbon::parse($timeEntryDate[0])->format('Y-m-d');
             $endDate = Carbon::parse($timeEntryDate[1])->format('Y-m-d');
-            $query->whereBetween('appointments.date', [$startDate, $endDate]);
+            $query->whereBetween('patient_queues.date', [$startDate, $endDate]);
         }
 
         return $query;
@@ -109,10 +109,10 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
                     return view('patients.components.status')
                         ->with([
                             'row' => $row,
-                            'book' => Appointment::BOOKED,
-                            'accepted' => Appointment::ACCEPTED,
-                            'finished' => Appointment::FINISHED,
-                            'cancel' => Appointment::CANCELLED,
+                            'book' => PatientQueue::BOOKED,
+                            'accepted' => PatientQueue::ACCEPTED,
+                            'finished' => PatientQueue::FINISHED,
+                            'cancel' => PatientQueue::CANCELLED,
                         ]);
                 }),
             Column::make(__('messages.common.action'), 'id')->view('patients.components.appointments_action'),

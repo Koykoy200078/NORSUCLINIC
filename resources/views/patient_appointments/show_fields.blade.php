@@ -38,7 +38,7 @@
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.doctor.status') }}:</label>
                             <span class="fs-4 text-gray-800">
                                 <span class="badge bg-{{ getStatusBadgeColor($appointment['data']->status)}}">
-                                    {{\App\Models\Appointment::STATUS[$appointment['data']->status]}}
+                                    {{\App\Models\PatientQueue::STATUS[$appointment['data']->status]}}
                                 </span>
                             </span>
                         </div>
@@ -62,17 +62,17 @@
                         <div class="col-md-6 d-flex flex-column mb-5">
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.appointment.status') }}:</label>
                             <span class="fs-4 text-gray-800">
-                                <span class="badge bg-{{($appointment['data']->payment_type === \App\Models\Appointment::PAID)?'success':'danger'}}">
-                                    {{($appointment['data']->payment_type === \App\Models\Appointment::PAID)?'PAID':'PENDING'}}
+                                <span class="badge bg-{{($appointment['data']->payment_type === \App\Models\PatientQueue::PAID)?'success':'danger'}}">
+                                    {{($appointment['data']->payment_type === \App\Models\PatientQueue::PAID)?'PAID':'PENDING'}}
                                 </span>
 
                             </span>
                         </div>
-                        @if($appointment['data']->payment_type === \App\Models\Appointment::PAID)
+                        @if($appointment['data']->payment_type === \App\Models\PatientQueue::PAID)
                         <div class="col-md-6 d-flex flex-column">
                             <label for="name" class="pb-2 fs-4 text-gray-600">{{ __('messages.appointment.payment_method') }}:</label>
                             <span class="fs-4 text-gray-800">
-                                {{ !empty($appointment['data']->payment_method) ? \App\Models\Appointment::PAYMENT_METHOD[$appointment['data']->payment_method] : __('messages.common.n/a') }}
+                                {{ !empty($appointment['data']->payment_method) ? \App\Models\PatientQueue::PAYMENT_METHOD[$appointment['data']->payment_method] : __('messages.common.n/a') }}
                             </span>
                         </div>
                         @endif
@@ -101,3 +101,4 @@
         </div>
     </div>
 </div>
+

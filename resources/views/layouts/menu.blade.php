@@ -51,15 +51,15 @@
 @endcan
 
 @role('doctor')
-@can('manage_appointments')
-<li class="nav-item {{ Request::is('doctors/appointments*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.appointments') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
+@can('manage_patient_queues')
+<li class="nav-item {{ Request::is('doctors/patient-queues*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queues') }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa-list-ul"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
         @if(isRole('doctor') && auth()->user()->doctor)
         @php
-        $bookedCount = \App\Models\Appointment::where('doctor_id', auth()->user()->doctor->id)
-        ->where('status', \App\Models\Appointment::BOOKED)
+        $bookedCount = \App\Models\PatientQueue::where('doctor_id', auth()->user()->doctor->id)
+        ->where('status', \App\Models\PatientQueue::BOOKED)
         ->count();
         @endphp
         @if($bookedCount > 0)
@@ -109,10 +109,10 @@
 @endrole
 @role('patient')
 <li
-    class="nav-item {{ Request::is('patients/appointments*', 'patients/patient-appointments-calendar*', 'patients/doctors*') ? 'active' : '' }}">
+    class="nav-item {{ Request::is('patients/patient-queues*', 'patients/patient-appointments-calendar*', 'patients/doctors*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ route('patients.patient-appointments-index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
+        <span class="aside-menu-icon pe-3"><i class="fas fa-list-ul"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
     </a>
 </li>
@@ -196,18 +196,18 @@
 </li>
 @endcan
 @if (!isRole('doctor') && !isRole('patient'))
-@can('manage_appointments')
+@can('manage_patient_queues')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/appointments*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*')) ||
-        (isRole('staff') && Request::is('staff/appointments*', 'staff/admin-appointments-calendar*', 'staff/prescriptions*', 'staff/prescription-medicine-show*'))
+        (isRole('clinic_admin') && Request::is('admin/patient-queues*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*')) ||
+        (isRole('staff') && Request::is('staff/patient-queues*', 'staff/admin-appointments-calendar*', 'staff/prescriptions*', 'staff/prescription-medicine-show*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
         href="{{ 
-            isRole('clinic_admin') ? route('appointments.index') : 
-            (isRole('staff') ? route('staff.appointments.index') : route('appointments.index'))
+            isRole('clinic_admin') ? route('patient-queues.index') : 
+            (isRole('staff') ? route('staff.patient-queues.index') : route('patient-queues.index'))
         }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
+        <span class="aside-menu-icon pe-3"><i class="fas fa-list-ul"></i></span>
         <span class="aside-menu-title">{{ __('messages.appointments') }}</span>
     </a>
 </li>
@@ -377,3 +377,5 @@
     </a>
 </li>
 @endcan
+
+

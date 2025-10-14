@@ -93,3 +93,4 @@
     </div>
     @include('doctor_dashboard.templates.templates')
 @endsection
+

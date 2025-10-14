@@ -33,3 +33,4 @@ $customAttributes['loader-icon'] = $component->getLoadingPlaceHolderIconAttribut
     </tr>
 
 @endif
+

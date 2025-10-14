@@ -3,3 +3,4 @@
            type="checkbox" value=""
             {{!empty($row->user->email_verified_at) ? 'checked disabled' : ''}} />
 </div>
+

@@ -13,3 +13,4 @@
     @include('appointments.models.patient-payment-model')
     @include('generate_patient_smart_cards/components/show_card')
 @endsection
+

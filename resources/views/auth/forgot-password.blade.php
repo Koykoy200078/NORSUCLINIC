@@ -47,3 +47,4 @@
 @endsection
 @push('scripts')
 @endpush
+

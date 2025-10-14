@@ -4,3 +4,4 @@
     <div class="">{{ \Carbon\Carbon::parse($row->date)->isoFormat('DD MMM YYYY') }}
     </div>
 </div>
+
