@@ -36,8 +36,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequestDocuments> $requestDocuments
  * @property-read int|null $request_documents_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
- * @property-read int|null $reviews_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \App\Models\User $user
@@ -183,9 +181,6 @@ class Patient extends Model implements HasMedia
             // Delete all appointments
             $patient->appointments()->delete();
 
-            // Delete all reviews
-            $patient->reviews()->delete();
-
             // Delete all request documents (consultation forms, medical certificates)
             // Use get()->each() to trigger deleting events on each document
             // This ensures images are deleted from storage
@@ -270,13 +265,20 @@ class Patient extends Model implements HasMedia
         return $this->hasMany(Appointment::class, 'patient_id');
     }
 
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class);
-    }
-
     public function requestDocuments()
     {
         return $this->hasMany(RequestDocuments::class, 'user_id', 'user_id');
+    }
+
+    public function queueEntries(): HasMany
+    {
+        return $this->hasMany(PatientQueue::class);
+    }
+
+    public function currentQueue()
+    {
+        return $this->hasOne(PatientQueue::class)
+            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+            ->latest();
     }
 }

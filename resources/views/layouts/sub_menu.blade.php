@@ -46,10 +46,6 @@
     <a class="nav-link p-0 {{ Request::is('patients/transactions*') ? 'active' : '' }}"
         href="{{ route('patients.transactions') }}">{{ __('messages.transactions') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/reviews*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('patients/reviews*') ? 'active' : '' }}"
-        href="{{ route('patients.reviews.index') }}">{{ __('messages.reviews') }}</a>
-</li>
 @endrole
 @can('manage_staff')
 @if(getLogInUser()->hasRole('clinic_admin'))

@@ -72,6 +72,30 @@
 </li>
 @endcan
 
+{{-- Patient Queue - For Doctors --}}
+<li class="nav-item {{ Request::is('doctors/patient-queue*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queue.index') }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
+        <span class="aside-menu-title">Patient Queue</span>
+        @php
+        $doctorQueueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
+        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
+        ->first();
+        @endphp
+        @if($doctorQueueData && $doctorQueueData->total > 0)
+        @if($doctorQueueData->in_progress > 0)
+        <span class="badge bg-warning rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Patient in progress">
+            <i class="fas fa-user-clock"></i>
+        </span>
+        @elseif($doctorQueueData->priority > 0)
+        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $doctorQueueData->priority }} priority patient(s)">{{ $doctorQueueData->priority }}</span>
+        @else
+        <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $doctorQueueData->total }}</span>
+        @endif
+        @endif
+    </a>
+</li>
+
 @can('manage_request_documents')
 <li
     class="nav-item {{ Request::is('doctors/request-documents*') ? 'active' : '' }}">
@@ -123,14 +147,6 @@
         <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
     </a>
 </li>
-
-<!-- <li class="nav-item {{ Request::is('patients/reviews*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.reviews.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-star"></i></span>
-        <span class="aside-menu-title">{{ __('messages.reviews') }}</span>
-    </a>
-</li> -->
 
 @can('manage_request_documents')
 <li
@@ -194,6 +210,52 @@
         <span class="aside-menu-title">{{ __('messages.patients') }}</span>
     </a>
 </li>
+
+{{-- Patient Queue Management - For Staff (with manage_patients permission) --}}
+@if(isRole('staff'))
+<li class="nav-item {{ Request::is('staff/patient-queue*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.patient-queue.index') }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
+        <span class="aside-menu-title">Patient Queue</span>
+        @php
+        $queueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
+        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority')
+        ->first();
+        @endphp
+        @if($queueData && $queueData->total > 0)
+        @if($queueData->priority > 0)
+        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $queueData->priority }} priority patient(s)">{{ $queueData->priority }}</span>
+        @else
+        <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $queueData->total }}</span>
+        @endif
+        @endif
+        <span class="d-none">Queue Management</span>
+    </a>
+</li>
+@endif
+
+{{-- Patient Queue - For Clinic Admin --}}
+@if(isRole('clinic_admin'))
+<li class="nav-item {{ Request::is('admin/patient-queue*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patient-queue.index') }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
+        <span class="aside-menu-title">Patient Queue</span>
+        @php
+        $adminQueueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
+        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority')
+        ->first();
+        @endphp
+        @if($adminQueueData && $adminQueueData->total > 0)
+        @if($adminQueueData->priority > 0)
+        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $adminQueueData->priority }} priority patient(s)">{{ $adminQueueData->priority }}</span>
+        @else
+        <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $adminQueueData->total }}</span>
+        @endif
+        @endif
+        <span class="d-none">Queue Monitoring</span>
+    </a>
+</li>
+@endif
 @endcan
 @if (!isRole('doctor') && !isRole('patient'))
 @can('manage_appointments')

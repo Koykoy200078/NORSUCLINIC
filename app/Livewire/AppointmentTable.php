@@ -72,7 +72,6 @@ class AppointmentTable extends LivewireTableComponent
             'patient.user:id,first_name,last_name,email',
             'services:id,name,charges',
             'transaction:id,appointment_id,amount,status',
-            'doctor.reviews:id,doctor_id,rating',
             'doctor.user.media'
         ]);
 

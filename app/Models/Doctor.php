@@ -27,8 +27,6 @@ use Illuminate\Support\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoctorSession> $doctorSession
  * @property-read int|null $doctor_session_count
  * @property-read \App\Models\User $doctorUser
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
- * @property-read int|null $reviews_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Specialization> $specializations
  * @property-read int|null $specializations_count
  * @property-read \App\Models\User $testUser
@@ -131,10 +129,5 @@ class Doctor extends Model
     public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'owner');
-    }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class);
     }
 }

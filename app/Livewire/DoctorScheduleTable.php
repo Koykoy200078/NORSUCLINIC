@@ -75,7 +75,7 @@ class DoctorScheduleTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query = DoctorSession::with(['doctor.user', 'doctor.reviews'])->select('doctor_sessions.*');
+        $query = DoctorSession::with(['doctor.user'])->select('doctor_sessions.*');
 
         if (getLoginUser()->hasRole('doctor')) {
             $query->where('doctor_id', getLoginUser()->doctor->id);

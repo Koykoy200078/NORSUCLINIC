@@ -68,8 +68,7 @@ class DoctorVisitTable extends LivewireTableComponent
         return Visit::with([
             'patient:id,user_id',
             'patient.user:id,first_name,last_name,email',
-            'doctor:id,user_id',
-            'doctor.reviews:id,doctor_id,rating'
+            'doctor:id,user_id'
         ])->where('doctor_id', getLoginUser()->doctor->id)
             ->select('visits.*');
     }

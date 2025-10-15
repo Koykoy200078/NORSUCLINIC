@@ -302,6 +302,18 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
     Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
+
+    // Patient Queue Management
+    Route::middleware('permission:manage_patients')->group(function () {
+        Route::get('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'index'])->name('patient-queue.index');
+        Route::get('patient-queue/create', [\App\Http\Controllers\PatientQueueController::class, 'create'])->name('patient-queue.create');
+        Route::post('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'store'])->name('patient-queue.store');
+        Route::get('patient-queue/{patientQueue}/edit', [\App\Http\Controllers\PatientQueueController::class, 'edit'])->name('patient-queue.edit');
+        Route::put('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'update'])->name('patient-queue.update');
+        Route::delete('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'destroy'])->name('patient-queue.destroy');
+        Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
+        Route::post('patient-queue/{patientQueue}/complete', [\App\Http\Controllers\PatientQueueController::class, 'complete'])->name('patient-queue.complete');
+    });
 });
 
 // ============================================================================
@@ -437,6 +449,18 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
         Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
+    });
+
+    // Patient Queue Management
+    Route::middleware('permission:manage_patients')->group(function () {
+        Route::get('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'index'])->name('patient-queue.index');
+        Route::get('patient-queue/create', [\App\Http\Controllers\PatientQueueController::class, 'create'])->name('patient-queue.create');
+        Route::post('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'store'])->name('patient-queue.store');
+        Route::get('patient-queue/{patientQueue}/edit', [\App\Http\Controllers\PatientQueueController::class, 'edit'])->name('patient-queue.edit');
+        Route::put('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'update'])->name('patient-queue.update');
+        Route::delete('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'destroy'])->name('patient-queue.destroy');
+        Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
+        Route::post('patient-queue/{patientQueue}/complete', [\App\Http\Controllers\PatientQueueController::class, 'complete'])->name('patient-queue.complete');
     });
 
     // Enquiry Management
@@ -594,6 +618,11 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
     });
+
+    // Patient Queue Management (Doctor View)
+    Route::get('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index');
+    Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
+    Route::post('patient-queue/{patientQueue}/complete', [\App\Http\Controllers\PatientQueueController::class, 'complete'])->name('patient-queue.complete');
 });
 
 Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']);

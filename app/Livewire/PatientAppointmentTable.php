@@ -70,8 +70,7 @@ class PatientAppointmentTable extends LivewireTableComponent
         $query = Appointment::with([
             'doctor.user',
             'services',
-            'transaction',
-            'doctor.reviews',
+            'transaction'
         ])->where('patient_id', getLoginUser()->patient->id)->select('appointments.*');
 
         $query->when(

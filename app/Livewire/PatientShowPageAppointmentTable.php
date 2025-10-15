@@ -51,7 +51,7 @@ class PatientShowPageAppointmentTable extends LivewireTableComponent
         $query = Appointment::with('doctor')->where('patient_id', '=', $this->patientId)->select('appointments.*');
 
         if (getLogInUser()->hasRole('doctor')) {
-            $query = Appointment::with(['doctor.user', 'doctor.reviews'])->where('patient_id', '=', $this->patientId)->whereDoctorId(getLogInUser()->doctor->id)->select('appointments.*');
+            $query = Appointment::with(['doctor.user'])->where('patient_id', '=', $this->patientId)->whereDoctorId(getLogInUser()->doctor->id)->select('appointments.*');
         }
 
         $query->when(

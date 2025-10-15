@@ -8,6 +8,7 @@ use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\PurchaseMedicineController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -41,6 +42,13 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
+    });
+
+    // Patient Queue Management (Nurse/Staff can manage queue)
+    Route::middleware('permission:manage_patients')->group(function () {
+        Route::resource('patient-queue', PatientQueueController::class);
+        Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
+        Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
     });
 
     // Appointment Management (Staff can manage appointments)

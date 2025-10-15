@@ -48,8 +48,7 @@ class DoctorTable extends LivewireTableComponent
     {
         $query = Doctor::with([
             'user:id,first_name,last_name,email,status,email_verified_at',
-            'specializations:id,name',
-            'reviews:id,doctor_id,rating'
+            'specializations:id,name'
         ])->select('doctors.*');
 
         $query->when(

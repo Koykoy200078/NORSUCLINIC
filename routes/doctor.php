@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\HolidayContoller;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -30,6 +31,11 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         '/doctor-dashboard',
         [DashboardController::class, 'getDoctorAppointment']
     )->name('appointment.dashboard');
+
+    // Patient Queue (Doctors can view and update queue)
+    Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index');
+    Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
+    Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
 
     // Appointment Management (Doctors can fully manage appointments)
     Route::middleware('permission:manage_appointments')->group(function () {

@@ -6,7 +6,6 @@ use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\PatientAppointmentController;
 use App\Http\Controllers\PatientVisitController;
 use App\Http\Controllers\PrescriptionController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -56,8 +55,6 @@ Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUs
         'patient-visits/{patientVisit}',
         [PatientVisitController::class, 'show']
     )->name('patient.visits.show');
-
-    Route::resource('reviews', ReviewController::class)->except(['delete', 'create']);
 
     // Route for Prescription
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
