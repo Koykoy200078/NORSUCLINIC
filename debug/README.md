@@ -26,10 +26,10 @@ debug/
 
 ## ⚠️ Important Notes
 
-- These files were created for development and testing purposes
-- They are **NOT** part of the production application
-- They can be safely deleted once testing is complete
-- Do **NOT** deploy these files to production
+-   These files were created for development and testing purposes
+-   They are **NOT** part of the production application
+-   They can be safely deleted once testing is complete
+-   Do **NOT** deploy these files to production
 
 ## Cleanup
 
@@ -44,10 +44,11 @@ Remove-Item -Path .\debug\ -Recurse -Force
 ```
 
 Or add to `.gitignore`:
+
 ```
 /debug/
 ```
 
 ---
 
-*Files moved here on October 16, 2025*
+_Files moved here on October 16, 2025_

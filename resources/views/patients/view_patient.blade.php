@@ -163,6 +163,7 @@ Patient Data
                                     <form action="{{ route('request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
                                         <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -174,6 +175,7 @@ Patient Data
                                     <form action="{{ route('staff.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
                                         <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -185,6 +187,7 @@ Patient Data
                                     <form action="{{ route('doctors.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
                                         <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
