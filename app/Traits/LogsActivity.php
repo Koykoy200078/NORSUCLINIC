@@ -124,6 +124,23 @@ trait LogsActivity
      */
     public static function logMedicalCertificateCreation($requestDocument)
     {
+        // Parse examined_on to get a single date for logging
+        $logDate = $requestDocument->examined_on ?? now()->toDateString();
+
+        // If examined_on contains pipe-delimited dates (range or multiple), extract the first date
+        if (is_string($logDate) && (strpos($logDate, '|') !== false || strpos($logDate, ',') !== false)) {
+            // For range: "2025-10-13|2025-10-16|range" -> get first date
+            if (strpos($logDate, '|') !== false) {
+                $parts = explode('|', $logDate);
+                $logDate = $parts[0];
+            }
+            // For multiple: "2025-10-12,2025-10-14,2025-10-16|multiple" -> get first date
+            if (strpos($logDate, ',') !== false) {
+                $parts = explode(',', $logDate);
+                $logDate = $parts[0];
+            }
+        }
+
         return self::logActivity(
             'created_medical_certificate',
             "Created medical certificate for: {$requestDocument->name}",
@@ -139,7 +156,7 @@ trait LogsActivity
                 'year_level' => $requestDocument->year_level,
                 'subject_type' => 'RequestDocuments',
                 'subject_id' => $requestDocument->id,
-                'date' => $requestDocument->examined_on ?? now()->toDateString(),
+                'date' => $logDate,
             ]
         );
     }

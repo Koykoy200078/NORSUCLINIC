@@ -180,7 +180,7 @@ class RequestDocuments extends Model implements HasMedia
 
     protected $casts = [
         'requested_at' => 'date',
-        'examined_on' => 'date',
+        // 'examined_on' => 'date', // Removed: Now supports date ranges and multiple dates as string
         'date_of_birth' => 'date',
         'consultation_images' => 'array',
     ];

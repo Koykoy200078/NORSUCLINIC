@@ -129,6 +129,9 @@ class RequestDocumentsController extends Controller
         $data['vital_signs_height'] = $data['vital_signs_height_2'];
         $data['vital_signs_weight'] = $data['vital_signs_weight_2'];
 
+        // examined_on is now coming from the hidden field with the correct format
+        // No need to process it further
+
         // Log the user_id for debugging
         Log::info('Attempting to create medical certificate for user_id: ' . ($data['user_id'] ?? 'NULL'));
 

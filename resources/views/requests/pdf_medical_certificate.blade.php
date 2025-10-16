@@ -177,7 +177,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is to certify that Mr./Ms.
                 <span class="input-line">{{ $requestDocument->name }}</span>, <span class="input-line" style="min-width: 32px">{{ $requestDocument->age }}</span> yrs old, <span class="input-line" style="min-width: 32px">{{ $requestDocument->gender }}</span> a resident of
                 <span class="input-line" style="min-width: 120px">{{ $requestDocument->address }}</span>, was seen and examined at my clinic on
-                <span class="input-line" style="min-width: 60px"> {{ $requestDocument->examined_on ? \Carbon\Carbon::parse($requestDocument->examined_on)->format('Y-m-d') : '' }} </span>
+                <span class="input-line" style="min-width: 60px"> {{ $requestDocument->examined_on ? formatExaminedOnForPDF($requestDocument->examined_on) : '' }} </span>
                 with the following <span class="font-bold">complaints/diagnosis:</span>
             </p>
             <div class="underlined-area">{{ trim($requestDocument->complaints_diagnosis) }}</div>

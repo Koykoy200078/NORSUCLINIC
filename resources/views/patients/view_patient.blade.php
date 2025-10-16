@@ -225,7 +225,7 @@ Patient Data
                     @foreach($medicalCertificates as $certificate)
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($certificate->created_at)->format('F j, Y (g:i A)') }}</td>
-                        <td>{{ $certificate->examined_on ? \Carbon\Carbon::parse($certificate->examined_on)->format('F j, Y') : 'N/A' }}</td>
+                        <td>{{ $certificate->examined_on ? formatExaminedOnForPDF($certificate->examined_on) : 'N/A' }}</td>
 
                         <td>{{ $certificate->request_of ?? 'N/A' }}</td>
                         <td>

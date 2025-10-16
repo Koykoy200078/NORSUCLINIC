@@ -272,7 +272,7 @@
                     </p>
                     <p>
                         <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->address }}" readonly>
-                        , was seen and examined at my clinic on <input type="string" id="examined_on" name="examined_on" style="width: 120px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->examined_on->format("Y-m-d") }}" readonly> with the following
+                        , was seen and examined at my clinic on <input type="string" id="examined_on" name="examined_on" style="width: 300px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->examined_on ? formatExaminedOnForPDF($requestDocument->examined_on) : '' }}" readonly> with the following
                     <p class="font-semibold">complaints/diagnosis:</p>
                     <div class="border border-gray-300 p-2 h-28 mb-4">
                         <div class="col-span-3">

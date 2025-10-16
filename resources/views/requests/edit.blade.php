@@ -388,7 +388,7 @@
                 </p>
                 <p>
                     <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ old('address', $requestDocument->address) }}">
-                    , was seen and examined at my clinic on <input type="date" id="examined_on" name="examined_on" style="width: 120px; text-align: center;" class="border-b border-black" value="{{ old('examined_on', $requestDocument->examined_on ? \Carbon\Carbon::parse($requestDocument->examined_on)->format('Y-m-d') : '') }}"> with the following
+                    , was seen and examined at my clinic on <input type="date" id="examined_on" name="examined_on" style="width: 120px; text-align: center;" class="border-b border-black" value="{{ old('examined_on', $requestDocument->examined_on ? (strpos($requestDocument->examined_on, '|') !== false ? explode('|', $requestDocument->examined_on)[0] : (strpos($requestDocument->examined_on, ',') !== false ? explode(',', $requestDocument->examined_on)[0] : $requestDocument->examined_on)) : '') }}"> with the following
                 <p class="font-semibold">complaints/diagnosis:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
