@@ -19,6 +19,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\RequestDocumentsController;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUserStatus', 'role:doctor')->group(function () {
@@ -154,5 +155,12 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
         Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
+    });
+
+    // Activity Logs (Doctors can view activity logs)
+    Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 });

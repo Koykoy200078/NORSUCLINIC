@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Vaccination;
 use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
+use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestDocumentsController extends Controller
 {
+    use LogsActivity;
     /**
      * Display a listing of the resource.
      */
@@ -144,7 +146,7 @@ class RequestDocumentsController extends Controller
         $data['year_level'] = $user->yearLevel->year_level_name ?? 'Unknown Year Level';
 
         // Insert the data into the database
-        RequestDocuments::create([
+        $requestDocument = RequestDocuments::create([
             'document_type' => $data['document_type'],
             'document_creator_id' => $data['document_creator_id'], // Use the authenticated user ID
             'user_id' => $data['user_id'],
@@ -171,6 +173,9 @@ class RequestDocumentsController extends Controller
             'doc_lic_no' => $data['doc_lic_no'],
             'doc_prt_no' => $data['doc_prt_no'],
         ]);
+
+        // Log medical certificate creation activity
+        self::logMedicalCertificateCreation($requestDocument);
     }
 
     /**
@@ -285,6 +290,9 @@ class RequestDocumentsController extends Controller
 
         // Handle medicine deduction
         $this->handleMedicineDeduction($requestDocument, $data);
+
+        // Log consultation form creation activity
+        self::logConsultationCreation($requestDocument);
 
         return $requestDocument;
     }
@@ -608,8 +616,11 @@ class RequestDocumentsController extends Controller
                     'dosage_instructions' => $dosageInstructions,
                 ]);
 
+                // Log medicine usage activity
+                self::logMedicineUsage($medicine, $quantity, $requestDocument->name, $requestDocument);
+
                 // Log the medicine deduction
-                \Log::info('Medicine deducted from inventory', [
+                Log::info('Medicine deducted from inventory', [
                     'consultation_id' => $requestDocument->id,
                     'medicine_id' => $medicineId,
                     'medicine_name' => $medicine->name,

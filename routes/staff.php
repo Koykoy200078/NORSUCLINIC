@@ -28,6 +28,7 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\HolidayContoller;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStatus', 'role:staff')->group(function () {
@@ -204,5 +205,12 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     Route::middleware('permission:manage_countries')->group(function () {
         Route::get('countries', [CountryController::class, 'index'])->name('countries.index');
         Route::get('countries/{country}', [CountryController::class, 'show'])->name('countries.show');
+    });
+
+    // Activity Logs (Staff can view activity logs)
+    Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 });

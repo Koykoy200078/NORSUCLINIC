@@ -229,6 +229,13 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
     });
 
+    // Activity Logs Routes
+    Route::prefix('activity-logs')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/export', [\App\Http\Controllers\ActivityLogController::class, 'export'])->name('activity-logs.export');
+        Route::get('/{id}', [\App\Http\Controllers\ActivityLogController::class, 'show'])->name('activity-logs.show');
+    });
+
     // Doctor Schedule Routes
     Route::middleware('permission:manage_doctor_sessions')->group(function () {
         Route::resource('doctor-sessions', DoctorSessionController::class);
@@ -629,4 +636,6 @@ Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/patient.php';
+require __DIR__ . '/staff.php';
+require __DIR__ . '/doctor.php';
 require __DIR__ . '/upgrade.php';

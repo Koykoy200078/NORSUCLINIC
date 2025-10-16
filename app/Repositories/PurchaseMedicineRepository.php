@@ -9,6 +9,7 @@ use App\Models\Medicine;
 use App\Models\PurchasedMedicine;
 use App\Models\PurchaseMedicine;
 use App\Models\User;
+use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  */
 class PurchaseMedicineRepository extends BaseRepository
 {
+    use LogsActivity;
     /**
      * @var array
      */
@@ -123,6 +125,16 @@ class PurchaseMedicineRepository extends BaseRepository
                     'available_quantity' => $input['quantity'][$key] + $medicine->available_quantity,
                 ];
                 $medicine->update($medicineQtyArray);
+
+                // Log medicine procurement activity
+                self::logMedicineProcurement(
+                    $medicine,
+                    $input['quantity'][$key],
+                    [
+                        'batch_no' => $input['lot_no'][$key],
+                        'expiry_date' => $input['expiry_date'][$key],
+                    ]
+                );
             }
 
             DB::commit();

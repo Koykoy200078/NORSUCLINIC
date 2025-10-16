@@ -439,3 +439,20 @@
     </a>
 </li>
 @endcan
+
+{{-- Activity Logs - For clinic_admin, staff, and doctor --}}
+@if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+<li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
+    (isRole('staff') && Request::is('staff/activity-logs*')) ||
+    (isRole('doctor') && Request::is('doctors/activity-logs*'))
+? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('activity-logs.index') : 
+        (isRole('staff') ? route('staff.activity-logs.index') : route('doctors.activity-logs.index'))
+    }}">
+        <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
+        <span class="aside-menu-title">Activity Logs</span>
+    </a>
+</li>
+@endif

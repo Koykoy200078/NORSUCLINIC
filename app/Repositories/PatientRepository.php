@@ -11,6 +11,7 @@ use App\Models\Course;
 use App\Models\Diagnose;
 use App\Models\Patient;
 use App\Models\User;
+use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -31,6 +32,7 @@ use App\Models\YearLevel;
  */
 class PatientRepository extends BaseRepository
 {
+    use LogsActivity;
     /**
      * @var array
      */
@@ -132,6 +134,9 @@ class PatientRepository extends BaseRepository
 
             // $user->sendEmailVerificationNotification();
 
+            // Log patient creation activity
+            self::logPatientCreation($patient, $user);
+
             DB::commit();
 
             return true;
@@ -187,6 +192,9 @@ class PatientRepository extends BaseRepository
                 $patient->clearMediaCollection(Patient::PROFILE);
                 $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
             }
+
+            // Log patient update activity
+            self::logPatientUpdate($patient, $patient->user);
 
             DB::commit();
 
