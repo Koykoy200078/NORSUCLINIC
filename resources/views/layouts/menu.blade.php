@@ -311,18 +311,41 @@
         })
         ->distinct('medicine_id')
         ->count('medicine_id');
-        @endphp
-        @if($criticalCount > 0)
-        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Critical: {{ $criticalCount }} medicine(s) expiring in 7 days or less">{{ $criticalCount }}</span>
-        @elseif($warningCount > 0)
-        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Warning: {{ $warningCount }} medicine(s) expiring within 30 days">{{ $warningCount }}</span>
-        @endif
-        <span class="d-none">{{ __('messages.medicine_categories') }}</span>
-        <span class="d-none">{{ __('messages.medicine_brands') }}</span>
-        <span class="d-none">{{ __('messages.medicines') }}</span>
-        <span class="d-none">{{ __('messages.purchase_medicine.purchase_medicines') }}</span>
-        <span class="d-none">{{ __('messages.used_medicine.used_medicines') }}</span>
-        <span class="d-none">{{ __('messages.medicine_bills.medicine_bills') }}</span>
+
+        // Count medicines with low stock alerts (based on minimum_stock_alert or stock_alert_percentage)
+        $lowStockCount = \App\Models\Medicine::where('available_quantity', '>', 0)
+        ->where(function ($query) {
+        // Check minimum stock alert
+        $query->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_stock_alert')
+            // OR check percentage alert
+            ->orWhereRaw('stock_alert_percentage IS NOT NULL AND quantity > 0 AND (available_quantity / quantity * 100) <= stock_alert_percentage');
+                })
+                ->count();
+                @endphp
+
+                <div class="d-flex align-items-center ms-auto gap-1">
+                    @if($criticalCount > 0)
+                    <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Critical: {{ $criticalCount }} medicine(s) expiring in 7 days or less">
+                        <i class="fas fa-calendar-times me-1" style="font-size: 0.6rem;"></i>{{ $criticalCount }}
+                    </span>
+                    @elseif($warningCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Warning: {{ $warningCount }} medicine(s) expiring within 30 days">
+                        <i class="fas fa-calendar-exclamation me-1" style="font-size: 0.6rem;"></i>{{ $warningCount }}
+                    </span>
+                    @endif
+
+                    @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Low Stock: {{ $lowStockCount }} medicine(s) below alert threshold">
+                        <i class="fas fa-box-open me-1" style="font-size: 0.6rem;"></i>{{ $lowStockCount }}
+                    </span>
+                    @endif
+                </div>
+                <span class="d-none">{{ __('messages.medicine_categories') }}</span>
+                <span class="d-none">{{ __('messages.medicine_brands') }}</span>
+                <span class="d-none">{{ __('messages.medicines') }}</span>
+                <span class="d-none">{{ __('messages.purchase_medicine.purchase_medicines') }}</span>
+                <span class="d-none">{{ __('messages.used_medicine.used_medicines') }}</span>
+                <span class="d-none">{{ __('messages.medicine_bills.medicine_bills') }}</span>
     </a>
 </li>
 @endcan

@@ -108,11 +108,7 @@
                                                         <th scope="col">{{ __('messages.medicines') }}</th>
                                                         <th scope="col">{{ __('messages.purchase_medicine.expiry_date') }}</th>
                                                         <th scope="col">{{ __('messages.purchase_medicine.lot_no') }}</th>
-                                                        {{-- <th scope="col">{{ __('messages.medicine.buying_price') }}</th> --}}
-                                                        {{-- <th scope="col">{{ __('messages.medicine.selling_price') }}</th> --}}
-                                                        {{-- <th scope="col">{{ __('messages.purchase_medicine.tax' ) }}</th> --}}
                                                         <th scope="col">{{ __('messages.purchase_medicine.quantity') }}</th>
-                                                        {{-- <th scope="col" class="text-end ">{{ __('messages.purchase_medicine.amount') }}</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -120,62 +116,35 @@
                                                     @foreach($medicinePurchase->purchasedMedcines as $purchasedMedcine)
                                                     <tr>
                                                         <td class="py-4">{{ isset($purchasedMedcine->medicines->name) == true ? $purchasedMedcine->medicines->name : __('messages.common.n/a')  }}</td>
-                                                        <td class="py-4">{{ $purchasedMedcine->expiry_date ==null ? __('messages.common.n/a') : \Carbon\Carbon::parse($purchasedMedcine->expiry_date)->isoFormat('Do MMM, Y')}}</td>
+                                                        <td class="py-4">
+                                                            @if($purchasedMedcine->expiry_date == null)
+                                                            {{ __('messages.common.n/a') }}
+                                                            @else
+                                                            @php
+                                                            // Check if expiry date is in Y-m format (7 chars) or Y-m-d format (10 chars)
+                                                            $expiryDate = $purchasedMedcine->expiry_date;
+                                                            if (strlen($expiryDate) === 7 && substr_count($expiryDate, '-') === 1) {
+                                                            // Month-only format (Y-m): Display as "MMM, Y"
+                                                            echo \Carbon\Carbon::parse($expiryDate . '-01')->isoFormat('MMM, Y');
+                                                            } else {
+                                                            // Full date format (Y-m-d): Display as "Do MMM, Y"
+                                                            echo \Carbon\Carbon::parse($expiryDate)->isoFormat('Do MMM, Y');
+                                                            }
+                                                            @endphp
+                                                            @endif
+                                                        </td>
                                                         <td class="py-4">{{ $purchasedMedcine->lot_no }}</td>
-                                                        {{-- <td class="py-4">{{ isset($purchasedMedcine->medicines->buying_price) == true ? $purchasedMedcine->medicines->buying_price : __('messages.common.n/a')  }}</td> --}}
-                                                        {{-- <td class="py-4">{{ isset($purchasedMedcine->medicines->selling_price) == true ? $purchasedMedcine->medicines->selling_price : __('messages.common.n/a') }}</td> --}}
-                                                        {{-- <td class="py-4">{{ $purchasedMedcine->tax }}%</td> --}}
                                                         <td class="py-4">{{ $purchasedMedcine->quantity }}</td>
-                                                        {{-- <td class="py-4 text-end ">{{ number_format($purchasedMedcine->amount,2) }}</td> --}}
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
-
-                                        <!-- <div class="d-none col-lg-6 ms-lg-auto mt-4">
-                                            <div class="border-top">
-                                                <table class="table table-borderless  box-shadow-none mb-0 mt-5 text-end">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="ps-0">{{ __('messages.purchase_medicine.total').(':') }}</td>
-                                                            <td class="text-gray-900 text-end pe-0">
-                                                                {{ number_format($medicinePurchase->total,2) }}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="ps-0">{{ __('messages.purchase_medicine.tax').(':') }}</td>
-                                                            <td class="text-gray-900 text-end pe-0">
-                                                                {{ number_format($medicinePurchase->tax,2)}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="ps-0">{{ __('messages.purchase_medicine.discount').(':') }}</td>
-                                                            <td class="text-gray-900 text-end pe-0">
-                                                                {{ number_format($medicinePurchase->discount,2)}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="ps-0">{{ __('messages.purchase_medicine.net_amount').(':') }}</td>
-                                                            <td class="text-gray-900 text-end pe-0">
-                                                                {{ number_format($medicinePurchase->net_amount,2)}}
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="col-xxl-3">
                                     <div class="bg-gray-100 rounded-15 p-md-7 p-5 h-100 mt-xxl-0 mt-5 col-xxl-9 ms-xxl-auto w-100">
                                         <h3 class="mb-5">{{ __('messages.purchase_medicine.other_details') }}</h3>
-                                        <!-- <div class="row">
-                                            <div class="col-xxl-12 col-lg-4 col-sm-6 d-flex flex-column mb-xxl-7 mb-lg-0 mb-4">
-                                                <label class="pb-2 fs-4 text-gray-600">{{ __('messages.purchase_medicine.payment_note')  }}</label>
-                                                <span class="fw-bold fs-6 text-gray-800">{!! !empty($medicinePurchase->payment_note)?nl2br(e($medicinePurchase->payment_note)):'N/A' !!}</span>
-                                            </div>
-                                        </div> -->
                                         <div class="row">
                                             <div class="col-xxl-12 col-lg-4 col-sm-6 d-flex flex-column mb-xxl-7 mb-lg-0 mb-4">
                                                 <label for="name"
@@ -184,13 +153,6 @@
 
                                             </div>
                                         </div>
-                                        <!-- <div class="row">
-                                            <div class="col-xxl-12 col-lg-4 col-sm-6 d-flex flex-column mb-xxl-7 mb-lg-0 mb-4">
-                                                <label for="name"
-                                                    class="pb-2 fs-4 text-gray-600">{{ __('messages.purchase_medicine.payment_mode') }}</label>
-                                                {{ App\Models\PurchaseMedicine::PAYMENT_METHOD[$medicinePurchase->payment_type]  }}
-                                            </div>
-                                        </div> -->
                                         <div class="row">
                                             <div class="col-xxl-12 col-lg-4 col-sm-6 d-flex flex-column mb-xxl-7 mb-lg-0 mb-4">
                                                 <label for="name"

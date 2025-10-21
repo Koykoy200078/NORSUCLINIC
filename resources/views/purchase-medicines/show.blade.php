@@ -9,6 +9,13 @@
         <h1 class="mb-0 me-1">{{__('messages.purchase_medicine.purchase_medicine_details')}}</h1>
         <div class="text-end mt-4 mt-md-0">
             <a href="{{ 
+                isRole('clinic_admin') ? route('medicine-purchase.edit', $medicinePurchase->id) : 
+                (isRole('staff') ? route('staff.medicine-purchase.edit', $medicinePurchase->id) : 
+                (isRole('doctor') ? route('doctors.medicine-purchase.edit', $medicinePurchase->id) : route('medicine-purchase.edit', $medicinePurchase->id))) 
+            }}" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>{{ __('messages.common.edit') }}
+            </a>
+            <a href="{{ 
                     isRole('clinic_admin') ? route('medicine-purchase.index') : 
                     (isRole('staff') ? route('staff.medicine-purchase.index') : 
                     (isRole('doctor') ? route('doctors.medicine-purchase.index') : route('medicine-purchase.index'))) 

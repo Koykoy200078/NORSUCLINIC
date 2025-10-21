@@ -1,14 +1,91 @@
 document.addEventListener("DOMContentLoaded", loadPurchaseMedicineCreate);
 let uniquePrescriptionId = "";
 
+// Helper function to initialize flatpickr with specific format
+function initializeFlatpickrForElement(
+    element,
+    format,
+    allowPastDates = false
+) {
+    let config = {};
+
+    // Only set minDate for create page, not edit page
+    if (!allowPastDates) {
+        config.minDate = new Date();
+    }
+
+    // For month-only format, configure to show only month and year
+    if (format === "Y-m") {
+        // Save as Y-m format (without day)
+        config.dateFormat = "Y-m";
+        config.altInput = true;
+        config.altFormat = "F Y";
+        config.enableTime = false;
+
+        // Set default date if element has value
+        if ($(element).val()) {
+            let existingValue = $(element).val();
+            // Parse Y-m format and set to first day of month for display
+            config.defaultDate = existingValue + "-01";
+        }
+
+        config.onChange = function (selectedDates, dateStr, instance) {
+            // Save as Y-m format (without day)
+            if (selectedDates.length > 0) {
+                let date = selectedDates[0];
+                let year = date.getFullYear();
+                let month = String(date.getMonth() + 1).padStart(2, "0");
+                instance.element.value = `${year}-${month}`;
+            }
+        };
+    } else {
+        config.dateFormat = "Y-m-d";
+
+        // Set default date if element has value
+        if ($(element).val()) {
+            config.defaultDate = $(element).val();
+        }
+    }
+
+    $(element).flatpickr(config);
+}
+
+// Initialize all flatpickr instances
+function initializeAllFlatpickrs() {
+    // Check if we're on edit page by looking for existing medicine IDs
+    let isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+
+    $(".purchaseMedicineExpiryDate").each(function () {
+        let rowId = $(this).attr("id").replace("expiry_date", "");
+        let format = $("#expiry_format" + rowId).val() || "Y-m-d";
+        initializeFlatpickrForElement(this, format, isEditPage);
+    });
+}
+
 function loadPurchaseMedicineCreate() {
     if (!$("#purchaseUniqueId").length) {
         return;
     }
-    $(".purchaseMedicineExpiryDate").flatpickr({
-        minDate: new Date(),
-        dateFormat: "Y-m-d",
+
+    // Initialize all flatpickr instances
+    initializeAllFlatpickrs();
+
+    // Handle format selector changes
+    $(document).on("change", ".expiry-format-selector", function () {
+        let rowId = $(this).data("id");
+        let format = $(this).val();
+        let expiryInput = $("#expiry_date" + rowId);
+        let isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+
+        // Destroy existing flatpickr instance
+        if (expiryInput[0]._flatpickr) {
+            expiryInput[0]._flatpickr.destroy();
+        }
+
+        // Reinitialize with new format
+        initializeFlatpickrForElement(expiryInput, format, isEditPage);
     });
+
     $("#paymentMode,#paymentMode2").select2({
         width: "100%",
     });
@@ -26,10 +103,16 @@ listenClick(".add-medicine-btn-purchase", function () {
     );
     $(".prescription-medicine-container").append(prescriptionMedicineHtml);
     dropdownToSelecte2(".purchaseMedicineId");
-    $(".purchaseMedicineExpiryDate").flatpickr({
-        minDate: new Date(),
-        dateFormat: "Y-m-d",
-    });
+
+    // Initialize flatpickr for the newly added row
+    let isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+    let format = $("#expiry_format" + uniquePrescriptionId).val() || "Y-m-d";
+    initializeFlatpickrForElement(
+        $("#expiry_date" + uniquePrescriptionId),
+        format,
+        isEditPage
+    );
+
     uniquePrescriptionId++;
     $("#purchaseUniqueId").val(uniquePrescriptionId);
 });

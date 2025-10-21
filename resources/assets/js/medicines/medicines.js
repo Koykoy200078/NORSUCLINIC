@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", loadMedicineCreateData);
 ("use strict");
 
 function loadMedicineCreateData() {
-    $('#medicineCategoryId,#medicineBrandId').select2({
-        width:'100%',
+    $("#medicineCategoryId,#medicineBrandId").select2({
+        width: "100%",
     });
     listenClick(".showMedicineBtn", function (event) {
         event.preventDefault();
@@ -29,6 +29,16 @@ function loadMedicineCreateData() {
                     );
                     $("#showMedicineBuyingPrice").text(
                         result.data.buying_price
+                    );
+                    $("#showMedicineMinStockAlert").text(
+                        result.data.minimum_stock_alert
+                            ? result.data.minimum_stock_alert
+                            : "Not set"
+                    );
+                    $("#showMedicineStockAlertPercentage").text(
+                        result.data.stock_alert_percentage
+                            ? result.data.stock_alert_percentage + "%"
+                            : "Not set"
                     );
                     $("#showMedicineQuanity").text(
                         addCommas(result.data.quantity)
@@ -75,15 +85,15 @@ window.medicineDeleteItem = function (url, header) {
             if (result.success) {
                 let popUpText =
                     result.data.result == true
-                        ? Lang.get('js.the_medicine_already_in_use')
-                        :  Lang.get('js.are_you_sure')+ ' "' + header + '"?';
+                        ? Lang.get("js.the_medicine_already_in_use")
+                        : Lang.get("js.are_you_sure") + ' "' + header + '"?';
                 swal({
-                    title: Lang.get('js.deleted'),
+                    title: Lang.get("js.deleted"),
                     text: popUpText,
-                    icon: 'warning',
+                    icon: "warning",
                     buttons: {
-                        confirm: Lang.get('js.yes'),
-                        cancel: Lang.get('js.no'),
+                        confirm: Lang.get("js.yes"),
+                        cancel: Lang.get("js.no"),
                     },
                 }).then((popResult) => {
                     if (popResult) {
@@ -112,12 +122,12 @@ function deleteMedicineAjax(url, tableId = null, header, callFunction = null) {
             if (obj.success && obj.data) {
                 swal({
                     title: obj.message,
-                    text: Lang.get('js.are_you_sure')+ ' "' + header + '"?',
+                    text: Lang.get("js.are_you_sure") + ' "' + header + '"?',
                     icon: sweetAlertIcon,
                     timer: 3000,
                     buttons: {
-                        confirm: Lang.get('js.yes'),
-                        cancel: Lang.get('js.no'),
+                        confirm: Lang.get("js.yes"),
+                        cancel: Lang.get("js.no"),
                     },
                 }).then((result) => {
                     if (result) {
@@ -135,7 +145,7 @@ function deleteMedicineAjax(url, tableId = null, header, callFunction = null) {
                                     icon: "error",
                                     timer: 5000,
                                     buttons: {
-                                        confirm: Lang.get('js.ok'),
+                                        confirm: Lang.get("js.ok"),
                                     },
                                 });
                             },
@@ -147,12 +157,12 @@ function deleteMedicineAjax(url, tableId = null, header, callFunction = null) {
                 Livewire.dispatch("resetPage");
                 swal({
                     icon: "success",
-                    title: Lang.get('js.deleted'),
+                    title: Lang.get("js.deleted"),
                     confirmButtonColor: "#f62947",
-                    text: header + " " + Lang.get('js.has_been'),
+                    text: header + " " + Lang.get("js.has_been"),
                     timer: 2000,
                     buttons: {
-                        confirm: Lang.get('js.ok'),
+                        confirm: Lang.get("js.ok"),
                     },
                 });
                 if (callFunction) {
@@ -168,7 +178,7 @@ function deleteMedicineAjax(url, tableId = null, header, callFunction = null) {
                 icon: "error",
                 timer: 5000,
                 buttons: {
-                    confirm: Lang.get('js.ok'),
+                    confirm: Lang.get("js.ok"),
                 },
             });
         },

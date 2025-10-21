@@ -62,6 +62,8 @@ class Medicine extends Model
         'currency_symbol',
         'quantity',
         'available_quantity',
+        'minimum_stock_alert',
+        'stock_alert_percentage',
     ];
 
     /**
@@ -82,6 +84,8 @@ class Medicine extends Model
         'currency_symbol' => 'string',
         'quantity' => 'integer',
         'available_quantity' => 'integer',
+        'minimum_stock_alert' => 'integer',
+        'stock_alert_percentage' => 'decimal:2',
     ];
 
     /**

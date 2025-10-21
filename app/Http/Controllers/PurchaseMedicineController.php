@@ -81,6 +81,44 @@ class PurchaseMedicineController extends AppBaseController
         return view('purchase-medicines.show', compact('medicinePurchase'));
     }
 
+    /**
+     * @param  PurchaseMedicine  $medicinePurchase
+     */
+    public function edit(PurchaseMedicine $medicinePurchase): View
+    {
+        $medicinePurchase->load(['purchasedMedcines.medicines']);
+        $medicines = $this->prchaseMedicineRepository->getMedicine();
+        $medicineList = $this->prchaseMedicineRepository->getMedicineList();
+        $categories = $this->prchaseMedicineRepository->getCategory();
+        $categoriesList = $this->prchaseMedicineRepository->getCategoryList();
+
+        return view('purchase-medicines.edit', compact('medicinePurchase', 'medicines', 'medicineList', 'categories', 'categoriesList'));
+    }
+
+    /**
+     * @param  CreatePurchaseMedicineRequest  $request
+     * @param  PurchaseMedicine  $medicinePurchase
+     */
+    public function update(CreatePurchaseMedicineRequest $request, PurchaseMedicine $medicinePurchase): RedirectResponse
+    {
+        $input = $request->all();
+
+        $this->prchaseMedicineRepository->updatePurchaseMedicine($input, $medicinePurchase->id);
+
+        flash::success(__('messages.purchase_medicine.purchased_medicine_updated'));
+
+        // Redirect based on user role
+        if (isRole('clinic_admin')) {
+            return redirect(route('medicine-purchase.index'));
+        } elseif (isRole('staff')) {
+            return redirect(route('staff.medicine-purchase.index'));
+        } elseif (isRole('doctor')) {
+            return redirect(route('doctors.medicine-purchase.index'));
+        }
+
+        return redirect(route('medicine-purchase.index'));
+    }
+
     public function getMedicine(Medicine $medicine): JsonResponse
     {
 

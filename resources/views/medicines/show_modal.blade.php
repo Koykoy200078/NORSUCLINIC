@@ -58,6 +58,18 @@
                                                  class="fs-5 text-gray-800 showSpan"></span>
                                    </div>
                                    <div class="form-group col-lg-6 mb-5">
+                                          <label for="minimum_stock_alert"
+                                                 class="pb-2 fs-5 text-gray-600">{{ __('Minimum Stock Alert').(':') }}</label><br>
+                                          <span id="showMedicineMinStockAlert"
+                                                 class="fs-5 text-gray-800 showSpan"></span>
+                                   </div>
+                                   <div class="form-group col-lg-6 mb-5">
+                                          <label for="stock_alert_percentage"
+                                                 class="pb-2 fs-5 text-gray-600">{{ __('Stock Alert Percentage').(':') }}</label><br>
+                                          <span id="showMedicineStockAlertPercentage"
+                                                 class="fs-5 text-gray-800 showSpan"></span>
+                                   </div>
+                                   <div class="form-group col-lg-6 mb-5">
                                           <label for="side_effects"
                                                  class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.side_effects').(':') }}</label><br>
                                           <span id="showMedicineSideEffects"

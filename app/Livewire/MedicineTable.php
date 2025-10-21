@@ -82,6 +82,10 @@ class MedicineTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return Medicine::query()->with(['category', 'brand']);
+        return Medicine::query()
+            ->select([
+                'medicines.*'
+            ])
+            ->with(['category', 'brand']);
     }
 }

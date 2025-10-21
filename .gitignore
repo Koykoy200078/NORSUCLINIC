@@ -5,6 +5,7 @@ npm-debug.log
 yarn-error.log
 
 # Environment and configuration files
+.env
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml

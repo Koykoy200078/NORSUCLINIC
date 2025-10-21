@@ -41,6 +41,22 @@
     {{ Form::text('buying_price', isset($medicine) ? $medicine->buying_price : '', ['class' => 'form-control','placeholder' =>  __('messages.medicine.buying_price')]) }}
 </div>
 
+<!-- Minimum Stock Alert Field -->
+<div class="form-group col-md-6 mb-5">
+    {{ Form::label('minimum_stock_alert', __('Minimum Stock Alert').(':'), ['class' => 'form-label']) }}
+    <span class="text-muted ms-1" style="font-size: 0.85rem;">(Optional)</span>
+    {{ Form::number('minimum_stock_alert', isset($medicine) ? $medicine->minimum_stock_alert : null, ['class' => 'form-control','placeholder' =>  'e.g., 10', 'min' => 0]) }}
+    <small class="form-text text-muted">Alert when stock reaches or falls below this quantity</small>
+</div>
+
+<!-- Stock Alert Percentage Field -->
+<div class="form-group col-md-6 mb-5">
+    {{ Form::label('stock_alert_percentage', __('Stock Alert Percentage').(':'), ['class' => 'form-label']) }}
+    <span class="text-muted ms-1" style="font-size: 0.85rem;">(Optional)</span>
+    {{ Form::number('stock_alert_percentage', isset($medicine) ? $medicine->stock_alert_percentage : null, ['class' => 'form-control','placeholder' =>  'e.g., 20', 'min' => 0, 'max' => 100, 'step' => '0.01']) }}
+    <small class="form-text text-muted">Alert when available stock falls below this percentage of total stock</small>
+</div>
+
 <!-- Selling Price Field -->
 <!-- <div class="form-group col-md-6 mb-5">
     {{ Form::label('selling_price', __('messages.medicine.selling_price').(':'), ['class' => 'form-label']) }}

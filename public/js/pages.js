@@ -12767,6 +12767,8 @@ function loadMedicineCreateData() {
           $("#showMedicineSaltComposition").text(result.data.salt_composition);
           $("#showMedicineSellingPrice").text(result.data.selling_price);
           $("#showMedicineBuyingPrice").text(result.data.buying_price);
+          $("#showMedicineMinStockAlert").text(result.data.minimum_stock_alert ? result.data.minimum_stock_alert : 'Not set');
+          $("#showMedicineStockAlertPercentage").text(result.data.stock_alert_percentage ? result.data.stock_alert_percentage + '%' : 'Not set');
           $("#showMedicineQuanity").text(addCommas(result.data.quantity));
           $("#showMedicineAvailableQuanity").text(addCommas(result.data.available_quantity));
           $("#showMedicineSideEffects").text(result.data.side_effects);
@@ -13567,13 +13569,83 @@ listenClick('.removeAvatarIcon', function () {
 
 document.addEventListener("DOMContentLoaded", loadPurchaseMedicineCreate);
 var uniquePrescriptionId = "";
+
+// Helper function to initialize flatpickr with specific format
+function initializeFlatpickrForElement(element, format) {
+  var allowPastDates = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var config = {};
+
+  // Only set minDate for create page, not edit page
+  if (!allowPastDates) {
+    config.minDate = new Date();
+  }
+
+  // For month-only format, configure to show only month and year
+  if (format === "Y-m") {
+    // Save as Y-m format (without day)
+    config.dateFormat = "Y-m";
+    config.altInput = true;
+    config.altFormat = "F Y";
+    config.enableTime = false;
+
+    // Set default date if element has value
+    if ($(element).val()) {
+      var existingValue = $(element).val();
+      // Parse Y-m format and set to first day of month for display
+      config.defaultDate = existingValue + "-01";
+    }
+    config.onChange = function (selectedDates, dateStr, instance) {
+      // Save as Y-m format (without day)
+      if (selectedDates.length > 0) {
+        var date = selectedDates[0];
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        instance.element.value = "".concat(year, "-").concat(month);
+      }
+    };
+  } else {
+    config.dateFormat = "Y-m-d";
+
+    // Set default date if element has value
+    if ($(element).val()) {
+      config.defaultDate = $(element).val();
+    }
+  }
+  $(element).flatpickr(config);
+}
+
+// Initialize all flatpickr instances
+function initializeAllFlatpickrs() {
+  // Check if we're on edit page by looking for existing medicine IDs
+  var isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+  $(".purchaseMedicineExpiryDate").each(function () {
+    var rowId = $(this).attr("id").replace("expiry_date", "");
+    var format = $("#expiry_format" + rowId).val() || "Y-m-d";
+    initializeFlatpickrForElement(this, format, isEditPage);
+  });
+}
 function loadPurchaseMedicineCreate() {
   if (!$("#purchaseUniqueId").length) {
     return;
   }
-  $(".purchaseMedicineExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
+
+  // Initialize all flatpickr instances
+  initializeAllFlatpickrs();
+
+  // Handle format selector changes
+  $(document).on("change", ".expiry-format-selector", function () {
+    var rowId = $(this).data("id");
+    var format = $(this).val();
+    var expiryInput = $("#expiry_date" + rowId);
+    var isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+
+    // Destroy existing flatpickr instance
+    if (expiryInput[0]._flatpickr) {
+      expiryInput[0]._flatpickr.destroy();
+    }
+
+    // Reinitialize with new format
+    initializeFlatpickrForElement(expiryInput, format, isEditPage);
   });
   $("#paymentMode,#paymentMode2").select2({
     width: "100%"
@@ -13588,10 +13660,11 @@ listenClick(".add-medicine-btn-purchase", function () {
   var prescriptionMedicineHtml = prepareTemplateRender("#purchaseMedicineTemplate", data);
   $(".prescription-medicine-container").append(prescriptionMedicineHtml);
   dropdownToSelecte2(".purchaseMedicineId");
-  $(".purchaseMedicineExpiryDate").flatpickr({
-    minDate: new Date(),
-    dateFormat: "Y-m-d"
-  });
+
+  // Initialize flatpickr for the newly added row
+  var isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+  var format = $("#expiry_format" + uniquePrescriptionId).val() || "Y-m-d";
+  initializeFlatpickrForElement($("#expiry_date" + uniquePrescriptionId), format, isEditPage);
   uniquePrescriptionId++;
   $("#purchaseUniqueId").val(uniquePrescriptionId);
 });

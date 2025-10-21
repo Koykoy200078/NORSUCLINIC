@@ -19,30 +19,42 @@
                         </tr>
                     </thead>
                     <tbody class="prescription-medicine-container">
+                        @foreach($medicinePurchase->purchasedMedcines as $index => $purchasedMedicine)
+                        @php
+                        $uniqueId = $index + 1;
+                        // Detect date format
+                        $dateFormat = 'Y-m-d';
+                        if (strlen($purchasedMedicine->expiry_date) === 7 && substr_count($purchasedMedicine->expiry_date, '-') === 1) {
+                        $dateFormat = 'Y-m';
+                        }
+                        // Calculate purchase price from amount and quantity
+                        $purchasePrice = ($purchasedMedicine->quantity > 0) ? ($purchasedMedicine->amount / $purchasedMedicine->quantity) : 0.00;
+                        @endphp
                         <tr>
                             <td>
-                                {{ Form::select('medicine[]', $medicines['medicines'], null,['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId1','data-control'=>'select2','data-id'=>1,'required']) }}
+                                {{ Form::hidden('purchased_medicine_id[]', $purchasedMedicine->id, ['id' => 'purchased_medicine_id'.$uniqueId]) }}
+                                {{ Form::select('medicine[]', $medicines['medicines'], $purchasedMedicine->medicine_id, ['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId'.$uniqueId,'data-control'=>'select2','data-id'=>$uniqueId,'required']) }}
                             </td>
                             <td>
-                                {{ Form::number('lot_no[]', null, ['class' => 'form-control', 'id' => 'lot_no1','required','placeholder'=>__('messages.purchase_medicine.lot_no')]) }}
+                                {{ Form::number('lot_no[]', $purchasedMedicine->lot_no, ['class' => 'form-control', 'id' => 'lot_no'.$uniqueId,'required','placeholder'=>__('messages.purchase_medicine.lot_no')]) }}
                             </td>
                             <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date1','placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}
+                                {{ Form::text('expiry_date[]', $purchasedMedicine->expiry_date, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date'.$uniqueId,'placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}
                             </td>
                             <td>
-                                <select class="form-select expiry-format-selector" data-id="1" id="expiry_format1">
-                                    <option value="Y-m-d" selected>Full Date (Y-M-D)</option>
-                                    <option value="Y-m">Month Only (Y-M)</option>
+                                <select class="form-select expiry-format-selector" data-id="{{$uniqueId}}" id="expiry_format{{$uniqueId}}">
+                                    <option value="Y-m-d" {{ $dateFormat === 'Y-m-d' ? 'selected' : '' }}>Full Date (Y-M-D)</option>
+                                    <option value="Y-m" {{ $dateFormat === 'Y-m' ? 'selected' : '' }}>Month Only (Y-M)</option>
                                 </select>
                             </td>
                             <td>
-                                {{ Form::number('quantity[]', 0, ['class' => 'form-control purchase-quantity' ,'id'=>'quantity1','required']) }}
+                                {{ Form::number('quantity[]', $purchasedMedicine->quantity, ['class' => 'form-control purchase-quantity' ,'id'=>'quantity'.$uniqueId,'required','min'=>'1']) }}
                             </td>
 
                             <!-- Hidden fields for purchase price, tax, and amount -->
-                            {{ Form::hidden('purchase_price[]', '0.00', ['class' => 'purchase-price', 'id' => 'purchase_price1']) }}
-                            {{ Form::hidden('tax_medicine[]', 0, ['class' => 'purchase-tax', 'id'=>'tax1']) }}
-                            {{ Form::hidden('amount[]','0.00', ['class' => 'purchase-amount','id'=>'amount1']) }}
+                            {{ Form::hidden('purchase_price[]', number_format($purchasePrice, 2, '.', ''), ['class' => 'purchase-price', 'id' => 'purchase_price'.$uniqueId]) }}
+                            {{ Form::hidden('tax_medicine[]', $purchasedMedicine->tax ?? 0, ['class' => 'purchase-tax', 'id'=>'tax'.$uniqueId]) }}
+                            {{ Form::hidden('amount[]', $purchasedMedicine->amount, ['class' => 'purchase-amount','id'=>'amount'.$uniqueId]) }}
 
                             <td class="text-center">
                                 <a href="javascript:void(0)" title="{{__('messages.common.delete')}}"
@@ -51,6 +63,7 @@
                                 </a>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

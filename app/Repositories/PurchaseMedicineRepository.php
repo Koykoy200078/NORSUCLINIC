@@ -147,9 +147,147 @@ class PurchaseMedicineRepository extends BaseRepository
     }
 
     /**
+     * Update purchase medicine with quantity adjustment
+     */
+    public function updatePurchaseMedicine(array $input, int $id): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $purchaseMedicine = PurchaseMedicine::findOrFail($id);
+            $purchaseMedicineArray = Arr::only($input, $purchaseMedicine->getFillable());
+            $purchaseMedicine->update($purchaseMedicineArray);
+
+            // Get existing purchased medicines
+            $existingPurchasedMedicines = PurchasedMedicine::where('purchase_medicines_id', $id)->get()->keyBy('id');
+
+            foreach ($input['medicine'] as $key => $value) {
+                $purchasedMedicineId = $input['purchased_medicine_id'][$key] ?? null;
+                $newQuantity = $input['quantity'][$key];
+                $medicineId = $input['medicine'][$key];
+
+                if ($purchasedMedicineId && isset($existingPurchasedMedicines[$purchasedMedicineId])) {
+                    // Update existing purchased medicine
+                    $existingPurchasedMedicine = $existingPurchasedMedicines[$purchasedMedicineId];
+                    $oldQuantity = $existingPurchasedMedicine->quantity;
+                    $quantityDifference = $newQuantity - $oldQuantity;
+
+                    $purchasedMedicineArray = [
+                        'medicine_id' => $medicineId,
+                        'lot_no' => $input['lot_no'][$key],
+                        'tax' => $input['tax_medicine'][$key] ?? 0,
+                        'expiry_date' => $input['expiry_date'][$key],
+                        'quantity' => $newQuantity,
+                        'amount' => $input['amount'][$key],
+                    ];
+
+                    $existingPurchasedMedicine->update($purchasedMedicineArray);
+
+                    // Update medicine quantities
+                    $medicine = Medicine::find($medicineId);
+                    if ($medicine) {
+                        $medicineQtyArray = [
+                            'quantity' => $medicine->quantity + $quantityDifference,
+                            'available_quantity' => $medicine->available_quantity + $quantityDifference,
+                        ];
+                        $medicine->update($medicineQtyArray);
+
+                        // Log the update
+                        if ($quantityDifference != 0) {
+                            self::logMedicineUpdate(
+                                $medicine,
+                                $quantityDifference,
+                                [
+                                    'batch_no' => $input['lot_no'][$key],
+                                    'expiry_date' => $input['expiry_date'][$key],
+                                    'action' => $quantityDifference > 0 ? 'increased' : 'decreased',
+                                ]
+                            );
+                        }
+                    }
+
+                    unset($existingPurchasedMedicines[$purchasedMedicineId]);
+                } else {
+                    // Create new purchased medicine entry
+                    $purchasedMedicineArray = [
+                        'purchase_medicines_id' => $purchaseMedicine->id,
+                        'medicine_id' => $medicineId,
+                        'lot_no' => $input['lot_no'][$key],
+                        'tax' => $input['tax_medicine'][$key] ?? 0,
+                        'expiry_date' => $input['expiry_date'][$key],
+                        'quantity' => $newQuantity,
+                        'amount' => $input['amount'][$key],
+                    ];
+
+                    PurchasedMedicine::create($purchasedMedicineArray);
+
+                    // Add to medicine quantity
+                    $medicine = Medicine::find($medicineId);
+                    if ($medicine) {
+                        $medicineQtyArray = [
+                            'quantity' => $medicine->quantity + $newQuantity,
+                            'available_quantity' => $medicine->available_quantity + $newQuantity,
+                        ];
+                        $medicine->update($medicineQtyArray);
+
+                        // Log medicine procurement
+                        self::logMedicineProcurement(
+                            $medicine,
+                            $newQuantity,
+                            [
+                                'batch_no' => $input['lot_no'][$key],
+                                'expiry_date' => $input['expiry_date'][$key],
+                            ]
+                        );
+                    }
+                }
+            }
+
+            // Remove deleted medicines (subtract their quantities)
+            foreach ($existingPurchasedMedicines as $deletedMedicine) {
+                $medicine = Medicine::find($deletedMedicine->medicine_id);
+                if ($medicine) {
+                    $medicineQtyArray = [
+                        'quantity' => max(0, $medicine->quantity - $deletedMedicine->quantity),
+                        'available_quantity' => max(0, $medicine->available_quantity - $deletedMedicine->quantity),
+                    ];
+                    $medicine->update($medicineQtyArray);
+                }
+                $deletedMedicine->delete();
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * Log medicine update activity
+     */
+    protected static function logMedicineUpdate($medicine, $quantityChange, $details = [])
+    {
+        self::logActivity(
+            Medicine::class,
+            $medicine->id,
+            [
+                'action' => 'medicine_quantity_updated',
+                'medicine_name' => $medicine->name,
+                'quantity_change' => $quantityChange,
+                'new_quantity' => $medicine->quantity,
+                'new_available_quantity' => $medicine->available_quantity,
+                'details' => $details,
+            ]
+        );
+    }
+
+    /**
      * @return bool|Builder|Builder[]|Collection|Model
      */
-    public function update($accountant, $input)
+    public function updateAccountant($accountant, $input)
     {
         try {
             unset($input['password']);

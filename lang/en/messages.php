@@ -1176,6 +1176,7 @@ return [
         'purchase_medicines' => 'Procure Medicines',
         'purchase_medicine_details' => 'Procure Medicine Details',
         'purchase_medicine_overview' => 'Procure Medicine Overview',
+        'edit_purchase_medicine' => 'Edit Procure Medicine',
         'lot_no' => 'Lot no.',
         'tax' => 'Tax',
         'quantity' => 'Quantity',
@@ -1186,6 +1187,7 @@ return [
         'actions' => 'Actions',
         'export_to_excel' => 'Export to Excel',
         'purchased_medicine_success' => 'Medicine Procure successfully',
+        'purchased_medicine_updated' => 'Medicine Procure updated successfully',
     ],
 
     'used_medicine' => [
