@@ -458,17 +458,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
     });
 
-    // Patient Queue Management
-    Route::middleware('permission:manage_patients')->group(function () {
-        Route::get('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'index'])->name('patient-queue.index');
-        Route::get('patient-queue/create', [\App\Http\Controllers\PatientQueueController::class, 'create'])->name('patient-queue.create');
-        Route::post('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'store'])->name('patient-queue.store');
-        Route::get('patient-queue/{patientQueue}/edit', [\App\Http\Controllers\PatientQueueController::class, 'edit'])->name('patient-queue.edit');
-        Route::put('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'update'])->name('patient-queue.update');
-        Route::delete('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'destroy'])->name('patient-queue.destroy');
-        Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
-        Route::post('patient-queue/{patientQueue}/complete', [\App\Http\Controllers\PatientQueueController::class, 'complete'])->name('patient-queue.complete');
-    });
+    // Patient Queue Management is defined in routes/staff.php
+    // (Removed duplicate routes to avoid "route already assigned" error)
 
     // Enquiry Management
     Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
