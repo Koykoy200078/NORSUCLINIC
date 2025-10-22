@@ -62,19 +62,19 @@
             </div>
 
             <!-- Campus Field (for Students only) - Auto-filled if available -->
-            <div class="col-span-1" id="campus_field">
+            <div class="col-span-1" id="campus_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus">CAMPUS</label>
                 {{ Form::select('campus_id', $data['campuses'], $user->type == 3 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Campus']) }}
             </div>
 
             <!-- College Field (for Students and Faculty) - Auto-filled if available -->
-            <div class="col-span-1" id="college_field">
+            <div class="col-span-1" id="college_field" style="display: {{ (isset($user->year_level_id) && (($user->year_level_id >= 1 && $user->year_level_id <= 6) || $user->year_level_id == 7)) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college">COLLEGE</label>
                 {{ Form::select('college_id', $data['colleges'], $user->type == 3 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select College']) }}
             </div>
 
             <!-- Course & Year Field (for Students only) - Auto-filled if available -->
-            <div class="col-span-1" id="course_year_field">
+            <div class="col-span-1" id="course_year_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
                     {{ Form::select('course_id', $data['courses'], $user->type == 3 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Course']) }}
@@ -83,20 +83,27 @@
             </div>
 
             <!-- Department Field (for Faculty only) - Auto-filled if available -->
-            <div class="col-span-1" id="department_field" style="display: none;">
+
+            <div class="col-span-1" id="department_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 7) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="department">DEPARTMENT</label>
                 {{ Form::select('department_id', $data['departments'] ?? [], $user->type == 3 ? $user->department_id : null, ['id' => 'department_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Department']) }}
             </div>
 
             <!-- Office Field (for Staff only) - Auto-filled if available -->
-            <div class="col-span-1" id="office_field" style="display: none;">
+            <div class="col-span-1" id="office_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 8) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="office">OFFICE</label>
                 {{ Form::select('office_id', $data['offices'] ?? [], $user->type == 3 ? $user->office_id : null, ['id' => 'office_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Office']) }}
             </div>
 
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
-                <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="Student">
+                <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ 
+                    $user->type == 3 ? (
+                        $user->year_level_id == 7 ? 'Faculty' : 
+                        ($user->year_level_id == 8 ? 'Staff' : 
+                        ($user->year_level_id == 9 ? 'Guest' : 'Student'))
+                    ) : 'Student' 
+                }}">
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
@@ -424,16 +431,17 @@
             departmentField.style.display = 'none';
             officeField.style.display = 'none';
 
-            if (yearLevelId == '1') {
-                // Employee - need to determine if Faculty or Staff
-                // For now, show both department and office, user can fill what's applicable
+            if (yearLevelId == '7') {
+                // Faculty (ID 7) - show college and department
                 collegeField.style.display = 'block';
                 departmentField.style.display = 'block';
-                officeField.style.display = 'block';
             } else if (yearLevelId == '8') {
-                // Guest - no additional fields needed
-            } else if (yearLevelId >= '2' && yearLevelId <= '7') {
-                // Student (1st-6th year) - show all student fields
+                // Staff (ID 8) - show office only
+                officeField.style.display = 'block';
+            } else if (yearLevelId == '9') {
+                // Guest (ID 9) - no additional fields needed
+            } else if (yearLevelId >= '1' && yearLevelId <= '6') {
+                // Student (IDs 1-6) - show campus, college, course & year
                 campusField.style.display = 'block';
                 collegeField.style.display = 'block';
                 courseYearField.style.display = 'block';
@@ -615,6 +623,17 @@
 
                                     // Update field visibility based on year level
                                     updateFieldsVisibility();
+
+                                    // Update informant field based on year_level_id
+                                    let informantValue = 'Student'; // Default
+                                    if (patientData.user.year_level_id == 7) {
+                                        informantValue = 'Faculty';
+                                    } else if (patientData.user.year_level_id == 8) {
+                                        informantValue = 'Staff';
+                                    } else if (patientData.user.year_level_id == 9) {
+                                        informantValue = 'Guest';
+                                    }
+                                    document.getElementById('informant').value = informantValue;
 
                                     if (patientData.address) {
                                         document.getElementById('address').value = `${patientData.address.address1}`;

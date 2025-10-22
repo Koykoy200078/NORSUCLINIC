@@ -173,12 +173,10 @@ class PatientRepository extends BaseRepository
                 'edit_patient_state_id',
                 'edit_patient_city_id',
                 'backgroundImg',
-                // Employee-related fields that don't exist in users table
+                // Form-only fields that don't exist in users table
                 'is_employee',
-                'campus_id',
-                'college_id',
-                'course_id',
-                'year_level_id',
+                'is_guest',
+                'position_type',
                 'all_year_levels',
             ]));
 

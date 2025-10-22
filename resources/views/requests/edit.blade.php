@@ -6,9 +6,15 @@
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <a href="{{ 
-            isRole('clinic_admin') ? route('request-documents.index') : 
-            (isRole('staff') ? route('staff.request-documents.index') : 
-            (isRole('doctor') ? route('doctors.request-documents.index') : route('request-documents.index')))
+            request('patient_id') ? 
+                (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => request('patient_id')]) : 
+                (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => request('patient_id')]) : 
+                (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => request('patient_id')]) : 
+                route('patients.showMyHistory', ['patient' => request('patient_id')])))) :
+                (isRole('clinic_admin') ? route('request-documents.index') :
+                (isRole('staff') ? route('staff.request-documents.index') :
+                (isRole('doctor') ? route('doctors.request-documents.index') :
+                route('request-documents.index'))))
         }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
 
@@ -59,46 +65,83 @@
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #</label>
                 <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ old('patient_contact', $requestDocument->patient_contact) }}">
             </div>
-            <div class="col-span-1">
+
+
+            <!-- Campus Field (for Students only) -->
+            <div class="col-span-1" id="campus_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus_id">CAMPUS</label>
                 <select id="campus_id" name="campus_id" class="w-full border-b border-black">
+                    <option value="">Select Campus</option>
                     @foreach($campuses as $campus)
-                    <option value="{{ $campus->id }}" {{ old('campus_id', $requestDocument->campus_id ?? '') == $campus->id ? 'selected' : '' }}>
+                    <option value="{{ $campus->id }}" {{ old('campus_id', $requestDocument->campus_id ?? $user->campus_id ?? '') == $campus->id ? 'selected' : '' }}>
                         {{ $campus->campus_name }}
                     </option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-span-1">
+
+            <!-- College Field (for Students and Faculty) -->
+            <div class="col-span-1" id="college_field" style="display: {{ (isset($user->year_level_id) && (($user->year_level_id >= 1 && $user->year_level_id <= 6) || $user->year_level_id == 7)) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college_id">COLLEGE</label>
                 <select id="college_id" name="college_id" class="w-full border-b border-black">
+                    <option value="">Select College</option>
                     @foreach($colleges as $college)
-                    <option value="{{ $college->id }}" {{ old('college_id', $requestDocument->college_id ?? '') == $college->id ? 'selected' : '' }}>
+                    <option value="{{ $college->id }}" {{ old('college_id', $requestDocument->college_id ?? $user->college_id ?? '') == $college->id ? 'selected' : '' }}>
                         {{ $college->college_name }}
                     </option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-span-1">
-                <label class="block text-xs" for="course_id">COURSE</label>
-                <select id="course_id" name="course_id" class="w-full border-b border-black">
-                    @foreach($courses as $course)
-                    <option value="{{ $course->id }}" {{ old('course_id', $requestDocument->course_id ?? '') == $course->id ? 'selected' : '' }}>
-                        {{ $course->course_name }}
+
+            <!-- Course & Year Field (for Students only) -->
+            <div class="col-span-1" id="course_year_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
+                <label class="block text-xs" for="course_year">COURSE & YEAR</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="course_id" name="course_id" class="w-full border-b border-black">
+                        <option value="">Select Course</option>
+                        @foreach($courses as $course)
+                        <option value="{{ $course->id }}" {{ old('course_id', $requestDocument->course_id ?? $user->course_id ?? '') == $course->id ? 'selected' : '' }}>
+                            {{ $course->course_name }}
+                        </option>
+                        @endforeach
+                    </select>
+                    <select id="year_level_id" name="year_level_id" class="w-full border-b border-black">
+                        <option value="">Select Year Level</option>
+                        @foreach($yearLevels as $level)
+                        <option value="{{ $level->id }}" {{ old('year_level_id', $requestDocument->year_level_id ?? $user->year_level_id ?? '') == $level->id ? 'selected' : '' }}>
+                            {{ $level->year_level_name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Department Field (for Faculty only) -->
+            <div class="col-span-1" id="department_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 7) ? 'block' : 'none' }};">
+                <label class="block text-xs" for="department_id">DEPARTMENT</label>
+                <select id="department_id" name="department_id" class="w-full border-b border-black">
+                    <option value="">Select Department</option>
+                    @foreach($departments as $department)
+                    <option value="{{ $department->id }}" {{ old('department_id', $requestDocument->department_id ?? $user->department_id ?? '') == $department->id ? 'selected' : '' }}>
+                        {{ $department->department_name }}
                     </option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-span-1">
-                <label class="block text-xs" for="year_level_id">YEAR LEVEL</label>
-                <select id="year_level_id" name="year_level_id" class="w-full border-b border-black">
-                    @foreach($yearLevels as $level)
-                    <option value="{{ $level->id }}" {{ old('year_level_id', $requestDocument->year_level_id ?? '') == $level->id ? 'selected' : '' }}>
-                        {{ $level->year_level_name }}
+
+            <!-- Office Field (for Staff only) -->
+            <div class="col-span-1" id="office_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 8) ? 'block' : 'none' }};">
+                <label class="block text-xs" for="office_id">OFFICE</label>
+                <select id="office_id" name="office_id" class="w-full border-b border-black">
+                    <option value="">Select Office</option>
+                    @foreach($offices as $office)
+                    <option value="{{ $office->id }}" {{ old('office_id', $requestDocument->office_id ?? $user->office_id ?? '') == $office->id ? 'selected' : '' }}>
+                        {{ $office->office_name }}
                     </option>
                     @endforeach
                 </select>
             </div>
+
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
                 <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ old('informant', $requestDocument->informant) }}">
@@ -511,7 +554,49 @@
         }
     }
 
+    // Function to update field visibility based on year_level_id
+    function updateFieldsVisibility() {
+        const yearLevelId = document.getElementById('year_level_id')?.value;
+
+        const campusField = document.getElementById('campus_field');
+        const collegeField = document.getElementById('college_field');
+        const courseYearField = document.getElementById('course_year_field');
+        const departmentField = document.getElementById('department_field');
+        const officeField = document.getElementById('office_field');
+
+        // Hide all fields first
+        if (campusField) campusField.style.display = 'none';
+        if (collegeField) collegeField.style.display = 'none';
+        if (courseYearField) courseYearField.style.display = 'none';
+        if (departmentField) departmentField.style.display = 'none';
+        if (officeField) officeField.style.display = 'none';
+
+        if (yearLevelId == '7') {
+            // Faculty: Show College and Department
+            if (collegeField) collegeField.style.display = 'block';
+            if (departmentField) departmentField.style.display = 'block';
+        } else if (yearLevelId == '8') {
+            // Staff: Show Office only
+            if (officeField) officeField.style.display = 'block';
+        } else if (yearLevelId == '9') {
+            // Guest: Hide all additional fields
+            // All fields are already hidden
+        } else if (yearLevelId >= '1' && yearLevelId <= '6') {
+            // Students: Show Campus, College, Course & Year
+            if (campusField) campusField.style.display = 'block';
+            if (collegeField) collegeField.style.display = 'block';
+            if (courseYearField) courseYearField.style.display = 'block';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener for year_level_id changes
+        const yearLevelSelect = document.getElementById('year_level_id');
+        if (yearLevelSelect) {
+            yearLevelSelect.addEventListener('change', updateFieldsVisibility);
+        }
+
+
         // Image Upload Preview and Validation for new images
         const imageInput = document.getElementById('consultation_images');
         const previewContainer = document.getElementById('image_preview_container');

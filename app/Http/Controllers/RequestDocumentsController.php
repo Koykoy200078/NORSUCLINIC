@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Campus;
 use App\Models\College;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Diagnose;
+use App\Models\Office;
 use App\Models\Patient;
 use App\Models\RequestDocuments;
 use App\Models\Staff;
@@ -317,9 +319,14 @@ class RequestDocumentsController extends Controller
         $colleges = College::all();
         $courses = Course::all();
         $yearLevels = YearLevel::all();
+        $departments = Department::all();
+        $offices = Office::all();
         $vaccinations = Vaccination::all();
         $diagnoses = Diagnose::all();
         $nursingStaff = User::where('type', 'staff')->get(); // adjust as needed
+
+        // Get the user data associated with this request document
+        $user = User::find($requestDocument->user_id);
 
         return view('requests.edit', compact(
             'requestDocument',
@@ -327,9 +334,12 @@ class RequestDocumentsController extends Controller
             'colleges',
             'courses',
             'yearLevels',
+            'departments',
+            'offices',
             'vaccinations',
             'diagnoses',
-            'nursingStaff'
+            'nursingStaff',
+            'user'
         ));
     }
 

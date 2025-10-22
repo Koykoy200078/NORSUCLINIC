@@ -15,10 +15,7 @@ class DefaultServiceCategorySeeder extends Seeder
         $input = [
             [
                 'name' => 'Medical',
-            ],
-            [
-                'name' => 'Dental',
-            ],
+            ]
         ];
 
         foreach ($input as $data) {

@@ -23,14 +23,6 @@ class DefaultServicesSeeder extends Seeder
                 'icon' => asset('assets/front/images/services_images/GeneralCheckup.png'),
             ],
             [
-                'category_id' => '2',
-                'name' => 'Dental Cleaning',
-                'charges' => '0',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Professional dental cleaning service.',
-                'icon' => asset('assets/front/images/services_images/DentalCleaning.png'),
-            ],
-            [
                 'category_id' => '1',
                 'name' => 'Medication Dispensing Request',
                 'charges' => '0',
@@ -109,14 +101,6 @@ class DefaultServicesSeeder extends Seeder
                 'status' => Service::ACTIVE,
                 'short_description' => 'Consultation for rehabilitation services.',
                 'icon' => asset('assets/front/images/services_images/RehabilitationConsultation.png'),
-            ],
-            [
-                'category_id' => '2',
-                'name' => 'Dental Consultation',
-                'charges' => '0',
-                'status' => Service::ACTIVE,
-                'short_description' => 'Consultation for dental care.',
-                'icon' => asset('assets/front/images/services_images/DentalConsultation.png'),
             ],
             [
                 'category_id' => '1',

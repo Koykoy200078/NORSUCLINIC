@@ -33,9 +33,98 @@
             {{ Form::hidden('edit_patient_city_id', isset($patient->address->city_id) ? $patient->address->city_id:null,
                             ['id' => 'editPatientCityId']) }}
             {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'patientBackgroundImg']) }}
+            <input type="hidden" id="existingYearLevelId" value="{{ !empty($patient->user) ? $patient->user->year_level_id : '' }}">
+            <input type="hidden" id="existingPositionType" value="{{ !empty($patient->user) ? $patient->user->position_type : '' }}">
             @include('patients.fields')
             {{ Form::close() }}
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get existing year level and position type
+        const existingYearLevelId = document.getElementById('existingYearLevelId')?.value;
+        const existingPositionType = document.getElementById('existingPositionType')?.value;
+
+        if (existingYearLevelId) {
+            const yearLevelId = parseInt(existingYearLevelId);
+            const isEmployeeCheckbox = document.getElementById('isEmployeeCheckbox');
+            const isGuestCheckbox = document.getElementById('isGuestCheckbox');
+            const positionTypeSelect = document.getElementById('positionTypeSelect');
+
+            // Year level 7 = Faculty, 8 = Staff (Employee)
+            if (yearLevelId === 7 || yearLevelId === 8) {
+                if (isEmployeeCheckbox) {
+                    isEmployeeCheckbox.checked = true;
+                }
+
+                // Set position type based on year level
+                if (positionTypeSelect) {
+                    if (yearLevelId === 7) {
+                        $(positionTypeSelect).val('faculty').trigger('change');
+                    } else if (yearLevelId === 8) {
+                        $(positionTypeSelect).val('staff').trigger('change');
+                    }
+                }
+            }
+            // Year level 9 = Guest
+            else if (yearLevelId === 9) {
+                if (isGuestCheckbox) {
+                    isGuestCheckbox.checked = true;
+                }
+            }
+
+            // Trigger the updateFieldsDisplay function after a short delay
+            // to ensure all Select2 elements are initialized
+            setTimeout(function() {
+                if (typeof updateFieldsDisplay === 'function') {
+                    updateFieldsDisplay();
+                }
+
+                // If position type exists, set it again after fields are displayed
+                if (existingPositionType && positionTypeSelect) {
+                    $(positionTypeSelect).val(existingPositionType).trigger('change');
+                }
+            }, 300);
+        }
+
+        // Add event listeners to clear fields when Guest is selected
+        const isGuestCheckboxEdit = document.getElementById('isGuestCheckbox');
+        if (isGuestCheckboxEdit) {
+            isGuestCheckboxEdit.addEventListener('change', function(e) {
+                if (this.checked) {
+                    // Uncheck employee checkbox first
+                    const isEmployeeCheckbox = document.getElementById('isEmployeeCheckbox');
+                    if (isEmployeeCheckbox) {
+                        isEmployeeCheckbox.checked = false;
+                    }
+
+                    // Trigger the display update to handle everything
+                    if (typeof updateFieldsDisplay === 'function') {
+                        updateFieldsDisplay();
+                    }
+                }
+            });
+        }
+
+        // Add event listener to clear Guest when Employee is selected
+        const isEmployeeCheckboxEdit = document.getElementById('isEmployeeCheckbox');
+        if (isEmployeeCheckboxEdit) {
+            isEmployeeCheckboxEdit.addEventListener('change', function(e) {
+                if (this.checked) {
+                    const isGuestCheckbox = document.getElementById('isGuestCheckbox');
+                    if (isGuestCheckbox) {
+                        isGuestCheckbox.checked = false;
+                    }
+
+                    // Trigger the display update
+                    if (typeof updateFieldsDisplay === 'function') {
+                        updateFieldsDisplay();
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection

@@ -124,13 +124,13 @@
     <div class="row">
         <div class="col-md-6 mb-5">
             <div class="form-check">
-                {{ Form::checkbox('is_employee', 1, !empty($patient->user) && $patient->user->year_level_id == 1, ['class' => 'form-check-input', 'id' => 'isEmployeeCheckbox']) }}
+                {{ Form::checkbox('is_employee', 1, !empty($patient->user) && in_array($patient->user->year_level_id, [7, 8]), ['class' => 'form-check-input', 'id' => 'isEmployeeCheckbox']) }}
                 {{ Form::label('is_employee', __('messages.student.is_employee'), ['class' => 'form-check-label']) }}
             </div>
         </div>
         <div class="col-md-6 mb-5">
             <div class="form-check">
-                {{ Form::checkbox('is_guest', 1, !empty($patient->user) && $patient->user->year_level_id == 8, ['class' => 'form-check-input', 'id' => 'isGuestCheckbox']) }}
+                {{ Form::checkbox('is_guest', 1, !empty($patient->user) && $patient->user->year_level_id == 9, ['class' => 'form-check-input', 'id' => 'isGuestCheckbox']) }}
                 {{ Form::label('is_guest', __('Is Guest'), ['class' => 'form-check-label']) }}
             </div>
         </div>
@@ -202,23 +202,27 @@
             const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value);
 
             // Split year levels:
-            // Employee (position 1), Student year levels (2-7), Guest (position 8)
-            const employeeYearLevels = {};
+            // Student year levels (1-6), Faculty (7), Staff (8), Guest (9)
             const studentYearLevels = {};
-            const guestYearLevels = {};
+            const facultyYearLevel = {};
+            const staffYearLevel = {};
+            const guestYearLevel = {};
 
             let count = 0;
             Object.entries(allYearLevels).forEach(([id, name]) => {
                 count++;
-                if (count === 1) {
-                    // Employee
-                    employeeYearLevels[id] = name;
-                } else if (count === 8) {
-                    // Guest
-                    guestYearLevels[id] = name;
-                } else {
-                    // Student (2-7)
+                if (count >= 1 && count <= 6) {
+                    // Student (1-6)
                     studentYearLevels[id] = name;
+                } else if (count === 7) {
+                    // Faculty
+                    facultyYearLevel[id] = name;
+                } else if (count === 8) {
+                    // Staff
+                    staffYearLevel[id] = name;
+                } else if (count === 9) {
+                    // Guest
+                    guestYearLevel[id] = name;
                 }
             });
 
@@ -243,14 +247,14 @@
                 let placeholderText, optionsToShow;
 
                 if (isEmployee) {
-                    optionsToShow = employeeYearLevels;
                     yearLevelFieldContainer.style.display = 'none';
                     positionFieldContainer.style.display = 'block';
                     campusFieldContainer.style.display = 'none';
 
                     // Show/hide fields based on position type
                     if (positionType === 'faculty') {
-                        // Faculty: Show College and Department, hide Course and Office
+                        // Faculty (ID 7): Show College and Department, hide Course and Office
+                        optionsToShow = facultyYearLevel;
                         collegeFieldContainer.style.display = 'block';
                         departmentFieldContainer.style.display = 'block';
                         courseFieldContainer.style.display = 'none';
@@ -259,7 +263,8 @@
                         $(officeSelect).val(null);
                         $(campusSelect).val(null);
                     } else if (positionType === 'staff') {
-                        // Staff: Show Office only, hide College, Course and Department
+                        // Staff (ID 8): Show Office only, hide College, Course and Department
+                        optionsToShow = staffYearLevel;
                         collegeFieldContainer.style.display = 'none';
                         departmentFieldContainer.style.display = 'none';
                         courseFieldContainer.style.display = 'none';
@@ -274,9 +279,19 @@
                         courseFieldContainer.style.display = 'none';
                         departmentFieldContainer.style.display = 'none';
                         officeFieldContainer.style.display = 'none';
+                        optionsToShow = {};
+                    }
+
+                    // Auto-select the appropriate year level for employee
+                    if (optionsToShow && Object.keys(optionsToShow).length > 0) {
+                        Object.entries(optionsToShow).forEach(([value, text]) => {
+                            const option = new Option(text, value, true, true);
+                            $(yearLevelSelect).append(option);
+                        });
                     }
                 } else if (isGuest) {
-                    optionsToShow = guestYearLevels;
+                    // Guest (ID 9)
+                    optionsToShow = guestYearLevel;
                     yearLevelFieldContainer.style.display = 'none';
                     positionFieldContainer.style.display = 'none';
                     campusFieldContainer.style.display = 'none';
@@ -285,22 +300,24 @@
                     departmentFieldContainer.style.display = 'none';
                     officeFieldContainer.style.display = 'none';
 
-                    // Clear all fields - no dropdowns needed for guests
+                    // Clear all fields - no dropdowns needed for guests (without triggering change events)
                     $(courseSelect).val(null);
                     $(officeSelect).val(null);
                     $(positionTypeSelect).val(null);
                     $(departmentSelect).val(null);
+                    $(collegeSelect).val(null);
+                    $(campusSelect).val(null);
 
                     // Automatically select guest year level without showing dropdown
                     $(yearLevelSelect).empty();
-                    Object.entries(guestYearLevels).forEach(([value, text]) => {
+                    Object.entries(guestYearLevel).forEach(([value, text]) => {
                         const option = new Option(text, value, true, true);
                         $(yearLevelSelect).append(option);
                     });
 
                     return; // Exit early - no need to populate dropdowns
                 } else {
-                    // Student
+                    // Student (IDs 1-6)
                     optionsToShow = studentYearLevels;
                     placeholderText = '{{ __("messages.student.select_year_level") }}';
                     yearLevelFieldContainer.style.display = 'block';
@@ -324,23 +341,13 @@
                         const option = new Option(text, value, false, value == currentValue);
                         $(yearLevelSelect).append(option);
                     });
-                } else {
-                    // Automatically select the appropriate year level
-                    if (isEmployee) {
-                        Object.entries(employeeYearLevels).forEach(([value, text]) => {
-                            const option = new Option(text, value, true, true);
-                            $(yearLevelSelect).append(option);
-                        });
-                    } else if (isGuest) {
-                        Object.entries(guestYearLevels).forEach(([value, text]) => {
-                            const option = new Option(text, value, true, true);
-                            $(yearLevelSelect).append(option);
-                        });
-                    }
                 }
 
                 // Year level select is already initialized with Select2, no need to refresh
             }
+
+            // Make function globally accessible for edit page
+            window.updateFieldsDisplay = updateFieldsDisplay;
 
             // Initialize on page load
             updateFieldsDisplay();

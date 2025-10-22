@@ -12747,8 +12747,8 @@ listenClick(".delete-medicine-bill-item", function () {
 document.addEventListener("DOMContentLoaded", loadMedicineCreateData);
 "use strict";
 function loadMedicineCreateData() {
-  $('#medicineCategoryId,#medicineBrandId').select2({
-    width: '100%'
+  $("#medicineCategoryId,#medicineBrandId").select2({
+    width: "100%"
   });
   listenClick(".showMedicineBtn", function (event) {
     event.preventDefault();
@@ -12767,8 +12767,8 @@ function loadMedicineCreateData() {
           $("#showMedicineSaltComposition").text(result.data.salt_composition);
           $("#showMedicineSellingPrice").text(result.data.selling_price);
           $("#showMedicineBuyingPrice").text(result.data.buying_price);
-          $("#showMedicineMinStockAlert").text(result.data.minimum_stock_alert ? result.data.minimum_stock_alert : 'Not set');
-          $("#showMedicineStockAlertPercentage").text(result.data.stock_alert_percentage ? result.data.stock_alert_percentage + '%' : 'Not set');
+          $("#showMedicineMinStockAlert").text(result.data.minimum_stock_alert ? result.data.minimum_stock_alert : "Not set");
+          $("#showMedicineStockAlertPercentage").text(result.data.stock_alert_percentage ? result.data.stock_alert_percentage + "%" : "Not set");
           $("#showMedicineQuanity").text(addCommas(result.data.quantity));
           $("#showMedicineAvailableQuanity").text(addCommas(result.data.available_quantity));
           $("#showMedicineSideEffects").text(result.data.side_effects);
@@ -12799,14 +12799,14 @@ window.medicineDeleteItem = function (url, header) {
     type: "GET",
     success: function success(result) {
       if (result.success) {
-        var popUpText = result.data.result == true ? Lang.get('js.the_medicine_already_in_use') : Lang.get('js.are_you_sure') + ' "' + header + '"?';
+        var popUpText = result.data.result == true ? Lang.get("js.the_medicine_already_in_use") : Lang.get("js.are_you_sure") + ' "' + header + '"?';
         swal({
-          title: Lang.get('js.deleted'),
+          title: Lang.get("js.deleted"),
           text: popUpText,
-          icon: 'warning',
+          icon: "warning",
           buttons: {
-            confirm: Lang.get('js.yes'),
-            cancel: Lang.get('js.no')
+            confirm: Lang.get("js.yes"),
+            cancel: Lang.get("js.no")
           }
         }).then(function (popResult) {
           if (popResult) {
@@ -12832,12 +12832,12 @@ function deleteMedicineAjax(url) {
       if (obj.success && obj.data) {
         swal({
           title: obj.message,
-          text: Lang.get('js.are_you_sure') + ' "' + header + '"?',
+          text: Lang.get("js.are_you_sure") + ' "' + header + '"?',
           icon: sweetAlertIcon,
           timer: 3000,
           buttons: {
-            confirm: Lang.get('js.yes'),
-            cancel: Lang.get('js.no')
+            confirm: Lang.get("js.yes"),
+            cancel: Lang.get("js.no")
           }
         }).then(function (result) {
           if (result) {
@@ -12857,7 +12857,7 @@ function deleteMedicineAjax(url) {
                   icon: "error",
                   timer: 5000,
                   buttons: {
-                    confirm: Lang.get('js.ok')
+                    confirm: Lang.get("js.ok")
                   }
                 });
               }
@@ -12869,12 +12869,12 @@ function deleteMedicineAjax(url) {
         Livewire.dispatch("resetPage");
         swal({
           icon: "success",
-          title: Lang.get('js.deleted'),
+          title: Lang.get("js.deleted"),
           confirmButtonColor: "#f62947",
-          text: header + " " + Lang.get('js.has_been'),
+          text: header + " " + Lang.get("js.has_been"),
           timer: 2000,
           buttons: {
-            confirm: Lang.get('js.ok')
+            confirm: Lang.get("js.ok")
           }
         });
         if (callFunction) {
@@ -12890,7 +12890,7 @@ function deleteMedicineAjax(url) {
         icon: "error",
         timer: 5000,
         buttons: {
-          confirm: Lang.get('js.ok')
+          confirm: Lang.get("js.ok")
         }
       });
     }
