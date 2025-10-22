@@ -97,11 +97,11 @@ return [
     'medicine_bill' => 'Medicine Bill',
     'quantity_should' => 'Quantity should be greater than 0.',
     'medicine' => 'Medicine',
-    'the_medicine_already_in_use'=> 'This medicine is already used in medicine bills, are you sure want to delete it?',
+    'the_medicine_already_in_use' => 'This medicine is already used in medicine bills, are you sure want to delete it?',
     'prescription' => 'Prescription',
-    'enter_lot_number'=>'Enter lot number.',
-    'enter_sale_price'=>'Enter sale price.',
-    'tax_cannot_be_zero_empty'=> 'The tax amount can not be zero or empty.',
+    'enter_manufacturing_date' => 'Enter manufacturing date.',
+    'enter_sale_price' => 'Enter sale price.',
+    'tax_cannot_be_zero_empty' => 'The tax amount can not be zero or empty.',
     'purchase_medicine' => 'Purchase Medicine',
     'roles' => 'Roles',
     'service_category' => 'Service Category',
@@ -149,7 +149,7 @@ return [
     'this_month' => 'This Month',
     'last_month' => 'Last Month',
     'custom' => 'Custom Range',
-    
+
     'holiday' => 'Holiday',
     'appointment_created_payment_not_complete' => 'Appointment created successfully and Payment is not completed.',
 ];

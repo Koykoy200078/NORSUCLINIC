@@ -110,7 +110,8 @@ class PurchaseMedicineRepository extends BaseRepository
                 $purchasedMedicineArray = [
                     'purchase_medicines_id' => $purchaseMedicine->id,
                     'medicine_id' => $input['medicine'][$key],
-                    'lot_no' => $input['lot_no'][$key],
+                    'dosage' => $input['dosage'][$key] ?? null,
+                    'manufacturing_date' => $input['manufacturing_date'][$key],
                     'tax' => $input['tax_medicine'][$key] ?? 0,
                     'expiry_date' => $input['expiry_date'][$key],
                     'quantity' => $input['quantity'][$key],
@@ -131,7 +132,7 @@ class PurchaseMedicineRepository extends BaseRepository
                     $medicine,
                     $input['quantity'][$key],
                     [
-                        'batch_no' => $input['lot_no'][$key],
+                        'batch_no' => $input['manufacturing_date'][$key],
                         'expiry_date' => $input['expiry_date'][$key],
                     ]
                 );
@@ -174,7 +175,8 @@ class PurchaseMedicineRepository extends BaseRepository
 
                     $purchasedMedicineArray = [
                         'medicine_id' => $medicineId,
-                        'lot_no' => $input['lot_no'][$key],
+                        'dosage' => $input['dosage'][$key] ?? null,
+                        'manufacturing_date' => $input['manufacturing_date'][$key],
                         'tax' => $input['tax_medicine'][$key] ?? 0,
                         'expiry_date' => $input['expiry_date'][$key],
                         'quantity' => $newQuantity,
@@ -198,7 +200,7 @@ class PurchaseMedicineRepository extends BaseRepository
                                 $medicine,
                                 $quantityDifference,
                                 [
-                                    'batch_no' => $input['lot_no'][$key],
+                                    'batch_no' => $input['manufacturing_date'][$key],
                                     'expiry_date' => $input['expiry_date'][$key],
                                     'action' => $quantityDifference > 0 ? 'increased' : 'decreased',
                                 ]
@@ -212,7 +214,8 @@ class PurchaseMedicineRepository extends BaseRepository
                     $purchasedMedicineArray = [
                         'purchase_medicines_id' => $purchaseMedicine->id,
                         'medicine_id' => $medicineId,
-                        'lot_no' => $input['lot_no'][$key],
+                        'dosage' => $input['dosage'][$key] ?? null,
+                        'manufacturing_date' => $input['manufacturing_date'][$key],
                         'tax' => $input['tax_medicine'][$key] ?? 0,
                         'expiry_date' => $input['expiry_date'][$key],
                         'quantity' => $newQuantity,
@@ -235,7 +238,7 @@ class PurchaseMedicineRepository extends BaseRepository
                             $medicine,
                             $newQuantity,
                             [
-                                'batch_no' => $input['lot_no'][$key],
+                                'batch_no' => $input['manufacturing_date'][$key],
                                 'expiry_date' => $input['expiry_date'][$key],
                             ]
                         );

@@ -115,7 +115,7 @@
                                 {{ Form::select('medicine[]', [], null,['class' => 'form-select medicinePurchaseId purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'c1','data-control'=>'select2','data-id'=>1,'required']) }}
                             </td>
                             {{-- <td>
-                        {{ Form::number('lot_no[]', null, ['class' => 'form-control', 'id' => 'lot_no1','required','placeholder'=>'Lot no.']) }}
+                        {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control', 'id' => 'manufacturing_date1','required','placeholder'=>'Manufacturing Date']) }}
                             </td> --}}
                             <td>
                                 {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('messages.purchase_medicine.expiry_date')]) }}

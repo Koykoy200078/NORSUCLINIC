@@ -6,7 +6,8 @@
                     <thead class="thead-dark">
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
-                            <th class="">{{ __('messages.purchase_medicine.lot_no') }}<span class="required"></span></th>
+                            <th class="">{{ __('messages.purchase_medicine.dosage') }}</th>
+                            <th class="">{{ __('messages.purchase_medicine.manufacturing_date') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.expiry_date') }}</th>
                             <th class="">Date Format</th>
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
@@ -24,7 +25,10 @@
                                 {{ Form::select('medicine[]', $medicines['medicines'], null,['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId1','data-control'=>'select2','data-id'=>1,'required']) }}
                             </td>
                             <td>
-                                {{ Form::number('lot_no[]', null, ['class' => 'form-control', 'id' => 'lot_no1','required','placeholder'=>__('messages.purchase_medicine.lot_no')]) }}
+                                {{ Form::text('dosage[]', null, ['class' => 'form-control', 'id' => 'dosage1','placeholder'=>'e.g. 500mg, 200mg']) }}
+                            </td>
+                            <td>
+                                {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date1','required','placeholder'=>__('messages.purchase_medicine.manufacturing_date')]) }}
                             </td>
                             <td>
                                 {{ Form::text('expiry_date[]', null, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date1','placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}

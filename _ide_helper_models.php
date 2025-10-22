@@ -173,8 +173,6 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
- * @property string|null $email
- * @property string|null $phone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Category|null $category
@@ -184,10 +182,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Brand newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand query()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Brand whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Brand wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -1027,8 +1023,9 @@ namespace App\Models{
  * @property int $id
  * @property int $purchase_medicines_id
  * @property int|null $medicine_id
+ * @property string|null $dosage
  * @property string|null $expiry_date
- * @property string $lot_no
+ * @property string $manufacturing_date
  * @property float $tax
  * @property int $quantity
  * @property float $amount
@@ -1040,9 +1037,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereDosage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereExpiryDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereLotNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereManufacturingDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereMedicineId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine wherePurchaseMedicinesId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereQuantity($value)

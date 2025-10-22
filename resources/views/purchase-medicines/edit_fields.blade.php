@@ -6,7 +6,8 @@
                     <thead class="thead-dark">
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
-                            <th class="">{{ __('messages.purchase_medicine.lot_no') }}<span class="required"></span></th>
+                            <th class="">{{ __('messages.purchase_medicine.dosage') }}</th>
+                            <th class="">{{ __('messages.purchase_medicine.manufacturing_date') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.purchase_medicine.expiry_date') }}</th>
                             <th class="">Date Format</th>
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
@@ -36,7 +37,10 @@
                                 {{ Form::select('medicine[]', $medicines['medicines'], $purchasedMedicine->medicine_id, ['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId'.$uniqueId,'data-control'=>'select2','data-id'=>$uniqueId,'required']) }}
                             </td>
                             <td>
-                                {{ Form::number('lot_no[]', $purchasedMedicine->lot_no, ['class' => 'form-control', 'id' => 'lot_no'.$uniqueId,'required','placeholder'=>__('messages.purchase_medicine.lot_no')]) }}
+                                {{ Form::text('dosage[]', $purchasedMedicine->dosage, ['class' => 'form-control', 'id' => 'dosage'.$uniqueId,'placeholder'=>'e.g. 500mg, 200mg']) }}
+                            </td>
+                            <td>
+                                {{ Form::text('manufacturing_date[]', $purchasedMedicine->manufacturing_date, ['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date'.$uniqueId,'required','placeholder'=>__('messages.purchase_medicine.manufacturing_date')]) }}
                             </td>
                             <td>
                                 {{ Form::text('expiry_date[]', $purchasedMedicine->expiry_date, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date'.$uniqueId,'placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}

@@ -13824,14 +13824,14 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
     }
     if (typeof $(medicinID).val() != "undefined") {
       if ($(medicinID).val() == null || $(medicinID).val() == "") {
-        displayErrorMessage(Lang.get("js.enter_lot_number"));
+        displayErrorMessage(Lang.get("js.enter_manufacturing_date"));
         return false;
       }
     }
-    var lotNum = "#lot_no" + i;
-    if (typeof $(lotNum).val() != "undefined") {
-      if ($(lotNum).val() == null || $(lotNum).val() == "") {
-        displayErrorMessage(Lang.get("js.enter_lot_number"));
+    var manufacturingDate = "#manufacturing_date" + i;
+    if (typeof $(manufacturingDate).val() != "undefined") {
+      if ($(manufacturingDate).val() == null || $(manufacturingDate).val() == "") {
+        displayErrorMessage(Lang.get("js.enter_manufacturing_date"));
         return false;
       }
     }

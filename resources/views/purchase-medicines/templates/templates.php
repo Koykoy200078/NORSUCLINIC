@@ -61,7 +61,10 @@
             </select>
         </td>
         <td>
-            <input class="form-control" placeholder="<?php echo __('messages.purchase_medicine.lot_no') ?>" required="" name="lot_no[]" type="text" id="lot_no{{:uniqueId}}">
+            <input class="form-control" placeholder="e.g. 500mg, 200mg" name="dosage[]" type="text" id="dosage{{:uniqueId}}">
+        </td>
+        <td>
+            <input class="form-control purchaseMedicineManufacturingDate" placeholder="<?php echo __('messages.purchase_medicine.manufacturing_date') ?>" required="" name="manufacturing_date[]" type="text" id="manufacturing_date{{:uniqueId}}">
         </td>
         <td>
             <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">

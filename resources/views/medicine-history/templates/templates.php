@@ -67,7 +67,7 @@
             </select>
         </td>
         <!-- <td>
-            <input class="form-control" placeholder="Lot no." required="" name="lot_no[]" type="text" id="lot_no{{:uniqueId}}">
+            <input class="form-control" placeholder="Manufacturing Date" required="" name="manufacturing_date[]" type="text" id="manufacturing_date{{:uniqueId}}">
         </td> -->
         <td>
             <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">

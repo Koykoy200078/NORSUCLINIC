@@ -11,8 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $purchase_medicines_id
  * @property int|null $medicine_id
+ * @property string|null $dosage
  * @property string|null $expiry_date
- * @property string $lot_no
+ * @property string $manufacturing_date
  * @property float $tax
  * @property int $quantity
  * @property float $amount
@@ -24,9 +25,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereDosage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereExpiryDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereLotNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereManufacturingDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereMedicineId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine wherePurchaseMedicinesId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereQuantity($value)
@@ -37,16 +39,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PurchasedMedicine extends Model
 {
     protected $fillable =
-        [
-            'purchase_medicines_id',
-            'medicine_id',
-            'lot_no',
-            'expiry_date',
-            'quantity',
-            'amount',
-            'tax',
-            'tenant_id',
-        ];
+    [
+        'purchase_medicines_id',
+        'medicine_id',
+        'dosage',
+        'manufacturing_date',
+        'expiry_date',
+        'quantity',
+        'amount',
+        'tax',
+        'tenant_id',
+    ];
 
     public function medicines(): BelongsTo
     {
