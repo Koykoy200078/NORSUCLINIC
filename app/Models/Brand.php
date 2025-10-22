@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property string $name
- * @property string|null $email
- * @property string|null $phone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Category|null $category
@@ -22,10 +20,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Brand newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand query()
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Brand whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Brand wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Brand whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -35,8 +31,6 @@ class Brand extends Model
 
     public $fillable = [
         'name',
-        'email',
-        'phone',
     ];
 
     /**
@@ -47,8 +41,6 @@ class Brand extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'email' => 'string',
-        'phone' => 'string',
     ];
 
     /**
@@ -58,8 +50,6 @@ class Brand extends Model
      */
     public static $rules = [
         'name' => 'required|unique:brands,name',
-        'email' => 'email|unique:brands,email|nullable',
-        'phone' => 'nullable|numeric',
     ];
 
     public function medicines(): HasMany

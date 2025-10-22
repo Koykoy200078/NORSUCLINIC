@@ -72,7 +72,6 @@ class BrandController extends AppBaseController
     public function store(CreateBrandRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['phone'] = preparePhoneNumber($input, 'phone');
         $this->brandRepository->create($input);
         Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.saved_successfully'));
 
@@ -107,7 +106,6 @@ class BrandController extends AppBaseController
     public function update(Brand $brand, UpdateBrandRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['phone'] = preparePhoneNumber($input, 'phone');
         $this->brandRepository->update($input, $brand->id);
         Flash::success(__('messages.medicine_brands') . ' ' . __('messages.medicine.updated_successfully'));
 

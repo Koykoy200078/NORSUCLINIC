@@ -29,16 +29,43 @@ class MedicineBrandTable extends LivewireTableComponent
         }
 
         $this->setThAttributes(function (Column $column) {
+            // For doctor users: Brand column takes 100% width
+            if (isRole('doctor')) {
+                if ($column->isField('name')) {
+                    return [
+                        'class' => 'w-100',
+                        'style' => 'width: 100% !important',
+                    ];
+                }
+            } else {
+                // For non-doctor users: Brand 95%, Action 5%
+                if ($column->isField('name')) {
+                    return [
+                        'class' => 'w-95',
+                        'style' => 'width: 95% !important',
+                    ];
+                }
+
+                if ($column->isField('id')) {
+                    return [
+                        'class' => 'text-center w-5',
+                        'style' => 'width: 5% !important',
+                    ];
+                }
+            }
+
+            return [];
+        });
+
+        $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
+            // Center align the action column cells
             if ($column->isField('id')) {
                 return [
-                    'class' => 'd-flex justify-content-center w-75 ps-125 text-center',
-                    'style' => 'width: 85% !important',
+                    'class' => 'text-center',
                 ];
             }
 
-            return [
-                'class' => 'w-50',
-            ];
+            return [];
         });
     }
 
@@ -54,14 +81,6 @@ class MedicineBrandTable extends LivewireTableComponent
                 ->view('brands.templates.columns.name')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.user.email'), 'email')
-                ->view('brands.templates.columns.email')
-                ->sortable()
-                ->searchable(),
-            Column::make(__('messages.web.phone'), 'phone')
-                ->view('brands.templates.columns.phone')
-                ->sortable()
-                ->searchable(),
         ];
 
         // Only show Action column for non-doctor users
