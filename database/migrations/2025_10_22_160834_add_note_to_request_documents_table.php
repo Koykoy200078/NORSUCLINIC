@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->string('dosage')->nullable()->after('medicine_id');
+        Schema::table('request_documents', function (Blueprint $table) {
+            $table->text('note')->nullable()->after('complaints');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->dropColumn('dosage');
+        Schema::table('request_documents', function (Blueprint $table) {
+            $table->dropColumn('note');
         });
     }
 };

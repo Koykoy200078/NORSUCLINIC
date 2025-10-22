@@ -12777,6 +12777,18 @@ function loadMedicineCreateData() {
           $("#showMedicineCreatedOn").text(createDate.fromNow());
           $("#showMedicineUpdatedOn").text(moment(result.data.updated_at).fromNow());
           $("#showMedicineDescription").text(result.data.description);
+
+          // Populate dosage table
+          var dosageTableBody = $("#showMedicineDosageTable");
+          dosageTableBody.empty();
+          if (result.data.purchased_medicines && result.data.purchased_medicines.length > 0) {
+            result.data.purchased_medicines.forEach(function (item) {
+              var row = "<tr>\n                                <td>".concat(item.dosage, "</td>\n                                <td>").concat(addCommas(item.quantity), "</td>\n                            </tr>");
+              dosageTableBody.append(row);
+            });
+          } else {
+            dosageTableBody.html('<tr><td colspan="2" class="text-center text-muted">No data available</td></tr>');
+          }
           setValueOfEmptySpan();
           $("#showMedicine").appendTo("body").modal("show");
         }

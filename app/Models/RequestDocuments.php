@@ -149,6 +149,7 @@ class RequestDocuments extends Model implements HasMedia
         'emergency_contact',
         'requested_at',
         'complaints',
+        'note',
         'covid_vaccination',
         'comorbidities',
         'allergies',

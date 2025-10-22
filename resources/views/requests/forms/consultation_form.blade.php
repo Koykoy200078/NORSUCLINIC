@@ -117,13 +117,17 @@
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-b border-black" rows="5"></textarea>
+                <textarea id="complaints" name="complaints" class="w-full border-b border-black auto-resize-textarea" rows="2"></textarea>
+            </div>
+            <div class="col-span-1"></div>
+            <div class="col-span-3">
+                <textarea id="note" name="note" class="w-full border-b border-black auto-resize-textarea" rows="3"></textarea>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">S</label>
-                <label class="block text-xs">(Subjective Complaints)</label>
+                <label class="block text-xs">(Subjective Data)</label>
             </div>
             <div class="col-span-3">
                 <div class="grid grid-cols-2 gap-2">
@@ -171,24 +175,24 @@
             <div class="col-span-3">
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_bp">BP<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" placeholder="mmHg" required>
+                        <label class="block text-xs" for="vital_signs_bp">BP</label>
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" placeholder="mmHg">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_pr">PR<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" placeholder="bpm" required>
+                        <label class="block text-xs" for="vital_signs_pr">PR</label>
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" placeholder="bpm">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_temp">Temp<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" placeholder="°C" required>
+                        <label class="block text-xs" for="vital_signs_temp">Temp</label>
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" placeholder="°C">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
                         <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="breaths/min">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat<span class="text-red-500">*</span></label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" placeholder="%" required>
+                        <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" placeholder="%">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
@@ -201,7 +205,7 @@
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM<span class="text-red-500">*</span></label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5" required></textarea>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
                 </div>
             </div>
         </div>
@@ -211,7 +215,7 @@
                 <label class="block text-xs">(Assessment)<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black" rows="5" required></textarea>
+                <textarea id="assessment" name="assessment" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -220,7 +224,7 @@
                 <label class="block text-xs">(Plan)<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5" required></textarea>
+                <textarea id="plan" name="plan" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
 
                 <!-- Medicine Selection for Plan -->
                 <div class="mt-3">
@@ -247,7 +251,7 @@
                 <label class="block">Nursing Intervention<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black" rows="5" required></textarea>
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
 
                 <!-- Medicine Selection for Nursing Intervention -->
                 <div class="mt-3">
@@ -312,12 +316,9 @@
 </div>
 
 <style>
-    #complaints,
-    #pertinent_exam,
-    #assessment,
-    #plan,
-    #nursing_intervention {
+    .auto-resize-textarea {
         resize: none;
+        overflow: hidden;
     }
 
     .image-preview-wrapper {
@@ -364,7 +365,7 @@
     /* Medicine selection styles */
     .medicine-row {
         display: grid;
-        grid-template-columns: 2fr 1fr 2fr auto;
+        grid-template-columns: 2fr 1.5fr 1fr 2fr auto;
         gap: 0.5rem;
         padding: 0.5rem;
         background-color: #f9fafb;
@@ -378,6 +379,16 @@
         border: 1px solid #d1d5db;
         border-radius: 0.25rem;
         font-size: 0.875rem;
+    }
+
+    .medicine-row select optgroup {
+        font-weight: bold;
+        font-style: normal;
+        background-color: #e5e7eb;
+    }
+
+    .medicine-row select option {
+        padding: 0.25rem;
     }
 
     .remove-medicine-btn {
@@ -455,14 +466,33 @@
         }
 
         // Auto-fill PERTINENT EXAM when Complaint/s is filled
-        const complaintsField = document.getElementById('complaints');
-        const pertinentExamField = document.getElementById('pertinent_exam');
+        // const complaintsField = document.getElementById('complaints');
+        // const pertinentExamField = document.getElementById('pertinent_exam');
 
-        if (complaintsField && pertinentExamField) {
-            complaintsField.addEventListener('input', function() {
-                pertinentExamField.value = this.value;
-            });
+        // if (complaintsField && pertinentExamField) {
+        //     complaintsField.addEventListener('input', function() {
+        //         pertinentExamField.value = this.value;
+        //     });
+        // }
+
+        // Auto-resize textarea functionality for all textareas with auto-resize-textarea class
+        function autoResizeTextarea(textarea) {
+            // Reset height to auto to get the correct scrollHeight
+            textarea.style.height = 'auto';
+            // Set height based on scrollHeight
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
+
+        // Initialize auto-resize for all textareas with the class
+        const autoResizeTextareas = document.querySelectorAll('.auto-resize-textarea');
+        autoResizeTextareas.forEach(function(textarea) {
+            // Add input event listener
+            textarea.addEventListener('input', function() {
+                autoResizeTextarea(this);
+            });
+            // Initialize height on page load
+            autoResizeTextarea(textarea);
+        });
 
         // Image Upload Preview and Validation
         const imageInput = document.getElementById('consultation_images');
@@ -677,14 +707,19 @@
 
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
-        // Fetch medicines from API
+        // Fetch medicines from API (grouped by category with dosages)
         let medicinesData = [];
 
         async function fetchMedicines() {
             try {
-                const response = await fetch('/api/medicines');
-                const data = await response.json();
-                medicinesData = data;
+                const response = await fetch('{{ route("medicines.by.category") }}');
+                const result = await response.json();
+
+                if (result.success) {
+                    medicinesData = result.data;
+                } else {
+                    console.error('Error fetching medicines:', result.message);
+                }
             } catch (error) {
                 console.error('Error fetching medicines:', error);
             }
@@ -716,7 +751,7 @@
             row.dataset.type = type;
             row.dataset.index = index;
 
-            // Medicine select
+            // Medicine select (grouped by category)
             const medicineSelect = document.createElement('select');
             medicineSelect.name = `medicines[${type}][${index}][medicine_id]`;
             medicineSelect.className = 'medicine-select';
@@ -727,14 +762,36 @@
             defaultOption.textContent = 'Select Medicine';
             medicineSelect.appendChild(defaultOption);
 
-            medicinesData.forEach(medicine => {
-                const option = document.createElement('option');
-                option.value = medicine.id;
-                option.textContent = `${medicine.name} (Stock: ${medicine.available_quantity})`;
-                option.dataset.stock = medicine.available_quantity;
-                option.dataset.name = medicine.name;
-                medicineSelect.appendChild(option);
+            // Populate medicines grouped by category
+            medicinesData.forEach(category => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category.name;
+
+                category.medicines.forEach(medicine => {
+                    const option = document.createElement('option');
+                    option.value = medicine.id;
+                    option.textContent = `${medicine.name}`;
+                    option.dataset.medicineId = medicine.id;
+                    option.dataset.medicineName = medicine.name;
+                    option.dataset.dosages = JSON.stringify(medicine.dosages);
+                    option.dataset.totalStock = medicine.available_quantity;
+                    optgroup.appendChild(option);
+                });
+
+                medicineSelect.appendChild(optgroup);
             });
+
+            // Dosage select (populated when medicine is selected)
+            const dosageSelect = document.createElement('select');
+            dosageSelect.name = `medicines[${type}][${index}][dosage]`;
+            dosageSelect.className = 'dosage-select';
+            dosageSelect.required = true;
+            dosageSelect.disabled = true;
+
+            const dosageDefaultOption = document.createElement('option');
+            dosageDefaultOption.value = '';
+            dosageDefaultOption.textContent = 'Select Dosage';
+            dosageSelect.appendChild(dosageDefaultOption);
 
             // Quantity input
             const quantityInput = document.createElement('input');
@@ -744,12 +801,13 @@
             quantityInput.min = '1';
             quantityInput.value = '1';
             quantityInput.required = true;
+            quantityInput.disabled = true;
 
             // Dosage instructions
-            const dosageInput = document.createElement('input');
-            dosageInput.type = 'text';
-            dosageInput.name = `medicines[${type}][${index}][dosage_instructions]`;
-            dosageInput.placeholder = 'Dosage instructions (e.g., 1 tablet 3x a day)';
+            const dosageInstructions = document.createElement('input');
+            dosageInstructions.type = 'text';
+            dosageInstructions.name = `medicines[${type}][${index}][dosage_instructions]`;
+            dosageInstructions.placeholder = 'Instructions (e.g., 1 tablet 3x a day)';
 
             // Remove button
             const removeBtn = document.createElement('button');
@@ -760,50 +818,99 @@
                 row.remove();
             });
 
-            // Stock validation
+            // Medicine selection handler - populate dosages
             medicineSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
-                const stock = parseInt(selectedOption.dataset.stock || 0);
-                const medicineName = selectedOption.dataset.name || '';
 
-                // Update max quantity
-                quantityInput.max = stock;
+                // Clear previous dosages
+                dosageSelect.innerHTML = '';
+                dosageSelect.appendChild(dosageDefaultOption.cloneNode(true));
+                dosageSelect.disabled = true;
+                quantityInput.disabled = true;
+                quantityInput.value = '1';
 
-                // Show stock warning if low
+                // Remove existing warnings
                 const existingWarning = row.querySelector('.medicine-stock-info');
                 if (existingWarning) {
                     existingWarning.remove();
                 }
 
-                if (stock <= 0) {
+                if (!selectedOption.value) return;
+
+                const dosages = JSON.parse(selectedOption.dataset.dosages || '[]');
+
+                if (dosages.length === 0) {
                     const warning = document.createElement('div');
                     warning.className = 'medicine-stock-info medicine-stock-warning';
-                    warning.textContent = `⚠️ ${medicineName} is out of stock!`;
+                    warning.textContent = `⚠️ No dosages available for this medicine!`;
                     row.appendChild(warning);
-                    medicineSelect.value = '';
-                } else if (stock < 10) {
+                    return;
+                }
+
+                // Populate dosage options
+                dosages.forEach(dosageItem => {
+                    const option = document.createElement('option');
+                    option.value = dosageItem.dosage;
+                    option.textContent = `${dosageItem.dosage} (Available: ${dosageItem.available_quantity})`;
+                    option.dataset.availableQty = dosageItem.available_quantity;
+                    dosageSelect.appendChild(option);
+                });
+
+                dosageSelect.disabled = false;
+            });
+
+            // Dosage selection handler - enable quantity and set max
+            dosageSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                // Remove existing warnings
+                const existingWarning = row.querySelector('.medicine-stock-info');
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+
+                if (!selectedOption.value) {
+                    quantityInput.disabled = true;
+                    quantityInput.value = '1';
+                    return;
+                }
+
+                const availableQty = parseInt(selectedOption.dataset.availableQty || 0);
+                quantityInput.max = availableQty;
+                quantityInput.disabled = false;
+
+                // Show stock warning if low
+                if (availableQty <= 0) {
                     const warning = document.createElement('div');
                     warning.className = 'medicine-stock-info medicine-stock-warning';
-                    warning.textContent = `⚠️ Low stock: Only ${stock} units available`;
+                    warning.textContent = `⚠️ This dosage is out of stock!`;
+                    row.appendChild(warning);
+                    dosageSelect.value = '';
+                    quantityInput.disabled = true;
+                } else if (availableQty < 10) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ Low stock: Only ${availableQty} units available`;
                     row.appendChild(warning);
                 }
             });
 
             // Quantity validation
             quantityInput.addEventListener('input', function() {
-                const selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
-                const stock = parseInt(selectedOption.dataset.stock || 0);
+                const selectedDosageOption = dosageSelect.options[dosageSelect.selectedIndex];
+                const availableQty = parseInt(selectedDosageOption.dataset.availableQty || 0);
                 const quantity = parseInt(this.value || 0);
 
-                if (quantity > stock) {
-                    this.value = stock;
-                    alert(`Only ${stock} units available for this medicine.`);
+                if (quantity > availableQty) {
+                    this.value = availableQty;
+                    alert(`Only ${availableQty} units available for this dosage.`);
                 }
             });
 
             row.appendChild(medicineSelect);
+            row.appendChild(dosageSelect);
             row.appendChild(quantityInput);
-            row.appendChild(dosageInput);
+            row.appendChild(dosageInstructions);
             row.appendChild(removeBtn);
 
             container.appendChild(row);

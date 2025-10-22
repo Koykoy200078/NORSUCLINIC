@@ -598,6 +598,7 @@ class RequestDocumentsController extends Controller
 
                 $medicineId = $medicineData['medicine_id'];
                 $quantity = (int) $medicineData['quantity'];
+                $dosage = $medicineData['dosage'] ?? null;
                 $dosageInstructions = $medicineData['dosage_instructions'] ?? null;
 
                 // Find the medicine
@@ -607,12 +608,42 @@ class RequestDocumentsController extends Controller
                     continue;
                 }
 
-                // Check if enough stock is available
-                if ($medicine->available_quantity < $quantity) {
-                    throw new \Exception("Insufficient stock for {$medicine->name}. Available: {$medicine->available_quantity}, Requested: {$quantity}");
+                // Check if enough stock is available in the specific dosage
+                $availableDosageQty = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
+                    ->where('dosage', $dosage)
+                    ->sum('quantity');
+
+                if ($availableDosageQty < $quantity) {
+                    throw new \Exception("Insufficient stock for {$medicine->name} ({$dosage}). Available: {$availableDosageQty}, Requested: {$quantity}");
                 }
 
-                // Deduct from available quantity
+                // Deduct from specific dosage quantities (FIFO - First In, First Out)
+                $remainingToDeduct = $quantity;
+                $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
+                    ->where('dosage', $dosage)
+                    ->where('quantity', '>', 0)
+                    ->orderBy('manufacturing_date', 'asc') // FIFO: oldest first
+                    ->get();
+
+                foreach ($purchasedMedicines as $purchasedMedicine) {
+                    if ($remainingToDeduct <= 0) {
+                        break;
+                    }
+
+                    if ($purchasedMedicine->quantity >= $remainingToDeduct) {
+                        // This batch has enough quantity
+                        $purchasedMedicine->quantity -= $remainingToDeduct;
+                        $purchasedMedicine->save();
+                        $remainingToDeduct = 0;
+                    } else {
+                        // Use all from this batch and continue
+                        $remainingToDeduct -= $purchasedMedicine->quantity;
+                        $purchasedMedicine->quantity = 0;
+                        $purchasedMedicine->save();
+                    }
+                }
+
+                // Deduct from medicine's total available quantity
                 $medicine->available_quantity -= $quantity;
                 $medicine->save();
 
@@ -625,6 +656,7 @@ class RequestDocumentsController extends Controller
                     'request_document_id' => $requestDocument->id,
                     'medicine_id' => $medicineId,
                     'quantity' => $quantity,
+                    'dosage' => $dosage,
                     'used_for' => $usedFor, // 'plan' or 'nursing'
                     'dosage_instructions' => $dosageInstructions,
                 ]);
@@ -637,6 +669,7 @@ class RequestDocumentsController extends Controller
                     'consultation_id' => $requestDocument->id,
                     'medicine_id' => $medicineId,
                     'medicine_name' => $medicine->name,
+                    'dosage' => $dosage,
                     'quantity_used' => $quantity,
                     'remaining_stock' => $medicine->available_quantity,
                     'used_for' => $usedFor,

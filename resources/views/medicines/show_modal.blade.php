@@ -93,6 +93,26 @@
                                           <span id="showMedicineDescription"
                                                  class="fs-5 text-gray-800 showSpan"></span>
                                    </div>
+
+                                   <!-- Dosage and Quantity Table -->
+                                   <div class="col-12 mt-5">
+                                          <h4 class="mb-3">{{ __('Available Stock by Dosage') }}</h4>
+                                          <div class="table-responsive">
+                                                 <table class="table table-striped table-bordered">
+                                                        <thead class="thead-light">
+                                                               <tr>
+                                                                      <th>{{ __('messages.purchase_medicine.dosage') }}</th>
+                                                                      <th>{{ __('Available Quantity') }}</th>
+                                                               </tr>
+                                                        </thead>
+                                                        <tbody id="showMedicineDosageTable">
+                                                               <tr>
+                                                                      <td colspan="2" class="text-center text-muted">{{ __('No data available') }}</td>
+                                                               </tr>
+                                                        </tbody>
+                                                 </table>
+                                          </div>
+                                   </div>
                             </div>
                      </div>
               </div>

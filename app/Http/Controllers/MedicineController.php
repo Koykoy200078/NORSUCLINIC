@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Response;
 use Laracasts\Flash\Flash;
@@ -160,8 +161,21 @@ class MedicineController extends AppBaseController
         $getBuyingPrice = Medicine::find($medicine->id)->buying_price;
         $getSellingPrice = Medicine::find($medicine->id)->selling_price;
 
+        // Get purchased medicines with dosage information grouped by dosage
+        $purchasedMedicines = PurchasedMedicine::where('medicine_id', $medicine->id)
+            ->select('dosage', DB::raw('SUM(quantity) as total_quantity'))
+            ->groupBy('dosage')
+            ->orderBy('dosage')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'dosage' => $item->dosage ?? 'N/A',
+                    'quantity' => $item->total_quantity
+                ];
+            });
+
         $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
-        $medicine = [
+        $medicineData = [
             'name' => $medicine->name,
             'brand_name' => $medicine->brand->name,
             'category_name' => $medicine->category->name,
@@ -174,9 +188,12 @@ class MedicineController extends AppBaseController
             'description' => $medicine->description,
             'quantity' => $medicine->quantity,
             'available_quantity' => $medicine->available_quantity,
+            'minimum_stock_alert' => $medicine->minimum_stock_alert,
+            'stock_alert_percentage' => $medicine->stock_alert_percentage,
+            'purchased_medicines' => $purchasedMedicines,
         ];
 
-        return $this->sendResponse($medicine, __('messages.medicine.medicine_retrieved_successfully'));
+        return $this->sendResponse($medicineData, __('messages.medicine.medicine_retrieved_successfully'));
     }
 
     public function checkUseOfMedicine(Medicine $medicine)
@@ -195,5 +212,49 @@ class MedicineController extends AppBaseController
         }
 
         return $this->sendResponse($result, __('messages.medicine.no_use'));
+    }
+
+    /**
+     * Get medicines grouped by category with dosage information
+     */
+    public function getMedicinesByCategory(): JsonResponse
+    {
+        $categories = \App\Models\Category::with(['medicines' => function ($query) {
+            $query->where('available_quantity', '>', 0)
+                ->orderBy('name');
+        }])->whereHas('medicines', function ($query) {
+            $query->where('available_quantity', '>', 0);
+        })->orderBy('name')->get();
+
+        $result = $categories->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'medicines' => $category->medicines->map(function ($medicine) {
+                    // Get dosage information for this medicine
+                    $dosages = PurchasedMedicine::where('medicine_id', $medicine->id)
+                        ->where('quantity', '>', 0)
+                        ->select('dosage', DB::raw('SUM(quantity) as available_quantity'))
+                        ->groupBy('dosage')
+                        ->orderBy('dosage')
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'dosage' => $item->dosage ?? 'N/A',
+                                'available_quantity' => (int) $item->available_quantity
+                            ];
+                        });
+
+                    return [
+                        'id' => $medicine->id,
+                        'name' => $medicine->name,
+                        'available_quantity' => $medicine->available_quantity,
+                        'dosages' => $dosages
+                    ];
+                })
+            ];
+        });
+
+        return $this->sendResponse($result, 'Medicines retrieved successfully');
     }
 }

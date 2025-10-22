@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $request_document_id
  * @property int $medicine_id
+ * @property string|null $dosage
  * @property int $quantity
  * @property string|null $used_for
  * @property string|null $dosage_instructions
@@ -26,6 +27,7 @@ class ConsultationMedicine extends Model
     protected $fillable = [
         'request_document_id',
         'medicine_id',
+        'dosage',
         'quantity',
         'used_for',
         'dosage_instructions',

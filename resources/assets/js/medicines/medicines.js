@@ -56,6 +56,30 @@ function loadMedicineCreateData() {
                         moment(result.data.updated_at).fromNow()
                     );
                     $("#showMedicineDescription").text(result.data.description);
+
+                    // Populate dosage table
+                    let dosageTableBody = $("#showMedicineDosageTable");
+                    dosageTableBody.empty();
+
+                    if (
+                        result.data.purchased_medicines &&
+                        result.data.purchased_medicines.length > 0
+                    ) {
+                        result.data.purchased_medicines.forEach(function (
+                            item
+                        ) {
+                            let row = `<tr>
+                                <td>${item.dosage}</td>
+                                <td>${addCommas(item.quantity)}</td>
+                            </tr>`;
+                            dosageTableBody.append(row);
+                        });
+                    } else {
+                        dosageTableBody.html(
+                            '<tr><td colspan="2" class="text-center text-muted">No data available</td></tr>'
+                        );
+                    }
+
                     setValueOfEmptySpan();
                     $("#showMedicine").appendTo("body").modal("show");
                 }
