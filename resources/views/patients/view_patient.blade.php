@@ -111,94 +111,96 @@ Patient Data
                 }
                 }
                 @endphp
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Blood Pressure</th>
-                            <th>Heart Rate</th>
-                            <th>Temperature</th>
-                            <th>Respiratory Rate</th>
-                            <th>Oxygen Saturation</th>
-                            <th>Height</th>
-                            <th>Weight</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($consultations as $consultation)
-                        @php
-                        // Blood Pressure
-                        $bp = explode('/', $consultation->vital_signs_bp ?? '0/0');
-                        $systolic = (int) ($bp[0] ?? 0);
-                        $bpStatus = getVitalSignStatus($systolic, $normalRanges['vital_signs_bp']);
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Blood Pressure</th>
+                                <th>Heart Rate</th>
+                                <th>Temperature</th>
+                                <th>Respiratory Rate</th>
+                                <th>Oxygen Saturation</th>
+                                <th>Height</th>
+                                <th>Weight</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($consultations as $consultation)
+                            @php
+                            // Blood Pressure
+                            $bp = explode('/', $consultation->vital_signs_bp ?? '0/0');
+                            $systolic = (int) ($bp[0] ?? 0);
+                            $bpStatus = getVitalSignStatus($systolic, $normalRanges['vital_signs_bp']);
 
-                        // Heart Rate
-                        $prStatus = getVitalSignStatus($consultation->vital_signs_pr, $normalRanges['vital_signs_pr']);
+                            // Heart Rate
+                            $prStatus = getVitalSignStatus($consultation->vital_signs_pr, $normalRanges['vital_signs_pr']);
 
-                        // Temperature
-                        $tempStatus = getVitalSignStatus($consultation->vital_signs_temp, $normalRanges['vital_signs_temp']);
+                            // Temperature
+                            $tempStatus = getVitalSignStatus($consultation->vital_signs_temp, $normalRanges['vital_signs_temp']);
 
-                        // Respiratory Rate
-                        $rrStatus = getVitalSignStatus($consultation->vital_signs_rr, $normalRanges['vital_signs_rr']);
+                            // Respiratory Rate
+                            $rrStatus = getVitalSignStatus($consultation->vital_signs_rr, $normalRanges['vital_signs_rr']);
 
-                        // Oxygen Saturation
-                        $o2Status = getVitalSignStatus($consultation->vital_signs_o2_sat, $normalRanges['vital_signs_o2_sat']);
-                        @endphp
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($consultation->created_at)->format('F j, Y (g:i A)') }}</td>
-                            <td>{{ $consultation->vital_signs_bp ? $consultation->vital_signs_bp . ' mmHg' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_pr ? $consultation->vital_signs_pr . ' bpm' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_temp ? $consultation->vital_signs_temp . ' °C' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_rr ? $consultation->vital_signs_rr . ' breaths/min' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_o2_sat ? $consultation->vital_signs_o2_sat . '%' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_height ? $consultation->vital_signs_height . 'cm' : 'N/A' }}</td>
-                            <td>{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    @if(isRole('clinic_admin'))
-                                    <a href="{{ route('request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    @elseif(isRole('staff'))
-                                    <a href="{{ route('staff.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('staff.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    @elseif(isRole('doctor'))
-                                    <a href="{{ route('doctors.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('doctors.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                            // Oxygen Saturation
+                            $o2Status = getVitalSignStatus($consultation->vital_signs_o2_sat, $normalRanges['vital_signs_o2_sat']);
+                            @endphp
+                            <tr>
+                                <td style="white-space: nowrap;">{{ \Carbon\Carbon::parse($consultation->created_at)->format('F j, Y (g:i A)') }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_bp ? $consultation->vital_signs_bp . ' mmHg' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_pr ? $consultation->vital_signs_pr . ' bpm' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_temp ? $consultation->vital_signs_temp . ' °C' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_rr ? $consultation->vital_signs_rr . ' breaths/min' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_o2_sat ? $consultation->vital_signs_o2_sat . '%' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_height ? $consultation->vital_signs_height . 'cm' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">
+                                    <div class="d-flex gap-2">
+                                        @if(isRole('clinic_admin'))
+                                        <a href="{{ route('request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        @elseif(isRole('staff'))
+                                        <a href="{{ route('staff.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('staff.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        @elseif(isRole('doctor'))
+                                        <a href="{{ route('doctors.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('doctors.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 @endif
         </div>
     </div>
@@ -430,6 +432,80 @@ Patient Data
                             <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Plan</strong></td>
                             @foreach($selectedConsultations as $consultation)
                             <td>{{ $consultation->plan ?? 'N/A' }}</td>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Medicines for Plan</strong></td>
+                            @foreach($selectedConsultations as $consultation)
+                            <td>
+                                @php
+                                $planMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
+                                ->where('used_for', 'plan')
+                                ->with('medicine')
+                                ->get();
+                                @endphp
+
+                                @if($planMedicines->isNotEmpty())
+                                <ul class="list-unstyled mb-0">
+                                    @foreach($planMedicines as $consultationMedicine)
+                                    <li class="mb-2">
+                                        <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
+                                        @if($consultationMedicine->dosage)
+                                        <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
+                                        @endif
+                                        @if($consultationMedicine->quantity)
+                                        <br><small class="text-muted">Quantity: {{ $consultationMedicine->quantity }}</small>
+                                        @endif
+                                        @if($consultationMedicine->dosage_instructions)
+                                        <br><small class="text-muted">Instructions: {{ $consultationMedicine->dosage_instructions }}</small>
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                                @else
+                                <span class="text-muted">No medicines for plan</span>
+                                @endif
+                            </td>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Nursing Intervention</strong></td>
+                            @foreach($selectedConsultations as $consultation)
+                            <td>{{ $consultation->nursing_intervention ?? 'N/A' }}</td>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Medicines for Nursing Intervention</strong></td>
+                            @foreach($selectedConsultations as $consultation)
+                            <td>
+                                @php
+                                $nursingMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
+                                ->where('used_for', 'nursing')
+                                ->with('medicine')
+                                ->get();
+                                @endphp
+
+                                @if($nursingMedicines->isNotEmpty())
+                                <ul class="list-unstyled mb-0">
+                                    @foreach($nursingMedicines as $consultationMedicine)
+                                    <li class="mb-2">
+                                        <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
+                                        @if($consultationMedicine->dosage)
+                                        <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
+                                        @endif
+                                        @if($consultationMedicine->quantity)
+                                        <br><small class="text-muted">Quantity: {{ $consultationMedicine->quantity }}</small>
+                                        @endif
+                                        @if($consultationMedicine->dosage_instructions)
+                                        <br><small class="text-muted">Instructions: {{ $consultationMedicine->dosage_instructions }}</small>
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                                @else
+                                <span class="text-muted">No medicines for nursing intervention</span>
+                                @endif
+                            </td>
                             @endforeach
                         </tr>
 

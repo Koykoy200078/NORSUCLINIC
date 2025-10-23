@@ -14,17 +14,24 @@
             {{ __('messages.request.create_request') }}
             @endif
         </h1>
-        <a href="{{ 
-            request('user_id') && isset($patient) ? 
-                (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => $patient->id]) : 
-                (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $patient->id]) : 
-                (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $patient->id]) : 
-                route('patients.showMyHistory', ['patient' => $patient->id])))) :
-                (isRole('clinic_admin') ? route('request-documents.index') : 
-                (isRole('staff') ? route('staff.request-documents.index') : 
-                (isRole('doctor') ? route('doctors.request-documents.index') : 
-                route('request-documents.index'))))
-        }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        <div class="flex gap-2">
+            @if(request('document_type') === 'consultation_form')
+            <button type="button" id="load_past_data_btn" class="text-white px-4 py-2 rounded" style="background-color: #9333ea;">
+                <i class="fas fa-history"></i> Load Past Data
+            </button>
+            @endif
+            <a href="{{ 
+                request('user_id') && isset($patient) ? 
+                    (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => $patient->id]) : 
+                    (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $patient->id]) : 
+                    (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $patient->id]) : 
+                    route('patients.showMyHistory', ['patient' => $patient->id])))) :
+                    (isRole('clinic_admin') ? route('request-documents.index') : 
+                    (isRole('staff') ? route('staff.request-documents.index') : 
+                    (isRole('doctor') ? route('doctors.request-documents.index') : 
+                    route('request-documents.index'))))
+            }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        </div>
     </div>
 
     @if(!request('document_type'))
@@ -64,6 +71,17 @@
 
                 // Redirect to the same page with the selected document type
                 window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Add hover effect for Load Past Data button
+        const loadPastDataBtn = document.getElementById('load_past_data_btn');
+        if (loadPastDataBtn) {
+            loadPastDataBtn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#7c3aed'; // darker purple on hover
+            });
+            loadPastDataBtn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '#9333ea'; // original purple
             });
         }
     });

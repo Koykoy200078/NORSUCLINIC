@@ -216,6 +216,7 @@ class RequestDocumentsController extends Controller
             'emergency_contact' => $data['emergency_contact'],
             'requested_at' => $data['requested_at'],
             'complaints' => $data['complaints'],
+            'note' => $data['note'] ?? null,
             'covid_vaccination' => $data['vaccination_id'],
             'comorbidities' => $data['comorbidities_id'],
             'allergies' => $data['allergies'] ?? null,
@@ -328,6 +329,9 @@ class RequestDocumentsController extends Controller
         // Get the user data associated with this request document
         $user = User::find($requestDocument->user_id);
 
+        // Load existing consultation medicines with medicine details
+        $existingMedicines = $requestDocument->consultationMedicines()->with('medicine')->get();
+
         return view('requests.edit', compact(
             'requestDocument',
             'campuses',
@@ -339,7 +343,8 @@ class RequestDocumentsController extends Controller
             'vaccinations',
             'diagnoses',
             'nursingStaff',
-            'user'
+            'user',
+            'existingMedicines'
         ));
     }
 
@@ -481,6 +486,7 @@ class RequestDocumentsController extends Controller
             'emergency_contact' => $data['emergency_contact'] ?? $requestDocument->emergency_contact,
             'requested_at' => $data['requested_at'] ?? $requestDocument->requested_at,
             'complaints' => $data['complaints'] ?? $requestDocument->complaints,
+            'note' => $data['note'] ?? $requestDocument->note,
             'covid_vaccination' => $data['covid_vaccination'],
             'comorbidities' => $data['comorbidities'],
             'allergies' => $data['allergies'] ?? $requestDocument->allergies,
@@ -505,6 +511,9 @@ class RequestDocumentsController extends Controller
 
         // Handle image updates
         $this->handleImageUpdates($requestDocument, $data);
+
+        // Handle medicine updates (restore removed, deduct newly added)
+        $this->handleMedicineUpdates($requestDocument, $data);
     }
 
     /**
@@ -553,18 +562,21 @@ class RequestDocumentsController extends Controller
             }
 
             foreach (request()->file('consultation_images') as $image) {
+                // Get file size BEFORE moving (important: must be done before move())
+                $fileSize = $image->getSize();
+
                 // Validate file size (5MB max)
-                if ($image->getSize() <= 5 * 1024 * 1024) {
+                if ($fileSize <= 5 * 1024 * 1024) {
                     $fileName = $image->getClientOriginalName();
 
                     // Move image to public/uploads/
                     $image->move($destinationPath, $fileName);
 
-                    // Add to existing images array
+                    // Add to existing images array (use stored size, not getSize() after move)
                     $existingImages[] = [
                         'path' => $folderPath . '/' . $fileName,
                         'name' => $fileName,
-                        'size' => $image->getSize(),
+                        'size' => $fileSize,
                         'uploaded_at' => now()->toDateTimeString(),
                     ];
                 }
@@ -574,6 +586,274 @@ class RequestDocumentsController extends Controller
         // Update database with modified images array
         $requestDocument->consultation_images = !empty($existingImages) ? json_encode($existingImages) : null;
         $requestDocument->save();
+    }
+
+    /**
+     * Handle medicine updates during consultation form edit
+     * This method compares existing medicines with new submission and:
+     * 1. Restores stock for removed medicines
+     * 2. Deducts stock only for newly added medicines
+     */
+    private function handleMedicineUpdates(RequestDocuments $requestDocument, array $data)
+    {
+        // Get existing medicines from database
+        $existingMedicines = $requestDocument->consultationMedicines()->get();
+
+        // Create a map of existing medicines for easy lookup
+        // Key format: "medicineId_dosage_usedFor"
+        $existingMedicinesMap = [];
+        foreach ($existingMedicines as $existingMedicine) {
+            $key = "{$existingMedicine->medicine_id}_{$existingMedicine->dosage}_{$existingMedicine->used_for}";
+            $existingMedicinesMap[$key] = $existingMedicine;
+        }
+
+        // Create a map of new medicines from form submission
+        $newMedicinesMap = [];
+        if (isset($data['medicines']) && is_array($data['medicines'])) {
+            foreach ($data['medicines'] as $usedFor => $medicines) {
+                if (!is_array($medicines)) {
+                    continue;
+                }
+
+                foreach ($medicines as $medicineData) {
+                    if (empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
+                        continue;
+                    }
+
+                    $medicineId = $medicineData['medicine_id'];
+                    $dosage = $medicineData['dosage'] ?? null;
+                    $key = "{$medicineId}_{$dosage}_{$usedFor}";
+
+                    $newMedicinesMap[$key] = [
+                        'medicine_id' => $medicineId,
+                        'dosage' => $dosage,
+                        'quantity' => (int) $medicineData['quantity'],
+                        'used_for' => $usedFor,
+                        'dosage_instructions' => $medicineData['dosage_instructions'] ?? null,
+                    ];
+                }
+            }
+        }
+
+        // STEP 1: Restore stock for removed medicines (exists in DB but not in new submission)
+        foreach ($existingMedicinesMap as $key => $existingMedicine) {
+            if (!isset($newMedicinesMap[$key])) {
+                // This medicine was removed, restore its stock
+                $this->restoreMedicineStock($existingMedicine);
+
+                // Delete the consultation medicine record
+                $existingMedicine->delete();
+
+                Log::info('Medicine removed and stock restored during edit', [
+                    'consultation_id' => $requestDocument->id,
+                    'medicine_id' => $existingMedicine->medicine_id,
+                    'dosage' => $existingMedicine->dosage,
+                    'quantity_restored' => $existingMedicine->quantity,
+                    'used_for' => $existingMedicine->used_for,
+                ]);
+            }
+        }
+
+        // STEP 2: Handle quantity changes for medicines that still exist
+        foreach ($existingMedicinesMap as $key => $existingMedicine) {
+            if (isset($newMedicinesMap[$key])) {
+                $newQuantity = $newMedicinesMap[$key]['quantity'];
+                $oldQuantity = $existingMedicine->quantity;
+
+                if ($newQuantity != $oldQuantity) {
+                    $quantityDiff = $newQuantity - $oldQuantity;
+
+                    if ($quantityDiff > 0) {
+                        // Quantity increased, deduct more stock
+                        $this->deductMedicineStock(
+                            $existingMedicine->medicine_id,
+                            $existingMedicine->dosage,
+                            $quantityDiff,
+                            $requestDocument
+                        );
+                    } else if ($quantityDiff < 0) {
+                        // Quantity decreased, restore some stock
+                        $this->restoreMedicineStockAmount(
+                            $existingMedicine->medicine_id,
+                            $existingMedicine->dosage,
+                            abs($quantityDiff)
+                        );
+                    }
+
+                    // Update the consultation medicine record
+                    $existingMedicine->quantity = $newQuantity;
+                    $existingMedicine->dosage_instructions = $newMedicinesMap[$key]['dosage_instructions'];
+                    $existingMedicine->save();
+
+                    Log::info('Medicine quantity updated during edit', [
+                        'consultation_id' => $requestDocument->id,
+                        'medicine_id' => $existingMedicine->medicine_id,
+                        'dosage' => $existingMedicine->dosage,
+                        'old_quantity' => $oldQuantity,
+                        'new_quantity' => $newQuantity,
+                        'quantity_diff' => $quantityDiff,
+                    ]);
+                }
+            }
+        }
+
+        // STEP 3: Deduct stock for newly added medicines (exists in new submission but not in DB)
+        foreach ($newMedicinesMap as $key => $newMedicine) {
+            if (!isset($existingMedicinesMap[$key])) {
+                // This is a new medicine, deduct its stock
+                $this->deductMedicineStock(
+                    $newMedicine['medicine_id'],
+                    $newMedicine['dosage'],
+                    $newMedicine['quantity'],
+                    $requestDocument
+                );
+
+                // Create new consultation medicine record
+                \App\Models\ConsultationMedicine::create([
+                    'request_document_id' => $requestDocument->id,
+                    'medicine_id' => $newMedicine['medicine_id'],
+                    'quantity' => $newMedicine['quantity'],
+                    'dosage' => $newMedicine['dosage'],
+                    'used_for' => $newMedicine['used_for'],
+                    'dosage_instructions' => $newMedicine['dosage_instructions'],
+                ]);
+
+                Log::info('New medicine added during edit', [
+                    'consultation_id' => $requestDocument->id,
+                    'medicine_id' => $newMedicine['medicine_id'],
+                    'dosage' => $newMedicine['dosage'],
+                    'quantity_deducted' => $newMedicine['quantity'],
+                    'used_for' => $newMedicine['used_for'],
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Restore medicine stock when medicine is removed from consultation
+     */
+    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine)
+    {
+        $medicine = \App\Models\Medicine::find($consultationMedicine->medicine_id);
+
+        if (!$medicine) {
+            return;
+        }
+
+        // Restore to medicine's total available quantity
+        $medicine->available_quantity += $consultationMedicine->quantity;
+        $medicine->save();
+
+        // Restore to the most recent batch of the same dosage (LIFO - Last In, First Out for restoration)
+        $remainingToRestore = $consultationMedicine->quantity;
+        $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $consultationMedicine->medicine_id)
+            ->where('dosage', $consultationMedicine->dosage)
+            ->orderBy('manufacturing_date', 'desc') // LIFO: newest first for restoration
+            ->get();
+
+        foreach ($purchasedMedicines as $purchasedMedicine) {
+            if ($remainingToRestore <= 0) {
+                break;
+            }
+
+            // Add the quantity back to this batch
+            $purchasedMedicine->quantity += $remainingToRestore;
+            $purchasedMedicine->save();
+            $remainingToRestore = 0;
+        }
+
+        // Clear medicine cache
+        cache()->forget('medicine_' . $consultationMedicine->medicine_id);
+        cache()->forget('medicines_list');
+    }
+
+    /**
+     * Restore a specific amount of medicine stock
+     */
+    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity)
+    {
+        $medicine = \App\Models\Medicine::find($medicineId);
+
+        if (!$medicine) {
+            return;
+        }
+
+        // Restore to medicine's total available quantity
+        $medicine->available_quantity += $quantity;
+        $medicine->save();
+
+        // Restore to the most recent batch of the same dosage
+        $purchasedMedicine = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
+            ->where('dosage', $dosage)
+            ->orderBy('manufacturing_date', 'desc')
+            ->first();
+
+        if ($purchasedMedicine) {
+            $purchasedMedicine->quantity += $quantity;
+            $purchasedMedicine->save();
+        }
+
+        // Clear medicine cache
+        cache()->forget('medicine_' . $medicineId);
+        cache()->forget('medicines_list');
+    }
+
+    /**
+     * Deduct medicine stock from inventory
+     */
+    private function deductMedicineStock($medicineId, $dosage, $quantity, RequestDocuments $requestDocument)
+    {
+        $medicine = \App\Models\Medicine::find($medicineId);
+
+        if (!$medicine) {
+            throw new \Exception("Medicine not found (ID: {$medicineId})");
+        }
+
+        // Check if enough stock is available in the specific dosage
+        $availableDosageQty = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
+            ->where('dosage', $dosage)
+            ->sum('quantity');
+
+        if ($availableDosageQty < $quantity) {
+            throw new \Exception("Insufficient stock for {$medicine->name} ({$dosage}). Available: {$availableDosageQty}, Requested: {$quantity}");
+        }
+
+        // Deduct from specific dosage quantities (FIFO - First In, First Out)
+        $remainingToDeduct = $quantity;
+        $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
+            ->where('dosage', $dosage)
+            ->where('quantity', '>', 0)
+            ->orderBy('manufacturing_date', 'asc') // FIFO: oldest first
+            ->get();
+
+        foreach ($purchasedMedicines as $purchasedMedicine) {
+            if ($remainingToDeduct <= 0) {
+                break;
+            }
+
+            if ($purchasedMedicine->quantity >= $remainingToDeduct) {
+                // This batch has enough quantity
+                $purchasedMedicine->quantity -= $remainingToDeduct;
+                $purchasedMedicine->save();
+                $remainingToDeduct = 0;
+            } else {
+                // Use all from this batch and continue
+                $remainingToDeduct -= $purchasedMedicine->quantity;
+                $purchasedMedicine->quantity = 0;
+                $purchasedMedicine->save();
+            }
+        }
+
+        // Deduct from medicine's total available quantity
+        $medicine->available_quantity -= $quantity;
+        $medicine->save();
+
+        // Clear medicine cache
+        cache()->forget('medicine_' . $medicineId);
+        cache()->forget('medicines_list');
+
+        // Log medicine usage activity
+        self::logMedicineUsage($medicine, $quantity, $requestDocument->name, $requestDocument);
     }
 
     /**
@@ -789,6 +1069,51 @@ class RequestDocumentsController extends Controller
             // Log the error and redirect back with an error message
             Log::error('Error exporting PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while exporting the PDF.');
+        }
+    }
+
+    public function getLastConsultation(Request $request)
+    {
+        try {
+            $userId = $request->input('user_id');
+
+            if (empty($userId)) {
+                return response()->json(['error' => 'User ID is required'], 400);
+            }
+
+            // Get the latest consultation for this user
+            $lastConsultation = RequestDocuments::where('user_id', $userId)
+                ->where('document_type', 'consultation_form')
+                ->orderBy('requested_at', 'desc')
+                ->first();
+
+            if (!$lastConsultation) {
+                return response()->json(['error' => 'No previous consultation found'], 404);
+            }
+
+            // Return the relevant fields
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'status' => $lastConsultation->status,
+                    'religion' => $lastConsultation->religion,
+                    'allergies' => $lastConsultation->allergies,
+                    'admissions_surgeries' => $lastConsultation->admissions_surgeries,
+                    'maintenance' => $lastConsultation->maintenance,
+                    'pregnancy_status' => $lastConsultation->pregnancy_status,
+                    'lmp_aog' => $lastConsultation->lmp_aog,
+                    'vital_signs_bp' => $lastConsultation->vital_signs_bp,
+                    'vital_signs_pr' => $lastConsultation->vital_signs_pr,
+                    'vital_signs_temp' => $lastConsultation->vital_signs_temp,
+                    'vital_signs_rr' => $lastConsultation->vital_signs_rr,
+                    'vital_signs_o2_sat' => $lastConsultation->vital_signs_o2_sat,
+                    'vital_signs_weight' => $lastConsultation->vital_signs_weight,
+                    'vital_signs_height' => $lastConsultation->vital_signs_height,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getLastConsultation: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while fetching consultation data'], 500);
         }
     }
 }

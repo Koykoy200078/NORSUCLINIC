@@ -226,6 +226,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::resource('request-documents', RequestDocumentsController::class);
         Route::get('/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('search-users');
+        Route::get('/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('get-last-consultation');
         Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
     });
 
@@ -427,6 +428,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Request Documents
     Route::get('request-documents/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('request-documents.search-users');
+    Route::get('request-documents/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('request-documents.get-last-consultation');
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
         Route::resource('request-documents', RequestDocumentsController::class);
@@ -596,6 +598,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Request Documents
     Route::get('request-documents/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('request-documents.search-users');
+    Route::get('request-documents/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('request-documents.get-last-consultation');
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
         Route::resource('request-documents', RequestDocumentsController::class);

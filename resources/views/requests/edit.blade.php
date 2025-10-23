@@ -153,27 +153,32 @@
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block text-xs" for="requested_at">REQUEST DATE</label>
-                <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" value="{{ old('requested_at', $requestDocument->requested_at->format('Y-m-d')) }}">
+                <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
+                <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" max="{{ date('Y-m-d') }}" value="{{ old('requested_at', $requestDocument->requested_at->format('Y-m-d')) }}" required>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-b border-black" rows="5">{{ old('complaints', $requestDocument->complaints) }}</textarea>
+                <textarea id="complaints" name="complaints" class="w-full border-b border-black auto-resize-textarea" rows="2">{{ old('complaints', $requestDocument->complaints) }}</textarea>
+            </div>
+            <div class="col-span-1"></div>
+            <div class="col-span-3">
+                <textarea id="note" name="note" class="w-full border-b border-black auto-resize-textarea" rows="3">{{ old('note', $requestDocument->note) }}</textarea>
             </div>
         </div>
         <!-- Subjective Complaints -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">S</label>
-                <label class="block text-xs">(Subjective Complaints)</label>
+                <label class="block text-xs">(Subjective Data)</label>
             </div>
             <div class="col-span-3">
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vaccination_id">COVID Vaccination</label>
-                        <select id="vaccination_id" name="vaccination_id" class="w-full border-b border-black">
+                        <label class="block text-xs" for="vaccination_id">COVID Vaccination<span class="text-red-500">*</span></label>
+                        <select id="vaccination_id" name="vaccination_id" class="w-full border-b border-black" required>
+                            <option value="">Select Vaccination Status</option>
                             @foreach($vaccinations as $vaccination)
-                            <option value="{{ $vaccination->id }}" {{ old('vaccination_id', $requestDocument->vaccination_id ?? '') == $vaccination->id ? 'selected' : '' }}>
+                            <option value="{{ $vaccination->id }}" {{ old('vaccination_id', $requestDocument->covid_vaccination ?? '') == $vaccination->vaccination_status ? 'selected' : '' }}>
                                 {{ $vaccination->vaccination_status }}
                             </option>
                             @endforeach
@@ -182,6 +187,7 @@
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities_id">Comorbidities</label>
                         <select id="comorbidities_id" name="comorbidities_id" class="w-full border-b border-black">
+                            <option value="none">None</option>
                             @foreach($diagnoses as $diagnose)
                             <option value="{{ $diagnose->id }}" {{ old('comorbidities_id', $requestDocument->comorbidities_id ?? '') == $diagnose->id ? 'selected' : '' }}>
                                 {{ $diagnose->diagnoses }}
@@ -190,20 +196,20 @@
                         </select>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="allergies">Allergies</label>
-                        <input type="text" id="allergies" name="allergies" class="w-full border-b border-black" value="{{ old('allergies', $requestDocument->allergies) }}">
+                        <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
+                        <input type="text" id="allergies" name="allergies" class="w-full border-b border-black" value="{{ old('allergies', $requestDocument->allergies) }}" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
                         <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black" value="{{ old('admissions_surgeries', $requestDocument->admissions_surgeries) }}">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="maintenance">Maintenance</label>
-                        <input type="text" id="maintenance" name="maintenance" class="w-full border-b border-black" value="{{ old('maintenance', $requestDocument->maintenance) }}">
+                        <label class="block text-xs" for="maintenance">Maintenance<span class="text-red-500">*</span></label>
+                        <input type="text" id="maintenance" name="maintenance" class="w-full border-b border-black" value="{{ old('maintenance', $requestDocument->maintenance) }}" required>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="pregnancy_status">Pregnant or Not?</label>
-                        <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border-b border-black" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}">
+                        <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
+                        <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border-b border-black" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="lmp_aog">If YES, LMP/AOG</label>
@@ -222,36 +228,36 @@
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_bp">BP</label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" value="{{ old('vital_signs_bp', $requestDocument->vital_signs_bp) }}">
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" placeholder="mmHg" value="{{ old('vital_signs_bp', $requestDocument->vital_signs_bp) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_pr">PR</label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" value="{{ old('vital_signs_pr', $requestDocument->vital_signs_pr) }}">
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" placeholder="bpm" value="{{ old('vital_signs_pr', $requestDocument->vital_signs_pr) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_temp">Temp</label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" value="{{ old('vital_signs_temp', $requestDocument->vital_signs_temp) }}">
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" placeholder="°C" value="{{ old('vital_signs_temp', $requestDocument->vital_signs_temp) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="breaths/min" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" value="{{ old('vital_signs_o2_sat', $requestDocument->vital_signs_o2_sat) }}">
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" placeholder="%" value="{{ old('vital_signs_o2_sat', $requestDocument->vital_signs_o2_sat) }}">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_weight">Wt</label>
-                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" value="{{ old('vital_signs_weight', $requestDocument->vital_signs_weight) }}">
+                        <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
+                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" placeholder="kg" value="{{ old('vital_signs_weight', $requestDocument->vital_signs_weight) }}">
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_height">Height</label>
-                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" value="{{ old('vital_signs_height', $requestDocument->vital_signs_height) }}">
+                        <label class="block text-xs" for="vital_signs_height">Height (cm)</label>
+                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" placeholder="cm" value="{{ old('vital_signs_height', $requestDocument->vital_signs_height) }}">
                     </div>
                 </div>
                 <div class="col-span-5">
-                    <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5">{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
+                    <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM<span class="text-red-500">*</span></label>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
                 </div>
             </div>
         </div>
@@ -259,29 +265,39 @@
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">A</label>
-                <label class="block text-xs">(Assessment)</label>
+                <label class="block text-xs">(Assessment)<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black" rows="5">{{ old('assessment', $requestDocument->assessment) }}</textarea>
+                <textarea id="assessment" name="assessment" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('assessment', $requestDocument->assessment) }}</textarea>
             </div>
         </div>
         <!-- Plan -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">P</label>
-                <label class="block text-xs">(Plan)</label>
+                <label class="block text-xs">(Plan)<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5">{{ old('plan', $requestDocument->plan) }}</textarea>
+                <textarea id="plan" name="plan" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('plan', $requestDocument->plan) }}</textarea>
+
+                <!-- Medicine Selection for Plan -->
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Add Medicines to Plan:</label>
+                    <button type="button" id="add_plan_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                    <div id="plan_medicines_container" class="mt-2 space-y-2"></div>
+                </div>
             </div>
         </div>
 
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block">Consult Mode</label>
+                <label class="block">Consult Mode<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <select id="consult_mode" name="consult_mode" class="w-full border-b border-black">
+                <select id="consult_mode" name="consult_mode" class="w-full border-b border-black" required>
+                    <option value="">Select Consultation Mode</option>
                     <option value="physical" {{ old('consult_mode', $requestDocument->consult_mode) == 'physical' ? 'selected' : '' }}>Physical</option>
                     <option value="virtual" {{ old('consult_mode', $requestDocument->consult_mode) == 'virtual' ? 'selected' : '' }}>Virtual</option>
                 </select>
@@ -290,10 +306,19 @@
 
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block">Nursing Intervention</label>
+                <label class="block">Nursing Intervention<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <input type="text" id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black" value="{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}">
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}</textarea>
+
+                <!-- Medicine Selection for Nursing Intervention -->
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Add Medicines to Nursing Intervention:</label>
+                    <button type="button" id="add_nursing_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                    <div id="nursing_medicines_container" class="mt-2 space-y-2"></div>
+                </div>
             </div>
         </div>
 
@@ -482,13 +507,13 @@
 </div>
 
 <style>
+    .auto-resize-textarea {
+        resize: none;
+        overflow: hidden;
+    }
+
     #complaints_diagnosis,
-    #medical_cert_remarks,
-    #complaints,
-    #pertinent_exam,
-    #assessment,
-    #plan,
-    #nursing_intervention {
+    #medical_cert_remarks {
         resize: none;
     }
 
@@ -533,6 +558,88 @@
         color: #ef4444;
         font-size: 12px;
         margin-top: 4px;
+    }
+
+    /* Medicine selection styles */
+    .medicine-row {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 1fr 2fr auto auto;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background-color: #f9fafb;
+        border-radius: 0.375rem;
+        align-items: center;
+    }
+
+    .existing-medicine-row {
+        background-color: #e0f2fe;
+        border: 1px solid #0ea5e9;
+    }
+
+    .existing-medicine-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background-color: #10b981;
+        color: white;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .medicine-row select,
+    .medicine-row input {
+        padding: 0.375rem 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .medicine-row select optgroup {
+        font-weight: bold;
+        font-style: normal;
+        background-color: #e5e7eb;
+    }
+
+    .medicine-row select option {
+        padding: 0.25rem;
+    }
+
+    .remove-medicine-btn {
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .remove-medicine-btn:hover {
+        background-color: #dc2626;
+    }
+
+    .medicine-stock-info {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.125rem;
+    }
+
+    .medicine-stock-warning {
+        color: #ef4444;
+        font-weight: 600;
+    }
+
+    .medicine-stock-error {
+        color: #dc2626;
+        font-weight: 700;
+        background-color: #fee2e2;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        border-left: 4px solid #dc2626;
+        grid-column: 1 / -1;
     }
 </style>
 
@@ -686,6 +793,428 @@
                     previewContainer.appendChild(noValidFiles);
                 }
             });
+        }
+
+        // ==================== AUTO-RESIZE TEXTAREA FUNCTIONALITY ====================
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        const autoResizeTextareas = document.querySelectorAll('.auto-resize-textarea');
+        autoResizeTextareas.forEach(function(textarea) {
+            textarea.addEventListener('input', function() {
+                autoResizeTextarea(this);
+            });
+            autoResizeTextarea(textarea);
+        });
+
+        // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
+
+        let medicinesData = [];
+
+        async function fetchMedicines() {
+            try {
+                const response = await fetch('{{ route("medicines.by.category") }}');
+                const result = await response.json();
+
+                if (result.success) {
+                    medicinesData = result.data;
+
+                    // Also fetch ALL medicines (including out of stock) for existing medicine rows
+                    await fetchAllMedicinesForExisting();
+
+                    // Load existing medicines after medicine data is fetched
+                    loadExistingMedicines();
+                } else {
+                    console.error('Error fetching medicines:', result.message);
+                }
+            } catch (error) {
+                console.error('Error fetching medicines:', error);
+            }
+        }
+
+        // Fetch all medicines including out of stock ones (for existing medicines only)
+        let allMedicinesData = [];
+        async function fetchAllMedicinesForExisting() {
+            try {
+                // We'll use the existing medicines data but also need to ensure
+                // out-of-stock medicines that are currently used can be shown
+                allMedicinesData = medicinesData; // Use same data structure
+            } catch (error) {
+                console.error('Error fetching all medicines:', error);
+            }
+        }
+
+        fetchMedicines();
+
+        // Load existing medicines from the database
+        function loadExistingMedicines() {
+            const existingMedicines = @json($existingMedicines ?? []);
+
+            if (existingMedicines.length === 0) {
+                return;
+            }
+
+            existingMedicines.forEach(medicine => {
+                const type = medicine.used_for; // 'plan' or 'nursing'
+                const counter = type === 'plan' ? planMedicineCounter++ : nursingMedicineCounter++;
+
+                // Add medicine row with existing data
+                addMedicineRow(type, counter, {
+                    medicineId: medicine.medicine_id,
+                    dosage: medicine.dosage,
+                    quantity: medicine.quantity,
+                    dosageInstructions: medicine.dosage_instructions,
+                    isExisting: true, // Mark as existing medicine
+                    existingQuantity: medicine.quantity // Store the original quantity used
+                });
+            });
+        }
+
+        let planMedicineCounter = 0;
+        let nursingMedicineCounter = 0;
+
+        const addPlanMedicineBtn = document.getElementById('add_plan_medicine_btn');
+        const addNursingMedicineBtn = document.getElementById('add_nursing_medicine_btn');
+
+        if (addPlanMedicineBtn) {
+            addPlanMedicineBtn.addEventListener('click', function() {
+                addMedicineRow('plan', planMedicineCounter++);
+            });
+        }
+
+        if (addNursingMedicineBtn) {
+            addNursingMedicineBtn.addEventListener('click', function() {
+                addMedicineRow('nursing', nursingMedicineCounter++);
+            });
+        }
+
+        function addMedicineRow(type, index, existingData = null) {
+            const container = type === 'plan' ?
+                document.getElementById('plan_medicines_container') :
+                document.getElementById('nursing_medicines_container');
+
+            const row = document.createElement('div');
+            row.className = 'medicine-row';
+            row.dataset.type = type;
+            row.dataset.index = index;
+
+            // Add visual indicator for existing medicines
+            if (existingData && existingData.isExisting) {
+                row.classList.add('existing-medicine-row');
+            }
+
+            const medicineSelect = document.createElement('select');
+            medicineSelect.name = `medicines[${type}][${index}][medicine_id]`;
+            medicineSelect.className = 'medicine-select';
+            medicineSelect.required = true;
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select Medicine';
+            medicineSelect.appendChild(defaultOption);
+
+            // For existing medicines, we need to ensure the medicine appears even if out of stock
+            if (existingData && existingData.isExisting) {
+                // Add a special entry for the existing medicine even if it's not in medicinesData
+                let medicineFound = false;
+
+                medicinesData.forEach(category => {
+                    category.medicines.forEach(medicine => {
+                        if (medicine.id === existingData.medicineId) {
+                            medicineFound = true;
+                        }
+                    });
+                });
+
+                // If medicine not found in available list, add it manually
+                if (!medicineFound) {
+                    const existingMedicine = @json($existingMedicines ?? []).find(m => m.medicine_id === existingData.medicineId);
+                    if (existingMedicine && existingMedicine.medicine) {
+                        const option = document.createElement('option');
+                        option.value = existingMedicine.medicine.id;
+                        option.textContent = `${existingMedicine.medicine.name} (Out of Stock)`;
+                        option.dataset.medicineId = existingMedicine.medicine.id;
+                        option.dataset.medicineName = existingMedicine.medicine.name;
+                        option.dataset.dosages = JSON.stringify([{
+                            dosage: existingData.dosage,
+                            available_quantity: 0
+                        }]);
+                        option.dataset.totalStock = 0;
+                        option.dataset.isOutOfStock = 'true';
+                        option.selected = true;
+                        medicineSelect.appendChild(option);
+                    }
+                }
+            }
+
+            medicinesData.forEach(category => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category.name;
+                let hasValidMedicines = false;
+
+                category.medicines.forEach(medicine => {
+                    // Check if medicine has available stock OR is the currently selected existing medicine
+                    const isCurrentlyUsed = existingData && medicine.id === existingData.medicineId;
+                    const hasStock = medicine.available_quantity > 0 ||
+                        (medicine.dosages && medicine.dosages.length > 0);
+
+                    // Only show if it has stock OR is already being used in this consultation
+                    if (hasStock || isCurrentlyUsed) {
+                        const option = document.createElement('option');
+                        option.value = medicine.id;
+                        option.textContent = `${medicine.name}`;
+                        option.dataset.medicineId = medicine.id;
+                        option.dataset.medicineName = medicine.name;
+                        option.dataset.dosages = JSON.stringify(medicine.dosages);
+                        option.dataset.totalStock = medicine.available_quantity;
+
+                        // Pre-select if this is existing data
+                        if (existingData && medicine.id === existingData.medicineId) {
+                            option.selected = true;
+                        }
+
+                        optgroup.appendChild(option);
+                        hasValidMedicines = true;
+                    }
+                });
+
+                // Only add optgroup if it has valid medicines
+                if (hasValidMedicines) {
+                    medicineSelect.appendChild(optgroup);
+                }
+            });
+
+            const dosageSelect = document.createElement('select');
+            dosageSelect.name = `medicines[${type}][${index}][dosage]`;
+            dosageSelect.className = 'dosage-select';
+            dosageSelect.required = true;
+            dosageSelect.disabled = true;
+
+            const dosageDefaultOption = document.createElement('option');
+            dosageDefaultOption.value = '';
+            dosageDefaultOption.textContent = 'Select Dosage';
+            dosageSelect.appendChild(dosageDefaultOption);
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.name = `medicines[${type}][${index}][quantity]`;
+            quantityInput.placeholder = 'Qty';
+            quantityInput.min = '1';
+            quantityInput.value = existingData ? existingData.quantity : '1';
+            quantityInput.required = true;
+            quantityInput.disabled = true;
+
+            const dosageInstructions = document.createElement('input');
+            dosageInstructions.type = 'text';
+            dosageInstructions.name = `medicines[${type}][${index}][dosage_instructions]`;
+            dosageInstructions.placeholder = 'Instructions (e.g., 1 tablet 3x a day)';
+            dosageInstructions.value = existingData ? existingData.dosageInstructions || '' : '';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-medicine-btn';
+            removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            removeBtn.addEventListener('click', function() {
+                const isExisting = existingData && existingData.isExisting;
+                const medicineName = medicineSelect.options[medicineSelect.selectedIndex]?.textContent || 'this medicine';
+                const quantity = quantityInput.value || '0';
+                const dosageText = dosageSelect.options[dosageSelect.selectedIndex]?.textContent || 'N/A';
+
+                let confirmMessage = `Remove ${medicineName}?\nDosage: ${dosageText}\nQuantity: ${quantity}`;
+
+                if (isExisting) {
+                    confirmMessage += '\n\n⚠️ This will restore the stock to inventory.';
+                }
+
+                if (confirm(confirmMessage)) {
+                    row.remove();
+                }
+            });
+
+            medicineSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                dosageSelect.innerHTML = '';
+                dosageSelect.appendChild(dosageDefaultOption.cloneNode(true));
+                dosageSelect.disabled = true;
+                quantityInput.disabled = true;
+                if (!existingData) {
+                    quantityInput.value = '1';
+                }
+
+                const existingWarning = row.querySelector('.medicine-stock-info');
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+
+                if (!selectedOption.value) return;
+
+                const dosages = JSON.parse(selectedOption.dataset.dosages || '[]');
+
+                if (dosages.length === 0) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ No dosages available for this medicine!`;
+                    row.appendChild(warning);
+                    return;
+                }
+
+                // Filter and populate dosages
+                let hasAnyValidDosage = false;
+                const isOutOfStock = selectedOption.dataset.isOutOfStock === 'true';
+
+                dosages.forEach(dosageItem => {
+                    // Calculate display quantity (add existing if this is the current dosage)
+                    let displayQuantity = dosageItem.available_quantity;
+                    let isAdjusted = false;
+                    if (existingData && existingData.isExisting && dosageItem.dosage === existingData.dosage) {
+                        displayQuantity = dosageItem.available_quantity + existingData.existingQuantity;
+                        isAdjusted = true;
+                    }
+
+                    // Only show dosages with stock > 0 OR the currently used dosage (even if stock is 0)
+                    if (displayQuantity > 0 || (existingData && dosageItem.dosage === existingData.dosage)) {
+                        const option = document.createElement('option');
+                        option.value = dosageItem.dosage;
+
+                        // Special message for out-of-stock existing medicines
+                        let displayText;
+                        if (isOutOfStock && existingData && dosageItem.dosage === existingData.dosage) {
+                            displayText = `${dosageItem.dosage} (Stock: 0 - You used ${existingData.existingQuantity})`;
+                        } else if (isAdjusted) {
+                            displayText = `${dosageItem.dosage} (Stock: ${dosageItem.available_quantity} + Your ${existingData.existingQuantity} used = ${displayQuantity} available)`;
+                        } else {
+                            displayText = `${dosageItem.dosage} (Available: ${displayQuantity})`;
+                        }
+
+                        option.textContent = displayText;
+                        option.dataset.availableQty = displayQuantity; // Use adjusted quantity for validation
+                        option.dataset.originalAvailableQty = dosageItem.available_quantity; // Store original for reference
+                        option.dataset.isAdjusted = isAdjusted;
+                        option.dataset.isOutOfStock = isOutOfStock;
+
+                        // Pre-select dosage if this is existing data
+                        if (existingData && dosageItem.dosage === existingData.dosage) {
+                            option.selected = true;
+                        }
+
+                        dosageSelect.appendChild(option);
+                        hasAnyValidDosage = true;
+                    }
+                });
+
+                if (!hasAnyValidDosage) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ No dosages available with sufficient stock!`;
+                    row.appendChild(warning);
+                    return;
+                }
+
+                dosageSelect.disabled = false;
+
+                // Trigger dosage change event if loading existing data
+                if (existingData && existingData.dosage) {
+                    dosageSelect.dispatchEvent(new Event('change'));
+                }
+            });
+
+            dosageSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                const existingWarning = row.querySelector('.medicine-stock-info');
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+
+                if (!selectedOption.value) {
+                    quantityInput.disabled = true;
+                    quantityInput.value = '1';
+                    return;
+                }
+
+                const availableQty = parseInt(selectedOption.dataset.availableQty || 0);
+                const isOutOfStock = selectedOption.dataset.isOutOfStock === 'true';
+                const isAdjusted = selectedOption.dataset.isAdjusted === 'true';
+
+                quantityInput.max = availableQty;
+                quantityInput.disabled = false;
+
+                // Special handling for out-of-stock existing medicines
+                if (isOutOfStock && existingData && existingData.isExisting) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-error';
+                    warning.innerHTML = `<i class="fa fa-exclamation-triangle"></i> This medicine is completely out of stock. You can only reduce the quantity or remove it to restore ${existingData.existingQuantity} units to inventory.`;
+                    row.appendChild(warning);
+                    quantityInput.max = existingData.existingQuantity; // Can't increase, only decrease
+                } else if (availableQty <= 0) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ This dosage is out of stock!`;
+                    row.appendChild(warning);
+                    dosageSelect.value = '';
+                    quantityInput.disabled = true;
+                } else if (isAdjusted && availableQty < 10) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-info';
+                    warning.innerHTML = `<i class="fa fa-info-circle"></i> Actual Stock: ${selectedOption.dataset.originalAvailableQty} + Your ${existingData.existingQuantity} used = ${availableQty} total you can use`;
+                    row.appendChild(warning);
+                } else if (isAdjusted) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-info';
+                    warning.innerHTML = `<i class="fa fa-info-circle"></i> Current Stock: ${selectedOption.dataset.originalAvailableQty} units in inventory + Your ${existingData.existingQuantity} already used`;
+                    row.appendChild(warning);
+                } else if (availableQty < 10) {
+                    const warning = document.createElement('div');
+                    warning.className = 'medicine-stock-info medicine-stock-warning';
+                    warning.textContent = `⚠️ Low stock: Only ${availableQty} units available`;
+                    row.appendChild(warning);
+                }
+            });
+
+            quantityInput.addEventListener('input', function() {
+                const selectedDosageOption = dosageSelect.options[dosageSelect.selectedIndex];
+                const availableQty = parseInt(selectedDosageOption.dataset.availableQty || 0);
+                const isOutOfStock = selectedDosageOption.dataset.isOutOfStock === 'true';
+                const quantity = parseInt(this.value || 0);
+
+                // For out-of-stock existing medicines, only allow reducing quantity
+                if (isOutOfStock && existingData && existingData.isExisting) {
+                    if (quantity > existingData.existingQuantity) {
+                        this.value = existingData.existingQuantity;
+                        alert(`This medicine is out of stock. You can only reduce from ${existingData.existingQuantity} to restore stock for other patients.`);
+                    }
+                } else if (quantity > availableQty) {
+                    this.value = availableQty;
+                    alert(`Only ${availableQty} units available for this dosage.`);
+                }
+            });
+
+            row.appendChild(medicineSelect);
+            row.appendChild(dosageSelect);
+            row.appendChild(quantityInput);
+            row.appendChild(dosageInstructions);
+
+            // Add existing medicine badge if applicable
+            if (existingData && existingData.isExisting) {
+                const badge = document.createElement('span');
+                badge.className = 'existing-medicine-badge';
+                badge.innerHTML = '<i class="fas fa-check-circle"></i> Saved';
+                badge.title = 'This medicine was already saved. The available quantity shown includes the amount you already used (' + existingData.existingQuantity + ' units). Removing it will restore the stock.';
+                row.appendChild(badge);
+            }
+
+            row.appendChild(removeBtn);
+
+            container.appendChild(row);
+
+            // If loading existing data, trigger medicine select change to populate dosages
+            if (existingData && existingData.medicineId) {
+                medicineSelect.dispatchEvent(new Event('change'));
+            }
         }
     });
 </script>

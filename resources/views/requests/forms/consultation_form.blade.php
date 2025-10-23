@@ -309,7 +309,7 @@
             </div>
         </div>
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600">
             Submit
         </button>
     </form>
@@ -914,6 +914,73 @@
             row.appendChild(removeBtn);
 
             container.appendChild(row);
+        }
+
+        // ==================== LOAD PAST DATA FUNCTIONALITY ====================
+
+        const loadPastDataBtn = document.getElementById('load_past_data_btn');
+
+        if (loadPastDataBtn) {
+            loadPastDataBtn.addEventListener('click', async function() {
+                const userId = document.getElementById('user_id').value;
+
+                if (!userId) {
+                    alert('Please select a patient first.');
+                    return;
+                }
+
+                // Show loading state
+                loadPastDataBtn.disabled = true;
+                loadPastDataBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+                try {
+                    // Set the search route based on user role
+                    let getLastConsultationRoute = '';
+                    @if(isRole('clinic_admin'))
+                    getLastConsultationRoute = '{{ route("get-last-consultation") }}';
+                    @elseif(isRole('staff'))
+                    getLastConsultationRoute = '{{ route("staff.request-documents.get-last-consultation") }}';
+                    @elseif(isRole('doctor'))
+                    getLastConsultationRoute = '{{ route("doctors.request-documents.get-last-consultation") }}';
+                    @else
+                    getLastConsultationRoute = '{{ route("get-last-consultation") }}';
+                    @endif
+
+                    const response = await fetch(`${getLastConsultationRoute}?user_id=${userId}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const data = result.data;
+
+                        // Populate the fields
+                        if (data.status) document.getElementById('status').value = data.status;
+                        if (data.religion) document.getElementById('religion').value = data.religion;
+                        if (data.allergies) document.getElementById('allergies').value = data.allergies;
+                        if (data.admissions_surgeries) document.getElementById('admissions_surgeries').value = data.admissions_surgeries;
+                        if (data.maintenance) document.getElementById('maintenance').value = data.maintenance;
+                        if (data.pregnancy_status) document.getElementById('pregnancy_status').value = data.pregnancy_status;
+                        if (data.lmp_aog) document.getElementById('lmp_aog').value = data.lmp_aog;
+                        if (data.vital_signs_bp) document.getElementById('vital_signs_bp').value = data.vital_signs_bp;
+                        if (data.vital_signs_pr) document.getElementById('vital_signs_pr').value = data.vital_signs_pr;
+                        if (data.vital_signs_temp) document.getElementById('vital_signs_temp').value = data.vital_signs_temp;
+                        if (data.vital_signs_rr) document.getElementById('vital_signs_rr').value = data.vital_signs_rr;
+                        if (data.vital_signs_o2_sat) document.getElementById('vital_signs_o2_sat').value = data.vital_signs_o2_sat;
+                        if (data.vital_signs_weight) document.getElementById('vital_signs_weight').value = data.vital_signs_weight;
+                        if (data.vital_signs_height) document.getElementById('vital_signs_height').value = data.vital_signs_height;
+
+                        alert('Past data loaded successfully!');
+                    } else {
+                        alert(result.error || 'No previous consultation found for this patient.');
+                    }
+                } catch (error) {
+                    console.error('Error loading past data:', error);
+                    alert('An error occurred while loading past data. Please try again.');
+                } finally {
+                    // Reset button state
+                    loadPastDataBtn.disabled = false;
+                    loadPastDataBtn.innerHTML = '<i class="fas fa-history"></i> Load Past Data';
+                }
+            });
         }
     });
 </script>

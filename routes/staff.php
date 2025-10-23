@@ -117,6 +117,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Search users route (moved outside middleware for testing)
     Route::get('request-documents/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('request-documents.search-users');
+    Route::get('request-documents/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('request-documents.get-last-consultation');
 
     // Request Documents (Staff specific)
     Route::middleware('permission:manage_request_documents')->group(function () {
