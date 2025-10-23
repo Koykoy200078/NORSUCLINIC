@@ -185,15 +185,23 @@
                         </select>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="comorbidities_id">Comorbidities</label>
-                        <select id="comorbidities_id" name="comorbidities_id" class="w-full border-b border-black">
-                            <option value="none">None</option>
-                            @foreach($diagnoses as $diagnose)
-                            <option value="{{ $diagnose->id }}" {{ old('comorbidities_id', $requestDocument->comorbidities_id ?? '') == $diagnose->id ? 'selected' : '' }}>
-                                {{ $diagnose->diagnoses }}
-                            </option>
-                            @endforeach
-                        </select>
+                        <label class="block text-xs" for="comorbidities_custom">Comorbidities</label>
+                        <div class="relative">
+                            <input type="text"
+                                name="comorbidities_custom"
+                                id="comorbidities_input"
+                                list="comorbidities_list"
+                                class="w-full border-b border-black"
+                                placeholder="Select or type custom comorbidity"
+                                value="{{ old('comorbidities_custom', $requestDocument->comorbidities) }}"
+                                autocomplete="off">
+                            <datalist id="comorbidities_list">
+                                <option value="None">
+                                    @foreach($diagnoses as $diagnose)
+                                <option value="{{ $diagnose->diagnoses }}">
+                                    @endforeach
+                            </datalist>
+                        </div>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
@@ -240,7 +248,7 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="breaths/min" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="cycles/min" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>

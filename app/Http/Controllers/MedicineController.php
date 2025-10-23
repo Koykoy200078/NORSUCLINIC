@@ -15,6 +15,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Response;
 use Laracasts\Flash\Flash;
@@ -161,16 +163,40 @@ class MedicineController extends AppBaseController
         $getBuyingPrice = Medicine::find($medicine->id)->buying_price;
         $getSellingPrice = Medicine::find($medicine->id)->selling_price;
 
-        // Get purchased medicines with dosage information grouped by dosage
+        // Get purchased medicines with dosage information grouped by dosage with earliest expiry date
         $purchasedMedicines = PurchasedMedicine::where('medicine_id', $medicine->id)
-            ->select('dosage', DB::raw('SUM(quantity) as total_quantity'))
+            ->where('quantity', '>', 0) // Only show batches with available stock
+            ->select(
+                'dosage',
+                DB::raw('SUM(quantity) as total_quantity'),
+                DB::raw('MIN(expiry_date) as earliest_expiry')
+            )
             ->groupBy('dosage')
             ->orderBy('dosage')
             ->get()
             ->map(function ($item) {
+                $expiryDate = $item->earliest_expiry;
+                $remainingDays = null;
+                $expiryFormatted = 'N/A';
+
+                if ($expiryDate && $expiryDate !== '' && $expiryDate !== 'N/A') {
+                    try {
+                        $expiry = \Carbon\Carbon::parse($expiryDate);
+                        $now = \Carbon\Carbon::now();
+                        $remainingDays = (int) $now->diffInDays($expiry, false); // false to get negative for past dates
+                        $expiryFormatted = $expiry->format('M d, Y');
+                    } catch (\Exception $e) {
+                        // If parsing fails, keep N/A
+                        Log::info('Failed to parse expiry date: ' . $expiryDate . ' - ' . $e->getMessage());
+                        $remainingDays = null;
+                    }
+                }
+
                 return [
                     'dosage' => $item->dosage ?? 'N/A',
-                    'quantity' => $item->total_quantity
+                    'quantity' => $item->total_quantity,
+                    'expiry_date' => $expiryFormatted,
+                    'remaining_days' => $remainingDays
                 ];
             });
 

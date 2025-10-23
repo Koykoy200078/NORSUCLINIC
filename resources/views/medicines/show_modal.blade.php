@@ -103,11 +103,13 @@
                                                                <tr>
                                                                       <th>{{ __('messages.purchase_medicine.dosage') }}</th>
                                                                       <th>{{ __('Available Quantity') }}</th>
+                                                                      <th>{{ __('Expiry Date') }}</th>
+                                                                      <th>{{ __('Remaining Days') }}</th>
                                                                </tr>
                                                         </thead>
                                                         <tbody id="showMedicineDosageTable">
                                                                <tr>
-                                                                      <td colspan="2" class="text-center text-muted">{{ __('No data available') }}</td>
+                                                                      <td colspan="4" class="text-center text-muted">{{ __('No data available') }}</td>
                                                                </tr>
                                                         </tbody>
                                                  </table>

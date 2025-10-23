@@ -22,7 +22,7 @@ class MedicineCategoryDetailsTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-//            ->setDefaultSort('created_at', 'desc')
+            //            ->setDefaultSort('created_at', 'desc')
             ->setQueryStringStatus(false);
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('selling_price')) {
@@ -59,14 +59,6 @@ class MedicineCategoryDetailsTable extends LivewireTableComponent
                 ->searchable()
                 ->sortable()
                 ->view('categories.templates.columnsDetails.description'),
-            Column::make(__('messages.medicine.selling_price'), 'selling_price')
-                ->searchable()
-                ->view('categories.templates.columnsDetails.selling_price')
-                ->sortable(),
-            Column::make(__('messages.medicine.buying_price'), 'buying_price')
-                ->searchable()
-                ->view('categories.templates.columnsDetails.buying_price')
-                ->sortable(),
         ];
     }
 

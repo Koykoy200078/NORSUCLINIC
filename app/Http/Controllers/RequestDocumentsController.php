@@ -194,7 +194,9 @@ class RequestDocumentsController extends Controller
         $data['course'] = Course::find($data['course_id'])->course_name ?? 'Unknown Course';
         $data['year_level'] = YearLevel::find($data['year_level_id'])->year_level_name ?? 'Unknown Year Level';
         $data['vaccination_id'] = Vaccination::find($data['vaccination_id'])->vaccination_status ?? 'Unknown Vaccination';
-        $data['comorbidities_id'] = isset($data['comorbidities_id']) && $data['comorbidities_id'] ? Diagnose::find($data['comorbidities_id'])->diagnoses ?? 'None' : 'None';
+
+        // Handle comorbidities - accept custom input or predefined values
+        $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';
 
         $requestDocument = RequestDocuments::create([
             'document_type' => $data['document_type'],
@@ -218,7 +220,7 @@ class RequestDocumentsController extends Controller
             'complaints' => $data['complaints'],
             'note' => $data['note'] ?? null,
             'covid_vaccination' => $data['vaccination_id'],
-            'comorbidities' => $data['comorbidities_id'],
+            'comorbidities' => $data['comorbidities_value'],
             'allergies' => $data['allergies'] ?? null,
             'admissions_surgeries' => $data['admissions_surgeries'] ?? null,
             'maintenance' => $data['maintenance'] ?? null,
@@ -466,7 +468,10 @@ class RequestDocumentsController extends Controller
         $data['course'] = isset($data['course_id']) ? (Course::find($data['course_id'])->course_name ?? $requestDocument->course) : $requestDocument->course;
         $data['year_level'] = isset($data['year_level_id']) ? (YearLevel::find($data['year_level_id'])->year_level_name ?? $requestDocument->year_level) : $requestDocument->year_level;
         $data['covid_vaccination'] = isset($data['vaccination_id']) ? (Vaccination::find($data['vaccination_id'])->vaccination_status ?? $requestDocument->covid_vaccination) : $requestDocument->covid_vaccination;
-        $data['comorbidities'] = isset($data['comorbidities_id']) ? (Diagnose::find($data['comorbidities_id'])->diagnoses ?? $requestDocument->comorbidities) : $requestDocument->comorbidities;
+
+        // Handle comorbidities - accept custom input or keep existing value
+        $data['comorbidities'] = isset($data['comorbidities_custom']) ? $data['comorbidities_custom'] : $requestDocument->comorbidities;
+
         $data['nursing_incharge_id'] = $data['nursing_incharged'] ?? $requestDocument->nursing_incharged_id;
 
         $requestDocument->update([

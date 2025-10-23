@@ -43,10 +43,10 @@ class MedicineBrandDetailsTable extends LivewireTableComponent
         });
     }
 
-   public function placeholder()
-   {
-         return view('livewire.staff_skeleton');
-   }
+    public function placeholder()
+    {
+        return view('livewire.staff_skeleton');
+    }
 
     public function columns(): array
     {
@@ -59,16 +59,7 @@ class MedicineBrandDetailsTable extends LivewireTableComponent
                 ->searchable()
                 ->sortable(),
             Column::make(__('messages.medicine.brand'), 'category_id')
-                ->hideIf('category_id'),
-
-            Column::make(__('messages.medicine.selling_price'), 'selling_price')
-                ->view('brands.templates.columnsDetails.selling')
-                ->searchable()
-                ->sortable(),
-            Column::make(__('messages.medicine.buying_price'), 'buying_price')
-                ->view('brands.templates.columnsDetails.buying')
-                ->searchable()
-                ->sortable(),
+                ->hideIf('category_id')
         ];
     }
 

@@ -151,7 +151,7 @@ Patient Data
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_bp ? $consultation->vital_signs_bp . ' mmHg' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_pr ? $consultation->vital_signs_pr . ' bpm' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_temp ? $consultation->vital_signs_temp . ' °C' : 'N/A' }}</td>
-                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_rr ? $consultation->vital_signs_rr . ' breaths/min' : 'N/A' }}</td>
+                                <td style="white-space: nowrap;">{{ $consultation->vital_signs_rr ? $consultation->vital_signs_rr . ' cycles/min' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_o2_sat ? $consultation->vital_signs_o2_sat . '%' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_height ? $consultation->vital_signs_height . 'cm' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
@@ -379,7 +379,7 @@ Patient Data
                             @endforeach
                         </tr>
                         <tr>
-                            <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Respiratory Rate (breaths/min)</strong></td>
+                            <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Respiratory Rate (cycles/min)</strong></td>
                             @foreach($selectedConsultations as $consultation)
                             @php
                             $rrStatus = getVitalSignStatus($consultation->vital_signs_rr, $normalRanges['vital_signs_rr']);

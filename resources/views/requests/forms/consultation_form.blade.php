@@ -137,12 +137,21 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities">Comorbidities</label>
-                        <select name="comorbidities_id" id="comorbidities_id" class="w-full border-b border-black">
-                            <option value="none">None</option>
-                            @foreach($data['comorbidities'] as $key => $value)
-                            <option value="{{ $key }}">{{ $value }}</option>
-                            @endforeach
-                        </select>
+                        <div class="relative">
+                            <input type="text"
+                                name="comorbidities_custom"
+                                id="comorbidities_input"
+                                list="comorbidities_list"
+                                class="w-full border-b border-black"
+                                placeholder="Select or type custom comorbidity"
+                                autocomplete="off">
+                            <datalist id="comorbidities_list">
+                                <option value="None">
+                                    @foreach($data['comorbidities'] as $key => $value)
+                                <option value="{{ $value }}">
+                                    @endforeach
+                            </datalist>
+                        </div>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
@@ -188,7 +197,7 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="breaths/min">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="cycles/min">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
