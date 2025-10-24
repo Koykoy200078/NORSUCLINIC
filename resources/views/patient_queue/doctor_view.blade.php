@@ -31,6 +31,7 @@
         from {
             transform: rotate(0deg);
         }
+
         to {
             transform: rotate(360deg);
         }
@@ -47,9 +48,12 @@
     }
 
     @keyframes pulse {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: scale(1);
         }
+
         50% {
             transform: scale(1.1);
         }
@@ -57,25 +61,30 @@
 
     /* Color states for countdown */
     #countdown-badge.countdown-5 {
-        background-color: #28a745 !important; /* Green - Just started */
+        background-color: #28a745 !important;
+        /* Green - Just started */
     }
 
     #countdown-badge.countdown-4 {
-        background-color: #20c997 !important; /* Teal */
+        background-color: #20c997 !important;
+        /* Teal */
     }
 
     #countdown-badge.countdown-3 {
-        background-color: #ffc107 !important; /* Yellow - Halfway */
+        background-color: #ffc107 !important;
+        /* Yellow - Halfway */
         color: #000 !important;
     }
 
     #countdown-badge.countdown-2 {
-        background-color: #fd7e14 !important; /* Orange - Getting close */
+        background-color: #fd7e14 !important;
+        /* Orange - Getting close */
         color: #fff !important;
     }
 
     #countdown-badge.countdown-1 {
-        background-color: #dc3545 !important; /* Red - About to refresh */
+        background-color: #dc3545 !important;
+        /* Red - About to refresh */
         color: #fff !important;
         animation: pulse 0.5s ease-in-out;
     }
@@ -289,168 +298,165 @@
 </div>
 
 <script>
-// Define functions IMMEDIATELY - inline in content section
-// Global state
-window.queueAutoRefresh = {
-    enabled: localStorage.getItem('queueAutoRefresh') === 'true',
-    countdownInterval: null,
-    refreshTimeout: null,
-    countdownSeconds: 5
-};
+    // Define functions IMMEDIATELY - inline in content section
+    // Global state
+    window.queueAutoRefresh = {
+        enabled: localStorage.getItem('queueAutoRefresh') === 'true',
+        countdownInterval: null,
+        refreshTimeout: null,
+        countdownSeconds: 5
+    };
 
-// Manual refresh function - defined immediately
-window.manualQueueRefresh = function() {
-    const state = window.queueAutoRefresh;
-    const icon = document.getElementById('refresh-icon');
-    if (icon) icon.classList.add('spinning');
-    
-    if (state.enabled) {
-        if (state.countdownInterval) clearInterval(state.countdownInterval);
-        if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-    }
-    
-    setTimeout(function() { 
-        location.reload(); 
-    }, 300);
-};
-
-// Toggle auto-refresh function - defined immediately
-window.toggleQueueAutoRefresh = function() {
-    const state = window.queueAutoRefresh;
-    state.enabled = !state.enabled;
-    localStorage.setItem('queueAutoRefresh', state.enabled);
-
-    const toggleBtn = document.getElementById('toggle-auto-refresh');
-    const toggleText = document.getElementById('toggle-text');
-    const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-
-    if (state.enabled) {
-        if (toggleBtn) {
-            toggleBtn.classList.remove('btn-outline-primary');
-            toggleBtn.classList.add('btn-outline-success');
-        }
-        if (icon) {
-            icon.classList.remove('fa-play');
-            icon.classList.add('fa-pause');
-        }
-        if (toggleText) toggleText.textContent = 'Auto-Refresh ON';
-        window.startQueueCountdown();
-    } else {
-        if (toggleBtn) {
-            toggleBtn.classList.remove('btn-outline-success');
-            toggleBtn.classList.add('btn-outline-primary');
-        }
-        if (icon) {
-            icon.classList.remove('fa-pause');
-            icon.classList.add('fa-play');
-        }
-        if (toggleText) toggleText.textContent = 'Auto-Refresh OFF';
-        
-        if (state.countdownInterval) clearInterval(state.countdownInterval);
-        if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-        
-        updateCountdown();
-    }
-};
-
-// Start countdown function - defined immediately
-window.startQueueCountdown = function() {
-    const state = window.queueAutoRefresh;
-    if (!state.enabled) return;
-
-    state.countdownSeconds = 5;
-    updateCountdown();
-
-    if (state.countdownInterval) clearInterval(state.countdownInterval);
-    if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-
-    state.countdownInterval = setInterval(function() {
-        state.countdownSeconds--;
-        updateCountdown();
-        if (state.countdownSeconds <= 0) {
-            clearInterval(state.countdownInterval);
-        }
-    }, 1000);
-
-    state.refreshTimeout = setTimeout(function() {
-        if (state.enabled) {
-            location.reload();
-        }
-    }, 5000);
-};
-
-// Update countdown helper function
-function updateCountdown() {
-    const state = window.queueAutoRefresh;
-    const badge = document.getElementById('countdown-badge');
-    const countdownEl = document.getElementById('countdown');
-    
-    if (!badge || !countdownEl) return;
-    
-    countdownEl.textContent = state.countdownSeconds;
-    
-    if (state.enabled) {
-        badge.classList.remove('d-none');
-        badge.classList.remove('countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
-        
-        if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
-            badge.classList.add('countdown-' + state.countdownSeconds);
-        }
-        
-        badge.classList.add('pulse');
-        setTimeout(function() { 
-            badge.classList.remove('pulse'); 
-        }, 300);
-    } else {
-        badge.classList.add('d-none');
-    }
-}
-
-// Initialize when page loads
-(function() {
-    'use strict';
-    
-    function initQueuePage() {
+    // Manual refresh function - defined immediately
+    window.manualQueueRefresh = function() {
         const state = window.queueAutoRefresh;
+        const icon = document.getElementById('refresh-icon');
+        if (icon) icon.classList.add('spinning');
+
+        if (state.enabled) {
+            if (state.countdownInterval) clearInterval(state.countdownInterval);
+            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+        }
+
+        setTimeout(function() {
+            location.reload();
+        }, 300);
+    };
+
+    // Toggle auto-refresh function - defined immediately
+    window.toggleQueueAutoRefresh = function() {
+        const state = window.queueAutoRefresh;
+        state.enabled = !state.enabled;
+        localStorage.setItem('queueAutoRefresh', state.enabled);
+
         const toggleBtn = document.getElementById('toggle-auto-refresh');
         const toggleText = document.getElementById('toggle-text');
         const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-        const countdownBadge = document.getElementById('countdown-badge');
 
-        if (!toggleBtn) return;
-
-        // Initialize UI based on saved state
         if (state.enabled) {
-            toggleBtn.classList.add('btn-outline-success');
-            toggleBtn.classList.remove('btn-outline-primary');
+            if (toggleBtn) {
+                toggleBtn.classList.remove('btn-outline-primary');
+                toggleBtn.classList.add('btn-outline-success');
+            }
             if (icon) {
-                icon.classList.add('fa-pause');
                 icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
             }
             if (toggleText) toggleText.textContent = 'Auto-Refresh ON';
-            if (countdownBadge) countdownBadge.classList.remove('d-none');
             window.startQueueCountdown();
         } else {
-            toggleBtn.classList.add('btn-outline-primary');
-            toggleBtn.classList.remove('btn-outline-success');
+            if (toggleBtn) {
+                toggleBtn.classList.remove('btn-outline-success');
+                toggleBtn.classList.add('btn-outline-primary');
+            }
             if (icon) {
-                icon.classList.add('fa-play');
                 icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
             }
             if (toggleText) toggleText.textContent = 'Auto-Refresh OFF';
-            if (countdownBadge) countdownBadge.classList.add('d-none');
+
+            if (state.countdownInterval) clearInterval(state.countdownInterval);
+            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+
+            updateCountdown();
+        }
+    };
+
+    // Start countdown function - defined immediately
+    window.startQueueCountdown = function() {
+        const state = window.queueAutoRefresh;
+        if (!state.enabled) return;
+
+        state.countdownSeconds = 5;
+        updateCountdown();
+
+        if (state.countdownInterval) clearInterval(state.countdownInterval);
+        if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+
+        state.countdownInterval = setInterval(function() {
+            state.countdownSeconds--;
+            updateCountdown();
+            if (state.countdownSeconds <= 0) {
+                clearInterval(state.countdownInterval);
+            }
+        }, 1000);
+
+        state.refreshTimeout = setTimeout(function() {
+            if (state.enabled) {
+                location.reload();
+            }
+        }, 5000);
+    };
+
+    // Update countdown helper function
+    function updateCountdown() {
+        const state = window.queueAutoRefresh;
+        const badge = document.getElementById('countdown-badge');
+        const countdownEl = document.getElementById('countdown');
+
+        if (!badge || !countdownEl) return;
+
+        countdownEl.textContent = state.countdownSeconds;
+
+        if (state.enabled) {
+            badge.classList.remove('d-none');
+            badge.classList.remove('countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
+
+            if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
+                badge.classList.add('countdown-' + state.countdownSeconds);
+            }
+
+            badge.classList.add('pulse');
+            setTimeout(function() {
+                badge.classList.remove('pulse');
+            }, 300);
+        } else {
+            badge.classList.add('d-none');
         }
     }
-    
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initQueuePage);
-    } else {
-        initQueuePage();
-    }
-})();
+
+    // Initialize when page loads
+    (function() {
+        'use strict';
+
+        function initQueuePage() {
+            const state = window.queueAutoRefresh;
+            const toggleBtn = document.getElementById('toggle-auto-refresh');
+            const toggleText = document.getElementById('toggle-text');
+            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
+            const countdownBadge = document.getElementById('countdown-badge');
+
+            if (!toggleBtn) return;
+
+            // Initialize UI based on saved state
+            if (state.enabled) {
+                toggleBtn.classList.add('btn-outline-success');
+                toggleBtn.classList.remove('btn-outline-primary');
+                if (icon) {
+                    icon.classList.add('fa-pause');
+                    icon.classList.remove('fa-play');
+                }
+                if (toggleText) toggleText.textContent = 'Auto-Refresh ON';
+                if (countdownBadge) countdownBadge.classList.remove('d-none');
+                window.startQueueCountdown();
+            } else {
+                toggleBtn.classList.add('btn-outline-primary');
+                toggleBtn.classList.remove('btn-outline-success');
+                if (icon) {
+                    icon.classList.add('fa-play');
+                    icon.classList.remove('fa-pause');
+                }
+                if (toggleText) toggleText.textContent = 'Auto-Refresh OFF';
+                if (countdownBadge) countdownBadge.classList.add('d-none');
+            }
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQueuePage);
+        } else {
+            initQueuePage();
+        }
+    })();
 </script>
 @endsection
-
-
-
