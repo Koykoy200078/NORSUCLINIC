@@ -12781,29 +12781,25 @@ function loadMedicineCreateData() {
           // Populate dosage table
           var dosageTableBody = $("#showMedicineDosageTable");
           dosageTableBody.empty();
-          console.log('Purchased Medicines Data:', result.data.purchased_medicines); // Debug log
-
           if (result.data.purchased_medicines && result.data.purchased_medicines.length > 0) {
             result.data.purchased_medicines.forEach(function (item) {
-              console.log('Processing item:', item); // Debug log
-
               // Format remaining days with color coding
-              var remainingDaysHtml = 'N/A';
-              var rowClass = '';
-              var expiryDateDisplay = item.expiry_date || 'N/A';
+              var remainingDaysHtml = "N/A";
+              var rowClass = "";
+              var expiryDateDisplay = item.expiry_date || "N/A";
               if (item.remaining_days !== null && item.remaining_days !== undefined) {
                 if (item.remaining_days < 0) {
                   // Expired
                   remainingDaysHtml = "<span class=\"badge bg-danger\">Expired (".concat(Math.abs(item.remaining_days), " days ago)</span>");
-                  rowClass = 'table-danger';
+                  rowClass = "table-danger";
                 } else if (item.remaining_days === 0) {
                   // Expires today
                   remainingDaysHtml = "<span class=\"badge bg-danger\">Expires Today</span>";
-                  rowClass = 'table-danger';
+                  rowClass = "table-danger";
                 } else if (item.remaining_days <= 30) {
                   // Critical: 30 days or less
                   remainingDaysHtml = "<span class=\"badge bg-warning text-dark\">".concat(item.remaining_days, " days</span>");
-                  rowClass = 'table-warning';
+                  rowClass = "table-warning";
                 } else if (item.remaining_days <= 90) {
                   // Warning: 90 days or less
                   remainingDaysHtml = "<span class=\"badge bg-info\">".concat(item.remaining_days, " days</span>");
@@ -12816,7 +12812,7 @@ function loadMedicineCreateData() {
               dosageTableBody.append(row);
             });
           } else {
-            console.warn('No purchased medicines data found'); // Debug log
+            console.warn("No purchased medicines data found"); // Debug log
             dosageTableBody.html('<tr><td colspan="4" class="text-center text-muted">No data available</td></tr>');
           }
           setValueOfEmptySpan();

@@ -104,7 +104,23 @@
         <span class="aside-menu-icon pe-3">
             <i class="fa-solid fa-file-signature"></i>
         </span>
-        <span class="aside-menu-title">Request Documents</span>
+        <span class="aside-menu-title">Patients Data</span>
+        @php
+        // Count incomplete consultation forms (missing assessment or plan)
+        $incompleteDocsCount = \App\Models\RequestDocuments::where('document_type', 'consultation_form')
+        ->where(function($query) {
+        $query->whereNull('assessment')
+        ->orWhere('assessment', '')
+        ->orWhereNull('plan')
+        ->orWhere('plan', '');
+        })
+        ->count();
+        @endphp
+        @if($incompleteDocsCount > 0)
+        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
+            <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
+        </span>
+        @endif
     </a>
 </li>
 @endcan

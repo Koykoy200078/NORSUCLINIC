@@ -105,12 +105,12 @@ Patient Data
             if (!function_exists('getVitalSignStatus')) {
             function getVitalSignStatus($value, $range) {
             if (is_null($value)) return '';
-            if ($value < $range['min']) return 'below-normal';
-            if ($value > $range['max']) return 'above-normal';
-            return 'normal';
-            }
-            }
-            @endphp
+            if ($value < $range['min']) return 'below-normal' ;
+                if ($value> $range['max']) return 'above-normal';
+                return 'normal';
+                }
+                }
+                @endphp
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -382,26 +382,26 @@ Patient Data
 
             // Use custom ranges if provided, otherwise use defaults
             $normalRanges = [
-                'vital_signs_bp' => [
-                    'min' => request('bp_min') ? (int)request('bp_min') : 90, 
-                    'max' => request('bp_max') ? (int)request('bp_max') : 120
-                ],
-                'vital_signs_pr' => [
-                    'min' => request('pr_min') ? (int)request('pr_min') : 60, 
-                    'max' => request('pr_max') ? (int)request('pr_max') : 100
-                ],
-                'vital_signs_temp' => [
-                    'min' => request('temp_min') ? (float)request('temp_min') : 36.1, 
-                    'max' => request('temp_max') ? (float)request('temp_max') : 37.2
-                ],
-                'vital_signs_rr' => [
-                    'min' => request('rr_min') ? (int)request('rr_min') : 12, 
-                    'max' => request('rr_max') ? (int)request('rr_max') : 20
-                ],
-                'vital_signs_o2_sat' => [
-                    'min' => request('o2_min') ? (int)request('o2_min') : 95, 
-                    'max' => request('o2_max') ? (int)request('o2_max') : 100
-                ],
+            'vital_signs_bp' => [
+            'min' => request('bp_min') ? (int)request('bp_min') : 90,
+            'max' => request('bp_max') ? (int)request('bp_max') : 120
+            ],
+            'vital_signs_pr' => [
+            'min' => request('pr_min') ? (int)request('pr_min') : 60,
+            'max' => request('pr_max') ? (int)request('pr_max') : 100
+            ],
+            'vital_signs_temp' => [
+            'min' => request('temp_min') ? (float)request('temp_min') : 36.1,
+            'max' => request('temp_max') ? (float)request('temp_max') : 37.2
+            ],
+            'vital_signs_rr' => [
+            'min' => request('rr_min') ? (int)request('rr_min') : 12,
+            'max' => request('rr_max') ? (int)request('rr_max') : 20
+            ],
+            'vital_signs_o2_sat' => [
+            'min' => request('o2_min') ? (int)request('o2_min') : 95,
+            'max' => request('o2_max') ? (int)request('o2_max') : 100
+            ],
             ];
             @endphp
 

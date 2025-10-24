@@ -221,19 +221,19 @@
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">A</label>
-                <label class="block text-xs">(Assessment)<span class="text-red-500">*</span></label>
+                <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
+                <textarea id="assessment" name="assessment" class="w-full border-b border-black auto-resize-textarea" rows="5"></textarea>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">P</label>
-                <label class="block text-xs">(Plan)<span class="text-red-500">*</span></label>
+                <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
+                <textarea id="plan" name="plan" class="w-full border-b border-black auto-resize-textarea" rows="5"></textarea>
 
                 <!-- Medicine Selection for Plan -->
                 <div class="mt-3">

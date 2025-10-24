@@ -11,7 +11,7 @@ class RequestDocumentTable extends DataTableComponent
 {
     protected $model = RequestDocuments::class;
     public bool $showFilterOnHeader = false;
-    public bool $showButtonOnHeader = true;
+    public bool $showButtonOnHeader = false;
     public string $buttonComponent = 'requests.components.table-buttons';
     public ?int $patientId = null; // Add patient ID filter
 
@@ -49,7 +49,7 @@ class RequestDocumentTable extends DataTableComponent
 
     public function columns(): array
     {
-        return [
+        $columns = [
             Column::make("ID", "id")
                 ->sortable(),
             Column::make("Patient Name", "name")
@@ -75,10 +75,48 @@ class RequestDocumentTable extends DataTableComponent
                 ->sortable()
                 ->format(fn($value) => $value ? $value->format('Y-m-d') : 'N/A'),
 
-            Column::make("Actions")
-                ->label(
-                    fn($row) => view('requests.components.action-buttons', ['id' => $row->id])
-                ),
+            // Completion Status - Shows if consultation form has Assessment and Plan filled
+            Column::make("Completion Status")
+                ->label(function ($row, Column $column) {
+                    // Only show for consultation forms
+                    if ($row->document_type !== 'consultation_form') {
+                        return '<span class="badge bg-secondary text-white">N/A</span>';
+                    }
+
+                    // Get fresh data from database
+                    $record = RequestDocuments::find($row->id);
+                    if (!$record) {
+                        return '<span class="badge bg-secondary">Unknown</span>';
+                    }
+
+                    // Check if fields are truly empty
+                    $hasAssessment = !empty(trim((string)$record->assessment));
+                    $hasPlan = !empty(trim((string)$record->plan));
+
+                    // Both fields have data = Complete
+                    if ($hasAssessment && $hasPlan) {
+                        return '<span class="badge bg-success text-white">
+                                    <i class="fas fa-check-circle"></i> Complete
+                                </span>';
+                    }
+
+                    // One or both fields missing = Incomplete
+                    $missing = [];
+                    if (!$hasAssessment) $missing[] = 'Assessment';
+                    if (!$hasPlan) $missing[] = 'Plan';
+
+                    return '<span class="badge bg-warning text-dark" data-bs-toggle="tooltip" title="Missing: ' . implode(', ', $missing) . '">
+                                <i class="fas fa-exclamation-triangle"></i> Incomplete
+                            </span>';
+                })
+                ->html(),
         ];
+
+        $columns[] = Column::make("Actions")
+            ->label(
+                fn($row) => view('requests.components.action-buttons', ['id' => $row->id, 'row' => $row])
+            );
+
+        return $columns;
     }
 }
