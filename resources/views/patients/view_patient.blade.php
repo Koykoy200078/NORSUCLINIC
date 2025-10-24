@@ -105,12 +105,12 @@ Patient Data
             if (!function_exists('getVitalSignStatus')) {
             function getVitalSignStatus($value, $range) {
             if (is_null($value)) return '';
-            if ($value < $range['min']) return 'below-normal' ;
-                if ($value> $range['max']) return 'above-normal';
-                return 'normal';
-                }
-                }
-                @endphp
+            if ($value < $range['min']) return 'below-normal';
+            if ($value > $range['max']) return 'above-normal';
+            return 'normal';
+            }
+            }
+            @endphp
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -287,7 +287,7 @@ Patient Data
         <div class="card-body" style="margin-top: -30px; margin-left: 5px; min-height: fit-content;">
             <form method="GET" action="">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-3">
                         <label for="consultations_to_compare">Select Consultations to Compare</label>
                         <select name="consultations_to_compare[]" id="consultations_to_compare" class="form-control" multiple>
                             @foreach($consultations as $consultation)
@@ -299,7 +299,73 @@ Patient Data
                         <small class="text-muted">Hold down the Ctrl (Windows) or Command (Mac) key to select multiple dates.</small>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-3">Select</button>
+
+                <!-- Custom Normal Ranges -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="mb-3">Customize Normal Ranges (Optional)</h5>
+                        <small class="text-muted d-block mb-3">Leave blank to use default ranges</small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Blood Pressure (Systolic mmHg)</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Min</span>
+                            <input type="number" class="form-control" name="bp_min" placeholder="90" value="{{ request('bp_min', '') }}" step="1">
+                            <span class="input-group-text">Max</span>
+                            <input type="number" class="form-control" name="bp_max" placeholder="120" value="{{ request('bp_max', '') }}" step="1">
+                        </div>
+                        <small class="text-muted">Default: 90-120 mmHg</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Heart Rate (bpm)</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Min</span>
+                            <input type="number" class="form-control" name="pr_min" placeholder="60" value="{{ request('pr_min', '') }}" step="1">
+                            <span class="input-group-text">Max</span>
+                            <input type="number" class="form-control" name="pr_max" placeholder="100" value="{{ request('pr_max', '') }}" step="1">
+                        </div>
+                        <small class="text-muted">Default: 60-100 bpm</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Temperature (°C)</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Min</span>
+                            <input type="number" class="form-control" name="temp_min" placeholder="36.1" value="{{ request('temp_min', '') }}" step="0.1">
+                            <span class="input-group-text">Max</span>
+                            <input type="number" class="form-control" name="temp_max" placeholder="37.2" value="{{ request('temp_max', '') }}" step="0.1">
+                        </div>
+                        <small class="text-muted">Default: 36.1-37.2 °C</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Respiratory Rate (cycles/min)</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Min</span>
+                            <input type="number" class="form-control" name="rr_min" placeholder="12" value="{{ request('rr_min', '') }}" step="1">
+                            <span class="input-group-text">Max</span>
+                            <input type="number" class="form-control" name="rr_max" placeholder="20" value="{{ request('rr_max', '') }}" step="1">
+                        </div>
+                        <small class="text-muted">Default: 12-20 cycles/min</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Oxygen Saturation (%)</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Min</span>
+                            <input type="number" class="form-control" name="o2_min" placeholder="95" value="{{ request('o2_min', '') }}" step="1">
+                            <span class="input-group-text">Max</span>
+                            <input type="number" class="form-control" name="o2_max" placeholder="100" value="{{ request('o2_max', '') }}" step="1">
+                        </div>
+                        <small class="text-muted">Default: 95-100%</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-3">Compare</button>
             </form>
         </div>
     </div>
@@ -314,26 +380,62 @@ Patient Data
             @php
             $selectedConsultations = $consultations->whereIn('id', request('consultations_to_compare'));
 
-            // Ensure normal ranges are defined
-            if (!isset($normalRanges)) {
+            // Use custom ranges if provided, otherwise use defaults
             $normalRanges = [
-            'vital_signs_bp' => ['min' => 90, 'max' => 120],
-            'vital_signs_pr' => ['min' => 60, 'max' => 100],
-            'vital_signs_temp' => ['min' => 36.1, 'max' => 37.2],
-            'vital_signs_rr' => ['min' => 12, 'max' => 20],
-            'vital_signs_o2_sat' => ['min' => 95, 'max' => 100],
+                'vital_signs_bp' => [
+                    'min' => request('bp_min') ? (int)request('bp_min') : 90, 
+                    'max' => request('bp_max') ? (int)request('bp_max') : 120
+                ],
+                'vital_signs_pr' => [
+                    'min' => request('pr_min') ? (int)request('pr_min') : 60, 
+                    'max' => request('pr_max') ? (int)request('pr_max') : 100
+                ],
+                'vital_signs_temp' => [
+                    'min' => request('temp_min') ? (float)request('temp_min') : 36.1, 
+                    'max' => request('temp_max') ? (float)request('temp_max') : 37.2
+                ],
+                'vital_signs_rr' => [
+                    'min' => request('rr_min') ? (int)request('rr_min') : 12, 
+                    'max' => request('rr_max') ? (int)request('rr_max') : 20
+                ],
+                'vital_signs_o2_sat' => [
+                    'min' => request('o2_min') ? (int)request('o2_min') : 95, 
+                    'max' => request('o2_max') ? (int)request('o2_max') : 100
+                ],
             ];
-            }
             @endphp
 
             <!-- Legend -->
             <div class="px-6 pt-0">
-                <h5>Vital Legend:</h5>
-                <ul>
-                    <li><span class="badge bg-success">Normal</span>: Within the normal range</li>
-                    <li><span class="badge bg-warning">Below Normal</span>: Below the normal range</li>
-                    <li><span class="badge bg-danger">Above Normal</span>: Above the normal range</li>
-                </ul>
+                <h5>Vital Sign Legend:</h5>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="d-flex flex-wrap gap-3 align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div style="width: 30px; height: 30px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;" class="me-2"></div>
+                                <span><strong>Normal</strong> - Within the normal range</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div style="width: 30px; height: 30px; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;" class="me-2"></div>
+                                <span><strong>Below Normal</strong> - Below the normal range</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div style="width: 30px; height: 30px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;" class="me-2"></div>
+                                <span><strong>Above Normal</strong> - Above the normal range</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <h6 class="mb-2">Active Normal Ranges:</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Blood Pressure (Systolic):</strong> {{ $normalRanges['vital_signs_bp']['min'] }}-{{ $normalRanges['vital_signs_bp']['max'] }} mmHg</li>
+                            <li><strong>Heart Rate:</strong> {{ $normalRanges['vital_signs_pr']['min'] }}-{{ $normalRanges['vital_signs_pr']['max'] }} bpm</li>
+                            <li><strong>Temperature:</strong> {{ $normalRanges['vital_signs_temp']['min'] }}-{{ $normalRanges['vital_signs_temp']['max'] }} °C</li>
+                            <li><strong>Respiratory Rate:</strong> {{ $normalRanges['vital_signs_rr']['min'] }}-{{ $normalRanges['vital_signs_rr']['max'] }} cycles/min</li>
+                            <li><strong>Oxygen Saturation:</strong> {{ $normalRanges['vital_signs_o2_sat']['min'] }}-{{ $normalRanges['vital_signs_o2_sat']['max'] }}%</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <!-- Single Scrollable Container for Both Tables -->
@@ -441,7 +543,7 @@ Patient Data
                                 @php
                                 $planMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
                                 ->where('used_for', 'plan')
-                                ->with('medicine')
+                                ->with('medicine.brand')
                                 ->get();
                                 @endphp
 
@@ -450,6 +552,9 @@ Patient Data
                                     @foreach($planMedicines as $consultationMedicine)
                                     <li class="mb-2">
                                         <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
+                                        @if($consultationMedicine->medicine && $consultationMedicine->medicine->brand)
+                                        <br><small class="text-muted">Brand: {{ $consultationMedicine->medicine->brand->name }}</small>
+                                        @endif
                                         @if($consultationMedicine->dosage)
                                         <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
                                         @endif
@@ -481,7 +586,7 @@ Patient Data
                                 @php
                                 $nursingMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
                                 ->where('used_for', 'nursing')
-                                ->with('medicine')
+                                ->with('medicine.brand')
                                 ->get();
                                 @endphp
 
@@ -490,6 +595,9 @@ Patient Data
                                     @foreach($nursingMedicines as $consultationMedicine)
                                     <li class="mb-2">
                                         <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
+                                        @if($consultationMedicine->medicine && $consultationMedicine->medicine->brand)
+                                        <br><small class="text-muted">Brand: {{ $consultationMedicine->medicine->brand->name }}</small>
+                                        @endif
                                         @if($consultationMedicine->dosage)
                                         <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
                                         @endif

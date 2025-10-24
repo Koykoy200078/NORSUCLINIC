@@ -46,9 +46,10 @@ class ActivityLogController extends Controller
 
         $activityLogs = $query->paginate(20);
 
-        // Get unique actions for filter dropdown
+        // Get unique actions for filter dropdown (exclude 'created_patient')
         $actions = ActivityLog::select('action')
             ->distinct()
+            ->whereNotIn('action', ['created_patient'])
             ->pluck('action')
             ->toArray();
 
