@@ -51,6 +51,9 @@ class PurchaseMedicineController extends AppBaseController
 
         $input = $request->all();
 
+        // Temporary debug logging
+        \Illuminate\Support\Facades\Log::info('Purchase Medicine Input Data:', $input);
+
         // Generate unique purchase number if not provided
         if (empty($input['purchase_no'])) {
             $input['purchase_no'] = generateUniquePurchaseNumber();

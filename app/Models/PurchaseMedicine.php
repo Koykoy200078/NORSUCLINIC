@@ -40,17 +40,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PurchaseMedicine extends Model
 {
     protected $fillable =
-        [
-            'purchase_no',
-            'total',
-            'discount',
-            'tax',
-            'net_amount',
-            'payment_type',
-            'payment_note',
-            'note',
-            'tenant_id',
-        ];
+    [
+        'purchase_no',
+        'total',
+        'discount',
+        'tax',
+        'net_amount',
+        'payment_type',
+        'payment_note',
+        'note',
+    ];
 
     const CASH = 0;
 

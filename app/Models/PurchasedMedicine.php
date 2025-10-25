@@ -48,7 +48,6 @@ class PurchasedMedicine extends Model
         'quantity',
         'amount',
         'tax',
-        'tenant_id',
     ];
 
     public function medicines(): BelongsTo

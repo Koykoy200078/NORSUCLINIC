@@ -104,6 +104,9 @@ class PurchaseMedicineRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $purchaseMedicineArray = Arr::only($input, $this->model->getFillable());
+
+            \Illuminate\Support\Facades\Log::info('Creating PurchaseMedicine with data:', $purchaseMedicineArray);
+
             $purchaseMedicine = PurchaseMedicine::create($purchaseMedicineArray);
 
             foreach ($input['medicine'] as $key => $value) {
@@ -113,11 +116,12 @@ class PurchaseMedicineRepository extends BaseRepository
                     'dosage' => $input['dosage'][$key] ?? null,
                     'manufacturing_date' => $input['manufacturing_date'][$key],
                     'tax' => $input['tax_medicine'][$key] ?? 0,
-                    'expiry_date' => $input['expiry_date'][$key],
+                    'expiry_date' => $input['expiry_date'][$key] ?? null,
                     'quantity' => $input['quantity'][$key],
-                    'amount' => $input['amount'][$key],
-                    'tenant_id',
+                    'amount' => $input['amount'][$key] ?? '0.00',
                 ];
+
+                \Illuminate\Support\Facades\Log::info('Creating PurchasedMedicine with data:', $purchasedMedicineArray);
 
                 PurchasedMedicine::create($purchasedMedicineArray);
                 $medicine = Medicine::find($input['medicine'][$key]);
@@ -143,6 +147,8 @@ class PurchaseMedicineRepository extends BaseRepository
             return true;
         } catch (Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Purchase Medicine Store Error: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Stack Trace: ' . $e->getTraceAsString());
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }

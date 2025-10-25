@@ -70,7 +70,7 @@
             <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
         </td>
         <td>
-            <select class="form-select expiry-format-selector" data-id="{{:uniqueId}}" id="expiry_format{{:uniqueId}}">
+            <select class="form-select expiry-format-selector" data-id="{{:uniqueId}}" id="expiry_format{{:uniqueId}}" name="expiry_format[]">
                 <option value="Y-m-d" selected>Full Date (Y-M-D)</option>
                 <option value="Y-m">Month Only (Y-M)</option>
             </select>

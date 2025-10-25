@@ -46,7 +46,7 @@
                                 {{ Form::text('expiry_date[]', $purchasedMedicine->expiry_date, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date'.$uniqueId,'placeholder'=>__('messages.purchase_medicine.expiry_date')]) }}
                             </td>
                             <td>
-                                <select class="form-select expiry-format-selector" data-id="{{$uniqueId}}" id="expiry_format{{$uniqueId}}">
+                                <select class="form-select expiry-format-selector" data-id="{{$uniqueId}}" id="expiry_format{{$uniqueId}}" name="expiry_format[]">
                                     <option value="Y-m-d" {{ $dateFormat === 'Y-m-d' ? 'selected' : '' }}>Full Date (Y-M-D)</option>
                                     <option value="Y-m" {{ $dateFormat === 'Y-m' ? 'selected' : '' }}>Month Only (Y-M)</option>
                                 </select>
@@ -71,6 +71,16 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Parent-level purchase medicine fields (hidden - populated by JavaScript) -->
+            {{ Form::hidden('total', null, ['id' => 'total']) }}
+            {{ Form::hidden('tax', null, ['id' => 'purchaseTaxId']) }}
+            {{ Form::hidden('discount', null, ['class' => 'purchase-discount', 'id' => 'discountAmount']) }}
+            {{ Form::hidden('net_amount', null, ['id' => 'netAmount']) }}
+            {{ Form::hidden('payment_type', null, ['id' => 'paymentMode']) }}
+            {{ Form::hidden('payment_note', null, ['id' => 'paymentNote']) }}
+            {{ Form::hidden('note', null, ['id' => 'purchaseNote']) }}
+
             <div class="row mt-5 justify-content-between">
 
                 <div class="float-end mt-5">

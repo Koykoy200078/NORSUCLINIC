@@ -13656,6 +13656,18 @@ function initializeFlatpickrForElement(element, format) {
 function initializeAllFlatpickrs() {
   // Check if we're on edit page by looking for existing medicine IDs
   var isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
+
+  // Initialize manufacturing date pickers
+  $(".purchaseMedicineManufacturingDate").each(function () {
+    $(this).flatpickr({
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "F j, Y",
+      allowInput: true
+    });
+  });
+
+  // Initialize expiry date pickers
   $(".purchaseMedicineExpiryDate").each(function () {
     var rowId = $(this).attr("id").replace("expiry_date", "");
     var format = $("#expiry_format" + rowId).val() || "Y-m-d";
@@ -13685,9 +13697,11 @@ function loadPurchaseMedicineCreate() {
     // Reinitialize with new format
     initializeFlatpickrForElement(expiryInput, format, isEditPage);
   });
-  $("#paymentMode,#paymentMode2").select2({
-    width: "100%"
-  });
+
+  // Disabled Select2 for paymentMode since it's now a hidden field
+  // $("#paymentMode,#paymentMode2").select2({
+  //     width: "100%",
+  // });
 }
 listenClick(".add-medicine-btn-purchase", function () {
   uniquePrescriptionId = $("#purchaseUniqueId").val();
@@ -13699,7 +13713,15 @@ listenClick(".add-medicine-btn-purchase", function () {
   $(".prescription-medicine-container").append(prescriptionMedicineHtml);
   dropdownToSelecte2(".purchaseMedicineId");
 
-  // Initialize flatpickr for the newly added row
+  // Initialize flatpickr for manufacturing date in the newly added row
+  $("#manufacturing_date" + uniquePrescriptionId).flatpickr({
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "F j, Y",
+    allowInput: true
+  });
+
+  // Initialize flatpickr for the newly added expiry date row
   var isEditPage = $("input[name='purchased_medicine_id[]']").length > 0;
   var format = $("#expiry_format" + uniquePrescriptionId).val() || "Y-m-d";
   initializeFlatpickrForElement($("#expiry_date" + uniquePrescriptionId), format, isEditPage);
@@ -13883,16 +13905,21 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
     //     }
     // }
 
-    var purchasePrice = "#purchase_price" + i;
-    if (typeof $(purchasePrice).val() != "undefined") {
-      if ($(purchasePrice).val() == null || $(purchasePrice).val() == "") {
-        displayErrorMessage("Enter purchase price.");
-        return false;
-      } else if ($(purchasePrice).val() == 0) {
-        displayErrorMessage(Lang.get("js.quantity_should"));
-        return false;
-      }
-    }
+    // Purchase price validation removed - field is intentionally hidden with default value 0.00
+    // let purchasePrice = "#purchase_price" + i;
+    // if (typeof $(purchasePrice).val() != "undefined") {
+    //     if (
+    //         $(purchasePrice).val() == null ||
+    //         $(purchasePrice).val() == ""
+    //     ) {
+    //         displayErrorMessage("Enter purchase price.");
+    //         return false;
+    //     } else if ($(purchasePrice).val() == 0) {
+    //         displayErrorMessage(Lang.get("js.quantity_should"));
+    //         return false;
+    //     }
+    // }
+
     var quantityID = "#quantity" + i;
     if (typeof $(quantityID).val() != "undefined") {
       if ($(quantityID).val() == null || $(quantityID).val() == "") {
