@@ -133,19 +133,24 @@
     </a>
 </li>
 @endcan
-<li
+{{--
+    <li
     class="nav-item {{ Request::is('doctors/doctor-schedule-edit*', 'doctors/doctor-sessions/create') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getLoginDoctorSessionUrl() }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar"></i></span>
-        <span class="aside-menu-title">{{ __('messages.doctor_session.my_schedule') }}</span>
-    </a>
+<a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getLoginDoctorSessionUrl() }}">
+    <span class="aside-menu-icon pe-3"><i class="fas fa-calendar"></i></span>
+    <span class="aside-menu-title">{{ __('messages.doctor_session.my_schedule') }}</span>
+</a>
 </li>
-<li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
-        <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
-        <span class="aside-menu-title">{{ __('messages.holiday.holiday') }}</span>
-    </a>
+--}}
+
+{{--
+    <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
+<a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
+    <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
+    <span class="aside-menu-title">{{ __('messages.holiday.holiday') }}</span>
+</a>
 </li>
+--}}
 @endrole
 @role('patient')
 <li
