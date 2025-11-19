@@ -4,7 +4,13 @@
 npm-debug.log
 yarn-error.log
 
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # Environment and configuration files
+.env
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml
@@ -29,6 +35,7 @@ Homestead.yaml
 /public/uploads
 /public/js/app.js
 /public/mix-manifest.json
+/public/messages.js
 
 # Storage and sensitive files
 /storage/*.key
