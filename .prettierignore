@@ -1,0 +1,10 @@
+# Ignore Laravel Blade templates to prevent PHP formatting issues
+resources/views/**/*.blade.php
+
+# Other common ignores
+vendor/
+node_modules/
+public/build/
+public/hot
+storage/
+bootstrap/cache/

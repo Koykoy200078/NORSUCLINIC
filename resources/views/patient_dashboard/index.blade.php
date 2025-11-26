@@ -410,77 +410,45 @@
 </div>
 
 <script>
-    console.log('Inline script loaded - checking default password');
-
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded');
 
         // Check if user has default password
         var hasDefaultPassword = @json($hasDefaultPassword ?? false);
 
-        console.log('=== Password Check Debug ===');
-        console.log('Has default password:', hasDefaultPassword);
-
         if (hasDefaultPassword) {
-            console.log('User has default password - triggering change password modal');
-
             setTimeout(function() {
-                console.log('Attempting to trigger password change...');
                 var changePasswordBtn = document.getElementById('changePassword');
 
                 if (changePasswordBtn) {
-                    console.log('Found changePassword button, clicking...');
                     changePasswordBtn.click();
                 } else {
-                    console.error('changePassword button not found in DOM');
-
                     // Try jQuery fallback
                     if (typeof $ !== 'undefined') {
                         var $btn = $('#changePassword');
                         if ($btn.length > 0) {
-                            console.log('Found with jQuery, clicking...');
                             $btn.click();
-                        } else {
-                            console.error('Button not found with jQuery either');
                         }
                     }
                 }
             }, 1500);
-        } else {
-            console.log('Password has been changed - no action needed');
         }
     });
 </script>
 
 @push('scripts')
 <script>
-    console.log('Dashboard script loaded');
-
     $(document).ready(function() {
-        console.log('Document ready');
-
         // Check if user has default password and trigger header change password modal
         var hasDefaultPassword = @json($hasDefaultPassword ?? false);
 
-        console.log('=== Password Check Debug ===');
-        console.log('Has default password:', hasDefaultPassword);
-        console.log('changePassword element exists:', $('#changePassword').length > 0);
-
         // Trigger the header's change password modal if user has default password
         if (hasDefaultPassword) {
-            console.log('User has default password - triggering header change password modal');
             setTimeout(function() {
-                console.log('Attempting to click changePassword button...');
                 var changePasswordBtn = $('#changePassword');
                 if (changePasswordBtn.length > 0) {
-                    console.log('Button found, clicking...');
                     changePasswordBtn.click();
-                } else {
-                    console.error('changePassword button not found!');
                 }
             }, 1000);
-        } else {
-            console.log('User has changed password - no action needed');
         }
     });
 </script>

@@ -13,131 +13,6 @@
         @include('flash::message')
     </div>
 
-    {{-- Debug: Deep data verification with null/empty checks --}}
-    <script>
-        console.log('=== DEEP PROFILE EDIT DEBUG ===');
-
-        // Parse user and patient data as objects
-        const userData = @json($user ?? null);
-        const patientData = @json($patient ?? null);
-        const patientAddress = @json($patient->address ?? null);
-
-        console.log('User Object:', userData);
-        console.log('Patient Object:', patientData);
-        console.log('Patient Address:', patientAddress);
-
-        // Deep verification of user properties
-        console.log('=== USER DATA VERIFICATION ===');
-        console.log('User exists?', userData !== null);
-        console.log('User ID:', userData?.id || 'NULL');
-        console.log('User Email:', userData?.email || 'NULL');
-        console.log('User Department ID:', userData?.department_id || 'NULL');
-        console.log('User Office ID:', userData?.office_id || 'NULL');
-        console.log('User Year Level ID:', userData?.year_level_id || 'NULL');
-        console.log('User College ID:', userData?.college_id || 'NULL');
-
-        // Deep verification of department_id specifically
-        console.log('=== DEPARTMENT ID DEEP CHECK ===');
-        console.log('Type of department_id:', typeof userData?.department_id);
-        console.log('Is NULL?', userData?.department_id === null);
-        console.log('Is undefined?', userData?.department_id === undefined);
-        console.log('Is empty string?', userData?.department_id === '');
-        console.log('Is zero?', userData?.department_id === 0);
-        console.log('Truthiness:', !!userData?.department_id);
-
-        // Dropdown data arrays
-        console.log('=== DROPDOWN DATA ARRAYS ===');
-        console.log('Departments Count:', {
-            {
-                count($data['departments'] ?? [])
-            }
-        });
-        console.log('Offices Count:', {
-            {
-                count($data['offices'] ?? [])
-            }
-        });
-        console.log('States Count:', {
-            {
-                count($data['states'] ?? [])
-            }
-        });
-        console.log('Cities Count:', {
-            {
-                count($data['cities'] ?? [])
-            }
-        });
-
-        // Selected values verification
-        console.log('=== SELECTED VALUES VERIFICATION ===');
-        const deptId = '{{ $user->department_id ?? "" }}';
-        const officeId = '{{ $user->office_id ?? "" }}';
-        const stateId = '{{ !empty($patient->address) ? $patient->address->state_id : "" }}';
-        const cityId = '{{ !empty($patient->address) ? $patient->address->city_id : "" }}';
-
-        console.log('Department ID from Blade:', deptId, '| Length:', deptId.length, '| Empty?', deptId === '');
-        console.log('Office ID from Blade:', officeId, '| Length:', officeId.length, '| Empty?', officeId === '');
-        console.log('State ID from Blade:', stateId, '| Length:', stateId.length, '| Empty?', stateId === '');
-        console.log('City ID from Blade:', cityId, '| Length:', cityId.length, '| Empty?', cityId === '');
-
-        // Check actual HTML rendered (truncated to avoid console clutter)
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== HTML VERIFICATION ===');
-
-            // Check hidden debug divs for server-rendered values
-            const debugDept = document.getElementById('debug-dept-value');
-            const debugState = document.getElementById('debug-state-value');
-
-            if (debugDept) {
-                console.log('DEBUG DEPT DIV:', debugDept.textContent.trim());
-                console.log('DEBUG DEPT DATA-VALUE:', debugDept.getAttribute('data-value'));
-            }
-
-            if (debugState) {
-                console.log('DEBUG STATE DIV:', debugState.textContent.trim());
-                console.log('DEBUG STATE DATA-VALUE:', debugState.getAttribute('data-value'));
-            }
-
-            const deptDropdown = document.getElementById('departmentSelect');
-            const stateDropdown = document.getElementById('patientProfileStateId');
-            const cityDropdown = document.getElementById('patientProfileCityId');
-
-            if (deptDropdown) {
-                const selectedOption = deptDropdown.querySelector('option[selected]');
-                console.log('Department dropdown options:', deptDropdown.options.length);
-                console.log('Department selected option:', selectedOption?.value || 'NONE');
-                console.log('Department current value:', deptDropdown.value);
-
-                // List all options to verify if the value exists
-                console.log('Department options:', Array.from(deptDropdown.options).map(o => ({
-                    value: o.value,
-                    text: o.text,
-                    selected: o.selected
-                })));
-            } else {
-                console.log('Department dropdown: NOT FOUND');
-            }
-
-            if (stateDropdown) {
-                const selectedOption = stateDropdown.querySelector('option[selected]');
-                console.log('State dropdown options:', stateDropdown.options.length);
-                console.log('State selected option:', selectedOption?.value || 'NONE');
-                console.log('State current value:', stateDropdown.value);
-            } else {
-                console.log('State dropdown: NOT FOUND');
-            }
-
-            if (cityDropdown) {
-                const selectedOption = cityDropdown.querySelector('option[selected]');
-                console.log('City dropdown options:', cityDropdown.options.length);
-                console.log('City selected option:', selectedOption?.value || 'NONE');
-                console.log('City current value:', cityDropdown.value);
-            } else {
-                console.log('City dropdown: NOT FOUND');
-            }
-        });
-    </script>
-
     <form id="profileForm" method="POST" action="{{ route('update.profile.setting') }}" enctype="multipart/form-data">
         {{ Form::hidden('is_edit', true, ['id' => 'staffProfileIsEdit']) }}
         {{ Form::hidden('is_edit', true, ['id' => 'patientProfileIsEdit']) }}
@@ -658,19 +533,13 @@
         setTimeout(function() {
             const positionType = $(positionTypeSelect).val();
 
-            console.log('=== SETTING VALUES ===');
-
             // For Faculty - set department
             if (positionType === 'faculty' && departmentSelect) {
                 const savedDeptId = '{{ $user->department_id ?? "" }}';
-                console.log('Attempting to set department to:', savedDeptId);
                 if (savedDeptId) {
-                    // First check if the option exists
                     const optionExists = $(departmentSelect).find('option[value="' + savedDeptId + '"]').length > 0;
-                    console.log('Department option exists?', optionExists);
                     if (optionExists) {
                         $(departmentSelect).val(savedDeptId).trigger('change');
-                        console.log('Department set successfully');
                     }
                 }
             }
@@ -680,34 +549,26 @@
                 const savedOfficeId = '{{ $user->office_id ?? "" }}';
                 if (savedOfficeId) {
                     $(officeSelect).val(savedOfficeId).trigger('change');
-                    console.log('Set office to:', savedOfficeId);
                 }
             }
 
             // Address fields - set state (province)
             const savedStateId = '{{ !empty($patient->address) ? $patient->address->state_id : "" }}';
-            console.log('Attempting to set state to:', savedStateId);
             if (savedStateId) {
                 const stateOptionExists = $('#patientProfileStateId').find('option[value="' + savedStateId + '"]').length > 0;
-                console.log('State option exists?', stateOptionExists);
                 if (stateOptionExists) {
                     $('#patientProfileStateId').val(savedStateId).trigger('change');
-                    console.log('State set successfully');
 
                     // After setting state, we need to load cities via AJAX, then set city value
                     setTimeout(function() {
                         const savedCityId = '{{ !empty($patient->address) ? $patient->address->city_id : "" }}';
-                        console.log('Attempting to set city to:', savedCityId);
                         if (savedCityId) {
-                            // Check if city option was loaded by AJAX
                             const cityOptionExists = $('#patientProfileCityId').find('option[value="' + savedCityId + '"]').length > 0;
-                            console.log('City option exists?', cityOptionExists);
                             if (cityOptionExists) {
                                 $('#patientProfileCityId').val(savedCityId).trigger('change');
-                                console.log('City set successfully');
                             }
                         }
-                    }, 1000); // Wait for AJAX to complete
+                    }, 1000);
                 }
             }
         }, 800);
