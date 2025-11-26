@@ -30,7 +30,7 @@ class UpdatePatientRequest extends FormRequest
         if ($patient instanceof Patient) {
             $rules['patient_unique_id'] = 'required|regex:/^\S*$/u|unique:patients,patient_unique_id,' . $patient->id;
             $rules['email'] = 'nullable|email:filter|unique:users,email,' . $patient->user_id;
-            $rules['contact'] = 'nullable|unique:users,contact,' . $patient->user_id;
+            $rules['contact'] = 'nullable';
         } else {
             // Fallback - should not reach here if route model binding works
             Log::error('UpdatePatientRequest: Patient parameter is NULL or not instance of Patient', [

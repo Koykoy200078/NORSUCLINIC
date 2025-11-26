@@ -111,7 +111,7 @@ class PatientRepository extends BaseRepository
                 'all_year_levels',
             ]);
 
-            // $input['password'] = Hash::make($input['password']);
+            $userInput['password'] = Hash::make(!empty($input['password']) ? $input['password'] : '123456');
             $user = User::create($userInput);
 
             $patient = $user->patient()->create($patientArray);

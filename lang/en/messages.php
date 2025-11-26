@@ -239,6 +239,7 @@ return [
         'status' => 'Status',
         'cancel' => 'Cancel',
         'discard' => 'Discard',
+        'date' => 'Date',
         'country' => 'Country',
         'province' => 'Province',
         'city' => 'City',
@@ -374,6 +375,10 @@ return [
         'google_captcha_secret_required' => 'Google captcha secret field is required.',
         'space_not_allowed_in_unique_id_field' => 'Space not allowed in unique id field',
         'pick_date_range' => 'Pick date range',
+        'view_all' => 'View All',
+        'quick_actions' => 'Quick Actions',
+        'view_details' => 'View Details',
+        'address' => 'Address',
     ],
 
     'user' => [
@@ -383,6 +388,11 @@ return [
         'full_name' => 'Full Name',
         'email' => 'Email',
         'contact_number' => 'Contact Number',
+        'profile_summary' => 'Profile Summary',
+        'phone' => 'Phone',
+        'dob' => 'Date of Birth',
+        'male' => 'Male',
+        'female' => 'Female',
         'save_changes' => 'Save Changes',
         'setting' => 'Setting',
         'account_setting' => 'Account Settings',
@@ -476,6 +486,10 @@ return [
         'emailverified' => 'Email Verified',
         'vaccination_status' => 'COVID Vaccination Status',
         'choose_vaccination_status' => 'Choose Vaccination Status',
+        'health_records' => 'Health Records',
+        'recent_visits' => 'Recent Visits',
+        'no_visits' => 'No visits found',
+        'visit_history' => 'Visit History',
     ],
 
     'request' => [
@@ -680,6 +694,8 @@ return [
         'patient_id' => 'Patient Id',
         'appointment_details' => 'Appointment Details',
         'appointment_at' => 'Appointment At',
+        'consultation_with' => 'Consultation with',
+        'date' => 'Date',
         'appointment_unique_id' => 'Appointment ID',
         'appointment_date' => 'Appointment Date',
         'switch_to_calendar' => 'Switch to Calendar',
@@ -706,6 +722,10 @@ return [
         'please_select_appointment_time_slot' => 'Please select appointment time slot.',
         'ServiceRequired' => 'Service field is required',
         'SelectAppointment' => 'Please select a reservation period.',
+        'new_appointment' => 'New Appointment',
+        'my_appointments' => 'My Appointments',
+        'consultation_with' => 'Consultation with',
+        'date' => 'Date',
     ],
 
     'doctor_appointment' => [
@@ -726,6 +746,8 @@ return [
         'completed_appointments' => 'Completed Appointments',
         'upcoming_appointments' => 'Upcoming Appointments',
         'next_appointment' => 'Next Appointments',
+        'appointment_overview' => 'Appointment Overview',
+        'yearly_appointments' => 'Yearly Appointments',
     ],
 
     'currency' => [
@@ -766,6 +788,11 @@ return [
         'name' => 'Name',
         'frequency' => 'Frequency',
         'duration' => 'Duration',
+        'medicine_history' => 'Medicine History',
+        'recent_prescriptions' => 'Recent Prescriptions',
+        'medicines' => 'Medicines',
+        'no_prescriptions' => 'No prescriptions found',
+        'download_pdf' => 'Download PDF',
     ],
 
     'slider' => [
@@ -1297,7 +1324,9 @@ return [
         'available_quantity_of' => 'The available quantity of ',
         'is' => 'is',
         'selectMedicine' => "Select medicine",
-        'total_quantity' => 'Total Quantity'
+        'total_quantity' => 'Total Quantity',
+        'medicines' => 'Medicines',
+        'no_prescriptions' => 'No prescriptions found'
     ],
 
     'qr_patient_detail' => [

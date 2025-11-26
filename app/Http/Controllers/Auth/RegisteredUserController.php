@@ -56,7 +56,7 @@ class RegisteredUserController extends Controller
             'type' => User::PATIENT,
             'language' => getSettingValue('language'),
             'country_code' => getSettingValue('country_code'),
-            'time_zone' => 0,
+            'time_zone' => 'Asia/Manila',
         ]);
 
         $user->patient()->create([

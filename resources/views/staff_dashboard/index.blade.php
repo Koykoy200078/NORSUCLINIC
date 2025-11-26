@@ -6,10 +6,10 @@
 <div class="container-fluid">
     <div class="d-flex flex-column">
         <div class="row">
-            <div class="col-xl-4">
+            <div class="col-xl-12">
                 <livewire:staff-dashboard />
             </div>
-            <div class="col-xxl-8 col-xl-8">
+            <div class="col-xl-12">
                 <!--begin::Charts Widget 8-->
                 <div class="row">
                     <livewire:staff-dashboard-sidebar-table />

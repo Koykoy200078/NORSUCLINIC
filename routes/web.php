@@ -1,5 +1,8 @@
 <?php
 
+// Debug route
+require __DIR__ . '/debug-profile.php';
+
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorizePaymentController;
@@ -220,6 +223,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::resource('patients', PatientController::class);
         Route::get('patient-appointments', [PatientController::class, 'patientAppointment'])->name('patients.appointment');
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
+        Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
     });
 
     // Request Documents
@@ -367,6 +371,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::resource('patients', PatientController::class);
         Route::get('patient-appointments', [PatientController::class, 'patientAppointment'])->name('patients.appointment');
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
+        Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
     });
 
@@ -581,6 +586,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::middleware('permission:manage_patients')->group(function () {
         Route::resource('patients', PatientController::class);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
+        Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
     });
 

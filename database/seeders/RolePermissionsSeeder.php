@@ -23,10 +23,9 @@ class RolePermissionsSeeder extends Seeder
         $this->command->info('Setting up role permissions...');
 
         // Define default permissions for each role based on current database state
-        // UPDATED: Removed view-only restrictions, doctors now have full CRUD access
+        // UPDATED: Removed appointments and transactions permissions from doctors
         $rolePermissions = [
             'doctor' => [
-                'manage_appointments',
                 'manage_doctor_sessions',
                 'manage_doctors_holiday',
                 'manage_medicines',
@@ -35,10 +34,8 @@ class RolePermissionsSeeder extends Seeder
                 'manage_request_documents',
                 'manage_services',           // Added: Full service management
                 'manage_specialties',        // Added: Full specialty management
-                'manage_transactions',
             ],
             'staff' => [
-                'manage_appointments',
                 'manage_doctor_sessions',
                 'manage_doctors',
                 'manage_doctors_holiday',
@@ -50,7 +47,6 @@ class RolePermissionsSeeder extends Seeder
                 'manage_specialties',
                 'manage_staff',
                 'manage_staff_dashboard',
-                'manage_transactions',
             ],
         ];
 

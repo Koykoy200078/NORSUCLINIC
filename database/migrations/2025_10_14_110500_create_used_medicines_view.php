@@ -21,6 +21,12 @@ return new class extends Migration
                 rd.name as patient_name,
                 COALESCE(CONCAT(nurse.first_name, ' ', nurse.last_name), 'N/A') as nurse_incharged,
                 COALESCE(cm.used_for, 'N/A') as used_for,
+                (SELECT pm.expiry_date 
+                 FROM purchased_medicines pm 
+                 WHERE pm.medicine_id = cm.medicine_id 
+                 AND pm.expiry_date >= CURDATE() 
+                 ORDER BY pm.expiry_date ASC 
+                 LIMIT 1) as expiry_date,
                 cm.created_at
             FROM consultation_medicines cm
             INNER JOIN medicines m ON cm.medicine_id = m.id
@@ -38,6 +44,12 @@ return new class extends Migration
                 COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'N/A') as patient_name,
                 'N/A' as nurse_incharged,
                 'Sale' as used_for,
+                (SELECT pm.expiry_date 
+                 FROM purchased_medicines pm 
+                 WHERE pm.medicine_id = sm.medicine_id 
+                 AND pm.expiry_date >= CURDATE() 
+                 ORDER BY pm.expiry_date ASC 
+                 LIMIT 1) as expiry_date,
                 sm.created_at
             FROM sale_medicines sm
             INNER JOIN medicines m ON sm.medicine_id = m.id

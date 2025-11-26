@@ -119,6 +119,40 @@ listenClick(".patient-delete-btn", function () {
     deleteItem(url, Lang.get("js.patient"));
 });
 
+listenClick(".patient-reset-password-btn", function () {
+    let userId = $(this).attr("data-id");
+    let resetUrl = $(this).attr("data-reset-url");
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This will reset the patient's password to default (123456)",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, reset it!",
+        cancelButtonText: "Cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: resetUrl,
+                success: function (result) {
+                    if (result.success) {
+                        displaySuccessMessage(result.message);
+                    }
+                },
+                error: function (result) {
+                    displayErrorMessage(
+                        result.responseJSON.message ||
+                            "Failed to reset password"
+                    );
+                },
+            });
+        }
+    });
+});
+
 listenChange(".patient-email-verified", function (e) {
     let patientRecordId = $(e.currentTarget).attr("data-id");
     let value = $(this).is(":checked") ? 1 : 0;

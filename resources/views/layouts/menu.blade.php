@@ -40,7 +40,7 @@
 
 
 @can('manage_staff')
-@if(getLogInUser()->hasRole('clinic_admin'))
+@if(isRole('clinic_admin'))
 <li class="nav-item {{ Request::is('admin/staffs*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staffs.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-users"></i></span>
@@ -50,8 +50,8 @@
 @endif
 @endcan
 
-@role('doctor')
 @can('manage_appointments')
+@if(isRole('doctor'))
 <li class="nav-item {{ Request::is('doctors/appointments*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.appointments') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
@@ -70,9 +70,11 @@
         <span class="d-none">{{ __('messages.patients') }}</span>
     </a>
 </li>
+@endif
 @endcan
 
 {{-- Patient Queue - For Doctors --}}
+@if(isRole('doctor'))
 <li class="nav-item {{ Request::is('doctors/patient-queue*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queue.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
@@ -95,8 +97,10 @@
         @endif
     </a>
 </li>
+@endif
 
 @can('manage_request_documents')
+@if(isRole('doctor'))
 <li
     class="nav-item {{ Request::is('doctors/request-documents*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
@@ -123,15 +127,18 @@
         @endif
     </a>
 </li>
+@endif
 @endcan
 
 @can('manage_transactions')
+@if(isRole('doctor'))
 <li class="nav-item {{ Request::is('doctors/transactions*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.transactions') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
         <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
     </a>
 </li>
+@endif
 @endcan
 {{--
     <li
@@ -151,8 +158,8 @@
 </a>
 </li>
 --}}
-@endrole
-@role('patient')
+@can('manage_appointments')
+@if(isRole('patient'))
 <li
     class="nav-item {{ Request::is('patients/appointments*', 'patients/patient-appointments-calendar*', 'patients/doctors*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
@@ -161,43 +168,64 @@
         <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
     </a>
 </li>
+@endif
+@endcan
 
+@can('manage_transactions')
+@if(isRole('patient'))
 <li class="nav-item {{ Request::is('patients/transactions*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.transactions') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
         <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
     </a>
 </li>
-
-@can('manage_request_documents')
-<li
-    class="nav-item {{ Request::is('patients/request-documents*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.request-documents.index') }}">
-        <span class="aside-menu-icon pe-3">
-            <i class="fa-solid fa-file-signature"></i>
-        </span>
-        <span class="aside-menu-title">Request Documents</span>
-    </a>
-</li>
+@endif
 @endcan
 
-<!-- <li class="nav-item {{ Request::is('patients/patient-visits*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.patient.visits.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
-        <span class="aside-menu-title">{{ __('messages.visits') }}</span>
-    </a>
-</li> -->
+{{-- Request Documents temporarily disabled for patients - route not implemented
+@can('manage_request_documents')
+@if(isRole('patient'))
+<li
+    class="nav-item {{ Request::is('patients/request-documents*') ? 'active' : '' }}">
+<a class="nav-link d-flex align-items-center py-4" aria-current="page"
+    href="{{ route('patients.request-documents.index') }}">
+    <span class="aside-menu-icon pe-3">
+        <i class="fa-solid fa-file-signature"></i>
+    </span>
+    <span class="aside-menu-title">Request Documents</span>
+</a>
+</li>
+@endif
+@endcan
+--}}
 
-<!-- <li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.live-consultations.index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
-        <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
-    </a>
-</li> -->
-@endrole
+{{-- Patient Visits temporarily disabled - route not implemented
+@can('manage_patient_visits')
+@if(isRole('patient'))
+<li class="nav-item {{ Request::is('patients/patient-visits*') ? 'active' : '' }}">
+<a class="nav-link d-flex align-items-center py-4" aria-current="page"
+    href="{{ route('patients.patient.visits.index') }}">
+    <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
+    <span class="aside-menu-title">{{ __('messages.visits') }}</span>
+</a>
+</li>
+@endif
+@endcan
+--}}
+
+{{-- Live Consultations temporarily disabled for patients - route not implemented
+@can('manage_live_consultations')
+@if(isRole('patient'))
+<li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
+<a class="nav-link d-flex align-items-center py-4" aria-current="page"
+    href="{{ route('patients.live-consultations.index') }}">
+    <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
+    <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
+</a>
+</li>
+@endif
+@endcan
+--}}
 @can('manage_doctors')
 <li
     class="nav-item {{ 
@@ -278,8 +306,8 @@
 </li>
 @endif
 @endcan
-@if (!isRole('doctor') && !isRole('patient'))
 @can('manage_appointments')
+@if(isRole('clinic_admin') || isRole('staff'))
 <li
     class="nav-item {{ 
         (isRole('clinic_admin') && Request::is('admin/appointments*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*')) ||
@@ -294,8 +322,8 @@
         <span class="aside-menu-title">{{ __('messages.appointments') }}</span>
     </a>
 </li>
-@endcan
 @endif
+@endcan
 @can('manage_medicines')
 <li
     class="nav-item {{ 
@@ -370,8 +398,8 @@
     </a>
 </li>
 @endcan
-@if (!isRole('doctor') && !isRole('patient'))
 @can('manage_transactions')
+@if(isRole('clinic_admin') || isRole('staff'))
 <li class="nav-item {{ 
     (isRole('clinic_admin') && Request::is('admin/transactions*')) ||
     (isRole('staff') && Request::is('staff/transactions*'))
@@ -384,18 +412,21 @@
         <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
     </a>
 </li>
-@endcan
 @endif
-@if (!isRole('doctor') && !isRole('patient'))
+@endcan
 <!-- @can('manage_patient_visits')
-<li class="nav-item {{ Request::is('admin/visits*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('visits.index') }}">
+@if(isRole('clinic_admin') || isRole('staff'))
+<li class="nav-item {{ Request::is('admin/visits*', 'staff/visits*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('visits.index') : 
+        (isRole('staff') ? route('staff.visits.index') : route('visits.index'))
+    }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
         <span class="aside-menu-title">{{ __('messages.visits') }}</span>
     </a>
 </li>
-@endcan -->
 @endif
+@endcan -->
 @can('manage_services')
 <li class="nav-item {{ 
     (isRole('clinic_admin') && Request::is('admin/services*', 'admin/service-categories*')) ||

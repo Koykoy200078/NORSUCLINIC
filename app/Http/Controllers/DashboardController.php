@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\Patient;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class DashboardController extends AppBaseController
 {
@@ -80,7 +82,8 @@ class DashboardController extends AppBaseController
         $data = $this->dashboardRepository->getPatientData();
         $logo = Setting::where('key', 'logo')->pluck('value');
         $patientAllAppointment = $this->dashboardRepository->patientAllAppointment();
-        return view('patient_dashboard.index', compact('data', 'logo', 'patientAllAppointment'));
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        return view('patient_dashboard.index', compact('data', 'logo', 'patientAllAppointment', 'hasDefaultPassword'));
     }
 
     /**
@@ -99,5 +102,44 @@ class DashboardController extends AppBaseController
         }
 
         return view('staff_dashboard.index', compact('data', 'appointmentChartData', 'clinic_name'));
+    }
+
+    /**
+     * Change default password for patient
+     */
+    public function changeDefaultPassword(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:6|confirmed',
+            ]);
+
+            $user = Auth::user();
+
+            // Verify current password is the default password
+            if (!Hash::check($request->current_password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => ['The current password is incorrect.'],
+                ]);
+            }
+
+            // Ensure new password is not the same as default
+            if ($request->new_password === '123456') {
+                throw ValidationException::withMessages([
+                    'new_password' => ['Please choose a different password from the default one.'],
+                ]);
+            }
+
+            // Update password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return $this->sendSuccess('Password changed successfully.');
+        } catch (ValidationException $e) {
+            return $this->sendError($e->getMessage(), 422);
+        } catch (\Exception $e) {
+            return $this->sendError('An error occurred while changing password.', 500);
+        }
     }
 }

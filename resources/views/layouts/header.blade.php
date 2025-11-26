@@ -22,15 +22,17 @@
             </span>
         </li>
         @endImpersonating
+        {{-- Smart card temporarily disabled for patients - template_id column doesn't exist in patients table
         @if (isRole('patient'))
         @php
         $isholdcard = App\Models\Patient::where('user_id', Auth::user()->id)->whereNotNull('template_id')->exists();
         @endphp
         @if ($isholdcard)
         <a href="javascript:void(0)" class="btn px-5 text-primary fs-3 show_patient_card" data-id="{{getLogInUser()->patient->id}}" data-toggle="modal" data-target="#show_card_modal" data-bs-toggle="tooltip"
-            data-bs-original-title="{{ __('messages.smart_patient_card.smart_card') }}"> <i class="fa-solid fa-id-card fs-1"></i></a>
+        data-bs-original-title="{{ __('messages.smart_patient_card.smart_card') }}"> <i class="fa-solid fa-id-card fs-1"></i></a>
         @endif
         @endif
+        --}}
         {{-- <li class="px-sm-3 px-2">
             @if(Auth::user()->dark_mode)
                 <a href="javascript:void(0)" title="Switch to Light mode"><i
@@ -156,7 +158,8 @@
                             </a>
                         </li>
                         @endif
-                        @if(getLogInUser()->hasRole('doctor') || getLogInUser()->hasRole('patient'))
+
+                        <!-- @if(getLogInUser()->hasRole('doctor') || getLogInUser()->hasRole('patient'))
                         <li>
                             <a class="dropdown-item text-gray-900" id="emailNotification" href="javascript:void(0)">
                                 <span class="dropdown-icon me-4 text-gray-600">
@@ -165,7 +168,8 @@
                                 {{ __('messages.user.email_notification') }}
                             </a>
                         </li>
-                        @endif
+                        @endif -->
+
                         @if(session('impersonated_by'))
                         <li>
                             <a class="dropdown-item text-gray-900" href="{{ route('impersonate.leave') }}">
@@ -176,14 +180,14 @@
                             </a>
                         </li>
                         @endif
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item text-gray-900" id="changeLanguage" href="javascript:void(0)">
                                 <span class="dropdown-icon me-4 text-gray-600">
                                     <i class="fa-solid fa-globe"></i>
                                 </span>
                                 {{ __('messages.user.change_language') }}
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <a class="dropdown-item text-gray-900 d-flex" href="javascript:void(0)">
                                 <span class="dropdown-icon me-4 text-gray-600">

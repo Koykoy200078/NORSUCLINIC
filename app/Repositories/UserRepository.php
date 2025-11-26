@@ -9,9 +9,11 @@ use App\Models\City;
 use App\Models\College;
 use App\Models\Country;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
 use App\Models\DoctorSession;
+use App\Models\Office;
 use App\Models\Patient;
 use App\Models\Qualification;
 use App\Models\Specialization;
@@ -76,6 +78,8 @@ class UserRepository extends BaseRepository
         $data['colleges'] = College::toBase()->pluck('college_name', 'id');
         $data['courses'] = Course::toBase()->pluck('course_name', 'id');
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
+        $data['departments'] = Department::toBase()->pluck('department_name', 'id');
+        $data['offices'] = Office::toBase()->pluck('office_name', 'id');
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
@@ -176,6 +180,9 @@ class UserRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $user = Auth::user();
+
+            \Log::info('UserRepository updateProfile - User Input:', $userInput);
+
             $addressInputArray = Arr::only(
                 $userInput,
                 ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
@@ -218,7 +225,11 @@ class UserRepository extends BaseRepository
                     'edit_patient_state_id',
                     'edit_patient_city_id',
                     'backgroundImg',
-                    'image'
+                    'image',
+                    'is_employee',
+                    'is_guest',
+                    'position_type',
+                    'all_year_levels'
                 ]));
 
                 if (isset($patient->address)) {

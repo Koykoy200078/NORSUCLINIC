@@ -15,9 +15,6 @@ class DefaultSpecializationSeeder extends Seeder
         $input = [
             [
                 'name' => 'Medical',
-            ],
-            [
-                'name' => 'Dental',
             ]
         ];
 

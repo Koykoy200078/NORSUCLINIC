@@ -142,7 +142,7 @@ class Patient extends Model implements HasMedia
         'first_name' => 'required',
         'last_name' => 'required',
         'email' => 'nullable|email|unique:users,email',
-        'contact' => 'nullable|unique:users,contact',
+        'contact' => 'nullable',
         'password' => 'nullable|same:password_confirmation|min:6',
         'postal_code' => 'nullable',
         'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',

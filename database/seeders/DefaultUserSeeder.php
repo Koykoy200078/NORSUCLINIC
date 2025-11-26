@@ -30,7 +30,7 @@ class DefaultUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('123456'),
                 'country_code' => '63',
-                'time_zone' => '0',
+                'time_zone' => 'Asia/Manila',
             ]
         ];
 

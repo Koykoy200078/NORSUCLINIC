@@ -76,20 +76,22 @@
                                     <h6 class="text-end mb-3 patient_unique_id d-inline">
                                     </h6>
                                 </div>
+                                {{-- Patient smart card download temporarily disabled - route not implemented
                                 @if (isRole('patient'))
                                 <div class="ms-auto">
                                     <a href="{{ route('patients.patients.smartCardPdf', getLogInUser()->patient->id) }}" target="_blank"
-                                        class="btn px-1 fs-1 patient-model-download float-end" data-bs-toggle="tooltip"
-                                        data-bs-original-title="{{ __('messages.common.download') }}">
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-                                @endif
+                                class="btn px-1 fs-1 patient-model-download float-end" data-bs-toggle="tooltip"
+                                data-bs-original-title="{{ __('messages.common.download') }}">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
                             </div>
+                            @endif
+                            --}}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>

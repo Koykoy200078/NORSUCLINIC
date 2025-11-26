@@ -29,13 +29,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        if (Auth::user()->type === User::PATIENT) {
-            Auth::logout(); // Log out the user
-            return redirect()->route('login')->withErrors([
-                'email' => 'Patients are not allowed to log in.',
-            ]);
-        }
-
+        // Allow all user types including patients to log in
         $request->session()->regenerate();
 
         return redirect()->intended(getDashboardURL());

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\View\View;
 use App\DataTables\PatientDataTable;
 use Illuminate\Http\RedirectResponse;
@@ -263,5 +264,24 @@ class PatientController extends AppBaseController
 
         // Pass the data to the view
         return view('patients.view_patient', compact('patient', 'consultations', 'medicalCertificates'));
+    }
+
+    public function resetPassword(User $user): JsonResponse
+    {
+        try {
+            $user->update([
+                'password' => Hash::make('123456')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password has been reset to default (123456) successfully.'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

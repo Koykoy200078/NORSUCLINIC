@@ -55,6 +55,7 @@ class UsedMedicineView extends Model
         'patient_name',
         'nurse_incharged',
         'used_for',
+        'expiry_date',
         'created_at',
     ];
 
@@ -65,5 +66,14 @@ class UsedMedicineView extends Model
      */
     protected $casts = [
         'created_at' => 'datetime',
+        'expiry_date' => 'datetime',
     ];
+
+    /**
+     * Get the medicine that was used.
+     */
+    public function medicine()
+    {
+        return $this->belongsTo(Medicine::class, 'medicine_id');
+    }
 }

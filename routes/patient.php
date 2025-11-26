@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUserStatus', 'role:patient')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'patientDashboard'])->name('dashboard');
+    Route::post('/change-default-password', [DashboardController::class, 'changeDefaultPassword'])->name('change-default-password');
     Route::get(
         '/dashboard-patients',
         [DashboardController::class, 'getPatientList']

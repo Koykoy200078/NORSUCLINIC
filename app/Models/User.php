@@ -190,7 +190,7 @@ class User extends Authenticatable implements HasMedia
     ];
 
     const TIME_ZONE_ARRAY = [
-        'Asia/Manila',
+        'Asia/Manila' => 'Asia/Manila',
     ];
 
     // protected $with = ['media', 'roles'];
