@@ -46,6 +46,11 @@
                                     <td>
                                         <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                         <small class="text-muted">{{ $queue->patient->patient_unique_id }}</small>
+                                        @if($queue->has_consultation_attachment)
+                                        <br><span class="badge badge-sm bg-success mt-1">
+                                            <i class="fas fa-file-medical"></i> Has Form
+                                        </span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if($queue->room_number)
@@ -139,6 +144,11 @@
                                     <td>
                                         <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                         <small class="text-muted">{{ $queue->patient->patient_unique_id }}</small>
+                                        @if($queue->has_consultation_attachment)
+                                        <br><span class="badge badge-sm bg-success mt-1">
+                                            <i class="fas fa-file-medical"></i> Has Form
+                                        </span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if($queue->room_number)

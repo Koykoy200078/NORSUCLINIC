@@ -37,6 +37,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index');
     Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
     Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
+    Route::get('patient-queue/{patientQueue}/consultation', [PatientQueueController::class, 'viewConsultation'])->name('patient-queue.view-consultation');
 
     // Appointment Management (Doctors can fully manage appointments)
     Route::middleware('permission:manage_appointments')->group(function () {

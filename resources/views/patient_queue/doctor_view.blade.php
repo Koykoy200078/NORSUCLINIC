@@ -167,21 +167,45 @@
                                 @if($queue->room_number)
                                 | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                                 @endif
+                                @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                | <span class="badge bg-success" title="Has consultation form">
+                                    <i class="fas fa-file-medical"></i> Form Available
+                                </span>
+                                @endif
                             </p>
                             @if($queue->notes)
                             <p class="mb-2"><strong>Notes:</strong> {{ $queue->notes }}</p>
                             @endif
+                            @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                            <p class="mb-2">
+                                <strong>Latest Consultation:</strong> 
+                                <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
+                                <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}" 
+                                   class="btn btn-sm btn-outline-primary ms-2">
+                                    <i class="fas fa-eye"></i> View Form
+                                </a>
+                            </p>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Added by: {{ $queue->addedBy->full_name }}</small>
-                                @if(!$inProgressQueue)
-                                <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="queue_id" value="{{ $queue->id }}">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-phone"></i> Call Next
-                                    </button>
-                                </form>
-                                @endif
+                                <div class="btn-group">
+                                    @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                    <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}" 
+                                       class="btn btn-sm btn-primary" 
+                                       title="View Consultation Form">
+                                        <i class="fas fa-file-medical"></i>
+                                    </a>
+                                    @endif
+                                    @if(!$inProgressQueue)
+                                    <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="queue_id" value="{{ $queue->id }}">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-phone"></i> Call Next
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         @endforeach
@@ -222,21 +246,45 @@
                                 @if($queue->room_number)
                                 | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                                 @endif
+                                @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                | <span class="badge bg-success" title="Has consultation form">
+                                    <i class="fas fa-file-medical"></i> Form Available
+                                </span>
+                                @endif
                             </p>
                             @if($queue->notes)
                             <p class="mb-2"><strong>Notes:</strong> {{ $queue->notes }}</p>
                             @endif
+                            @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                            <p class="mb-2">
+                                <strong>Latest Consultation:</strong> 
+                                <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
+                                <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}" 
+                                   class="btn btn-sm btn-outline-primary ms-2">
+                                    <i class="fas fa-eye"></i> View Form
+                                </a>
+                            </p>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Added by: {{ $queue->addedBy->full_name }}</small>
-                                @if(!$inProgressQueue && $priorityQueues->count() === 0)
-                                <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="queue_id" value="{{ $queue->id }}">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-phone"></i> Call Next
-                                    </button>
-                                </form>
-                                @endif
+                                <div class="btn-group">
+                                    @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                    <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}" 
+                                       class="btn btn-sm btn-primary" 
+                                       title="View Consultation Form">
+                                        <i class="fas fa-file-medical"></i>
+                                    </a>
+                                    @endif
+                                    @if(!$inProgressQueue && $priorityQueues->count() === 0)
+                                    <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="queue_id" value="{{ $queue->id }}">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-phone"></i> Call Next
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         @endforeach

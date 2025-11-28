@@ -84,14 +84,51 @@
             allowClear: true
         });
 
-        // Show patient info when selected
+        // Show patient info and check for consultation forms when selected
         $('#patientId').on('change', function() {
             const patientId = $(this).val();
             if (patientId) {
-                // You can add AJAX call here to fetch patient details
                 $('#patientInfoPreview').show();
                 const patientName = $(this).find('option:selected').text();
-                $('#patientDetails').html(`<strong>Name:</strong> ${patientName}`);
+                
+                // Fetch patient consultation form info via AJAX
+                $.ajax({
+                    url: '/api/patient/' + patientId + '/latest-consultation',
+                    method: 'GET',
+                    success: function(response) {
+                        let consultationInfo = '';
+                        if (response.success && response.consultation) {
+                            const consultationDate = new Date(response.consultation.created_at).toLocaleDateString();
+                            consultationInfo = `
+                                <div class="alert alert-info mt-2">
+                                    <strong><i class="fas fa-file-medical"></i> Latest Consultation Form:</strong>
+                                    <br><small>Date: ${consultationDate}</small>
+                                    <br><small>This consultation form will be automatically attached to the queue entry.</small>
+                                </div>
+                            `;
+                        } else {
+                            consultationInfo = `
+                                <div class="alert alert-warning mt-2">
+                                    <strong><i class="fas fa-exclamation-triangle"></i> No Consultation Form Found</strong>
+                                    <br><small>This patient has no previous consultation forms.</small>
+                                </div>
+                            `;
+                        }
+                        
+                        $('#patientDetails').html(`
+                            <strong>Name:</strong> ${patientName}
+                            ${consultationInfo}
+                        `);
+                    },
+                    error: function() {
+                        $('#patientDetails').html(`
+                            <strong>Name:</strong> ${patientName}
+                            <div class="alert alert-secondary mt-2">
+                                <small>Could not load consultation form information.</small>
+                            </div>
+                        `);
+                    }
+                });
             } else {
                 $('#patientInfoPreview').hide();
             }

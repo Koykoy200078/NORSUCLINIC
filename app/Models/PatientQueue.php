@@ -17,6 +17,8 @@ class PatientQueue extends Model
         'is_priority',
         'status',
         'notes',
+        'latest_consultation_id',
+        'has_consultation_attachment',
         'called_at',
         'completed_at',
     ];
@@ -53,6 +55,14 @@ class PatientQueue extends Model
     public function addedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by');
+    }
+
+    /**
+     * Get the latest consultation form attached to this queue entry
+     */
+    public function latestConsultation(): BelongsTo
+    {
+        return $this->belongsTo(RequestDocuments::class, 'latest_consultation_id');
     }
 
     /**

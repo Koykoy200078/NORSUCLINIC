@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Medicine;
+use App\Models\Patient;
+use App\Models\RequestDocuments;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,4 +61,40 @@ Route::middleware(['web', 'auth'])->get('/medicines', function () {
     $groupedByCategory = $medicinesWithDosages->groupBy('category_name');
 
     return response()->json($groupedByCategory);
+});
+
+// Patient Queue Related API Routes
+Route::middleware(['auth:web'])->group(function () {
+    // Get latest consultation form for a patient (for queue management)
+    Route::get('/patient/{patient}/latest-consultation', function (Patient $patient) {
+        try {
+            $latestConsultation = RequestDocuments::where('user_id', $patient->user_id)
+                ->where('document_type', 'consultation_form')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($latestConsultation) {
+                return response()->json([
+                    'success' => true,
+                    'consultation' => [
+                        'id' => $latestConsultation->id,
+                        'created_at' => $latestConsultation->created_at,
+                        'complaints' => $latestConsultation->complaints,
+                        'assessment' => $latestConsultation->assessment,
+                        'has_images' => !empty($latestConsultation->consultation_images)
+                    ]
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No consultation forms found for this patient.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving consultation form information.'
+            ], 500);
+        }
+    });
 });

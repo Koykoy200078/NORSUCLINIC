@@ -14,7 +14,7 @@ class PatientQueueController extends Controller
      */
     public function index()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy'])
+        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
             ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
             ->orderByQueue()
             ->get();
@@ -61,10 +61,31 @@ class PatientQueueController extends Controller
         $validated['added_by'] = Auth::id();
         $validated['is_priority'] = $request->has('is_priority') ? true : false;
 
+        // Get patient's latest consultation form if it exists
+        $latestConsultation = \App\Models\RequestDocuments::where('user_id', function ($query) use ($validated) {
+            $query->select('user_id')
+                ->from('patients')
+                ->where('id', $validated['patient_id'])
+                ->limit(1);
+        })
+            ->where('document_type', 'consultation_form')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestConsultation) {
+            $validated['latest_consultation_id'] = $latestConsultation->id;
+            $validated['has_consultation_attachment'] = true;
+        }
+
         PatientQueue::create($validated);
 
+        $message = 'Patient added to queue successfully.';
+        if ($latestConsultation) {
+            $message .= ' Latest consultation form attached.';
+        }
+
         return redirect()->route($this->getIndexRoute())
-            ->with('success', 'Patient added to queue successfully.');
+            ->with('success', $message);
     }
 
     /**
@@ -151,7 +172,7 @@ class PatientQueueController extends Controller
      */
     public function doctorQueue()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy'])
+        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
             ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
             ->orderByQueue()
             ->get();
@@ -185,5 +206,29 @@ class PatientQueueController extends Controller
 
         return redirect()->back()
             ->with('success', 'Patient consultation completed.');
+    }
+
+    /**
+     * View consultation form for a patient queue entry (Doctor only)
+     */
+    public function viewConsultation(PatientQueue $patientQueue)
+    {
+        // Load relationships
+        $patientQueue->load(['patient.user', 'latestConsultation']);
+
+        // Check if consultation form exists
+        if (!$patientQueue->latestConsultation) {
+            return redirect()->back()->with('error', 'No consultation form found for this patient.');
+        }
+
+        // Redirect to patient history with consultation form
+        $patientId = $patientQueue->patient->id;
+        $consultationId = $patientQueue->latest_consultation_id;
+
+        // Route to patient history page with specific consultation highlighted
+        return redirect()->route('doctors.patients.showMyHistory', [
+            'patient' => $patientId,
+            'consultation_id' => $consultationId
+        ])->with('info', 'Viewing consultation form for queue patient: ' . $patientQueue->patient->user->full_name);
     }
 }
