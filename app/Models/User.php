@@ -163,12 +163,9 @@ class User extends Authenticatable implements HasMedia
     const PROFILE = 'profile';
 
     const ADMIN = 1;
-
     const DOCTOR = 2;
-
-    const PATIENT = 3;
-
-    const STAFF = 4;
+    const PATIENT = 4;
+    const STAFF = 3;
 
     const TYPE = [
         self::ADMIN => 'Admin',

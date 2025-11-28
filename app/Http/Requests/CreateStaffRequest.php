@@ -26,7 +26,7 @@ class CreateStaffRequest extends FormRequest
             'contact' => 'nullable|unique:users,contact',
             'password' => 'required|same:password_confirmation|min:6',
             'gender' => 'required',
-            'role' => 'required',
+            'role' => 'sometimes|integer|exists:roles,id', // Default value 3 will be set, validate only if provided
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];
     }

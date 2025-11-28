@@ -62,8 +62,11 @@
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('role', __('messages.staff.role').':', ['class' => 'form-label required']) }}
-            {{ Form::select('role', $roles, isset($staff) ? $staff->roles->first()->id : 3, ['class' => 'form-select io-select2','required', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role'), 'readonly' => true, 'disabled' => true]) }}
+            {{ Form::label('role', __('messages.staff.role').':', ['class' => 'form-label']) }}
+            {{-- Hidden field to ensure role value is submitted --}}
+            {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : 3) }}
+            {{-- Display-only select field for visual purposes --}}
+            {{ Form::select('role_display', $roles, isset($staff) ? $staff->roles->first()->id : 3, ['class' => 'form-select io-select2', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role'), 'readonly' => true, 'disabled' => true]) }}
         </div>
     </div>
 

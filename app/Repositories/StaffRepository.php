@@ -68,8 +68,7 @@ class StaffRepository extends BaseRepository
             $staff = User::create($input);
 
             if (isset($input['role']) && ! empty($input['role'])) {
-                $role = $staff->assignRole($input['role']);
-                $role->givePermissionTo('manage_admin_dashboard');
+                $staff->assignRole($input['role']);
             }
 
             if (isset($input['profile']) && ! empty($input['profile'])) {

@@ -54,6 +54,10 @@ class StaffController extends AppBaseController
     public function store(CreateStaffRequest $request): RedirectResponse
     {
         $input = $request->all();
+        // Ensure role defaults to 3 (staff) if not provided
+        if (!isset($input['role']) || empty($input['role'])) {
+            $input['role'] = 3;
+        }
         $this->staffRepository->store($input);
 
         Flash::success(__('messages.flash.staff_create'));
@@ -90,7 +94,12 @@ class StaffController extends AppBaseController
      */
     public function update(UpdateStaffRequest $request, User $staff): RedirectResponse
     {
-        $this->staffRepository->update($request->all(), $staff->id);
+        $input = $request->all();
+        // Ensure role defaults to 3 (staff) if not provided
+        if (!isset($input['role']) || empty($input['role'])) {
+            $input['role'] = 3;
+        }
+        $this->staffRepository->update($input, $staff->id);
 
         Flash::success(__('messages.flash.staff_update'));
 
