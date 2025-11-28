@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
+ * @property string $type
  * @property string $state_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -35,18 +36,12 @@ class City extends Model
 
     public $fillable = [
         'name',
+        'type',
         'state_id',
     ];
 
 
-    const CITY_ARRAY = [
-        'Guihulngan',
-        'Dumaguete',
-        'Canlaon',
-        'Bais',
-        'Bayawan',
-        'Tanjay'
-    ];
+
 
     /**
      * The attributes that should be casted to native types.
@@ -55,8 +50,12 @@ class City extends Model
      */
     protected $casts = [
         'name' => 'string',
+        'type' => 'string',
         'state_id' => 'string',
     ];
+
+    const TYPE_CITY = 'city';
+    const TYPE_MUNICIPALITY = 'municipality';
 
     /**
      * Validation rules
@@ -64,8 +63,23 @@ class City extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:cities,name',
+        'name' => 'required|string|max:255',
+        'type' => 'required|in:city,municipality',
+        'state_id' => 'required|exists:states,id',
     ];
+
+    /**
+     * Get the available types
+     *
+     * @return array
+     */
+    public static function getTypes(): array
+    {
+        return [
+            self::TYPE_CITY => 'City',
+            self::TYPE_MUNICIPALITY => 'Municipality',
+        ];
+    }
 
     public function state(): BelongsTo
     {

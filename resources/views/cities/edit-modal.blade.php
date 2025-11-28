@@ -13,6 +13,10 @@
                     {{ Form::label('name', __('messages.common.name').':', ['class' => 'required']) }}
                     {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' =>  __('messages.web.name'),'required','id'=>'editCityName']) }}
                 </div>
+                <div class="mb-5">
+                    {{ Form::label('type', 'Type:', ['class' => 'required']) }}
+                    {{ Form::select('type', $cityTypes, null, ['id' => 'editCityType','required','data-control'=>"select2"]) }}
+                </div>
                 <div>
                     {{ Form::label('state_id', __('messages.city.province').':', ['class' => 'required']) }}
                     {{ Form::select('state_id', $states, null, ['id' => 'editCityStateId','required','data-control'=>"select2"]) }}

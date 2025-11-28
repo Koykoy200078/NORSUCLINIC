@@ -31,8 +31,9 @@ class CityController extends AppBaseController
     public function index(): \Illuminate\View\View
     {
         $states = State::orderBy('name', 'ASC')->pluck('name', 'id');
+        $cityTypes = City::getTypes();
 
-        return view('cities.index', compact('states'));
+        return view('cities.index', compact('states', 'cityTypes'));
     }
 
     /**
@@ -42,13 +43,18 @@ class CityController extends AppBaseController
     {
         $input = $request->all();
 
-        if (in_array($input['name'], City::CITY_ARRAY)) {
-            $city = $this->cityRepository->create($input);
-            return $this->sendSuccess(__('messages.flash.city_create'));
+        // Check if city/municipality with same name, type and state already exists
+        $existingCity = City::where('name', $input['name'])
+            ->where('type', $input['type'])
+            ->where('state_id', $input['state_id'])
+            ->first();
 
-        } else {
-            return $this->sendError(__('messages.city.city_not_avl'));
+        if ($existingCity) {
+            return $this->sendError(__('messages.city.city_already_exists'));
         }
+
+        $city = $this->cityRepository->create($input);
+        return $this->sendSuccess(__('messages.flash.city_create'));
     }
 
     /**
@@ -65,6 +71,18 @@ class CityController extends AppBaseController
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
         $input = $request->all();
+
+        // Check if another city/municipality with same name, type and state already exists (excluding current city)
+        $existingCity = City::where('name', $input['name'])
+            ->where('type', $input['type'])
+            ->where('state_id', $input['state_id'])
+            ->where('id', '!=', $city->id)
+            ->first();
+
+        if ($existingCity) {
+            return $this->sendError(__('messages.city.city_already_exists'));
+        }
+
         $this->cityRepository->update($input, $city->id);
         return $this->sendSuccess(__('messages.flash.city_update'));
     }

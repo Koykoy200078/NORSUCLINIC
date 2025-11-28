@@ -1,5 +1,5 @@
 <div>
-    @if($user->type != 3)
+    @if($user->type != 4)
     <div class="mb-10">
         <label class="block text-xs" for="user_search">Search User</label>
         <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name" autocomplete="off">
@@ -26,19 +26,19 @@
             <div class="col-span-1 d-none">
                 <label class="block text-xs" for="name">ID<span class="text-red-500">*</span></label>
                 <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ auth()->user()->id }}" readonly required>
-                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ request('user_id') ?? ($user->type == 3 ? $user->id : '') }}" readonly required>
+                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME<span class="text-red-500">*</span></label>
-                <input type="text" id="name" name="name" class="w-full border-b border-black" value="{{ $user->type == 3 ? $user->first_name . ' ' . $user->last_name : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="text" id="name" name="name" class="w-full border-b border-black" value="{{ $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE<span class="text-red-500">*</span></label>
-                <input type="text" id="age" name="age" class="w-full border-b border-black" value="{{ $user->type == 3 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="text" id="age" name="age" class="w-full border-b border-black" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="gender">GENDER<span class="text-red-500">*</span></label>
-                <input type="text" id="gender" name="gender" class="w-full border-b border-black" value="{{ $user->type == 3 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="text" id="gender" name="gender" class="w-full border-b border-black" value="{{ $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="status">STATUS<span class="text-red-500">*</span></label>
@@ -46,11 +46,11 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="date_of_birth">DATE OF BIRTH<span class="text-red-500">*</span></label>
-                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border-b border-black" value="{{ $user->type == 3 ? $user->dob : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border-b border-black" value="{{ $user->type == 4 ? $user->dob : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS<span class="text-red-500">*</span></label>
-                <input type="text" id="address" name="address" class="w-full border-b border-black" value="{{ $user->type == 3 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="text" id="address" name="address" class="w-full border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="religion">RELIGION<span class="text-red-500">*</span></label>
@@ -58,27 +58,27 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #<span class="text-red-500">*</span></label>
-                <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ $user->type == 3 ? $user->contact : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ $user->type == 4 ? $user->contact : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
 
             <!-- Campus Field (for Students only) - Auto-filled if available -->
             <div class="col-span-1" id="campus_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus">CAMPUS</label>
-                {{ Form::select('campus_id', $data['campuses'], $user->type == 3 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Campus']) }}
+                {{ Form::select('campus_id', $data['campuses'], $user->type == 4 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Campus']) }}
             </div>
 
             <!-- College Field (for Students and Faculty) - Auto-filled if available -->
             <div class="col-span-1" id="college_field" style="display: {{ (isset($user->year_level_id) && (($user->year_level_id >= 1 && $user->year_level_id <= 6) || $user->year_level_id == 7)) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college">COLLEGE</label>
-                {{ Form::select('college_id', $data['colleges'], $user->type == 3 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select College']) }}
+                {{ Form::select('college_id', $data['colleges'], $user->type == 4 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select College']) }}
             </div>
 
             <!-- Course & Year Field (for Students only) - Auto-filled if available -->
             <div class="col-span-1" id="course_year_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
-                    {{ Form::select('course_id', $data['courses'], $user->type == 3 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Course']) }}
-                    {{ Form::select('year_level_id', $data['year_levels'], $user->type == 3 ? $user->year_level_id : null, ['id' => 'year_level_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Year Level']) }}
+                    {{ Form::select('course_id', $data['courses'], $user->type == 4 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Course']) }}
+                    {{ Form::select('year_level_id', $data['year_levels'], $user->type == 4 ? $user->year_level_id : null, ['id' => 'year_level_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Year Level']) }}
                 </div>
             </div>
 
@@ -86,19 +86,19 @@
 
             <div class="col-span-1" id="department_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 7) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="department">DEPARTMENT</label>
-                {{ Form::select('department_id', $data['departments'] ?? [], $user->type == 3 ? $user->department_id : null, ['id' => 'department_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Department']) }}
+                {{ Form::select('department_id', $data['departments'] ?? [], $user->type == 4 ? $user->department_id : null, ['id' => 'department_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Department']) }}
             </div>
 
             <!-- Office Field (for Staff only) - Auto-filled if available -->
             <div class="col-span-1" id="office_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 8) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="office">OFFICE</label>
-                {{ Form::select('office_id', $data['offices'] ?? [], $user->type == 3 ? $user->office_id : null, ['id' => 'office_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Office']) }}
+                {{ Form::select('office_id', $data['offices'] ?? [], $user->type == 4 ? $user->office_id : null, ['id' => 'office_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Office']) }}
             </div>
 
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
                 <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ 
-                    $user->type == 3 ? (
+                    $user->type == 4 ? (
                         $user->year_level_id == 7 ? 'Faculty' : 
                         ($user->year_level_id == 8 ? 'Staff' : 
                         ($user->year_level_id == 9 ? 'Guest' : 'Student'))
@@ -107,7 +107,7 @@
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
-                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" value="{{ $user->type == 3 ? ($user->emergency_contact_name . ' / ' . $user->emergency_contact_no . ($user->emergency_relationship ? ' (' . $user->emergency_relationship . ')' : '')) : '' }}" required>
+                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" value="{{ $user->type == 4 ? ($user->emergency_contact_name . ' / ' . $user->emergency_contact_no . ($user->emergency_relationship ? ' (' . $user->emergency_relationship . ')' : '')) : '' }}" required>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -133,7 +133,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="covid_vaccination">COVID Vaccination<span class="text-red-500">*</span></label>
-                        {{ Form::select('vaccination_id', $data['vaccination_data'], $user->type == 3 ? $user->vaccination_id : null, ['id' => 'vaccination_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Vaccination Status']) }}
+                        {{ Form::select('vaccination_id', $data['vaccination_data'], $user->type == 4 ? $user->vaccination_id : null, ['id' => 'vaccination_id', 'class' => 'w-full border-b border-black', 'placeholder' => 'Select Vaccination Status']) }}
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities">Comorbidities</label>

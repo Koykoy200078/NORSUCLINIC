@@ -49,12 +49,12 @@
                     <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" readonly required>
                     <!-- Hidden field to indicate redirect to patient history -->
                     <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
-                    <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? $user->first_name . ' ' . $user->last_name : '' }}" readonly required>,
-                    <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required> yrs old,
-                    <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" readonly required> a resident of
+                    <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '' }}" readonly required>,
+                    <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required> yrs old,
+                    <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" readonly required> a resident of
                 </p>
                 <p>
-                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $user->type == 3 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 3 ? 'readonly' : '' }} required>
+                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
                     , was seen and examined at my clinic on
                     <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" readonly required>
                     <input type="hidden" id="examined_on" name="examined_on">

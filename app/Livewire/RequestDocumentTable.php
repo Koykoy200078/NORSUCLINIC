@@ -31,7 +31,7 @@ class RequestDocumentTable extends DataTableComponent
         // Check the user's role and filter data accordingly
         $user = Auth::user();
 
-        if ($user->type == 3) { // Patient
+        if ($user->type == 4) { // Patient
             $query->where('user_id', $user->id);
         } elseif ($user->type == 1 || $user->type == 4) { // Admin or Staff
             // If patient_id is set, filter by that patient's consultation forms only

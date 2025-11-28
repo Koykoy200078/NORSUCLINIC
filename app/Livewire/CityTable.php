@@ -50,6 +50,8 @@ class CityTable extends LivewireTableComponent
         return [
             Column::make(__('messages.common.name'), 'name')->view('cities.components.name')
                 ->sortable()->searchable(),
+            Column::make('Type', 'type')->view('cities.components.type')
+                ->sortable()->searchable(),
             Column::make(__('messages.city.province'), 'state.name')->view('cities.components.state')
                 ->sortable()->searchable(),
             Column::make(__('messages.common.action'), 'id')->view('cities.components.action'),

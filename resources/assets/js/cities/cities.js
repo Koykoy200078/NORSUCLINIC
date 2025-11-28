@@ -4,12 +4,15 @@ listenClick("#createCity", function () {
     $("#stateCity").select2({
         dropdownParent: $("#createCityModal"),
     });
+    $("#cityType").select2({
+        dropdownParent: $("#createCityModal"),
+    });
 });
-
 
 listen("hidden.bs.modal", "#createCityModal", function () {
     resetModalForm("#createCityForm", "#createCityValidationErrorsBox");
     $("#stateCity").val(null).trigger("change");
+    $("#cityType").val(null).trigger("change");
 });
 
 listen("hidden.bs.modal", "#editCityModal", function () {
@@ -23,6 +26,9 @@ listenClick(".city-edit-btn", function (event) {
     $("#editCityStateId").select2({
         dropdownParent: $("#editCityModal"),
     });
+    $("#editCityType").select2({
+        dropdownParent: $("#editCityModal"),
+    });
 });
 
 function renderData(id) {
@@ -32,6 +38,7 @@ function renderData(id) {
         success: function (result) {
             $("#cityID").val(result.data.id);
             $("#editCityName").val(result.data.name);
+            $("#editCityType").val(result.data.type).trigger("change");
             $("#editCityStateId").val(result.data.state_id).trigger("change");
             $("#editCityModal").modal("show");
         },
@@ -77,8 +84,5 @@ listenSubmit("#editCityForm", function (e) {
 
 listenClick(".city-delete-btn", function (event) {
     let cityRecordId = $(event.currentTarget).attr("data-id");
-    deleteItem(
-        route("cities.destroy", cityRecordId),
-        Lang.get("js.city")
-    );
+    deleteItem(route("cities.destroy", cityRecordId), Lang.get("js.city"));
 });

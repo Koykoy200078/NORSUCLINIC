@@ -536,7 +536,8 @@ return [
         'edit_city' => 'Edit City',
         'province' => 'Province',
         'select_city' => 'Select City',
-        'city_not_avl' => 'City not available'
+        'city_not_avl' => 'City not available',
+        'city_already_exists' => 'A city/municipality with this name and type already exists in the selected province'
     ],
 
 
