@@ -102,7 +102,7 @@ return [
     'enter_manufacturing_date' => 'Enter manufacturing date.',
     'enter_sale_price' => 'Enter sale price.',
     'tax_cannot_be_zero_empty' => 'The tax amount can not be zero or empty.',
-    'purchase_medicine' => 'Purchase Medicine',
+    'medicine_availability' => 'Medicine Availability',
     'roles' => 'Roles',
     'service_category' => 'Service Category',
     'service' => 'Service',

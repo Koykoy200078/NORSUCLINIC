@@ -744,13 +744,13 @@ if (! function_exists('getCurrentLoginUserLanguageName')) {
     }
 }
 
-if (! function_exists('generateUniquePurchaseNumber')) {
+if (! function_exists('generateUniqueAvailabilityNumber')) {
 
-    function generateUniquePurchaseNumber()
+    function generateUniqueAvailabilityNumber()
     {
         do {
             $code = random_int(100000, 999999);
-        } while (\App\Models\PurchaseMedicine::where('purchase_no', '=', $code)->first());
+        } while (\App\Models\MedicineAvailability::where('availability_no', '=', $code)->first());
 
         return $code;
     }

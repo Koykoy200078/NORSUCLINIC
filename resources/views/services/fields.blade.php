@@ -19,17 +19,6 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="mb-5">
-            {{ Form::label('charges', __('messages.service.charges').':', ['class' => 'form-label required']) }}
-            <div class="input-group">
-                {{ Form::number('charges', old('charges', '0'), ['class' => 'form-control price-input', 'placeholder' => __('messages.service.charges'), 'step' => '0.01', 'min' => '0']) }}
-                <div class="input-group-text">
-                    <a class="fw-bolder text-gray-500 text-decoration-none">{{ getCurrencyIcon() }}</a>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-lg-6 mb-5">
         {{ Form::label('doctors', __('messages.doctors').':', ['class' => 'form-label required']) }}
         {{ Form::select('doctors[]',$data['doctors'],(isset($selectedDoctor)) ? $selectedDoctor : null,['class' => 'form-control io-select2', 'data-placeholder' => __('messages.doctor.select_doctors'), 'data-control'=>'select2','multiple']) }}

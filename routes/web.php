@@ -28,7 +28,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PayTMController;
 use App\Http\Controllers\PrescriptionController;
-use App\Http\Controllers\PurchaseMedicineController;
+use App\Http\Controllers\MedicineAvailabilityController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\ServiceController;
@@ -345,11 +345,11 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus')->group(function ()
     Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
     Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
 
-    // Medicine Purchase
-    Route::resource('medicine-purchase', PurchaseMedicineController::class)->parameters(['categories' => 'category']);
-    Route::get('export-medicine-purchase', [PurchaseMedicineController::class, 'purchaseMedicineExport'])->name('purchase-medicine.excel');
-    Route::get('get-medicine/{medicine}', [PurchaseMedicineController::class, 'getMedicine'])->name('get-medicine');
-    Route::get('used-medicine', [PurchaseMedicineController::class, 'usedMedicine'])->name('used-medicine.index');
+    // Medicine Availability
+    Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
+    Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
+    Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
+    Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
 
     // Medicine History
     Route::resource('medicine-history', MedicineBillController::class);
@@ -457,18 +457,11 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
-        Route::resource('medicine-purchase', PurchaseMedicineController::class)->parameters(['categories' => 'category']);
-        Route::get('export-medicine-purchase', [PurchaseMedicineController::class, 'purchaseMedicineExport'])->name('purchase-medicine.excel');
-        Route::get('get-medicine/{medicine}', [PurchaseMedicineController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', [PurchaseMedicineController::class, 'usedMedicine'])->name('used-medicine.index');
-        Route::resource('medicine-history', MedicineBillController::class);
-        Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
-        Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
-        Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
+        Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
+        Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
+        Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
+        Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
     });
-
-    // Patient Queue Management is defined in routes/staff.php
-    // (Removed duplicate routes to avoid "route already assigned" error)
 
     // Enquiry Management
     Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
@@ -619,10 +612,10 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
-        Route::resource('medicine-purchase', PurchaseMedicineController::class)->parameters(['categories' => 'category']);
-        Route::get('export-medicine-purchase', [PurchaseMedicineController::class, 'purchaseMedicineExport'])->name('purchase-medicine.excel');
-        Route::get('get-medicine/{medicine}', [PurchaseMedicineController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', [PurchaseMedicineController::class, 'usedMedicine'])->name('used-medicine.index');
+        Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
+        Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
+        Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
+        Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
         Route::resource('medicine-history', MedicineBillController::class);
         Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
         Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');

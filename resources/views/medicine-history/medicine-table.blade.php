@@ -197,7 +197,7 @@
                             <label class="fw-bold text-muted required py-3">{{ __('messages.medicine_bills.payment_type') }}</label>
                         </div>
                         <div>
-                            {{ Form::select('payment_type', App\Models\PurchaseMedicine::PAYMENT_METHOD, 0, ['class' => 'form-select medicine-payment-mode', 'placeholder' => __('messages.medicine_bills.select_payment_type'), 'id' => 'paymentMode', 'required']) }}
+                            {{ Form::select('payment_type', [0 => 'Cash', 1 => 'Cheque', 2 => 'Online'], 0, ['class' => 'form-select medicine-payment-mode', 'placeholder' => __('messages.medicine_bills.select_payment_type'), 'id' => 'paymentMode', 'required']) }}
                         </div>
                     </div>
                     <div class="d-none">

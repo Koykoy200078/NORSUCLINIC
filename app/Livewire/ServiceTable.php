@@ -32,7 +32,7 @@ class ServiceTable extends LivewireTableComponent
                     'class' => 'text-center',
                 ];
             }
-            if (in_array($column->getField(), ['charges', 'status'], true)) {
+            if ($column->isField('status')) {
                 return [
                     'class' => 'text-end',
                 ];

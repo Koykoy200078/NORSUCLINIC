@@ -327,9 +327,9 @@
 @can('manage_medicines')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/generics*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
-        (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
-        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/medicine-purchase*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
+        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/generics*', 'admin/medicines*', 'admin/medicine-availability*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/medicine-availability*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
+        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/medicine-availability*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('categories.index') : 
@@ -392,7 +392,7 @@
                 <span class="d-none">{{ __('messages.medicine_categories') }}</span>
                 <span class="d-none">{{ __('messages.medicine_brands') }}</span>
                 <span class="d-none">{{ __('messages.medicines') }}</span>
-                <span class="d-none">{{ __('messages.purchase_medicine.purchase_medicines') }}</span>
+                <span class="d-none">{{ __('messages.medicine_availability.medicine_availabilities') }}</span>
                 <span class="d-none">{{ __('messages.used_medicine.used_medicines') }}</span>
                 <span class="d-none">{{ __('messages.medicine_bills.medicine_bills') }}</span>
     </a>

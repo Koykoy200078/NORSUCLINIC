@@ -64,29 +64,77 @@
             <input class="form-control" placeholder="e.g. 500mg, 200mg" name="dosage[]" type="text" id="dosage{{:uniqueId}}">
         </td>
         <td>
-            <input class="form-control purchaseMedicineManufacturingDate" placeholder="<?php echo __('messages.purchase_medicine.manufacturing_date') ?>" required="" name="manufacturing_date[]" type="text" id="manufacturing_date{{:uniqueId}}">
+            <?php
+            /**
+             * Dynamic Row Template - Manufacturing Date Format Toggle Switch
+             * 
+             * Toggle switch for selecting manufacturing date format, placed beside input.
+             * 
+             * Formats:
+             * - Toggle OFF: Full date (Y-m-d) - default for new rows
+             * - Toggle ON: Month only (Y-m)
+             */
+            $defaultManufacturingFormat = 'Y-m-d';
+            $isManufacturingMonthOnly = ($defaultManufacturingFormat === 'Y-m');
+            ?>
+            <div class="d-flex gap-2 align-items-center">
+                <input class="form-control purchaseMedicineManufacturingDate" placeholder="<?php echo __('messages.medicine_availability.manufacturing_date') ?>" required name="manufacturing_date[]" id="manufacturing_date{{:uniqueId}}" type="text">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input manufacturing-format-toggle" 
+                           type="checkbox" 
+                           role="switch" 
+                           id="manufacturing_format_toggle{{:uniqueId}}" 
+                           data-id="{{:uniqueId}}"
+                           <?php echo $isManufacturingMonthOnly ? 'checked' : ''; ?>
+                           title="<?php echo $isManufacturingMonthOnly ? 'Month Only (Y-M)' : 'Full Date (Y-M-D)'; ?>">
+                    <input type="hidden" 
+                           class="manufacturing-format-value" 
+                           name="manufacturing_format[]" 
+                           id="manufacturing_format{{:uniqueId}}" 
+                           value="<?php echo $defaultManufacturingFormat; ?>">
+                </div>
+            </div>
         </td>
         <td>
-            <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
-        </td>
-        <td>
-            <select class="form-select expiry-format-selector" data-id="{{:uniqueId}}" id="expiry_format{{:uniqueId}}" name="expiry_format[]">
-                <option value="Y-m-d" selected>Full Date (Y-M-D)</option>
-                <option value="Y-m">Month Only (Y-M)</option>
-            </select>
+            <?php
+            /**
+             * Dynamic Row Template - Expiry Format Toggle Switch
+             * 
+             * This template is used by JavaScript to dynamically add new medicine rows.
+             * Toggle switch for selecting date format, placed beside expiry date input.
+             * 
+             * Formats:
+             * - Toggle OFF: Full date (Y-m-d) - default for new rows
+             * - Toggle ON: Month only (Y-m)
+             */
+            $defaultFormat = 'Y-m-d';
+            $isMonthOnly = ($defaultFormat === 'Y-m');
+            ?>
+            <div class="d-flex gap-2 align-items-center">
+                <input class="form-control purchaseMedicineExpiryDate" placeholder="<?php echo __('messages.medicine_availability.expiry_date') ?>" required name="expiry_date[]" id="expiry_date{{:uniqueId}}" type="text">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input expiry-format-toggle" 
+                           type="checkbox" 
+                           role="switch" 
+                           id="expiry_format_toggle{{:uniqueId}}" 
+                           data-id="{{:uniqueId}}"
+                           <?php echo $isMonthOnly ? 'checked' : ''; ?>
+                           title="<?php echo $isMonthOnly ? 'Month Only (Y-M)' : 'Full Date (Y-M-D)'; ?>">
+                    <input type="hidden" 
+                           class="expiry-format-value" 
+                           name="expiry_format[]" 
+                           id="expiry_format{{:uniqueId}}" 
+                           value="<?php echo $defaultFormat; ?>">
+                </div>
+            </div>
         </td>
         <td>
             <input type="number" class="form-control purchase-quantity" required="" value='0' name="quantity[]"  id="quantity{{:uniqueId}}">
         </td>
         
-        <!-- Hidden fields for purchase price, tax, and amount -->
-        <input type="hidden" class="purchase-price" value='0.00' name="purchase_price[]" id="purchase_price{{:uniqueId}}">
-        <input type="hidden" class="purchase-tax" value='0' name="tax_medicine[]" id="tax{{:uniqueId}}">
-        <input type="hidden" class="purchase-amount" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
-        
         <td class="text-center">
             <a href="javascript:void(0)" title="<?php echo __('messages.common.delete') ?>"
-               class="delete-purchase-medicine-item btn px-1 text-danger fs-3 pe-0">
+               class="delete-medicine-availability-item btn px-1 text-danger fs-3 pe-0">
                      <i class="fa-solid fa-trash"></i>
             </a>
         </td>

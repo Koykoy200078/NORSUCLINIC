@@ -89,7 +89,7 @@
                                                  <table class="table table-striped table-bordered">
                                                         <thead class="thead-light">
                                                                <tr>
-                                                                      <th>{{ __('messages.purchase_medicine.dosage') }}</th>
+                                                                      <th>{{ __('messages.medicine_availability.dosage') }}</th>
                                                                       <th>{{ __('Available Quantity') }}</th>
                                                                       <th>{{ __('Expiry Date') }}</th>
                                                                       <th>{{ __('Remaining Days') }}</th>

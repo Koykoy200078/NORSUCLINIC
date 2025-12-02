@@ -49,6 +49,10 @@ mix.copyDirectory("resources/assets/images", "public/assets/image")
 mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
     .copy("resources/css/poppins.css", "public/css/poppins.css")
     .copy(
+        "resources/css/flatpickr-month-select.css",
+        "public/css/flatpickr-month-select.css"
+    )
+    .copy(
         "resources/assets/front/vendor/font-awesome/css/all.min.css",
         "public/css/fontawesome.all.min.css"
     )
@@ -253,7 +257,7 @@ mix.js(
         "resources/assets/js/category/category.js",
         "resources/assets/js/brands/brands.js",
         "resources/assets/js/medicines/medicines.js",
-        "resources/assets/js/purchase-medicine/purchase-medicine.js",
+        "resources/assets/js/medicine-availability/medicine-availability.js",
         "resources/assets/js/medicine_history/medicine_bill.js",
         "resources/assets/js/prescriptions/create-edit.js",
         "resources/assets/js/prescriptions/prescriptions.js",

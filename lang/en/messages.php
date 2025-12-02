@@ -1189,8 +1189,10 @@ return [
         'dose_interval' => 'Select Dose Interval',
     ],
 
-    'purchase_medicine' => [
-        'purchase_number' => 'Procure Number',
+    'medicine_availability' => [
+        'availability_number' => 'Medicine Availability Number',
+        'purchase_number' => 'Medicine Availability Number',
+        'total_medicines' => 'Total Medicines',
         'total' => 'Total',
         'discount' => 'Discount',
         'tax_amount' => 'Tax Amount',
@@ -1198,11 +1200,13 @@ return [
         'payment_mode' => 'Payment Mode',
         'payment_note' => 'Payment Note',
         'note' => 'Note',
-        'purchase_medicine' => 'Procure Medicine',
-        'purchase_medicines' => 'Procure Medicines',
-        'purchase_medicine_details' => 'Procure Medicine Details',
-        'purchase_medicine_overview' => 'Procure Medicine Overview',
-        'edit_purchase_medicine' => 'Edit Procure Medicine',
+        'created_mode' => 'Created Mode',
+        'created_note' => 'Created Note',
+        'medicine_availability' => 'Medicine Availability',
+        'medicine_availabilities' => 'Medicine Availabilities',
+        'medicine_availability_details' => 'Medicine Availability Details',
+        'medicine_availability_overview' => 'Medicine Availability Overview',
+        'edit_medicine_availability' => 'Edit Medicine Availability',
         'manufacturing_date' => 'Manufacturing Date',
         'dosage' => 'Dosage/Strength',
         'tax' => 'Tax',
@@ -1213,8 +1217,8 @@ return [
         'dose_duration' => 'Dose Duration',
         'actions' => 'Actions',
         'export_to_excel' => 'Export to Excel',
-        'purchased_medicine_success' => 'Medicine Procure successfully',
-        'purchased_medicine_updated' => 'Medicine Procure updated successfully',
+        'medicine_availability_success' => 'Medicine Availability added successfully',
+        'medicine_availability_updated' => 'Medicine Availability updated successfully',
     ],
 
     'used_medicine' => [

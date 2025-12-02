@@ -5,7 +5,7 @@ use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\MedicineBillController;
-use App\Http\Controllers\PurchaseMedicineController;
+use App\Http\Controllers\MedicineAvailabilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
@@ -150,10 +150,10 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
 
         // Medicine Purchase
-        Route::resource('medicine-purchase', PurchaseMedicineController::class)->parameters(['categories' => 'category']);
-        Route::get('export-medicine-purchase', [PurchaseMedicineController::class, 'purchaseMedicineExport'])->name('purchase-medicine.excel');
-        Route::get('get-medicine/{medicine}', [PurchaseMedicineController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', [PurchaseMedicineController::class, 'usedMedicine'])->name('used-medicine.index');
+        Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
+        Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
+        Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
+        Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
 
         // Medicine History
         Route::resource('medicine-history', MedicineBillController::class);

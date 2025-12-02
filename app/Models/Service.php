@@ -94,7 +94,6 @@ class Service extends Model implements HasMedia
     public static $rules = [
         'name' => 'required|unique:services,name',
         'category_id' => 'required',
-        'charges' => 'required|min:0',
         'doctors' => 'required',
         'short_description' => 'required|max:60',
         'icon' => 'required|mimes:svg,jpeg,png,jpg',

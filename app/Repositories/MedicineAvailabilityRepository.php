@@ -7,7 +7,7 @@ use App\Models\Address;
 use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\PurchasedMedicine;
-use App\Models\PurchaseMedicine;
+use App\Models\MedicineAvailability;
 use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
- * Class AccountantRepository
+ * Class MedicineAvailabilityRepository
  *
  * @version February 17, 2020, 5:34 am UTC
  */
-class PurchaseMedicineRepository extends BaseRepository
+class MedicineAvailabilityRepository extends BaseRepository
 {
     use LogsActivity;
     /**
@@ -49,7 +49,7 @@ class PurchaseMedicineRepository extends BaseRepository
      **/
     public function model()
     {
-        return PurchaseMedicine::class;
+        return MedicineAvailability::class;
     }
 
     public function getMedicine()
@@ -105,20 +105,18 @@ class PurchaseMedicineRepository extends BaseRepository
             DB::beginTransaction();
             $purchaseMedicineArray = Arr::only($input, $this->model->getFillable());
 
-            \Illuminate\Support\Facades\Log::info('Creating PurchaseMedicine with data:', $purchaseMedicineArray);
+            \Illuminate\Support\Facades\Log::info('Creating MedicineAvailability with data:', $purchaseMedicineArray);
 
-            $purchaseMedicine = PurchaseMedicine::create($purchaseMedicineArray);
+            $medicineAvailability = MedicineAvailability::create($purchaseMedicineArray);
 
             foreach ($input['medicine'] as $key => $value) {
                 $purchasedMedicineArray = [
-                    'purchase_medicines_id' => $purchaseMedicine->id,
+                    'medicine_availabilities_id' => $medicineAvailability->id,
                     'medicine_id' => $input['medicine'][$key],
                     'dosage' => $input['dosage'][$key] ?? null,
                     'manufacturing_date' => $input['manufacturing_date'][$key],
-                    'tax' => $input['tax_medicine'][$key] ?? 0,
                     'expiry_date' => $input['expiry_date'][$key] ?? null,
                     'quantity' => $input['quantity'][$key],
-                    'amount' => $input['amount'][$key] ?? '0.00',
                 ];
 
                 \Illuminate\Support\Facades\Log::info('Creating PurchasedMedicine with data:', $purchasedMedicineArray);
@@ -161,12 +159,12 @@ class PurchaseMedicineRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            $purchaseMedicine = PurchaseMedicine::findOrFail($id);
-            $purchaseMedicineArray = Arr::only($input, $purchaseMedicine->getFillable());
-            $purchaseMedicine->update($purchaseMedicineArray);
+            $medicineAvailability = MedicineAvailability::findOrFail($id);
+            $purchaseMedicineArray = Arr::only($input, $medicineAvailability->getFillable());
+            $medicineAvailability->update($purchaseMedicineArray);
 
             // Get existing purchased medicines
-            $existingPurchasedMedicines = PurchasedMedicine::where('purchase_medicines_id', $id)->get()->keyBy('id');
+            $existingPurchasedMedicines = PurchasedMedicine::where('medicine_availabilities_id', $id)->get()->keyBy('id');
 
             foreach ($input['medicine'] as $key => $value) {
                 $purchasedMedicineId = $input['purchased_medicine_id'][$key] ?? null;
@@ -183,10 +181,8 @@ class PurchaseMedicineRepository extends BaseRepository
                         'medicine_id' => $medicineId,
                         'dosage' => $input['dosage'][$key] ?? null,
                         'manufacturing_date' => $input['manufacturing_date'][$key],
-                        'tax' => $input['tax_medicine'][$key] ?? 0,
                         'expiry_date' => $input['expiry_date'][$key],
                         'quantity' => $newQuantity,
-                        'amount' => $input['amount'][$key],
                     ];
 
                     $existingPurchasedMedicine->update($purchasedMedicineArray);
@@ -218,14 +214,12 @@ class PurchaseMedicineRepository extends BaseRepository
                 } else {
                     // Create new purchased medicine entry
                     $purchasedMedicineArray = [
-                        'purchase_medicines_id' => $purchaseMedicine->id,
+                        'medicine_availabilities_id' => $medicineAvailability->id,
                         'medicine_id' => $medicineId,
                         'dosage' => $input['dosage'][$key] ?? null,
                         'manufacturing_date' => $input['manufacturing_date'][$key],
-                        'tax' => $input['tax_medicine'][$key] ?? 0,
                         'expiry_date' => $input['expiry_date'][$key],
                         'quantity' => $newQuantity,
-                        'amount' => $input['amount'][$key],
                     ];
 
                     PurchasedMedicine::create($purchasedMedicineArray);

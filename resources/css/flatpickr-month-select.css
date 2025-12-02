@@ -1,0 +1,41 @@
+/* Flatpickr Month-Only Picker Styles */
+/* Hide day selection when in month-only mode */
+.flatpickr-monthSelect .flatpickr-days {
+    display: none !important;
+}
+
+.flatpickr-monthSelect .flatpickr-monthSelect-months {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+}
+
+.flatpickr-monthSelect .flatpickr-monthSelect-month {
+    padding: 8px 12px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.flatpickr-monthSelect .flatpickr-monthSelect-month:hover {
+    background-color: #e9ecef;
+}
+
+.flatpickr-monthSelect .flatpickr-monthSelect-month.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Adjust calendar container height for month-only mode */
+.flatpickr-monthSelect .flatpickr-calendar {
+    height: auto !important;
+}
+
+/* Show month names in the calendar */
+.flatpickr-monthSelect .flatpickr-current-month {
+    padding: 10px 0;
+    height: auto;
+}
