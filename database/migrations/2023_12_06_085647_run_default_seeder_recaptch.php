@@ -12,8 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Artisan::call('db:seed', ['--class' => 'AddCaptchaFieldSettingTableSeeder', '--force' => true]);
-
+        // AddCaptchaFieldSettingTableSeeder removed - reCAPTCHA feature has been removed
     }
 
     /**

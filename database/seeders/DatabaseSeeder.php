@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultRoleSeeder::class);
         $this->call(DefaultServiceCategorySeeder::class);
         $this->call(DefaultServicesSeeder::class);
-        $this->call(DefaultCurrenciesSeeder::class);
+        // $this->call(DefaultCurrenciesSeeder::class); // Removed - Currency feature has been removed
         $this->call(DefaultStaffSeeder::class);
         $this->call(DefaultSliderSeeder::class);
 
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AddEmailVerifiedFieldSettingTableSeeder::class);
         $this->call(AddAboutUsImageFieldsSettingSeeder::class);
         $this->call(AddAboutExperienceFieldInSettingSeeder::class);
-        $this->call(DefaultPaymentGatewaySeeder::class);
+        // $this->call(DefaultPaymentGatewaySeeder::class); // Removed - PaymentGateway feature has been removed
         $this->call(DefaultMedicinePermissionSeeder::class);
         $this->call(DefaultAssignPermissionSeeder::class);
 
