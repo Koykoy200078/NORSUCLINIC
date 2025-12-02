@@ -35,15 +35,13 @@ class UpdateMedicineRequest extends FormRequest
     {
         return [
             'category_id.required' => __('messages.common.category_required'),
-            'brand_id.required' => __('messages.common.brand_required'),
+            'generic_id.required' => __('messages.common.generic_required'),
         ];
     }
 
     public function sanitize()
     {
         $input = $this->all();
-        $input['selling_price'] = ! empty($input['selling_price']) ? str_replace(',', '', $input['selling_price']) : null;
-        $input['buying_price'] = ! empty($input['buying_price']) ? str_replace(',', '', $input['buying_price']) : null;
         $this->replace($input);
     }
 }

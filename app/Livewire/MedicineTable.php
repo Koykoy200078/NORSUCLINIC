@@ -30,7 +30,7 @@ class MedicineTable extends LivewireTableComponent
         }
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if ($column->isField('name') || $column->isField('selling_price') || $column->isField('buying_price')) {
+            if ($column->isField('name')) {
                 return [
                     'class' => 'pt-5',
                 ];
@@ -39,12 +39,6 @@ class MedicineTable extends LivewireTableComponent
             return [];
         });
         $this->setThAttributes(function (Column $column) {
-            if ($column->isField('selling_price') || $column->isField('buying_price')) {
-                return [
-                    'class' => 'text-end',
-                ];
-            }
-
             return [];
         });
     }
@@ -61,11 +55,11 @@ class MedicineTable extends LivewireTableComponent
                 ->view('medicines.templates.columns.name')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.medicine.brand'), 'brand.name')
+            Column::make('Generic Name', 'generic.name')
                 ->searchable()
                 ->sortable(),
             Column::make(__('messages.medicine.available_quantity'), 'available_quantity')
-                ->view('medicines.templates.columns.avalable_quantity')
+                ->view('medicines.templates.columns.available_quantity')
                 ->searchable()
                 ->sortable(),
             Column::make('Expiration', 'id')
@@ -86,6 +80,6 @@ class MedicineTable extends LivewireTableComponent
             ->select([
                 'medicines.*'
             ])
-            ->with(['category', 'brand']);
+            ->with(['category', 'generic']);
     }
 }

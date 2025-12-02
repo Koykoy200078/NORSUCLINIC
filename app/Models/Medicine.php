@@ -10,10 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property int|null $category_id
- * @property int|null $brand_id
+ * @property int|null $generic_id
  * @property string $name
- * @property float $selling_price
- * @property float $buying_price
  * @property int $quantity
  * @property int $available_quantity
  * @property string $salt_composition
@@ -22,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $currency_symbol
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Brand|null $brand
+ * @property-read \App\Models\Generic|null $generic
  * @property-read \App\Models\Category|null $category
  * @property-read \App\Models\PrescriptionMedicineModal|null $prescriptionMedicines
  * @property-read \App\Models\PurchasedMedicine|null $purchasedMedicine
@@ -31,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereAvailableQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereBrandId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereGenericId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereBuyingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCreatedAt($value)
@@ -52,10 +50,8 @@ class Medicine extends Model
 
     public $fillable = [
         'category_id',
-        'brand_id',
+        'generic_id',
         'name',
-        'selling_price',
-        'buying_price',
         'side_effects',
         'description',
         'salt_composition',
@@ -74,10 +70,8 @@ class Medicine extends Model
     protected $casts = [
         'id' => 'integer',
         'category_id' => 'integer',
-        'brand_id' => 'integer',
+        'generic_id' => 'integer',
         'name' => 'string',
-        'selling_price' => 'double',
-        'buying_price' => 'double',
         'side_effects' => 'string',
         'description' => 'string',
         'salt_composition' => 'string',
@@ -95,10 +89,8 @@ class Medicine extends Model
      */
     public static $rules = [
         'category_id' => 'required',
-        'brand_id' => 'required',
+        'generic_id' => 'required',
         'name' => 'required|min:2|unique:medicines,name',
-        'selling_price' => 'nullable',
-        'buying_price' => 'required',
         'side_effects' => 'nullable',
         'salt_composition' => 'nullable|string',
         // 'quantity'    => 'required|integer',
@@ -110,9 +102,9 @@ class Medicine extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function brand(): BelongsTo
+    public function generic(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Generic::class);
     }
 
     public function prescriptionMedicines(): BelongsTo

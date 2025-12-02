@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\BrandController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\PurchaseMedicineController;
@@ -132,14 +132,14 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::resource('request-documents', RequestDocumentsController::class);
     });
 
-    // Medicine Management (Doctors can manage medicines, categories, brands)
+    // Medicine Management (Doctors can manage medicines, categories, generics)
     Route::middleware('permission:manage_medicines')->group(function () {
         // Medicine Categories
         Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
         Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
 
-        // Medicine Brands
-        Route::resource('brands', BrandController::class);
+        // Medicine Generics
+        Route::resource('generics', GenericController::class);
 
         // Medicines
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);

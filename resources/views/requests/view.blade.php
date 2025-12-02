@@ -168,7 +168,7 @@
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5" required>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5">
                     {{ $requestDocument->pertinent_exam }}
                     </textarea>
                 </div>

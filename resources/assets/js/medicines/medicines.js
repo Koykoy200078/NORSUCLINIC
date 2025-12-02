@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", loadMedicineCreateData);
 ("use strict");
 
 function loadMedicineCreateData() {
-    $("#medicineCategoryId,#medicineBrandId").select2({
+    $("#medicineCategoryId,#medicineGenericId").select2({
         width: "100%",
     });
     listenClick(".showMedicineBtn", function (event) {
@@ -19,16 +19,10 @@ function loadMedicineCreateData() {
             success: function (result) {
                 if (result.success) {
                     $("#showMedicineName").text(result.data.name);
-                    $("#showMedicineBrand").text(result.data.brand_name);
+                    $("#showMedicineGeneric").text(result.data.generic_name);
                     $("#showMedicineCategory").text(result.data.category_name);
                     $("#showMedicineSaltComposition").text(
                         result.data.salt_composition
-                    );
-                    $("#showMedicineSellingPrice").text(
-                        result.data.selling_price
-                    );
-                    $("#showMedicineBuyingPrice").text(
-                        result.data.buying_price
                     );
                     $("#showMedicineMinStockAlert").text(
                         result.data.minimum_stock_alert

@@ -80,7 +80,6 @@ class MedicineController extends AppBaseController
     public function store(CreateMedicineRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['selling_price'] = $input['selling_price'] ?? "0";
 
         $this->medicineRepository->create($input);
 
@@ -96,7 +95,7 @@ class MedicineController extends AppBaseController
      */
     public function show(Medicine $medicine): View
     {
-        $medicine->brand;
+        $medicine->generic;
         $medicine->category;
 
         return view('medicines.show')->with('medicine', $medicine);
@@ -159,9 +158,7 @@ class MedicineController extends AppBaseController
      */
     public function showModal(Medicine $medicine): JsonResponse
     {
-        $medicine->load(['brand', 'category']);
-        $getBuyingPrice = Medicine::find($medicine->id)->buying_price;
-        $getSellingPrice = Medicine::find($medicine->id)->selling_price;
+        $medicine->load(['generic', 'category']);
 
         // Get purchased medicines with dosage information grouped by dosage with earliest expiry date
         $purchasedMedicines = PurchasedMedicine::where('medicine_id', $medicine->id)
@@ -203,13 +200,11 @@ class MedicineController extends AppBaseController
         $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
         $medicineData = [
             'name' => $medicine->name,
-            'brand_name' => $medicine->brand->name,
+            'generic_name' => $medicine->generic->name,
             'category_name' => $medicine->category->name,
             'salt_composition' => $medicine->salt_composition,
             'side_effects' => $medicine->side_effects,
             'created_at' => $medicine->created_at,
-            'selling_price' => getCurrencyFormat(getCurrencyCode(), $getBuyingPrice),
-            'buying_price' => getCurrencyFormat(getCurrencyCode(), $getSellingPrice),
             'updated_at' => $medicine->updated_at,
             'description' => $medicine->description,
             'quantity' => $medicine->quantity,

@@ -233,7 +233,7 @@ class RequestDocumentsController extends Controller
             'vital_signs_o2_sat' => $data['vital_signs_o2_sat'],
             'vital_signs_height' => $data['vital_signs_height'] ?? null,
             'vital_signs_weight' => $data['vital_signs_weight'] ?? null,
-            'pertinent_exam' => $data['pertinent_exam'],
+            'pertinent_exam' => $data['pertinent_exam'] ?? null,
             'assessment' => $data['assessment'] ?? null,
             'plan' => $data['plan'] ?? null,
             'consult_mode' => $data['consult_mode'],

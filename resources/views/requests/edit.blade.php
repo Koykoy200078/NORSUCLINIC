@@ -264,8 +264,8 @@
                     </div>
                 </div>
                 <div class="col-span-5">
-                    <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM<span class="text-red-500">*</span></label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
+                    <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black auto-resize-textarea" rows="5">{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
                 </div>
             </div>
         </div>

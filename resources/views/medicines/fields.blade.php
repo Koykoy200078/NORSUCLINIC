@@ -1,9 +1,17 @@
 {{ Form::hidden('currency_symbol', getCurrentCurrency(), ['class' => 'currencySymbol']) }}
+
+<!-- Generic Field -->
+<div class="form-group col-md-6 mb-5">
+    {{ Form::label('generic_id', 'Generic Name:', ['class' => 'form-label']) }}
+    <span class="required"></span>
+    {{ Form::select('generic_id', $generics,  (isset($medicine)) ? $medicine->generic_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_generic'), 'id' => 'medicineGenericId']) }}
+</div>
+
 <!-- Name Field -->
 <div class="form-group col-md-6 mb-5">
-    {{ Form::label('name', __('Medicine Name').(':'), ['class' => 'form-label']) }}
+    {{ Form::label('name', 'Medicine Brand:', ['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('name', null, ['class' => 'form-control','minlength' => 2, 'placeholder' =>  __('Medicine Name'), 'id' => 'medicineNameId']) }}
+    {{ Form::text('name', null, ['class' => 'form-control','minlength' => 2, 'placeholder' =>  __('Medicine Brand'), 'id' => 'medicineNameId']) }}
 </div>
 
 <!-- Category Field -->
@@ -19,13 +27,6 @@
 <!-- Available Quantity Field -->
 {{ Form::hidden('available_quantity',isset($medicine) ? $medicine->available_quantity : 0, ['class' => 'form-control', 'placeholder' =>  __('messages.issued_item.available_quantity'), 'id' => 'AvailableQuantityId']) }}
 
-<!-- Name Field -->
-<div class="form-group col-md-6 mb-5">
-    {{ Form::label('brand_id', __('messages.medicine.brand').(':'), ['class' => 'form-label']) }}
-    <span class="required"></span>
-    {{ Form::select('brand_id', $brands,  (isset($medicine)) ? $medicine->brand_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_brand'), 'id' => 'medicineBrandId']) }}
-</div>
-
 <!-- Salt Composition Field -->
 <!-- <div class="form-group col-md-6 mb-5">
     {{ Form::label('salt_composition', __('messages.medicine.salt_composition').(':'), ['class' => 'form-label']) }}
@@ -33,13 +34,6 @@
         class="required"></span>
     {{ Form::text('salt_composition', null, ['class' => 'form-control','placeholder' =>  __('messages.medicine.salt_composition'),'required']) }}
 </div> -->
-
-<!-- Buying Price Field -->
-<div class="form-group col-md-6 mb-5">
-    {{ Form::label('buying_price', __('messages.medicine.buying_price').(':'), ['class' => 'form-label']) }}
-    <span class="required"></span>
-    {{ Form::text('buying_price', isset($medicine) ? $medicine->buying_price : '', ['class' => 'form-control','placeholder' =>  __('messages.medicine.buying_price')]) }}
-</div>
 
 <!-- Minimum Stock Alert Field -->
 <div class="form-group col-md-6 mb-5">

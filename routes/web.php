@@ -6,7 +6,7 @@ require __DIR__ . '/debug-profile.php';
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorizePaymentController;
-use App\Http\Controllers\BrandController;
+use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\ClinicScheduleController;
@@ -336,8 +336,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus')->group(function ()
     Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
     Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
 
-    // Medicine Brands
-    Route::resource('brands', BrandController::class);
+    // Medicine Generics
+    Route::resource('generics', GenericController::class);
 
     // Medicines
     Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
@@ -452,7 +452,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     Route::middleware('permission:manage_medicines')->group(function () {
         Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
         Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
-        Route::resource('brands', BrandController::class);
+        Route::resource('generics', GenericController::class);
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
@@ -614,7 +614,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::middleware('permission:manage_medicines')->group(function () {
         Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
         Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
-        Route::resource('brands', BrandController::class);
+        Route::resource('generics', GenericController::class);
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');

@@ -181,6 +181,18 @@ class Patient extends Model implements HasMedia
             // Delete all appointments
             $patient->appointments()->delete();
 
+            // Delete all patient queue entries
+            $patient->queueEntries()->delete();
+
+            // Delete all prescriptions
+            $patient->prescriptions()->delete();
+
+            // Delete all visits
+            $patient->visits()->delete();
+
+            // Delete all medicine bills
+            $patient->medicineBills()->delete();
+
             // Delete all request documents (consultation forms, medical certificates)
             // Use get()->each() to trigger deleting events on each document
             // This ensures images are deleted from storage
@@ -188,8 +200,19 @@ class Patient extends Model implements HasMedia
                 $document->delete();
             });
 
-            // Delete the associated user account
+            // Delete activity logs related to this patient
+            \App\Models\ActivityLog::where('subject_type', 'App\Models\Patient')
+                ->where('subject_id', $patient->id)
+                ->delete();
+
+            // Delete activity logs related to the patient's user account
             if ($patient->user) {
+                \App\Models\ActivityLog::where('subject_type', 'App\Models\User')
+                    ->where('subject_id', $patient->user->id)
+                    ->delete();
+
+                \App\Models\ActivityLog::where('user_id', $patient->user->id)->delete();
+
                 // Delete user's address
                 if ($patient->user->address) {
                     $patient->user->address->delete();
@@ -280,5 +303,20 @@ class Patient extends Model implements HasMedia
         return $this->hasOne(PatientQueue::class)
             ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
             ->latest();
+    }
+
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    public function medicineBills(): HasMany
+    {
+        return $this->hasMany(MedicineBill::class);
     }
 }

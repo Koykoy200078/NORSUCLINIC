@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Brand;
+use App\Models\Generic;
 use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\Prescription;
@@ -19,8 +19,6 @@ class MedicineRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'name',
-        'selling_price',
-        'buying_price',
         'salt_composition',
         'description',
         'side_effects',
@@ -47,7 +45,7 @@ class MedicineRepository extends BaseRepository
     public function getSyncList(): array
     {
         $data['categories'] = Category::all()->where('is_active', '=', 1)->pluck('name', 'id')->toArray();
-        $data['brands'] = Brand::all()->pluck('name', 'id')->toArray();
+        $data['generics'] = Generic::all()->pluck('name', 'id')->toArray();
 
         return $data;
     }

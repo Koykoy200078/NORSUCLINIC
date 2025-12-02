@@ -16,9 +16,9 @@
                                                  class="fs-5 text-gray-800 showSpan"></span>
                                    </div>
                                    <div class="form-group col-lg-6 mb-5">
-                                          <label for="medicine_brand"
-                                                 class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.brand').(':') }}</label><br>
-                                          <span id="showMedicineBrand"
+                                          <label for="medicine_generic"
+                                                 class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.generic').(':') }}</label><br>
+                                          <span id="showMedicineGeneric"
                                                  class="fs-5 text-gray-800 showSpan"></span>
                                    </div>
                                    <div class="form-group col-lg-6 mb-5">
@@ -43,18 +43,6 @@
                                           <label for="salt_composition"
                                                  class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.salt_composition').(':') }}</label><br>
                                           <span id="showMedicineSaltComposition"
-                                                 class="fs-5 text-gray-800 showSpan"></span>
-                                   </div>
-                                   <div class="form-group col-lg-6 mb-5">
-                                          <label for="selling_price"
-                                                 class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.selling_price').(':') }}</label><br>
-                                          <span id="showMedicineSellingPrice"
-                                                 class="fs-5 text-gray-800 showSpan"></span>
-                                   </div>
-                                   <div class="form-group col-lg-6 mb-5">
-                                          <label for="buying_price"
-                                                 class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine.buying_price').(':') }}</label><br>
-                                          <span id="showMedicineBuyingPrice"
                                                  class="fs-5 text-gray-800 showSpan"></span>
                                    </div>
                                    <div class="form-group col-lg-6 mb-5">

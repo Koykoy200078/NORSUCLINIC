@@ -327,9 +327,9 @@
 @can('manage_medicines')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/brands*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
-        (isRole('staff') && Request::is('staff/categories*', 'staff/brands*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
-        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/brands*', 'doctors/medicines*', 'doctors/medicine-purchase*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
+        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/generics*', 'admin/medicines*', 'admin/medicine-purchase*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/medicine-purchase*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
+        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/medicine-purchase*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('categories.index') : 

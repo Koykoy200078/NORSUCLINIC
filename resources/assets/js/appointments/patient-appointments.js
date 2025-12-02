@@ -183,12 +183,12 @@ window.cancelAppointment = function (url, header, appointmentId) {
         },
     }).then(function (result) {
         if (result) {
-            deleteItemAjax(url, header, appointmentId);
+            deleteAppointmentAjax(url, header, appointmentId);
         }
     });
 };
 
-function deleteItemAjax(url, header, appointmentId) {
+function deleteAppointmentAjax(url, header, appointmentId) {
     $.ajax({
         url: route("patients.cancel-status"),
         type: "POST",
