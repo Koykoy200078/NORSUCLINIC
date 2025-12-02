@@ -1,1 +1,0 @@
-{{ $row->currency_code }}

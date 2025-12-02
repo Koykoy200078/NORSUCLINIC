@@ -29,7 +29,6 @@ return [
     'staffs' => 'Staffs',
     'appointments' => 'Appointments',
     'doctor_appointments' => 'Doctor Appointments',
-    'currencies' => 'Currencies',
     'login' => 'Login',
     'register' => 'Register',
     'visits' => 'Visits',
@@ -39,8 +38,6 @@ return [
     'faqs' => 'FAQs',
     'front_medical_services' => 'Front Medical Services',
     'front_patient_testimonials' => 'Front Patient Testimonials',
-    'enquiries' => 'Enquiries',
-    'subscribers' => 'Subscribers',
     'privacy_policy' => 'Privacy Policy',
     'terms_conditions' => 'Terms & Conditions',
     'how_we_care' => 'How We Care',
@@ -167,7 +164,6 @@ return [
         'contact' => 'Contact',
         'call_us' => 'Call Us',
         'send_an_email' => 'Send An Email',
-        'subscribe' => 'Subscribe',
         'medical' => 'Home',
         'medical_services' => 'Services',
         'medical_about_us' => 'About Us',
@@ -177,6 +173,8 @@ return [
         'our_services' => 'Our Service',
         'opening_hours' => 'Opening Hours',
         'send_us_an_email' => 'Send us an Email',
+        'contact_information' => 'Contact Information',
+        'you_can_reach_us' => 'You can reach us',
         'name' => 'Name',
         'reason' => 'Reason',
         'email' => 'Email',
@@ -185,7 +183,6 @@ return [
         'message' => 'Message',
         'send_message' => 'Send Message',
         'closed' => 'Closed',
-        'enquiry_details' => 'Enquiry Details',
         'status' => 'Status',
         'created_at' => 'Created At',
         'total_services' => 'Total Services',
@@ -211,10 +208,8 @@ return [
         'questions_before_booking' => 'Questions Before Booking',
         'no_services_available' => 'No Services Available',
         'meet_our_team_of_specialists' => 'Meet our Team of Specialists',
-        'enter_your_email_to_subscribe_to_our_newsletter' => 'Enter your Email to Subscribe to our Newsletter',
         'we_make_sure_that_your_life_are_in_good_hands' => 'We make sure that your Life are in Good Hands',
         'dynamically_formulate_error_free_results_before_integrated_results_dramatically_incubate_integrated_resources_without_cost_effective_outside_the' => 'Dynamically formulate error-free results before integrated results. Dramatically incubate integrated resources without cost effective outside the.',
-        'enquiry' => 'Enquiry',
     ],
 
     'admin_dashboard' => [
@@ -345,7 +340,6 @@ return [
         'connected_zoom' => 'Connected with zoom successfully.',
         'contact_number' => 'Contact number is ',
         'purchase_price' => 'Purchase Price',
-        'email_already_exist' => 'The email has already subscribe.',
         'email_not_register' => 'Email is not registered.',
         'category_required' => 'The category field is required.',
         'generic_required' => 'The generic field is required.',
@@ -354,7 +348,6 @@ return [
         'email_max' => 'Maximum size of email is 255.',
         'email_regex' => 'The email field must be valid format.',
         'Attempt_read_property_access_token_null' => 'Attempt to read property \"access_token\" on null',
-        'default_language' => 'Default Language',
 
         'not_allow__assess_record' => 'Seems, you are not allowed to access this record.',
         'zoom_credentials' => 'Please add zoom credentials.',
@@ -366,11 +359,6 @@ return [
         'logout' => 'Logout',
         'confirm' => 'Confirm',
         'province_not_avl' => 'Province not available',
-        'google_recaptcha' => 'Enable Google reCAPTCHA',
-        'google_captcha_key' => 'Google Captcha Key',
-        'google_captcha_secret' => 'Google Captcha Secret',
-        'google_captcha_key_required' => 'Google captcha key field is required. ',
-        'google_captcha_secret_required' => 'Google captcha secret field is required.',
         'space_not_allowed_in_unique_id_field' => 'Space not allowed in unique id field',
         'pick_date_range' => 'Pick date range',
         'view_all' => 'View All',
@@ -414,11 +402,9 @@ return [
         'setting' => 'Setting',
         'general' => 'General',
         'contact_information' => 'Contact Information',
-        'currency_settings' => 'Currency Settings',
         'general_details' => 'General Details',
         'clinic_name' => 'Clinic Name',
         'specialties' => 'Specialties',
-        'currency' => 'Currency',
         'prefix' => 'Prefix',
         'address' => 'Address',
         'postal_code' => 'Postal Code',
@@ -431,7 +417,6 @@ return [
         'when_checkbox_disable' => 'When checkbox is disable email verification is not working for new users.',
         'change_app_logo' => 'Change app logo',
         'change_favicon' => 'Change favicon',
-        'default_language_suggest' => 'By updating this the entire app language will change at doctor, patient logins as well as front side.'
     ],
 
     'patient' => [
@@ -749,19 +734,6 @@ return [
         'yearly_appointments' => 'Yearly Appointments',
     ],
 
-    'currency' => [
-        'add_currency' => 'Add Currency',
-        'edit_currency' => 'Edit Currency',
-        'currency_name' => 'Currency Name',
-        'currency_icon' => 'Currency Icon',
-        'currency_code' => 'Currency Code',
-        'name' => 'Name',
-        'note' => 'Note',
-        'add_currency_code_as_per_three_letter_iso_code' => 'Add currency code as per three-letter ISO code',
-        'you_can_find_out_here' => 'you can find out here',
-        'currency_not_avl' => 'Currency not available'
-    ],
-
     'visit' => [
         'add_visit' => 'Add Visit',
         'edit_visit' => 'Edit Visit',
@@ -1072,9 +1044,7 @@ return [
         'update_front_testimonial' => 'Testimonial updated successfully.',
         'setting_update' => 'Settings updated successfully.',
         'cms_update' => 'CMS updated successfully.',
-        'enquire_sent' => 'Enquiry Sent Successfully',
         'messages_sent' => 'Message Send Successfully',
-        'enquire_deleted' => 'Enquiry deleted successfully.',
         'create_blog' => 'VCard blog created successfully.',
         'update_blog' => 'VCard blog updated successfully.',
         'role_create' => 'Role created successfully.',
@@ -1100,8 +1070,6 @@ return [
         'faq_use' => 'This FAQ used somewhere else.',
         'faq_delete' => 'FAQ deleted successfully.',
         'slider_update' => 'Banner updated successfully',
-        'subscriber_creat' => 'Subscriber created successfully.',
-        'subscriber_delete' => 'Subscriber deleted successfully.',
         'testimonial_creat' => 'Front Patient Testimonial created successfully.',
         'testimonial_update' => 'Front Patient Testimonial update successfully.',
         'testimonial_use' => 'Front Patient Testimonial used successfully.',
@@ -1378,6 +1346,5 @@ return [
         'type' => 'Type',
         'patient' => 'Patient',
     ],
-
 
 ];

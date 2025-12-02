@@ -71,15 +71,6 @@
                         </span>
                     </div>
 
-                    @if (getSettingValue('recaptcha'))
-                        <div class="form-group mb-4 captcha-customize">
-                            <div class="g-recaptcha" id="g-recaptcha"
-                                data-sitekey="{{$captchakey}}"
-                                data-callback="verifyRecaptchaCallback" data-expired-callback="expiredRecaptchaCallback">
-                            </div>
-                        </div>
-                    @endif
-
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary">{{__('messages.common.submit')}}</button>
                     </div>

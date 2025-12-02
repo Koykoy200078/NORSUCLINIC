@@ -241,6 +241,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
+ * @property string $type
  * @property string $state_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -255,6 +256,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|City whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|City whereType($value)
  */
 	class City extends \Eloquent {}
 }
@@ -310,6 +312,7 @@ namespace App\Models{
  * @property int $id
  * @property int $request_document_id
  * @property int $medicine_id
+ * @property string|null $dosage
  * @property int $quantity
  * @property string|null $used_for
  * @property string|null $dosage_instructions
@@ -321,6 +324,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine whereDosage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine whereDosageInstructions($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ConsultationMedicine whereMedicineId($value)
@@ -375,33 +379,6 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	class Course extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\Currency
- *
- * @property int $id
- * @property string $currency_name
- * @property string $currency_icon
- * @property string $currency_code
- * @property int $is_default
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @method static \Database\Factories\CurrencyFactory factory($count = null, $state = [])
- * @method static Builder|Currency newModelQuery()
- * @method static Builder|Currency newQuery()
- * @method static Builder|Currency query()
- * @method static Builder|Currency whereCreatedAt($value)
- * @method static Builder|Currency whereCurrencyCode($value)
- * @method static Builder|Currency whereCurrencyIcon($value)
- * @method static Builder|Currency whereCurrencyName($value)
- * @method static Builder|Currency whereId($value)
- * @method static Builder|Currency whereIsDefault($value)
- * @method static Builder|Currency whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	class Currency extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -543,35 +520,25 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Enquiry
+ * App\Models\Generic
  *
  * @property int $id
  * @property string $name
- * @property string $email
- * @property string|null $phone
- * @property string $subject
- * @property string $message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $view
- * @property string|null $country_code
- * @property-read string $view_name
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry query()
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereCountryCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Enquiry whereView($value)
+ * @property-read \App\Models\Category|null $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
+ * @property-read int|null $medicines_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Generic whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class Enquiry extends \Eloquent {}
+	class Generic extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -609,10 +576,8 @@ namespace App\Models{
  *
  * @property int $id
  * @property int|null $category_id
- * @property int|null $brand_id
+ * @property int|null $generic_id
  * @property string $name
- * @property float $selling_price
- * @property float $buying_price
  * @property int $quantity
  * @property int $available_quantity
  * @property string $salt_composition
@@ -621,7 +586,7 @@ namespace App\Models{
  * @property string|null $currency_symbol
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Brand|null $brand
+ * @property-read \App\Models\Generic|null $generic
  * @property-read \App\Models\Category|null $category
  * @property-read \App\Models\PrescriptionMedicineModal|null $prescriptionMedicines
  * @property-read \App\Models\PurchasedMedicine|null $purchasedMedicine
@@ -630,7 +595,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine query()
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereAvailableQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereBrandId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereGenericId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereBuyingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereCreatedAt($value)
@@ -651,6 +616,43 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine whereStockAlertPercentage($value)
  */
 	class Medicine extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MedicineAvailability
+ *
+ * @property int $id
+ * @property string $availability_no
+ * @property float $tax
+ * @property float $total
+ * @property float $net_amount
+ * @property int $payment_type
+ * @property float $discount
+ * @property string|null $note
+ * @property string|null $payment_note
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchasedMedicine> $purchasedMedcines
+ * @property-read int|null $purchased_medcines_count
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereNetAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability wherePaymentNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability wherePaymentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability wherePurchaseNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereUpdatedAt($value)
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|MedicineAvailability whereAvailabilityNo($value)
+ */
+	class MedicineAvailability extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -786,8 +788,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Patient whereUserId($value)
  * @mixin \Eloquent
  * @property-read \App\Models\PatientQueue|null $currentQueue
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MedicineBill> $medicineBills
+ * @property-read int|null $medicine_bills_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Prescription> $prescriptions
+ * @property-read int|null $prescriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PatientQueue> $queueEntries
  * @property-read int|null $queue_entries_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Visit> $visits
+ * @property-read int|null $visits_count
  */
 	class Patient extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -803,12 +811,15 @@ namespace App\Models{
  * @property bool $is_priority
  * @property string $status
  * @property string|null $notes
+ * @property int|null $latest_consultation_id
+ * @property int $has_consultation_attachment
  * @property \Illuminate\Support\Carbon|null $called_at
  * @property \Illuminate\Support\Carbon|null $completed_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $addedBy
  * @property-read mixed $queue_number
+ * @property-read \App\Models\RequestDocuments|null $latestConsultation
  * @property-read \App\Models\Patient $patient
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue newQuery()
@@ -820,8 +831,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereCalledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereCompletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereHasConsultationAttachment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereIsPriority($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereLatestConsultationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereRoomNumber($value)
@@ -829,28 +842,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PatientQueue whereUpdatedAt($value)
  */
 	class PatientQueue extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\PaymentGateway
- *
- * @property int $id
- * @property int $payment_gateway_id
- * @property string $payment_gateway
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway query()
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway wherePaymentGateway($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway wherePaymentGatewayId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PaymentGateway whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	class PaymentGateway extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -982,46 +973,10 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\PurchaseMedicine
- *
- * @property int $id
- * @property string $purchase_no
- * @property float $tax
- * @property float $total
- * @property float $net_amount
- * @property int $payment_type
- * @property float $discount
- * @property string|null $note
- * @property string|null $payment_note
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchasedMedicine> $purchasedMedcines
- * @property-read int|null $purchased_medcines_count
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine query()
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereDiscount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereNetAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereNote($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine wherePaymentNote($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine wherePaymentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine wherePurchaseNo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereTax($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereTotal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PurchaseMedicine whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	class PurchaseMedicine extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\PurchasedMedicine
  *
  * @property int $id
- * @property int $purchase_medicines_id
+ * @property int $medicine_availabilities_id
  * @property int|null $medicine_id
  * @property string|null $dosage
  * @property string|null $expiry_date
@@ -1043,10 +998,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereManufacturingDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereMedicineId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine wherePurchaseMedicinesId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereMedicineAvailabilitiesId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereTax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PurchasedMedicine whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\MedicineAvailability $medicineAvailability
  */
 	class PurchasedMedicine extends \Eloquent {}
 }
@@ -1189,10 +1146,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereVitalSignsWeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereYearLevel($value)
  * @mixin \Eloquent
+ * @property string|null $note
  * @property array|null $consultation_images
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ConsultationMedicine> $consultationMedicines
  * @property-read int|null $consultation_medicines_count
  * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereConsultationImages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RequestDocuments whereNote($value)
  */
 	class RequestDocuments extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -1450,28 +1409,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Subscribe
- *
- * @property int $id
- * @property string $email
- * @property bool $subscribe
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe query()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereSubscribe($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscribe whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	class Subscribe extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\Transaction
  *
  * @property int $id
@@ -1503,6 +1440,7 @@ namespace App\Models{
  * @method static Builder|Transaction whereUpdatedAt($value)
  * @method static Builder|Transaction whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\Appointment|null $doctorappointment
  */
 	class Transaction extends \Eloquent {}
 }
@@ -1538,6 +1476,7 @@ namespace App\Models{
 /**
  * App\Models\UsedMedicineView
  *
+ * @property-read \App\Models\Medicine $medicine
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicineView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicineView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UsedMedicineView query()

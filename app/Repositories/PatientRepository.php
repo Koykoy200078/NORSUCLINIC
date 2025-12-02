@@ -89,8 +89,7 @@ class PatientRepository extends BaseRepository
             $input['email'] = !empty($input['email']) ? setEmailLowerCase($input['email']) : null;
             $patientArray = Arr::only($input, ['patient_unique_id']);
             $input['type'] = User::PATIENT;
-            $languageSetting = Setting::where('key', 'language')->first();
-            $input['language'] = $languageSetting ? $languageSetting->value : 'en';
+            $input['language'] = 'en';
 
             // Set email as verified with Philippine time
             $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();

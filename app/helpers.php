@@ -1,11 +1,9 @@
 <?php
 
 use App\Models\City;
-use App\Models\Currency;
 use App\Models\DoctorSession;
 use App\Models\Notification;
 use App\Models\Patient;
-use App\Models\PaymentGateway;
 use App\Models\PurchasedMedicine;
 use App\Models\Setting;
 use App\Models\State;
@@ -404,66 +402,11 @@ if (! function_exists('getUserLanguages')) {
     }
 }
 
-if (! function_exists('getCurrencyIcon')) {
-
-    /**
-     * @return mixed
-     */
-    function getCurrencyIcon()
-    {
-        static $setting;
-
-        if (empty($setting)) {
-
-            $setting = Setting::all()->keyBy('key');
-        }
-
-        static $currencies;
-
-        if (empty($currencies)) {
-            $currencies = Currency::all()->keyBy('id');
-        }
-
-        $currencyId = $setting['currency']->value;
-        $currency = $currencies[$currencyId];
-        $currencyIcon = $currency->currency_icon ?? '₱';
-
-        return $currencyIcon;
-    }
-}
-
 if (! function_exists('setStripeApiKey')) {
 
     function setStripeApiKey()
     {
         Stripe::setApiKey(config('services.stripe.secret_key'));
-    }
-}
-
-if (! function_exists('getCurrencyCode')) {
-
-    /**
-     * @return HigherOrderBuilderProxy|mixed|string
-     */
-    function getCurrencyCode()
-    {
-        static $setting;
-        if (empty($setting)) {
-            $setting = Setting::all()->keyBy('key');
-        }
-
-        $currencyId = $setting['currency'];
-
-        $currencies = Cache::get('currency', null);
-
-        if (empty($currencies)) {
-            $currency = Currency::find($currencyId)->first();
-            Cache::put('currency', $currency);
-
-            return $currency->currency_code;
-        }
-
-        return $currencies->currency_code;
     }
 }
 
@@ -488,6 +431,41 @@ if (! function_exists('getNotification')) {
             'user_id',
             getLogInUserId()
         )->orderByDesc('created_at')->get();
+    }
+}
+
+if (! function_exists('getCurrencyCode')) {
+    /**
+     * Returns hardcoded Philippine Peso currency code
+     * @return string
+     */
+    function getCurrencyCode(): string
+    {
+        return 'PHP';
+    }
+}
+
+if (! function_exists('getCurrencyFormat')) {
+    /**
+     * Format amount with Philippine Peso currency
+     * @param string $currency
+     * @param float $amount
+     * @return string
+     */
+    function getCurrencyFormat($currency, $amount): string
+    {
+        return '₱' . number_format($amount, 2);
+    }
+}
+
+if (! function_exists('getCurrentCurrency')) {
+    /**
+     * Returns hardcoded Philippine Peso symbol
+     * @return string
+     */
+    function getCurrentCurrency(): string
+    {
+        return '₱';
     }
 }
 
@@ -571,30 +549,7 @@ if (! function_exists('getAllPaymentStatus')) {
      */
     function getAllPaymentStatus()
     {
-        $paymentGateway = \App\Models\Appointment::PAYMENT_METHOD;
-
-        $selectedPaymentGateway = PaymentGateway::pluck('payment_gateway', 'payment_gateway_id')->toArray();
-
-        $paymentMethodToReturn = array_intersect($paymentGateway, $selectedPaymentGateway);
-
-        return $paymentMethodToReturn;
-    }
-}
-
-if (! function_exists('getPaymentGateway')) {
-
-    /**
-     * @return string[]
-     */
-    function getPaymentGateway()
-    {
-
-        $paymentGateway = \App\Models\Appointment::PAYMENT_GATEWAY;
-        $selectedPaymentGateway = PaymentGateway::pluck('payment_gateway')->toArray();
-
-        $paymentGatewayToReturn = array_intersect($paymentGateway, $selectedPaymentGateway);
-
-        return $paymentGatewayToReturn;
+        return \App\Models\Appointment::PAYMENT_METHOD;
     }
 }
 
@@ -621,14 +576,6 @@ if (! function_exists('getYearDate')) {
         $endDate = Carbon::createFromDate($date, 12, 31)->endOfDay();
 
         return $startDate . ' - ' . $endDate;
-    }
-}
-
-if (! function_exists('getCurrencyFormat')) {
-
-    function getCurrencyFormat($currencies, $amount): string
-    {
-        return moneyFormat($amount, $currencies);
     }
 }
 
@@ -713,23 +660,6 @@ if (! function_exists('preparePhoneNumber')) {
     function preparePhoneNumber($input, $key)
     {
         return (! empty($input[$key])) ? '+' . $input['country_code'] . $input[$key] : null;
-    }
-}
-
-if (! function_exists('getCurrentCurrency')) {
-
-    /**
-     * @return mixed
-     */
-    function getCurrentCurrency()
-    {
-        /** @var Setting $currentCurrency */
-        static $currentCurrency;
-
-        if (empty($currentCurrency)) {
-            $currentCurrency = Setting::where('key', 'currency')->first();
-        }
-        return $currentCurrency->value;
     }
 }
 
@@ -845,7 +775,7 @@ if (! function_exists('getAmountToWord')) {
         $get_paise = ($amount_after_decimal > 0) ? 'And ' . ($change_words[$amount_after_decimal / 10] . '
    ' . $change_words[$amount_after_decimal % 10]) . ' Paise' : '';
 
-        return ($implode_to_Rupees ? $implode_to_Rupees . getCurrencyCode() : '') . $get_paise;
+        return ($implode_to_Rupees ? $implode_to_Rupees . 'PHP' : '') . $get_paise;
     }
 }
 
@@ -964,7 +894,7 @@ if (!function_exists('paypalCurrencySupports')) {
     {
         $paypal = ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'USD', 'SGD', 'SEK', 'CHF', 'THB'];
 
-        if (!in_array(strtoupper(getCurrencyCode()), $paypal)) {
+        if (!in_array(strtoupper('PHP'), $paypal)) {
             return  false;
         }
         return  true;
@@ -976,7 +906,7 @@ if (!function_exists('authorizedCurrencySupports')) {
     {
         $authorized = ['USD', 'CAD', 'GBP', 'EUR', 'CHF', 'DKK', 'NOK', 'PLN', 'SEK'];
 
-        if (!in_array(strtoupper(getCurrencyCode()), $authorized)) {
+        if (!in_array(strtoupper('PHP'), $authorized)) {
             return  false;
         }
         return  true;
@@ -1061,7 +991,7 @@ if (!function_exists('paytmCurrencySupports')) {
             'ZAR'
         ];
 
-        if (!in_array(strtoupper(getCurrencyCode()), $paytm)) {
+        if (!in_array(strtoupper('PHP'), $paytm)) {
             return  false;
         }
         return  true;
@@ -1124,5 +1054,17 @@ if (!function_exists('getDoctorBookedAppointmentsCount')) {
                 ->where('status', \App\Models\Appointment::BOOKED)
                 ->count();
         });
+    }
+}
+
+if (! function_exists('getCurrencyIcon')) {
+    /**
+     * Get the currency icon (hardcoded to Philippine Peso)
+     *
+     * @return string
+     */
+    function getCurrencyIcon(): string
+    {
+        return '₱';
     }
 }

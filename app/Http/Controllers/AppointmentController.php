@@ -50,9 +50,8 @@ class AppointmentController extends AppBaseController
     {
         $allPaymentStatus = getAllPaymentStatus();
         $paymentStatus = Arr::except($allPaymentStatus, [Appointment::MANUALLY]);
-        $paymentGateway = getPaymentGateway();
 
-        return view('appointments.index', compact('allPaymentStatus', 'paymentGateway', 'paymentStatus'));
+        return view('appointments.index', compact('allPaymentStatus', 'paymentStatus'));
     }
 
     /**

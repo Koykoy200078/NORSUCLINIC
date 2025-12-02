@@ -35,7 +35,7 @@
             <div class="bg-white rounded-10 shadow-sm mb-5 p-5">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-2 fw-semibold fs-6">{{ __('messages.purchase_medicine.total') . ' ' . __('messages.common.active') . ' ' . __('messages.doctors') }}</h6>
+                        <h6 class="text-muted mb-2 fw-semibold fs-6">{{ __('messages.common.active') . ' ' . __('messages.doctors') }}</h6>
                         <h2 class="mb-0 fw-bolder text-primary">{{ $totalDoctorCount }}</h2>
                     </div>
                     <div class="ms-3">

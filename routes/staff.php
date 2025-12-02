@@ -18,13 +18,10 @@ use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\RequestDocumentsController;
-use App\Http\Controllers\Front\EnquiryController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\SliderController;
-use App\Http\Controllers\Front\SubscribeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\HolidayContoller;
@@ -162,11 +159,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
     });
 
-    // Enquiry Management (Staff can manage enquiries)
-    Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
-    Route::get('enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
-    Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('enquiries.destroy');
-
     // CMS Management (Staff can manage CMS with limited access)
     Route::middleware('permission:manage_front_cms')->group(function () {
         Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
@@ -174,10 +166,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
         // Banner/Slider management
         Route::resource('banner', SliderController::class)->except('create', 'store', 'destroy', 'show');
-
-        // Subscribers management
-        Route::get('subscribers', [SubscribeController::class, 'index'])->name('subscribers.index');
-        Route::delete('subscribers/{subscribe}', [SubscribeController::class, 'destroy'])->name('subscribers.destroy');
     });
 
     // Settings Management (Staff can view settings but limited editing)
@@ -197,11 +185,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     Route::middleware('permission:manage_roles')->group(function () {
         Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    });
-
-    Route::middleware('permission:manage_currencies')->group(function () {
-        Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
-        Route::get('currencies/{currency}', [CurrencyController::class, 'show'])->name('currencies.show');
     });
 
     Route::middleware('permission:manage_countries')->group(function () {

@@ -11,14 +11,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\CountryController;
-use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\Front\CMSController;
-use App\Http\Controllers\Front\EnquiryController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Front\SliderController;
-use App\Http\Controllers\Front\SubscribeController;
 
 use App\Http\Controllers\HolidayContoller;
 use App\Http\Controllers\MedicineBillController;
@@ -111,9 +108,6 @@ Route::post('/paytm-callback', [PayTMController::class, 'paymentCallback'])->nam
 Route::get('paytm-payment-cancel', [PayTMController::class, 'failed'])->name('paytm.failed');
 
 // Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
-
-Route::post('/enquiries', [EnquiryController::class, 'store'])->name('enquiries.store');
-Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
 
 Route::get('doctor-session-time', [DoctorSessionController::class, 'getDoctorSession'])->name('doctor-session-time');
 Route::get('get-service', [ServiceController::class, 'getService'])->name('get-service');
@@ -275,11 +269,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     });
 
-    // Currency route
-    Route::middleware('permission:manage_currencies')->group(function () {
-        Route::resource('currencies', CurrencyController::class);
-    });
-
     // Encounter route (Patient Visits)
     Route::middleware('permission:manage_patient_visits')->group(function () {
         Route::resource('visits', VisitController::class);
@@ -299,11 +288,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
         Route::post('cms', [CMSController::class, 'update'])->name('cms.update');
         Route::resource('banner', SliderController::class)->except('create', 'store', 'destroy', 'show');
-        Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
-        Route::get('enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
-        Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('enquiries.destroy');
-        Route::get('subscribers', [SubscribeController::class, 'index'])->name('subscribers.index');
-        Route::delete('subscribers/{subscribe}', [SubscribeController::class, 'destroy'])->name('subscribers.destroy');
     });
 
     // Prescription Management
@@ -463,18 +447,11 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
     });
 
-    // Enquiry Management
-    Route::get('enquiries', [EnquiryController::class, 'index'])->name('enquiries.index');
-    Route::get('enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
-    Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('enquiries.destroy');
-
     // CMS Management
     Route::middleware('permission:manage_front_cms')->group(function () {
         Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
         Route::post('cms', [CMSController::class, 'update'])->name('cms.update');
         Route::resource('banner', SliderController::class)->except('create', 'store', 'destroy', 'show');
-        Route::get('subscribers', [SubscribeController::class, 'index'])->name('subscribers.index');
-        Route::delete('subscribers/{subscribe}', [SubscribeController::class, 'destroy'])->name('subscribers.destroy');
     });
 
     // Settings Management
@@ -490,12 +467,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     Route::middleware('permission:manage_roles')->group(function () {
         Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    });
-
-    // Currencies Management
-    Route::middleware('permission:manage_currencies')->group(function () {
-        Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
-        Route::get('currencies/{currency}', [CurrencyController::class, 'show'])->name('currencies.show');
     });
 
     // Countries Management

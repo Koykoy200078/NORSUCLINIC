@@ -117,12 +117,12 @@
 
 @can('manage_settings')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/settings*') ? 'active' : '' }}"
         href="{{ route('setting.index') }}">{{ __('messages.settings') }}</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/clinic-schedules*') ? 'active' : '' }}"
         href="{{ route('clinic-schedules.index') }}">{{ __('messages.clinic_schedules') }}</a>
 </li>
@@ -137,14 +137,14 @@
 @endcan
 @can('manage_roles')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/roles*') ? 'active' : '' }}"
         href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a>
 </li>
 @endcan
 @can('manage_countries')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/countries*') ? 'active' : '' }}"
         href="{{ route('countries.index') }}">{{ __('messages.countries') }}</a>
 </li>
@@ -152,7 +152,7 @@
 
 @can('manage_states')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/states*') ? 'active' : '' }}"
         href="{{ route('states.index') }}">{{ __('messages.states') }}</a>
 </li>
@@ -160,7 +160,7 @@
 
 @can('manage_cities')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/currencies*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/cities*') ? 'active' : '' }}"
         href="{{ route('cities.index') }}">{{ __('messages.cities') }}</a>
 </li>
@@ -246,10 +246,6 @@
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/banner*') ? 'active' : '' }}"
         href="{{ route('banner.index') }}">{{ __('messages.sliders') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/enquiries*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/enquiries*') ? 'active' : '' }}"
-        href="{{ route('enquiries.index') }}">{{ __('messages.enquiries') }}</a>
 </li>
 @endcan
 @can('manage_transactions')

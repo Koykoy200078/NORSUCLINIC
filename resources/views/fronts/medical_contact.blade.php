@@ -60,61 +60,15 @@ $styleCss = 'style';
                         </div>
                     </div>
                     <div class="col-lg-9 col-md-8 ps-md-0">
-                        <form id="enquiryForm" action="{{ route('enquiries.store') }}" class="contact-form ajax-form"
-                            method="POST">
-                            @method('post')
-                            @csrf
-                            <div class="ajax-message"></div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="contact-form__input-block">
-                                        {{ Form::text('name', old('name'), ['class' => 'form-control', 'id' => 'name', 'placeholder' => __('messages.web.name'), 'required']) }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="contact-form__input-block">
-                                        {{ Form::email('email', old('email'), ['class' => 'form-control', 'id' => 'email', 'placeholder' => __('messages.web.email'), 'required']) }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="contact-form__input-block">
-                                        {{ Form::tel('phone', null, ['class' => 'form-control', 'placeholder' => __('messages.web.phone'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-                                        {{ Form::hidden('country_code', null, ['id' => 'prefix_code']) }}
-                                        <span id="valid-msg" class="hide">✓ &nbsp;
-                                            {{ __('messages.valid_number') }}</span>
-                                        <span id="error-msg" class="hide"></span>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="contact-form__input-block">
-                                        {{ Form::text('subject', null, ['class' => 'form-control', 'id' => 'subject', 'placeholder' => __('messages.web.subject'), 'required', 'maxlength' => '121']) }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="contact-form__input-block">
-                                        {{ Form::textarea('message', null, ['class' => 'form-control form-textarea', 'id' => 'message', 'placeholder' => __('messages.web.message'), 'required']) }}
-                                    </div>
-                                </div>
-                                @if (config('app.google_recaptcha_site_key'))
-                                <div class="col-lg-12">
-                                    <div class="input-group">
-                                        <div class="g-recaptcha"
-                                            data-sitekey="{{ config('app.google_recaptcha_site_key') }}"
-                                            data-callback="verifyRecaptchaCallback"
-                                            data-expired-callback="expiredRecaptchaCallback"></div>
-                                        <input class="form-control d-none" {{ $styleCss }}="display:none;"
-                                            name="
-                                        gre_captcha"
-                                            data-recaptcha="true" data-error="Please complete the Captcha">
-                                    </div>
-                                </div>
-                                @endif
-
-                                <div class="col-lg-12 text-end mt-3">
-                                    {{ Form::button(__('messages.web.send_message'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'submitBtn']) }}
-                                </div>
-                            </div>
-                        </form>
+                        <div class="contact-info-message p-5 bg-light">
+                            <h4 class="mb-4">{{ __('messages.web.contact_information') }}</h4>
+                            <p class="mb-3">{{ __('messages.web.you_can_reach_us') }}</p>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> {{ getSettingValue('address_one') }}</li>
+                                <li class="mb-2"><i class="fas fa-envelope me-2"></i> <a href="mailto:{{ getSettingValue('email') }}">{{ getSettingValue('email') }}</a></li>
+                                <li class="mb-2"><i class="fas fa-phone me-2"></i> <a href="tel:+{{ getSettingValue('country_code') }}{{ getSettingValue('contact_no') }}">+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

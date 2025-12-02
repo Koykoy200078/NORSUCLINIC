@@ -40,15 +40,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $language =   Setting::where('key', 'language')->get()->toArray()[0]['value'];
-
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        Session::put('languageName', $language);
+        Session::put('languageName', 'en');
         return redirect('/');
     }
 }

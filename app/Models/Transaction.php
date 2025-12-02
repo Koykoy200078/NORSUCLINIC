@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * App\Models\Transaction
@@ -90,7 +91,18 @@ class Transaction extends Model
 
     public function doctorappointment()
     {
-        $doctors = Doctor::whereUserId(getLogInUserId())->first();
+        // Get logged in user ID safely (returns null if no user is logged in)
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return $this->hasOne(Appointment::class, 'appointment_unique_id', 'appointment_id')->whereRaw('1 = 0');
+        }
+
+        $doctors = Doctor::whereUserId($userId)->first();
+
+        if (!$doctors) {
+            return $this->hasOne(Appointment::class, 'appointment_unique_id', 'appointment_id')->whereRaw('1 = 0');
+        }
 
         return $this->hasOne(Appointment::class, 'appointment_unique_id', 'appointment_id')->where('doctor_id', $doctors->id);
     }

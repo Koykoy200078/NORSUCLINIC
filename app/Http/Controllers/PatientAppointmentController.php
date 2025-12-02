@@ -18,9 +18,8 @@ class PatientAppointmentController extends AppBaseController
     {
         $allPaymentStatus = getAllPaymentStatus();
         $paymentStatus = Arr::except($allPaymentStatus, [Appointment::MANUALLY]);
-        $paymentGateway = getPaymentGateway();
         $logo = Setting::where('key', 'logo')->pluck('value');
 
-        return view('patients.appointments.index', compact('paymentStatus', 'paymentGateway','logo'));
+        return view('patients.appointments.index', compact('paymentStatus', 'logo'));
     }
 }

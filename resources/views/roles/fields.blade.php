@@ -61,8 +61,7 @@
         'icon' => 'fas fa-money-bill',
         'description' => 'Financial operations, payments, and transaction management',
         'permissions' => [
-        'manage_transactions' => 'View and manage financial transactions, payments, and billing records',
-        'manage_currencies' => 'Configure supported currencies and exchange rates for international patients'
+        'manage_transactions' => 'View and manage financial transactions, payments, and billing records'
         ]
         ],
         'Location Management' => [

@@ -66,10 +66,6 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Roles',
             ],
             [
-                'name' => 'manage_currencies',
-                'display_name' => 'Manage Currencies',
-            ],
-            [
                 'name' => 'manage_admin_dashboard',
                 'display_name' => 'Manage Admin Dashboard',
             ],

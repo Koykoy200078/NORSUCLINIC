@@ -463,18 +463,6 @@
 </li>
 @endcan
 @can('manage_front_cms')
-<li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/enquiries*')) ||
-    (isRole('staff') && Request::is('staff/enquiries*'))
-? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('enquiries.index') : 
-        (isRole('staff') ? route('staff.enquiries.index') : route('enquiries.index'))
-    }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-question-circle"></i></span>
-        <span class="aside-menu-title">{{ __('messages.enquiries') }}</span>
-    </a>
-</li>
 <li
     class="nav-item {{ 
         (isRole('clinic_admin') && Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*')) ||
@@ -494,8 +482,8 @@
 @can('manage_settings')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/currencies*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
-        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/currencies*', 'staff/clinic-schedules*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
+        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
+        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/clinic-schedules*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('setting.index') : 
@@ -506,7 +494,6 @@
         <span class="d-none">{{ __('messages.settings') }}</span>
         <span class="d-none">{{ __('messages.clinic_schedules') }}</span>
         <span class="d-none">{{ __('messages.roles') }}</span>
-        <span class="d-none">{{ __('messages.currencies') }}</span>
         <span class="d-none">{{ __('messages.countries') }}</span>
         <span class="d-none">{{ __('messages.states') }}</span>
         <span class="d-none">{{ __('messages.cities') }}</span>
