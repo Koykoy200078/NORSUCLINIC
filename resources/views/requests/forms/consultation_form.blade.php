@@ -257,10 +257,10 @@
 
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block">Nursing Intervention<span class="text-red-500">*</span></label>
+                <label class="block">Nursing Intervention</label>
             </div>
             <div class="col-span-3">
-                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black auto-resize-textarea" rows="5" required></textarea>
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black auto-resize-textarea" rows="5"></textarea>
 
                 <!-- Medicine Selection for Nursing Intervention -->
                 <div class="mt-3">

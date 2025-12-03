@@ -612,7 +612,7 @@ Patient Data
                                 @php
                                 $planMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
                                 ->where('used_for', 'plan')
-                                ->with('medicine.brand')
+                                ->with('medicine')
                                 ->get();
                                 @endphp
 
@@ -621,9 +621,6 @@ Patient Data
                                     @foreach($planMedicines as $consultationMedicine)
                                     <li class="mb-2">
                                         <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
-                                        @if($consultationMedicine->medicine && $consultationMedicine->medicine->brand)
-                                        <br><small class="text-muted">Brand: {{ $consultationMedicine->medicine->brand->name }}</small>
-                                        @endif
                                         @if($consultationMedicine->dosage)
                                         <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
                                         @endif
@@ -680,7 +677,7 @@ Patient Data
                                 @php
                                 $nursingMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
                                 ->where('used_for', 'nursing')
-                                ->with('medicine.brand')
+                                ->with('medicine')
                                 ->get();
                                 @endphp
 
@@ -689,9 +686,6 @@ Patient Data
                                     @foreach($nursingMedicines as $consultationMedicine)
                                     <li class="mb-2">
                                         <strong>{{ $consultationMedicine->medicine->name ?? 'N/A' }}</strong>
-                                        @if($consultationMedicine->medicine && $consultationMedicine->medicine->brand)
-                                        <br><small class="text-muted">Brand: {{ $consultationMedicine->medicine->brand->name }}</small>
-                                        @endif
                                         @if($consultationMedicine->dosage)
                                         <br><small class="text-muted">Dosage: {{ $consultationMedicine->dosage }}</small>
                                         @endif
