@@ -24,14 +24,9 @@ if (! function_exists('getLogInUser')) {
      */
     function getLogInUser()
     {
-        // Cache user for request lifecycle to avoid repeated Auth::user() calls
-        static $cachedUser;
-
-        if ($cachedUser === null) {
-            $cachedUser = Auth::user();
-        }
-
-        return $cachedUser;
+        // Always return current authenticated user
+        // DO NOT use static cache as it causes wrong user data across different logins
+        return Auth::user();
     }
 }
 
@@ -128,31 +123,24 @@ if (!function_exists('getDashboardURL')) {
      */
     function getDashboardURL()
     {
-        // Cache dashboard URL for request lifecycle
-        static $cachedDashboardUrl;
-
-        if ($cachedDashboardUrl !== null) {
-            return $cachedDashboardUrl;
-        }
-
         // Get the authenticated user
+        // DO NOT use static cache as it causes wrong dashboard URLs across different users
         $user = getLogInUser();
 
         // Return the default home URL if no user is authenticated
         if (!$user) {
-            $cachedDashboardUrl = RouteServiceProvider::HOME;
-            return $cachedDashboardUrl;
+            return RouteServiceProvider::HOME;
         }
 
         // Role-based dashboard URLs - check most common roles first
         if ($user->hasRole('clinic_admin')) {
-            $cachedDashboardUrl = 'admin/dashboard';
+            return 'admin/dashboard';
         } elseif ($user->hasRole('staff')) {
-            $cachedDashboardUrl = 'staff/dashboard';
+            return 'staff/dashboard';
         } elseif ($user->hasRole('doctor')) {
-            $cachedDashboardUrl = 'doctors/dashboard';
+            return 'doctors/dashboard';
         } elseif ($user->hasRole('patient')) {
-            $cachedDashboardUrl = 'patients/dashboard';
+            return 'patients/dashboard';
         } else {
             // Fallback to permission-based check for admin users only
             if ($user->hasRole('clinic_admin')) {
@@ -170,18 +158,14 @@ if (!function_exists('getDashboardURL')) {
 
                 foreach ($permissionDashboardMap as $permission => $url) {
                     if (in_array($permission, $permissions, true)) {
-                        $cachedDashboardUrl = $url;
-                        break;
+                        return $url;
                     }
                 }
             }
 
-            if (!isset($cachedDashboardUrl)) {
-                $cachedDashboardUrl = RouteServiceProvider::HOME;
-            }
+            // Default fallback
+            return RouteServiceProvider::HOME;
         }
-
-        return $cachedDashboardUrl;
     }
 }
 
@@ -858,7 +842,9 @@ if (! function_exists('getVisitRoute')) {
     {
         $user = getLogInUser();
 
-        if ($user->hasRole('doctor')) {
+        if ($user->hasRole('clinic_admin')) {
+            return route('admin.visits.' . $action, $parameters);
+        } elseif ($user->hasRole('doctor')) {
             return route('doctors.visits.' . $action, $parameters);
         } elseif ($user->hasRole('staff')) {
             return route('staff.visits.' . $action, $parameters);
@@ -879,7 +865,9 @@ if (! function_exists('getPrescriptionRoute')) {
     {
         $user = getLogInUser();
 
-        if ($user->hasRole('doctor')) {
+        if ($user->hasRole('clinic_admin')) {
+            return route('admin.prescriptions.' . $action, $parameters);
+        } elseif ($user->hasRole('doctor')) {
             return route('doctors.prescriptions.' . $action, $parameters);
         } elseif ($user->hasRole('staff')) {
             return route('staff.prescriptions.' . $action, $parameters);

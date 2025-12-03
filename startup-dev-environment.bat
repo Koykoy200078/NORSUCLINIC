@@ -4,7 +4,8 @@ REM NORSUCLINIC Development Environment Startup Script
 REM This script automatically:
 REM 1. Starts WAMP Server
 REM 2. Clears all Laravel caches
-REM 3. Starts Laravel development server
+REM 3. Starts Auto Database Backup System
+REM 4. Starts Laravel development server
 REM ============================================================
 
 echo.
@@ -16,7 +17,7 @@ echo.
 REM ============================================================
 REM Step 1: Start WAMP Server
 REM ============================================================
-echo [1/4] Starting WAMP Server...
+echo [1/5] Starting WAMP Server...
 echo.
 
 REM Check if WAMP is already running
@@ -44,7 +45,7 @@ echo.
 echo ============================================================
 REM Step 2: Navigate to project directory
 REM ============================================================
-echo [2/4] Navigating to project directory...
+echo [2/5] Navigating to project directory...
 echo.
 
 cd /d "C:\Users\User\Desktop\Clinic\NORSUCLINIC"
@@ -60,7 +61,7 @@ echo.
 echo ============================================================
 REM Step 3: Clear all Laravel caches
 REM ============================================================
-echo [3/4] Clearing all Laravel caches...
+echo [3/5] Clearing all Laravel caches...
 echo.
 
 REM Clear application cache
@@ -95,9 +96,30 @@ echo All caches cleared successfully!
 echo.
 
 echo ============================================================
-REM Step 4: Start Laravel development server
+REM Step 4: Start Auto Database Backup System
 REM ============================================================
-echo [4/4] Starting Laravel development server...
+echo [4/5] Starting Auto Database Backup System...
+echo.
+
+REM Start backup system in minimized window
+start "NORSUCLINIC Auto Backup" /min cmd /c "%~dp0auto-backup-database.bat"
+
+if %ERRORLEVEL% EQU 0 (
+    echo Auto Backup System started successfully!
+    echo - Checking for database changes every hour
+    echo - Backups saved to: database_backups\
+    echo - Running in background (minimized window)
+) else (
+    echo WARNING: Failed to start Auto Backup System!
+    echo You can start it manually: auto-backup-database.bat
+)
+
+echo.
+
+echo ============================================================
+REM Step 5: Start Laravel development server
+REM ============================================================
+echo [5/5] Starting Laravel development server...
 echo.
 echo Server will be accessible at:
 echo   - http://192.168.180.100:8000
