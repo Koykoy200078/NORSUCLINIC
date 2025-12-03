@@ -8,15 +8,15 @@ The NORSUCLINIC Auto Database Backup System provides **intelligent hourly backup
 
 ## 🚀 Features
 
-- ✅ **Automatic hourly checks** - Scans database every hour
-- ✅ **Smart change detection** - Uses MD5 hash to detect data changes
-- ✅ **Skip unchanged backups** - Only backs up when data has changed
-- ✅ **Timestamp-based naming** - Backups include date and time in filename
-- ✅ **Automatic compression** - Backups saved as `.zip` files
-- ✅ **Automatic cleanup** - Removes backups older than 30 days
-- ✅ **Detailed logging** - Maintains backup history log
-- ✅ **Auto-start with dev environment** - Starts when you run startup script
-- ✅ **Runs in background** - Minimized window, doesn't interfere
+-   ✅ **Automatic hourly checks** - Scans database every hour
+-   ✅ **Smart change detection** - Uses MD5 hash to detect data changes
+-   ✅ **Skip unchanged backups** - Only backs up when data has changed
+-   ✅ **Timestamp-based naming** - Backups include date and time in filename
+-   ✅ **Automatic compression** - Backups saved as `.zip` files
+-   ✅ **Automatic cleanup** - Removes backups older than 30 days
+-   ✅ **Detailed logging** - Maintains backup history log
+-   ✅ **Auto-start with dev environment** - Starts when you run startup script
+-   ✅ **Runs in background** - Minimized window, doesn't interfere
 
 ---
 
@@ -62,20 +62,23 @@ Default: **3600 seconds (1 hour)**
 To change interval, edit the script:
 
 **Batch (.bat):**
+
 ```batch
 set BACKUP_INTERVAL=3600
 ```
 
 **PowerShell (.ps1):**
+
 ```powershell
 $BackupInterval = 3600
 ```
 
 Common intervals:
-- 30 minutes = `1800`
-- 1 hour = `3600`
-- 2 hours = `7200`
-- 6 hours = `21600`
+
+-   30 minutes = `1800`
+-   1 hour = `3600`
+-   2 hours = `7200`
+-   6 hours = `21600`
 
 ### Backup Retention
 
@@ -86,11 +89,13 @@ Older backups are automatically deleted.
 To change, modify the cleanup section:
 
 **Batch:**
+
 ```batch
 forfiles /P "%BACKUP_DIR%" /M *.zip /D -30 /C "cmd /c del @path"
 ```
 
 **PowerShell:**
+
 ```powershell
 $cutoffDate = (Get-Date).AddDays(-30)
 ```
@@ -142,11 +147,13 @@ Example: `norsuclinic_backup_2025-12-03_14-30-00.sql.zip`
 The backup system starts automatically when you run:
 
 **Batch:**
+
 ```cmd
 startup-dev-environment.bat
 ```
 
 **PowerShell:**
+
 ```powershell
 .\startup-dev-environment.ps1
 ```
@@ -156,11 +163,13 @@ It runs in a **minimized background window**.
 ### Manual Start
 
 **Batch:**
+
 ```cmd
 auto-backup-database.bat
 ```
 
 **PowerShell:**
+
 ```powershell
 .\auto-backup-database.ps1
 ```
@@ -239,34 +248,36 @@ C:\wamp64\bin\mysql\mysql8.0.39\bin\mysql.exe -u root -p norsu_clinic < norsucli
 
 ### Requirements
 
-- ✅ WAMP/MySQL must be running
-- ✅ Database must be accessible
-- ✅ mysqldump.exe must exist in MySQL bin folder
-- ✅ Sufficient disk space for backups
+-   ✅ WAMP/MySQL must be running
+-   ✅ Database must be accessible
+-   ✅ mysqldump.exe must exist in MySQL bin folder
+-   ✅ Sufficient disk space for backups
 
 ### Backup Size
 
 Typical backup sizes (compressed):
-- Empty database: ~50 KB
-- Small clinic (100 patients): ~500 KB
-- Medium clinic (1000 patients): ~5 MB
-- Large clinic (10000+ patients): ~50 MB
+
+-   Empty database: ~50 KB
+-   Small clinic (100 patients): ~500 KB
+-   Medium clinic (1000 patients): ~5 MB
+-   Large clinic (10000+ patients): ~50 MB
 
 ### Performance Impact
 
-- Backup process takes: **5-15 seconds**
-- CPU usage during backup: **Low**
-- Does not lock database (uses `--single-transaction`)
-- **No impact on running application**
+-   Backup process takes: **5-15 seconds**
+-   CPU usage during backup: **Low**
+-   Does not lock database (uses `--single-transaction`)
+-   **No impact on running application**
 
 ### Security
 
 ⚠️ **Database credentials are stored in scripts!**
 
 **Recommendation:**
-- Keep scripts in secure location
-- Don't commit to public repositories
-- Use environment variables for production
+
+-   Keep scripts in secure location
+-   Don't commit to public repositories
+-   Use environment variables for production
 
 ---
 
@@ -275,6 +286,7 @@ Typical backup sizes (compressed):
 ### Backup not creating
 
 **Check:**
+
 1. Is MySQL running?
 2. Are database credentials correct?
 3. Does MySQL bin path exist?
@@ -283,6 +295,7 @@ Typical backup sizes (compressed):
 ### Backup script stops running
 
 **Common causes:**
+
 1. Database connection lost
 2. Disk space full
 3. MySQL service stopped
@@ -293,14 +306,17 @@ Restart the backup script - it will resume from last state.
 ### Old backups not deleting
 
 **Batch version:**
-- Requires `forfiles` command (Windows 7+)
+
+-   Requires `forfiles` command (Windows 7+)
 
 **PowerShell version:**
-- Works on all PowerShell versions
+
+-   Works on all PowerShell versions
 
 ### Backup size too large
 
 **Reduce size:**
+
 1. Clean up old/unused data
 2. Archive historical records
 3. Optimize database tables
@@ -312,11 +328,13 @@ Restart the backup script - it will resume from last state.
 ### Check if Backup System is Running
 
 **Task Manager:**
+
 1. Open Task Manager (`Ctrl+Shift+Esc`)
 2. Look for process: `powershell.exe` or `cmd.exe`
 3. Window title: "NORSUCLINIC Auto Backup"
 
 **PowerShell:**
+
 ```powershell
 Get-Process | Where-Object { $_.MainWindowTitle -like "*Auto Backup*" }
 ```
@@ -324,6 +342,7 @@ Get-Process | Where-Object { $_.MainWindowTitle -like "*Auto Backup*" }
 ### View Recent Backups
 
 **PowerShell:**
+
 ```powershell
 Get-ChildItem database_backups\*.zip | Sort-Object LastWriteTime -Descending | Select-Object -First 10 Name, Length, LastWriteTime
 ```
@@ -331,6 +350,7 @@ Get-ChildItem database_backups\*.zip | Sort-Object LastWriteTime -Descending | S
 ### Calculate Total Backup Size
 
 **PowerShell:**
+
 ```powershell
 $totalSize = (Get-ChildItem database_backups\*.zip | Measure-Object -Property Length -Sum).Sum
 [math]::Round($totalSize / 1MB, 2)  # Size in MB
@@ -341,41 +361,47 @@ $totalSize = (Get-ChildItem database_backups\*.zip | Measure-Object -Property Le
 ## 🔐 Best Practices
 
 1. **Monitor Regularly**
-   - Check `backup_log.txt` weekly
-   - Verify backups are being created
+
+    - Check `backup_log.txt` weekly
+    - Verify backups are being created
 
 2. **Test Restore Process**
-   - Practice restoring from backup monthly
-   - Ensure backups are valid
+
+    - Practice restoring from backup monthly
+    - Ensure backups are valid
 
 3. **Off-site Backup**
-   - Copy `database_backups` folder to cloud storage
-   - Use OneDrive, Google Drive, or external drive
+
+    - Copy `database_backups` folder to cloud storage
+    - Use OneDrive, Google Drive, or external drive
 
 4. **Before Major Changes**
-   - Create manual backup before migrations
-   - Test on backup copy first
+
+    - Create manual backup before migrations
+    - Test on backup copy first
 
 5. **Production Environment**
-   - Use more frequent backups (every 15-30 min)
-   - Store backups on separate server
-   - Implement backup verification
+    - Use more frequent backups (every 15-30 min)
+    - Store backups on separate server
+    - Implement backup verification
 
 ---
 
 ## 📞 Support
 
 If backup system fails:
+
 1. Check log file: `database_backups\backup_log.txt`
 2. Verify MySQL is running
 3. Test database connection manually
 4. Check disk space
 
 For production use, consider:
-- Professional backup solutions
-- Database replication
-- Point-in-time recovery
-- Encrypted backups
+
+-   Professional backup solutions
+-   Database replication
+-   Point-in-time recovery
+-   Encrypted backups
 
 ---
 
@@ -383,11 +409,11 @@ For production use, consider:
 
 The Auto Backup System provides **set-and-forget** database protection:
 
-- 🔄 Runs continuously in background
-- 🧠 Smart change detection
-- 💾 Automatic compression
-- 🧹 Automatic cleanup
-- 📝 Detailed logging
-- 🚀 Auto-starts with dev environment
+-   🔄 Runs continuously in background
+-   🧠 Smart change detection
+-   💾 Automatic compression
+-   🧹 Automatic cleanup
+-   📝 Detailed logging
+-   🚀 Auto-starts with dev environment
 
 **Just run your startup script and you're protected!**
