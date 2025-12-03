@@ -399,11 +399,38 @@
                 <!-- Upload new images -->
                 <div class="mt-4">
                     <label class="block text-sm font-semibold mb-2">Add New Images:</label>
-                    <input type="file" id="consultation_images" name="consultation_images[]"
-                        class="w-full border border-gray-300 rounded p-2"
-                        accept="image/jpeg,image/png,image/jpg,image/gif"
-                        multiple>
-                    <small class="text-gray-500">You can select multiple images (JPEG, PNG, JPG, GIF)</small>
+                    
+                    <!-- Drag & Drop Zone -->
+                    <div id="drop_zone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4 transition-all hover:border-blue-400 hover:bg-blue-50">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-600 font-semibold mb-1">Drag & Drop Images Here</p>
+                        <p class="text-gray-500 text-sm mb-3">or</p>
+                        <label for="consultation_images" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600 inline-block">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </label>
+                        <input type="file" id="consultation_images" name="consultation_images[]"
+                            class="hidden"
+                            accept="image/jpeg,image/png,image/jpg,image/gif"
+                            multiple>
+                        <p class="text-gray-500 text-xs mt-3">Supported: JPEG, PNG, JPG, GIF (Max 5MB each)</p>
+                    </div>
+
+                    <!-- Image URL Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-link"></i> Or paste image URL to auto-download:
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="image_url_input" 
+                                class="flex-1 border border-gray-300 rounded px-3 py-2" 
+                                placeholder="https://example.com/image.jpg">
+                            <button type="button" id="download_from_url_btn" 
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                        <small class="text-gray-500">Paste an image URL and click Download to add it to your uploads</small>
+                    </div>
 
                     <!-- Image Preview Container for new images -->
                     <div id="image_preview_container" class="mt-4 grid grid-cols-3 gap-4"></div>
@@ -649,6 +676,67 @@
         border-left: 4px solid #dc2626;
         grid-column: 1 / -1;
     }
+
+    /* Drag and Drop Zone Styles */
+    #drop_zone {
+        cursor: pointer;
+    }
+
+    #drop_zone.drag-over {
+        border-color: #3b82f6;
+        background-color: #dbeafe;
+        transform: scale(1.02);
+    }
+
+    #drop_zone.drag-over i {
+        color: #3b82f6;
+        transform: scale(1.1);
+    }
+
+    .image-loading {
+        position: relative;
+        opacity: 0.6;
+    }
+
+    .image-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px;
+        height: 30px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .url-downloading {
+        position: relative;
+    }
+
+    .url-downloading::after {
+        content: 'Downloading...';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 0.375rem;
+    }
 </style>
 
 <script>
@@ -712,93 +800,265 @@
         }
 
 
-        // Image Upload Preview and Validation for new images
+        // ==================== IMAGE UPLOAD WITH DRAG & DROP AND URL DOWNLOAD ====================
         const imageInput = document.getElementById('consultation_images');
         const previewContainer = document.getElementById('image_preview_container');
+        const dropZone = document.getElementById('drop_zone');
+        const imageUrlInput = document.getElementById('image_url_input');
+        const downloadUrlBtn = document.getElementById('download_from_url_btn');
         const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
         let selectedFiles = [];
 
+        // Function to validate and add files
+        function processFiles(files) {
+            const filesArray = Array.from(files);
+            const dataTransfer = new DataTransfer();
+
+            // Keep existing files
+            selectedFiles.forEach(f => dataTransfer.items.add(f));
+
+            filesArray.forEach((file) => {
+                // Validate file type
+                if (!file.type.match('image.*')) {
+                    showError(`${file.name} is not a valid image file.`);
+                    return;
+                }
+
+                // Validate file size
+                if (file.size > maxFileSize) {
+                    showError(`${file.name} exceeds 5MB limit (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+                    return;
+                }
+
+                // Add valid file to the list
+                selectedFiles.push(file);
+                dataTransfer.items.add(file);
+
+                // Create preview
+                createImagePreview(file);
+            });
+
+            // Update the file input with all files
+            imageInput.files = dataTransfer.files;
+        }
+
+        // Function to create image preview
+        function createImagePreview(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'image-preview-wrapper';
+                wrapper.dataset.filename = file.name;
+
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.className = 'image-preview';
+                img.alt = file.name;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-image-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.onclick = function() {
+                    removeImage(file, wrapper);
+                };
+
+                const fileInfo = document.createElement('small');
+                fileInfo.className = 'text-gray-600 block mt-1';
+                fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                wrapper.appendChild(fileInfo);
+                previewContainer.appendChild(wrapper);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Function to remove image
+        function removeImage(file, wrapper) {
+            // Remove from selectedFiles array
+            const fileIndex = selectedFiles.indexOf(file);
+            if (fileIndex > -1) {
+                selectedFiles.splice(fileIndex, 1);
+            }
+
+            // Update the file input
+            const newDataTransfer = new DataTransfer();
+            selectedFiles.forEach(f => newDataTransfer.items.add(f));
+            imageInput.files = newDataTransfer.files;
+
+            // Remove preview
+            wrapper.remove();
+
+            // Show message if no images
+            if (selectedFiles.length === 0) {
+                previewContainer.innerHTML = '<p class="text-gray-500 col-span-3">No new images selected</p>';
+            }
+        }
+
+        // Function to show error
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'col-span-3 image-size-error';
+            errorDiv.textContent = `⚠️ ${message}`;
+            previewContainer.appendChild(errorDiv);
+
+            // Auto-remove error after 5 seconds
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // File input change event
         if (imageInput) {
             imageInput.addEventListener('change', function(e) {
-                const files = Array.from(e.target.files);
-                previewContainer.innerHTML = ''; // Clear previous previews
-                selectedFiles = []; // Reset selected files
+                processFiles(e.target.files);
+            });
+        }
 
-                // Create a new FileList to store valid files
-                const dataTransfer = new DataTransfer();
+        // ==================== DRAG & DROP FUNCTIONALITY ====================
+        if (dropZone) {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
 
-                files.forEach((file, index) => {
-                    // Validate file size
-                    if (file.size > maxFileSize) {
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = 'col-span-3 image-size-error';
-                        errorDiv.textContent = `Error: ${file.name} exceeds 5MB limit (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
-                        previewContainer.appendChild(errorDiv);
-                        return; // Skip this file
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                dropZone.classList.add('drag-over');
+            }
+
+            function unhighlight(e) {
+                dropZone.classList.remove('drag-over');
+            }
+
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                processFiles(files);
+            }
+
+            // Click to browse
+            dropZone.addEventListener('click', function(e) {
+                if (e.target.id !== 'consultation_images' && !e.target.closest('label')) {
+                    imageInput.click();
+                }
+            });
+        }
+
+        // ==================== IMAGE URL DOWNLOAD FUNCTIONALITY ====================
+        if (downloadUrlBtn && imageUrlInput) {
+            downloadUrlBtn.addEventListener('click', async function() {
+                const imageUrl = imageUrlInput.value.trim();
+
+                if (!imageUrl) {
+                    alert('Please enter an image URL');
+                    return;
+                }
+
+                // Validate URL format
+                try {
+                    new URL(imageUrl);
+                } catch (e) {
+                    alert('Please enter a valid URL');
+                    return;
+                }
+
+                // Show loading state
+                downloadUrlBtn.disabled = true;
+                downloadUrlBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+                downloadUrlBtn.classList.add('url-downloading');
+
+                try {
+                    // Fetch the image
+                    const response = await fetch(imageUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to download image: ${response.statusText}`);
                     }
 
-                    // Add valid file to the list
+                    const blob = await response.blob();
+
+                    // Validate if it's an image
+                    if (!blob.type.match('image.*')) {
+                        throw new Error('The URL does not point to a valid image file');
+                    }
+
+                    // Validate file size
+                    if (blob.size > maxFileSize) {
+                        throw new Error(`Image exceeds 5MB limit (${(blob.size / 1024 / 1024).toFixed(2)}MB)`);
+                    }
+
+                    // Extract filename from URL or generate one
+                    let filename = imageUrl.split('/').pop().split('?')[0];
+                    if (!filename || !filename.match(/\\.(jpg|jpeg|png|gif)$/i)) {
+                        const ext = blob.type.split('/')[1];
+                        filename = `downloaded_image_${Date.now()}.${ext}`;
+                    }
+
+                    // Create File object from blob
+                    const file = new File([blob], filename, { type: blob.type });
+
+                    // Add to selected files
                     selectedFiles.push(file);
-                    dataTransfer.items.add(file);
+
+                    // Update file input
+                    const dataTransfer = new DataTransfer();
+                    selectedFiles.forEach(f => dataTransfer.items.add(f));
+                    imageInput.files = dataTransfer.files;
 
                     // Create preview
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'image-preview-wrapper';
+                    createImagePreview(file);
 
-                        const img = document.createElement('img');
-                        img.src = event.target.result;
-                        img.className = 'image-preview';
-                        img.alt = file.name;
+                    // Clear input
+                    imageUrlInput.value = '';
 
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'remove-image-btn';
-                        removeBtn.innerHTML = '×';
-                        removeBtn.type = 'button';
-                        removeBtn.onclick = function() {
-                            // Remove from selectedFiles array
-                            const fileIndex = selectedFiles.indexOf(file);
-                            if (fileIndex > -1) {
-                                selectedFiles.splice(fileIndex, 1);
-                            }
+                    // Show success message
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'col-span-3 text-green-600 font-semibold';
+                    successDiv.innerHTML = `✓ Image downloaded successfully: ${filename}`;
+                    previewContainer.appendChild(successDiv);
 
-                            // Update the file input
-                            const newDataTransfer = new DataTransfer();
-                            selectedFiles.forEach(f => newDataTransfer.items.add(f));
-                            imageInput.files = newDataTransfer.files;
+                    setTimeout(() => {
+                        successDiv.remove();
+                    }, 3000);
 
-                            // Remove preview
-                            wrapper.remove();
+                } catch (error) {
+                    console.error('Error downloading image:', error);
+                    alert(`Error downloading image: ${error.message}`);
+                } finally {
+                    // Reset button state
+                    downloadUrlBtn.disabled = false;
+                    downloadUrlBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+                    downloadUrlBtn.classList.remove('url-downloading');
+                }
+            });
 
-                            // Show message if no images
-                            if (selectedFiles.length === 0) {
-                                previewContainer.innerHTML = '<p class="text-gray-500 col-span-3">No new images selected</p>';
-                            }
-                        };
-
-                        const fileInfo = document.createElement('small');
-                        fileInfo.className = 'text-gray-600 block mt-1';
-                        fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
-
-                        wrapper.appendChild(img);
-                        wrapper.appendChild(removeBtn);
-                        wrapper.appendChild(fileInfo);
-                        previewContainer.appendChild(wrapper);
-                    };
-
-                    reader.readAsDataURL(file);
-                });
-
-                // Update the file input with only valid files
-                imageInput.files = dataTransfer.files;
-
-                // Show message if no valid files
-                if (selectedFiles.length === 0 && files.length > 0) {
-                    const noValidFiles = document.createElement('p');
-                    noValidFiles.className = 'text-red-500 col-span-3';
-                    noValidFiles.textContent = 'No valid images selected. All files exceeded 5MB limit.';
-                    previewContainer.appendChild(noValidFiles);
+            // Allow Enter key to trigger download
+            imageUrlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    downloadUrlBtn.click();
                 }
             });
         }
