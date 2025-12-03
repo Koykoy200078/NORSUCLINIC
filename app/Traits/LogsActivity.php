@@ -10,6 +10,7 @@ trait LogsActivity
 {
     /**
      * Log an activity with patient/document details
+     * Uses updateOrCreate to update existing logs instead of creating duplicates
      *
      * @param string $action The action performed (e.g., 'created_patient', 'created_consultation', 'used_medicine')
      * @param string $description Human-readable description
@@ -40,11 +41,21 @@ trait LogsActivity
             $details['course_section'] = $details['course'] . ' - ' . $details['year_level'];
         }
 
+        // Build unique identifier for finding existing logs
+        // Use action + subject_type + subject_id as unique key
+        $uniqueIdentifier = [
+            'action' => $action,
+            'subject_type' => $details['subject_type'] ?? null,
+            'subject_id' => $details['subject_id'] ?? null,
+        ];
+
+        // Remove null values from unique identifier
+        $uniqueIdentifier = array_filter($uniqueIdentifier, fn($value) => $value !== null);
+
         $logData = [
             'user_id' => $user->id,
             'user_type' => $userType,
             'user_name' => $user->full_name,
-            'action' => $action,
             'description' => $description,
             'date' => $details['date'] ?? now()->toDateString(),
             'patient_name' => $details['patient_name'] ?? null,
@@ -58,24 +69,23 @@ trait LogsActivity
             'informant' => $details['informant'] ?? null,
             'consult_mode' => $details['consult_mode'] ?? null,
             'course_section' => $details['course_section'] ?? null,
-            'subject_type' => $details['subject_type'] ?? null,
-            'subject_id' => $details['subject_id'] ?? null,
             'properties' => $details['properties'] ?? null,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ];
 
-        return ActivityLog::create($logData);
+        // Use updateOrCreate to update existing log or create new one
+        return ActivityLog::updateOrCreate($uniqueIdentifier, $logData);
     }
 
     /**
-     * Log patient creation
+     * Log patient creation or update
      */
     public static function logPatientCreation($patient, $user)
     {
         return self::logActivity(
-            'created_patient',
-            "Created new patient: {$user->full_name}",
+            'patient_record', // Changed from 'created_patient' to generic action
+            "Patient record: {$user->full_name}",
             [
                 'patient_name' => $user->full_name,
                 'date_of_birth' => $user->dob,
@@ -92,13 +102,13 @@ trait LogsActivity
     }
 
     /**
-     * Log consultation form creation
+     * Log consultation form creation or update
      */
     public static function logConsultationCreation($requestDocument)
     {
         return self::logActivity(
-            'created_consultation',
-            "Created consultation form for: {$requestDocument->name}",
+            'consultation_record', // Changed from 'created_consultation' to generic action
+            "Consultation form: {$requestDocument->name}",
             [
                 'patient_name' => $requestDocument->name,
                 'patient_age' => $requestDocument->age,
@@ -120,7 +130,7 @@ trait LogsActivity
     }
 
     /**
-     * Log medical certificate creation
+     * Log medical certificate creation or update
      */
     public static function logMedicalCertificateCreation($requestDocument)
     {
@@ -142,8 +152,8 @@ trait LogsActivity
         }
 
         return self::logActivity(
-            'created_medical_certificate',
-            "Created medical certificate for: {$requestDocument->name}",
+            'medical_certificate_record', // Changed from 'created_medical_certificate' to generic action
+            "Medical certificate: {$requestDocument->name}",
             [
                 'patient_name' => $requestDocument->name,
                 'patient_age' => $requestDocument->age,
@@ -212,15 +222,22 @@ trait LogsActivity
     }
 
     /**
-     * Log patient update
+     * Log patient update (will update the same log as patient creation)
      */
     public static function logPatientUpdate($patient, $user)
     {
         return self::logActivity(
-            'updated_patient',
-            "Updated patient information: {$user->full_name}",
+            'patient_record', // Use same action as creation - will update existing log
+            "Patient record: {$user->full_name}",
             [
                 'patient_name' => $user->full_name,
+                'date_of_birth' => $user->dob,
+                'patient_gender' => $user->gender == User::MALE ? 'Male' : 'Female',
+                'college' => $user->college->name ?? null,
+                'address' => $user->address->address ?? null,
+                'contact_number' => $user->contact,
+                'course' => $user->course->name ?? null,
+                'year_level' => $user->yearLevel->name ?? null,
                 'subject_type' => 'Patient',
                 'subject_id' => $patient->id,
             ]

@@ -515,7 +515,26 @@ Patient Data
                         <tr>
                             <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Complaints</strong></td>
                             @foreach($selectedConsultations as $consultation)
-                            <td>{{ $consultation->complaints ?? 'N/A' }}</td>
+                            <td>
+                                @if($consultation->complaints)
+                                    @php
+                                        $items = array_filter(array_map('trim', explode('*', $consultation->complaints)));
+                                    @endphp
+                                    @if(count($items) > 0)
+                                        <ul class="mb-0" style="padding-left: 1.5rem;">
+                                            @foreach($items as $item)
+                                                @if(!empty($item))
+                                                    <li>{{ $item }}</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        {{ $consultation->complaints }}
+                                    @endif
+                                @else
+                                    N/A
+                                @endif
+                            </td>
                             @endforeach
                         </tr>
                         <tr>
@@ -527,13 +546,63 @@ Patient Data
                         <tr>
                             <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Assessment</strong></td>
                             @foreach($selectedConsultations as $consultation)
-                            <td>{{ $consultation->assessment ?? 'N/A' }}</td>
+                            <td>
+                                @if($consultation->assessment)
+                                    @php
+                                        $text = $consultation->assessment;
+                                        $parts = explode('*', $text);
+                                        $firstPart = trim($parts[0]);
+                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                    @endphp
+                                    
+                                    @if(!empty($firstPart))
+                                        <div>{{ $firstPart }}</div>
+                                    @endif
+                                    
+                                    @if(count($items) > 0)
+                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                            @foreach($items as $item)
+                                                @if(!empty($item))
+                                                    <li>{{ $item }}</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                @else
+                                    N/A
+                                @endif
+                            </td>
                             @endforeach
                         </tr>
                         <tr>
                             <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Plan</strong></td>
                             @foreach($selectedConsultations as $consultation)
-                            <td>{{ $consultation->plan ?? 'N/A' }}</td>
+                            <td>
+                                @if($consultation->plan)
+                                    @php
+                                        $text = $consultation->plan;
+                                        $parts = explode('*', $text);
+                                        $firstPart = trim($parts[0]);
+                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                    @endphp
+                                    
+                                    @if(!empty($firstPart))
+                                        <div>{{ $firstPart }}</div>
+                                    @endif
+                                    
+                                    @if(count($items) > 0)
+                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                            @foreach($items as $item)
+                                                @if(!empty($item))
+                                                    <li>{{ $item }}</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                @else
+                                    N/A
+                                @endif
+                            </td>
                             @endforeach
                         </tr>
                         <tr>
@@ -576,7 +645,32 @@ Patient Data
                         <tr>
                             <td style="position: sticky; left: 0; background-color: white; font-weight: bold; z-index: 5;"><strong>Nursing Intervention</strong></td>
                             @foreach($selectedConsultations as $consultation)
-                            <td>{{ $consultation->nursing_intervention ?? 'N/A' }}</td>
+                            <td>
+                                @if($consultation->nursing_intervention)
+                                    @php
+                                        $text = $consultation->nursing_intervention;
+                                        $parts = explode('*', $text);
+                                        $firstPart = trim($parts[0]);
+                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                    @endphp
+                                    
+                                    @if(!empty($firstPart))
+                                        <div>{{ $firstPart }}</div>
+                                    @endif
+                                    
+                                    @if(count($items) > 0)
+                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                            @foreach($items as $item)
+                                                @if(!empty($item))
+                                                    <li>{{ $item }}</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                @else
+                                    N/A
+                                @endif
+                            </td>
                             @endforeach
                         </tr>
                         <tr>
@@ -745,6 +839,17 @@ Patient Data
     .table-responsive {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    /* Text wrapping and word breaking for all table cells */
+    .table td,
+    .table th {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 300px; /* Adjust based on your needs */
+        min-width: 150px;
     }
 
     /* Sticky column styling */

@@ -455,6 +455,9 @@ class RequestDocumentsController extends Controller
             'course' => $data['course'],
             'year_level' => $data['year_level'],
         ]);
+
+        // Log medical certificate update (will update existing log instead of creating new)
+        self::logMedicalCertificateCreation($requestDocument->fresh());
     }
 
     /**
@@ -519,6 +522,9 @@ class RequestDocumentsController extends Controller
 
         // Handle medicine updates (restore removed, deduct newly added)
         $this->handleMedicineUpdates($requestDocument, $data);
+
+        // Log consultation form update (will update existing log instead of creating new)
+        self::logConsultationCreation($requestDocument->fresh());
     }
 
     /**
