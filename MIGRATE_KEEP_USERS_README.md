@@ -5,18 +5,20 @@ This directory contains scripts to run `migrate:fresh --seed` while preserving t
 ## Available Scripts
 
 ### Windows Batch File (`.bat`)
-- **File**: `migrate-keep-users.bat`
-- **Usage**: Double-click the file or run from command prompt
-  ```cmd
-  migrate-keep-users.bat
-  ```
+
+-   **File**: `migrate-keep-users.bat`
+-   **Usage**: Double-click the file or run from command prompt
+    ```cmd
+    migrate-keep-users.bat
+    ```
 
 ### PowerShell Script (`.ps1`)
-- **File**: `migrate-keep-users.ps1`
-- **Usage**: Right-click and select "Run with PowerShell" or run from PowerShell:
-  ```powershell
-  .\migrate-keep-users.ps1
-  ```
+
+-   **File**: `migrate-keep-users.ps1`
+-   **Usage**: Right-click and select "Run with PowerShell" or run from PowerShell:
+    ```powershell
+    .\migrate-keep-users.ps1
+    ```
 
 ## What These Scripts Do
 
@@ -28,11 +30,11 @@ This directory contains scripts to run `migrate:fresh --seed` while preserving t
 
 ## Safety Features
 
-- ✅ Confirmation prompt before migration
-- ✅ Error checking at each step
-- ✅ Keeps backup file if restoration fails
-- ✅ Clear error messages with recovery instructions
-- ✅ Exit codes for automation
+-   ✅ Confirmation prompt before migration
+-   ✅ Error checking at each step
+-   ✅ Keeps backup file if restoration fails
+-   ✅ Clear error messages with recovery instructions
+-   ✅ Exit codes for automation
 
 ## Manual Recovery
 
@@ -43,6 +45,7 @@ php artisan tinker
 ```
 
 Then in tinker:
+
 ```php
 $users = json_decode(file_get_contents('users_backup.json'), true);
 DB::table('users')->insert($users);
@@ -51,10 +54,10 @@ exit
 
 ## Requirements
 
-- PHP CLI available in PATH
-- Laravel project with working database connection
-- Artisan commands functional
-- Users table must exist before running
+-   PHP CLI available in PATH
+-   Laravel project with working database connection
+-   Artisan commands functional
+-   Users table must exist before running
 
 ## Warning
 
