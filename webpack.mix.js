@@ -33,11 +33,11 @@ deleteDirectories(directoriesToDelete);
 mix.copyDirectory("resources/assets/images", "public/assets/image")
     .copyDirectory(
         "resources/assets/front/vendor/font-awesome/webfonts",
-        "public/assets/webfonts"
+        "public/assets/webfonts",
     )
     .copyDirectory(
         "resources/assets/web/plugins/global/fonts",
-        "public/assets/css/fonts"
+        "public/assets/css/fonts",
     )
     .copyDirectory("node_modules/intl-tel-input/build/img", "public/assets/img")
     .copyDirectory("resources/assets/backend", "public/backend")
@@ -50,37 +50,37 @@ mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
     .copy("resources/css/poppins.css", "public/css/poppins.css")
     .copy(
         "resources/css/flatpickr-month-select.css",
-        "public/css/flatpickr-month-select.css"
+        "public/css/flatpickr-month-select.css",
     )
     .copy(
         "resources/assets/front/vendor/font-awesome/css/all.min.css",
-        "public/css/fontawesome.all.min.css"
+        "public/css/fontawesome.all.min.css",
     )
     .copy(
         "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
-        "public/assets/css/bootstrap-datepicker/bootstrap-datepicker.css"
+        "public/assets/css/bootstrap-datepicker/bootstrap-datepicker.css",
     )
     .copy(
         "node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
-        "public/assets/js/bootstrap-datepicker/bootstrap-datepicker.js"
+        "public/assets/js/bootstrap-datepicker/bootstrap-datepicker.js",
     )
     .copy("node_modules/datatables/media/images", "public/assets/images")
     .copy("resources/messages.js", "public/messages.js")
     .copy(
         "resources/assets/front/vendor/bootstrap.bundle.min.js",
-        "public/assets/front/vendor/bootstrap.bundle.min.js"
+        "public/assets/front/vendor/bootstrap.bundle.min.js",
     )
     .copy(
         "vendor/rappasoft/laravel-livewire-tables/resources/imports",
-        "public/vendor"
+        "public/vendor",
     )
     .copy(
         "vendor/rappasoft/laravel-livewire-tables/resources/css",
-        "public/vendor"
+        "public/vendor",
     )
     .copy(
         "vendor/rappasoft/laravel-livewire-tables/resources/js",
-        "public/vendor"
+        "public/vendor",
     )
     .copy("resources/css/ajax-loader.gif", "public/css");
 
@@ -92,21 +92,21 @@ mix.styles(
         "node_modules/quill/dist/quill.snow.css",
         "node_modules/quill/dist/quill.bubble.css",
     ],
-    "public/assets/css/third-party.css"
+    "public/assets/css/third-party.css",
 )
     .styles(
         "node_modules/intl-tel-input/build/css/intlTelInput.css",
-        "public/assets/css/intlTelInput.css"
+        "public/assets/css/intlTelInput.css",
     )
     .styles("resources/theme/css/style.css", "public/assets/css/style.css")
     .styles("resources/theme/css/plugins.css", "public/css/plugins.css")
     .styles(
         "resources/theme/css/style.dark.css",
-        "public/assets/css/style-dark.css"
+        "public/assets/css/style-dark.css",
     )
     .styles(
         "resources/theme/css/plugins.dark.css",
-        "public/css/plugins.dark.css"
+        "public/css/plugins.dark.css",
     )
     .styles(
         [
@@ -114,39 +114,39 @@ mix.styles(
             "public/assets/front/vendor/slick.css",
             "public/assets/front/vendor/slick-theme.css",
         ],
-        "public/css/front-third-party.css"
+        "public/css/front-third-party.css",
     );
 
 // Compile SCSS
 mix.sass(
     "resources/assets/scss/custom-pages-dark.scss",
-    "public/assets/css/custom-pages-dark.css"
+    "public/assets/css/custom-pages-dark.css",
 )
     .version()
     .sass("resources/assets/scss/pages.scss", "public/assets/css/pages.css")
     .version()
     .sass(
         "resources/assets/scss/bill-pdf.scss",
-        "public/assets/css/bill-pdf.css"
+        "public/assets/css/bill-pdf.css",
     )
     .version()
     .sass(
         "resources/assets/scss/prescription-pdf.scss",
-        "public/assets/css/prescription-pdf.css"
+        "public/assets/css/prescription-pdf.css",
     )
     .version()
     .sass(
         "resources/assets/scss/smart-card-pdf.scss",
-        "public/assets/css/smart-card-pdf.css"
+        "public/assets/css/smart-card-pdf.css",
     )
     .version()
     .sass(
         "resources/assets/front/scss/front-custom.scss",
-        "assets/front/css/front-custom.css"
+        "assets/front/css/front-custom.css",
     )
     .sass(
         "resources/assets/front/scss/about.scss",
-        "assets/front/css/about.css"
+        "assets/front/css/about.css",
     )
     .sass("resources/assets/front/scss/main.scss", "public/css/front-pages.css")
     .version();
@@ -162,7 +162,7 @@ mix.scripts(
         "node_modules/intl-tel-input/build/js/intlTelInput.js",
         "node_modules/quill/dist/quill.js",
     ],
-    "public/js/third-party.js"
+    "public/js/third-party.js",
 )
     .scripts(
         [
@@ -182,11 +182,11 @@ mix.scripts(
             "node_modules/intl-tel-input/build/js/intlTelInput.js",
             "node_modules/quill/dist/quill.js",
         ],
-        "public/js/front-third-party.js"
+        "public/js/front-third-party.js",
     )
     .scripts(
         "resources/assets/js/auto_fill/auto_fill.js",
-        "public/assets/js/auto_fill/auto_fill.js"
+        "public/assets/js/auto_fill/auto_fill.js",
     )
     .version();
 
@@ -209,6 +209,7 @@ mix.js(
         "resources/assets/js/countries/countries.js",
         "resources/assets/js/states/states.js",
         "resources/assets/js/cities/cities.js",
+        "resources/assets/js/barangays/barangays.js",
         "resources/assets/js/doctor_sessions/doctor_sessions.js",
         "resources/assets/js/doctor_sessions/create-edit.js",
         "resources/assets/js/service_categories/service_categories.js",
@@ -257,7 +258,7 @@ mix.js(
         "resources/assets/js/prescriptions/create-edit.js",
         "resources/assets/js/prescriptions/prescriptions.js",
     ],
-    "public/js/pages.js"
+    "public/js/pages.js",
 );
 
 // Frontend page JS
@@ -274,13 +275,13 @@ mix.js(
         "resources/assets/js/fronts/front_home/front-home.js",
         "resources/assets/front/js/front-language.js",
     ],
-    "public/js/front-pages.js"
+    "public/js/front-pages.js",
 );
 
 mix.js("resources/js/app.js", "public/js").postCss(
     "resources/css/app.css",
     "public/css",
-    [require("@tailwindcss/postcss")]
+    [require("@tailwindcss/postcss")],
 );
 
 // Custom Auth JS

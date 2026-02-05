@@ -26,6 +26,9 @@ function loadPatientCountry() {
         return;
     }
 
+    // Set a flag to prevent AJAX from overwriting server-loaded data during initial page load
+    window.isInitialPatientLoad = true;
+
     $("#patientCountryId")
         .val($("#editPatientCountryId").val())
         .trigger("change");
@@ -41,6 +44,16 @@ function loadPatientCountry() {
             .val($("#editPatientCityId").val())
             .trigger("change");
     }, 700);
+
+    setTimeout(function () {
+        if ($("#editPatientBarangayId").val()) {
+            $("#patientBarangayId")
+                .val($("#editPatientBarangayId").val())
+                .trigger("change");
+        }
+        // Clear the flag after all initial values are set
+        window.isInitialPatientLoad = false;
+    }, 1000);
 }
 
 function loadPatientprofileCountry() {
@@ -72,6 +85,14 @@ function loadPatientprofileCountry() {
             .val($("#editPatientProfileCityId").val())
             .trigger("change");
     }, 1200);
+
+    setTimeout(function () {
+        if ($("#editPatientProfileBarangayId").val()) {
+            $("#patientProfileBarangayId")
+                .val($("#editPatientProfileBarangayId").val())
+                .trigger("change");
+        }
+    }, 1500);
 }
 
 listenChange("input[type=radio][name=gender]", function () {
@@ -80,20 +101,26 @@ listenChange("input[type=radio][name=gender]", function () {
         if (this.value == 1) {
             $(".image-input-wrapper").attr(
                 "style",
-                "background-image:url(" + manAvatar + ")"
+                "background-image:url(" + manAvatar + ")",
             );
         } else if (this.value == 2) {
             $(".image-input-wrapper").attr(
                 "style",
-                "background-image:url(" + womanAvatar + ")"
+                "background-image:url(" + womanAvatar + ")",
             );
         }
     }
 });
 
 listenChange("#patientCountryId", function () {
+    // Skip AJAX during initial page load - data is already loaded from server
+    if (window.isInitialPatientLoad) {
+        return;
+    }
+
     $("#patientStateId").empty();
     $("#patientCityId").empty();
+    $("#patientBarangayId").empty();
     $.ajax({
         url: route("get-state"),
         type: "get",
@@ -102,15 +129,21 @@ listenChange("#patientCountryId", function () {
         success: function (data) {
             $("#patientStateId").empty();
             $("#patientCityId").empty();
+            $("#patientBarangayId").empty();
             $("#patientStateId").append(
-                $('<option value=""></option>').text("Select State")
+                $('<option value=""></option>').text("Select Province"),
             );
             $("#patientCityId").append(
-                $('<option value=""></option>').text("Select City")
+                $('<option value=""></option>').text(
+                    "Select City/Municipality",
+                ),
+            );
+            $("#patientBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
             );
             $.each(data.data, function (i, v) {
                 $("#patientStateId").append(
-                    $("<option></option>").attr("value", i).text(v)
+                    $("<option></option>").attr("value", i).text(v),
                 );
             });
         },
@@ -125,6 +158,7 @@ listenChange("#patientProfileCountryId", function () {
 
     $("#patientProfileStateId").empty();
     $("#patientProfileCityId").empty();
+    $("#patientProfileBarangayId").empty();
     $.ajax({
         url: route("get-state"),
         type: "get",
@@ -133,15 +167,21 @@ listenChange("#patientProfileCountryId", function () {
         success: function (data) {
             $("#patientProfileStateId").empty();
             $("#patientProfileCityId").empty();
+            $("#patientProfileBarangayId").empty();
             $("#patientProfileStateId").append(
-                $('<option value=""></option>').text("Select State")
+                $('<option value=""></option>').text("Select Province"),
             );
             $("#patientProfileCityId").append(
-                $('<option value=""></option>').text("Select City")
+                $('<option value=""></option>').text(
+                    "Select City/Municipality",
+                ),
+            );
+            $("#patientProfileBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
             );
             $.each(data.data, function (i, v) {
                 $("#patientProfileStateId").append(
-                    $("<option></option>").attr("value", i).text(v)
+                    $("<option></option>").attr("value", i).text(v),
                 );
             });
         },
@@ -151,6 +191,7 @@ listenChange("#patientProfileCountryId", function () {
 listenChange("#patientProfileStateId", function () {
     // Allow AJAX call - we need it to load cities when state changes
     $("#patientProfileCityId").empty();
+    $("#patientProfileBarangayId").empty(); // Clear barangays when state changes
     $.ajax({
         url: route("get-city"),
         type: "get",
@@ -159,13 +200,19 @@ listenChange("#patientProfileStateId", function () {
         success: function (data) {
             $("#patientProfileCityId").empty();
             $("#patientProfileCityId").append(
-                $('<option value=""></option>').text("Select City")
+                $('<option value=""></option>').text(
+                    "Select City/Municipality",
+                ),
             );
             $.each(data.data, function (i, v) {
                 $("#patientProfileCityId").append(
-                    $("<option></option>").attr("value", i).text(v)
+                    $("<option></option>").attr("value", i).text(v),
                 );
             });
+            // Add default barangay option
+            $("#patientProfileBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
+            );
             // After cities are loaded, set the saved city value
             if (
                 $("#patientProfileIsEdit").val() &&
@@ -179,8 +226,52 @@ listenChange("#patientProfileStateId", function () {
     });
 });
 
+// Load barangays when city changes in profile
+listenChange("#patientProfileCityId", function () {
+    $("#patientProfileBarangayId").empty();
+    var cityId = $(this).val();
+    if (!cityId) {
+        $("#patientProfileBarangayId").append(
+            $('<option value=""></option>').text("Select Barangay"),
+        );
+        return;
+    }
+    $.ajax({
+        url: route("get-barangay"),
+        type: "get",
+        dataType: "json",
+        data: { city: cityId },
+        success: function (data) {
+            $("#patientProfileBarangayId").empty();
+            $("#patientProfileBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
+            );
+            $.each(data.data, function (i, v) {
+                $("#patientProfileBarangayId").append(
+                    $("<option></option>").attr("value", i).text(v),
+                );
+            });
+            // After barangays are loaded, set the saved barangay value if editing
+            if (
+                $("#patientProfileIsEdit").val() &&
+                $("#editPatientProfileBarangayId").val()
+            ) {
+                $("#patientProfileBarangayId")
+                    .val($("#editPatientProfileBarangayId").val())
+                    .trigger("change");
+            }
+        },
+    });
+});
+
 listenChange("#patientStateId", function () {
+    // Skip AJAX during initial page load - data is already loaded from server
+    if (window.isInitialPatientLoad) {
+        return;
+    }
+
     $("#patientCityId").empty();
+    $("#patientBarangayId").empty(); // Clear barangays when state changes
     $.ajax({
         url: route("get-city"),
         type: "get",
@@ -189,16 +280,65 @@ listenChange("#patientStateId", function () {
         success: function (data) {
             $("#patientCityId").empty();
             $("#patientCityId").append(
-                $('<option value=""></option>').text("Select City")
+                $('<option value=""></option>').text(
+                    "Select City/Municipality",
+                ),
             );
             $.each(data.data, function (i, v) {
                 $("#patientCityId").append(
-                    $("<option></option>").attr("value", i).text(v)
+                    $("<option></option>").attr("value", i).text(v),
                 );
             });
+            // Add default barangay option
+            $("#patientBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
+            );
             if ($("#patientIsEdit").val() && $("#editPatientCityId").val()) {
                 $("#patientCityId")
                     .val($("#editPatientCityId").val())
+                    .trigger("change");
+            }
+        },
+    });
+});
+
+// Load barangays when city changes
+listenChange("#patientCityId", function () {
+    // Skip AJAX during initial page load - data is already loaded from server
+    if (window.isInitialPatientLoad) {
+        return;
+    }
+
+    $("#patientBarangayId").empty();
+    var cityId = $(this).val();
+    if (!cityId) {
+        $("#patientBarangayId").append(
+            $('<option value=""></option>').text("Select Barangay"),
+        );
+        return;
+    }
+    $.ajax({
+        url: route("get-barangay"),
+        type: "get",
+        dataType: "json",
+        data: { city: cityId },
+        success: function (data) {
+            $("#patientBarangayId").empty();
+            $("#patientBarangayId").append(
+                $('<option value=""></option>').text("Select Barangay"),
+            );
+            $.each(data.data, function (i, v) {
+                $("#patientBarangayId").append(
+                    $("<option></option>").attr("value", i).text(v),
+                );
+            });
+            // After barangays are loaded, set the saved barangay value if editing
+            if (
+                $("#patientIsEdit").val() &&
+                $("#editPatientBarangayId").val()
+            ) {
+                $("#patientBarangayId")
+                    .val($("#editPatientBarangayId").val())
                     .trigger("change");
             }
         },
@@ -209,7 +349,7 @@ listenSubmit("#createPatientForm", function () {
     if ($("#error-msg").text() !== "") {
         $("#phoneNumber").focus();
         displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text()
+            Lang.get("js.contact_number") + $("#error-msg").text(),
         );
         return false;
     }
@@ -219,7 +359,7 @@ listenSubmit("#editPatientForm", function () {
     if ($("#error-msg").text() !== "") {
         $("#phoneNumber").focus();
         displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text()
+            Lang.get("js.contact_number") + $("#error-msg").text(),
         );
         return false;
     }

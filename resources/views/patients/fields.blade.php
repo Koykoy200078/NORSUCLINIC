@@ -46,7 +46,7 @@
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
-            {{ Form::tel('contact', !empty($patient->user) ? '+'.$patient->user->country_code.$patient->user->contact : null, ['class' => 'form-control',
+            {{ Form::tel('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control',
             'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
             {{ Form::hidden('country_code',!empty($patient->user) ? $patient->user->country_code : null,['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
@@ -107,11 +107,15 @@
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('state_id',__('messages.province.province').':',['class'=>'form-label']) }}
-            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['placeholder' => __('messages.province.select_province'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
+            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['id' => 'patientStateId', 'placeholder' => __('messages.province.select_province'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('city_id',__('messages.city.city').':',['class'=>'form-label']) }}
-            {{ Form::select('city_id', $data['cities'] ,!empty($patient->address) ? $patient->address->city_id : null, ['placeholder' => __('messages.city.select_city'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
+            {{ Form::label('city_id',__('City/Municipality').':',['class'=>'form-label']) }}
+            {{ Form::select('city_id', isset($patient) && !empty($patient->address) ? $data['cities'] : [] ,!empty($patient->address) ? $patient->address->city_id : null, ['id' => 'patientCityId', 'placeholder' => __('City/Municipality'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
+        </div>
+        <div class="col-md-6 mb-7">
+            {{ Form::label('barangay_id',__('Barangay').':',['class'=>'form-label']) }}
+            {{ Form::select('barangay_id', isset($patient) && !empty($patient->address) ? ($data['barangays'] ?? []) : [] ,!empty($patient->address) ? $patient->address->barangay_id : null, ['id' => 'patientBarangayId', 'placeholder' => __('Select Barangay'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Barangay",'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}

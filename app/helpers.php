@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Barangay;
 use App\Models\City;
 use App\Models\DoctorSession;
 use App\Models\Notification;
@@ -111,6 +112,18 @@ if (! function_exists('getCities')) {
     function getCities($stateId)
     {
         return City::where('state_id', $stateId)->pluck('name', 'id')->toArray();
+    }
+}
+
+if (! function_exists('getBarangays')) {
+    /**
+     * Get barangays for a specific city
+     * @param int|array $cityId
+     * @return array
+     */
+    function getBarangays($cityId)
+    {
+        return Barangay::where('city_id', $cityId)->pluck('name', 'id')->toArray();
     }
 }
 

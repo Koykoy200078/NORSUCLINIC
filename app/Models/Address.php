@@ -51,11 +51,20 @@ class Address extends Model
         'country_id',
         'state_id',
         'city_id',
+        'barangay_id',
         'postal_code',
     ];
 
     public function owner(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Get the barangay associated with the address.
+     */
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay_id');
     }
 }

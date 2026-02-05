@@ -60,7 +60,8 @@ class PatientRepository extends BaseRepository
         $data['countries'] = Country::toBase()->pluck('name', 'id');
         $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
         $data['provinces'] = State::toBase()->pluck('name', 'id');
-        $data['cities'] = City::toBase()->pluck('name', 'id');
+        $data['cities'] = [];  // Loaded dynamically via AJAX based on province selection
+        $data['barangays'] = [];  // Loaded dynamically via AJAX based on city selection
 
         $data['campuses'] = Campus::toBase()->pluck('campus_name', 'id');
         $data['colleges'] = College::toBase()->pluck('college_name', 'id');
@@ -82,7 +83,7 @@ class PatientRepository extends BaseRepository
             DB::beginTransaction();
             $addressInputArray = Arr::only(
                 $input,
-                ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+                ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
 
             $input['patient_unique_id'] = Str::upper($input['patient_unique_id']);
@@ -152,7 +153,7 @@ class PatientRepository extends BaseRepository
 
             $addressInputArray = Arr::only(
                 $input,
-                ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+                ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
             $input['type'] = User::PATIENT;
             $input['email'] = setEmailLowerCase($input['email']);
@@ -161,6 +162,7 @@ class PatientRepository extends BaseRepository
                 'address1',
                 'address2',
                 'city_id',
+                'barangay_id',
                 'state_id',
                 'country_id',
                 'postal_code',
@@ -171,6 +173,7 @@ class PatientRepository extends BaseRepository
                 'edit_patient_country_id',
                 'edit_patient_state_id',
                 'edit_patient_city_id',
+                'edit_patient_barangay_id',
                 'backgroundImg',
                 // Form-only fields that don't exist in users table
                 'is_employee',

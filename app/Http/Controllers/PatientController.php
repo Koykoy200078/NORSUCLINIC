@@ -153,6 +153,16 @@ class PatientController extends AppBaseController
         $data = $this->patientRepository->getData();
         unset($data['patientUniqueId']);
 
+        // Load cities and barangays for existing patient address
+        if ($patient->address) {
+            if ($patient->address->state_id) {
+                $data['cities'] = getCities($patient->address->state_id);
+            }
+            if ($patient->address->city_id) {
+                $data['barangays'] = getBarangays($patient->address->city_id);
+            }
+        }
+
         return view('patients.edit', compact('data', 'patient'));
     }
 

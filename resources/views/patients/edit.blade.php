@@ -3,6 +3,12 @@
 {{ __('messages.patient.edit') }}
 @endsection
 @section('content')
+@if(!empty($patient->user) && !empty($patient->user->contact))
+<script>
+    // Set phone number for intl-tel-input initialization - MUST be before the input is rendered
+    var phoneNo = '{{ $patient->user->country_code }}{{ $patient->user->contact }}';
+</script>
+@endif
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-end mb-5">
         <h1>@yield('title')</h1>
@@ -32,6 +38,8 @@
                             ['id' => 'editPatientStateId']) }}
             {{ Form::hidden('edit_patient_city_id', isset($patient->address->city_id) ? $patient->address->city_id:null,
                             ['id' => 'editPatientCityId']) }}
+            {{ Form::hidden('edit_patient_barangay_id', isset($patient->address->barangay_id) ? $patient->address->barangay_id:null,
+                            ['id' => 'editPatientBarangayId']) }}
             {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'patientBackgroundImg']) }}
             <input type="hidden" id="existingYearLevelId" value="{{ !empty($patient->user) ? $patient->user->year_level_id : '' }}">
             <input type="hidden" id="existingPositionType" value="{{ !empty($patient->user) ? $patient->user->position_type : '' }}">

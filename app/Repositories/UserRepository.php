@@ -74,6 +74,7 @@ class UserRepository extends BaseRepository
 
         $data['provinces'] = State::toBase()->pluck('name', 'id');
         $data['cities'] = City::toBase()->pluck('name', 'id');
+        $data['barangays'] = [];  // Loaded dynamically via AJAX based on city selection
         $data['campuses'] = Campus::toBase()->pluck('campus_name', 'id');
         $data['colleges'] = College::toBase()->pluck('college_name', 'id');
         $data['courses'] = Course::toBase()->pluck('course_name', 'id');
@@ -94,7 +95,7 @@ class UserRepository extends BaseRepository
     {
         $addressInputArray = Arr::only(
             $input,
-            ['address1', 'address2', 'country_id', 'city_id', 'state_id', 'postal_code']
+            ['address1', 'address2', 'country_id', 'city_id', 'barangay_id', 'state_id', 'postal_code']
         );
         $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
         $specialization = $input['specializations'];
@@ -129,7 +130,7 @@ class UserRepository extends BaseRepository
     {
         $addressInputArray = Arr::only(
             $input,
-            ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+            ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
         );
         $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
         $qualificationArray = json_decode($input['qualifications'], true);
@@ -185,7 +186,7 @@ class UserRepository extends BaseRepository
 
             $addressInputArray = Arr::only(
                 $userInput,
-                ['address1', 'address2', 'city_id', 'state_id', 'country_id', 'postal_code']
+                ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
 
             if ($user->hasRole('clinic_admin')) {
@@ -214,6 +215,7 @@ class UserRepository extends BaseRepository
                     'address1',
                     'address2',
                     'city_id',
+                    'barangay_id',
                     'state_id',
                     'country_id',
                     'postal_code',
@@ -224,6 +226,7 @@ class UserRepository extends BaseRepository
                     'edit_patient_country_id',
                     'edit_patient_state_id',
                     'edit_patient_city_id',
+                    'edit_patient_barangay_id',
                     'backgroundImg',
                     'image',
                     'is_employee',

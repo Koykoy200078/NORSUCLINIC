@@ -21,6 +21,7 @@ return [
     'countries' => 'Countries',
     'states' => 'Provinces',
     'cities' => 'Cities/Municipalities',
+    'barangays' => 'Barangays',
     'doctors' => 'Doctors',
     'service_categories' => 'Service Categories',
     'specializations' => 'Specializations',
@@ -284,6 +285,7 @@ return [
         'select_country' => 'Select Country',
         'select_province' => 'Select Province',
         'select_city' => 'Select City',
+        'select_barangay' => 'Select Barangay',
         'read' => 'Read',
         'unread' => 'Unread',
         'change_image' => 'Change Image',
@@ -521,6 +523,17 @@ return [
         'select_city' => 'Select City',
         'city_not_avl' => 'City not available',
         'city_already_exists' => 'A city/municipality with this name and type already exists in the selected province'
+    ],
+
+    'barangay' => [
+        'barangay' => 'Barangay',
+        'add_barangay' => 'Add Barangay',
+        'edit_barangay' => 'Edit Barangay',
+        'city' => 'City/Municipality',
+        'select_barangay' => 'Select Barangay',
+        'barangay_not_avl' => 'Barangay not available',
+        'barangay_already_exists' => 'A barangay with this name already exists in the selected city/municipality',
+        'select_city' => 'Select City/Municipality',
     ],
 
 
@@ -1036,6 +1049,11 @@ return [
         'city_update' => 'City updated successfully.',
         'city_used' => 'City used somewhere else.',
         'city_delete' => 'City deleted successfully.',
+        'barangay_create' => 'Barangay created successfully.',
+        'barangay_retrieved' => 'Barangay retrieved successfully.',
+        'barangay_update' => 'Barangay updated successfully.',
+        'barangay_used' => 'Barangay used somewhere else.',
+        'barangay_delete' => 'Barangay deleted successfully.',
         'about_us_create' => 'About Us saved successfully.',
         'feature_update' => 'Feature updated successfully.',
         'clinic_save' => 'Clinic Schedule saved successfully.',

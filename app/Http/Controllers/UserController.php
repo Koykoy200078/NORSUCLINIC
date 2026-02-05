@@ -248,11 +248,20 @@ class UserController extends AppBaseController
                 $data['cities'] = []; // Empty array if no state selected
                 \Log::info('No state_id - cities array empty');
             }
+
+            if (!empty($patient->address->city_id)) {
+                $data['barangays'] = getBarangays($patient->address->city_id);
+                \Log::info('Loaded barangays', ['count' => count($data['barangays'])]);
+            } else {
+                $data['barangays'] = []; // Empty array if no city selected
+                \Log::info('No city_id - barangays array empty');
+            }
         } else {
             // No address exists yet - initialize empty arrays
             $data['states'] = [];
             $data['cities'] = [];
-            \Log::info('No address - both arrays empty');
+            $data['barangays'] = [];
+            \Log::info('No address - all arrays empty');
         }
 
         // DEEP VERIFICATION: Log all critical values before passing to view
@@ -289,6 +298,7 @@ class UserController extends AppBaseController
             'offices' => count($data['offices'] ?? []),
             'states' => count($data['states'] ?? []),
             'cities' => count($data['cities'] ?? []),
+            'barangays' => count($data['barangays'] ?? []),
         ]);
 
         return view('profile.index', compact('user', 'data', 'patient'));
@@ -345,6 +355,14 @@ class UserController extends AppBaseController
         $cities = getCities($state);
 
         return $this->sendResponse($cities, __('messages.flash.retrieve'));
+    }
+
+    public function getBarangays(Request $request): JsonResponse
+    {
+        $cityId = $request->city;
+        $barangays = getBarangays($cityId);
+
+        return $this->sendResponse($barangays, __('messages.flash.retrieve'));
     }
 
     /**

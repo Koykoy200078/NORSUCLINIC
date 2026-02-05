@@ -6,6 +6,7 @@ require __DIR__ . '/debug-profile.php';
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorizePaymentController;
+use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
@@ -149,6 +150,7 @@ Route::get('cancel-appointment/{patient_id}/{appointment_unique_id}', [Appointme
 //get States and cities route
 Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
 Route::get('get-cities', [UserController::class, 'getCity'])->name('get-city');
+Route::get('get-barangays', [UserController::class, 'getBarangays'])->name('get-barangay');
 
 // ============================================================================
 // ADMIN ROUTES
@@ -194,6 +196,11 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Cities Routes
     Route::middleware('permission:manage_cities')->group(function () {
         Route::resource('cities', CityController::class);
+    });
+
+    // Barangays Routes
+    Route::middleware('permission:manage_cities')->group(function () {
+        Route::resource('barangays', BarangayController::class);
     });
 
     // Role route

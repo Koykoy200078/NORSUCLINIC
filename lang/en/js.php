@@ -36,6 +36,7 @@ return [
     'brand' => 'Brand',
     'category' => 'Category',
     'city' => 'City',
+    'barangay' => 'Barangay',
     'state' => 'State',
     'country' => 'Country',
     'select_state' => 'Select State',

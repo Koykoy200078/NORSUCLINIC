@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -84,5 +85,13 @@ class City extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class, 'state_id');
+    }
+
+    /**
+     * Get the barangays for the city.
+     */
+    public function barangays(): HasMany
+    {
+        return $this->hasMany(Barangay::class, 'city_id');
     }
 }

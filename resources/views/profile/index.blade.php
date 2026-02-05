@@ -29,6 +29,9 @@
         {{ Form::hidden('edit_patient_city_id', isset($patient->address->city_id) ? $patient->address->city_id : null, [
                 'id' => 'editPatientProfileCityId',
             ]) }}
+        {{ Form::hidden('edit_patient_barangay_id', isset($patient->address->barangay_id) ? $patient->address->barangay_id : null, [
+                'id' => 'editPatientProfileBarangayId',
+            ]) }}
         @csrf
         @method('PUT')
 
@@ -225,6 +228,10 @@
                     <div class="col-md-6 mb-7">
                         {{ Form::label('city_id', __('messages.city.city') . ':', ['class' => 'form-label fw-semibold']) }}
                         {{ Form::select('city_id', $data['cities'] ?? [], !empty($patient->address) ? $patient->address->city_id : null, ['id' => 'patientProfileCityId', 'class' => 'form-control form-control-lg io-select2', 'data-placeholder' => __('messages.common.select_city'), 'aria-label' => 'Select City', 'data-control' => 'select2']) }}
+                    </div>
+                    <div class="col-md-6 mb-7">
+                        {{ Form::label('barangay_id', __('messages.barangay.barangay') . ':', ['class' => 'form-label fw-semibold']) }}
+                        {{ Form::select('barangay_id', $data['barangays'] ?? [], !empty($patient->address) ? $patient->address->barangay_id : null, ['id' => 'patientProfileBarangayId', 'class' => 'form-control form-control-lg io-select2', 'data-placeholder' => __('messages.common.select_barangay'), 'aria-label' => 'Select Barangay', 'data-control' => 'select2']) }}
                     </div>
                     <div class="col-md-6 mb-7">
                         {{ Form::label('postalCode', __('messages.patient.postal_code') . ':', ['class' => 'form-label fw-semibold']) }}
