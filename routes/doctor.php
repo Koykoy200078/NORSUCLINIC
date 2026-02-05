@@ -8,7 +8,7 @@ use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\MedicineAvailabilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorSessionController;
-use App\Http\Controllers\HolidayContoller;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
@@ -86,10 +86,10 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Holiday Management (Doctors can manage their holidays)
     Route::middleware('permission:manage_doctors_holiday')->group(function () {
-        Route::get('holidays', [HolidayContoller::class, 'holiday'])->name('holiday');
-        Route::get('holidays/create', [HolidayContoller::class, 'doctorCreate'])->name('holiday-create');
-        Route::post('holidays/create', [HolidayContoller::class, 'doctorStore'])->name('holiday-store');
-        Route::delete('holidays/delete/{holiday}', [HolidayContoller::class, 'doctorDestroy'])->name('holiday-destroy');
+        Route::get('holidays', [HolidayController::class, 'holiday'])->name('holiday');
+        Route::get('holidays/create', [HolidayController::class, 'doctorCreate'])->name('holiday-create');
+        Route::post('holidays/create', [HolidayController::class, 'doctorStore'])->name('holiday-store');
+        Route::delete('holidays/delete/{holiday}', [HolidayController::class, 'doctorDestroy'])->name('holiday-destroy');
     });
 
     // Route for Prescription
@@ -106,6 +106,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::middleware('permission:manage_patients')->group(function () {
         Route::resource('patients', PatientController::class);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
+        Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
     });

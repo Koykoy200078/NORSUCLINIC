@@ -16,7 +16,7 @@ use App\Models\Appointment;
 use function PHPUnit\Framework\isEmpty;
 use function PHPUnit\Framework\isNull;
 
-class HolidayContoller extends AppBaseController
+class HolidayController extends AppBaseController
 {
     /** @var HolidayRepository */
     private $holidayRepository;

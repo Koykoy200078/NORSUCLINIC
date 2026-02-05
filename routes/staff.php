@@ -24,7 +24,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ClinicScheduleController;
-use App\Http\Controllers\HolidayContoller;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -178,7 +178,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::resource('clinic-schedules', ClinicScheduleController::class);
 
         // Holidays Management (Staff and Doctor can manage)
-        Route::resource('holidays', HolidayContoller::class)->middleware('permission:manage_doctors_holiday');
+        Route::resource('holidays', HolidayController::class)->middleware('permission:manage_doctors_holiday');
     });
 
     // Additional management routes (view-only for staff)

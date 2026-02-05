@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePatientQueueRequest;
+use App\Http\Requests\UpdatePatientQueueRequest;
 use App\Models\Patient;
 use App\Models\PatientQueue;
 use Illuminate\Http\Request;
@@ -40,14 +42,9 @@ class PatientQueueController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePatientQueueRequest $request)
     {
-        $validated = $request->validate([
-            'patient_id' => 'required|exists:patients,id',
-            'room_number' => 'nullable|string|max:50',
-            'is_priority' => 'boolean',
-            'notes' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         // Check if patient is already in queue
         $existingQueue = PatientQueue::where('patient_id', $validated['patient_id'])
@@ -114,16 +111,9 @@ class PatientQueueController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PatientQueue $patientQueue)
+    public function update(UpdatePatientQueueRequest $request, PatientQueue $patientQueue)
     {
-        $validated = $request->validate([
-            'room_number' => 'nullable|string|max:50',
-            'is_priority' => 'boolean',
-            'notes' => 'nullable|string|max:500',
-            'status' => 'in:waiting,in_progress,completed,cancelled',
-        ]);
-
-        $validated['is_priority'] = $request->has('is_priority') ? true : false;
+        $validated = $request->validated();
 
         // Set timestamps based on status
         if ($request->status === PatientQueue::STATUS_IN_PROGRESS && !$patientQueue->called_at) {
