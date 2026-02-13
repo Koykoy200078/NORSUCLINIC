@@ -55,6 +55,13 @@ class Address extends Model
         'postal_code',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['full_address'];
+
     public function owner(): MorphTo
     {
         return $this->morphTo();
@@ -66,5 +73,57 @@ class Address extends Model
     public function barangay()
     {
         return $this->belongsTo(Barangay::class, 'barangay_id');
+    }
+
+    /**
+     * Get the city associated with the address.
+     */
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    /**
+     * Get the state/province associated with the address.
+     */
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id');
+    }
+
+    /**
+     * Get the full formatted address.
+     * Format: Barangay {name}, {City name} {Province}, {postal_code}
+     */
+    public function getFullAddressAttribute(): string
+    {
+        $parts = [];
+
+        // Add barangay if available
+        if ($this->barangay) {
+            $parts[] = 'Barangay ' . $this->barangay->name;
+        }
+
+        // Add city if available
+        if ($this->city) {
+            $parts[] = $this->city->name;
+        }
+
+        // Add state/province if available
+        if ($this->state) {
+            $parts[] = $this->state->name;
+        }
+
+        // Add postal code if available
+        if ($this->postal_code) {
+            $parts[] = $this->postal_code;
+        }
+
+        // If we have parts, join them; otherwise fall back to address1
+        if (!empty($parts)) {
+            return implode(', ', $parts);
+        }
+
+        return $this->address1 ?? '';
     }
 }

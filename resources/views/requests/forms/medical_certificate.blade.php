@@ -54,7 +54,7 @@
                     <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" readonly required> a resident of
                 </p>
                 <p>
-                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->full_address : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
                     , was seen and examined at my clinic on
                     <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" readonly required>
                     <input type="hidden" id="examined_on" name="examined_on">
@@ -280,7 +280,26 @@
                                     document.getElementById('gender_2').value = patientData.user.gender === 1 ? 'Male' : 'Female';
 
                                     if (patientData.address) {
-                                        document.getElementById('address_2').value = `${patientData.address.address1}`;
+                                        // Use full_address if available, otherwise fall back to building it from parts
+                                        if (patientData.address.full_address) {
+                                            document.getElementById('address_2').value = patientData.address.full_address;
+                                        } else {
+                                            // Build address from available parts
+                                            let addressParts = [];
+                                            if (patientData.address.barangay && patientData.address.barangay.name) {
+                                                addressParts.push('Barangay ' + patientData.address.barangay.name);
+                                            }
+                                            if (patientData.address.city && patientData.address.city.name) {
+                                                addressParts.push(patientData.address.city.name);
+                                            }
+                                            if (patientData.address.state && patientData.address.state.name) {
+                                                addressParts.push(patientData.address.state.name);
+                                            }
+                                            if (patientData.address.postal_code) {
+                                                addressParts.push(patientData.address.postal_code);
+                                            }
+                                            document.getElementById('address_2').value = addressParts.length > 0 ? addressParts.join(', ') : (patientData.address.address1 || '');
+                                        }
                                     }
 
                                     userSearchResults.classList.add('hidden');

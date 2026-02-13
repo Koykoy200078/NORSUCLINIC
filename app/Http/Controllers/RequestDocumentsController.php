@@ -1039,9 +1039,17 @@ class RequestDocumentsController extends Controller
             })
                 ->select('id', 'patient_unique_id', 'user_id')
                 ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id', 'address' => function ($query) {
-                    $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'postal_code');
+                    $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
+                        ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
                 }])
                 ->get();
+
+            // Add full_address attribute to each patient's address
+            $patients->each(function ($patient) {
+                if ($patient->address) {
+                    $patient->address->full_address = $patient->address->full_address;
+                }
+            });
 
             return response()->json($patients);
         } catch (\Exception $e) {

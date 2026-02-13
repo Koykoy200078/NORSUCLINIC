@@ -50,7 +50,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS<span class="text-red-500">*</span></label>
-                <input type="text" id="address" name="address" class="w-full border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->address1 : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="address" name="address" class="w-full border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->full_address : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="religion">RELIGION<span class="text-red-500">*</span></label>
@@ -934,7 +934,26 @@
                                     document.getElementById('informant').value = informantValue;
 
                                     if (patientData.address) {
-                                        document.getElementById('address').value = `${patientData.address.address1}`;
+                                        // Use full_address if available, otherwise fall back to building it from parts
+                                        if (patientData.address.full_address) {
+                                            document.getElementById('address').value = patientData.address.full_address;
+                                        } else {
+                                            // Build address from available parts
+                                            let addressParts = [];
+                                            if (patientData.address.barangay && patientData.address.barangay.name) {
+                                                addressParts.push('Barangay ' + patientData.address.barangay.name);
+                                            }
+                                            if (patientData.address.city && patientData.address.city.name) {
+                                                addressParts.push(patientData.address.city.name);
+                                            }
+                                            if (patientData.address.state && patientData.address.state.name) {
+                                                addressParts.push(patientData.address.state.name);
+                                            }
+                                            if (patientData.address.postal_code) {
+                                                addressParts.push(patientData.address.postal_code);
+                                            }
+                                            document.getElementById('address').value = addressParts.length > 0 ? addressParts.join(', ') : (patientData.address.address1 || '');
+                                        }
                                     }
 
                                     userSearchResults.classList.add('hidden');
