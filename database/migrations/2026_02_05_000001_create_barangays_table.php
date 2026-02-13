@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('barangays', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 191); // Limited to 191 chars for MySQL utf8mb4 composite index compatibility
             $table->unsignedBigInteger('city_id');
             $table->timestamps();
 
