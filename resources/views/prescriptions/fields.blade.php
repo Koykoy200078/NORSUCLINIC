@@ -1,5 +1,4 @@
 <div class="row gx-10 mb-5">
-    {{ Form::hidden('appointment_id', null) }}
     {{ Form::hidden('patient_id', $patientId ?? null) }}
 
     @if (Auth::user()->hasRole('Doctor'))

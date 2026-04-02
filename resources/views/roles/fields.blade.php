@@ -57,8 +57,7 @@
         'icon' => 'fas fa-edit',
         'description' => 'Website content, marketing materials, and public-facing information',
         'permissions' => [
-        'manage_front_cms' => 'Manage website content, pages, sliders, testimonials, and public information',
-        'manage_doctors_holiday' => 'Configure doctor holidays, vacation schedules, and unavailable periods'
+        'manage_front_cms' => 'Manage website content, pages, sliders, testimonials, and public information'
         ]
         ],
         'Location Management' => [

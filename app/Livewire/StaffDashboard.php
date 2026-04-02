@@ -13,14 +13,12 @@ class StaffDashboard extends Component
 {
     public $totalDoctorCount;
     public $totalPatientCount;
-    public $todayAppointmentCount;
     public $totalRegisteredPatientCount;
 
     public function mount()
     {
         $this->totalDoctorCount = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
         $this->totalPatientCount = User::toBase()->whereType(User::PATIENT)->count();
-        $this->todayAppointmentCount = 0;
         $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
     }
 

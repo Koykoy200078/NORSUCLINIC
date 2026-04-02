@@ -37,12 +37,6 @@ return new class extends Migration
             $table->index('doctor_id', 'idx_prescriptions_doctor_id');
             $table->index('created_at', 'idx_prescriptions_created_at');
         });
-
-        // Add indexes for Visits table
-        Schema::table('visits', function (Blueprint $table) {
-            $table->index('patient_id', 'idx_visits_patient_id');
-            $table->index('doctor_id', 'idx_visits_doctor_id');
-        });
     }
 
     /**
@@ -71,11 +65,6 @@ return new class extends Migration
             $table->dropIndex('idx_prescriptions_patient_id');
             $table->dropIndex('idx_prescriptions_doctor_id');
             $table->dropIndex('idx_prescriptions_created_at');
-        });
-
-        Schema::table('visits', function (Blueprint $table) {
-            $table->dropIndex('idx_visits_patient_id');
-            $table->dropIndex('idx_visits_doctor_id');
         });
     }
 };

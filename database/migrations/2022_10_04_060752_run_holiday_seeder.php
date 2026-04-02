@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
 
 return new class extends Migration
 {
@@ -10,8 +9,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Artisan::call('db:seed', ['--class' => 'DefaultHolidayPermissionSeeder', '--force' => true]);
-        Artisan::call('db:seed', ['--class' => 'DefaultClinicSchedulesSeeder', '--force' => true]);
+        // DefaultHolidayPermissionSeeder and DefaultClinicSchedulesSeeder removed in Phase 7 cleanup.
+        // Holiday and ClinicSchedule features were removed in Phase 2.
     }
 
     /**

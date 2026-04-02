@@ -1,5 +1,4 @@
 <div class="row mb-5">
-    {{ Form::hidden('appointment_id', null) }}
     {{ Form::hidden('patient_id', $prescription->patient_id) }}
     @if(Auth::user() && Auth::user()->hasRole('Doctor'))
     <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">

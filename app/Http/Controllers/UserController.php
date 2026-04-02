@@ -206,81 +206,29 @@ class UserController extends AppBaseController
         $data = $this->userRepo->getData();
 
         // Load states and cities if address exists with values
-        // The JavaScript will also handle loading via AJAX when dropdowns change
         if (!empty($patient->address)) {
-            \Log::info('Address exists', [
-                'country_id' => $patient->address->country_id,
-                'state_id' => $patient->address->state_id,
-                'city_id' => $patient->address->city_id
-            ]);
-
             if (!empty($patient->address->country_id)) {
                 $data['states'] = getStates($patient->address->country_id);
-                \Log::info('Loaded states', ['count' => count($data['states'])]);
             } else {
-                $data['states'] = []; // Empty array if no country selected
-                \Log::info('No country_id - states array empty');
+                $data['states'] = [];
             }
 
             if (!empty($patient->address->state_id)) {
                 $data['cities'] = getCities($patient->address->state_id);
-                \Log::info('Loaded cities', ['count' => count($data['cities'])]);
             } else {
-                $data['cities'] = []; // Empty array if no state selected
-                \Log::info('No state_id - cities array empty');
+                $data['cities'] = [];
             }
 
             if (!empty($patient->address->city_id)) {
                 $data['barangays'] = getBarangays($patient->address->city_id);
-                \Log::info('Loaded barangays', ['count' => count($data['barangays'])]);
             } else {
-                $data['barangays'] = []; // Empty array if no city selected
-                \Log::info('No city_id - barangays array empty');
+                $data['barangays'] = [];
             }
         } else {
-            // No address exists yet - initialize empty arrays
             $data['states'] = [];
             $data['cities'] = [];
             $data['barangays'] = [];
-            \Log::info('No address - all arrays empty');
         }
-
-        // DEEP VERIFICATION: Log all critical values before passing to view
-        \Log::info('=== DEEP DATA VERIFICATION BEFORE VIEW ===');
-        \Log::info('User Object Data:', [
-            'id' => $user->id,
-            'email' => $user->email,
-            'department_id' => $user->department_id,
-            'department_id_type' => gettype($user->department_id),
-            'department_id_is_null' => is_null($user->department_id),
-            'department_id_is_empty' => empty($user->department_id),
-            'office_id' => $user->office_id,
-            'office_id_type' => gettype($user->office_id),
-            'year_level_id' => $user->year_level_id,
-            'college_id' => $user->college_id,
-        ]);
-
-        \Log::info('Patient Data:', [
-            'patient_exists' => !is_null($patient),
-            'patient_id' => $patient->id ?? 'NULL',
-            'patient_user_id' => $patient->user_id ?? 'NULL',
-        ]);
-
-        \Log::info('Patient Address Data:', [
-            'address_exists' => !empty($patient->address),
-            'country_id' => $patient->address->country_id ?? 'NULL',
-            'state_id' => $patient->address->state_id ?? 'NULL',
-            'state_id_type' => isset($patient->address->state_id) ? gettype($patient->address->state_id) : 'NULL',
-            'city_id' => $patient->address->city_id ?? 'NULL',
-        ]);
-
-        \Log::info('Dropdown Arrays Count:', [
-            'departments' => count($data['departments'] ?? []),
-            'offices' => count($data['offices'] ?? []),
-            'states' => count($data['states'] ?? []),
-            'cities' => count($data['cities'] ?? []),
-            'barangays' => count($data['barangays'] ?? []),
-        ]);
 
         return view('profile.index', compact('user', 'data', 'patient'));
     }

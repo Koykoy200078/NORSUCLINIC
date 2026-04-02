@@ -55,7 +55,6 @@
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.login') }}</a>
                             @endif
 
-                            <!-- <a href="{{ route('medicalAppointment') }}" class="btn btn-primary mb-3 mb-lg-0">{{ __('messages.web.book_an_appointment') }}</a> -->
                         </div>
                     </div>
                 </nav>

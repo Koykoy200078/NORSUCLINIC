@@ -9,16 +9,6 @@ use Livewire\Attributes\Lazy;
 #[Lazy]
 class DoctorDashboardSidebarTable extends Component
 {
-   public $totalAppointmentCount;
-   public $todayAppointmentCount;
-   public $upcomingAppointmentCount;
-
-   public function mount()
-   {
-      $this->totalAppointmentCount = 0;
-      $this->todayAppointmentCount = 0;
-      $this->upcomingAppointmentCount = 0;
-   }
 
    public function placeholder()
    {

@@ -5,13 +5,9 @@
 @section('content')
 <div class="container-fluid">
     {{-- Top Row: Welcome Card and Statistics --}}
-    @php
-    $hasAppointmentData = ($data['todayAppointmentCount'] ?? 0) > 0 || ($data['upcomingAppointmentCount'] ?? 0) > 0 || ($data['completedAppointmentCount'] ?? 0) > 0;
-    @endphp
-
     <div class="row g-5 g-xl-8">
         {{-- Welcome Card with Profile Summary Section --}}
-        <div class="{{ $hasAppointmentData ? 'col-xxl-4' : 'col-xxl-12' }} col-xl-12">
+        <div class="col-xxl-12 col-xl-12">
             <livewire:patient-dashboard-table />
 
             {{-- Profile Summary Card --}}
@@ -88,11 +84,6 @@
         </div>
 
         {{-- Statistics Cards Section --}}
-        @if($hasAppointmentData)
-        <div class="col-xxl-8 col-xl-12">
-            <livewire:patient-dashboard-sidebar-table />
-        </div>
-        @endif
     </div>
 
     {{-- Second Row: Medicine History and Recent Activity --}}
@@ -381,32 +372,6 @@
         </div>
     </div>
 
-    {{-- Appointments Chart Section --}}
-    <div class="row g-5 g-xl-8 mt-5">
-        <div class="col-12">
-            <div class="card card-xl-stretch mb-5 mb-xl-8 shadow-sm">
-                <div class="card-header border-0 pt-5">
-                    <h3 class="card-title align-items-start flex-column">
-                        <span class="card-label fw-bold fs-3 mb-1">
-                            <i class="fas fa-chart-line text-primary me-2"></i>
-                            {{ __('messages.patient_dashboard.appointment_overview') }}
-                        </span>
-                        <span class="text-muted mt-1 fw-semibold fs-7">{{ __('messages.patient_dashboard.yearly_appointments') }}</span>
-                    </h3>
-                    <div class="card-toolbar">
-                        <button type="button" class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
-                            data-bs-toggle="tooltip" title="{{ __('messages.common.view_details') }}">
-                            <i class="fas fa-info-circle fs-2"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="patient_appointment_chart" style="min-height: 350px;"></div>
-                    {{ Form::hidden('patient_chart_data', json_encode($patientAllAppointment, true), ['id' => 'patientChartData']) }}
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>

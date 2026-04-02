@@ -53,13 +53,13 @@ class PerformanceMonitor extends Command
             $userQueryTime = round((microtime(true) - $start) * 1000, 2);
 
             $start = microtime(true);
-            $appointmentCount = DB::table('appointments')->count();
-            $appointmentQueryTime = round((microtime(true) - $start) * 1000, 2);
+            $patientCount = DB::table('patients')->count();
+            $patientQueryTime = round((microtime(true) - $start) * 1000, 2);
 
             $this->line("  Users table: {$userCount} records ({$userQueryTime}ms)");
-            $this->line("  Appointments table: {$appointmentCount} records ({$appointmentQueryTime}ms)");
+            $this->line("  Patients table: {$patientCount} records ({$patientQueryTime}ms)");
 
-            if ($userQueryTime > 100 || $appointmentQueryTime > 100) {
+            if ($userQueryTime > 100 || $patientQueryTime > 100) {
                 $this->warn('  ⚠️  Some queries are slow. Consider adding indexes.');
             } else {
                 $this->info('  ✅ Database queries are performing well.');
@@ -131,8 +131,6 @@ class PerformanceMonitor extends Command
 
         $suggestions = [
             'Consider adding index on users(type, status)',
-            'Consider adding index on appointments(date, status)',
-            'Consider adding index on appointments(doctor_id, date)',
             'Consider adding index on patients(created_at)',
             'Use eager loading for relationships',
             'Cache frequently accessed data',

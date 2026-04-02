@@ -144,10 +144,6 @@
     $bloodGroupArr = html_entity_decode($bloodGroupArr);
     @endphp
     <script data-turbo-eval="false">
-        let stripe = '';
-        @if(config('services.stripe.key'))
-        stripe = Stripe("{{ config('services.stripe.key') }}");
-        @endif
         let usersRole = "{{ !empty(getLogInUser()->roles->first()) ? getLogInUser()->roles->first()->name : '' }}";
         let currencyIcon = '{{ getCurrencyIcon() }}';
         let isSetFirstFocus = true;

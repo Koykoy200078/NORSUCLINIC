@@ -153,10 +153,6 @@
                                 </span>
                                 @endif
                             </ul>
-                            <!-- <a href="{{ route('doctorBookAppointment',$doctor->id) }}"
-                                class="about-appointment-btn btn btn-primary">
-                                <span>{{ __('messages.web.book_an_appointment') }}</span>
-                            </a> -->
                         </div>
                     </div>
                 </div>

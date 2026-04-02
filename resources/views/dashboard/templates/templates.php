@@ -1,6 +1,6 @@
 <script id="adminDashboardTemplate" type="text/x-jsrender">
 
-<tr>
+    <tr>
     <td>
                <div class="d-flex align-items-center">
             <div class="image image-circle image-mini me-3">
@@ -16,9 +16,6 @@
     </td>
     <td class="text-start">
         <span class="badge bg-light-success">{{:patientId}}</span>
-    </td>
-        <td class="text-center">
-        <span class="badge bg-light-danger">{{:appointment_count}}</span>
     </td>
     <td class="text-center text-muted fw-bold">
         <span class="badge bg-light-info">

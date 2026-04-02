@@ -63,10 +63,6 @@ $styleCss = 'style';
                                 </li>
                                 @endif
                             </ul>
-                            <!-- <a href="{{ route('doctorBookAppointment',$doctor->id) }}"
-                                class="doctor-appointment-btn btn btn-primary mt-auto align-self-center">
-                                <span>{{ __('messages.web.book_an_appointment') }}</span>
-                            </a> -->
                         </div>
                     </div>
                 </div>

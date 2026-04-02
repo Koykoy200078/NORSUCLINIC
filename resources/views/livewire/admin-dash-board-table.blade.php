@@ -43,9 +43,6 @@
                                 {{ __('messages.admin_dashboard.patient_id') }}
                             </th>
                             <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
-                                {{ __('messages.doctor_dashboard.total_appointments') }}
-                            </th>
-                            <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
                                 {{ __('messages.patient.registered_on') }}
                             </th>
                         </tr>
@@ -67,9 +64,6 @@
                             <td class="text-start">
                                 <span class="badge bg-light-success">{{ $patient['patient_unique_id'] }}</span>
                             </td>
-                            <td class="text-center">
-                                <span class="badge bg-light-danger">{{ $patient['appointments_count'] ?? 0 }}</span>
-                            </td>
                             <td class="text-center text-muted fw-bold">
                                 <span class="badge bg-light-info">
                                     {{ \Carbon\Carbon::parse($patient['user']['created_at'])->isoFormat('DD MMM YYYY hh:mm A') }}
@@ -78,7 +72,7 @@
                         </tr>
                         @empty
                         <tr class="text-center">
-                            <td colspan="5" class="text-center text-muted fw-bold">
+                            <td colspan="3" class="text-center text-muted fw-bold">
                                 {{ __('messages.common.no_data_available') }}
                             </td>
                         </tr>
@@ -97,9 +91,6 @@
                             </th>
                             <th class="min-w-150px text-muted mt-1 fw-bold fs-7">
                                 {{ __('messages.admin_dashboard.patient_id') }}
-                            </th>
-                            <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
-                                {{ __('messages.doctor_dashboard.total_appointments') }}
                             </th>
                             <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
                                 {{ __('messages.patient.registered_on') }}
@@ -121,9 +112,6 @@
                             </th>
                             <th class="min-w-150px text-muted mt-1 fw-bold fs-7">
                                 {{ __('messages.admin_dashboard.patient_id') }}
-                            </th>
-                            <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
-                                {{ __('messages.doctor_dashboard.total_appointments') }}
                             </th>
                             <th class="min-w-150px text-muted mt-1 fw-bold fs-7 text-center">
                                 {{ __('messages.patient.registered_on') }}

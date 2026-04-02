@@ -2,7 +2,8 @@
 
 **Project:** NORSUCLINIC Laravel 10 Medical Clinic System  
 **Scanned:** April 2, 2026  
-**Status:** Phase 4 Complete ✅ — Smart Cards / QR Codes removed. Deep-scan performed across all Phases 1–4: additional orphaned views and skeletons found and deleted. All gates passed.
+**Last Deep-Scan:** April 2, 2026 — Full Phases 1–7 deep-scan audit. 25+ breaking/dead issues found and fixed. All gates passed.  
+**Status:** Phase 7 Complete ✅ + Deep-Scan Audit Complete ✅ — All 16 tables dropped. 28 dead migrations removed. Seeders/factories cleaned. Dead routes, controllers, views, JS, configs all cleaned.
 
 ---
 
@@ -20,18 +21,18 @@
 
 ## FEATURES TO REMOVE
 
-| Feature                                             | Tracker File                                       | PHP Phase | Status                                                       |
-| --------------------------------------------------- | -------------------------------------------------- | --------- | ------------------------------------------------------------ |
-| Payment Gateways (PayPal, Stripe, PayTM, Authorize) | [CLEANUP_PAYMENTS.md](CLEANUP_PAYMENTS.md)         | Phase 1   | ✅ Complete                                                  |
-| Transactions                                        | [CLEANUP_PAYMENTS.md](CLEANUP_PAYMENTS.md)         | Phase 1   | ✅ Complete                                                  |
-| Appointments / Bookings                             | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                  |
-| Services & Service Categories                       | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                  |
-| DoctorSessions & ClinicSchedule                     | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                  |
-| Visits / Encounters                                 | [CLEANUP_VISITS.md](CLEANUP_VISITS.md)             | Phase 3   | ✅ Complete                                                  |
-| Patient Smart Cards / QR Codes                      | [CLEANUP_SMART_CARDS.md](CLEANUP_SMART_CARDS.md)   | Phase 4   | ✅ Complete                                                  |
-| WebSockets                                          | [CLEANUP_UNUSED.md](CLEANUP_UNUSED.md)             | Phase 5   | ⬜ Not started                                               |
-| Navigation cleanup                                  | [CLEANUP_NAVIGATION.md](CLEANUP_NAVIGATION.md)     | Phase 6   | 🔄 Partial — Transaction nav items already removed (Phase 1) |
-| Database cleanup migrations                         | [CLEANUP_DATABASE.md](CLEANUP_DATABASE.md)         | Phase 7   | ⬜ Not started                                               |
+| Feature                                             | Tracker File                                       | PHP Phase | Status                                                                                                                       |
+| --------------------------------------------------- | -------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Payment Gateways (PayPal, Stripe, PayTM, Authorize) | [CLEANUP_PAYMENTS.md](CLEANUP_PAYMENTS.md)         | Phase 1   | ✅ Complete                                                                                                                  |
+| Transactions                                        | [CLEANUP_PAYMENTS.md](CLEANUP_PAYMENTS.md)         | Phase 1   | ✅ Complete                                                                                                                  |
+| Appointments / Bookings                             | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                                                                                  |
+| Services & Service Categories                       | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                                                                                  |
+| DoctorSessions & ClinicSchedule                     | [CLEANUP_APPOINTMENTS.md](CLEANUP_APPOINTMENTS.md) | Phase 2   | ✅ Complete                                                                                                                  |
+| Visits / Encounters                                 | [CLEANUP_VISITS.md](CLEANUP_VISITS.md)             | Phase 3   | ✅ Complete                                                                                                                  |
+| Patient Smart Cards / QR Codes                      | [CLEANUP_SMART_CARDS.md](CLEANUP_SMART_CARDS.md)   | Phase 4   | ✅ Complete                                                                                                                  |
+| WebSockets                                          | [CLEANUP_UNUSED.md](CLEANUP_UNUSED.md)             | Phase 5   | ✅ Complete                                                                                                                  |
+| Navigation cleanup                                  | [CLEANUP_NAVIGATION.md](CLEANUP_NAVIGATION.md)     | Phase 6   | ✅ Complete — All dashboard, menu, controller stubs fixed                                                                    |
+| Database cleanup migrations                         | [CLEANUP_DATABASE.md](CLEANUP_DATABASE.md)         | Phase 7   | ✅ Complete — 16 tables dropped, prescriptions.appointment_id removed, 28 dead migrations deleted, seeders/factories cleaned |
 
 ---
 
@@ -121,8 +122,8 @@
 | ✅ Gate 5      | Validate before Phase 6                        | See below               | Phase 5 done     |
 | **Phase 6**    | Navigation & dashboard cleanup                 | CLEANUP_NAVIGATION.md   | After Phases 1–5 |
 | ✅ Gate 6      | Validate before Phase 7                        | See below               | Phase 6 done     |
-| **Phase 7**    | Database cleanup migrations                    | CLEANUP_DATABASE.md     | After Phase 6    |
-| ✅ Gate 7      | Validate before Phase 8                        | See below               | Phase 7 done     |
+| **Phase 7** ✅ | Database cleanup migrations                    | CLEANUP_DATABASE.md     | After Phase 6    |
+| ✅ Gate 7      | Validate before Phase 8                        | See below               | Phase 7 done ✅  |
 | **Phase 8**    | Final verification                             | —                       | After all phases |
 
 ---
@@ -306,5 +307,286 @@ Additional orphaned files found and removed during deep-scan reverse-pass:
 
 ---
 
+## PHASE 5 — WebSockets (Complete ✅)
+
+All WebSocket infrastructure removed. Broadcast driver already set to `null`. `BeyondCode/laravel-websockets` and `pusher/pusher-php-server` composer packages removed.
+
+---
+
+## PHASE 6 — Navigation & Dashboard Cleanup (Complete ✅)
+
+### PHP Livewire Components Cleaned
+
+| Component                          | Change                                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `Dashboard.php`                    | Removed `$todayAppointmentCount` prop + mount assignment                       |
+| `AdminDashboardSidebarTable.php`   | Removed `$upcomingAppointmentCount`, `$totalAppointmentCount` + entire mount() |
+| `DoctorDashboardTable.php`         | Removed 3 appointment count props + assignments from `loadStatistics()`        |
+| `DoctorDashboardSidebarTable.php`  | Removed all 3 appointment props + entire mount()                               |
+| `PatientDashboardSidebarTable.php` | Removed all 6 appointment props + entire mount()                               |
+| `StaffDashboard.php`               | Removed `$todayAppointmentCount` + assignment                                  |
+| `StaffDashboardSidebarTable.php`   | Removed `$upcomingAppointmentCount`, `$totalAppointmentCount` + entire mount() |
+
+### Blade Views Cleaned
+
+| View                                        | Change                                                                            |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| `admin-dashboard-sidebar-table.blade.php`   | Replaced with `<div></div>`                                                       |
+| `staff-dashboard-sidebar-table.blade.php`   | Replaced with `<div></div>`                                                       |
+| `doctor-dashboard-sidebar-table.blade.php`  | Replaced with `<div></div>`                                                       |
+| `patient-dashboard-sidebar-table.blade.php` | Replaced with `<div></div>`                                                       |
+| `staff-dashboard.blade.php`                 | Removed "today appointments" stat card                                            |
+| `admin-dash-board-table.blade.php`          | Removed "Total Appointments" `<th>` + `<td>` from all 3 tabs, fixed `colspan` 5→3 |
+| `staff-dash-board-table.blade.php`          | Same as admin version                                                             |
+| `doctor-dashboard-table.blade.php`          | Removed entire `@if($totalAppointmentCount > 0)` block with 3 stat cards          |
+
+### Menu / SubMenu Cleaned
+
+| File                                      | Change                                                                                                                                       |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `menu.blade.php` (Doctors `<li>`)         | Removed `admin/doctor-sessions*`, `staff/doctor-sessions*`, `admin/holiday*`, `staff/holiday*`, `doctors/doctor-sessions*` from active check |
+| `menu.blade.php` (Settings `<li>`)        | Removed `admin/clinic-schedules*`, `staff/clinic-schedules*` from active check                                                               |
+| `sub_menu.blade.php` (Doctors visibility) | Removed `doctor-sessions*` and `holidays*` from show/hide check                                                                              |
+| `sub_menu.blade.php` (Settings sub-items) | Removed `admin/clinic-schedules*` from all 5 visibility checks                                                                               |
+
+### Controller Fixed
+
+| File                                          | Change                                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `DashboardController::getDoctorAppointment()` | Returns `['patients' => []]` directly — no longer calls non-existent `doctorAppointment()` repository method |
+
+---
+
+## PHASES 5–6 CROSS-PHASE DEEP-SCAN AUDIT — April 2, 2026
+
+Additional breaking issues found and fixed during thorough cross-phase re-scan:
+
+| Issue                                                                                                                                                                                                          | Severity                                                  | File                                                       | Fix Applied                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `$hasAppointmentData` undefined variable in patient dashboard view — controller never passed it                                                                                                                | **BREAKING** (PHP E_WARNING → exception)                  | `resources/views/patient_dashboard/index.blade.php`        | Removed the entire `@if($hasAppointmentData)…@endif` guard block                           |
+| `route('front.appointment.book')` called in front booking view — route deleted in Phase 2                                                                                                                      | **BREAKING** (RouteNotFoundException at render)           | `resources/views/fronts/medical_appointment.blade.php`     | Replaced form section with "unavailable" notice                                            |
+| `getAllPaymentStatus()` called in `book_appointment.blade.php` — helper deleted in Phase 1                                                                                                                     | **BREAKING** (call to undefined function)                 | `resources/views/fronts/common/book_appointment.blade.php` | Deleted entire file (only included by medical_appointment)                                 |
+| `#adminDashboardTemplate` JSRender had 4 `<td>` columns but Blade `<th>` count was 3                                                                                                                           | **Visual bug** (column mismatch on day/week/month filter) | `resources/views/dashboard/templates/templates.php`        | Removed `{{:appointment_count}}` `<td>` block                                              |
+| `dashboard.js` AJAX renders with `appointment_count` property + `colspan="5"` in 3 empty rows                                                                                                                  | **Visual bug** (extra empty cell + wrong empty colspan)   | `resources/assets/js/dashboard/dashboard.js`               | Removed `appointment_count` from 3 data objects, changed `colspan="5"` → `"3"` in 3 places |
+| `PatientAppointmentBookMail`, `AppointmentBookedMail`, `DoctorAppointmentBookMail` — mail classes referencing deleted controllers                                                                              | Dead code                                                 | `app/Mail/*.php`                                           | Deleted all 3 mail classes                                                                 |
+| `emails/patient_appointment_booked_mail.blade.php`, `appointment_booked_mail.blade.php`, `doctor_appointment_booked_mail.blade.php` — email views referencing `route('cancelAppointment')` which doesn't exist | Dead code (render-time failure if ever sent)              | `resources/views/emails/`                                  | Deleted all 3 email views                                                                  |
+| `sub_menu.blade.php` — 5 Settings sub-menu `Request::is()` checks still included `'admin/clinic-schedules*'`                                                                                                   | Dead code                                                 | `resources/views/layouts/sub_menu.blade.php`               | Removed from all 5 occurrences                                                             |
+
+### Items Verified as Non-Breaking (intentionally kept)
+
+| Item                                                                                      | Reason Kept                                                                  |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `resources/assets/js/appointments/` (5 JS files)                                          | Files still exist on disk; webpack builds without error; dead JS is harmless |
+| `resources/assets/js/doctor_sessions/` (2 JS files)                                       | Same — files exist, webpack doesn't error                                    |
+| `webpack.mix.js` — entries for appointment/doctor_session JS                              | Files referenced still exist; no build error; Phase 7 scope                  |
+| `resources/views/doctors/templates/templates.php` — `sessionTemplateData` JSRender script | Script ID not referenced in any active JS; dead but harmless                 |
+| `app/Models/Notification.php` — `APPOINTMENT_*` constants                                 | Class-level constants; never instantiated in removed flows; harmless         |
+| `route('medicalAppointment')` in `web.php` + `FrontController::medicalAppointment()`      | Page now shows "unavailable" notice; route is live but safe                  |
+
+### Gate 6 Final Validation Results
+
+| Check                                          | Result                                 |
+| ---------------------------------------------- | -------------------------------------- |
+| `composer dump-autoload`                       | ✅ 9351 classes, no errors             |
+| `php artisan route:list`                       | ✅ No errors, no undefined controllers |
+| `php artisan config:cache`                     | ✅ Configuration cached successfully   |
+| `php artisan view:cache`                       | ✅ Blade templates cached successfully |
+| `php artisan optimize:clear`                   | ✅ Clean                               |
+| Scan: `route('cancelAppointment')` in views    | ✅ Zero matches (email views deleted)  |
+| Scan: `route('front.appointment.book')`        | ✅ Zero matches                        |
+| Scan: `getAllPaymentStatus()`                  | ✅ Zero matches                        |
+| Scan: `$hasAppointmentData` undefined variable | ✅ Guard block removed                 |
+| Scan: `appointment_count` in JSRender template | ✅ Removed                             |
+
+---
+
+## PHASE 7 — Database Schema Cleanup (Complete ✅)
+
+**Migration file:** `database/migrations/2026_04_02_000000_drop_removed_features_tables.php`
+
+### Tables Dropped (15 total)
+
+| Order | Table                 | Phase   |
+| ----- | --------------------- | ------- |
+| 1     | `visit_problems`      | Phase 3 |
+| 2     | `visit_observations`  | Phase 3 |
+| 3     | `visit_notes`         | Phase 3 |
+| 4     | `visit_prescriptions` | Phase 3 |
+| 5     | `visits`              | Phase 3 |
+| 6     | `appointments`        | Phase 2 |
+| 7     | `service_doctor`      | Phase 2 |
+| 8     | `services`            | Phase 2 |
+| 9     | `service_categories`  | Phase 2 |
+| 10    | `session_week_days`   | Phase 2 |
+| 11    | `doctor_sessions`     | Phase 2 |
+| 12    | `clinic_schedules`    | Phase 2 |
+| 13    | `transactions`        | Phase 1 |
+| 14    | `payment_gateways`    | Phase 1 |
+| 15    | `currencies`          | Phase 1 |
+| 16    | `holidays`            | Phase 2 |
+
+> Note: `appointments` had FK `appointments_service_id_foreign → services`, so it was dropped before `services`.
+
+### Column Cleanup
+
+| Table           | Column                                         | Index                           | Result          |
+| --------------- | ---------------------------------------------- | ------------------------------- | --------------- |
+| `prescriptions` | `appointment_id` (unsignedBigInteger nullable) | `idx_prescriptions_appointment` | ✅ Both dropped |
+
+### Gate 7 Final Validation Results
+
+| Check                                                   | Result                                 |
+| ------------------------------------------------------- | -------------------------------------- |
+| `php artisan migrate`                                   | ✅ DONE in 182ms                       |
+| `php artisan db:show` — all 15 tables                   | ✅ Zero matches (all gone)             |
+| `php artisan db:table prescriptions` — `appointment_id` | ✅ Column and index gone               |
+| `composer dump-autoload`                                | ✅ 9351 classes, no errors             |
+| `php artisan route:list`                                | ✅ No errors                           |
+| `php artisan config:cache`                              | ✅ Clean                               |
+| `php artisan view:cache`                                | ✅ Blade templates cached successfully |
+| `php artisan optimize:clear`                            | ✅ Clean                               |
+
+---
+
+## PHASE 7 EXTENSION — Database Cleanup (Seeders, Factories, Migrations)
+
+### Seeders Deleted (5 files)
+
+| File                                 | Reason                                               |
+| ------------------------------------ | ---------------------------------------------------- |
+| `DefaultHolidayPermissionSeeder.php` | Seeded `manage_doctors_holiday` permission (removed) |
+| `DefaultClinicSchedulesSeeder.php`   | Was already a stub no-op                             |
+| `DefaultServicesSeeder.php`          | Was already a stub no-op                             |
+| `DefaultServiceCategorySeeder.php`   | Was already a stub no-op                             |
+| `StaffDoctorPermissionSeeder.php`    | Assigned removed permissions                         |
+
+### Factories Deleted (6 files)
+
+| File                         | Reason                           |
+| ---------------------------- | -------------------------------- |
+| `AppointmentFactory.php`     | Model deleted                    |
+| `DoctorSessionFactory.php`   | Model deleted                    |
+| `ServicesFactory.php`        | Model deleted                    |
+| `ServiceCategoryFactory.php` | Model deleted                    |
+| `CurrencyFactory.php`        | Model deleted                    |
+| `EncounterFactory.php`       | Referenced Visit model (deleted) |
+
+### Dead Migrations Deleted (28 files)
+
+15 `CREATE TABLE` migrations for dropped tables, 9 `ALTER TABLE` migrations modifying dropped tables, `create_holidays_table`, `run_holiday_seeder` (no-op), and 2 appointment-only performance index migrations.
+
+### Performance Index Migrations Edited (2 files)
+
+| File                                                                | Change                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------- |
+| `2025_10_01_000001_add_performance_indexes.php`                     | Removed appointments/services/transactions index blocks |
+| `2025_10_02_173840_add_additional_performance_indexes_oct_2025.php` | Removed visits index block                              |
+
+### Phase 7 Drop Migration Updated
+
+- Added `Schema::dropIfExists('holidays')` — table confirmed absent from DB; now 16 tables total
+
+---
+
+## FULL PHASES 1–7 DEEP-SCAN AUDIT — April 2, 2026
+
+Comprehensive cross-phase deep-scan across ALL code: controllers, models, Livewire, helpers, configs, views, routes, JS, webpack, seeders, migrations, language files.
+
+### BREAKING Issues Found & Fixed
+
+| Issue                                                                                            | Severity  | File                                                  | Fix Applied                                                                  |
+| ------------------------------------------------------------------------------------------------ | --------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `{{ route('front.home.appointment.book') }}` inside HTML comment — Blade processes it at runtime | **CRASH** | `resources/views/fronts/medicals/index.blade.php`     | Removed entire appointment + services section (replaced with Blade comments) |
+| `{{ route('serviceBookAppointment') }}` inside HTML comment                                      | **CRASH** | `resources/views/fronts/medical_services.blade.php`   | Removed commented link block                                                 |
+| `{{ route('doctorBookAppointment') }}` inside HTML comment                                       | **CRASH** | `resources/views/fronts/medical_doctors.blade.php`    | Removed commented link block                                                 |
+| `{{ route('doctorBookAppointment') }}` inside HTML comment                                       | **CRASH** | `resources/views/fronts/medical_about_us.blade.php`   | Removed commented link block                                                 |
+| `{{ route('medicalAppointment') }}` inside HTML comment in header                                | **CRASH** | `resources/views/fronts/layouts/header.blade.php`     | Removed commented link                                                       |
+| `WeekDay` model references dropped `session_week_days` table                                     | **CRASH** | `app/Models/WeekDay.php`                              | Deleted model (unused by any code)                                           |
+| `PerformanceMonitor` queries dropped `appointments` table                                        | **CRASH** | `app/Console/Commands/PerformanceMonitor.php`         | Replaced with `patients` table query                                         |
+| `Stripe()` JS init references removed payment service                                            | **DEAD**  | `resources/views/layouts/app.blade.php`               | Removed Stripe JS initialization block                                       |
+| Hidden `appointment_id` field — column dropped from prescriptions                                | **DEAD**  | `resources/views/prescriptions/fields.blade.php`      | Removed hidden field                                                         |
+| Hidden `appointment_id` field — column dropped from prescriptions                                | **DEAD**  | `resources/views/prescriptions/edit_fields.blade.php` | Removed hidden field                                                         |
+
+### Dead Code Removed
+
+| Issue                                                      | File                                                                | Fix Applied                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
+| Stripe + PayTM config blocks (packages removed in Phase 1) | `config/services.php`                                               | Removed both config arrays                    |
+| 6 `APPOINTMENT_*_MSG` notification constants               | `app/Models/Notification.php`                                       | Removed constants                             |
+| Stub appointment/visit stats in `getPatientStatistics()`   | `app/Services/PatientService.php`                                   | Removed 6 dead keys (kept prescriptions only) |
+| `manage_doctors_holiday` permission in roles form          | `resources/views/roles/fields.blade.php`                            | Removed from permission groups                |
+| Commented doctor session + holiday menu items              | `resources/views/layouts/menu.blade.php`                            | Removed Blade comment blocks                  |
+| `getDoctorAppointment()` dead controller method            | `app/Http/Controllers/DashboardController.php`                      | Removed method                                |
+| `medicalAppointment()` controller method + route           | `app/Http/Controllers/Front/FrontController.php` + `routes/web.php` | Removed method + route                        |
+| `appointment.dashboard` dead route                         | `routes/doctor.php`                                                 | Removed route                                 |
+| `DoctorDashboardDataTable` orphan Livewire component       | `app/Livewire/DoctorDashboardDataTable.php`                         | Deleted file                                  |
+| `doctor-dashboard-data-table.blade.php` orphan view        | `resources/views/livewire/`                                         | Deleted file                                  |
+| `appointment_filter.blade.php` orphan doctor view          | `resources/views/doctors/`                                          | Deleted file                                  |
+| `medical_appointment.blade.php` orphan front view          | `resources/views/fronts/`                                           | Deleted file                                  |
+
+### Webpack Bundle Cleanup (22 dead JS entries removed)
+
+Entries removed from `pages.js` bundle:
+
+- `doctor-patient-appointment.js`, `doctor_sessions/*.js` (2), `service_categories.js`
+- `services/*.js` (2), `appointments/*.js` (5), `doctor-dashboard.js`
+- `doctor_appointments/*.js` (2), `visits/*.js` (4), `clinic_schedule/create-edit.js`
+- `fronts/appointments/book_appointment.js`, `patient_visits/patient-visit.js`
+- `transactions/*.js` (2), `doctor_holiday/*.js` (3)
+
+Entry removed from `front-pages.js` bundle:
+
+- `fronts/appointments/book_appointment.js`
+
+### Gate Deep-Scan Validation Results
+
+| Check                                                                      | Result                                                           |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `composer dump-autoload`                                                   | ✅ 9338 classes, no errors                                       |
+| `php artisan route:list --name=appointment`                                | ✅ No routes matching                                            |
+| `php artisan route:list` scan for visit/transaction/holiday/doctor_session | ✅ Zero matches (only `medicalServices` front CMS route remains) |
+| `php artisan config:cache`                                                 | ✅ Configuration cached successfully                             |
+| `php artisan view:cache`                                                   | ✅ Blade templates cached successfully                           |
+| Cache clear (all caches)                                                   | ✅ Clean                                                         |
+
+### Items Verified as Non-Breaking (intentionally kept)
+
+| Item                                                                                            | Reason Kept                                                                                            |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `Notification::BOOKED/CHECKOUT/CANCELED/PAYMENT_DONE/REVIEW/LIVE_CONSULTATION` constants        | Used by `getNotificationIcon()` in helpers.php for existing notification records                       |
+| `getCurrencyCode()`, `getCurrencyFormat()`, `getCurrentCurrency()`, `getCurrencyIcon()` helpers | Actively used by 20+ medicine/billing views — return hardcoded '₱' values                              |
+| `Medicine.currency_symbol` fillable/casts property                                              | Column exists in DB; used by `MedicineController` — not related to deleted Currency model              |
+| `resources/assets/js/appointments/` directory (5 JS files)                                      | Files exist on disk; removed from webpack bundles so no longer compiled/loaded                         |
+| `resources/assets/js/visits/` directory (4 JS files)                                            | Same — on disk but not compiled                                                                        |
+| `resources/assets/js/doctor_sessions/` directory (2 JS files)                                   | Same — on disk but not compiled                                                                        |
+| `resources/assets/js/transactions/` directory (2 JS files)                                      | Same — on disk but not compiled                                                                        |
+| `resources/assets/js/doctor_holiday/` directory (3 JS files)                                    | Same — on disk but not compiled                                                                        |
+| `lang/en/messages.php` — 40+ translation keys for removed features                              | Harmless dead strings; no runtime impact                                                               |
+| `lang/en/js.php` — 8 translation keys for removed features                                      | Same                                                                                                   |
+| `resources/views/doctors/templates/templates.php` — JSRender template                           | Dead but harmless (script ID not referenced)                                                           |
+| `database/seeders/DefaultStaffSeeder.php` — commented `manage_currencies`                       | Just a comment                                                                                         |
+| `config/broadcasting.php` — pusher/websockets comments                                          | Documentation strings only; driver is `null`                                                           |
+| `resources/views/fronts/medicals/index.blade.php` — how-it-work/about sections in HTML comments | Only contain existing routes/functions like `route('register')`, `route('medicalContact')` — all exist |
+
+---
+
+## PERFORMANCE IMPROVEMENTS TRACKER
+
+### Identified Issues (for future work)
+
+| Issue                                                   | Severity | Details                                                                                                                                            | Suggested Fix                                                                                                                                                                                |
+| ------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Livewire components without `placeholder()` methods** | HIGH     | `LivewireTableComponent`, `MedicineCategoryDetailsTable`, `PrescriptionTable`, `RequestDocumentTable` — no loading skeleton shown during Lazy load | Add `placeholder()` method returning skeleton view                                                                                                                                           |
+| **Slow Livewire page loads / white screens**            | HIGH     | All Livewire table pages can show brief white screen before component hydrates                                                                     | Ensure all `#[Lazy]` components have proper `placeholder()` methods; consider adding `wire:init` for deferred data loading                                                                   |
+| **Large JS bundle size**                                | MEDIUM   | `pages.js` bundle contains ALL page JS in one file — loaded on every page regardless of which feature is used                                      | Split into per-feature bundles or use dynamic imports                                                                                                                                        |
+| **No HTTP caching headers**                             | MEDIUM   | Static assets may not have proper cache-busting or CDN headers                                                                                     | Configure `mix.version()` for cache busting; add proper `Cache-Control` headers                                                                                                              |
+| **Database N+1 queries**                                | MEDIUM   | Some Livewire tables may eager-load relations inefficiently                                                                                        | Profile with Laravel Debugbar; add `->with()` eager loading where needed                                                                                                                     |
+| **Dead JS files still on disk**                         | LOW      | 16+ JS files in `resources/assets/js/` for deleted features still exist (appointments, visits, etc.)                                               | Delete directories: `appointments/`, `visits/`, `doctor_sessions/`, `doctor_appointments/`, `transactions/`, `patient_visits/`, `doctor_holiday/`, `clinic_schedule/`, `service_categories/` |
+| **Dead translation keys**                               | LOW      | 40+ keys in `lang/en/messages.php` and 8 in `lang/en/js.php` for removed features                                                                  | Remove dead keys to reduce file size                                                                                                                                                         |
+| **Orphaned Blade views**                                | LOW      | `doctors/templates/templates.php` contains JSRender template for deleted appointments                                                              | Delete or clean the file                                                                                                                                                                     |
+
+---
+
 _Generated by Phase 0 — April 2, 2026_
 _Updated Phase 4 complete + full Phase 1–4 deep-scan audit — April 2, 2026_
+_Updated Phase 7 complete + full Phases 1–7 deep-scan audit — April 2, 2026_

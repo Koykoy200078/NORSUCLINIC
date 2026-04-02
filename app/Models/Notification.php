@@ -58,16 +58,4 @@ class Notification extends Model
     const REVIEW = 'review';
 
     const LIVE_CONSULTATION = 'live_consultation';
-
-    const APPOINTMENT_CREATE_DOCTOR_MSG = 'booked appointment with you at';
-
-    const APPOINTMENT_CREATE_PATIENT_MSG = 'Your Appointment has been booked between';
-
-    const APPOINTMENT_CANCEL_PATIENT_MSG = 'Your Appointment has been cancelled by';
-
-    const APPOINTMENT_CANCEL_DOCTOR_MSG = 'cancelled appointment with you at';
-
-    const APPOINTMENT_PAYMENT_DONE_PATIENT_MSG = 'Your appointment payment has been successful';
-
-    const APPOINTMENT_CHECKOUT_PATIENT_MSG = 'Your Appointment has been finished by';
 }

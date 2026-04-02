@@ -50,7 +50,6 @@ Route::middleware('setLanguage')->group(function () {
     Route::get('/', [FrontController::class, 'medical'])->name('medical');
     Route::get('/medical-about-us', [FrontController::class, 'medicalAboutUs'])->name('medicalAboutUs');
     Route::get('/medical-services', [FrontController::class, 'medicalServices'])->name('medicalServices');
-    Route::get('/medical-appointment', [FrontController::class, 'medicalAppointment'])->name('medicalAppointment');
     Route::get('/medical-doctors', [FrontController::class, 'medicalDoctors'])->name('medicalDoctors');
     Route::get('/medical-contact', [FrontController::class, 'medicalContact'])->name('medicalContact');
     Route::get('/terms-conditions', [FrontController::class, 'termsCondition'])->name('terms.conditions');

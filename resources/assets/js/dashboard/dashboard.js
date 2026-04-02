@@ -44,7 +44,7 @@ function loadPatientDashboardData() {
         $(".dashbord-earning-card-body-amont").html(
             performancedataforprogressbabr.toFixed(2) +
                 "%" +
-                "<i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                "<i class='fa fa-arrow-up' aria-hidden='true'></i>",
         );
         $(".bord-earning-card-body-amont").css("color", "green");
     } else {
@@ -52,7 +52,7 @@ function loadPatientDashboardData() {
             $(".dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-down'></i>"
+                    " <i class='fa fa-arrow-down'></i>",
             );
             $(".dashbord-earning-card-body-amont")
                 .removeClass("text-success")
@@ -61,7 +61,7 @@ function loadPatientDashboardData() {
             $(".dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>",
             );
             $(".dashbord-earning-card-body-amont").css("color", "green");
         }
@@ -76,15 +76,15 @@ function loadPatientDashboardData() {
         var setRadial = function (percent) {
             $(".patient-js-radial-mask").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".patient-js-radial-fill").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".js-radial-fill_fix").css(
                 "transform",
-                "rotate(" + 3.6 * percent + "deg)"
+                "rotate(" + 3.6 * percent + "deg)",
             );
             $(".patient-js-radial-percent").html(percent + "%");
         };
@@ -124,7 +124,7 @@ function loadDashboardData() {
         $(".admin-dashbord-earning-card-body-amont").html(
             performancedataforprogressbabr.toFixed(2) +
                 "%" +
-                "<i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                "<i class='fa fa-arrow-up' aria-hidden='true'></i>",
         );
         $(".admin-dashbord-earning-card-body-amont").css("color", "green");
     } else {
@@ -132,7 +132,7 @@ function loadDashboardData() {
             $(".admin-dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-down'></i>"
+                    " <i class='fa fa-arrow-down'></i>",
             );
             $(".admin-dashbord-earning-card-body-amont")
                 .removeClass("text-success")
@@ -141,7 +141,7 @@ function loadDashboardData() {
             $(".admin-dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>",
             );
             $(".admin-dashbord-earning-card-body-amont").css("color", "green");
         }
@@ -156,15 +156,15 @@ function loadDashboardData() {
         var setRadial = function (percent) {
             $(".js-radial-mask").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".js-radial-fill").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".js-radial-fill_fix").css(
                 "transform",
-                "rotate(" + 3.6 * percent + "deg)"
+                "rotate(" + 3.6 * percent + "deg)",
             );
             $(".js-radial-percent").html(percent + "%");
         };
@@ -211,7 +211,7 @@ function loadDoctorDashboardData() {
         $(".dashbord-earning-card-body-amont").html(
             performancedataforprogressbabr.toFixed(2) +
                 "%" +
-                "<i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                "<i class='fa fa-arrow-up' aria-hidden='true'></i>",
         );
         $(".bord-earning-card-body-amont").css("color", "green");
     } else {
@@ -219,7 +219,7 @@ function loadDoctorDashboardData() {
             $(".dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-down'></i>"
+                    " <i class='fa fa-arrow-down'></i>",
             );
             $(".dashbord-earning-card-body-amont")
                 .removeClass("text-success")
@@ -228,7 +228,7 @@ function loadDoctorDashboardData() {
             $(".dashbord-earning-card-body-amont").html(
                 performancedataforprogressbabr.toFixed(2) +
                     "%" +
-                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>"
+                    " <i class='fa fa-arrow-up' aria-hidden='true'></i>",
             );
             $(".dashbord-earning-card-body-amont").css("color", "green");
         }
@@ -243,15 +243,15 @@ function loadDoctorDashboardData() {
         var setRadial = function (percent) {
             $(".doctor-js-radial-mask").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".doctor-js-radial-fill").css(
                 "transform",
-                "rotate(" + 1.8 * percent + "deg)"
+                "rotate(" + 1.8 * percent + "deg)",
             );
             $(".js-radial-fill_fix").css(
                 "transform",
-                "rotate(" + 3.6 * percent + "deg)"
+                "rotate(" + 3.6 * percent + "deg)",
             );
             $(".doctor-js-radial-percent").html(percent + "%");
         };
@@ -283,7 +283,7 @@ function prepareDoctorAppointmentReport() {
 
     $("#appointmentDoctorChartId").remove();
     $(".appointmentDoctorChart").append(
-        '<div id="appointmentDoctorChartId" style="height: 350px" class="card-rounded-bottom"></div>'
+        '<div id="appointmentDoctorChartId" style="height: 350px" class="card-rounded-bottom"></div>',
     );
     let id = document.getElementById("appointmentDoctorChartId"),
         borderColor = "--bs-gray-200";
@@ -401,7 +401,6 @@ listenClick("#monthData", function (e) {
                                 registered: moment
                                     .parseZone(value.user.created_at)
                                     .format("Do MMM Y hh:mm A"),
-                                appointment_count: value.appointments_count,
                                 route: route("patients.show", value.id),
                             },
                         ];
@@ -410,14 +409,14 @@ listenClick("#monthData", function (e) {
                             .append(
                                 prepareTemplateRender(
                                     "#adminDashboardTemplate",
-                                    data
-                                )
+                                    data,
+                                ),
                             );
                     });
                 } else {
                     $(document).find("#monthlyReport")
                         .append(`<tr class="text-center">
-                                                    <td colspan="5" class="text-muted fw-bold">${noData}</td>
+                                                    <td colspan="3" class="text-muted fw-bold">${noData}</td>
                                                 </tr>`);
                 }
             }
@@ -557,7 +556,6 @@ listenClick("#weekData", function (e) {
                                 registered: moment
                                     .parseZone(value.user.created_at)
                                     .format("Do MMM Y hh:mm A"),
-                                appointment_count: value.appointments_count,
                                 route: route("patients.show", value.id),
                             },
                         ];
@@ -566,14 +564,14 @@ listenClick("#weekData", function (e) {
                             .append(
                                 prepareTemplateRender(
                                     "#adminDashboardTemplate",
-                                    data
-                                )
+                                    data,
+                                ),
                             );
                     });
                 } else {
                     $(document).find("#weeklyReport")
                         .append(`<tr class="text-center">
-                                                    <td colspan="5" class="text-muted fw-bold">${noData}</td>
+                                                    <td colspan="3" class="text-muted fw-bold">${noData}</td>
                                                 </tr>`);
                 }
             }
@@ -607,7 +605,6 @@ listenClick("#dayData", function (e) {
                                 registered: moment
                                     .parseZone(value.user.created_at)
                                     .format("Do MMM Y hh:mm A"),
-                                appointment_count: value.appointments_count,
                                 route: route("patients.show", value.id),
                             },
                         ];
@@ -616,14 +613,14 @@ listenClick("#dayData", function (e) {
                             .append(
                                 prepareTemplateRender(
                                     "#adminDashboardTemplate",
-                                    data
-                                )
+                                    data,
+                                ),
                             );
                     });
                 } else {
                     $(document).find("#dailyReport").append(`
                     <tr class="text-center">
-                        <td colspan="5" class="text-muted fw-bold"> ${noData}</td>
+                        <td colspan="3" class="text-muted fw-bold"> ${noData}</td>
                     </tr>`);
                 }
             }

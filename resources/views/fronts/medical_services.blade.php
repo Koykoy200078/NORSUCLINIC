@@ -40,10 +40,6 @@
                             <p class="paragraph pb-3">
                                 {{ $service->short_description }}
                             </p>
-                            <!-- <a href="{{ route('serviceBookAppointment',$service->id) }}"
-                                   class="btn btn-primary mt-auto align-self-center">
-                                    <span>{{ __('messages.web.book_an_appointment') }}</span>
-                                </a> -->
                         </div>
                     </div>
                 </div>

@@ -33,15 +33,12 @@ class DashboardController extends AppBaseController
     public function index(Request $request)
     {
         $data = $this->dashboardRepository->getData();
-        $appointmentChartData = $this->dashboardRepository->getAppointmentChartData($request->all());
         $clinic_name = Setting::where('key', 'clinic_name')->pluck('value')->first();
         if ($request->ajax()) {
-            $appointmentFilterChartData = $this->dashboardRepository->getAppointmentChartData($request->all());
-
-            return $this->sendResponse($appointmentFilterChartData, __('messages.filter_success'));
+            return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('dashboard.index', compact('data', 'appointmentChartData', 'clinic_name'));
+        return view('dashboard.index', compact('data', 'clinic_name'));
     }
 
     /**
@@ -62,16 +59,7 @@ class DashboardController extends AppBaseController
     public function doctorDashboard(Request $request): \Illuminate\View\View
     {
         $appointments = $this->dashboardRepository->getDoctorData();
-        $doctorAllAppointment = $this->dashboardRepository->doctorAllAppointment();
-        return view('doctor_dashboard.index', compact('appointments', 'doctorAllAppointment'));
-    }
-
-    public function getDoctorAppointment(Request $request): JsonResponse
-    {
-        $input = $request->all();
-        $data['patients'] = $this->dashboardRepository->doctorAppointment($input);
-
-        return $this->sendResponse($data, __('messages.flash.patients_retrieve'));
+        return view('doctor_dashboard.index', compact('appointments'));
     }
 
     /**
@@ -79,11 +67,9 @@ class DashboardController extends AppBaseController
      */
     public function patientDashboard(): \Illuminate\View\View
     {
-        $data = $this->dashboardRepository->getPatientData();
         $logo = Setting::where('key', 'logo')->pluck('value');
-        $patientAllAppointment = $this->dashboardRepository->patientAllAppointment();
         $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
-        return view('patient_dashboard.index', compact('data', 'logo', 'patientAllAppointment', 'hasDefaultPassword'));
+        return view('patient_dashboard.index', compact('logo', 'hasDefaultPassword'));
     }
 
     /**
@@ -93,15 +79,13 @@ class DashboardController extends AppBaseController
     public function staffDashboard(Request $request)
     {
         $data = $this->dashboardRepository->getStaffData();
-        $appointmentChartData = $this->dashboardRepository->getAppointmentChartData($request->all());
         $clinic_name = Setting::where('key', 'clinic_name')->pluck('value')->first();
 
         if ($request->ajax()) {
-            $appointmentFilterChartData = $this->dashboardRepository->getAppointmentChartData($request->all());
-            return $this->sendResponse($appointmentFilterChartData, __('messages.filter_success'));
+            return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('staff_dashboard.index', compact('data', 'appointmentChartData', 'clinic_name'));
+        return view('staff_dashboard.index', compact('data', 'clinic_name'));
     }
 
     /**

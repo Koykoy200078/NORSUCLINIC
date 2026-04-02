@@ -87,32 +87,6 @@ class DashboardRepository
         }
     }
 
-    //doctor
-    public function doctorAppointment($input)
-    {
-        return collect();
-    }
-
-    public function getPatientData(): array
-    {
-        return [];
-    }
-
-    public function getAppointmentChartData($input): array
-    {
-        return [];
-    }
-
-    public function patientAllAppointment()
-    {
-        return [[], []];
-    }
-
-    public function doctorAllAppointment()
-    {
-        return [[], [], []];
-    }
-
     /**
      * Staff Dashboard Data
      * @return array

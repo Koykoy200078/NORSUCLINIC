@@ -29,7 +29,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-xxl-5 col-12">
+                    <div class="col-12">
                         <div class="d-sm-flex align-items-center mb-5 mb-xxl-0 text-center text-sm-start">
                             <div class="image image-circle image-lg-small">
                                 <img src="{{ $patient->profile }}" alt="user">
@@ -51,28 +51,6 @@
                                     {{__('messages.common.n/a') }}
                                 </a>
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xxl-7 col-12">
-                        <div class="row justify-content-center">
-                            <div class="col-md-4 col-sm-6 col-12 mb-6 mb-md-0">
-                                <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['todayAppointmentCount'] ?? 0}}</h2>
-                                    <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.today_appointments')}}</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6 col-12 mb-6 mb-md-0">
-                                <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['upcomingAppointmentCount'] ?? 0}}</h2>
-                                    <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.upcoming_appointments')}}</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6 col-12">
-                                <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['completedAppointmentCount'] ?? 0}}</h2>
-                                    <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.completed_appointments')}}</h3>
-                                </div>
                             </div>
                         </div>
                     </div>

@@ -21,10 +21,6 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     //doctor dashboard route
     Route::get('/dashboard', [DashboardController::class, 'doctorDashboard'])->name('dashboard');
-    Route::get(
-        '/doctor-dashboard',
-        [DashboardController::class, 'getDoctorAppointment']
-    )->name('appointment.dashboard');
 
     // Patient Queue (Doctors can view and update queue)
     Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index');

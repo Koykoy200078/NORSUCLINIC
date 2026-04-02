@@ -108,25 +108,6 @@
 @endif
 @endcan
 
-{{--
-    <li
-    class="nav-item {{ Request::is('doctors/doctor-schedule-edit*', 'doctors/doctor-sessions/create') ? 'active' : '' }}">
-<a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getLoginDoctorSessionUrl() }}">
-    <span class="aside-menu-icon pe-3"><i class="fas fa-calendar"></i></span>
-    <span class="aside-menu-title">{{ __('messages.doctor_session.my_schedule') }}</span>
-</a>
-</li>
---}}
-
-{{--
-    <li class="nav-item {{ Request::is('doctors/holidays*') ? 'active' : '' }}">
-<a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.holiday') }}">
-    <span class="aside-menu-icon pe-3"><i class="fa-solid fa-calendar-xmark"></i></span>
-    <span class="aside-menu-title">{{ __('messages.holiday.holiday') }}</span>
-</a>
-</li>
---}}
-
 {{-- Request Documents temporarily disabled for patients - route not implemented
 @can('manage_request_documents')
 @if(isRole('patient'))
@@ -160,9 +141,8 @@
 @can('manage_doctors')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/doctors*', 'admin/doctor-sessions*', 'admin/holiday*')) ||
-        (isRole('staff') && Request::is('staff/doctors*', 'staff/doctor-sessions*', 'staff/holiday*')) ||
-        Request::is('doctors/doctor-sessions*')
+        (isRole('clinic_admin') && Request::is('admin/doctors*')) ||
+        (isRole('staff') && Request::is('staff/doctors*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('doctors.index') : 
@@ -348,8 +328,8 @@
 @can('manage_settings')
 <li
     class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/clinic-schedules*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
-        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/clinic-schedules*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
+        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
+        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
     ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('setting.index') : 

@@ -290,14 +290,8 @@ class PatientService
         $patient = Patient::findOrFail($patientId);
 
         return [
-            'total_appointments' => 0,
-            'completed_appointments' => 0,
-            'pending_appointments' => 0,
             'total_prescriptions' => $patient->prescriptions()->count(),
             'active_prescriptions' => $patient->prescriptions()->where('status', 1)->count(),
-            'total_visits' => 0,
-            'last_visit' => null,
-            'last_appointment' => null,
         ];
     }
 

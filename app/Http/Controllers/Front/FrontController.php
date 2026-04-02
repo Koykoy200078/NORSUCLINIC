@@ -77,18 +77,6 @@ class FrontController extends AppBaseController
     /**
      * @return Application|Factory|View
      */
-    public function medicalAppointment(): \Illuminate\View\View
-    {
-        $appointmentDoctors = Doctor::with('user')->whereHas('user', function (Builder $query) {
-            $query->where('status', User::ACTIVE);
-        })->get()->pluck('user.full_name', 'id');
-
-        return view('fronts.medical_appointment', compact('appointmentDoctors'));
-    }
-
-    /**
-     * @return Application|Factory|View
-     */
     public function medicalDoctors(): \Illuminate\View\View
     {
         $doctors = Doctor::with('specializations', 'user')->whereHas('user', function (Builder $query) {
