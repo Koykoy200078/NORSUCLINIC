@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 
@@ -22,10 +21,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Address|null $address
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Appointment> $appointments
- * @property-read int|null $appointments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoctorSession> $doctorSession
- * @property-read int|null $doctor_session_count
  * @property-read \App\Models\User $doctorUser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Specialization> $specializations
  * @property-read int|null $specializations_count
@@ -114,16 +109,6 @@ class Doctor extends Model
     public function specializations(): BelongsToMany
     {
         return $this->belongsToMany(Specialization::class, 'doctor_specialization', 'doctor_id', 'specialization_id');
-    }
-
-    public function doctorSession(): HasMany
-    {
-        return $this->hasMany(DoctorSession::class);
-    }
-
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class);
     }
 
     public function address(): MorphOne

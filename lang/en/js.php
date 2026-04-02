@@ -39,7 +39,7 @@ return [
     'barangay' => 'Barangay',
     'state' => 'State',
     'country' => 'Country',
-    'select_state' => 'Select State',
+    'select_state' => 'Select Province',
     'select_city' => 'Select City',
     'delete' => 'Delete',
     'deleted' => 'Deleted!',

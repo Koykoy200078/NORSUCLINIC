@@ -216,7 +216,7 @@ class PatientRepository extends BaseRepository
      */
     public function getPatientData($input)
     {
-        $patient = Patient::with(['user.address', 'appointments', 'address'])->findOrFail($input['id']);
+        $patient = Patient::with(['user.address', 'address'])->findOrFail($input['id']);
 
         return $patient;
     }

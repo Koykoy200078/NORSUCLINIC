@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateSettingRequest;
-use App\Models\Appointment;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Setting;

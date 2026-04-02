@@ -154,11 +154,10 @@
         let womanAvatar = "{{ url(asset('web/media/avatars/female.png')) }}";
         let manAvatar = "{{ url(asset('web/media/avatars/male.png')) }}";
         let changePasswordUrl = "{{ route('user.changePassword') }}";
-        let updateLanguageURL = "{{ route('change-language') }}";
+        let updateLanguageURL = "{{ route('front.change.language') }}";
         let dashboardChartBGColor = "{{ Auth::user()->dark_mode ? '#13151f' : '#FFFFFF' }}";
         let dashboardChartFontColor = "{{ Auth::user()->dark_mode ? '#FFFFFF' : '#000000' }}";
         let userRole = "{{ getLogInUser()->hasRole('patient') }}";
-        let appointmentStripePaymentUrl = "{{ url('appointment-stripe-charge') }}";
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         let noData = "{{ __('messages.common.no_data_available') }}";
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";

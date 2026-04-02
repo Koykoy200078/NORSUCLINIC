@@ -9,7 +9,6 @@ use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Service;
-use App\Models\Transaction;
 use App\Models\User;
 use App\Repositories\AppointmentRepository;
 use \PDF;
@@ -29,8 +28,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Laracasts\Flash\Flash;
-use Illuminate\Support\Str;
-use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AppointmentController extends AppBaseController
@@ -48,8 +45,8 @@ class AppointmentController extends AppBaseController
      */
     public function index(): \Illuminate\View\View
     {
-        $allPaymentStatus = getAllPaymentStatus();
-        $paymentStatus = Arr::except($allPaymentStatus, [Appointment::MANUALLY]);
+        $allPaymentStatus = [];
+        $paymentStatus = [];
 
         return view('appointments.index', compact('allPaymentStatus', 'paymentStatus'));
     }
@@ -148,7 +145,7 @@ class AppointmentController extends AppBaseController
      */
     public function show(Appointment $appointment)
     {
-        $allPaymentStatus = getAllPaymentStatus();
+        $allPaymentStatus = [];
         if (getLogInUser()->hasRole('doctor')) {
             $doctor = Appointment::whereId($appointment->id)->whereDoctorId(getLogInUser()->doctor->id);
             if (! $doctor->exists()) {
@@ -208,12 +205,6 @@ class AppointmentController extends AppBaseController
         }
         $appointmentUniqueId = $appointment->appointment_unique_id;
 
-        $transaction = Transaction::whereAppointmentId($appointmentUniqueId)->first();
-
-        if ($transaction) {
-            $transaction->delete();
-        }
-
         $appointment->delete();
 
         return $this->sendSuccess(__('messages.flash.appointment_delete'));
@@ -227,7 +218,7 @@ class AppointmentController extends AppBaseController
     public function doctorAppointment(Request $request): \Illuminate\View\View
     {
         $appointmentStatus = Appointment::ALL_STATUS;
-        $paymentStatus = getAllPaymentStatus();
+        $paymentStatus = [];
 
         return view('doctor_appointment.index', compact('appointmentStatus', 'paymentStatus'));
     }
@@ -447,51 +438,7 @@ class AppointmentController extends AppBaseController
      */
     public function paymentSuccess(Request $request): RedirectResponse
     {
-        $sessionId = $request->get('session_id');
-        if (empty($sessionId)) {
-            throw new UnprocessableEntityHttpException(__('messages.appointment.session_id_required'));
-        }
-        setStripeApiKey();
-
-        $sessionData = \Stripe\Checkout\Session::retrieve($sessionId);
-        $appointment = Appointment::whereAppointmentUniqueId($sessionData->client_reference_id)->first();
-        $patientId = User::whereEmail($sessionData->customer_details->email)->pluck('id')->first();
-        $transaction = [
-            'user_id' => $patientId,
-            'transaction_id' => $sessionData->id,
-            'appointment_id' => $sessionData->client_reference_id,
-            'amount' => intval($sessionData->amount_total / 100),
-            'type' => Appointment::STRIPE,
-            'meta' => $sessionData,
-        ];
-
-        Transaction::create($transaction);
-
-        $appointment->update([
-            'payment_method' => Appointment::STRIPE,
-            'payment_type' => Appointment::PAID,
-        ]);
-
-        Flash::success(__('messages.flash.appointment_created_payment_complete'));
-
-        $patient = Patient::whereUserId($patientId)->with('user')->first();
-        Notification::create([
-            'title' => Notification::APPOINTMENT_PAYMENT_DONE_PATIENT_MSG,
-            'type' => Notification::PAYMENT_DONE,
-            'user_id' => $patient->user_id,
-        ]);
-
-        if (parse_url(url()->previous(), PHP_URL_PATH) == '/medical-appointment') {
-            return redirect(route('medicalAppointment'));
-        }
-
-        if (! getLogInUser()) {
-            return redirect(route('medical'));
-        }
-
-        if (getLogInUser()->hasRole('patient')) {
-            return redirect(route('patients.patient-appointments-index'));
-        }
+        Flash::error('Payment processing has been removed from this system.');
 
         return redirect(route('appointments.index'));
     }
@@ -501,8 +448,6 @@ class AppointmentController extends AppBaseController
      */
     public function handleFailedPayment(): RedirectResponse
     {
-        setStripeApiKey();
-
         Flash::error(__('messages.flash.appointment_created_payment_not_complete'));
 
         if (! getLogInUser()) {
@@ -549,38 +494,16 @@ class AppointmentController extends AppBaseController
         }
 
         $appointment = Appointment::with('patient')->findOrFail($input['appointmentId']);
-        $transactionExist = Transaction::whereAppointmentId($appointment['appointment_unique_id'])->first();
 
         $appointment->update([
             'payment_type' => $input['paymentStatus'],
             'payment_method' => $input['paymentMethod'],
         ]);
 
-        if (empty($transactionExist)) {
-            $transaction = [
-                'user_id' => $appointment->patient->user_id,
-                'transaction_id' => Str::random(10),
-                'appointment_id' => $appointment->appointment_unique_id,
-                'amount' => $appointment->payable_amount,
-                'type' => Appointment::MANUALLY,
-                'status' => Transaction::SUCCESS,
-                'accepted_by' => $input['loginUserId'],
-            ];
-
-            Transaction::create($transaction);
-        } else {
-            $transactionExist->update([
-                'status' => Transaction::SUCCESS,
-                'accepted_by' => $input['loginUserId'],
-            ]);
-        }
-
-        $appointmentNotification = Transaction::with('acceptedPaymentUser')->whereAppointmentId($appointment['appointment_unique_id'])->first();
-
         $fullTime = $appointment->from_time . '' . $appointment->from_time_type . ' - ' . $appointment->to_time . '' . $appointment->to_time_type . ' ' . ' ' . Carbon::parse($appointment->date)->format('jS M, Y');
         $patient = Patient::whereId($appointment->patient_id)->with('user')->first();
         Notification::create([
-            'title' => $appointmentNotification->acceptedPaymentUser->full_name . ' changed the payment status ' . Appointment::PAYMENT_TYPE[Appointment::PENDING] . ' to ' . Appointment::PAYMENT_TYPE[$appointment->payment_type] . ' for appointment ' . $fullTime,
+            'title' => getLogInUser()->full_name . ' changed the payment status for appointment ' . $fullTime,
             'type' => Notification::PAYMENT_DONE,
             'user_id' => $patient->user_id,
         ]);
@@ -642,19 +565,6 @@ class AppointmentController extends AppBaseController
 
     public function manuallyPayment(Request $request): RedirectResponse
     {
-        $input = $request->all();
-        $appointment = Appointment::findOrFail($input['appointmentId'])->load('patient');
-        $transaction = [
-            'user_id' => $appointment->patient->user_id,
-            'transaction_id' => Str::random(10),
-            'appointment_id' => $appointment->appointment_unique_id,
-            'amount' => $appointment->payable_amount,
-            'type' => Appointment::MANUALLY,
-            'status' => Transaction::PENDING,
-        ];
-
-        Transaction::create($transaction);
-
         if (parse_url(url()->previous(), PHP_URL_PATH) == '/medical-appointment') {
             return redirect(route('medicalAppointment'));
         }

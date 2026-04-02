@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DefaultUserSeeder::class);
         $this->call(DefaultPermissionSeeder::class);
         $this->call(DefaultRoleSeeder::class);
-        $this->call(DefaultServiceCategorySeeder::class);
-        $this->call(DefaultServicesSeeder::class);
+        // $this->call(DefaultServiceCategorySeeder::class); // Removed - ServiceCategory feature removed in Phase 2
+        // $this->call(DefaultServicesSeeder::class); // Removed - Service feature removed in Phase 2
         // $this->call(DefaultCurrenciesSeeder::class); // Removed - Currency feature has been removed
         $this->call(DefaultStaffSeeder::class);
         $this->call(DefaultSliderSeeder::class);

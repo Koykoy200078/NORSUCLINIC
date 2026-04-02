@@ -22,10 +22,6 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Patients',
             ],
             [
-                'name' => 'manage_appointments',
-                'display_name' => 'Manage Appointments',
-            ],
-            [
                 'name' => 'manage_patient_visits',
                 'display_name' => 'Manage Patient Visits',
             ],
@@ -34,16 +30,8 @@ class DefaultPermissionSeeder extends Seeder
                 'display_name' => 'Manage Staff',
             ],
             [
-                'name' => 'manage_doctor_sessions',
-                'display_name' => 'Manage Doctor Sessions',
-            ],
-            [
                 'name' => 'manage_settings',
                 'display_name' => 'Manage Settings',
-            ],
-            [
-                'name' => 'manage_services',
-                'display_name' => 'Manage Services',
             ],
             [
                 'name' => 'manage_specialties',
@@ -76,10 +64,6 @@ class DefaultPermissionSeeder extends Seeder
             [
                 'name' => 'manage_front_cms',
                 'display_name' => 'Manage Front CMS',
-            ],
-            [
-                'name' => 'manage_transactions',
-                'display_name' => 'Manage Transactions',
             ],
             [
                 'name' => 'manage_request_documents',

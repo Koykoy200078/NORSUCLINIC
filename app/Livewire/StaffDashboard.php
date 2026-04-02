@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -19,10 +18,9 @@ class StaffDashboard extends Component
 
     public function mount()
     {
-        // Staff can see the same metrics as admin but with appropriate access control
         $this->totalDoctorCount = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
         $this->totalPatientCount = User::toBase()->whereType(User::PATIENT)->count();
-        $this->todayAppointmentCount = Appointment::toBase()->where('date', Carbon::now()->format('Y-m-d'))->whereStatus(Appointment::BOOKED)->count();
+        $this->todayAppointmentCount = 0;
         $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
     }
 

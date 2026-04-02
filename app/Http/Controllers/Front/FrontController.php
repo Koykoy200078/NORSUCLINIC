@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\AppBaseController;
-use App\Models\ClinicSchedule;
 use App\Models\Doctor;
-use App\Models\DoctorSession;
 use App\Models\Patient;
-use App\Models\Service;
-use App\Models\ServiceCategory;
 use App\Models\Setting;
 use App\Models\Slider;
 use App\Models\Specialization;
@@ -32,8 +28,6 @@ class FrontController extends AppBaseController
             $query->where('status', User::ACTIVE);
         })->latest()->take(10)->get()->pluck('user.full_name', 'id');
         $sliders = Slider::with('media')->first();
-        $frontMedicalServicesArray = Service::with('media')->whereStatus(Service::ACTIVE)->latest()->get()->toArray();
-        $frontMedicalServices = array_chunk($frontMedicalServicesArray, 2);
         $aboutExperience = Setting::where('key', 'about_experience')->first();
 
         return view(
@@ -41,7 +35,6 @@ class FrontController extends AppBaseController
             compact(
                 'doctors',
                 'sliders',
-                'frontMedicalServices',
                 'aboutExperience'
             )
         );
@@ -55,17 +48,15 @@ class FrontController extends AppBaseController
         $data = [];
         $data['doctorsCount'] = Doctor::with('user')->get()->where('user.status', true)->count();
         $data['patientsCount'] = Patient::get()->count();
-        $data['servicesCount'] = Service::whereStatus(true)->get()->count();
         $data['specializationsCount'] = Specialization::get()->count();
-        $clinicSchedules = ClinicSchedule::all();
         $setting = Setting::where('key', 'about_us_image')->first();
-        $doctors = Doctor::with('user', 'appointments', 'specializations')->whereHas('user', function (Builder $query) {
+        $doctors = Doctor::with('user', 'specializations')->whereHas('user', function (Builder $query) {
             $query->where('status', User::ACTIVE);
-        })->withCount('appointments')->orderBy('appointments_count', 'desc')->take(3)->get();
+        })->latest()->take(3)->get();
 
         return view(
             'fronts.medical_about_us',
-            compact('doctors', 'data', 'setting', 'clinicSchedules')
+            compact('doctors', 'data', 'setting')
         );
     }
 
@@ -75,15 +66,12 @@ class FrontController extends AppBaseController
     public function medicalServices(): \Illuminate\View\View
     {
         $data = [];
-        $serviceCategories = ServiceCategory::with('activatedServices')->withCount('services')->get();
         $setting = SettingsService::get();
-        $services = Service::with('media')->whereStatus(Service::ACTIVE)->latest()->get();
         $data['doctorsCount'] = Doctor::with('user')->get()->where('user.status', true)->count();
         $data['patientsCount'] = Patient::get()->count();
-        $data['servicesCount'] = Service::whereStatus(true)->get()->count();
         $data['specializationsCount'] = Specialization::get()->count();
 
-        return view('fronts.medical_services', compact('serviceCategories', 'setting', 'services', 'data'));
+        return view('fronts.medical_services', compact('setting', 'data'));
     }
 
     /**
@@ -91,17 +79,11 @@ class FrontController extends AppBaseController
      */
     public function medicalAppointment(): \Illuminate\View\View
     {
-        // $faqs = Faq::latest()->get();
+        $appointmentDoctors = Doctor::with('user')->whereHas('user', function (Builder $query) {
+            $query->where('status', User::ACTIVE);
+        })->get()->pluck('user.full_name', 'id');
 
-        $appointmentDoctors = Doctor::with('user')->whereIn(
-            'id',
-            DoctorSession::pluck('doctor_id')->toArray()
-        )->get()->where(
-            'user.status',
-            User::ACTIVE
-        )->pluck('user.full_name', 'id');
-
-        return view('fronts.medical_appointment', compact('appointmentDoctors')); // 'faqs',
+        return view('fronts.medical_appointment', compact('appointmentDoctors'));
     }
 
     /**
@@ -121,9 +103,7 @@ class FrontController extends AppBaseController
      */
     public function medicalContact(): \Illuminate\View\View
     {
-        $clinicSchedules = ClinicSchedule::all();
-
-        return view('fronts.medical_contact', compact('clinicSchedules'));
+        return view('fronts.medical_contact');
     }
 
     /**

@@ -16,35 +16,11 @@
     <a class="nav-link p-0 {{ Request::is('doctors/dashboard*') ? 'active' : '' }}"
         href="{{ route('doctors.dashboard') }}">{{ __('messages.dashboard') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/appointments*','doctors/prescription-medicine-show*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/appointments*','doctors/prescription-medicine-show*') ? 'active' : '' }}"
-        href="{{ route('doctors.appointments') }}">{{ __('messages.appointments') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/doctor-schedule-edit*','doctors/doctor-sessions/create*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/doctor-schedule-edit*','doctors/doctor-sessions/create*') ? 'active' : '' }}"
-        href="{{ getLoginDoctorSessionUrl() }}">{{ __('messages.doctor_session.my_schedule') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/transactions*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/transactions*') ? 'active' : '' }}"
-        href="{{ route('doctors.transactions') }}">{{ __('messages.transactions') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/holidays*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/holidays*') ? 'active' : '' }}"
-        href="{{ route('doctors.holiday') }}">{{ __('messages.holiday.holiday') }}</a>
-</li>
 @endrole
 @role('patient')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/dashboard*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('patients/dashboard*') ? 'active' : '' }}"
         href="{{ route('patients.dashboard') }}">{{ __('messages.dashboard') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/appointments*','patients/patient-appointments-calendar*','patients/prescription-medicine-show*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('patients/appointments*','patients/patient-appointments-calendar*','patients/prescription-medicine-show*') ? 'active' : '' }}"
-        href="{{ route('patients.patient-appointments-index') }}">{{ __('messages.appointments') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('patients/transactions*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('patients/transactions*') ? 'active' : '' }}"
-        href="{{ route('patients.transactions') }}">{{ __('messages.transactions') }}</a>
 </li>
 @endrole
 @can('manage_staff')
@@ -74,25 +50,6 @@
         }}">{{ __('messages.doctors') }}</a>
 </li>
 @endcan
-@can('manage_doctor_sessions')
-<li
-    class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ 
-        !(
-            (isRole('clinic_admin') && Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*')) ||
-            (isRole('staff') && Request::is('staff/doctors*', 'staff/doctor-sessions*','staff/holidays*'))
-        ) ? 'd-none' : '' 
-    }}">
-    <a class="nav-link p-0 {{ 
-        (isRole('clinic_admin') && Request::is('admin/doctor-sessions*')) ||
-        (isRole('staff') && Request::is('staff/doctor-sessions*'))
-    ? 'active' : '' }}"
-        href="{{ 
-            isRole('clinic_admin') ? route('doctor-sessions.index') : 
-            (isRole('staff') ? route('staff.doctor-sessions.index') : route('doctor-sessions.index'))
-        }}">{{ getLogInUser()->hasRole('doctor') ? __('messages.doctor_session.my_schedule') : __('messages.doctor_sessions') }}</a>
-</li>
-@endcan
 @can('manage_patients')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ 
@@ -117,23 +74,11 @@
 
 @can('manage_settings')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
+    {{ !Request::is('admin/settings*','admin/roles*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/settings*') ? 'active' : '' }}"
         href="{{ route('setting.index') }}">{{ __('messages.settings') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/settings*','admin/roles*','admin/clinic-schedules*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/clinic-schedules*') ? 'active' : '' }}"
-        href="{{ route('clinic-schedules.index') }}">{{ __('messages.clinic_schedules') }}</a>
-</li>
 
-@endcan
-@can('manage_doctors_holiday')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
-    {{ !Request::is('admin/doctors*', 'admin/doctor-sessions*','admin/holidays*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/holidays*') ? 'active' : '' }}"
-        href="{{ route('holidays.index') }}">{{ __('messages.holiday.doctor_holiday') }}</a>
-</li>
 @endcan
 @can('manage_roles')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
@@ -193,49 +138,7 @@
         }}">{{ __('messages.specializations') }}</a>
 </li>
 @endcan
-@can('manage_services')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
-    !(
-        (isRole('clinic_admin') && Request::is('admin/services*','admin/service-categories*')) ||
-        (isRole('staff') && Request::is('staff/services*','staff/service-categories*')) ||
-        (isRole('doctor') && Request::is('doctors/services*','doctors/service-categories*'))
-    ) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ 
-        (isRole('clinic_admin') && Request::is('admin/services*')) ||
-        (isRole('staff') && Request::is('staff/services*')) ||
-        (isRole('doctor') && Request::is('doctors/services*'))
-    ? 'active' : '' }}"
-        href="{{ 
-            isRole('clinic_admin') ? route('services.index') : 
-            (isRole('staff') ? route('staff.services.index') : 
-            (isRole('doctor') ? route('doctors.services.index') : route('services.index')))
-        }}">{{ __('messages.services') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
-    !(
-        (isRole('clinic_admin') && Request::is('admin/services*','admin/service-categories*')) ||
-        (isRole('staff') && Request::is('staff/services*','staff/service-categories*')) ||
-        (isRole('doctor') && Request::is('doctors/services*','doctors/service-categories*'))
-    ) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ 
-        (isRole('clinic_admin') && Request::is('admin/service-categories*')) ||
-        (isRole('staff') && Request::is('staff/service-categories*')) ||
-        (isRole('doctor') && Request::is('doctors/service-categories*'))
-    ? 'active' : '' }}"
-        href="{{ 
-            isRole('clinic_admin') ? route('service-categories.index') : 
-            (isRole('staff') && route('staff.service-categories.index')) ||
-            (isRole('doctor') && route('doctors.service-categories.index')) ||
-            route('service-categories.index')
-        }}">{{ __('messages.service_categories') }}</a>
-</li>
-@endcan
-@can('manage_appointments')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/appointments*','admin/admin-appointments-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/appointments*','admin/admin-appointments-calendar*','admin/prescriptions*', 'admin/prescription-medicine-show*') ? 'active' : '' }}"
-        href="{{ route('appointments.index') }}">{{ __('messages.appointments') }}</a>
-</li>
-@endcan
+
 <!-- @can('manage_patient_visits')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/visits*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/visits*') ? 'active' : '' }}"
@@ -254,12 +157,6 @@
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/banner*') ? 'active' : '' }}"
         href="{{ route('banner.index') }}">{{ __('messages.sliders') }}</a>
-</li>
-@endcan
-@can('manage_transactions')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/transactions*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/transactions*') ? 'active' : '' }}"
-        href="{{ route('transactions') }}">{{ __('messages.transactions') }}</a>
 </li>
 @endcan
 @can('manage_medicines')

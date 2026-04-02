@@ -11,7 +11,6 @@ use App\Models\Doctor;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Service;
-use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -22,8 +21,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Stripe\Checkout\Session;
-use Stripe\Exception\ApiErrorException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -343,7 +340,7 @@ class AppointmentRepository extends BaseRepository
 
         $data['data'] = Appointment::with(['patient.user', 'doctor.user', 'services'])->findOrFail($input['id']);
 
-        $data['transactionStatus'] = Transaction::whereAppointmentId($data['data']->appointment_unique_id)->exists();
+        $data['transactionStatus'] = false;
 
         return $data;
     }
@@ -362,41 +359,6 @@ class AppointmentRepository extends BaseRepository
      */
     public function createSession($input)
     {
-        $appointmentId = $input['appointment_unique_id'];
-        $patientEmail = Patient::with('user')->whereId($input['patient_id'])->first();
-        $doctorName = Doctor::with('user')->whereId($input['doctor_id'])->first();
-        setStripeApiKey();
-
-        $successUrl = '/medical-payment-success';
-        $cancelUrl = '/medical-payment-failed';
-
-        $session = Session::create([
-            'payment_method_types' => ['card'],
-            'customer_email' => $patientEmail->user->email,
-            'line_items' => [
-                [
-                    'price_data' => [
-                        'product_data' => [
-                            'name' => 'Payment for appointment booking',
-                        ],
-                        'unit_amount' => in_array(getCurrencyCode(), zeroDecimalCurrencies()) ? $input['payable_amount'] : $input['payable_amount'] * 100,
-                        'currency' => getCurrencyCode(),
-                    ],
-                    'quantity' => 1,
-                    'description' => 'Payment for booking appointment with doctor :
-                     ' . $doctorName->user->full_name . ' at ' . Carbon::parse($input->date)->format('d/m/Y') . ' ' . $input->from_time . ' ' . $input->from_time_type . ' to ' . $input->to_time . ' ' . $input->to_time_type,
-                ],
-            ],
-            'client_reference_id' => $appointmentId,
-            'mode' => 'payment',
-            'success_url' => url($successUrl) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => url($cancelUrl . '?error=payment_cancelled'),
-        ]);
-
-        $result = [
-            'sessionId' => $session['id'],
-        ];
-
-        return $result;
+        throw new \RuntimeException('Stripe payment has been removed from this system.');
     }
 }

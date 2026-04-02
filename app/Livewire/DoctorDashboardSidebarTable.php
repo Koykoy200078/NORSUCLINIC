@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -16,22 +15,9 @@ class DoctorDashboardSidebarTable extends Component
 
    public function mount()
    {
-      $doctorId = getLogInUser()->doctor->id;
-      $todayDate = Carbon::now()->format('Y-m-d');
-      $this->totalAppointmentCount = Appointment::whereDoctorId($doctorId)->whereNotIn(
-         'status',
-         [Appointment::CANCELLED]
-      )->count();
-      $this->todayAppointmentCount = Appointment::whereDoctorId($doctorId)->where(
-         'date',
-         '=',
-         $todayDate
-      )->whereNotIn('status', [Appointment::CANCELLED])->count();
-      $this->upcomingAppointmentCount = Appointment::whereDoctorId($doctorId)->where(
-         'date',
-         '>',
-         $todayDate
-      )->whereStatus(Appointment::BOOKED)->count();
+      $this->totalAppointmentCount = 0;
+      $this->todayAppointmentCount = 0;
+      $this->upcomingAppointmentCount = 0;
    }
 
    public function placeholder()

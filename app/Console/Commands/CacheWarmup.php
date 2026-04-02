@@ -6,8 +6,6 @@ use App\Models\Category;
 use App\Models\Doctor;
 use App\Models\Medicine;
 use App\Models\Patient;
-use App\Models\Service;
-use App\Models\ServiceCategory;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -35,16 +33,6 @@ class CacheWarmup extends Command
     public function handle()
     {
         $this->info('Starting cache warmup...');
-
-        // Warm up active services
-        $this->warmupCache('active_services', function () {
-            return Service::where('status', true)->pluck('name', 'id')->toArray();
-        }, 'Active Services');
-
-        // Warm up service categories
-        $this->warmupCache('service_categories', function () {
-            return ServiceCategory::pluck('name', 'id')->toArray();
-        }, 'Service Categories');
 
         // Warm up doctors list (for dashboards)
         $this->warmupCache('doctors_list', function () {

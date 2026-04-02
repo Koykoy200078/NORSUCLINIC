@@ -1,11 +1,14 @@
 <div class="row gx-10 mb-5">
-    {{ Form::hidden('appointment_id', $appointmentId) }}
-        {{ Form::hidden('patient_id', $appointment->patient->id) }}
+    {{ Form::hidden('appointment_id', null) }}
+    {{ Form::hidden('patient_id', $patientId ?? null) }}
 
     @if (Auth::user()->hasRole('Doctor'))
-        <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">
+    <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">
     @else
-    {{ Form::hidden('doctor_id', $appointment->doctor->id, null) }}
+    <div class="col-md-6 mb-5">
+        {{ Form::label('doctor_id', __('messages.doctors') . ':', ['class' => 'form-label required']) }}
+        {{ Form::select('doctor_id', $doctors ?? [], null, ['class' => 'form-select', 'required', 'placeholder' => __('messages.common.select_doctor')]) }}
+    </div>
     @endif
     <div class="col-md-3">
         <div class="form-group mb-5">

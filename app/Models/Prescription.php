@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * App\Models\Prescription
  *
  * @property int $id
- * @property int $appointment_id
  * @property int $patient_id
  * @property int|null $doctor_id
  * @property string|null $food_allergies
@@ -43,7 +42,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription query()
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereAccident($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereAdvice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereAppointmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereBreastFeeding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prescription whereCurrentMedication($value)
@@ -98,7 +96,6 @@ class Prescription extends Model
         'problem_description',
         'test',
         'advice',
-        'appointment_id',
     ];
 
     /**
@@ -109,7 +106,6 @@ class Prescription extends Model
     protected $casts = [
         'id' => 'integer',
         'patient_id' => 'integer',
-        'appointment_id' => 'integer',
         'food_allergies' => 'string',
         'tendency_bleed' => 'string',
         'heart_disease' => 'string',
@@ -211,11 +207,6 @@ class Prescription extends Model
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class, 'doctor_id');
-    }
-
-    public function appointment(): BelongsTo
-    {
-        return $this->belongsTo(Appointment::class, 'appointment_id');
     }
 
     public function getMedicine(): HasMany

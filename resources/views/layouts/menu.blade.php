@@ -50,28 +50,6 @@
 @endif
 @endcan
 
-@can('manage_appointments')
-@if(isRole('doctor'))
-<li class="nav-item {{ Request::is('doctors/appointments*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.appointments') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
-        <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
-        @if(isRole('doctor') && auth()->user()->doctor)
-        @php
-        $bookedCount = \App\Models\Appointment::where('doctor_id', auth()->user()->doctor->id)
-        ->where('status', \App\Models\Appointment::BOOKED)
-        ->count();
-        @endphp
-        @if($bookedCount > 0)
-        <span class="badge bg-warning rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $bookedCount }}</span>
-        @endif
-        @endif
-        <span class="d-none">{{ __('messages.appointments') }}</span>
-        <span class="d-none">{{ __('messages.patients') }}</span>
-    </a>
-</li>
-@endif
-@endcan
 
 {{-- Patient Queue - For Doctors --}}
 @if(isRole('doctor'))
@@ -130,16 +108,6 @@
 @endif
 @endcan
 
-@can('manage_transactions')
-@if(isRole('doctor'))
-<li class="nav-item {{ Request::is('doctors/transactions*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.transactions') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
-        <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
-    </a>
-</li>
-@endif
-@endcan
 {{--
     <li
     class="nav-item {{ Request::is('doctors/doctor-schedule-edit*', 'doctors/doctor-sessions/create') ? 'active' : '' }}">
@@ -158,29 +126,6 @@
 </a>
 </li>
 --}}
-@can('manage_appointments')
-@if(isRole('patient'))
-<li
-    class="nav-item {{ Request::is('patients/appointments*', 'patients/patient-appointments-calendar*', 'patients/doctors*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ route('patients.patient-appointments-index') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
-        <span class="aside-menu-title">{{ __('messages.appointment.appointments') }}</span>
-    </a>
-</li>
-@endif
-@endcan
-
-@can('manage_transactions')
-@if(isRole('patient'))
-<li class="nav-item {{ Request::is('patients/transactions*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.transactions') }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
-        <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
-    </a>
-</li>
-@endif
-@endcan
 
 {{-- Request Documents temporarily disabled for patients - route not implemented
 @can('manage_request_documents')
@@ -306,24 +251,6 @@
 </li>
 @endif
 @endcan
-@can('manage_appointments')
-@if(isRole('clinic_admin') || isRole('staff'))
-<li
-    class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/appointments*', 'admin/admin-appointments-calendar*', 'admin/prescriptions*', 'admin/prescription-medicine-show*')) ||
-        (isRole('staff') && Request::is('staff/appointments*', 'staff/admin-appointments-calendar*', 'staff/prescriptions*', 'staff/prescription-medicine-show*'))
-    ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-        href="{{ 
-            isRole('clinic_admin') ? route('appointments.index') : 
-            (isRole('staff') ? route('staff.appointments.index') : route('appointments.index'))
-        }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-alt"></i></span>
-        <span class="aside-menu-title">{{ __('messages.appointments') }}</span>
-    </a>
-</li>
-@endif
-@endcan
 @can('manage_medicines')
 <li
     class="nav-item {{ 
@@ -398,22 +325,6 @@
     </a>
 </li>
 @endcan
-@can('manage_transactions')
-@if(isRole('clinic_admin') || isRole('staff'))
-<li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/transactions*')) ||
-    (isRole('staff') && Request::is('staff/transactions*'))
-? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('transactions') : 
-        (isRole('staff') ? route('staff.transactions') : route('transactions'))
-    }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-money-bill-wave"></i></span>
-        <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
-    </a>
-</li>
-@endif
-@endcan
 <!-- @can('manage_patient_visits')
 @if(isRole('clinic_admin') || isRole('staff'))
 <li class="nav-item {{ Request::is('admin/visits*', 'staff/visits*') ? 'active' : '' }}">
@@ -427,24 +338,6 @@
 </li>
 @endif
 @endcan -->
-@can('manage_services')
-<li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/services*', 'admin/service-categories*')) ||
-    (isRole('staff') && Request::is('staff/services*', 'staff/service-categories*')) ||
-    (isRole('doctor') && Request::is('doctors/services*', 'doctors/service-categories*'))
-? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('services.index') : 
-        (isRole('staff') ? route('staff.services.index') : 
-        (isRole('doctor') ? route('doctors.services.index') : route('services.index')))
-    }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-user-cog"></i></span>
-        <span class="aside-menu-title">{{ __('messages.services') }}</span>
-        <span class="d-none">{{ __('messages.services') }}</span>
-        <span class="d-none">{{ __('messages.service_categories') }}</span>
-    </a>
-</li>
-@endcan
 @can('manage_specialties')
 <li class="nav-item {{ 
     (isRole('clinic_admin') && Request::is('admin/specializations*')) ||

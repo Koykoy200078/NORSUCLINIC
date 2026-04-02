@@ -68,7 +68,7 @@
                                 <span class="badge bg-light-success">{{ $patient['patient_unique_id'] }}</span>
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-light-danger">{{ $patient['appointments_count'] }}</span>
+                                <span class="badge bg-light-danger">{{ $patient['appointments_count'] ?? 0 }}</span>
                             </td>
                             <td class="text-center text-muted fw-bold">
                                 <span class="badge bg-light-info">

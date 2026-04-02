@@ -2,8 +2,6 @@
 
 namespace App\Repositories;
 
-use App\DataTable\UserDataTable;
-use App\Models\Appointment;
 use App\Models\Campus;
 use App\Models\City;
 use App\Models\College;
@@ -12,7 +10,6 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
-use App\Models\DoctorSession;
 use App\Models\Office;
 use App\Models\Patient;
 use App\Models\Qualification;
@@ -24,7 +21,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting;
 use App\Models\State;
@@ -335,22 +331,7 @@ class UserRepository extends BaseRepository
      */
     public function doctorDetail($input): array
     {
-        $todayDate = Carbon::now()->format('Y-m-d');
-        $doctor['data'] = Doctor::with(['user.address', 'specializations', 'appointments.patient.user'])->whereId($input->id)->first();
-        $doctor['doctorSession'] = DoctorSession::whereDoctorId($input->id)->get();
-        //        $doctor['appointments'] = DataTables::of((new UserDataTable())->getAppointment($input->id))->make(true);
-        $doctor['appointmentStatus'] = Appointment::ALL_STATUS;
-        $doctor['totalAppointmentCount'] = Appointment::whereDoctorId($input->id)->count();
-        $doctor['todayAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
-            'date',
-            '=',
-            $todayDate
-        )->count();
-        $doctor['upcomingAppointmentCount'] = Appointment::whereDoctorId($input->id)->where(
-            'date',
-            '>',
-            $todayDate
-        )->count();
+        $doctor['data'] = Doctor::with(['user.address', 'specializations'])->whereId($input->id)->first();
 
         return $doctor;
     }

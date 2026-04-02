@@ -17,7 +17,7 @@ $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status
 
     {{-- Edit Button - Only show if medicine bill is not paid --}}
     @if($canEdit)
-    <a href="{{ route($editRoute, [$row->appointment_id, $row->id]) }}"
+    <a href="{{ route($editRoute, $row->id) }}"
         title="{{ __('messages.common.edit') }}"
         class="btn btn-sm btn-outline-primary action-btn">
         <i class="fas fa-edit"></i>

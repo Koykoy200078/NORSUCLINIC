@@ -172,9 +172,9 @@
 
             <div class="contact-info">
                 <h3 style="margin-top: 0; color: #007bff;">📞 Contact Information</h3>
-                <p><strong>📍 Address:</strong> {{ getSettingValue('address_one') }}</p>
+                <p><strong>📍 Current Address:</strong> {{ getSettingValue('address_one') }}</p>
                 @if(getSettingValue('address_two'))
-                <p><strong>📍 Address 2:</strong> {{ getSettingValue('address_two') }}</p>
+                <p><strong>📍 Permanent Address:</strong> {{ getSettingValue('address_two') }}</p>
                 @endif
                 <p><strong>☎️ Phone:</strong> {{ getSettingValue('landline_no') }}</p>
                 <p><strong>📱 Mobile:</strong> {{ getSettingValue('contact_no') }}</p>

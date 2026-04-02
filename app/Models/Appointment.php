@@ -33,7 +33,6 @@ use Illuminate\Support\Str;
  * @property-read mixed $status_name
  * @property-read \App\Models\Patient $patient
  * @property-read \App\Models\Service $services
- * @property-read \App\Models\Transaction|null $transaction
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\AppointmentFactory factory($count = null, $state = [])
  * @method static Builder|Appointment newModelQuery()
@@ -232,13 +231,5 @@ class Appointment extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function transaction()
-    {
-        return $this->hasOne(Transaction::class, 'appointment_id', 'appointment_unique_id');
     }
 }

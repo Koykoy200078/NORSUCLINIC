@@ -43,20 +43,8 @@
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
     </script>
 
-    <!-- Payment Configuration -->
+    <!-- Language Configuration -->
     <script data-turbo-eval="false">
-        let appointmentStripePaymentUrl = "{{ url('appointment-stripe-charge') }}";
-        let stripe = '';
-        @if(config('services.stripe.key'))
-        stripe = Stripe("{{ config('services.stripe.key') }}");
-        @endif
-
-        let manually = "{{ \App\Models\Appointment::MANUALLY }}";
-        let paypal = "{{ \App\Models\Appointment::PAYPAL }}";
-        let stripeMethod = "{{ \App\Models\Appointment::STRIPE }}";
-        let authorizeMethod = "{{ \App\Models\Appointment::AUTHORIZE }}";
-        let paytmMethod = "{{ \App\Models\Appointment::PAYTM }}";
-
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         Lang.setLocale(checkLanguageSession);
     </script>

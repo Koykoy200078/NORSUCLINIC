@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
 use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,13 +14,7 @@ class DoctorDashboardDataTable extends Component
     public $appointments;
     public function mount(Request $request)
     {
-        $doctorId = getLogInUser()->doctor->id;
-        $this->appointments['records'] = Appointment::with(['patient.user'])
-            ->where('doctor_id', $doctorId)
-            ->whereStatus(Appointment::BOOKED)
-            ->whereDate('date', Carbon::today())
-            ->orderBy('date', 'ASC')
-            ->get()->toArray();
+        $this->appointments['records'] = [];
     }
 
     public function placeholder()

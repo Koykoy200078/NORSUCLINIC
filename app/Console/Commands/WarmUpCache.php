@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Service;
-use App\Models\ServiceCategory;
 use App\Models\Doctor;
 use App\Services\SettingsService;
 
@@ -31,14 +29,6 @@ class WarmUpCache extends Command
         // Warm up settings cache
         $this->info('Caching settings...');
         SettingsService::refresh();
-
-        // Warm up services cache
-        $this->info('Caching services...');
-        Cache::put('active_services', Service::where('status', true)->pluck('name', 'id')->toArray(), 600);
-
-        // Warm up service categories cache
-        $this->info('Caching service categories...');
-        Cache::put('service_categories', ServiceCategory::pluck('name', 'id')->toArray(), 600);
 
         // Warm up doctors list cache  
         $this->info('Caching doctors list...');

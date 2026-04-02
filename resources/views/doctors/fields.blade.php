@@ -106,7 +106,7 @@
                 <label for="exampleInputImage" class="form-label">{{__('messages.doctor.profile')}}:</label>
                 <div class="d-block">
                     <div class="image-picker">
-                        <div class="image previewImage" id="exampleInputImage" style="background-image: url({{ !empty($service->icon) ? $service->icon : asset('web/media/avatars/male.png') }})">
+                        <div class="image previewImage" id="exampleInputImage" style="background-image: url({{ asset('web/media/avatars/male.png') }})">
                         </div>
                         <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                             data-placement="top" data-bs-original-title="{{ __('messages.user.edit_profile') }}">

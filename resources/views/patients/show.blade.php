@@ -58,19 +58,19 @@
                         <div class="row justify-content-center">
                             <div class="col-md-4 col-sm-6 col-12 mb-6 mb-md-0">
                                 <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['todayAppointmentCount']}}</h2>
+                                    <h2 class="text-primary mb-3">{{$data['todayAppointmentCount'] ?? 0}}</h2>
                                     <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.today_appointments')}}</h3>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6 col-12 mb-6 mb-md-0">
                                 <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['upcomingAppointmentCount']}}</h2>
+                                    <h2 class="text-primary mb-3">{{$data['upcomingAppointmentCount'] ?? 0}}</h2>
                                     <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.upcoming_appointments')}}</h3>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6 col-12">
                                 <div class="border rounded-10 p-5 h-100">
-                                    <h2 class="text-primary mb-3">{{$data['completedAppointmentCount']}}</h2>
+                                    <h2 class="text-primary mb-3">{{$data['completedAppointmentCount'] ?? 0}}</h2>
                                     <h3 class="fs-5 fw-light text-gray-600 mb-0">{{__('messages.patient_dashboard.completed_appointments')}}</h3>
                                 </div>
                             </div>
@@ -87,12 +87,7 @@
                         {{ __('messages.common.overview')  }}
                     </button>
                 </li>
-                <li class="nav-item position-relative me-7 mb-3" role="presentation">
-                    <button class="nav-link p-0" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments"
-                        type="button" role="tab" aria-controls="appointments" aria-selected="false">
-                        {{ __('messages.appointments')  }}
-                    </button>
-                </li>
+                {{-- appointments tab removed: PatientShowPageAppointmentTable component no longer exists --}}
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="overview" role="tabpanel"
@@ -106,10 +101,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="appointments" role="tabpanel"
-                    aria-labelledby="appointments-tab">
-                    <livewire:patient-show-page-appointment-table :patientId="$patient->id" />
-                </div>
+                {{-- appointments tab pane removed: PatientShowPageAppointmentTable component no longer exists --}}
             </div>
         </div>
     </div>

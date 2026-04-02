@@ -24,7 +24,7 @@ class PrescriptionService
             $prescription = Prescription::create([
                 'patient_id' => $data['patient_id'],
                 'doctor_id' => $data['doctor_id'],
-                'appointment_id' => $data['appointment_id'] ?? null,
+                'appointment_id' => null,
                 'health_checkup' => $data['health_checkup'] ?? null,
                 'status' => $data['status'] ?? 1,
                 'is_completed' => $data['is_completed'] ?? false,
@@ -96,7 +96,6 @@ class PrescriptionService
             'patient.user',
             'doctor.user',
             'medicines',
-            'appointment'
         ]);
 
         $settings = SettingsService::getMultiple([
@@ -124,7 +123,6 @@ class PrescriptionService
             'patient.user',
             'doctor.user',
             'medicines.category',
-            'appointment'
         ])->findOrFail($prescriptionId);
     }
 

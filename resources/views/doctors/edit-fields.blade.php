@@ -95,7 +95,7 @@
         {{ Form::text('address1', isset($user->address->address1) ? $user->address->address1 : '', ['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address1')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Address 2', __('messages.doctor.address2').':', ['class' => 'form-label']) }}
+        {{ Form::label('Permanent Address', __('messages.doctor.address2').':', ['class' => 'form-label']) }}
         {{ Form::text('address2', isset($user->address->address2) ? $user->address->address2 : '', ['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address2')]) }}
     </div>
     <div class="col-md-6 mb-5">

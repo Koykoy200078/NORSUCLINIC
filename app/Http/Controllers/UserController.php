@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTable\UserDataTable;
 use App\Http\Requests\CreateQualificationRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateChangePasswordRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\Appointment;
 use App\Models\Doctor;
-use App\Models\DoctorSession;
 use App\Models\Patient;
 use App\Models\Specialization;
 use App\Models\User;
@@ -32,7 +29,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Laracasts\Flash\Flash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Yajra\DataTables\DataTables;
 
 class UserController extends AppBaseController
 {
@@ -107,13 +103,6 @@ class UserController extends AppBaseController
      */
     public function show(Doctor $doctor)
     {
-        if (getLogInUser()->hasRole('patient')) {
-            $doctorAppointment = Appointment::whereDoctorId($doctor->id)->wherePatientId(getLogInUser()->patient->id);
-            if (!$doctorAppointment->exists()) {
-                return redirect()->back();
-            }
-        }
-
         $doctorDetailData = $this->userRepo->doctorDetail($doctor);
 
         return view('doctors.show', compact('doctor', 'doctorDetailData'));
@@ -168,10 +157,9 @@ class UserController extends AppBaseController
      */
     public function destroy(Doctor $doctor): JsonResponse
     {
-        $existAppointment = Appointment::whereDoctorId($doctor->id)->exists();
         $existVisit = Visit::whereDoctorId($doctor->id)->exists();
 
-        if ($existAppointment || $existVisit) {
+        if ($existVisit) {
             return $this->sendError(__('messages.flash.doctor_use'));
         }
 
@@ -365,44 +353,11 @@ class UserController extends AppBaseController
         return $this->sendResponse($barangays, __('messages.flash.retrieve'));
     }
 
-    /**
-     * @return mixed
-     */
-    public function sessionData(Request $request)
-    {
-        $doctorSession = DoctorSession::whereDoctorId($request->doctorId)->first();
-
-        return $this->sendResponse($doctorSession, __('messages.flash.session_retrieve'));
-    }
-
-    /**
-     * @return mixed
-     */
     public function addQualification(CreateQualificationRequest $request, Doctor $doctor)
     {
         $this->userRepo->addQualification($request->all());
 
         return $this->sendSuccess(__('messages.flash.qualification_create'));
-    }
-
-    /**
-     * @return Application|RedirectResponse|Redirector
-     *
-     * @throws Exception
-     */
-    public function doctorAppointment(Doctor $doctor, Request $request)
-    {
-        if ($request->ajax()) {
-            return DataTables::of((new UserDataTable())->getAppointment($request->only([
-                'status',
-                'doctorId',
-                'filter_date',
-            ])))->make(true);
-        }
-
-        $indexRoute = isRole('clinic_admin') ? 'doctors.index' : (isRole('staff') ? 'staff.doctors.index' : 'doctors.index');
-
-        return redirect(route($indexRoute));
     }
 
     public function changeDoctorStatus(Request $request): JsonResponse

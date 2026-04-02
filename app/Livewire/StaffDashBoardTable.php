@@ -15,8 +15,7 @@ class StaffDashBoardTable extends Component
     public function mount(Request $request)
     {
         $this->data = []; // Initialize array
-        $this->data['patients'] = Patient::with(['user', 'appointments'])
-            ->withCount('appointments')
+        $this->data['patients'] = Patient::with(['user'])
             ->whereRaw('Date(created_at) = CURDATE()')
             ->orderBy('created_at', 'DESC')
             ->get()->toArray();

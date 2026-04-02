@@ -3,7 +3,6 @@
 namespace App\MediaLibrary;
 
 use App\Models\Patient;
-use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Slider;
 use App\Models\User;
@@ -30,8 +29,6 @@ class CustomPathGenerator implements PathGenerator
                 return str_replace('{PARENT_DIR}', Setting::FAVICON, $path);
             case Slider::SLIDER_IMAGE:
                 return str_replace('{PARENT_DIR}', Slider::SLIDER_IMAGE, $path);
-            case Service::ICON:
-                return str_replace('{PARENT_DIR}', Service::ICON, $path);
             case 'consultation_images':
                 // Get custom upload path from media properties
                 $uploadPath = $media->getCustomProperty('upload_path');

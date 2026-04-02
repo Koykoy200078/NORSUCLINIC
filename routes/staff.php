@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
@@ -10,21 +9,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\SpecializationController;
-use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\RequestDocumentsController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\SliderController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CountryController;
-use App\Http\Controllers\ClinicScheduleController;
-use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +29,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Patient Management (Staff can manage patients but with limited access)
     Route::middleware('permission:manage_patients')->group(function () {
         Route::resource('patients', PatientController::class);
-        Route::get('patient-appointments', [PatientController::class, 'patientAppointment'])->name('patients.appointment');
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
@@ -49,22 +41,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
     });
 
-    // Appointment Management (Staff can manage appointments)
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('staff.change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::get('appointments-calendar-view', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar-view');
-        Route::get('appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
-    });
-
-    // Transaction Management (View only for staff)
-    Route::middleware('permission:manage_transactions')->group(function () {
-        Route::get('transactions', [TransactionController::class, 'index'])->name('transactions');
-        Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
-    });
-
     // Doctor Management (Staff can manage doctors)
     Route::middleware('permission:manage_doctors')->group(function () {
         Route::get('doctors', [UserController::class, 'index'])->name('doctors.index');
@@ -74,8 +50,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('doctors/{doctor}/edit', [UserController::class, 'edit'])->name('doctors.edit');
         Route::match(['PUT', 'PATCH'], 'doctors/{doctor}', [UserController::class, 'update'])->name('doctors.update');
         Route::delete('doctors/{doctor}', [UserController::class, 'destroy'])->name('doctors.destroy');
-        Route::get('doctor/session', [UserController::class, 'sessionData'])->name('doctors.session');
-        Route::get('doctors-appointment', [UserController::class, 'doctorAppointment'])->name('doctors.appointment');
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
     });
@@ -94,22 +68,9 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('edit-prescription/{prescription}', [VisitController::class, 'editPrescription'])->name('edit.prescription');
     });
 
-    // Services Management (Staff can manage services)
-    Route::middleware('permission:manage_services')->group(function () {
-        Route::resource('services', ServiceController::class);
-        Route::put('service-status', [ServiceController::class, 'changeServiceStatus'])->name('service.status');
-        Route::resource('service-categories', ServiceCategoryController::class);
-    });
-
     // Specializations (Staff can manage specializations)
     Route::middleware('permission:manage_specialties')->group(function () {
         Route::resource('specializations', SpecializationController::class);
-    });
-
-    // Doctor Sessions (Staff can manage doctor schedules)
-    Route::middleware('permission:manage_doctor_sessions')->group(function () {
-        Route::resource('doctor-sessions', DoctorSessionController::class);
-        Route::get('/get-slot-by-gap', [DoctorSessionController::class, 'getSlotByGap'])->name('get.slot.by.gap');
     });
 
     // Search users route (moved outside middleware for testing)
@@ -124,8 +85,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Prescription Management (Staff can assist with prescriptions)
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patients/{patientId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('prescriptions/{prescription}/edit', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -173,12 +134,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('settings', [SettingController::class, 'index'])->name('setting.index');
         Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
         Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
-
-        // Clinic Schedules
-        Route::resource('clinic-schedules', ClinicScheduleController::class);
-
-        // Holidays Management (Staff and Doctor can manage)
-        Route::resource('holidays', HolidayController::class)->middleware('permission:manage_doctors_holiday');
     });
 
     // Additional management routes (view-only for staff)

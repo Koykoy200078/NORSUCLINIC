@@ -221,7 +221,7 @@
                                 'id' => 'patientProfileStateId',
                                 'class' => 'form-control form-control-lg io-select2',
                                 'data-placeholder' => __('messages.common.select_province'),
-                                'aria-label' => 'Select State',
+                                'aria-label' => 'Select Province',
                                 'data-control' => 'select2'
                             ]) }}
                     </div>

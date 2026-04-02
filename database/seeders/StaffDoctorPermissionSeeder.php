@@ -18,7 +18,6 @@ class StaffDoctorPermissionSeeder extends Seeder
     {
         // Define the permissions that both staff and doctor should have
         $sharedPermissions = [
-            'manage_appointments',
             'manage_doctors',
             'manage_doctors_holiday',
             'manage_specialties',
@@ -26,9 +25,6 @@ class StaffDoctorPermissionSeeder extends Seeder
             'manage_medicines',
             'manage_patients',
             'manage_patient_visits',
-            'manage_doctor_sessions',
-            'manage_services',
-            'manage_transactions',
         ];
 
         // Get staff and doctor roles

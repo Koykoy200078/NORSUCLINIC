@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -20,41 +19,12 @@ class PatientDashboardSidebarTable extends Component
 
    public function mount()
    {
-      $todayDate = Carbon::now()->format('Y-m-d');
-      $patientId = getLogInUser()->patient->id;
-      $todayCompleted = Appointment::wherePatientId($patientId)->where(
-         'date',
-         '=',
-         $todayDate
-      )->whereStatus(Appointment::FINISHED)->count();
-      $this->todayAppointmentCount = Appointment::wherePatientId($patientId)->where(
-         'date',
-         '=',
-         $todayDate
-      )->count();
-      $this->upcomingAppointmentCount = Appointment::wherePatientId($patientId)->where(
-         'date',
-         '>',
-         $todayDate
-      )->whereNotIn('status', [Appointment::CANCELLED])->count();
-      $this->pastCompletedAppointmentCount = Appointment::wherePatientId($patientId)->where(
-         'date',
-         '<',
-         $todayDate
-      )->count();
-      $this->completedAppointmentCount = $this->pastCompletedAppointmentCount + $todayCompleted;
-      $this->todayAppointment = Appointment::with(['patient.user', 'doctor.user', 'services'])
-         ->wherePatientId($patientId)
-         ->whereStatus(Appointment::BOOKED)
-         ->where('date', '=', $todayDate)
-         ->orderBy('created_at', 'DESC')
-         ->get();
-
-      $this->upcomingAppointment = Appointment::with(['patient.user', 'doctor.user', 'services'])
-         ->wherePatientId($patientId)
-         ->whereStatus(Appointment::BOOKED)
-         ->where('date', '>', $todayDate)
-         ->get();
+      $this->todayAppointmentCount = 0;
+      $this->upcomingAppointmentCount = 0;
+      $this->pastCompletedAppointmentCount = 0;
+      $this->completedAppointmentCount = 0;
+      $this->todayAppointment = collect();
+      $this->upcomingAppointment = collect();
    }
    public function placeholder()
    {

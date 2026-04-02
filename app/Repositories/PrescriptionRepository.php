@@ -249,7 +249,6 @@ class PrescriptionRepository extends BaseRepository
             'doctor.address',
             'getMedicine.medicines.category',
             'getMedicine.medicines.brand',
-            'appointment'
         ])->findOrFail($id);
 
         return $data;

@@ -26,8 +26,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Address|null $address
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Appointment> $appointments
- * @property-read int|null $appointments_count
  * @property-read string $profile
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
@@ -178,9 +176,6 @@ class Patient extends Model implements HasMedia
 
         // When a patient is being deleted, delete all related data
         static::deleting(function ($patient) {
-            // Delete all appointments
-            $patient->appointments()->delete();
-
             // Delete all patient queue entries
             $patient->queueEntries()->delete();
 
@@ -281,11 +276,6 @@ class Patient extends Model implements HasMedia
     public function patientUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class, 'patient_id');
     }
 
     public function requestDocuments()

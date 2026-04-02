@@ -159,10 +159,6 @@ class PatientService
         return Patient::with([
             'user',
             'address',
-            'appointments' => function ($query) {
-                $query->with(['doctor.user', 'service'])
-                    ->orderBy('date', 'desc');
-            },
             'prescriptions' => function ($query) {
                 $query->with(['medicines', 'doctor.user'])
                     ->orderBy('created_at', 'desc');
@@ -268,7 +264,6 @@ class PatientService
     {
         return DB::transaction(function () use ($patient) {
             // Delete associated records (if cascade is not set in database)
-            $patient->appointments()->delete();
             $patient->prescriptions()->delete();
             $patient->medicineBills()->delete();
             $patient->visits()->delete();
@@ -300,14 +295,14 @@ class PatientService
         $patient = Patient::findOrFail($patientId);
 
         return [
-            'total_appointments' => $patient->appointments()->count(),
-            'completed_appointments' => $patient->appointments()->where('status', 4)->count(),
-            'pending_appointments' => $patient->appointments()->where('status', 1)->count(),
+            'total_appointments' => 0,
+            'completed_appointments' => 0,
+            'pending_appointments' => 0,
             'total_prescriptions' => $patient->prescriptions()->count(),
             'active_prescriptions' => $patient->prescriptions()->where('status', 1)->count(),
             'total_visits' => $patient->visits()->count(),
             'last_visit' => $patient->visits()->latest()->first()?->created_at,
-            'last_appointment' => $patient->appointments()->latest('date')->first()?->date,
+            'last_appointment' => null,
         ];
     }
 
@@ -321,8 +316,7 @@ class PatientService
     {
         $patient = Patient::findOrFail($patientId);
 
-        return $patient->appointments()->exists() ||
-            $patient->prescriptions()->exists() ||
+        return $patient->prescriptions()->exists() ||
             $patient->visits()->exists() ||
             $patient->medicineBills()->exists();
     }

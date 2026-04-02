@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\CreatePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
-use App\Models\Appointment;
 use App\Models\Medicine;
 use App\Models\Prescription;
 use App\Repositories\DoctorRepository;
@@ -51,7 +50,7 @@ class PrescriptionController extends AppBaseController
      *
      * @return Factory|View
      */
-    public function create($appointmentId): View
+    public function create($patientId = null): View
     {
         $patients = $this->prescriptionRepository->getPatients();
         $doctors = $this->prescriptionRepository->getDoctors();
@@ -62,11 +61,10 @@ class PrescriptionController extends AppBaseController
         $mealList = $this->medicineRepository->getMealList();
         $doseDuration = $this->medicineRepository->getDoseDurationList();
         $doseInverval = $this->medicineRepository->getDoseInterValList();
-        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
 
         return view(
             'prescriptions.create',
-            compact('patients', 'doctors', 'appointment', 'medicines', 'medicinesQuantity', 'medicineList', 'mealList', 'doseDuration', 'doseInverval', 'appointmentId')
+            compact('patients', 'doctors', 'medicines', 'medicinesQuantity', 'medicineList', 'mealList', 'doseDuration', 'doseInverval', 'patientId')
         )->with($data);
     }
 
@@ -108,11 +106,10 @@ class PrescriptionController extends AppBaseController
         }
 
         $prescription = $this->prescriptionRepository->create($input);
-        $showRoute = isRole('doctor') ? 'doctors.appointment.detail' : (isRole('patient') ? 'patients.appointment.detail' : 'appointments.show');
         $this->prescriptionRepository->createPrescription($input, $prescription);
         Flash::success(__('messages.prescription.prescription_saved'));
 
-        return redirect(route($showRoute, $input['appointment_id']));
+        return redirect(route('prescription.medicine.show', $prescription->id));
     }
 
     /**
@@ -133,13 +130,13 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        return view('prescriptions.show')->with('prescription', $prescription);
+        return redirect(route('prescription.medicine.show', $prescription->id));
     }
 
     /**
      * @return \Illuminate\Contracts\Foundation\Application|Factory|\Illuminate\Contracts\View\View|RedirectResponse
      */
-    public function edit($appointmentId, Prescription $prescription)
+    public function edit(Prescription $prescription)
     {
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
             Flash::error(__('messages.flash.not_allow_access_record'));
@@ -155,8 +152,6 @@ class PrescriptionController extends AppBaseController
             }
         }
 
-        $appointment = Appointment::with('doctor', 'patient')->find($appointmentId);
-
         $patients = $this->prescriptionRepository->getPatients();
         $doctors = $this->prescriptionRepository->getDoctors();
         $data['medicines'] = Medicine::pluck('name', 'id')->toArray();
@@ -167,7 +162,7 @@ class PrescriptionController extends AppBaseController
         $doseDuration = $this->medicineRepository->getDoseDurationList();
         $doseInverval = $this->medicineRepository->getDoseInterValList();
 
-        return view('prescriptions.edit', compact('patients', 'appointment', 'appointmentId', 'prescription', 'doctors', 'medicines', 'medicineList', 'mealList', 'doseDuration', 'doseInverval'))->with($data);
+        return view('prescriptions.edit', compact('patients', 'prescription', 'doctors', 'medicines', 'medicineList', 'mealList', 'doseDuration', 'doseInverval'))->with($data);
     }
 
     /**
@@ -220,11 +215,11 @@ class PrescriptionController extends AppBaseController
                 return Redirect::back();
             }
         }
-        $showRoute = isRole('doctor') ? 'doctors.appointment.detail' : (isRole('patient') ? 'patients.appointment.detail' : 'appointments.show');
+        $showRoute = 'prescription.medicine.show';
         $this->prescriptionRepository->prescriptionUpdate($prescription, $request->all());
         Flash::success(__('messages.prescription.prescription_updated'));
 
-        return redirect(route($showRoute, $input['appointment_id']));
+        return redirect(route($showRoute, $prescription->id));
     }
 
     /**

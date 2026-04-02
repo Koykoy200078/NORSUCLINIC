@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
 use App\Models\Setting;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Arr;
 
 class PatientAppointmentController extends AppBaseController
 {
@@ -16,8 +14,7 @@ class PatientAppointmentController extends AppBaseController
      */
     public function index(): \Illuminate\View\View
     {
-        $allPaymentStatus = getAllPaymentStatus();
-        $paymentStatus = Arr::except($allPaymentStatus, [Appointment::MANUALLY]);
+        $paymentStatus = [];
         $logo = Setting::where('key', 'logo')->pluck('value');
 
         return view('patients.appointments.index', compact('paymentStatus', 'logo'));

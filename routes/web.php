@@ -3,38 +3,27 @@
 // Debug route
 require __DIR__ . '/debug-profile.php';
 
-use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\AuthorizePaymentController;
 use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DoctorSessionController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Front\SliderController;
-
-use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\MedicineBillController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PaypalController;
-use App\Http\Controllers\PayTMController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\MedicineAvailabilityController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\ServiceCategoryController;
-use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StateController;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Auth;
@@ -74,59 +63,7 @@ Route::post('/change-language', [FrontController::class, 'changeLanguage'])->nam
 //Dark Mode
 Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])->name('update-dark-mode');
 
-//Stripe route
-Route::get(
-    '/medical-payment-success',
-    [AppointmentController::class, 'paymentSuccess']
-)->name('medical-appointment-payment-success');
-Route::get(
-    '/medical-payment-failed',
-    [AppointmentController::class, 'handleFailedPayment']
-)->name('medical-appointment-failed-payment');
-
-// Manually payment route
-Route::get('/manually-payment', [AppointmentController::class, 'manuallyPayment'])->name('manually-payment');
-Route::put('transaction-status', [TransactionController::class, 'changeTransactionStatus'])->name('transaction.status');
-
-// paypal routes
-Route::get('/paypal-payment', function () {
-    return view('payments.paypal.index');
-})->name('paypal.index');
-
-Route::get('paypal-onboard', [PaypalController::class, 'onBoard'])->name('paypal.init');
-Route::get('paypal-payment-success', [PaypalController::class, 'success'])->name('paypal.success');
-Route::get('paypal-payment-failed', [PaypalController::class, 'failed'])->name('paypal.failed');
-
-// Authorize Route
-Route::get('authorize-onboard', [AuthorizePaymentController::class, 'onboard'])->name('authorize.init');
-Route::post('authorize-do-payment', [AuthorizePaymentController::class, 'pay'])->name('authorize.onboard');
-Route::get('authorize-payment-failed', [AuthorizePaymentController::class, 'failed'])->name('authorize.failed');
-
-//Paytm Route
-Route::get('/paytm-init', [PayTMController::class, 'initiate'])->name('paytm.init');
-Route::post('/paytm-payment', [PayTMController::class, 'payment'])->name('make.payment');
-Route::post('/paytm-callback', [PayTMController::class, 'paymentCallback'])->name('paytm.callback');
-Route::get('paytm-payment-cancel', [PayTMController::class, 'failed'])->name('paytm.failed');
-
 // Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
-
-Route::get('doctor-session-time', [DoctorSessionController::class, 'getDoctorSession'])->name('doctor-session-time');
-Route::get('get-service', [ServiceController::class, 'getService'])->name('get-service');
-Route::get('get-charge', [ServiceController::class, 'getCharge'])->name('get-charge');
-Route::post(
-    'front-appointment-book',
-    [AppointmentController::class, 'frontAppointmentBook']
-)->name('front.appointment.book');
-Route::post(
-    'medical-appointment',
-    [AppointmentController::class, 'frontHomeAppointmentBook']
-)->name('front.home.appointment.book');
-Route::get('get-patient-name', [AppointmentController::class, 'getPatientName'])->name('get-patient-name');
-//change Language
-Route::post('update-language', [UserController::class, 'updateLanguage'])->name('change-language');
-
-Route::get('doctor-appointment/{doctor}', [AppointmentController::class, 'doctorBookAppointment'])->name('doctorBookAppointment');
-Route::get('service-appointment/{service}', [AppointmentController::class, 'serviceBookAppointment'])->name('serviceBookAppointment');
 
 Route::post(
     '/notification/{notification}/read',
@@ -144,8 +81,6 @@ Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
     Route::put('/change-user-password', [UserController::class, 'changePassword'])->name('user.changePassword');
     Route::put('/email-notification', [UserController::class, 'emailNotification'])->name('emailNotification');
 });
-
-Route::get('cancel-appointment/{patient_id}/{appointment_unique_id}', [AppointmentController::class, 'cancelAppointment'])->name('cancelAppointment');
 
 //get States and cities route
 Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
@@ -175,8 +110,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Doctor route
     Route::middleware('permission:manage_doctors')->group(function () {
         Route::resource('doctors', UserController::class);
-        Route::get('doctor/session', [UserController::class, 'sessionData'])->name('doctors.session');
-        Route::get('doctors-appointment', [UserController::class, 'doctorAppointment'])->name('doctors.appointment');
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
     });
@@ -214,15 +147,11 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::post('/settings', [SettingController::class, 'update'])->name('setting.update');
         Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
         Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
-        Route::resource('clinic-schedules', ClinicScheduleController::class);
-        Route::resource('holidays', HolidayController::class);
-        Route::post('checkRecord', [ClinicScheduleController::class, 'checkRecord'])->name('checkRecord');
     });
 
     // Patient Routes
     Route::middleware('permission:manage_patients')->group(function () {
         Route::resource('patients', PatientController::class);
-        Route::get('patient-appointments', [PatientController::class, 'patientAppointment'])->name('patients.appointment');
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
     });
@@ -242,38 +171,14 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('/{id}', [\App\Http\Controllers\ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 
-    // Doctor Schedule Routes
-    Route::middleware('permission:manage_doctor_sessions')->group(function () {
-        Route::resource('doctor-sessions', DoctorSessionController::class);
-        Route::get('/get-slot-by-gap', [DoctorSessionController::class, 'getSlotByGap'])->name('get.slot.by.gap');
-    });
-
     // Specialization routes
     Route::middleware('permission:manage_specialties')->group(function () {
         Route::resource('specializations', SpecializationController::class);
     });
 
-    // Services and Service Category route
-    Route::middleware('permission:manage_services')->group(function () {
-        Route::resource('services', ServiceController::class);
-        Route::put('service-status', [ServiceController::class, 'changeServiceStatus'])->name('service.status');
-        Route::resource('service-categories', ServiceCategoryController::class);
-    });
-
     // Staff route
     Route::middleware('permission:manage_staff')->group(function () {
         Route::resource('staffs', StaffController::class);
-    });
-
-    // Appointment route
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('admin.change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('admin.appointmentPdf');
-        Route::get('admin-appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
-        Route::get('transactions', [TransactionController::class, 'index'])->name('transactions');
-        Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     });
 
     // Encounter route (Patient Visits)
@@ -299,8 +204,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Prescription Management
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patients/{patientId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('prescriptions/{prescription}/edit', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -360,32 +265,14 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Patient Management
     Route::middleware('permission:manage_patients')->group(function () {
         Route::resource('patients', PatientController::class);
-        Route::get('patient-appointments', [PatientController::class, 'patientAppointment'])->name('patients.appointment');
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
     });
 
-    // Appointment Management
-    Route::middleware('permission:manage_appointments')->group(function () {
-        Route::resource('appointments', AppointmentController::class)->except(['edit', 'update']);
-        Route::post('appointments/{appointment}', [AppointmentController::class, 'changeStatus'])->name('change-status');
-        Route::post('appointments-payment/{id}', [AppointmentController::class, 'changePaymentStatus'])->name('change-payment-status');
-        Route::get('appointment-pdf/{id}', [AppointmentController::class, 'appointmentPdf'])->name('appointmentPdf');
-        Route::get('appointments-calendar', [AppointmentController::class, 'appointmentCalendar'])->name('appointments.calendar');
-    });
-
-    // Transaction Management
-    Route::middleware('permission:manage_transactions')->group(function () {
-        Route::get('transactions', [TransactionController::class, 'index'])->name('transactions');
-        Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
-    });
-
     // Doctor Management
     Route::middleware('permission:manage_doctors')->group(function () {
         Route::resource('doctors', UserController::class);
-        Route::get('doctor/session', [UserController::class, 'sessionData'])->name('doctors.session');
-        Route::get('doctors-appointment', [UserController::class, 'doctorAppointment'])->name('doctors.appointment');
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
     });
@@ -404,22 +291,9 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('edit-prescription/{prescription}', [VisitController::class, 'editPrescription'])->name('edit.prescription');
     });
 
-    // Services Management
-    Route::middleware('permission:manage_services')->group(function () {
-        Route::resource('services', ServiceController::class);
-        Route::put('service-status', [ServiceController::class, 'changeServiceStatus'])->name('service.status');
-        Route::resource('service-categories', ServiceCategoryController::class);
-    });
-
     // Specializations
     Route::middleware('permission:manage_specialties')->group(function () {
         Route::resource('specializations', SpecializationController::class);
-    });
-
-    // Doctor Sessions
-    Route::middleware('permission:manage_doctor_sessions')->group(function () {
-        Route::resource('doctor-sessions', DoctorSessionController::class);
-        Route::get('/get-slot-by-gap', [DoctorSessionController::class, 'getSlotByGap'])->name('get.slot.by.gap');
     });
 
     // Request Documents
@@ -432,8 +306,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Prescription Management
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
-    Route::get('appointments/{appointmentId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-    Route::get('appointments/{appointmentId}/prescription-edit/{prescription}', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
+    Route::get('patients/{patientId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
+    Route::get('prescriptions/{prescription}/edit', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
     Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
@@ -466,8 +340,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('settings', [SettingController::class, 'index'])->name('setting.index');
         Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
         Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
-        Route::resource('clinic-schedules', ClinicScheduleController::class);
-        Route::resource('holidays', HolidayController::class)->middleware('permission:manage_doctors_holiday');
     });
 
     // Roles Management

@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Appointment;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -15,9 +14,8 @@ class StaffDashboardSidebarTable extends Component
 
     public function mount()
     {
-        $todayDate = Carbon::now()->format('Y-m-d');
-        $this->upcomingAppointmentCount = Appointment::where('date', '>', $todayDate)->count();
-        $this->totalAppointmentCount = Appointment::count();
+        $this->upcomingAppointmentCount = 0;
+        $this->totalAppointmentCount = 0;
     }
 
     public function placeholder()

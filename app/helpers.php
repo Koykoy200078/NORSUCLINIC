@@ -2,7 +2,6 @@
 
 use App\Models\Barangay;
 use App\Models\City;
-use App\Models\DoctorSession;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\PurchasedMedicine;
@@ -17,7 +16,6 @@ use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
-use Stripe\Stripe;
 
 if (! function_exists('getLogInUser')) {
     /**
@@ -166,7 +164,6 @@ if (!function_exists('getDashboardURL')) {
                     'manage_doctors' => 'admin/doctors',
                     'manage_patients' => 'admin/patients',
                     'manage_staff' => 'admin/staff',
-                    'manage_appointments' => 'admin/appointments',
                 ];
 
                 foreach ($permissionDashboardMap as $permission => $url) {
@@ -179,67 +176,6 @@ if (!function_exists('getDashboardURL')) {
             // Default fallback
             return RouteServiceProvider::HOME;
         }
-    }
-}
-
-if (! function_exists('getDoctorSessionURL')) {
-
-    /**
-     * @return string
-     */
-    function getDoctorSessionURL()
-    {
-        if (Auth::user()->hasRole('clinic_admin')) {
-            return 'admin/doctor-sessions';
-        } elseif (Auth::user()->hasRole('staff')) {
-            return 'staff/doctor-sessions';
-        } elseif (Auth::user()->hasRole('doctor')) {
-            return 'doctors/doctor-sessions';
-        } elseif (Auth::user()->hasRole('patient')) {
-            return 'patients/doctor-sessions';
-        }
-
-        return RouteServiceProvider::HOME;
-    }
-}
-
-if (! function_exists('getDoctorSessionTime')) {
-
-    function getDoctorSessionTime($doctor_id)
-    {
-        $doctorSession = DoctorSession::whereDoctorId($doctor_id)->get();
-    }
-}
-
-if (! function_exists('getSlotByGap')) {
-
-    function getSlotByGap($startTime, $endTime, $gap = 15)
-    {
-        $period = new CarbonPeriod(
-            $startTime,
-            $gap . ' minutes',
-            $endTime
-        ); // for create use 24 hours format later change format
-        $slots = [];
-        foreach ($period as $item) {
-            $slots[$item->format('h:i A')] = $item->format('h:i A');
-        }
-
-        return $slots;
-    }
-}
-
-if (! function_exists('getSchedulesTimingSlot')) {
-
-    function getSchedulesTimingSlot()
-    {
-        $period = new CarbonPeriod('00:00', '15 minutes', '24:00'); // for create use 24 hours format later change format
-        $slots = [];
-        foreach ($period as $item) {
-            $slots[$item->format('h:i A')] = $item->format('h:i A');
-        }
-
-        return $slots;
     }
 }
 
@@ -287,22 +223,6 @@ if (! function_exists('getBadgeStatusColor')) {
         return $colors[$status];
     }
 }
-if (! function_exists('getLoginDoctorSessionUrl')) {
-
-    function getLoginDoctorSessionUrl(): string
-    {
-        return DoctorSession::toBase()->whereDoctorId(getLogInUser()->doctor->id)->exists() ? route('doctors.doctor.schedule.edit') : route('doctors.doctor-sessions.create');
-    }
-}
-
-if (! function_exists('doctorSessionActiveUrl')) {
-
-    function doctorSessionActiveUrl(): string
-    {
-        return DoctorSession::toBase()->whereDoctorId(getLogInUser()->doctor->id)->exists() ? 'doctors/doctor-schedule-edit*' : 'doctors/doctor-sessions/create*';
-    }
-}
-
 if (! function_exists('getStatusBadgeColor')) {
 
     /**
@@ -396,14 +316,6 @@ if (! function_exists('getUserLanguages')) {
         asort($language);
 
         return $language;
-    }
-}
-
-if (! function_exists('setStripeApiKey')) {
-
-    function setStripeApiKey()
-    {
-        Stripe::setApiKey(config('services.stripe.secret_key'));
     }
 }
 
@@ -539,17 +451,6 @@ if (! function_exists('getMonth')) {
     }
 }
 
-if (! function_exists('getAllPaymentStatus')) {
-
-    /**
-     * @return string[]
-     */
-    function getAllPaymentStatus()
-    {
-        return \App\Models\Appointment::PAYMENT_METHOD;
-    }
-}
-
 if (! function_exists('getWeekDate')) {
 
     function getWeekDate(): string
@@ -585,44 +486,6 @@ if (! function_exists('filterLangChange')) {
         }
 
         return $array;
-    }
-}
-
-if (! function_exists('paymentMethodLangChange')) {
-
-    function paymentMethodLangChange($paymentMethodNameArray): array
-    {
-        $array = [];
-        foreach ($paymentMethodNameArray as $key => $value) {
-            $array[$key] = __('messages.payment_method.' . strtolower($value));
-        }
-
-        return $array;
-    }
-}
-
-if (! function_exists('zeroDecimalCurrencies')) {
-
-    function zeroDecimalCurrencies(): array
-    {
-        return [
-            'BIF',
-            'CLP',
-            'DJF',
-            'GNF',
-            'JPY',
-            'KMF',
-            'KRW',
-            'MGA',
-            'PYG',
-            'RWF',
-            'UGX',
-            'VND',
-            'VUV',
-            'XAF',
-            'XOF',
-            'XPF',
-        ];
     }
 }
 
@@ -890,115 +753,6 @@ if (! function_exists('getPrescriptionRoute')) {
     }
 }
 
-if (!function_exists('paypalCurrencySupports')) {
-    function paypalCurrencySupports()
-    {
-        $paypal = ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'USD', 'SGD', 'SEK', 'CHF', 'THB'];
-
-        if (!in_array(strtoupper('PHP'), $paypal)) {
-            return  false;
-        }
-        return  true;
-    }
-}
-
-if (!function_exists('authorizedCurrencySupports')) {
-    function authorizedCurrencySupports()
-    {
-        $authorized = ['USD', 'CAD', 'GBP', 'EUR', 'CHF', 'DKK', 'NOK', 'PLN', 'SEK'];
-
-        if (!in_array(strtoupper('PHP'), $authorized)) {
-            return  false;
-        }
-        return  true;
-    }
-}
-
-if (!function_exists('paytmCurrencySupports')) {
-    function paytmCurrencySupports()
-    {
-        $paytm = [
-            'AFN',
-            'ARS',
-            'AZN',
-            'AUD',
-            'AED',
-            'BBD',
-            'BDT',
-            'BGN',
-            'BHD',
-            'BMD',
-            'BND',
-            'BRL',
-            'BWP',
-            'BZD',
-            'CLP',
-            'COP',
-            'CRC',
-            'CZK',
-            'CAD',
-            'CHF',
-            'CNY',
-            'DKK',
-            'DOP',
-            'EGP',
-            'EUR',
-            'GTQ',
-            'GBP',
-            'HKD',
-            'HNL',
-            'HRK',
-            'HUF',
-            'ILS',
-            'JPY',
-            'JMD',
-            'JOD',
-            'KES',
-            'KRW',
-            'KWD',
-            'KZT',
-            'LBP',
-            'LKR',
-            'LTL',
-            'LVL',
-            'MOP',
-            'MUR',
-            'MXN',
-            'MYR',
-            'NGN',
-            'NOK',
-            'NZD',
-            'OMR',
-            'PEN',
-            'PHP',
-            'PKR',
-            'PLN',
-            'QAR',
-            'RON',
-            'RUB',
-            'SCR',
-            'SEK',
-            'SAR',
-            'SGD',
-            'THB',
-            'TRY',
-            'TTD',
-            'TWD',
-            'TZS',
-            'UAH',
-            'USD',
-            'XCD',
-            'XOF',
-            'ZAR'
-        ];
-
-        if (!in_array(strtoupper('PHP'), $paytm)) {
-            return  false;
-        }
-        return  true;
-    }
-}
-
 if (!function_exists('getExpiringMedicinesCount')) {
     /**
      * Get count of medicines expiring within a month
@@ -1021,39 +775,6 @@ if (!function_exists('getExpiringMedicinesCount')) {
                 })
                 ->distinct('medicine_id')
                 ->count('medicine_id');
-        });
-    }
-}
-
-if (!function_exists('getDoctorBookedAppointmentsCount')) {
-    /**
-     * Get count of booked appointments for the current doctor
-     *
-     * @return int
-     */
-    function getDoctorBookedAppointmentsCount()
-    {
-        // Only show count for doctors
-        if (!isRole('doctor')) {
-            return 0;
-        }
-
-        $user = getLogInUser();
-        if (!$user) {
-            return 0;
-        }
-
-        // Cache the result for 2 minutes to allow for more frequent updates
-        return Cache::remember('doctor_booked_appointments_' . $user->id, 120, function () use ($user) {
-            $doctor = $user->doctor;
-
-            if (!$doctor) {
-                return 0;
-            }
-
-            return \App\Models\Appointment::where('doctor_id', $doctor->id)
-                ->where('status', \App\Models\Appointment::BOOKED)
-                ->count();
         });
     }
 }
