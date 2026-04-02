@@ -24,7 +24,6 @@ class StaffDoctorPermissionSeeder extends Seeder
             'manage_request_documents',
             'manage_medicines',
             'manage_patients',
-            'manage_patient_visits',
         ];
 
         // Get staff and doctor roles

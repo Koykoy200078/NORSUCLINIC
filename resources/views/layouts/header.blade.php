@@ -22,17 +22,6 @@
             </span>
         </li>
         @endImpersonating
-        {{-- Smart card temporarily disabled for patients - template_id column doesn't exist in patients table
-        @if (isRole('patient'))
-        @php
-        $isholdcard = App\Models\Patient::where('user_id', Auth::user()->id)->whereNotNull('template_id')->exists();
-        @endphp
-        @if ($isholdcard)
-        <a href="javascript:void(0)" class="btn px-5 text-primary fs-3 show_patient_card" data-id="{{getLogInUser()->patient->id}}" data-toggle="modal" data-target="#show_card_modal" data-bs-toggle="tooltip"
-        data-bs-original-title="{{ __('messages.smart_patient_card.smart_card') }}"> <i class="fa-solid fa-id-card fs-1"></i></a>
-        @endif
-        @endif
-        --}}
         {{-- <li class="px-sm-3 px-2">
             @if(Auth::user()->dark_mode)
                 <a href="javascript:void(0)" title="Switch to Light mode"><i

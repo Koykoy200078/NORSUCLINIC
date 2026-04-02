@@ -260,7 +260,7 @@ class PrescriptionRepository extends BaseRepository
         $prescription = Prescription::with([
             'getMedicine' => function ($query) {
                 $query->with(['medicines' => function ($medicineQuery) {
-                    $medicineQuery->select('id', 'name', 'category_id', 'brand_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
+                    $medicineQuery->select('id', 'name', 'category_id', 'generic_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
                 }]);
             }
         ])->findOrFail($id);

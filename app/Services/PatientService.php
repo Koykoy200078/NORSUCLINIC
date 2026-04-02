@@ -167,10 +167,6 @@ class PatientService
                 $query->with(['saleMedicine.medicine'])
                     ->orderBy('created_at', 'desc');
             },
-            'visits' => function ($query) {
-                $query->with(['doctor.user'])
-                    ->orderBy('created_at', 'desc');
-            },
             'requestDocuments' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             }
@@ -266,7 +262,6 @@ class PatientService
             // Delete associated records (if cascade is not set in database)
             $patient->prescriptions()->delete();
             $patient->medicineBills()->delete();
-            $patient->visits()->delete();
             $patient->requestDocuments()->delete();
 
             // Delete address
@@ -300,8 +295,8 @@ class PatientService
             'pending_appointments' => 0,
             'total_prescriptions' => $patient->prescriptions()->count(),
             'active_prescriptions' => $patient->prescriptions()->where('status', 1)->count(),
-            'total_visits' => $patient->visits()->count(),
-            'last_visit' => $patient->visits()->latest()->first()?->created_at,
+            'total_visits' => 0,
+            'last_visit' => null,
             'last_appointment' => null,
         ];
     }
@@ -317,7 +312,6 @@ class PatientService
         $patient = Patient::findOrFail($patientId);
 
         return $patient->prescriptions()->exists() ||
-            $patient->visits()->exists() ||
             $patient->medicineBills()->exists();
     }
 

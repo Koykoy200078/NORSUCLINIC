@@ -26,7 +26,6 @@ class RolePermissionsSeeder extends Seeder
         $rolePermissions = [
             'doctor' => [
                 'manage_medicines',
-                'manage_patient_visits',
                 'manage_patients',
                 'manage_request_documents',
                 'manage_specialties',
@@ -34,7 +33,6 @@ class RolePermissionsSeeder extends Seeder
             'staff' => [
                 'manage_doctors',
                 'manage_medicines',
-                'manage_patient_visits',
                 'manage_patients',
                 'manage_request_documents',
                 'manage_specialties',

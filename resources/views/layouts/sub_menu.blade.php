@@ -139,12 +139,6 @@
 </li>
 @endcan
 
-<!-- @can('manage_patient_visits')
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/visits*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/visits*') ? 'active' : '' }}"
-        href="{{ route('visits.index') }}">{{ __('messages.visits') }}</a>
-</li>
-@endcan -->
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('profile/edit*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('profile/edit*') ? 'active' : '' }}"
         href="{{ route('profile.setting') }}">{{ __('messages.user.profile_details') }}</a>

@@ -58,7 +58,7 @@ class MedicineBrandDetailsTable extends LivewireTableComponent
             Column::make(__('messages.medicine.medicine'), 'name')
                 ->searchable()
                 ->sortable(),
-            Column::make(__('messages.medicine.brand'), 'category_id')
+            Column::make(__('messages.medicine.generic'), 'category_id')
                 ->hideIf('category_id')
         ];
     }
@@ -66,7 +66,7 @@ class MedicineBrandDetailsTable extends LivewireTableComponent
     public function builder(): Builder
     {
         /** @var Medicine $query */
-        $query = Medicine::with('category', 'brand')->where('brand_id', $this->brandDetails);
+        $query = Medicine::with('category', 'generic')->where('generic_id', $this->brandDetails);
 
         return $query;
     }

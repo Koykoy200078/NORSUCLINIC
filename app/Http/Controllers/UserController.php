@@ -11,7 +11,6 @@ use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Specialization;
 use App\Models\User;
-use App\Models\Visit;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -157,12 +156,6 @@ class UserController extends AppBaseController
      */
     public function destroy(Doctor $doctor): JsonResponse
     {
-        $existVisit = Visit::whereDoctorId($doctor->id)->exists();
-
-        if ($existVisit) {
-            return $this->sendError(__('messages.flash.doctor_use'));
-        }
-
         try {
             DB::beginTransaction();
 

@@ -25,7 +25,6 @@ use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -181,20 +180,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::resource('staffs', StaffController::class);
     });
 
-    // Encounter route (Patient Visits)
-    Route::middleware('permission:manage_patient_visits')->group(function () {
-        Route::resource('visits', VisitController::class);
-        Route::post('add-problem', [VisitController::class, 'addProblem'])->name('add.problem');
-        Route::post('delete-problem/{problem}', [VisitController::class, 'deleteProblem'])->name('delete.problem');
-        Route::post('add-observation', [VisitController::class, 'addObservation'])->name('add.observation');
-        Route::post('delete-observation/{observation}', [VisitController::class, 'deleteObservation'])->name('delete.observation');
-        Route::post('add-note', [VisitController::class, 'addNote'])->name('add.note');
-        Route::post('delete-note/{note}', [VisitController::class, 'deleteNote'])->name('delete.note');
-        Route::post('add-prescription', [VisitController::class, 'addPrescription'])->name('add.prescription');
-        Route::post('delete-prescription/{prescription}', [VisitController::class, 'deletePrescription'])->name('delete.prescription');
-        Route::get('edit-prescription/{prescription}', [VisitController::class, 'editPrescription'])->name('edit.prescription');
-    });
-
     // CMS/Front Management
     Route::middleware('permission:manage_front_cms')->group(function () {
         Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
@@ -275,20 +260,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::resource('doctors', UserController::class);
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
-    });
-
-    // Patient Visits
-    Route::middleware('permission:manage_patient_visits')->group(function () {
-        Route::resource('visits', VisitController::class);
-        Route::post('add-problem', [VisitController::class, 'addProblem'])->name('add.problem');
-        Route::post('delete-problem/{problem}', [VisitController::class, 'deleteProblem'])->name('delete.problem');
-        Route::post('add-observation', [VisitController::class, 'addObservation'])->name('add.observation');
-        Route::post('delete-observation/{observation}', [VisitController::class, 'deleteObservation'])->name('delete.observation');
-        Route::post('add-note', [VisitController::class, 'addNote'])->name('add.note');
-        Route::post('delete-note/{note}', [VisitController::class, 'deleteNote'])->name('delete.note');
-        Route::post('add-prescription', [VisitController::class, 'addPrescription'])->name('add.prescription');
-        Route::post('delete-prescription/{prescription}', [VisitController::class, 'deletePrescription'])->name('delete.prescription');
-        Route::get('edit-prescription/{prescription}', [VisitController::class, 'editPrescription'])->name('edit.prescription');
     });
 
     // Specializations

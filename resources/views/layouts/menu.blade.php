@@ -144,20 +144,6 @@
 @endcan
 --}}
 
-{{-- Patient Visits temporarily disabled - route not implemented
-@can('manage_patient_visits')
-@if(isRole('patient'))
-<li class="nav-item {{ Request::is('patients/patient-visits*') ? 'active' : '' }}">
-<a class="nav-link d-flex align-items-center py-4" aria-current="page"
-    href="{{ route('patients.patient.visits.index') }}">
-    <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
-    <span class="aside-menu-title">{{ __('messages.visits') }}</span>
-</a>
-</li>
-@endif
-@endcan
---}}
-
 {{-- Live Consultations temporarily disabled for patients - route not implemented
 @can('manage_live_consultations')
 @if(isRole('patient'))
@@ -325,19 +311,6 @@
     </a>
 </li>
 @endcan
-<!-- @can('manage_patient_visits')
-@if(isRole('clinic_admin') || isRole('staff'))
-<li class="nav-item {{ Request::is('admin/visits*', 'staff/visits*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('visits.index') : 
-        (isRole('staff') ? route('staff.visits.index') : route('visits.index'))
-    }}">
-        <span class="aside-menu-icon pe-3"><i class="fas fa-procedures"></i></span>
-        <span class="aside-menu-title">{{ __('messages.visits') }}</span>
-    </a>
-</li>
-@endif
-@endcan -->
 @can('manage_specialties')
 <li class="nav-item {{ 
     (isRole('clinic_admin') && Request::is('admin/specializations*')) ||

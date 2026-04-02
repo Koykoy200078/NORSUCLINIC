@@ -1,1 +1,1 @@
-{{$row->category->name}}
+{{$value ?? 'N/A'}}

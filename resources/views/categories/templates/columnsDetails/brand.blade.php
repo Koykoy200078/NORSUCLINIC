@@ -1,1 +1,1 @@
-{{$row->brand->name}}
+{{$value ?? '—'}}

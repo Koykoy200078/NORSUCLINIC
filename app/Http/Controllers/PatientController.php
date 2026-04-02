@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Laracasts\Flash\Flash;
 use Exception;
 use App\Models\User;
-use App\Models\Visit;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -166,14 +165,6 @@ class PatientController extends AppBaseController
      */
     public function destroy(Patient $patient): JsonResponse
     {
-        // Check if patient has visits
-        $existVisit = Visit::wherePatientId($patient->id)->exists();
-
-        // Prevent deletion if patient has active data
-        if ($existVisit) {
-            return $this->sendError(__('messages.flash.patient_used'));
-        }
-
         try {
             DB::beginTransaction();
 

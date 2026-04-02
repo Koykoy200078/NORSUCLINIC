@@ -42,9 +42,6 @@
         'icon' => 'fas fa-stethoscope',
         'description' => 'Core medical practice management and patient care operations',
         'permissions' => [
-        'manage_appointments' => 'Schedule, modify, and cancel patient appointments across the system',
-        'manage_patient_visits' => 'Record and manage patient visits, consultations, and medical interactions',
-        'manage_doctor_sessions' => 'Configure doctor availability, working hours, and session schedules',
         'manage_request_documents' => 'Handle patient document requests, medical certificates, and official forms'
         ]
         ],
@@ -52,16 +49,16 @@
         'icon' => 'fas fa-medical-kit',
         'description' => 'Medical services, specializations, and pharmaceutical management',
         'permissions' => [
-        'manage_services' => 'Create and manage medical services offered by the clinic',
         'manage_specialties' => 'Define and manage medical specializations and expertise areas',
         'manage_medicines' => 'Manage medicine inventory, categories, brands, purchases, and prescriptions'
         ]
         ],
-        'Financial Management' => [
-        'icon' => 'fas fa-money-bill',
-        'description' => 'Financial operations, payments, and transaction management',
+        'Content Management' => [
+        'icon' => 'fas fa-edit',
+        'description' => 'Website content, marketing materials, and public-facing information',
         'permissions' => [
-        'manage_transactions' => 'View and manage financial transactions, payments, and billing records'
+        'manage_front_cms' => 'Manage website content, pages, sliders, testimonials, and public information',
+        'manage_doctors_holiday' => 'Configure doctor holidays, vacation schedules, and unavailable periods'
         ]
         ],
         'Location Management' => [
@@ -71,14 +68,6 @@
         'manage_countries' => 'Manage country list for patient registration and clinic expansion',
         'manage_states' => 'Manage state/province data for accurate patient addressing',
         'manage_cities' => 'Manage city/municipality data for precise location services'
-        ]
-        ],
-        'Content Management' => [
-        'icon' => 'fas fa-edit',
-        'description' => 'Website content, marketing materials, and public-facing information',
-        'permissions' => [
-        'manage_front_cms' => 'Manage website content, pages, sliders, testimonials, and public information',
-        'manage_doctors_holiday' => 'Configure doctor holidays, vacation schedules, and unavailable periods'
         ]
         ]
         ];

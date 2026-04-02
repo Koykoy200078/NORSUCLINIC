@@ -10,7 +10,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VisitController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\RequestDocumentsController;
 use App\Http\Controllers\ActivityLogController;
@@ -32,20 +31,6 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
     Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
     Route::get('patient-queue/{patientQueue}/consultation', [PatientQueueController::class, 'viewConsultation'])->name('patient-queue.view-consultation');
-
-    // Patient Visits (Doctors can manage visits)
-    Route::middleware('permission:manage_patient_visits')->group(function () {
-        Route::resource('visits', VisitController::class);
-        Route::post('add-problem', [VisitController::class, 'addProblem'])->name('visits.add.problem');
-        Route::post('delete-problem/{problem}', [VisitController::class, 'deleteProblem'])->name('visits.delete.problem');
-        Route::post('add-observation', [VisitController::class, 'addObservation'])->name('visits.add.observation');
-        Route::post('delete-observation/{observation}', [VisitController::class, 'deleteObservation'])->name('visits.delete.observation');
-        Route::post('add-note', [VisitController::class, 'addNote'])->name('visits.add.note');
-        Route::post('delete-note/{note}', [VisitController::class, 'deleteNote'])->name('visits.delete.note');
-        Route::post('add-prescription', [VisitController::class, 'addPrescription'])->name('visits.add.prescription');
-        Route::post('delete-prescription/{prescription}', [VisitController::class, 'deletePrescription'])->name('visits.delete.prescription');
-        Route::get('edit-prescription/{prescription}', [VisitController::class, 'editPrescription'])->name('visits.edit.prescription');
-    });
 
     Route::get('doctors/{doctor}', [UserController::class, 'show'])->name('doctors.detail');
 

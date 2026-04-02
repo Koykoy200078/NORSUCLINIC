@@ -707,29 +707,6 @@ if (! function_exists('getRouteByRole')) {
     }
 }
 
-if (! function_exists('getVisitRoute')) {
-    /**
-     * Get visit route based on user role
-     * @param string $action
-     * @param array $parameters
-     * @return string
-     */
-    function getVisitRoute(string $action, array $parameters = []): string
-    {
-        $user = getLogInUser();
-
-        if ($user->hasRole('clinic_admin')) {
-            return route('admin.visits.' . $action, $parameters);
-        } elseif ($user->hasRole('doctor')) {
-            return route('doctors.visits.' . $action, $parameters);
-        } elseif ($user->hasRole('staff')) {
-            return route('staff.visits.' . $action, $parameters);
-        } else {
-            return route('visits.' . $action, $parameters);
-        }
-    }
-}
-
 if (! function_exists('getPrescriptionRoute')) {
     /**
      * Get prescription route based on user role

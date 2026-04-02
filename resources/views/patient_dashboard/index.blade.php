@@ -454,5 +454,4 @@
 </script>
 @endpush
 
-@include('generate_patient_smart_cards/components/show_card')
 @endsection

@@ -20,7 +20,6 @@ use Illuminate\Support\Carbon;
  * @property string $end_time_type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\DoctorSession $doctorSession
  * @property-read mixed $full_end_time
  * @property-read mixed $full_start_time
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay newModelQuery()
@@ -29,7 +28,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereDayOfWeek($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereDoctorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereDoctorSessionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereEndTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereEndTimeType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|WeekDay whereId($value)
@@ -72,16 +70,11 @@ class WeekDay extends Model
 
     public function getFullStartTimeAttribute()
     {
-        return $this->start_time.' '.$this->start_time_type;
+        return $this->start_time . ' ' . $this->start_time_type;
     }
 
     public function getFullEndTimeAttribute()
     {
-        return $this->end_time.' '.$this->end_time_type;
-    }
-
-    public function doctorSession()
-    {
-        return $this->belongsTo(DoctorSession::class);
+        return $this->end_time . ' ' . $this->end_time_type;
     }
 }

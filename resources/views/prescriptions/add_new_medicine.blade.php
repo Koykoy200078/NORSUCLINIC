@@ -26,11 +26,11 @@
                         {{ Form::select('category_id', $categories, (isset($medicine)) ? $medicine->category_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_category'), 'id' => 'prescriptionMedicineCategoryId']) }}
                     </div>
 
-                    <!-- Name Field -->
+                    <!-- Generic Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('brand_id', __('messages.medicine.brand').(':'), ['class' => 'form-label']) }}
+                        {{ Form::label('generic_id', __('messages.medicine.generic').(':'), ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::select('brand_id', $brands,  (isset($medicine)) ? $medicine->brand_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_brand'), 'id' => 'prescriptionMedicineBrandId']) }}
+                        {{ Form::select('generic_id', $generics,  (isset($medicine)) ? $medicine->generic_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_generic'), 'id' => 'prescriptionMedicineGenericId']) }}
                     </div>
 
                     <!-- Salt Composition Field -->

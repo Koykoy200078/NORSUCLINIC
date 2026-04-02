@@ -136,11 +136,6 @@ mix.sass(
     )
     .version()
     .sass(
-        "resources/assets/scss/smart-card-pdf.scss",
-        "public/assets/css/smart-card-pdf.css",
-    )
-    .version()
-    .sass(
         "resources/assets/front/scss/front-custom.scss",
         "assets/front/css/front-custom.css",
     )

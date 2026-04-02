@@ -21,17 +21,14 @@ class PrescriptionTable extends LivewireTableComponent
 
     protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
 
-    public $appointMentId = '';
-
     public $doctor;
 
     public $patient;
 
     public $statusFilter = '';
 
-    public function mount($id = null)
+    public function mount()
     {
-        $this->appointMentId = $id;
         $this->doctor = getLogInUser()->hasRole('doctor') ? 1 : 0;
         $this->patient = getLogInUser()->hasRole('patient') ? 1 : 0;
     }
@@ -102,9 +99,6 @@ class PrescriptionTable extends LivewireTableComponent
                 'doctor.doctorUser:id,first_name,last_name'
             ])->where('doctor_id', $doctorId->id);
         }
-        $query->when(! empty($this->appointMentId), function (Builder $q) {
-            $q->whereAppointmentId($this->appointMentId);
-        });
         $query->when(
             $this->statusFilter !== '' && $this->statusFilter != Prescription::STATUS_ALL,
             function (Builder $query) {

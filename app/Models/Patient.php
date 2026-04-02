@@ -182,9 +182,6 @@ class Patient extends Model implements HasMedia
             // Delete all prescriptions
             $patient->prescriptions()->delete();
 
-            // Delete all visits
-            $patient->visits()->delete();
-
             // Delete all medicine bills
             $patient->medicineBills()->delete();
 
@@ -298,11 +295,6 @@ class Patient extends Model implements HasMedia
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class);
-    }
-
-    public function visits(): HasMany
-    {
-        return $this->hasMany(Visit::class);
     }
 
     public function medicineBills(): HasMany

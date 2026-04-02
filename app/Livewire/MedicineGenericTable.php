@@ -71,7 +71,7 @@ class MedicineGenericTable extends LivewireTableComponent
 
     public function placeholder()
     {
-        return view('livewire.smart_patient_cards_skeleton');
+        return view('livewire.loading_skeleton');
     }
 
     public function columns(): array

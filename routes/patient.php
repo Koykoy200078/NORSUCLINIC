@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PatientVisitController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -13,12 +12,6 @@ Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUs
         '/dashboard-patients',
         [DashboardController::class, 'getPatientList']
     )->name('patientData.dashboard');
-
-    Route::get('patient-visits', [PatientVisitController::class, 'index'])->name('patient.visits.index');
-    Route::get(
-        'patient-visits/{patientVisit}',
-        [PatientVisitController::class, 'show']
-    )->name('patient.visits.show');
 
     // Route for Prescription
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');
