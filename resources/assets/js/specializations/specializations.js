@@ -32,6 +32,8 @@ function renderData (id) {
 
 listenSubmit('#createSpecializationForm', function (e) {
     e.preventDefault()
+    let $btn = $('#createSpecializationForm button[type="submit"]')
+    $btn.prop('disabled', true)
     $.ajax({
         url: route('specializations.store'),
         type: 'POST',
@@ -40,17 +42,22 @@ listenSubmit('#createSpecializationForm', function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message)
                 $('#createSpecializationModal').modal('hide')
-                Livewire.dispatch('refresh')
+                setTimeout(function () {
+                    window.location.reload()
+                }, 1500)
             }
         },
         error: function (result) {
             displayErrorMessage(result.responseJSON.message)
+            $btn.prop('disabled', false)
         },
     })
 })
 
 listenSubmit('#editSpecializationForm', function (e) {
     e.preventDefault()
+    let $btn = $('#editSpecializationForm button[type="submit"]')
+    $btn.prop('disabled', true)
     let updateSpecializationId = $('#specializationID').val()
     $.ajax({
         url: route('specializations.update', updateSpecializationId),
@@ -59,10 +66,13 @@ listenSubmit('#editSpecializationForm', function (e) {
         success: function (result) {
             $('#editSpecializationModal').modal('hide')
             displaySuccessMessage(result.message)
-            Livewire.dispatch('refresh')
+            setTimeout(function () {
+                window.location.reload()
+            }, 1500)
         },
         error: function (result) {
             displayErrorMessage(result.responseJSON.message)
+            $btn.prop('disabled', false)
         },
     })
 })

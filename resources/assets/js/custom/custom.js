@@ -211,9 +211,12 @@ window.deleteItem = function (url, header) {
         arguments.length > 3 && arguments[3] !== undefined
             ? arguments[3]
             : null;
+    var text = header
+        ? Lang.get("js.are_you_sure") + ' "' + header + '" ?'
+        : Lang.get("js.are_you_sure") + " ?";
     swal({
         title: Lang.get("js.delete") + " !",
-        text: Lang.get("js.are_you_sure") + ' "' + header + '" ?',
+        text: text,
         buttons: {
             confirm: Lang.get("js.yes"),
             cancel: Lang.get("js.no"),

@@ -5,7 +5,7 @@
 <div>
     <div class="row">
         <div class="form-group col-md-3 mb-5">
-            {{ Form::label('patient_id', __('messages.appointment.patient') . ':', ['class' => 'form-label']) }}
+            {{ Form::label('patient_id', __('Patient Name') . ':', ['class' => 'form-label']) }}
             <span class="required"></span>
             {{ Form::select('patient_id', $patients, isset($medicineBill) ? $medicineBill->patient_id : null, ['class' => 'form-select w-80', 'required', 'id' => 'prescriptionPatientId', 'placeholder' => __('messages.medicine_bills.select_patient')]) }}
         </div>
@@ -32,8 +32,8 @@
     </div>
 
     <div class="mb-md-0 mb-5 w-full">
-        <label class="fw-bold text-muted py-3">{{ __('messages.currency.note') }}</label>
-        {{ Form::textarea('note', null, ['class' => 'form-control w-100', 'rows' => 2, 'placeholder'=> __('messages.currency.note')]) }}
+        <label class="fw-bold text-muted py-3">{{ __('Notes') }}</label>
+        {{ Form::textarea('note', null, ['class' => 'form-control w-100', 'rows' => 2, 'placeholder'=> __('Notes (Optional)')]) }}
     </div>
 </div>
 
@@ -47,7 +47,7 @@
                             <th class="">{{ __('messages.medicine_categories') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
                             {{-- <th class="">{{ __('lot no.') }}<span class="required"></span></th> --}}
-                            <th class="">{{ __('messages.purchase_medicine.expiry_date') }}</th>
+                            <th class="">{{ __('Expiry Date') }}</th>
                             <th class="d-none">{{ __('messages.medicine_bills.sale_price') }}<span class="required"></span></th>
                             {{-- <th class="">{{ __('Purchase Price') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
@@ -75,7 +75,7 @@
                                 {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}
                             </td>
                             <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('messages.purchase_medicine.expiry_date')]) }}
+                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('Expiry Date')]) }}
                             </td>
                             <td class="d-none">
                                 {{ Form::text('sale_price[]', number_format($saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicineBill-sale-price price-format ', 'id' => 'medicine_sale_price' . $key + 1, 'required']) }}
@@ -83,10 +83,7 @@
 
                             {{ Form::hidden('quantity1[]', $saleMedicine->sale_quantity, ['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
                             <td>
-                                <div class="input-group">
-                                    {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'required']) }}
-                                    <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1">{{$saleMedicine->medicine->available_quantity}}</span>
-                                </div>
+                                {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'required']) }}
                             </td>
                             <td class="d-none">
                                 <div class="input-group">
@@ -95,7 +92,7 @@
                                         {{ __('%') }}</span>
                                 </div>
                             </td>
-                            <td>
+                            <td class="d-none">
                                 {{ Form::text('amount[]', number_format($saleMedicine->sale_quantity * $saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount' . $key + 1]) }}
                             </td>
                             <td class="text-center">
@@ -118,7 +115,7 @@
                         {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control', 'id' => 'manufacturing_date1','required','placeholder'=>'Manufacturing Date']) }}
                             </td> --}}
                             <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('messages.purchase_medicine.expiry_date')]) }}
+                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('Expiry Date')]) }}
                             </td>
                             <td class="d-none">
                                 {{ Form::text('sale_price[]', 0, ['class' => 'form-control medicineBill-sale-price price-format', 'required', 'id' => 'medicine_sale_price1']) }}
@@ -127,10 +124,7 @@
                         {{ Form::number('purchase_price[]', '0.00', ['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1','required' ]) }}
                             </td> --}}
                             <td>
-                                <div class="input-group">
-                                    {{ Form::number('quantity[]', 0, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'required']) }}
-                                    <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside1"></span>
-                                </div>
+                                {{ Form::number('quantity[]', 0, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'required']) }}
                             </td>
                             <td class="d-none">
                                 <div class="input-group">

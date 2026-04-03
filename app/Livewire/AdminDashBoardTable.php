@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Patient;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
 
@@ -12,10 +13,24 @@ class AdminDashBoardTable extends Component
     public $data;
     public function mount()
     {
-        $this->data['patients'] = Patient::with(['user'])
-            ->whereDate('created_at', today())
-            ->orderBy('created_at', 'DESC')
-            ->get()->toArray();
+        $this->data['patients'] = Cache::remember('admin_dashboard_today_patients_' . today()->format('Y-m-d'), 60, function () {
+            return Patient::with(['user:id,first_name,last_name,email,created_at', 'media'])
+                ->whereDate('created_at', today())
+                ->orderBy('created_at', 'DESC')
+                ->get()
+                ->map(fn($p) => [
+                    'id'               => $p->id,
+                    'patient_unique_id' => $p->patient_unique_id,
+                    'profile'          => $p->profile,
+                    'user'             => [
+                        'id'         => $p->user->id,
+                        'full_name'  => $p->user->full_name,
+                        'email'      => $p->user->email,
+                        'created_at' => $p->user->created_at,
+                    ],
+                ])
+                ->toArray();
+        });
     }
 
     public function placeholder()

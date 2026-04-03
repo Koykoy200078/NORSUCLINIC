@@ -6,7 +6,7 @@ function initializeFlatpickrForElement(
     element,
     format,
     allowPastDates = false,
-    dateType = "general" // 'manufacturing', 'expiry', or 'general'
+    dateType = "general", // 'manufacturing', 'expiry', or 'general'
 ) {
     let config = {};
 
@@ -57,7 +57,7 @@ function initializeFlatpickrForElement(
             let currentYear = instance.currentYear;
             let currentMonth = String(instance.currentMonth + 1).padStart(
                 2,
-                "0"
+                "0",
             );
             let yearMonth = `${currentYear}-${currentMonth}`;
 
@@ -65,7 +65,7 @@ function initializeFlatpickrForElement(
             let firstDayOfMonth = new Date(
                 currentYear,
                 instance.currentMonth,
-                1
+                1,
             );
             instance.setDate(firstDayOfMonth, false); // false = don't trigger onChange
 
@@ -145,7 +145,7 @@ function loadMedicineAvailabilityCreate() {
         // Update title attribute for tooltip
         $(this).attr(
             "title",
-            isChecked ? "Month Only (Y-M)" : "Full Date (Y-M-D)"
+            isChecked ? "Month Only (Y-M)" : "Full Date (Y-M-D)",
         );
 
         // Reinitialize flatpickr with new format
@@ -162,7 +162,7 @@ function loadMedicineAvailabilityCreate() {
             manufacturingInput,
             format,
             true,
-            "manufacturing"
+            "manufacturing",
         );
 
         // Update corresponding expiry date minDate when manufacturing date changes
@@ -189,7 +189,7 @@ function loadMedicineAvailabilityCreate() {
         // Update title attribute for tooltip
         $(this).attr(
             "title",
-            isChecked ? "Month Only (Y-M)" : "Full Date (Y-M-D)"
+            isChecked ? "Month Only (Y-M)" : "Full Date (Y-M-D)",
         );
 
         // Reinitialize flatpickr with new format
@@ -206,7 +206,7 @@ function loadMedicineAvailabilityCreate() {
             expiryInput,
             format,
             isEditPage,
-            "expiry"
+            "expiry",
         );
     });
 
@@ -236,7 +236,7 @@ listenClick(".add-medicine-btn-purchase", function () {
     };
     let prescriptionMedicineHtml = prepareTemplateRender(
         "#purchaseMedicineTemplate",
-        data
+        data,
     );
     $(".prescription-medicine-container").append(prescriptionMedicineHtml);
     dropdownToSelecte2(".purchaseMedicineId");
@@ -249,7 +249,7 @@ listenClick(".add-medicine-btn-purchase", function () {
         $("#manufacturing_date" + uniquePrescriptionId),
         manufacturingFormat,
         true,
-        "manufacturing"
+        "manufacturing",
     );
 
     // Initialize flatpickr for the newly added expiry date row (validate against manufacturing)
@@ -259,7 +259,7 @@ listenClick(".add-medicine-btn-purchase", function () {
         $("#expiry_date" + uniquePrescriptionId),
         expiryFormat,
         isEditPage,
-        "expiry"
+        "expiry",
     );
 
     uniquePrescriptionId++;
@@ -300,7 +300,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
 
         if (typeof $(medicinID).val() != "undefined") {
             if ($(medicinID).val() == null || $(medicinID).val() == "") {
-                displayErrorMessage(Lang.get("js.select_medicine"));
+                displayErrorMessage("Select medicine.");
                 return false;
             }
         }
@@ -311,7 +311,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
                 $(manufacturingDate).val() == null ||
                 $(manufacturingDate).val() == ""
             ) {
-                displayErrorMessage(Lang.get("js.enter_manufacturing_date"));
+                displayErrorMessage("Enter manufacturing date.");
                 return false;
             }
         }
@@ -322,7 +322,7 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
                 displayErrorMessage("Enter quantity.");
                 return false;
             } else if ($(quantityID).val() == 0) {
-                displayErrorMessage(Lang.get("js.quantity_should"));
+                displayErrorMessage("Quantity should be greater than 0.");
                 return false;
             }
         }
@@ -335,6 +335,6 @@ listenClick(".medicineAvailabilityDelete", function (event) {
     let id = $(event.currentTarget).attr("data-id");
     deleteItem(
         route("medicine-availability.destroy", id),
-        Lang.get("js.medicine_availability")
+        Lang.get("js.medicine_availability"),
     );
 });

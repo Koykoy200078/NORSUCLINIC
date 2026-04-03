@@ -220,6 +220,7 @@ mix.js(
         "resources/assets/front/js/front-language.js",
         "resources/assets/js/custom/create-account.js",
         "resources/assets/js/category/category.js",
+        "resources/assets/js/generics/generics.js",
         "resources/assets/js/brands/brands.js",
         "resources/assets/js/medicines/medicines.js",
         "resources/assets/js/medicine-availability/medicine-availability.js",

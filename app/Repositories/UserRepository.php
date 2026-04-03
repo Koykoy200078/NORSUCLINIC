@@ -129,7 +129,7 @@ class UserRepository extends BaseRepository
             ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
         );
         $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
-        $qualificationArray = json_decode($input['qualifications'], true);
+        $qualificationArray = json_decode($input['qualifications'] ?? '[]', true) ?? [];
         $specialization = $input['specializations'];
         try {
             DB::beginTransaction();
@@ -137,12 +137,12 @@ class UserRepository extends BaseRepository
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['type'] = User::DOCTOR;
             $doctor->user->update($input);
-            $doctor->user->address()->update($addressInputArray);
+            $doctor->user->address()->updateOrCreate([], $addressInputArray);
             $doctor->update($doctorArray);
             $doctor->specializations()->sync($specialization);
 
             if (count($qualificationArray) >= 0) {
-                if (isset($input['deletedQualifications'])) {
+                if (isset($input['deletedQualifications']) && !empty($input['deletedQualifications'])) {
                     Qualification::whereIn('id', explode(',', $input['deletedQualifications']))->delete();
                 }
 

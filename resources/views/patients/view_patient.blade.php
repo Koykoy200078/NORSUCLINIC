@@ -301,67 +301,78 @@ Patient Data
                 </div>
 
                 <!-- Custom Normal Ranges -->
-                <div class="row">
+                @php $hasRangeParams = request()->hasAny(['bp_min','bp_max','pr_min','pr_max','temp_min','temp_max','rr_min','rr_max','o2_min','o2_max']); @endphp
+                <div class="row mb-2">
                     <div class="col-md-12">
-                        <h5 class="mb-3">Customize Normal Ranges (Optional)</h5>
-                        <small class="text-muted d-block mb-3">Leave blank to use default ranges</small>
+                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                            onclick="var p=document.getElementById('customRangesPanel'); var hidden=p.classList.toggle('d-none'); document.getElementById('rangesChevron').style.transform = hidden ? '' : 'rotate(180deg)';">
+                            <i class="fa-solid fa-sliders me-1"></i>
+                            Customize Normal Ranges (Optional)
+                            <i class="fa-solid fa-chevron-down ms-1 small" id="rangesChevron" style="{{ $hasRangeParams ? 'transform:rotate(180deg)' : '' }}"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><strong>Blood Pressure (Systolic mmHg)</strong></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Min</span>
-                            <input type="number" class="form-control" name="bp_min" placeholder="90" value="{{ request('bp_min', '') }}" step="1">
-                            <span class="input-group-text">Max</span>
-                            <input type="number" class="form-control" name="bp_max" placeholder="120" value="{{ request('bp_max', '') }}" step="1">
-                        </div>
-                        <small class="text-muted">Default: 90-120 mmHg</small>
-                    </div>
+                <div id="customRangesPanel" class="{{ $hasRangeParams ? '' : 'd-none' }}">
+                    <div class="card card-body mb-3 bg-light border">
+                        <small class="text-muted d-block mb-3">Leave blank to use default ranges</small>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><strong>Heart Rate (bpm)</strong></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Min</span>
-                            <input type="number" class="form-control" name="pr_min" placeholder="60" value="{{ request('pr_min', '') }}" step="1">
-                            <span class="input-group-text">Max</span>
-                            <input type="number" class="form-control" name="pr_max" placeholder="100" value="{{ request('pr_max', '') }}" step="1">
-                        </div>
-                        <small class="text-muted">Default: 60-100 bpm</small>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><strong>Blood Pressure (Systolic mmHg)</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="bp_min" placeholder="90" value="{{ request('bp_min', '') }}" step="1">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="bp_max" placeholder="120" value="{{ request('bp_max', '') }}" step="1">
+                                </div>
+                                <small class="text-muted">Default: 90-120 mmHg</small>
+                            </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><strong>Temperature (°C)</strong></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Min</span>
-                            <input type="number" class="form-control" name="temp_min" placeholder="36.1" value="{{ request('temp_min', '') }}" step="0.1">
-                            <span class="input-group-text">Max</span>
-                            <input type="number" class="form-control" name="temp_max" placeholder="37.2" value="{{ request('temp_max', '') }}" step="0.1">
-                        </div>
-                        <small class="text-muted">Default: 36.1-37.2 °C</small>
-                    </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><strong>Heart Rate (bpm)</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="pr_min" placeholder="60" value="{{ request('pr_min', '') }}" step="1">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="pr_max" placeholder="100" value="{{ request('pr_max', '') }}" step="1">
+                                </div>
+                                <small class="text-muted">Default: 60-100 bpm</small>
+                            </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><strong>Respiratory Rate (cycles/min)</strong></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Min</span>
-                            <input type="number" class="form-control" name="rr_min" placeholder="12" value="{{ request('rr_min', '') }}" step="1">
-                            <span class="input-group-text">Max</span>
-                            <input type="number" class="form-control" name="rr_max" placeholder="20" value="{{ request('rr_max', '') }}" step="1">
-                        </div>
-                        <small class="text-muted">Default: 12-20 cycles/min</small>
-                    </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><strong>Temperature (°C)</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="temp_min" placeholder="36.1" value="{{ request('temp_min', '') }}" step="0.1">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="temp_max" placeholder="37.2" value="{{ request('temp_max', '') }}" step="0.1">
+                                </div>
+                                <small class="text-muted">Default: 36.1-37.2 °C</small>
+                            </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><strong>Oxygen Saturation (%)</strong></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Min</span>
-                            <input type="number" class="form-control" name="o2_min" placeholder="95" value="{{ request('o2_min', '') }}" step="1">
-                            <span class="input-group-text">Max</span>
-                            <input type="number" class="form-control" name="o2_max" placeholder="100" value="{{ request('o2_max', '') }}" step="1">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><strong>Respiratory Rate (cycles/min)</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="rr_min" placeholder="12" value="{{ request('rr_min', '') }}" step="1">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="rr_max" placeholder="20" value="{{ request('rr_max', '') }}" step="1">
+                                </div>
+                                <small class="text-muted">Default: 12-20 cycles/min</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><strong>Oxygen Saturation (%)</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="o2_min" placeholder="95" value="{{ request('o2_min', '') }}" step="1">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="o2_max" placeholder="100" value="{{ request('o2_max', '') }}" step="1">
+                                </div>
+                                <small class="text-muted">Default: 95-100%</small>
+                            </div>
                         </div>
-                        <small class="text-muted">Default: 95-100%</small>
                     </div>
                 </div>
 
@@ -517,22 +528,22 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @if($consultation->complaints)
-                                    @php
-                                        $items = array_filter(array_map('trim', explode('*', $consultation->complaints)));
-                                    @endphp
-                                    @if(count($items) > 0)
-                                        <ul class="mb-0" style="padding-left: 1.5rem;">
-                                            @foreach($items as $item)
-                                                @if(!empty($item))
-                                                    <li>{{ $item }}</li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        {{ $consultation->complaints }}
+                                @php
+                                $items = array_filter(array_map('trim', explode('*', $consultation->complaints)));
+                                @endphp
+                                @if(count($items) > 0)
+                                <ul class="mb-0" style="padding-left: 1.5rem;">
+                                    @foreach($items as $item)
+                                    @if(!empty($item))
+                                    <li>{{ $item }}</li>
                                     @endif
+                                    @endforeach
+                                </ul>
                                 @else
-                                    N/A
+                                {{ $consultation->complaints }}
+                                @endif
+                                @else
+                                N/A
                                 @endif
                             </td>
                             @endforeach
@@ -548,28 +559,28 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @if($consultation->assessment)
-                                    @php
-                                        $text = $consultation->assessment;
-                                        $parts = explode('*', $text);
-                                        $firstPart = trim($parts[0]);
-                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
-                                    @endphp
-                                    
-                                    @if(!empty($firstPart))
-                                        <div>{{ $firstPart }}</div>
+                                @php
+                                $text = $consultation->assessment;
+                                $parts = explode('*', $text);
+                                $firstPart = trim($parts[0]);
+                                $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                @endphp
+
+                                @if(!empty($firstPart))
+                                <div>{{ $firstPart }}</div>
+                                @endif
+
+                                @if(count($items) > 0)
+                                <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                    @foreach($items as $item)
+                                    @if(!empty($item))
+                                    <li>{{ $item }}</li>
                                     @endif
-                                    
-                                    @if(count($items) > 0)
-                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
-                                            @foreach($items as $item)
-                                                @if(!empty($item))
-                                                    <li>{{ $item }}</li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                                    @endforeach
+                                </ul>
+                                @endif
                                 @else
-                                    N/A
+                                N/A
                                 @endif
                             </td>
                             @endforeach
@@ -579,28 +590,28 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @if($consultation->plan)
-                                    @php
-                                        $text = $consultation->plan;
-                                        $parts = explode('*', $text);
-                                        $firstPart = trim($parts[0]);
-                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
-                                    @endphp
-                                    
-                                    @if(!empty($firstPart))
-                                        <div>{{ $firstPart }}</div>
+                                @php
+                                $text = $consultation->plan;
+                                $parts = explode('*', $text);
+                                $firstPart = trim($parts[0]);
+                                $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                @endphp
+
+                                @if(!empty($firstPart))
+                                <div>{{ $firstPart }}</div>
+                                @endif
+
+                                @if(count($items) > 0)
+                                <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                    @foreach($items as $item)
+                                    @if(!empty($item))
+                                    <li>{{ $item }}</li>
                                     @endif
-                                    
-                                    @if(count($items) > 0)
-                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
-                                            @foreach($items as $item)
-                                                @if(!empty($item))
-                                                    <li>{{ $item }}</li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                                    @endforeach
+                                </ul>
+                                @endif
                                 @else
-                                    N/A
+                                N/A
                                 @endif
                             </td>
                             @endforeach
@@ -644,28 +655,28 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @if($consultation->nursing_intervention)
-                                    @php
-                                        $text = $consultation->nursing_intervention;
-                                        $parts = explode('*', $text);
-                                        $firstPart = trim($parts[0]);
-                                        $items = array_filter(array_map('trim', array_slice($parts, 1)));
-                                    @endphp
-                                    
-                                    @if(!empty($firstPart))
-                                        <div>{{ $firstPart }}</div>
+                                @php
+                                $text = $consultation->nursing_intervention;
+                                $parts = explode('*', $text);
+                                $firstPart = trim($parts[0]);
+                                $items = array_filter(array_map('trim', array_slice($parts, 1)));
+                                @endphp
+
+                                @if(!empty($firstPart))
+                                <div>{{ $firstPart }}</div>
+                                @endif
+
+                                @if(count($items) > 0)
+                                <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
+                                    @foreach($items as $item)
+                                    @if(!empty($item))
+                                    <li>{{ $item }}</li>
                                     @endif
-                                    
-                                    @if(count($items) > 0)
-                                        <ul class="mb-0" style="padding-left: 1.5rem; list-style-type: disc;">
-                                            @foreach($items as $item)
-                                                @if(!empty($item))
-                                                    <li>{{ $item }}</li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                                    @endforeach
+                                </ul>
+                                @endif
                                 @else
-                                    N/A
+                                N/A
                                 @endif
                             </td>
                             @endforeach
@@ -842,7 +853,8 @@ Patient Data
         word-wrap: break-word !important;
         word-break: break-word !important;
         overflow-wrap: break-word !important;
-        max-width: 300px; /* Adjust based on your needs */
+        max-width: 300px;
+        /* Adjust based on your needs */
         min-width: 150px;
     }
 

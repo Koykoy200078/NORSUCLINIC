@@ -165,8 +165,6 @@ class Patient extends Model implements HasMedia
 
     protected $appends = ['profile'];
 
-    protected $with = ['media'];
-
     /**
      * Boot the model and set up event listeners for cascade delete
      */
@@ -240,19 +238,21 @@ class Patient extends Model implements HasMedia
 
     public function getProfileAttribute(): string
     {
+        // Guard: only use media if already eager-loaded to avoid N+1 queries
+        if ($this->relationLoaded('media')) {
+            /** @var Media $media */
+            $media = $this->getMedia(self::PROFILE)->first();
 
-        /** @var Media $media */
-        $media = $this->getMedia(self::PROFILE)->first();
-
-        if ($media) {
-            $fullUrl = $media->getFullUrl();
-            if (str_starts_with($fullUrl, 'http://localhost')) {
-                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+            if ($media) {
+                $fullUrl = $media->getFullUrl();
+                if (str_starts_with($fullUrl, 'http://localhost')) {
+                    $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
+                }
+                return $fullUrl;
             }
-            return $fullUrl;
         }
 
-        $gender = $this->user->gender;
+        $gender = $this->relationLoaded('user') ? $this->user->gender : null;
         if ($gender == self::FEMALE) {
             return asset('web/media/avatars/female.png');
         }

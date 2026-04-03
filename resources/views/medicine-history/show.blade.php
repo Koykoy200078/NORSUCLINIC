@@ -8,10 +8,8 @@
         <!-- <h1 class="mb-0 me-1">{{__('messages.medicine_bills.medicine_bill_details')}}</h1> -->
         <h1 class="mb-0 me-1"></h1>
         <div class="text-end mt-4 mt-md-0">
-            @if(isset($medicineBill->payment_status) && $medicineBill->payment_status == false)
             <a class="btn btn-primary edit-btn"
-                href="{{ isRole('clinic_admin') ? route('medicine-history.edit', ['medicine_bill' => $medicineBill->id]) : (isRole('staff') ? route('staff.medicine-history.edit', ['medicine_bill' => $medicineBill->id]) : route('doctors.medicine-history.edit', ['medicine_bill' => $medicineBill->id])) }}">{{ __('messages.common.edit') }}</a>
-            @endif
+                href="{{ isRole('clinic_admin') ? route('medicine-history.edit', ['medicine_history' => $medicineBill->id]) : (isRole('staff') ? route('staff.medicine-history.edit', ['medicine_history' => $medicineBill->id]) : route('doctors.medicine-history.edit', ['medicine_history' => $medicineBill->id])) }}">{{ __('messages.common.edit') }}</a>
             <a href="{{ isRole('clinic_admin') ? route('medicine-history.index') : (isRole('staff') ? route('staff.medicine-history.index') : route('doctors.medicine-history.index')) }}"
                 class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
         </div>

@@ -45,7 +45,7 @@ class DashboardRepository
             return $cachedData;
         });
 
-        $data['patients'] = Patient::with(['user:id,first_name,last_name'])
+        $data['patients'] = Patient::with(['user:id,first_name,last_name', 'media'])
             ->whereDate('created_at', $todayDate)
             ->orderBy('created_at', 'DESC')
             ->paginate(5);
@@ -63,7 +63,7 @@ class DashboardRepository
     public function patientData($input)
     {
         if (isset($input['day'])) {
-            return Patient::with(['user:id,first_name,last_name,email'])
+            return Patient::with(['user:id,first_name,last_name,email', 'media'])
                 ->whereDate('created_at', Carbon::today())
                 ->orderBy('created_at', 'DESC')
                 ->paginate(5);
@@ -73,14 +73,14 @@ class DashboardRepository
             $now = Carbon::now();
             $weekStartDate = $now->copy()->startOfWeek()->format('Y-m-d H:i');
             $weekEndDate = $now->copy()->endOfWeek()->format('Y-m-d H:i');
-            return Patient::with(['user:id,first_name,last_name,email'])
+            return Patient::with(['user:id,first_name,last_name,email', 'media'])
                 ->whereBetween('created_at', [$weekStartDate, $weekEndDate])
                 ->orderBy('created_at', 'DESC')
                 ->paginate(5);
         }
 
         if (isset($input['month'])) {
-            return Patient::with(['user:id,first_name,last_name,email'])
+            return Patient::with(['user:id,first_name,last_name,email', 'media'])
                 ->whereMonth('created_at', Carbon::now()->month)
                 ->orderBy('created_at', 'DESC')
                 ->paginate(5);
@@ -118,7 +118,7 @@ class DashboardRepository
             return $cachedData;
         });
 
-        $data['patients'] = Patient::with(['user:id,first_name,last_name'])
+        $data['patients'] = Patient::with(['user:id,first_name,last_name', 'media'])
             ->whereDate('created_at', $todayDate)
             ->orderBy('created_at', 'DESC')
             ->paginate(5);

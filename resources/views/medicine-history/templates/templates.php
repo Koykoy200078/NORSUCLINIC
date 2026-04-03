@@ -70,16 +70,13 @@
             <input class="form-control" placeholder="Manufacturing Date" required="" name="manufacturing_date[]" type="text" id="manufacturing_date{{:uniqueId}}">
         </td> -->
         <td>
-            <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('messages.purchase_medicine.expiry_date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
+            <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('Expiry Date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
         </td>
         <td class="d-none">
             <input class="form-control medicineBill-sale-price" required="" value='0.00' name="sale_price[]" id="medicine_sale_price{{:uniqueId}}" type="text">
         </td>
         <td>
-            <div class="input-group">
             <input type="number" class="form-control medicineBill-quantity" required="" value='0' name="quantity[]"  id="quantity{{:uniqueId}}">
-            <span class="input-group-text ms-0 medicineTotalQuantity" id="quantityshowside{{:uniqueId}}"></span>
-            </div>
         </td>
             <td class="d-none">
             <div class="input-group">

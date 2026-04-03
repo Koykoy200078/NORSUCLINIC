@@ -120,14 +120,10 @@ class GenericController extends AppBaseController
      */
     public function destroy(Generic $generic): JsonResponse
     {
-        $medicineGenericModel = [
-            Medicine::class,
-        ];
-        $result = canDelete($medicineGenericModel, 'generic_id', $generic->id);
-        if ($result) {
-            return $this->sendError(__('messages.medicine_generics') . ' ' . __('messages.medicine.cant_be_deleted'));
-        }
-        $generic->delete($generic->id);
+        // Null out generic_id on any medicines using this generic before deleting
+        Medicine::where('generic_id', $generic->id)->update(['generic_id' => null]);
+
+        $generic->delete();
 
         return $this->sendSuccess(__('messages.medicine_generics') . ' ' . __('messages.medicine.deleted_successfully'));
     }

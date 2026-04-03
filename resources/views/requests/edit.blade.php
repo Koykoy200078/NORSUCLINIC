@@ -399,7 +399,7 @@
                 <!-- Upload new images -->
                 <div class="mt-4">
                     <label class="block text-sm font-semibold mb-2">Add New Images:</label>
-                    
+
                     <!-- Drag & Drop Zone -->
                     <div id="drop_zone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4 transition-all hover:border-blue-400 hover:bg-blue-50">
                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
@@ -421,10 +421,10 @@
                             <i class="fas fa-link"></i> Or paste image URL to auto-download:
                         </label>
                         <div class="flex gap-2">
-                            <input type="text" id="image_url_input" 
-                                class="flex-1 border border-gray-300 rounded px-3 py-2" 
+                            <input type="text" id="image_url_input"
+                                class="flex-1 border border-gray-300 rounded px-3 py-2"
                                 placeholder="https://example.com/image.jpg">
-                            <button type="button" id="download_from_url_btn" 
+                            <button type="button" id="download_from_url_btn"
                                 class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                                 <i class="fas fa-download"></i> Download
                             </button>
@@ -491,7 +491,31 @@
                 </p>
                 <p>
                     <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ old('address', $requestDocument->address) }}">
-                    , was seen and examined at my clinic on <input type="date" id="examined_on" name="examined_on" style="width: 120px; text-align: center;" class="border-b border-black" value="{{ old('examined_on', $requestDocument->examined_on ? (strpos($requestDocument->examined_on, '|') !== false ? explode('|', $requestDocument->examined_on)[0] : (strpos($requestDocument->examined_on, ',') !== false ? explode(',', $requestDocument->examined_on)[0] : $requestDocument->examined_on)) : '') }}"> with the following
+                    @php
+                    $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
+                    if ($examinedOnRaw) {
+                    if (str_ends_with($examinedOnRaw, '|range')) {
+                    $parts = explode('|', $examinedOnRaw);
+                    $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
+                    } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
+                    $datesStr = explode('|', $examinedOnRaw)[0];
+                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
+                    } elseif (str_contains($examinedOnRaw, ',')) {
+                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
+                    } else {
+                    $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
+                    }
+                    } else {
+                    $examinedOnDisplay = '';
+                    }
+                    @endphp
+                    , was seen and examined at my clinic on
+                    <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" value="{{ $examinedOnDisplay }}" readonly required>
+                    <input type="hidden" id="examined_on" name="examined_on" value="{{ $examinedOnRaw }}">
+                    <button type="button" id="open_date_selector" class="btn btn-sm btn-primary ml-2" style="padding: 2px 8px; font-size: 12px;">
+                        <i class="fas fa-calendar-alt"></i> Select Dates
+                    </button>
+                    with the following
                 <p class="font-semibold">complaints/diagnosis:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
@@ -538,6 +562,71 @@
             </div>
         </div>
     </form>
+
+    <!-- Date Selector Modal (Medical Certificate) -->
+    <div id="date_selector_modal" class="modal fade" tabindex="-1" aria-labelledby="dateSelectorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dateSelectorModalLabel">Select Examination Date(s)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Date Type:</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="date_type" id="single_date_radio" value="single" checked>
+                            <label class="btn btn-outline-primary" for="single_date_radio">Single Date</label>
+                            <input type="radio" class="btn-check" name="date_type" id="date_range_radio" value="range">
+                            <label class="btn btn-outline-primary" for="date_range_radio">Date Range</label>
+                            <input type="radio" class="btn-check" name="date_type" id="multiple_dates_radio" value="multiple">
+                            <label class="btn btn-outline-primary" for="multiple_dates_radio">Multiple Dates</label>
+                        </div>
+                    </div>
+                    <!-- Single Date -->
+                    <div id="single_date_section" class="date-section">
+                        <label for="single_date_input" class="form-label">Select Date:</label>
+                        <input type="date" id="single_date_input" class="form-control" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <!-- Date Range -->
+                    <div id="date_range_section" class="date-section" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="start_date_input" class="form-label">Start Date:</label>
+                                <input type="date" id="start_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="end_date_input" class="form-label">End Date:</label>
+                                <input type="date" id="end_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Multiple Dates -->
+                    <div id="multiple_dates_section" class="date-section" style="display: none;">
+                        <label for="add_date_input" class="form-label">Add Date:</label>
+                        <div class="input-group mb-3">
+                            <input type="date" id="add_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                            <button type="button" id="add_date_btn" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div id="selected_dates_list" class="border rounded p-3" style="min-height: 100px; max-height: 200px; overflow-y: auto;">
+                            <p class="text-muted text-center mb-0">No dates selected</p>
+                        </div>
+                    </div>
+                    <!-- Preview -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <label class="form-label fw-bold">Preview:</label>
+                        <p id="date_preview" class="mb-0 text-primary">No date selected</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="apply_dates_btn" class="btn btn-primary">Apply Dates</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 </div>
 
@@ -550,6 +639,27 @@
     #complaints_diagnosis,
     #medical_cert_remarks {
         resize: none;
+    }
+
+    .selected-date-item {
+        display: inline-block;
+        background: #e7f3ff;
+        border: 1px solid #2196F3;
+        border-radius: 4px;
+        padding: 5px 10px;
+        margin: 3px;
+        font-size: 14px;
+    }
+
+    .selected-date-item .remove-date {
+        margin-left: 8px;
+        color: #d32f2f;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .selected-date-item .remove-date:hover {
+        color: #b71c1c;
     }
 
     .image-preview-wrapper {
@@ -713,8 +823,13 @@
     }
 
     @keyframes spin {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
     }
 
     .url-downloading {
@@ -992,7 +1107,7 @@
                 try {
                     // Fetch the image
                     const response = await fetch(imageUrl);
-                    
+
                     if (!response.ok) {
                         throw new Error(`Failed to download image: ${response.statusText}`);
                     }
@@ -1017,7 +1132,9 @@
                     }
 
                     // Create File object from blob
-                    const file = new File([blob], filename, { type: blob.type });
+                    const file = new File([blob], filename, {
+                        type: blob.type
+                    });
 
                     // Add to selected files
                     selectedFiles.push(file);
@@ -1156,6 +1273,190 @@
         if (addNursingMedicineBtn) {
             addNursingMedicineBtn.addEventListener('click', function() {
                 addMedicineRow('nursing', nursingMedicineCounter++);
+            });
+        }
+
+        // ==================== DATE SELECTOR FUNCTIONALITY (Medical Certificate) ====================
+        const dateSelectorModalEl = document.getElementById('date_selector_modal');
+        if (dateSelectorModalEl) {
+            let selectedDatesArray = [];
+            let currentDateType = 'single';
+
+            const dateSelectorModal = new bootstrap.Modal(dateSelectorModalEl);
+            const openDateSelectorBtn = document.getElementById('open_date_selector');
+            const applyDatesBtn = document.getElementById('apply_dates_btn');
+            const dateTypeRadios = document.querySelectorAll('input[name="date_type"]');
+
+            // Pre-populate from existing examined_on value
+            const existingExaminedOn = document.getElementById('examined_on').value;
+            if (existingExaminedOn) {
+                if (existingExaminedOn.endsWith('|range')) {
+                    const parts = existingExaminedOn.split('|');
+                    document.getElementById('start_date_input').value = parts[0];
+                    document.getElementById('end_date_input').value = parts[1];
+                    document.getElementById('date_range_radio').checked = true;
+                    document.getElementById('single_date_section').style.display = 'none';
+                    document.getElementById('date_range_section').style.display = 'block';
+                    currentDateType = 'range';
+                } else if (existingExaminedOn.endsWith('|multiple')) {
+                    const datesStr = existingExaminedOn.split('|')[0];
+                    selectedDatesArray = datesStr.split(',').map(d => d.trim()).filter(d => d);
+                    document.getElementById('multiple_dates_radio').checked = true;
+                    document.getElementById('single_date_section').style.display = 'none';
+                    document.getElementById('multiple_dates_section').style.display = 'block';
+                    currentDateType = 'multiple';
+                    renderSelectedDates();
+                } else if (existingExaminedOn.includes(',')) {
+                    // Old comma-separated format without |multiple
+                    selectedDatesArray = existingExaminedOn.split(',').map(d => d.trim()).filter(d => d);
+                    document.getElementById('multiple_dates_radio').checked = true;
+                    document.getElementById('single_date_section').style.display = 'none';
+                    document.getElementById('multiple_dates_section').style.display = 'block';
+                    currentDateType = 'multiple';
+                    renderSelectedDates();
+                } else {
+                    document.getElementById('single_date_input').value = existingExaminedOn;
+                    currentDateType = 'single';
+                }
+            }
+
+            openDateSelectorBtn.addEventListener('click', function() {
+                dateSelectorModal.show();
+                updatePreview();
+            });
+
+            dateTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentDateType = this.value;
+                    document.getElementById('single_date_section').style.display = 'none';
+                    document.getElementById('date_range_section').style.display = 'none';
+                    document.getElementById('multiple_dates_section').style.display = 'none';
+                    if (currentDateType === 'single') {
+                        document.getElementById('single_date_section').style.display = 'block';
+                    } else if (currentDateType === 'range') {
+                        document.getElementById('date_range_section').style.display = 'block';
+                    } else if (currentDateType === 'multiple') {
+                        document.getElementById('multiple_dates_section').style.display = 'block';
+                    }
+                    updatePreview();
+                });
+            });
+
+            document.getElementById('single_date_input').addEventListener('change', updatePreview);
+
+            document.getElementById('start_date_input').addEventListener('change', function() {
+                document.getElementById('end_date_input').min = this.value;
+                updatePreview();
+            });
+            document.getElementById('end_date_input').addEventListener('change', updatePreview);
+
+            document.getElementById('add_date_btn').addEventListener('click', function() {
+                const dateInput = document.getElementById('add_date_input');
+                const dateValue = dateInput.value;
+                if (!dateValue) {
+                    alert('Please select a date');
+                    return;
+                }
+                if (selectedDatesArray.includes(dateValue)) {
+                    alert('This date is already added');
+                    return;
+                }
+                selectedDatesArray.push(dateValue);
+                selectedDatesArray.sort();
+                renderSelectedDates();
+                updatePreview();
+                dateInput.value = '';
+            });
+
+            function renderSelectedDates() {
+                const listContainer = document.getElementById('selected_dates_list');
+                if (selectedDatesArray.length === 0) {
+                    listContainer.innerHTML = '<p class="text-muted text-center mb-0">No dates selected</p>';
+                    return;
+                }
+                listContainer.innerHTML = '';
+                selectedDatesArray.forEach((date, index) => {
+                    const dateItem = document.createElement('span');
+                    dateItem.className = 'selected-date-item';
+                    dateItem.innerHTML = `${formatDateDisplay(date)}<span class="remove-date" data-index="${index}">&times;</span>`;
+                    listContainer.appendChild(dateItem);
+                });
+                document.querySelectorAll('.remove-date').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        selectedDatesArray.splice(parseInt(this.dataset.index), 1);
+                        renderSelectedDates();
+                        updatePreview();
+                    });
+                });
+            }
+
+            function updatePreview() {
+                const preview = document.getElementById('date_preview');
+                let previewText = '';
+                if (currentDateType === 'single') {
+                    const singleDate = document.getElementById('single_date_input').value;
+                    previewText = singleDate ? formatDateDisplay(singleDate) : 'No date selected';
+                } else if (currentDateType === 'range') {
+                    const startDate = document.getElementById('start_date_input').value;
+                    const endDate = document.getElementById('end_date_input').value;
+                    if (startDate && endDate) {
+                        previewText = `${formatDateDisplay(startDate)} - ${formatDateDisplay(endDate)}`;
+                    } else if (startDate) {
+                        previewText = `${formatDateDisplay(startDate)} - (End date not selected)`;
+                    } else {
+                        previewText = 'No date range selected';
+                    }
+                } else if (currentDateType === 'multiple') {
+                    previewText = selectedDatesArray.length === 0 ? 'No dates selected' : selectedDatesArray.map(d => formatDateDisplay(d)).join(', ');
+                }
+                preview.textContent = previewText;
+            }
+
+            function formatDateDisplay(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString + 'T00:00:00');
+                return date.toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                });
+            }
+
+            applyDatesBtn.addEventListener('click', function() {
+                let displayValue = '';
+                let storageValue = '';
+                if (currentDateType === 'single') {
+                    const singleDate = document.getElementById('single_date_input').value;
+                    if (!singleDate) {
+                        alert('Please select a date');
+                        return;
+                    }
+                    displayValue = formatDateDisplay(singleDate);
+                    storageValue = singleDate;
+                } else if (currentDateType === 'range') {
+                    const startDate = document.getElementById('start_date_input').value;
+                    const endDate = document.getElementById('end_date_input').value;
+                    if (!startDate || !endDate) {
+                        alert('Please select both start and end dates');
+                        return;
+                    }
+                    if (new Date(endDate) < new Date(startDate)) {
+                        alert('End date cannot be before start date');
+                        return;
+                    }
+                    displayValue = `${formatDateDisplay(startDate)} - ${formatDateDisplay(endDate)}`;
+                    storageValue = `${startDate}|${endDate}|range`;
+                } else if (currentDateType === 'multiple') {
+                    if (selectedDatesArray.length === 0) {
+                        alert('Please add at least one date');
+                        return;
+                    }
+                    displayValue = selectedDatesArray.map(d => formatDateDisplay(d)).join(', ');
+                    storageValue = selectedDatesArray.join(',') + '|multiple';
+                }
+                document.getElementById('examined_on_display').value = displayValue;
+                document.getElementById('examined_on').value = storageValue;
+                dateSelectorModal.hide();
             });
         }
 

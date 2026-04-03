@@ -48,17 +48,9 @@
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
         {{ Form::select('blood_type', $bloodGroup , $user->blood_type, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.doctor.select_blood_type')]) }}
     </div>
-    <div class="col-md-6 mb-5">
+    <div class="col-md-6 mb-5" style="visibility: hidden;">
         {{ Form::label('twitter',__('messages.doctor.twitter').':' ,['class' => 'form-label']) }}
         {{ Form::text('twitter_url', !empty($doctor->twitter_url) ? $doctor->twitter_url : null,['class' => 'form-control','placeholder' =>  __('messages.common.twitter_url'),'id' => 'twitterUrl']) }}
-    </div>
-    <div class="col-md-6 mb-5">
-        {{ Form::label('linkedin',__('messages.doctor.linkedin').':' ,['class' => 'form-label']) }}
-        {{ Form::text('linkedin_url', !empty($doctor->linkedin_url) ? $doctor->linkedin_url : null,['class' => 'form-control','placeholder' =>  __('messages.common.linkedin_url'), 'id' => 'linkedinUrl']) }}
-    </div>
-    <div class="col-md-6 mb-5">
-        {{ Form::label('instagram',__('messages.doctor.instagram').':' ,['class' => 'form-label']) }}
-        {{ Form::text('instagram_url', !empty($doctor->instagram_url) ? $doctor->instagram_url : null,['class' => 'form-control','placeholder' =>  __('messages.common.instagram_url'), 'id' => 'instagramUrl']) }}
     </div>
     <div class="col-md-6 mb-5">
         <div class="mb-3" io-image-input="true">
@@ -78,17 +70,18 @@
             </div>
         </div>
     </div>
-</div>
-<div class="col-md-6 mb-5">
-    <label class="form-label">{{__('messages.doctor.status')}}:</label>
-    <div class="col-lg-8">
-        <div class="form-check form-check-solid form-switch">
-            <input name="status" class="form-check-input checkBoxClass"
-                type="checkbox" {{$user->status == 1 ? 'checked' : ''}}>
-            <label class="form-check-label" for="allowmarketing"></label>
+    <div class="col-md-6 mb-5">
+        <label class="form-label">{{__('messages.doctor.status')}}:</label>
+        <div class="col-lg-8">
+            <div class="form-check form-check-solid form-switch">
+                <input name="status" class="form-check-input checkBoxClass"
+                    type="checkbox" {{$user->status == 1 ? 'checked' : ''}}>
+                <label class="form-check-label" for="allowmarketing"></label>
+            </div>
         </div>
     </div>
 </div>
+
 <div class="row gx-10 mb-5">
     <div class="col-md-6 mb-5">
         {{ Form::label('Address 1', __('messages.doctor.address1').':', ['class' => 'form-label']) }}

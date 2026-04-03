@@ -39,6 +39,11 @@ listenClick(".add-qualification", function () {
 
 listenSubmit("#qualificationForm", function (e) {
     e.preventDefault();
+    let $saveBtn = $("#qualificationSaveBtn");
+    // Prevent double-submit
+    if ($saveBtn.prop("disabled")) return;
+    $saveBtn.prop("disabled", true);
+
     $.ajax({
         url: route("add.qualification"),
         type: "POST",
@@ -47,12 +52,24 @@ listenSubmit("#qualificationForm", function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 $("#year").val(null).trigger("change");
+                // Hide the modal first, then clean up backdrop and trigger Livewire refresh.
+                // Without the delay, Livewire re-renders the DOM while Bootstrap still
+                // owns the backdrop — leaving body.modal-open and .modal-backdrop orphaned.
                 $("#qualificationModal").modal("hide");
-                Livewire.dispatch("refresh");
+                setTimeout(function () {
+                    $(".modal-backdrop").remove();
+                    $("body")
+                        .removeClass("modal-open")
+                        .css("overflow", "")
+                        .css("padding-right", "");
+                    $saveBtn.prop("disabled", false);
+                    Livewire.dispatch("refresh");
+                }, 350);
             }
         },
         error: function (result) {
             displayErrorMessage(result.responseJSON.message);
+            $saveBtn.prop("disabled", false);
         },
     });
 });

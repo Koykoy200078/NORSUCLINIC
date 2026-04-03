@@ -149,14 +149,14 @@ class MedicineBillController extends AppBaseController
         $medicineBill = MedicineBill::create([
             'history_number' => 'HIS' . generateUniqueHistoryNumber(),
             'patient_id' => $input['patient_id'],
-            'net_amount' => $input['net_amount'],
-            'discount' => $input['discount'],
-            'payment_status' => $input['payment_status'],
-            'payment_type' => $input['payment_type'],
-            'note' => $input['note'],
-            'total' => $input['total'],
-            'tax_amount' => $input['tax'],
-            'payment_note' => $input['payment_note'],
+            'net_amount' => $input['net_amount'] ?? 0,
+            'discount' => $input['discount'] ?? 0,
+            'payment_status' => 1,
+            'payment_type' => $input['payment_type'] ?? 0,
+            'note' => $input['note'] ?? null,
+            'total' => $input['total'] ?? 0,
+            'tax_amount' => $input['tax'] ?? 0,
+            'payment_note' => $input['payment_note'] ?? null,
             'model_type' => \App\Models\MedicineBill::class,
             'bill_date' => $input['bill_date'],
         ]);
@@ -176,13 +176,11 @@ class MedicineBillController extends AppBaseController
                     'tax' => $tax,
 
                 ]);
-                if ($input['payment_status'] == 1) {
-                    $medicine->update([
-                        'available_quantity' => $medicine->available_quantity - $input['quantity'][$key],
-                    ]);
-                }
+                $medicine->update([
+                    'available_quantity' => max(0, ($medicine->available_quantity ?? 0) - $input['quantity'][$key]),
+                ]);
             }
-            Flash::success(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
+            Flash::success(__('messages.medicine_bills.saved_created'));
 
             return redirect($this->getMedicineHistoryIndexRoute());
         }
@@ -197,8 +195,9 @@ class MedicineBillController extends AppBaseController
      *
      * @param  int  $id
      */
-    public function show(MedicineBill $medicineBill): View
+    public function show(MedicineBill $medicine_history): View
     {
+        $medicineBill = $medicine_history;
         $medicineBill->load(['saleMedicine.medicine']);
 
         return view('medicine-history.show', compact('medicineBill'));
@@ -207,8 +206,9 @@ class MedicineBillController extends AppBaseController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MedicineBill $medicineBill): View
+    public function edit(MedicineBill $medicine_history): View
     {
+        $medicineBill = $medicine_history;
         $medicineBill->load(['saleMedicine.medicine.category', 'saleMedicine.medicine.purchasedMedicine', 'patient', 'doctor']);
 
         $patients = $this->prescriptionRepository->getPatients();
@@ -232,16 +232,16 @@ class MedicineBillController extends AppBaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(MedicineBill $medicineBill, UpdateMedicineBillRequest $request)
+    public function update(MedicineBill $medicine_history, UpdateMedicineBillRequest $request)
     {
+        $medicineBill = $medicine_history;
         $input = $request->all();
-        if (empty($input['medicine']) && $input['payment_status'] == false) {
-
+        if (empty($input['medicine'])) {
             return $this->sendError(__('messages.medicine_bills.medicine_not_selected'));
         }
         $this->medicineBillRepository->update($medicineBill, $input);
 
-        return $this->sendSuccess(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.medicine.saved_successfully'));
+        return $this->sendSuccess(__('messages.medicine_bills.saved_updated'));
     }
 
     /**
@@ -249,10 +249,10 @@ class MedicineBillController extends AppBaseController
      *
      * *  @return \Illuminate\Http\Response
      */
-    public function destroy(MedicineBill $medicineBill)
+    public function destroy(MedicineBill $medicine_history)
     {
-        $medicineBill->saleMedicine()->delete();
-        $medicineBill->delete();
+        $medicine_history->saleMedicine()->delete();
+        $medicine_history->delete();
 
         return $this->sendSuccess(__('messages.medicine_bills.medicine_bill') . ' ' . __('messages.common.deleted_successfully'));
     }

@@ -7,6 +7,7 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateChangePasswordRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Country;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Specialization;
@@ -74,8 +75,9 @@ class UserController extends AppBaseController
         $specializations = Specialization::pluck('name', 'id')->toArray();
         $country = $this->userRepo->getCountries();
         $bloodGroup = Doctor::BLOOD_TYPE_ARRAY;
+        $defaultCountryId = Country::where('name', 'Philippines')->value('id');
 
-        return view('doctors.create', compact('specializations', 'country', 'bloodGroup'));
+        return view('doctors.create', compact('specializations', 'country', 'bloodGroup', 'defaultCountryId'));
     }
 
     /**
@@ -125,11 +127,13 @@ class UserController extends AppBaseController
         for ($year = 1960; $year <= $currentYear; $year++) {
             $years[$year] = $year;
         }
-        if (isset($countryId)) {
-            $state = getStates($data['countryId']->toArray());
+        $countryId = $data['countryId']->first();
+        $stateId = $data['stateId']->first();
+        if ($countryId) {
+            $state = getStates($countryId);
         }
-        if (isset($stateId)) {
-            $cities = getCities($data['stateId']->toArray());
+        if ($stateId) {
+            $cities = getCities($stateId);
         }
 
         return view(

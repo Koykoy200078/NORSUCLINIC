@@ -88,17 +88,9 @@
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
         {{ Form::select('blood_type', $bloodGroup , null, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.patient.blood_type')]) }}
     </div>
-    <div class="col-md-6 mb-5">
+    <div class="col-md-6 mb-5" style="visibility: hidden;">
         {{ Form::label('twitter',__('messages.doctor.twitter').':' ,['class' => 'form-label']) }}
         {{ Form::text('twitter_url', null,['class' => 'form-control','placeholder' => __('messages.common.twitter_url'), 'id' => 'twitterUrl']) }}
-    </div>
-    <div class="col-md-6 mb-5">
-        {{ Form::label('linkedin',__('messages.doctor.linkedin').':' ,['class' => 'form-label']) }}
-        {{ Form::text('linkedin_url', null,['class' => 'form-control','placeholder' => __('messages.common.linkedin_url'), 'id' => 'linkedinUrl']) }}
-    </div>
-    <div class="col-md-6 mb-5">
-        {{ Form::label('instagram',__('messages.doctor.instagram').':' ,['class' => 'form-label']) }}
-        {{ Form::text('instagram_url', null,['class' => 'form-control','placeholder' => __('messages.common.instagram_url'), 'id' => 'instagramUrl']) }}
     </div>
     <div class="col-lg-6">
         <div class="mb-5">
@@ -144,7 +136,7 @@
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('Country',__('messages.doctor.country').':' ,['class' => 'form-label']) }}
-            {{ Form::select('country_id', $country, null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=>'editDoctorCountryId','placeholder' => __('messages.doctor.country')]) }}
+            {{ Form::select('country_id', $country, $defaultCountryId ?? null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=>'editDoctorCountryId','placeholder' => __('messages.doctor.country')]) }}
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('State',__('messages.doctor.province').':' ,['class' => 'form-label']) }}

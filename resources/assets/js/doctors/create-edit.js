@@ -32,22 +32,11 @@ function loadDoctorDate() {
         disableMobile: true,
     });
 
-    if (!$("#doctorCountryId").val()) {
-        return;
+    // On create form only: if a country is pre-selected (e.g. Philippines), load its provinces via AJAX
+    // On edit form, state/city dropdowns are server-rendered with correct options — no AJAX needed on load
+    if (!$("#doctorIsEdit").val() && $("#editDoctorCountryId").val()) {
+        $("#editDoctorCountryId").trigger("change");
     }
-    $("#editDoctorCountryId")
-        .val($("#doctorCountryId").val())
-        .trigger("change");
-
-    setTimeout(function () {
-        $("#editDoctorStateId")
-            .val($("#doctorStateId").val())
-            .trigger("change");
-    }, 400);
-
-    setTimeout(function () {
-        $("#editDoctorCityId").val($("#doctorCityId").val()).trigger("change");
-    }, 7000);
 }
 
 listenClick("#addQualification", function () {
@@ -72,7 +61,7 @@ listenClick("#saveQualification", function (e) {
     university = $(".university").val();
     year = $(".year").val();
     let existId = $(
-        "#doctorQualificationTbl tr:last-child td:first-child"
+        "#doctorQualificationTbl tr:last-child td:first-child",
     ).data("value");
     existId++;
     if (existId) {
@@ -122,7 +111,7 @@ listenClick("#saveQualification", function (e) {
     }
     let qualificationHtml = prepareTemplateRender(
         "#qualificationTemplateData",
-        data
+        data,
     );
     if (isDefault == false) {
         $("tbody").append(qualificationHtml);
@@ -136,7 +125,7 @@ listenClick("#saveQualification", function (e) {
         };
         let updateQualificationHtml = prepareTemplateRender(
             "#qualificationTemplateData",
-            data
+            data,
         );
         let table = $("table tbody");
         $(table)
@@ -206,56 +195,59 @@ listenClick(".edit-btn-qualification", function () {
 });
 
 listenSubmit("#editDoctorForm", function (e) {
-    let twitterUrl = $("#twitterUrl").val();
-    let linkedinUrl = $("#linkedinUrl").val();
-    let instagramUrl = $("#instagramUrl").val();
+    // Prevent native form submission IMMEDIATELY — must be first line
+    // so the server never receives the request without the AJAX-appended fields
+    e.preventDefault();
+
+    let twitterUrl = $("#twitterUrl").val() || "";
+    let linkedinUrl = $("#linkedinUrl").val() || "";
+    let instagramUrl = $("#instagramUrl").val() || "";
     let twitterExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i,
     );
     let linkedinExp = new RegExp(
-        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i,
     );
     let instagramExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i,
     );
 
     let twitterCheck =
         twitterUrl == "" ? true : twitterUrl.match(twitterExp) ? true : false;
     if (!twitterCheck) {
         displayErrorMessage(Lang.get("js.valid_twitter"));
-        return false;
+        return;
     }
 
     let linkedInCheck =
         linkedinUrl == ""
             ? true
             : linkedinUrl.match(linkedinExp)
-            ? true
-            : false;
+              ? true
+              : false;
     if (!linkedInCheck) {
         displayErrorMessage(Lang.get("js.valid_linkedin"));
-        return false;
+        return;
     }
 
     let instagramCheck =
         instagramUrl == ""
             ? true
             : instagramUrl.match(instagramExp)
-            ? true
-            : false;
+              ? true
+              : false;
     if (!instagramCheck) {
         displayErrorMessage(Lang.get("js.valid_instagram"));
-        return false;
+        return;
     }
 
-    if ($("#error-msg").text() !== "") {
+    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
         $("#phoneNumber").focus();
         displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text()
+            Lang.get("js.contact_number") + $("#error-msg").text(),
         );
-        return false;
+        return;
     }
-    e.preventDefault();
     let doctorFormData = new FormData($(this)[0]);
     let editDoctorId = $("#editDoctorId").val();
 
@@ -289,12 +281,12 @@ listenChange("input[type=radio][name=gender]", function () {
         if (this.value == 1) {
             $(".image-input-wrapper").attr(
                 "style",
-                "background-image:url(" + manAvatar + ")"
+                "background-image:url(" + manAvatar + ")",
             );
         } else if (this.value == 2) {
             $(".image-input-wrapper").attr(
                 "style",
-                "background-image:url(" + womanAvatar + ")"
+                "background-image:url(" + womanAvatar + ")",
             );
         }
     }
@@ -313,19 +305,24 @@ listenChange("#editDoctorCountryId", function () {
             //
             $("#editDoctorStateId").append(
                 $('<option value=""></option>').text(
-                    Lang.get("js.select_state")
-                )
+                    Lang.get("js.select_state"),
+                ),
             );
             $("#editDoctorCityId").append(
-                $('<option value=""></option>').text(Lang.get("js.select_city"))
+                $('<option value=""></option>').text(
+                    Lang.get("js.select_city"),
+                ),
             );
             $.each(data.data, function (i, v) {
                 $("#editDoctorStateId").append(
-                    $("<option></option>").attr("value", i).text(v)
+                    $("<option></option>").attr("value", i).text(v),
                 );
-            });
+            }); // Notify select2 to re-render the updated options
+            $("#editDoctorStateId").trigger("change.select2");
             if (doctorIsEdit && $("#doctorStateId").val()) {
-                $("#stateId").val($("#doctorStateId").val()).trigger("change");
+                $("#editDoctorStateId")
+                    .val($("#doctorStateId").val())
+                    .trigger("change");
             }
         },
     });
@@ -344,25 +341,26 @@ listenChange("#editDoctorStateId", function () {
         success: function (data) {
             $("#editDoctorCityId").empty();
             $("#editDoctorCityId").append(
-                $('<option value=""></option>').text(Lang.get("js.select_city"))
+                $('<option value=""></option>').text(
+                    Lang.get("js.select_city"),
+                ),
             );
             $.each(data.data, function (i, v) {
                 $("#editDoctorCityId").append(
-                    $("<option ></option>").attr("value", i).text(v)
+                    $("<option ></option>").attr("value", i).text(v),
                 );
-            });
+            }); // Notify select2 to re-render the updated options
+            $("#editDoctorCityId").trigger("change.select2");
             if (doctorIsEdit && $("#doctorCityId").val()) {
-                $("#cityId").val($("#doctorCityId").val()).trigger("change");
+                $("#editDoctorCityId")
+                    .val($("#doctorCityId").val())
+                    .trigger("change");
             }
         },
     });
 });
 
-if ($("#doctorIsEdit").val() && $("#doctorCountryId").val()) {
-    $("#editDoctorCountryId")
-        .val($("#doctorCountryId").val())
-        .trigger("change");
-}
+// Edit form: state/city dropdowns are server-rendered — no need to re-trigger AJAX on page load
 
 listenKeyup("#twitterUrl", function () {
     this.value = this.value.toLowerCase();
@@ -381,13 +379,13 @@ listenSubmit("#createDoctorForm", function () {
     let linkedinUrl = $("#linkedinUrl").val();
     let instagramUrl = $("#instagramUrl").val();
     let twitterExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i,
     );
     let linkedinExp = new RegExp(
-        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i,
     );
     let instagramExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i
+        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i,
     );
 
     let twitterCheck =
@@ -401,8 +399,8 @@ listenSubmit("#createDoctorForm", function () {
         linkedinUrl == ""
             ? true
             : linkedinUrl.match(linkedinExp)
-            ? true
-            : false;
+              ? true
+              : false;
     if (!linkedInCheck) {
         displayErrorMessage(Lang.get("js.valid_linkedin"));
         return false;
@@ -412,17 +410,17 @@ listenSubmit("#createDoctorForm", function () {
         instagramUrl == ""
             ? true
             : instagramUrl.match(instagramExp)
-            ? true
-            : false;
+              ? true
+              : false;
     if (!instagramCheck) {
         displayErrorMessage(Lang.get("js.valid_instagram"));
         return false;
     }
 
-    if ($("#error-msg").text() !== "") {
+    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
         $("#phoneNumber").focus();
         displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text()
+            Lang.get("js.contact_number") + $("#error-msg").text(),
         );
         return false;
     }

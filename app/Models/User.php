@@ -295,6 +295,9 @@ class User extends Authenticatable implements HasMedia
 
     public function getRoleNameAttribute()
     {
+        if (! $this->relationLoaded('roles')) {
+            return null;
+        }
         $role = $this->roles->first();
 
         if (! empty($role)) {
@@ -304,6 +307,9 @@ class User extends Authenticatable implements HasMedia
 
     public function getRoleDisplayNameAttribute()
     {
+        if (! $this->relationLoaded('roles')) {
+            return null;
+        }
         $role = $this->roles->first();
 
         if (! empty($role)) {

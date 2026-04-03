@@ -1,2 +1,0 @@
-<a href="<?php echo e(isRole('clinic_admin') ? route('doctors.create') : 
-    (isRole('staff') ? route('staff.doctors.create') : route('doctors.create'))); ?>" class="btn btn-primary">Add Doctor</a><?php /**PATH C:\Projects\NORSUCLINIC\resources\views/doctors/components/add_button.blade.php ENDPATH**/ ?>

@@ -1,14 +1,11 @@
 <div class="d-flex align-items-center pb-10">
     <img alt="Logo" src="{{ asset(getAppLogo()) }}" height="100px" width="100px">
-    <a target="_blank"
-        href="{{ route('medicine.bill.pdf',[$medicineBill->id]) }}"
-        class="btn btn-success ms-auto text-white">{{ __('messages.medicine_bills.print_bill') }}</a>
 </div>
 <div class="m-0">
     <div class="fs-3 text-gray-800 mb-8"> #{{ $medicineBill->history_number }}</div>
     <div class="row g-5 mb-11">
         <div class="col-sm-3">
-            <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').':' }}</div>
+            <div class="pb-2 fs-5 text-gray-600">{{ __('Patient Name').':' }}</div>
             <div class="fs-5 text-gray-800">{{ $medicineBill->patient->patientUser->full_name }}</div>
         </div>
         <div class="col-sm-3">
@@ -21,11 +18,11 @@
     <div class="fs-5 text-gray-800">{{ $medicineBill->patientAdmission->patient_admission_id }}</div>
 </div> --}}
 <div class="col-sm-3">
-    <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').' '.__('auth.email').':' }}</div>
+    <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('auth.email').':' }}</div>
     <div class="fs-5 text-gray-800">{{ $medicineBill->patient->patientUser->email }}</div>
 </div>
 <div class="col-sm-3">
-    <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').' '.__('messages.user.gender').':' }}</div>
+    <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.user.gender').':' }}</div>
     <div class="fs-5 text-gray-800">
         {{ ($medicineBill->patient->patientUser->gender == 1) ? __('messages.staff.male') : (($medicineBill->patient->patientUser->gender == 2) ? __('messages.staff.female') : __('messages.common.n/a')) }}
     </div>
@@ -37,12 +34,12 @@
 </div>
 <div class="row g-5 mb-11">
     <div class="col-sm-3">
-        <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').' '.__('messages.medicine_bills.cell_no').':' }}</div>
+        <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.medicine_bills.cell_no').':' }}</div>
         <div class="fs-5 text-gray-800">{{ !empty($medicineBill->patient->patientUser->phone) ? $medicineBill->patient->patientUser->phone : __('messages.common.n/a') }}</div>
     </div>
 
     <div class="col-sm-3">
-        <div class="pb-2 fs-5 text-gray-600">{{ __('messages.appointment.patient').' '.__('messages.doctor.dob').':' }}</div>
+        <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.doctor.dob').':' }}</div>
         <div class="fs-5 text-gray-800">{{ (!empty($medicineBill->patient->patientUser->dob)) ? \Carbon\Carbon::parse($medicineBill->patient->patientUser->dob)->translatedFormat('jS M, Y') : __('messages.common.n/a') }}</div>
     </div>
 
@@ -84,37 +81,4 @@
             @endforeach
         </tbody>
     </table>
-</div>
-<div class="col-lg-6 ms-lg-auto mt-4 d-none">
-    <div class="border-top">
-        <table class="table table-borderless box-shadow-none mb-0 mt-5 text-end">
-            <tbody>
-                <tr>
-                    <td class=" ps-0">{{ __('messages.purchase_medicine.total').(':') }}</td>
-                    <td class="text-gray-900 text-end pe-0">
-                        {{ number_format($medicineBill->total,2) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="ps-0">{{ __('messages.purchase_medicine.tax').(':') }}</td>
-                    <td class="text-gray-900 text-end pe-0">
-                        {{ number_format($medicineBill->tax_amount,2)}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="ps-0">{{ __('messages.purchase_medicine.discount').(':') }}</td>
-                    <td class="text-gray-900 text-end pe-0">
-                        {{ number_format($medicineBill->discount,2)}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="ps-0">{{ __('messages.purchase_medicine.net_amount').(':') }}</td>
-                    <td class="text-gray-900 text-end pe-0">
-                        {{ number_format($medicineBill->net_amount,2)}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 </div>

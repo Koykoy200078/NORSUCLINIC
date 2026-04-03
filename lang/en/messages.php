@@ -237,7 +237,7 @@ return [
         'twitter_url' => 'Twitter URL',
         'linkedin_url' => 'Linkedin URL',
         'instagram_url' => 'Instagram URL',
-        'are_you_sure' => 'Are you sure want to delete this',
+        'are_you_sure' => 'Are you sure you want to delete this',
         'no' => 'No, Cancel',
         'yes' => 'Yes, Delete!',
         'select_country' => 'Select Country',
@@ -956,7 +956,9 @@ return [
 
     'medicine_bills' => [
         'medicine_bills' => 'History',
-        'medicine_bill' => 'Medicine Bill',
+        'medicine_bill' => 'Medicine History',
+        'saved_created' => 'Medicine History created successfully.',
+        'saved_updated' => 'Medicine History updated successfully.',
         'add_medicine_bill' => 'Add Medicine History',
         'edit_medicine_bill' => 'Edit Medicine Bill',
         'medicine_bill_details' => 'Medicine Bill Details',

@@ -62,12 +62,12 @@ class MedicineBillTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()
                 ->view('medicine-history.columns.bill_id'),
-            Column::make(__('messages.appointment.date'), 'created_at')
+            Column::make(__('messages.medicine_bills.bill_date'), 'created_at')
                 ->sortable()
                 ->searchable()
                 ->view('medicine-history.columns.bill_date'),
-            Column::make(__('messages.visit.patient'), 'patient_id')->hideIf(1),
-            Column::make(__('messages.visit.patient'), 'patient.patientUser.first_name')
+            Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
+            Column::make(__('messages.prescription.patient'), 'patient.patientUser.first_name')
                 ->sortable(function (Builder $query, $direction) {
                     return $query->orderBy(User::select('first_name')->whereColumn('id', 'patient.user_id'), $direction);
                 })->searchable()->view('medicine-history.columns.patient'),

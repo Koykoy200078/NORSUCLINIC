@@ -1,1 +1,0 @@
-<?php /**PATH C:\Projects\NORSUCLINIC\resources\views/vendor/livewire-tables/stubs/custom.blade.php ENDPATH**/ ?>
