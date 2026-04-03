@@ -284,8 +284,8 @@
                         @endforeach
                     </select> -->
 
-                @if(auth()->user()->type == \App\Models\User::ADMIN)
-                <!-- Admin can select the nursing in-charged -->
+                @if(auth()->user()->type == \App\Models\User::ADMIN || auth()->user()->type == \App\Models\User::DOCTOR)
+                <!-- Admin and Doctor can select the nursing in-charged -->
                 <select id="nursing_incharged" name="nursing_incharged" class="w-full border-b border-black" required>
                     <option value="" disabled selected>Select Nursing In-charged</option>
                     @foreach(\App\Models\User::where('type', \App\Models\User::STAFF)->get() as $staff)
@@ -328,10 +328,10 @@
                         <i class="fas fa-link"></i> Or paste image URL to auto-download:
                     </label>
                     <div class="flex gap-2">
-                        <input type="text" id="image_url_input" 
-                            class="flex-1 border border-gray-300 rounded px-3 py-2" 
+                        <input type="text" id="image_url_input"
+                            class="flex-1 border border-gray-300 rounded px-3 py-2"
                             placeholder="https://example.com/image.jpg">
-                        <button type="button" id="download_from_url_btn" 
+                        <button type="button" id="download_from_url_btn"
                             class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                             <i class="fas fa-download"></i> Download
                         </button>
@@ -487,8 +487,13 @@
     }
 
     @keyframes spin {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
     }
 
     .url-downloading {
@@ -782,7 +787,7 @@
                 try {
                     // Fetch the image
                     const response = await fetch(imageUrl);
-                    
+
                     if (!response.ok) {
                         throw new Error(`Failed to download image: ${response.statusText}`);
                     }
@@ -807,7 +812,9 @@
                     }
 
                     // Create File object from blob
-                    const file = new File([blob], filename, { type: blob.type });
+                    const file = new File([blob], filename, {
+                        type: blob.type
+                    });
 
                     // Add to selected files
                     selectedFiles.push(file);

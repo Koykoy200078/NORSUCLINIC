@@ -335,8 +335,8 @@
                 <label class="block">Nursing In-charged</label>
             </div>
             <div class="col-span-3">
-                @if(auth()->user()->type == \App\Models\User::ADMIN)
-                <!-- Admin can select the nursing in-charged -->
+                @if(auth()->user()->type == \App\Models\User::ADMIN || auth()->user()->type == \App\Models\User::DOCTOR)
+                <!-- Admin and Doctor can select the nursing in-charged -->
                 <select id="nursing_incharged" name="nursing_incharged" class="w-full border-b border-black" required>
                     <option value="" disabled {{ empty(old('nursing_incharged', $requestDocument->nursing_incharged_id ?? '')) ? 'selected' : '' }}>Select Nursing In-charged</option>
                     @foreach(\App\Models\User::where('type', \App\Models\User::STAFF)->get() as $staff)

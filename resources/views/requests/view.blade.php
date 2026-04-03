@@ -19,8 +19,14 @@
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
+    @php
+    $planMedicines = $requestDocument->consultationMedicines()->where('used_for', 'plan')->with('medicine')->get();
+    $nursingMedicines = $requestDocument->consultationMedicines()->where('used_for', 'nursing')->with('medicine')->get();
+    $consultationImages = $requestDocument->consultation_images
+    ? (is_string($requestDocument->consultation_images) ? json_decode($requestDocument->consultation_images, true) : $requestDocument->consultation_images)
+    : [];
+    @endphp
     <form>
-        @csrf
         <div class="grid grid-cols-4 gap-2 pb-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME</label>
@@ -61,7 +67,6 @@
             <div class="col-span-1">
                 <label class="block text-xs" for="college">COLLEGE</label>
                 <input type="text" id="college_id" name="college_id" class="w-full border-b border-black" value="{{ $requestDocument->college }}" readonly>
-
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
@@ -81,29 +86,32 @@
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
-                <label class="block text-xs" for="requested_at">REQUEST DATE</label>
+                <label class="block text-xs" for="requested_at">CONSULTATION DATE</label>
                 <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" value="{{ $requestDocument->requested_at->format('Y-m-d') }}" readonly>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-b border-black" rows="5" readonly>
-                {{ $requestDocument->complaints }}
-                </textarea>
+                <textarea id="complaints" name="complaints" class="w-full border-b border-black view-textarea" rows="2" readonly>{{ $requestDocument->complaints }}</textarea>
+            </div>
+            <div class="col-span-1"></div>
+            <div class="col-span-3">
+                <textarea id="note" name="note" class="w-full border-b border-black view-textarea" rows="3" readonly>{{ $requestDocument->note }}</textarea>
             </div>
         </div>
+        <!-- Subjective Data -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-red-500 font-bold">S</label>
-                <label class="block text-xs">(Subjective Complaints)</label>
+                <label class="block text-xs">(Subjective Data)</label>
             </div>
             <div class="col-span-3">
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-1">
-                        <label class="block text-xs" for="covid_vaccination">COVID Vaccination</label>
+                        <label class="block text-xs" for="vaccination_id">COVID Vaccination</label>
                         <input type="text" id="vaccination_id" name="vaccination_id" class="w-full border-b border-black" value="{{ $requestDocument->covid_vaccination }}" readonly>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="comorbidities">Comorbidities</label>
+                        <label class="block text-xs" for="comorbidities_id">Comorbidities</label>
                         <input type="text" id="comorbidities_id" name="comorbidities_id" class="w-full border-b border-black" value="{{ $requestDocument->comorbidities }}" readonly>
                     </div>
                     <div class="col-span-1">
@@ -112,7 +120,7 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
-                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black" value="{{ $requestDocument->admissions_surgeries }}">
+                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black" value="{{ $requestDocument->admissions_surgeries }}" readonly>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="maintenance">Maintenance</label>
@@ -139,38 +147,36 @@
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_bp">BP</label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_bp }}">
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_bp }}" readonly>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_pr">PR</label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_pr }}">
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_pr }}" readonly>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_temp">Temp</label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_temp }}">
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_temp }}" readonly>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_rr }}">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_rr }}" readonly>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_o2_sat }}">
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_o2_sat }}" readonly>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_weight">Wt</label>
-                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_weight }}">
+                        <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
+                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_weight }}" readonly>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="vital_signs_height">Height</label>
-                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" readonly value="{{ $requestDocument->vital_signs_height }}">
+                        <label class="block text-xs" for="vital_signs_height">Height (cm)</label>
+                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" value="{{ $requestDocument->vital_signs_height }}" readonly>
                     </div>
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black" rows="5">
-                    {{ $requestDocument->pertinent_exam }}
-                    </textarea>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black view-textarea" rows="5" readonly>{{ $requestDocument->pertinent_exam }}</textarea>
                 </div>
             </div>
         </div>
@@ -181,9 +187,7 @@
                 <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black" rows="5" readonly>
-                {{ $requestDocument->assessment }}
-                </textarea>
+                <textarea id="assessment" name="assessment" class="w-full border-b border-black view-textarea" rows="5" readonly>{{ $requestDocument->assessment }}</textarea>
             </div>
         </div>
         <!-- Plan -->
@@ -193,12 +197,27 @@
                 <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black" rows="5" readonly>
-                {{ $requestDocument->plan }}
-                </textarea>
+                <textarea id="plan" name="plan" class="w-full border-b border-black view-textarea" rows="5" readonly>{{ $requestDocument->plan }}</textarea>
+
+                @if($planMedicines->count() > 0)
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Medicines in Plan:</label>
+                    <div class="space-y-2">
+                        @foreach($planMedicines as $med)
+                        <div class="medicine-view-row">
+                            <span class="font-medium">{{ $med->medicine->brand_name ?? $med->medicine->generic_name ?? 'N/A' }}</span>
+                            <span class="text-gray-600">{{ $med->dosage }}</span>
+                            <span class="text-gray-600">Qty: {{ $med->quantity }}</span>
+                            <span class="text-gray-500 text-xs">{{ $med->dosage_instructions }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
+        <!-- Consult Mode -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block">Consult Mode</label>
@@ -209,15 +228,33 @@
             </div>
         </div>
 
+        <!-- Nursing Intervention -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block">Nursing Intervention</label>
             </div>
             <div class="col-span-3">
-                <input type="text" id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black" readonly value="{{ $requestDocument->nursing_intervention }}">
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black view-textarea" rows="5" readonly>{{ $requestDocument->nursing_intervention }}</textarea>
+
+                @if($nursingMedicines->count() > 0)
+                <div class="mt-3">
+                    <label class="block text-xs font-semibold mb-2">Medicines in Nursing Intervention:</label>
+                    <div class="space-y-2">
+                        @foreach($nursingMedicines as $med)
+                        <div class="medicine-view-row">
+                            <span class="font-medium">{{ $med->medicine->brand_name ?? $med->medicine->generic_name ?? 'N/A' }}</span>
+                            <span class="text-gray-600">{{ $med->dosage }}</span>
+                            <span class="text-gray-600">Qty: {{ $med->quantity }}</span>
+                            <span class="text-gray-500 text-xs">{{ $med->dosage_instructions }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
+        <!-- Nursing In-charged -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block">Nursing In-charged</label>
@@ -227,6 +264,29 @@
                     value="{{ \App\Models\User::find($requestDocument->nursing_incharged_id)?->first_name . ' ' . \App\Models\User::find($requestDocument->nursing_incharged_id)?->last_name }}">
             </div>
         </div>
+
+        <!-- Consultation Images -->
+        @if(is_array($consultationImages) && count($consultationImages) > 0)
+        <div class="grid grid-cols-4 gap-2 py-2 mt-4">
+            <div class="col-span-1">
+                <label class="block font-semibold">Consultation Images</label>
+            </div>
+            <div class="col-span-3">
+                <div class="grid grid-cols-3 gap-4">
+                    @foreach($consultationImages as $image)
+                    <div>
+                        <img src="{{ asset('uploads/' . $image['path']) }}"
+                            alt="{{ $image['name'] }}"
+                            class="w-full h-40 object-cover rounded-lg border-2 border-gray-200">
+                        <small class="text-gray-600 block mt-1">
+                            {{ $image['name'] }} ({{ number_format($image['size'] / 1024 / 1024, 2) }}MB)
+                        </small>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
     </form>
     @elseif ($requestDocument->document_type == 'medical_certificate')
     <div class="flex justify-center items-center">
@@ -335,8 +395,35 @@
     #pertinent_exam,
     #assessment,
     #plan,
-    #nursing_intervention {
+    #nursing_intervention,
+    #note {
         resize: none;
     }
+
+    .view-textarea {
+        resize: none;
+        overflow: hidden;
+    }
+
+    .medicine-view-row {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 1fr 2fr;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background-color: #f9fafb;
+        border-radius: 0.375rem;
+        align-items: center;
+        font-size: 0.875rem;
+        border: 1px solid #e5e7eb;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.view-textarea').forEach(function(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        });
+    });
+</script>
 @endsection

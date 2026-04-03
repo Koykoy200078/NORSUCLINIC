@@ -238,7 +238,7 @@ class RequestDocumentsController extends Controller
             'plan' => $data['plan'] ?? null,
             'consult_mode' => $data['consult_mode'],
             'nursing_intervention' => $data['nursing_intervention'],
-            'nursing_incharged_id' => $data['nursing_incharged'],
+            'nursing_incharged_id' => $data['nursing_incharged'] ?? null,
         ]);
 
         // Handle image uploads with custom path (Patient Name/Timestamp)
