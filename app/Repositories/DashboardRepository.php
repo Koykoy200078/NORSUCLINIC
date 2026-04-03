@@ -24,7 +24,7 @@ class DashboardRepository
 
         $cacheKey = 'admin_dashboard_data_' . $todayDate;
 
-        $data = Cache::remember($cacheKey, 300, function () use ($todayDate) {
+        $data = Cache::remember($cacheKey, 60, function () use ($todayDate) {
             $cachedData = [];
 
             $cachedData['totalDoctorCount'] = User::where('type', User::DOCTOR)
@@ -33,10 +33,6 @@ class DashboardRepository
 
             $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
 
-            $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
-                ->whereDate('created_at', $todayDate)
-                ->count();
-
             $cachedData['doctorArr'] = Cache::remember('doctors_list', 600, function () {
                 return Doctor::with('user:id,first_name,last_name')->get()
                     ->pluck('user.full_name', 'id')->toArray();
@@ -44,6 +40,11 @@ class DashboardRepository
 
             return $cachedData;
         });
+
+        // Always query fresh — never cache today's registered count
+        $data['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
+            ->whereDate('created_at', $todayDate)
+            ->count();
 
         $data['patients'] = Patient::with(['user:id,first_name,last_name', 'media'])
             ->whereDate('created_at', $todayDate)
@@ -97,7 +98,7 @@ class DashboardRepository
 
         $cacheKey = 'staff_dashboard_data_' . $todayDate;
 
-        $data = Cache::remember($cacheKey, 300, function () use ($todayDate) {
+        $data = Cache::remember($cacheKey, 60, function () use ($todayDate) {
             $cachedData = [];
 
             $cachedData['totalDoctorCount'] = User::where('type', User::DOCTOR)
@@ -106,10 +107,6 @@ class DashboardRepository
 
             $cachedData['totalPatientCount'] = User::where('type', User::PATIENT)->count();
 
-            $cachedData['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
-                ->whereDate('created_at', $todayDate)
-                ->count();
-
             $cachedData['doctorArr'] = Cache::remember('doctors_list', 600, function () {
                 return Doctor::with('user:id,first_name,last_name')->get()
                     ->pluck('user.full_name', 'id')->toArray();
@@ -117,6 +114,11 @@ class DashboardRepository
 
             return $cachedData;
         });
+
+        // Always query fresh — never cache today's registered count
+        $data['totalRegisteredPatientCount'] = User::where('type', User::PATIENT)
+            ->whereDate('created_at', $todayDate)
+            ->count();
 
         $data['patients'] = Patient::with(['user:id,first_name,last_name', 'media'])
             ->whereDate('created_at', $todayDate)

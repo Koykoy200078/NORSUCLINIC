@@ -13,6 +13,7 @@ use App\Models\Patient;
 use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -138,6 +139,14 @@ class PatientRepository extends BaseRepository
             self::logPatientCreation($patient, $user);
 
             DB::commit();
+
+            // Invalidate dashboard caches so today's registered count reflects immediately
+            $todayKey = now()->format('Y-m-d');
+            Cache::forget('livewire_admin_dashboard_' . $todayKey);
+            Cache::forget('livewire_staff_dashboard_' . $todayKey);
+            Cache::forget('admin_dashboard_data_' . $todayKey);
+            Cache::forget('staff_dashboard_data_' . $todayKey);
+            Cache::forget('admin_dashboard_today_patients_' . $todayKey);
 
             return true;
         } catch (\Exception $e) {

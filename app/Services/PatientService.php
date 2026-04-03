@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Address;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Collection;
@@ -19,7 +20,7 @@ class PatientService
      */
     public function createPatient(array $data): Patient
     {
-        return DB::transaction(function () use ($data) {
+        $patient = DB::transaction(function () use ($data) {
             // If is_employee is checked, set course_id to null
             if (isset($data['is_employee']) && $data['is_employee']) {
                 $data['course_id'] = null;
@@ -70,6 +71,16 @@ class PatientService
 
             return $patient->load('user', 'address');
         });
+
+        // Invalidate dashboard caches so today's registered count reflects immediately
+        $todayKey = now()->format('Y-m-d');
+        Cache::forget('livewire_admin_dashboard_' . $todayKey);
+        Cache::forget('livewire_staff_dashboard_' . $todayKey);
+        Cache::forget('admin_dashboard_data_' . $todayKey);
+        Cache::forget('staff_dashboard_data_' . $todayKey);
+        Cache::forget('admin_dashboard_today_patients_' . $todayKey);
+
+        return $patient;
     }
 
     /**

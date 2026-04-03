@@ -16,16 +16,16 @@ class StaffDashboard extends Component
     public function mount()
     {
         $todayDate = now()->format('Y-m-d');
-        $stats = Cache::remember('livewire_staff_dashboard_' . $todayDate, 300, function () use ($todayDate) {
+        $stats = Cache::remember('livewire_staff_dashboard_' . $todayDate, 60, function () use ($todayDate) {
             return [
-                'totalDoctorCount'           => User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count(),
-                'totalPatientCount'          => User::toBase()->whereType(User::PATIENT)->count(),
-                'totalRegisteredPatientCount' => User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count(),
+                'totalDoctorCount'  => User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count(),
+                'totalPatientCount' => User::toBase()->whereType(User::PATIENT)->count(),
             ];
         });
         $this->totalDoctorCount            = $stats['totalDoctorCount'];
         $this->totalPatientCount           = $stats['totalPatientCount'];
-        $this->totalRegisteredPatientCount = $stats['totalRegisteredPatientCount'];
+        // Always query fresh — never cache today's registered count so new patients reflect immediately
+        $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count();
     }
 
     public function render(): View
