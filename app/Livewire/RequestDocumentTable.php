@@ -23,6 +23,9 @@ class RequestDocumentTable extends DataTableComponent
             'class' => 'table table-striped table-bordered',
         ]);
         $this->setColumnSelectStatus(false);
+        // Required so ->label() callbacks can access these fields (Rappasoft v3 only
+        // SELECTs columns mapped in Column::make(), label columns are excluded)
+        $this->setAdditionalSelects(['request_documents.assessment', 'request_documents.plan']);
     }
 
     public function placeholder()

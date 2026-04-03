@@ -40,10 +40,8 @@ Patient Data
     // Count incomplete consultation forms (missing assessment or plan)
     $incompleteCount = \App\Models\RequestDocuments::where('document_type', 'consultation_form')
     ->where(function($query) {
-    $query->whereNull('assessment')
-    ->orWhere('assessment', '')
-    ->orWhereNull('plan')
-    ->orWhere('plan', '');
+    $query->whereRaw("TRIM(COALESCE(assessment, '')) = ''")
+    ->orWhereRaw("TRIM(COALESCE(plan, '')) = ''");
     })
     ->count();
     @endphp
