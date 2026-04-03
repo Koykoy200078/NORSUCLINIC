@@ -18,22 +18,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    'google_oauth_path' => env('GOOGLE_OAUTH_PATH'),
-
     'footer_version_show' => env('SHOW_FOOTER_VERSION', true),
-    /*
-    |--------------------------------------------------------------------------
-    | Application Google ReCaptcha
-    |--------------------------------------------------------------------------
-    |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
-    |
-    */
-
-    'google_recaptcha_site_key' => env('GOOGLE_RECAPTCHA_SITE_KEY'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment

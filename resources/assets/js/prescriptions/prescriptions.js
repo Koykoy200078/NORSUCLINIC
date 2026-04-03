@@ -1,8 +1,8 @@
 listenClick(".delete-prescription-btn", function (event) {
     let prescriptionId = $(event.currentTarget).attr("data-id");
     deleteItem(
-        route("prescriptions.destroy", prescriptionId),
-        Lang.get("js.prescription")
+        panelRoute("prescriptions.destroy", prescriptionId),
+        Lang.get("js.prescription"),
     );
 });
 
@@ -23,7 +23,7 @@ function prescriptionUpdateStatus(id) {
                 displaySuccessMessage(result.message);
                 hideDropdownManually(
                     $("#prescriptionFilterBtn"),
-                    $("#prescriptionFilter")
+                    $("#prescriptionFilter"),
                 );
             }
         },

@@ -7,6 +7,8 @@ return [
     'except' => [
         'telescope*',
         'horizon*',
+        'livewire/*',
+        'livewire/update',
     ],
 
     'storage' => [

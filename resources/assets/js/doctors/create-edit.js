@@ -52,7 +52,7 @@ listenClick("#cancelQualification", function () {
 });
 
 listenClick("#ResetForm", function () {
-    window.location.href = route("doctors.index");
+    window.location.href = panelRoute("doctors.index");
 });
 
 listenClick("#saveQualification", function (e) {
@@ -266,7 +266,8 @@ listenSubmit("#editDoctorForm", function (e) {
             if (result.success) {
                 // Get redirect URL from a hidden input that will be set in the blade template
                 let redirectUrl = $("#doctorIndexRedirectUrl").val();
-                window.location.href = redirectUrl || route("doctors.index");
+                window.location.href =
+                    redirectUrl || panelRoute("doctors.index");
             }
         },
         error: function (result) {

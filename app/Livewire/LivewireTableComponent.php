@@ -33,6 +33,18 @@ class LivewireTableComponent extends DataTableComponent
 
     public string $buttonComponent = '';
 
+    /**
+     * Runs before configure() on every request — sets performance defaults
+     * that all child tables inherit without needing parent::configure() calls.
+     */
+    public function configuring(): void
+    {
+        $this->setSearchDebounce(500)
+            ->setColumnSelectStatus(false)
+            ->setPerPageAccepted([10, 25, 50])
+            ->setPerPage(10);
+    }
+
     public function configure(): void
     {
         // TODO: Implement configure() method.

@@ -5,6 +5,7 @@ require __DIR__ . '/debug-profile.php';
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BarangayController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
@@ -218,6 +219,9 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus')->group(function ()
 
     // Medicine Generics
     Route::resource('generics', GenericController::class);
+
+    // Medicine Brands
+    Route::resource('brands', BrandController::class);
 
     // Medicines
     Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);

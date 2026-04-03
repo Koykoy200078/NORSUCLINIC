@@ -274,7 +274,6 @@ return [
         'to' => 'to',
         'of' => 'of',
         'results' => 'results',
-        'google_captcha_required' => 'Google captcha field is required.',
         'processing' => 'Processing..',
         'first_name_required' => 'First name field is required. ',
         'last_name_required' => 'Last name field is required.',
@@ -694,7 +693,6 @@ return [
         'live_consultation_details' => 'Live Consultation Details',
         'awaited' => 'Awaited',
         'finished' => 'Finished',
-        'generate_oauth' => 'How to generate OAuth Credentials ?',
         'select_patient' => 'Select Patient Name',
     ],
     'months' => [

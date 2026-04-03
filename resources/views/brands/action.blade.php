@@ -9,6 +9,11 @@
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
     <a href="javascript:void(0)" title="<?php echo __('messages.common.delete') ?>" data-id="{{$row->id}}" wire:key="{{$row->id}}"
+        data-delete-url="{{
+            isRole('clinic_admin') ? route('brands.destroy', $row->id) :
+            (isRole('staff') ? route('staff.brands.destroy', $row->id) :
+            (isRole('doctor') ? route('doctors.brands.destroy', $row->id) : route('brands.destroy', $row->id)))
+        }}"
         class="brand-delete-btn btn px-2 text-danger fs-3">
         <i class="fa-solid fa-trash"></i>
     </a>

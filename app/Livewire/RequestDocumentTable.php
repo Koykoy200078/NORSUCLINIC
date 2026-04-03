@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\RequestDocuments;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class RequestDocumentTable extends DataTableComponent
@@ -36,9 +37,9 @@ class RequestDocumentTable extends DataTableComponent
         // Check the user's role and filter data accordingly
         $user = Auth::user();
 
-        if ($user->type == 4) { // Patient
+        if ($user->type === User::PATIENT) { // Patient sees only own documents
             $query->where('user_id', $user->id);
-        } elseif ($user->type == 1 || $user->type == 4) { // Admin or Staff
+        } elseif ($user->type === User::ADMIN || $user->type === User::STAFF) { // Admin or Staff
             // If patient_id is set, filter by that patient's consultation forms only
             if ($this->patientId) {
                 $query->where('user_id', $this->patientId)

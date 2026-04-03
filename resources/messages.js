@@ -483,8 +483,6 @@
                 "\u0627\u0644\u062e\u062f\u0645\u0627\u062a \u0627\u0644\u0637\u0628\u064a\u0629 \u0627\u0644\u0623\u0645\u0627\u0645\u064a\u0629",
             front_patient_testimonials:
                 "\u0634\u0647\u0627\u062f\u0627\u062a \u0627\u0644\u0645\u0631\u0636\u0649 \u0627\u0644\u0623\u0645\u0627\u0645\u064a\u0629",
-            google_captcha_required:
-                "\u062d\u0642\u0644 \u0627\u0644\u062a\u062d\u0642\u0642 \u0645\u0646 Google \u0645\u0637\u0644\u0648\u0628.",
             has_been: "\u062a\u0645 \u062d\u0630\u0641.",
             has_cancel: "\u062a\u0645 \u0625\u0644\u063a\u0627\u0621.",
             holiday: "\u0639\u0637\u0644\u0629",
@@ -689,8 +687,6 @@
             from: "Von",
             front_medical_services: "Frontmedizinische Dienstleistungen",
             front_patient_testimonials: "Front Patientenbewertungen",
-            google_captcha_required:
-                "Das Google-Captcha-Feld ist erforderlich.",
             has_been: "wurde gel\u00f6scht.",
             has_cancel: " wurde abgesagt.",
             holiday: "Urlaub",
@@ -847,7 +843,6 @@
             from: "From",
             front_medical_services: "Front Medical Services",
             front_patient_testimonials: "Front Patient Testimonials",
-            google_captcha_required: "Google captcha field is required.",
             has_been: "has been deleted.",
             has_cancel: " has been Cancelled.",
             holiday: "Holiday",
@@ -1009,8 +1004,6 @@
             from: "Desde",
             front_medical_services: "Servicios M\u00e9dicos Frontales",
             front_patient_testimonials: "Testimonios de Pacientes Frontales",
-            google_captcha_required:
-                "El campo captcha de Google es obligatorio.",
             has_been: "ha sido eliminado.",
             has_cancel: " ha sido Cancelado.",
             holiday: "D\u00eda festivo",
@@ -1177,7 +1170,6 @@
             from: "De",
             front_medical_services: "Services m\u00e9dicaux frontaux",
             front_patient_testimonials: "T\u00e9moignages de patients frontaux",
-            google_captcha_required: "Le champ captcha Google est obligatoire.",
             has_been: "a \u00e9t\u00e9 supprim\u00e9.",
             has_cancel: " a \u00e9t\u00e9 annul\u00e9.",
             holiday: "Vacances",
@@ -1342,8 +1334,6 @@
             from: "Da",
             front_medical_services: "Servizi Medici Frontali",
             front_patient_testimonials: "Testimonianze dei Pazienti Frontali",
-            google_captcha_required:
-                "Il campo captcha di Google \u00e8 obbligatorio.",
             has_been: "\u00e8 stato eliminato.",
             has_cancel: " \u00e8 stato annullato.",
             holiday: "Vacanza",
@@ -1507,8 +1497,6 @@
             from: "De",
             front_medical_services: "Servi\u00e7os M\u00e9dicos Frontais",
             front_patient_testimonials: "Depoimentos de Pacientes Frontais",
-            google_captcha_required:
-                "O campo captcha do Google \u00e9 obrigat\u00f3rio.",
             has_been: "foi exclu\u00eddo.",
             has_cancel: " foi cancelado.",
             holiday: "Feriado",
@@ -1689,8 +1677,6 @@
                 "\u041c\u0435\u0434\u0438\u0446\u0438\u043d\u0441\u043a\u0438\u0435 \u0443\u0441\u043b\u0443\u0433\u0438",
             front_patient_testimonials:
                 "\u041e\u0442\u0437\u044b\u0432\u044b \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u043e\u0432",
-            google_captcha_required:
-                "\u041f\u043e\u043b\u0435 Google Captcha \u044f\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u043e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u043c.",
             has_been:
                 "\u0431\u044b\u043b\u043e \u0443\u0434\u0430\u043b\u0435\u043d\u043e.",
             has_cancel:
@@ -1905,7 +1891,6 @@
             front_medical_services: "\u00d6n T\u0131bbi Hizmetler",
             front_patient_testimonials:
                 "\u00d6n Hasta G\u00f6r\u00fc\u015fleri",
-            google_captcha_required: "Google captcha alan\u0131 gereklidir.",
             has_been: "silindi.",
             has_cancel: " iptal edildi.",
             holiday: "Tatil",
@@ -2075,8 +2060,6 @@
             from: "\u4ece",
             front_medical_services: "\u524d\u7aef\u533b\u7597\u670d\u52a1",
             front_patient_testimonials: "\u524d\u7aef\u60a3\u8005\u89c1\u8bc1",
-            google_captcha_required:
-                "\u8c37\u6b4c\u9a57\u8b49\u78bc\u5b57\u6bb5\u662f\u5fc5\u8981\u7684\u3002",
             has_been: "\u5df2\u5220\u9664\u3002",
             has_cancel: "\u5df2\u53d6\u6d88\u3002",
             holiday: "\u5047\u671f",

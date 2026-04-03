@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
@@ -31,6 +32,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
+        // Toggle email_verified_at for any user (staff managing doctors/patients)
+        Route::post('/email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
     });
 
     // Patient Queue Management (Nurse/Staff can manage queue)
@@ -85,6 +88,9 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
         // Medicine Generics
         Route::resource('generics', GenericController::class);
+
+        // Medicine Brands
+        Route::resource('brands', BrandController::class);
 
         // Medicines
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);

@@ -11,32 +11,40 @@ class RolePermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
-     * This seeder sets the default permissions for staff and doctor roles
-     * based on the current production database configuration.
-     * 
-     * Last Updated: October 7, 2025
-     * Source: Current role_has_permissions table in production database
+     *
+     * Permission Rules:
+     *  - clinic_admin : ALL permissions (manages everything including staff accounts)
+     *  - staff        : Can manage doctors, patients, medicines, specialties, requests
+     *                   CANNOT manage staff accounts (admin-only)
+     *  - doctor       : Can manage patients, medicines, specialties, requests
+     *                   CANNOT manage doctors or staff accounts
+     *  - patient      : manage_request_documents only
+     *
+     * Last Updated: 2026-04-03
      */
     public function run(): void
     {
         $this->command->info('Setting up role permissions...');
 
-        // Define default permissions for each role based on current database state
+        // Define default permissions for each role
         $rolePermissions = [
             'doctor' => [
+                // Doctors can view/manage their own patients, medicines, specialties, documents
+                // They CANNOT create/edit/delete other doctor accounts (no manage_doctors)
+                // They CANNOT manage staff accounts (no manage_staff)
                 'manage_medicines',
                 'manage_patients',
                 'manage_request_documents',
                 'manage_specialties',
             ],
             'staff' => [
+                // Staff can create/edit/delete doctor accounts
+                // Staff CANNOT manage other staff accounts (clinic_admin only)
                 'manage_doctors',
                 'manage_medicines',
                 'manage_patients',
                 'manage_request_documents',
                 'manage_specialties',
-                'manage_staff',
                 'manage_staff_dashboard',
             ],
         ];

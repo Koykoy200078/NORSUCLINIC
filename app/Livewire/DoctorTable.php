@@ -81,7 +81,6 @@ class DoctorTable extends LivewireTableComponent
             Column::make(__('messages.doctor.status'), 'user.status')->view('doctors.components.status')->sortable(),
             // Column::make(__('messages.common.email_verified'), 'user.email_verified_at')->view('doctors.components.email_verified')
             //     ->sortable(),
-            // Column::make(__('messages.common.impersonate'), 'user.status')->view('doctors.components.impersonate'),
             Column::make(__('messages.patient.registered_on'), 'created_at')->view('doctors.components.registered_on')->sortable(),
             Column::make(__('messages.common.action'), 'id')->view('doctors.components.action'),
         ];

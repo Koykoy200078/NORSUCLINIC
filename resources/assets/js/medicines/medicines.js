@@ -14,7 +14,7 @@ function loadMedicineCreateData() {
 
     function renderMedicineData(id) {
         $.ajax({
-            url: route("medicines.show.modal", id),
+            url: panelRoute("medicines.show.modal", id),
             type: "GET",
             success: function (result) {
                 if (result.success) {
@@ -22,32 +22,32 @@ function loadMedicineCreateData() {
                     $("#showMedicineGeneric").text(result.data.generic_name);
                     $("#showMedicineCategory").text(result.data.category_name);
                     $("#showMedicineSaltComposition").text(
-                        result.data.salt_composition
+                        result.data.salt_composition,
                     );
                     $("#showMedicineMinStockAlert").text(
                         result.data.minimum_stock_alert
                             ? result.data.minimum_stock_alert
-                            : "Not set"
+                            : "Not set",
                     );
                     $("#showMedicineStockAlertPercentage").text(
                         result.data.stock_alert_percentage
                             ? result.data.stock_alert_percentage + "%"
-                            : "Not set"
+                            : "Not set",
                     );
                     $("#showMedicineQuanity").text(
-                        addCommas(result.data.quantity)
+                        addCommas(result.data.quantity),
                     );
                     $("#showMedicineAvailableQuanity").text(
-                        addCommas(result.data.available_quantity)
+                        addCommas(result.data.available_quantity),
                     );
                     $("#showMedicineSideEffects").text(
-                        result.data.side_effects
+                        result.data.side_effects,
                     );
                     moment.locale($("#medicineLanguage").val());
                     let createDate = moment(result.data.created_at);
                     $("#showMedicineCreatedOn").text(createDate.fromNow());
                     $("#showMedicineUpdatedOn").text(
-                        moment(result.data.updated_at).fromNow()
+                        moment(result.data.updated_at).fromNow(),
                     );
                     $("#showMedicineDescription").text(result.data.description);
 
@@ -59,53 +59,54 @@ function loadMedicineCreateData() {
                         result.data.purchased_medicines &&
                         result.data.purchased_medicines.length > 0
                     ) {
-                        result.data.purchased_medicines.forEach(function (
-                            item
-                        ) {
-                            // Format remaining days with color coding
-                            let remainingDaysHtml = "N/A";
-                            let rowClass = "";
-                            let expiryDateDisplay = item.expiry_date || "N/A";
+                        result.data.purchased_medicines.forEach(
+                            function (item) {
+                                // Format remaining days with color coding
+                                let remainingDaysHtml = "N/A";
+                                let rowClass = "";
+                                let expiryDateDisplay =
+                                    item.expiry_date || "N/A";
 
-                            if (
-                                item.remaining_days !== null &&
-                                item.remaining_days !== undefined
-                            ) {
-                                if (item.remaining_days < 0) {
-                                    // Expired
-                                    remainingDaysHtml = `<span class="badge bg-danger">Expired (${Math.abs(
-                                        item.remaining_days
-                                    )} days ago)</span>`;
-                                    rowClass = "table-danger";
-                                } else if (item.remaining_days === 0) {
-                                    // Expires today
-                                    remainingDaysHtml = `<span class="badge bg-danger">Expires Today</span>`;
-                                    rowClass = "table-danger";
-                                } else if (item.remaining_days <= 30) {
-                                    // Critical: 30 days or less
-                                    remainingDaysHtml = `<span class="badge bg-warning text-dark">${item.remaining_days} days</span>`;
-                                    rowClass = "table-warning";
-                                } else if (item.remaining_days <= 90) {
-                                    // Warning: 90 days or less
-                                    remainingDaysHtml = `<span class="badge bg-info">${item.remaining_days} days</span>`;
-                                } else {
-                                    // Good: more than 90 days
-                                    remainingDaysHtml = `<span class="badge bg-success">${item.remaining_days} days</span>`;
+                                if (
+                                    item.remaining_days !== null &&
+                                    item.remaining_days !== undefined
+                                ) {
+                                    if (item.remaining_days < 0) {
+                                        // Expired
+                                        remainingDaysHtml = `<span class="badge bg-danger">Expired (${Math.abs(
+                                            item.remaining_days,
+                                        )} days ago)</span>`;
+                                        rowClass = "table-danger";
+                                    } else if (item.remaining_days === 0) {
+                                        // Expires today
+                                        remainingDaysHtml = `<span class="badge bg-danger">Expires Today</span>`;
+                                        rowClass = "table-danger";
+                                    } else if (item.remaining_days <= 30) {
+                                        // Critical: 30 days or less
+                                        remainingDaysHtml = `<span class="badge bg-warning text-dark">${item.remaining_days} days</span>`;
+                                        rowClass = "table-warning";
+                                    } else if (item.remaining_days <= 90) {
+                                        // Warning: 90 days or less
+                                        remainingDaysHtml = `<span class="badge bg-info">${item.remaining_days} days</span>`;
+                                    } else {
+                                        // Good: more than 90 days
+                                        remainingDaysHtml = `<span class="badge bg-success">${item.remaining_days} days</span>`;
+                                    }
                                 }
-                            }
 
-                            let row = `<tr class="${rowClass}">
+                                let row = `<tr class="${rowClass}">
                                 <td>${item.dosage}</td>
                                 <td>${addCommas(item.quantity)}</td>
                                 <td>${expiryDateDisplay}</td>
                                 <td>${remainingDaysHtml}</td>
                             </tr>`;
-                            dosageTableBody.append(row);
-                        });
+                                dosageTableBody.append(row);
+                            },
+                        );
                     } else {
                         console.warn("No purchased medicines data found"); // Debug log
                         dosageTableBody.html(
-                            '<tr><td colspan="4" class="text-center text-muted">No data available</td></tr>'
+                            '<tr><td colspan="4" class="text-center text-muted">No data available</td></tr>',
                         );
                     }
 
@@ -123,8 +124,8 @@ function loadMedicineCreateData() {
 listenClick(".deleteMedicineBtn", function (event) {
     let id = $(event.currentTarget).attr("data-id");
     medicineDeleteItem(
-        route("check.use.medicine", id),
-        Lang.get("js.medicine")
+        panelRoute("check.use.medicine", id),
+        Lang.get("js.medicine"),
     );
 });
 
@@ -154,7 +155,7 @@ window.medicineDeleteItem = function (url, header) {
                             $("#indexMedicineUrl").val() + "/" + result.data.id,
                             (tableId = null),
                             header,
-                            (callFunction = null)
+                            (callFunction = null),
                         );
                     }
                 });

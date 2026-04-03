@@ -90,9 +90,6 @@ return [
     'status_update' => 'Status updated successfully.',
     'messages_sent' => 'Message Send Successfully',
     'processing' => 'Processing...',
-    'google_captcha_required' => 'Google captcha field is required.',
-
-
     'jan' => 'Jan',
     'feb' => 'Feb',
     'mar' => 'Mar',

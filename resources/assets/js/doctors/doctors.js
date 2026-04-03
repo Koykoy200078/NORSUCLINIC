@@ -45,7 +45,7 @@ listenSubmit("#qualificationForm", function (e) {
     $saveBtn.prop("disabled", true);
 
     $.ajax({
-        url: route("add.qualification"),
+        url: panelRoute("add.qualification"),
         type: "POST",
         data: $(this).serialize(),
         success: function (result) {
@@ -84,11 +84,16 @@ listenClick(".doctor-status", function (event) {
 
     $.ajax({
         type: "PUT",
-        url: route("doctor.status"),
+        url: panelRoute("doctor.status"),
         data: { id: doctorRecordId },
         success: function (result) {
-            Livewire.dispatch("refresh");
-            displaySuccessMessage(result.message);
+            if (result.success) {
+                displaySuccessMessage(result.message);
+                Livewire.dispatch("refresh");
+            }
+        },
+        error: function (result) {
+            displayErrorMessage(result.responseJSON.message);
         },
     });
 });
@@ -97,7 +102,7 @@ listenClick(".doctor-email-verification", function (event) {
     let userId = $(event.currentTarget).attr("data-id");
     $.ajax({
         type: "POST",
-        url: route("resend.email.verification", userId),
+        url: panelRoute("resend.email.verification", userId),
         success: function (result) {
             displaySuccessMessage(result.message);
             setTimeout(function () {
@@ -120,7 +125,7 @@ listenChange(".doctor-email-verified", function (e) {
     let value = $(this).is(":checked") ? 1 : 0;
     $.ajax({
         type: "POST",
-        url: route("emailVerified"),
+        url: panelRoute("emailVerified"),
         data: {
             id: recordId,
             value: value,

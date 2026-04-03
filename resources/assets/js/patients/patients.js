@@ -84,7 +84,7 @@ function loadAppointmentFilterDate() {
                     moment().subtract(1, "month").endOf("month"),
                 ],
             },
-        }
+        },
         //  cb
     );
 
@@ -104,7 +104,7 @@ function loadAppointmentFilterDate() {
 
 function cb(start, end) {
     $("#patientDateFilter").val(
-        start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY")
+        start.format("MM/DD/YYYY") + " - " + end.format("MM/DD/YYYY"),
     );
 }
 
@@ -114,8 +114,8 @@ listenClick(".patient-delete-btn", function () {
     let patientName = $(this).attr("data-patient-name") || "Patient";
 
     // Use the role-based delete URL from the button's data attribute
-    // Falls back to admin route if not specified
-    let url = deleteUrl || route("patients.destroy", patientId);
+    // Falls back to panel-aware route if not specified
+    let url = deleteUrl || panelRoute("patients.destroy", patientId);
 
     // Enhanced patient deletion with cascade information
     deletePatientWithCascade(url, patientName, patientId);
@@ -213,7 +213,7 @@ listenClick(".patient-reset-password-btn", function () {
                 error: function (result) {
                     displayErrorMessage(
                         result.responseJSON.message ||
-                            "Failed to reset password"
+                            "Failed to reset password",
                     );
                 },
             });
@@ -226,7 +226,7 @@ listenChange(".patient-email-verified", function (e) {
     let value = $(this).is(":checked") ? 1 : 0;
     $.ajax({
         type: "POST",
-        url: route("emailVerified"),
+        url: panelRoute("emailVerified"),
         data: {
             id: patientRecordId,
             value: value,
@@ -244,7 +244,7 @@ listenClick(".patient-email-verification", function (event) {
 
     $.ajax({
         type: "POST",
-        url: verificationUrl || route("resend.email.verification", userId), // Fallback to original route
+        url: verificationUrl || panelRoute("resend.email.verification", userId), // Fallback to panel route
         success: function (result) {
             displaySuccessMessage(result.message);
             setTimeout(function () {

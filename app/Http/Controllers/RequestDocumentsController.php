@@ -57,7 +57,7 @@ class RequestDocumentsController extends Controller
 
         // Get patient data if user is a patient or user_id is provided
         $patient = null;
-        if ($user && $user->type == 4) {
+        if ($user && $user->type === User::PATIENT) {
             $patient = $user->patient;
         }
 

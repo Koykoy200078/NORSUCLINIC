@@ -27,7 +27,7 @@ function initAllComponents() {
 
 function tooltip() {
     var tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
     );
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -56,10 +56,10 @@ function select2initialize() {
 
 document.addEventListener("click", function (e) {
     let filterBtnEle = $(e.target).closest(
-        '.show[data-ic-dropdown-btn="true"]'
+        '.show[data-ic-dropdown-btn="true"]',
     );
     let filterDropDownEle = $(e.target).closest(
-        '.show[data-ic-dropdown="true"]'
+        '.show[data-ic-dropdown="true"]',
     );
 
     if (!(filterBtnEle.length > 0 || filterDropDownEle.length > 0)) {
@@ -78,7 +78,7 @@ document.addEventListener("livewire:load", function () {
 
 const inputFocus = () => {
     $(
-        'input:text:not([readonly="readonly"]):not([name="search"]):not(.front-input)'
+        'input:text:not([readonly="readonly"]):not([name="search"]):not(.front-input)',
     )
         .first()
         .focus();
@@ -128,7 +128,7 @@ $(document).ajaxComplete(function () {
 
 listen("select2:open", () => {
     let allFound = document.querySelectorAll(
-        ".select2-container--open .select2-search__field"
+        ".select2-container--open .select2-search__field",
     );
     allFound[allFound.length - 1].focus();
 });
@@ -357,7 +357,7 @@ window.DatetimepickerDefaults = function (opts) {
                 clear: "fa fa-trash-o",
             },
         },
-        opts
+        opts,
     );
 };
 
@@ -409,7 +409,7 @@ window.setAdminBtnLoader = function (btnLoader) {
     btnLoader.attr("data-old-text", btnLoader.text());
     btnLoader
         .html(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
         )
         .prop("disabled", true);
 };
@@ -457,7 +457,7 @@ listenClick("#login", function (e) {
 window.checkSummerNoteEmpty = function (
     selectorElement,
     errorMessage,
-    isRequired = 0
+    isRequired = 0,
 ) {
     if ($(selectorElement).summernote("isEmpty") && isRequired === 1) {
         displayErrorMessage(errorMessage);

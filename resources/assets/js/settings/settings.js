@@ -41,7 +41,7 @@ function loadSettingData() {
                 function (resp) {
                     var countryCode = resp && resp.country ? resp.country : "";
                     success(countryCode);
-                }
+                },
             );
         },
         utilsScript: "../../public/assets/js/inttel/js/utils.min.js",
@@ -73,7 +73,7 @@ listenClick(".iti__standard", function () {
 
 listenChange("#settingCountryId", function () {
     $.ajax({
-        url: route("states-list"),
+        url: panelRoute("states-list"),
         type: "get",
         dataType: "json",
         data: { settingCountryId: $(this).val() },
@@ -82,11 +82,13 @@ listenChange("#settingCountryId", function () {
             $("#settingCityId").empty();
             $("#settingStateId").append(
                 $('<option value=""></option>').text(
-                    Lang.get("js.select_state")
-                )
+                    Lang.get("js.select_state"),
+                ),
             );
             $("#settingCityId").append(
-                $('<option value=""></option>').text(Lang.get("js.select_city"))
+                $('<option value=""></option>').text(
+                    Lang.get("js.select_city"),
+                ),
             );
             $.each(data.data.states, function (i, v) {
                 $("#settingStateId").append(
@@ -95,10 +97,10 @@ listenChange("#settingCountryId", function () {
                             !loadData && i == data.data.state_id
                                 ? "selected"
                                 : ""
-                        }></option>`
+                        }></option>`,
                     )
                         .attr("value", i)
-                        .text(v)
+                        .text(v),
                 );
             });
         },
@@ -108,24 +110,26 @@ listenChange("#settingCountryId", function () {
 listenChange("#settingStateId", function () {
     $("#settingCityId").empty();
     $.ajax({
-        url: route("cities-list"),
+        url: panelRoute("cities-list"),
         type: "get",
         dataType: "json",
         data: { stateId: $(this).val() },
         success: function (data) {
             $("#settingCityId").empty();
             $("#settingCityId").append(
-                $('<option value=""></option>').text(Lang.get("js.select_city"))
+                $('<option value=""></option>').text(
+                    Lang.get("js.select_city"),
+                ),
             );
             $.each(data.data.cities, function (i, v) {
                 $("#settingCityId").append(
                     $(
                         `<option ${
                             loadData && i == data.data.city_id ? "selected" : ""
-                        }></option>`
+                        }></option>`,
                     )
                         .attr("value", i)
-                        .text(v)
+                        .text(v),
                 );
             });
         },
@@ -136,7 +140,7 @@ listenClick("#settingSubmitBtn", function () {
     if ($("#error-msg").text() !== "") {
         $("#phoneNumber").focus();
         displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text()
+            Lang.get("js.contact_number") + $("#error-msg").text(),
         );
         return false;
     }

@@ -52,9 +52,6 @@ class SettingRepository extends BaseRepository
             $inputArr['country_code'] = (empty($inputArr['country_code'])) ? '' : $inputArr['country_code'];
             $inputArr['email_verified'] = (empty($inputArr['email_verified'])) ? '0' : $inputArr['email_verified'];
             $inputArr['default_country_code'] = (empty($inputArr['default_country_code'])) ? '' : $inputArr['default_country_code'];
-            $inputArr['recaptcha'] = (empty($inputArr['recaptcha'])) ? 0 : $inputArr['recaptcha'];
-            $inputArr['googleCaptchaKey'] = (empty($inputArr['googleCaptchaKey'])) ? '' : $inputArr['googleCaptchaKey'];
-            $inputArr['googleCaptchaSecret'] = (empty($inputArr['googleCaptchaSecret'])) ? '' : $inputArr['googleCaptchaSecret'];
         }
         if ($inputArr['sectionName'] == 'contact_information') {
             $inputArr['address_one'] = (empty($inputArr['address_one'])) ? '' : $inputArr['address_one'];

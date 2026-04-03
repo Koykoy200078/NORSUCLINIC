@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
@@ -46,6 +47,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
+        // Toggle email_verified_at (doctor managing patients)
+        Route::post('/email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
     });
 
     // Specializations (Doctors can manage specializations)
@@ -71,6 +74,9 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
         // Medicine Generics
         Route::resource('generics', GenericController::class);
+
+        // Medicine Brands
+        Route::resource('brands', BrandController::class);
 
         // Medicines
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);

@@ -39,6 +39,12 @@ Homestead.yaml
 
 # Storage and sensitive files
 /storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/debugbar/*
+/storage/logs/*
 
 # DEVSENSE-specific files
 /DEVSENSE/packages-cache/authorizenet

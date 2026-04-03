@@ -20,7 +20,7 @@ class StaffDashboard extends Component
             return [
                 'totalDoctorCount'           => User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count(),
                 'totalPatientCount'          => User::toBase()->whereType(User::PATIENT)->count(),
-                'totalRegisteredPatientCount'=> User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count(),
+                'totalRegisteredPatientCount' => User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count(),
             ];
         });
         $this->totalDoctorCount            = $stats['totalDoctorCount'];

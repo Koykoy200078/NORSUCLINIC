@@ -52,7 +52,7 @@ listenChange(".medicineBillCategoriesId", function () {
     }
     $.ajax({
         type: "get",
-        url: route("get-medicine-category", categoryId),
+        url: panelRoute("get-medicine-category", categoryId),
         success: function (result) {
             let array = result.data.medicine;
             $(medicineId).find("option").remove();
@@ -85,7 +85,7 @@ listenChange(".medicinePurchaseId", function () {
     }
     $.ajax({
         type: "get",
-        url: route("get-medicine", medicineId),
+        url: panelRoute("get-medicine", medicineId),
         success: function (result) {
             let sellingPrice = parseFloat(result.data.selling_price) || 0;
             $(salePriceId).val(sellingPrice.toFixed(2));
@@ -203,7 +203,7 @@ listenSubmit("#addPatientForm", function (e) {
     processingBtn("#addPatientForm", "#patientBtnSave", "loading");
     $("#patientBtnSave").attr("disabled", true);
     $.ajax({
-        url: route("store.patient"),
+        url: panelRoute("store.patient"),
         type: "POST",
         data: $(this).serialize(),
         success: function (result) {
@@ -240,10 +240,7 @@ listen("hidden.bs.modal", "#addPatientModal", function () {
 listenClick(".medicine-bill-delete-btn", function (event) {
     let id = $(event.currentTarget).attr("data-id");
 
-    deleteItem(
-        route("medicine-history.destroy", id),
-        "",
-    );
+    deleteItem(panelRoute("medicine-history.destroy", id), "");
 });
 
 listenSubmit("#MedicinebillForm", function (e) {
@@ -259,7 +256,7 @@ listenSubmit("#MedicinebillForm", function (e) {
     }
     $medicineBillId = $("#medicineBillId").val();
     $.ajax({
-        url: route("medicine-history.update", $medicineBillId),
+        url: panelRoute("medicine-history.update", $medicineBillId),
         type: "post",
         data: $(this).serialize(),
         success: function (result) {
@@ -267,7 +264,7 @@ listenSubmit("#MedicinebillForm", function (e) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
                     // Turbo.visit(route("medicine-history.index")); // true
-                    window.location.href = route("medicine-history.index");
+                    window.location.href = panelRoute("medicine-history.index");
                 }, 2000);
             }
         },
