@@ -67,12 +67,12 @@
             <div class="bg-white rounded-10 shadow-sm mb-5 p-5">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-2 fw-semibold fs-6">{{ __('messages.admin_dashboard.today_appointments') }}</h6>
-                        <h2 class="mb-0 fw-bolder text-info">{{ $todayAppointmentCount }}</h2>
+                        <h6 class="text-muted mb-2 fw-semibold fs-6">{{ __('Patient Queue Today') }}</h6>
+                        <h2 class="mb-0 fw-bolder text-info">{{ $todayQueueCount }}</h2>
                     </div>
                     <div class="ms-3">
                         <div class="bg-light-info rounded-circle p-4 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="fas fa-calendar-check fa-lg text-info"></i>
+                            <i class="fas fa-users-line fa-lg text-info"></i>
                         </div>
                     </div>
                 </div>

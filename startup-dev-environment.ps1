@@ -174,8 +174,10 @@ Write-Host "  Press Ctrl+C to stop the server" -ForegroundColor $WarningColor
 Write-Host ""
 Write-Header "Laravel Development Server Starting..."
 
-# Start Laravel server
-php artisan serve --host=$ServerHost --port=$ServerPort
+# Start Laravel server with OPcache timestamp revalidation disabled.
+# This prevents PHP from stat()-checking 12,000 vendor files every 2s (was causing ~12s page loads).
+# Restart the server after making PHP file changes to pick up new code.
+php -d opcache.revalidate_freq=0 -d opcache.validate_timestamps=0 artisan serve --host=$ServerHost --port=$ServerPort
 
 # This line executes only if server is stopped
 Write-Host "`n`nDevelopment server stopped." -ForegroundColor $WarningColor

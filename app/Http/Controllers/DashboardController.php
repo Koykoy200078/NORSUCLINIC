@@ -8,7 +8,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Setting;
 use App\Models\Patient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -33,7 +32,7 @@ class DashboardController extends AppBaseController
     public function index(Request $request)
     {
         $data = $this->dashboardRepository->getData();
-        $clinic_name = Setting::where('key', 'clinic_name')->pluck('value')->first();
+        $clinic_name = getSettingValue('clinic_name');
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));
         }
@@ -67,7 +66,7 @@ class DashboardController extends AppBaseController
      */
     public function patientDashboard(): \Illuminate\View\View
     {
-        $logo = Setting::where('key', 'logo')->pluck('value');
+        $logo = getSettingValue('logo');
         $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
         return view('patient_dashboard.index', compact('logo', 'hasDefaultPassword'));
     }
@@ -79,7 +78,7 @@ class DashboardController extends AppBaseController
     public function staffDashboard(Request $request)
     {
         $data = $this->dashboardRepository->getStaffData();
-        $clinic_name = Setting::where('key', 'clinic_name')->pluck('value')->first();
+        $clinic_name = getSettingValue('clinic_name');
 
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));

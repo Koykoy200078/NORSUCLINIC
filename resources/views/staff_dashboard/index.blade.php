@@ -9,14 +9,6 @@
             <div class="col-xl-12">
                 <livewire:staff-dashboard />
             </div>
-            <div class="col-xl-12">
-                <!--begin::Charts Widget 8-->
-                <div class="row">
-                    <livewire:staff-dashboard-sidebar-table />
-                </div>
-                <!--end::Charts Widget 8-->
-            </div>
-
 
             <div class="col-xxl-12">
                 <livewire:staff-dash-board-table />

@@ -2,21 +2,21 @@
     <div class="col-lg-6">
         <div class="mb-5">
             {{ Form::label('first_name', __('messages.staff.first_name').':', ['class' => 'form-label required']) }}
-            {{ Form::text('first_name', isset($staff) ? $staff->first_name : null, ['class' => 'form-control', 'placeholder' => __('messages.patient.first_name'), 'required']) }}
+            {{ Form::text('first_name', old('first_name', isset($staff) ? $staff->first_name : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.first_name'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
             {{ Form::label('last_name', __('messages.staff.last_name').':', ['class' => 'form-label required']) }}
-            {{ Form::text('last_name', isset($staff) ? $staff->last_name : null, ['class' => 'form-control', 'placeholder' => __('messages.patient.last_name'), 'required']) }}
+            {{ Form::text('last_name', old('last_name', isset($staff) ? $staff->last_name : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.last_name'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
             {{ Form::label('email', __('messages.staff.email').':', ['class' => 'form-label required']) }}
-            {{ Form::email('email', isset($staff) ? $staff->email : null, ['class' => 'form-control', 'placeholder' => __('messages.patient.email'), 'required']) }}
+            {{ Form::email('email', old('email', isset($staff) ? $staff->email : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.email'), 'required']) }}
         </div>
     </div>
 
@@ -24,10 +24,10 @@
         <div class="mb-5">
             {{ Form::label('contact', __('messages.staff.contact_no').':', ['class' => 'form-label']) }}
             <br>
-            {{ Form::tel('contact', isset($staff) && $staff->contact ? '+'.$staff->country_code.$staff->contact : null, ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
-            {{ Form::hidden('country_code',isset($staff) ? $staff->country_code : null,['id'=>'prefix_code']) }}
+            {{ Form::tel('contact', old('contact', isset($staff) && $staff->contact ? '+'.$staff->country_code.$staff->contact : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
+            {{ Form::hidden('country_code', old('country_code', isset($staff) ? $staff->country_code : null), ['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
-            <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+            <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2"></span>
         </div>
     </div>
 
@@ -64,9 +64,9 @@
         <div class="mb-5">
             {{ Form::label('role', __('messages.staff.role').':', ['class' => 'form-label']) }}
             {{-- Hidden field to ensure role value is submitted --}}
-            {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : 3) }}
+            {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : $defaultRoleId) }}
             {{-- Display-only select field for visual purposes --}}
-            {{ Form::select('role_display', $roles, isset($staff) ? $staff->roles->first()->id : 3, ['class' => 'form-select io-select2', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role'), 'readonly' => true, 'disabled' => true]) }}
+            {{ Form::select('role_display', $roles, isset($staff) ? $staff->roles->first()->id : $defaultRoleId, ['class' => 'form-select io-select2', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role'), 'readonly' => true, 'disabled' => true]) }}
         </div>
     </div>
 
@@ -76,12 +76,12 @@
             {{ Form::label('gender', __('messages.staff.gender').':', ['class' => 'form-label required']) }}
             <span class="is-valid">
                 <div class="mt-2">
-                    <input class="form-check-input" checked type="radio" name="gender" value="1"
-                        {{ !empty($staff) && $staff->gender === 1 ? 'checked' : '' }} required>
+                    <input class="form-check-input" type="radio" name="gender" value="1"
+                        {{ old('gender', isset($staff) ? $staff->gender : 1) == 1 ? 'checked' : '' }} required>
                     <label class="form-label mr-3">{{ __('messages.staff.male') }}</label>
 
                     <input class="form-check-input ms-2" type="radio" name="gender" value="2"
-                        {{ !empty($staff) && $staff->gender === 2 ? 'checked' : '' }} required>
+                        {{ old('gender', isset($staff) ? $staff->gender : 1) == 2 ? 'checked' : '' }} required>
                     <label class="form-label mr-3">{{ __('messages.staff.female') }}</label>
                 </div>
             </span>

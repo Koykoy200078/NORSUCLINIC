@@ -9,9 +9,6 @@
             <div class="col-xl-12">
                 <livewire:doctor-dashboard-table />
             </div>
-            <div class="col-xl-12">
-                <livewire:doctor-dashboard-sidebar-table />
-            </div>
         </div>
     </div>
 </div>

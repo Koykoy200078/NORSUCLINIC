@@ -3,12 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
-use Livewire\Attributes\Lazy;
 
-#[Lazy]
 class StaffDashboard extends Component
 {
     public $totalDoctorCount;
@@ -17,14 +15,17 @@ class StaffDashboard extends Component
 
     public function mount()
     {
-        $this->totalDoctorCount = User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count();
-        $this->totalPatientCount = User::toBase()->whereType(User::PATIENT)->count();
-        $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereRaw('Date(created_at) = CURDATE()')->count();
-    }
-
-    public function placeholder()
-    {
-        return view('livewire.dashboard_skeleton');
+        $todayDate = now()->format('Y-m-d');
+        $stats = Cache::remember('livewire_staff_dashboard_' . $todayDate, 300, function () use ($todayDate) {
+            return [
+                'totalDoctorCount'           => User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count(),
+                'totalPatientCount'          => User::toBase()->whereType(User::PATIENT)->count(),
+                'totalRegisteredPatientCount'=> User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count(),
+            ];
+        });
+        $this->totalDoctorCount            = $stats['totalDoctorCount'];
+        $this->totalPatientCount           = $stats['totalPatientCount'];
+        $this->totalRegisteredPatientCount = $stats['totalRegisteredPatientCount'];
     }
 
     public function render(): View

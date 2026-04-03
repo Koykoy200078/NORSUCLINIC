@@ -79,7 +79,7 @@ class PatientTable extends LivewireTableComponent
      */
     public function placeholder()
     {
-        return view('livewire.doctor_holiday_skeleton');
+        return view('livewire.staff_skeleton');
     }
 
     /**
@@ -108,9 +108,6 @@ class PatientTable extends LivewireTableComponent
                 }),
             Column::make(__('messages.patient.email'), 'user.email')
                 ->searchable(),
-            Column::make(__('messages.doctor_dashboard.total_appointments'), 'id')
-                ->sortable()
-                ->view('patients.components.total_appointments'),
             Column::make(__('Total Consultations'), 'id')
                 ->view('patients.components.consultation_form_count'),
             Column::make(__('messages.patient.registered_on'), 'created_at')

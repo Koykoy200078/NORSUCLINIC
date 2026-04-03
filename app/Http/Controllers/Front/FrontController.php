@@ -65,13 +65,13 @@ class FrontController extends AppBaseController
      */
     public function medicalServices(): \Illuminate\View\View
     {
-        $data = [];
-        $setting = SettingsService::get();
-        $data['doctorsCount'] = Doctor::with('user')->get()->where('user.status', true)->count();
-        $data['patientsCount'] = Patient::get()->count();
-        $data['specializationsCount'] = Specialization::get()->count();
+        $sliders = Slider::with('media')->first();
+        $aboutExperience = Setting::where('key', 'about_experience')->first();
+        $doctors = Doctor::with('user', 'specializations')->whereHas('user', function (Builder $query) {
+            $query->where('status', User::ACTIVE);
+        })->latest()->take(10)->get()->pluck('user.full_name', 'id');
 
-        return view('fronts.medical_services', compact('setting', 'data'));
+        return view('fronts.medicals.index', compact('sliders', 'aboutExperience', 'doctors'));
     }
 
     /**

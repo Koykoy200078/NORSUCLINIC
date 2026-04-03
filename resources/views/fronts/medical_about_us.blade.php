@@ -92,12 +92,6 @@
                     </div>
                     <div class="col-xl-3 col-6 services-counter-block">
                         <div class="text-center my-4 my-sm-5 pipe">
-                            <h4 class="text-primary fs-1 fw-bolder mb-3">{{ $data['servicesCount'] }}</h4>
-                            <h5 class="mb-0">{{ __('messages.web.services') }}</h5>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-6 services-counter-block">
-                        <div class="text-center my-4 my-sm-5 pipe">
                             <h4 class="text-primary fs-1 fw-bolder mb-3">{{ $data['doctorsCount'] }}</h4>
                             <h5 class="mb-0">{{ __('messages.doctors') }}</h5>
                         </div>

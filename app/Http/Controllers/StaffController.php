@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
+use App\Models\Role;
 use App\Models\User;
 use App\Repositories\StaffRepository;
 use Laracasts\Flash\Flash;
@@ -42,8 +43,9 @@ class StaffController extends AppBaseController
     public function create(): \Illuminate\View\View
     {
         $roles = $this->staffRepository->getRole();
+        $defaultRoleId = Role::whereName('staff')->value('id');
 
-        return view('staffs.create', compact('roles'));
+        return view('staffs.create', compact('roles', 'defaultRoleId'));
     }
 
     /**
@@ -54,9 +56,9 @@ class StaffController extends AppBaseController
     public function store(CreateStaffRequest $request): RedirectResponse
     {
         $input = $request->all();
-        // Ensure role defaults to 3 (staff) if not provided
+        // Ensure role defaults to staff if not provided
         if (!isset($input['role']) || empty($input['role'])) {
-            $input['role'] = 3;
+            $input['role'] = Role::whereName('staff')->value('id');
         }
         $this->staffRepository->store($input);
 
@@ -83,8 +85,9 @@ class StaffController extends AppBaseController
     public function edit(User $staff): \Illuminate\View\View
     {
         $roles = $this->staffRepository->getRole();
+        $defaultRoleId = Role::whereName('staff')->value('id');
 
-        return view('staffs.edit', compact('staff', 'roles'));
+        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId'));
     }
 
     /**
@@ -95,9 +98,9 @@ class StaffController extends AppBaseController
     public function update(UpdateStaffRequest $request, User $staff): RedirectResponse
     {
         $input = $request->all();
-        // Ensure role defaults to 3 (staff) if not provided
+        // Ensure role defaults to staff if not provided
         if (!isset($input['role']) || empty($input['role'])) {
-            $input['role'] = 3;
+            $input['role'] = Role::whereName('staff')->value('id');
         }
         $this->staffRepository->update($input, $staff->id);
 

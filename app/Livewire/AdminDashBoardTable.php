@@ -3,8 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Patient;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
 
@@ -12,10 +10,10 @@ use Livewire\Attributes\Lazy;
 class AdminDashBoardTable extends Component
 {
     public $data;
-    public function mount(Request $request)
+    public function mount()
     {
         $this->data['patients'] = Patient::with(['user'])
-            ->whereRaw('Date(created_at) = CURDATE()')
+            ->whereDate('created_at', today())
             ->orderBy('created_at', 'DESC')
             ->get()->toArray();
     }

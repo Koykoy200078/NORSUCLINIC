@@ -1,4 +1,41 @@
 @php $styleCss = 'style' @endphp
+@php
+// -----------------------------------------------------------------------
+// Sidebar badge data — computed ONCE per request with caching.
+// queue: 30s TTL (near-real-time).  medicine: 300s.  docs: 60s.
+// -----------------------------------------------------------------------
+$_menuQueueBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_queue', 30, function () {
+    return \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
+        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
+        ->first();
+});
+
+$_menuMedicineBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_medicine', 300, function () {
+    $today = \Carbon\Carbon::now();
+    $criticalCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
+        ->whereBetween('expiry_date', [$today, $today->copy()->addDays(7)])
+        ->whereHas('medicines', fn($q) => $q->where('available_quantity', '>', 0))
+        ->distinct('medicine_id')->count('medicine_id');
+    $warningCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
+        ->whereBetween('expiry_date', [$today->copy()->addDays(8), $today->copy()->addDays(30)])
+        ->whereHas('medicines', fn($q) => $q->where('available_quantity', '>', 0))
+        ->distinct('medicine_id')->count('medicine_id');
+    $lowStockCount = \App\Models\Medicine::where('available_quantity', '>', 0)
+        ->where(function ($q) {
+            $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_stock_alert')
+              ->orWhereRaw('stock_alert_percentage IS NOT NULL AND quantity > 0 AND (available_quantity / quantity * 100) <= stock_alert_percentage');
+        })->count();
+    return compact('criticalCount', 'warningCount', 'lowStockCount');
+});
+
+$_menuIncompleteDocsBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_incomplete_docs', 60, function () {
+    return \App\Models\RequestDocuments::where('document_type', 'consultation_form')
+        ->where(function ($q) {
+            $q->whereNull('assessment')->orWhere('assessment', '')
+              ->orWhereNull('plan')->orWhere('plan', '');
+        })->count();
+});
+@endphp
 <div class="no-record text-center d-none">{{ __('messages.no_matching_records_found') }}</div>
 
 {{-- Dashboard Menu Items - Show appropriate dashboard based on user role --}}
@@ -57,11 +94,7 @@
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queue.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
         <span class="aside-menu-title">Patient Queue</span>
-        @php
-        $doctorQueueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
-        ->first();
-        @endphp
+        @php $doctorQueueData = $_menuQueueBadge; @endphp
         @if($doctorQueueData && $doctorQueueData->total > 0)
         @if($doctorQueueData->in_progress > 0)
         <span class="badge bg-warning rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Patient in progress">
@@ -87,17 +120,7 @@
             <i class="fa-solid fa-file-signature"></i>
         </span>
         <span class="aside-menu-title">Patients Data</span>
-        @php
-        // Count incomplete consultation forms (missing assessment or plan)
-        $incompleteDocsCount = \App\Models\RequestDocuments::where('document_type', 'consultation_form')
-        ->where(function($query) {
-        $query->whereNull('assessment')
-        ->orWhere('assessment', '')
-        ->orWhereNull('plan')
-        ->orWhere('plan', '');
-        })
-        ->count();
-        @endphp
+        @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
         @if($incompleteDocsCount > 0)
         <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
             <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
@@ -150,8 +173,6 @@
     }}">
         <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
         <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
-        <span class="d-none">{{ __('messages.doctors') }}</span>
-        <span class="d-none">{{ __('messages.doctor_sessions') }}</span>
     </a>
 </li>
 @endcan
@@ -177,11 +198,7 @@
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.patient-queue.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
         <span class="aside-menu-title">Patient Queue</span>
-        @php
-        $queueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority')
-        ->first();
-        @endphp
+        @php $queueData = $_menuQueueBadge; @endphp
         @if($queueData && $queueData->total > 0)
         @if($queueData->priority > 0)
         <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $queueData->priority }} priority patient(s)">{{ $queueData->priority }}</span>
@@ -200,11 +217,7 @@
     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patient-queue.index') }}">
         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
         <span class="aside-menu-title">Patient Queue</span>
-        @php
-        $adminQueueData = \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-        ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority')
-        ->first();
-        @endphp
+        @php $adminQueueData = $_menuQueueBadge; @endphp
         @if($adminQueueData && $adminQueueData->total > 0)
         @if($adminQueueData->priority > 0)
         <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $adminQueueData->priority }} priority patient(s)">{{ $adminQueueData->priority }}</span>
@@ -232,38 +245,10 @@
         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
         <span class="aside-menu-title">{{ __('messages.medicines') }}</span>
         @php
-        // Count medicines expiring within 7 days (Critical - Red badge)
-        $sevenDaysFromNow = \Carbon\Carbon::now()->addDays(7);
-        $today = \Carbon\Carbon::now();
-        $criticalCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
-        ->whereBetween('expiry_date', [$today, $sevenDaysFromNow])
-        ->whereHas('medicines', function ($query) {
-        $query->where('available_quantity', '>', 0);
-        })
-        ->distinct('medicine_id')
-        ->count('medicine_id');
-
-        // Count medicines expiring within 8-30 days (Warning - Yellow badge)
-        $eightDaysFromNow = \Carbon\Carbon::now()->addDays(8);
-        $oneMonthFromNow = \Carbon\Carbon::now()->addDays(30);
-        $warningCount = \App\Models\PurchasedMedicine::whereNotNull('expiry_date')
-        ->whereBetween('expiry_date', [$eightDaysFromNow, $oneMonthFromNow])
-        ->whereHas('medicines', function ($query) {
-        $query->where('available_quantity', '>', 0);
-        })
-        ->distinct('medicine_id')
-        ->count('medicine_id');
-
-        // Count medicines with low stock alerts (based on minimum_stock_alert or stock_alert_percentage)
-        $lowStockCount = \App\Models\Medicine::where('available_quantity', '>', 0)
-        ->where(function ($query) {
-        // Check minimum stock alert
-        $query->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_stock_alert')
-            // OR check percentage alert
-            ->orWhereRaw('stock_alert_percentage IS NOT NULL AND quantity > 0 AND (available_quantity / quantity * 100) <= stock_alert_percentage');
-                })
-                ->count();
-                @endphp
+        $criticalCount = $_menuMedicineBadge['criticalCount'];
+        $warningCount  = $_menuMedicineBadge['warningCount'];
+        $lowStockCount = $_menuMedicineBadge['lowStockCount'];
+        @endphp
 
                 <div class="d-flex align-items-center ms-auto gap-1">
                     @if($criticalCount > 0)
@@ -338,7 +323,6 @@
         <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
         <span class="aside-menu-title">{{ __('messages.settings') }}</span>
         <span class="d-none">{{ __('messages.settings') }}</span>
-        <span class="d-none">{{ __('messages.clinic_schedules') }}</span>
         <span class="d-none">{{ __('messages.roles') }}</span>
         <span class="d-none">{{ __('messages.countries') }}</span>
         <span class="d-none">{{ __('messages.states') }}</span>

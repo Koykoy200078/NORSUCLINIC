@@ -14,22 +14,3 @@
     </td>
     </tr>
 </script>
-
-<script id="sessionTemplateData" type="text/x-jsrender">
-            <div class="position-absolute h-100 w-4px bg-secondary rounded top-0 start-0"></div>
-            <div class="fw-bold ms-5">
-                <div class=" fs-7 mb-1"><?php echo __('messages.doctor_session.session_time_in_minutes') ?> :
-                    <span class="fs-7 text-gray-400 text-uppercase">{{:time}}</span>
-                </div>
-                <div class="fs-7 text-gray-400"><?php echo __('messages.doctor_session.morning_session') ?> :
-                    <a href="#">
-    {{:morningSessionStart}} To {{:morningSessionEnd}}</a>
-                </div>
-                <div class="fs-7 text-gray-400"><?php echo __('messages.doctor_session.evening_session') ?> :
-                    <a href="#">
-    {{:eveningSessionStart}} To {{:eveningSessionEnd}}</a>
-                </div>
-            </div>
-
-
-</script>

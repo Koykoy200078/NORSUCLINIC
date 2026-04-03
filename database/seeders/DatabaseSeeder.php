@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CollegeSeeder::class);
         $this->call(CourseSeeder::class);
         $this->call(DepartmentSeeder::class);
-        $this->call(YearLevelSeeder::class);
+        // $this->call(YearLevelSeeder::class);
         $this->call(OfficeSeeder::class);
         $this->call(VaccinationSeeder::class);
 

@@ -36,12 +36,7 @@ if (! function_exists('getAppName')) {
      */
     function getAppName()
     {
-        static $setting;
-        if (empty($setting)) {
-            $setting = Setting::all()->keyBy('key');
-        }
-
-        return $setting['clinic_name']->value;
+        return \App\Services\SettingsService::get('clinic_name');
     }
 }
 
@@ -74,12 +69,7 @@ if (! function_exists('getAppFavicon')) {
      */
     function getAppFavicon()
     {
-        static $setting;
-        if (empty($setting)) {
-            $setting = Setting::all()->keyBy('key');
-        }
-
-        return $setting['favicon']->value;
+        return \App\Services\SettingsService::get('favicon') ?? '';
     }
 }
 
@@ -336,10 +326,11 @@ if (! function_exists('version')) {
 if (! function_exists('getNotification')) {
     function getNotification()
     {
-        return Notification::whereReadAt(null)->where(
-            'user_id',
-            getLogInUserId()
-        )->orderByDesc('created_at')->get();
+        return Notification::whereReadAt(null)
+            ->where('user_id', getLogInUserId())
+            ->orderByDesc('created_at')
+            ->limit(20)
+            ->get();
     }
 }
 
