@@ -143,8 +143,8 @@
             {{ Form::select('state_id', [], null,['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId','placeholder' => __('messages.doctor.province')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('City',__('messages.doctor.city').':' ,['class' => 'form-label']) }}
-            {{ Form::select('city_id', [], null,['class' => 'io-select2 form-select', 'data-control'=>'select2', 'id'=> 'editDoctorCityId','placeholder' => __('messages.doctor.city')]) }}
+            {{ Form::label('City',__('City/Municipality').':' ,['class' => 'form-label']) }}
+            {{ Form::select('city_id', [], null,['class' => 'io-select2 form-select', 'data-control'=>'select2', 'id'=> 'editDoctorCityId','placeholder' => __('City/Municipality')]) }}
         </div>
         <div class="col-md-6 mb-5">
             <label class="form-label">{{__('messages.doctor.postal_code')}}:</label>

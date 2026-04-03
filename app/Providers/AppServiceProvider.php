@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Mariuzzo\LaravelJsLocalization\Commands\LangJsCommand;
@@ -15,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        Schema::defaultStringLength(191);
+
         // Bind the Laravel JS Localization command into the app IOC.
         $this->app->singleton('localization.js', function ($app) {
             $app = $this->app;

@@ -101,8 +101,8 @@
         {{ Form::select('state_id', (isset($state) && $state!=null) ? $state:[], isset($user->address->state_id) ? $user->address->state_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId','placeholder' => __('messages.common.province')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('City',__('messages.doctor.city').':' ,['class' => 'form-label']) }}
-        {{ Form::select('city_id', (isset($cities) && $cities!=null) ? $cities:[], isset($user->address->city_id) ? $user->address->city_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorCityId','placeholder' => __('messages.common.select_city')]) }}
+        {{ Form::label('City',__('City/Municipality').':' ,['class' => 'form-label']) }}
+        {{ Form::select('city_id', (isset($cities) && $cities!=null) ? $cities:[], isset($user->address->city_id) ? $user->address->city_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorCityId','placeholder' => __('City/Municipality')]) }}
     </div>
     <div class="col-md-6">
         {{ Form::label('Postal Code', __('messages.doctor.postal_code').':', ['class' => 'form-label']) }}
