@@ -35,7 +35,7 @@ function tooltip() {
 }
 
 function alertInitialize() {
-    $(".alert").delay(5000).slideUp(300);
+    $(".alert:not(.no-auto-hide)").delay(5000).slideUp(300);
 }
 
 function refreshCsrfToken() {

@@ -18,7 +18,7 @@ $DBHost = "127.0.0.1"
 $DBPort = "3306"
 $DBName = "norsu_clinic"
 $DBUser = "root"
-$DBPass = "Carvs@10072000"
+$DBPass = ""
 
 # Backup interval in seconds (3600 = 1 hour)
 $BackupInterval = 3600

@@ -3,385 +3,185 @@
 {{ __('Patient Queue Management') }}
 @endsection
 @section('content')
+<style>
+    #pq-countdown-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    #pq-countdown-badge.pulse { animation: pqPulse 1s ease-in-out; }
+    @keyframes pqPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+    #pq-countdown-badge.countdown-5 { background-color: #28a745 !important; }
+    #pq-countdown-badge.countdown-4 { background-color: #20c997 !important; }
+    #pq-countdown-badge.countdown-3 { background-color: #ffc107 !important; color:#000 !important; }
+    #pq-countdown-badge.countdown-2 { background-color: #fd7e14 !important; color:#fff !important; }
+    #pq-countdown-badge.countdown-1 { background-color: #dc3545 !important; color:#fff !important; animation: pqPulse 0.5s ease-in-out; }
+    #pq-refresh-icon.spinning { animation: pqSpin 1s linear; }
+    @keyframes pqSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+</style>
 <div class="container-fluid">
     @include('flash::message')
 
     <div class="d-flex justify-content-between align-items-end mb-5">
         <h1>@yield('title')</h1>
-        @if(!isRole('doctor'))
-        <a class="btn btn-primary" href="{{ isRole('clinic_admin') ? route('patient-queue.create') : route('staff.patient-queue.create') }}">
-            <i class="fas fa-plus"></i> Add Patient to Queue
-        </a>
-        @endif
-    </div>
-
-    <div class="row">
-        <!-- Priority Queue -->
-        <div class="col-md-6 mb-4">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Priority Queue</h4>
-                </div>
-                <div class="card-body">
-                    @php
-                    $priorityQueues = $queues->where('is_priority', true);
-                    @endphp
-                    @if($priorityQueues->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Patient Name</th>
-                                    <th>Room</th>
-                                    <th>Status</th>
-                                    <th>Time</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($priorityQueues as $index => $queue)
-                                <tr class="{{ $queue->status === 'in_progress' ? 'table-warning' : '' }}">
-                                    <td><span class="badge bg-danger">{{ $index + 1 }}</span></td>
-                                    <td>
-                                        <strong>{{ $queue->patient->user->full_name }}</strong><br>
-                                        <small class="text-muted">{{ $queue->patient->patient_unique_id }}</small>
-                                        @if($queue->has_consultation_attachment)
-                                        <br><span class="badge badge-sm bg-success mt-1">
-                                            <i class="fas fa-file-medical"></i> Has Form
-                                        </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($queue->room_number)
-                                        <span class="badge bg-info">{{ $queue->room_number }}</span>
-                                        @else
-                                        <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($queue->status === 'waiting')
-                                        <span class="badge bg-secondary">Waiting</span>
-                                        @elseif($queue->status === 'in_progress')
-                                        <span class="badge bg-warning">In Progress</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <small>{{ $queue->created_at->diffForHumans() }}</small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            @if($queue->status === 'waiting')
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.call-next', $queue) : route('staff.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
-                                                    <i class="fas fa-phone"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-
-                                            @if($queue->status === 'in_progress')
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.complete', $queue) : route('staff.patient-queue.complete', $queue) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-primary" title="Complete">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-
-                                            <a href="{{ isRole('clinic_admin') ? route('patient-queue.edit', $queue) : route('staff.patient-queue.edit', $queue) }}" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.destroy', $queue) : route('staff.patient-queue.destroy', $queue) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Remove">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @else
-                    <p class="text-center text-muted">No priority patients in queue</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Regular Queue -->
-        <div class="col-md-6 mb-4">
-            <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-users"></i> Regular Queue</h4>
-                </div>
-                <div class="card-body">
-                    @php
-                    $regularQueues = $queues->where('is_priority', false);
-                    @endphp
-                    @if($regularQueues->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Patient Name</th>
-                                    <th>Room</th>
-                                    <th>Status</th>
-                                    <th>Time</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($regularQueues as $index => $queue)
-                                <tr class="{{ $queue->status === 'in_progress' ? 'table-warning' : '' }}">
-                                    <td><span class="badge bg-primary">{{ $index + 1 }}</span></td>
-                                    <td>
-                                        <strong>{{ $queue->patient->user->full_name }}</strong><br>
-                                        <small class="text-muted">{{ $queue->patient->patient_unique_id }}</small>
-                                        @if($queue->has_consultation_attachment)
-                                        <br><span class="badge badge-sm bg-success mt-1">
-                                            <i class="fas fa-file-medical"></i> Has Form
-                                        </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($queue->room_number)
-                                        <span class="badge bg-info">{{ $queue->room_number }}</span>
-                                        @else
-                                        <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($queue->status === 'waiting')
-                                        <span class="badge bg-secondary">Waiting</span>
-                                        @elseif($queue->status === 'in_progress')
-                                        <span class="badge bg-warning">In Progress</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <small>{{ $queue->created_at->diffForHumans() }}</small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            @if($queue->status === 'waiting')
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.call-next', $queue) : route('staff.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
-                                                    <i class="fas fa-phone"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-
-                                            @if($queue->status === 'in_progress')
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.complete', $queue) : route('staff.patient-queue.complete', $queue) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-primary" title="Complete">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-
-                                            <a href="{{ isRole('clinic_admin') ? route('patient-queue.edit', $queue) : route('staff.patient-queue.edit', $queue) }}" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <form action="{{ isRole('clinic_admin') ? route('patient-queue.destroy', $queue) : route('staff.patient-queue.destroy', $queue) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Remove">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @else
-                    <p class="text-center text-muted">No patients in regular queue</p>
-                    @endif
-                </div>
-            </div>
+        <div class="d-flex gap-2 align-items-center">
+            @if(!isRole('doctor'))
+            <a class="btn btn-primary" href="{{ isRole('clinic_admin') ? route('patient-queue.create') : route('staff.patient-queue.create') }}">
+                <i class="fas fa-plus"></i> Add Patient to Queue
+            </a>
+            @endif
+            <button class="btn btn-info" id="pq-manual-refresh-btn" onclick="window.pqManualRefresh()">
+                <i class="fas fa-sync" id="pq-refresh-icon"></i> Refresh Queue
+            </button>
+            <button class="btn btn-outline-primary" id="pq-toggle-auto-refresh" onclick="window.pqToggleAutoRefresh()">
+                <i class="fas fa-play"></i> <span id="pq-toggle-text">Auto-Refresh OFF</span>
+            </button>
+            <span class="badge d-none d-flex align-items-center countdown-5" id="pq-countdown-badge">
+                <i class="fas fa-clock me-1"></i> <span id="pq-countdown">5</span>s
+            </span>
         </div>
     </div>
 
-    <!-- Queue Summary -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <h3 class="text-primary">{{ $queues->count() }}</h3>
-                            <p class="text-muted">Total in Queue</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h3 class="text-danger">{{ $queues->where('is_priority', true)->count() }}</h3>
-                            <p class="text-muted">Priority</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h3 class="text-warning">{{ $queues->where('status', 'in_progress')->count() }}</h3>
-                            <p class="text-muted">In Progress</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h3 class="text-secondary">{{ $queues->where('status', 'waiting')->count() }}</h3>
-                            <p class="text-muted">Waiting</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- All Patients Today -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h4 class="mb-0"><i class="fas fa-history"></i> All Patients Today</h4>
-                </div>
-                <div class="card-body">
-                    @php
-                    $todayPatients = \App\Models\PatientQueue::with(['patient.user', 'addedBy'])
-                    ->whereDate('created_at', today())
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                    @endphp
-
-                    @if($todayPatients->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Time Added</th>
-                                    <th>Patient Name</th>
-                                    <th>Patient ID</th>
-                                    <th>Room</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Called At</th>
-                                    <th>Completed At</th>
-                                    <th>Added By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($todayPatients as $patient)
-                                <tr>
-                                    <td>
-                                        <small>{{ $patient->created_at->format('h:i A') }}</small>
-                                    </td>
-                                    <td>
-                                        <strong>{{ $patient->patient->user->full_name }}</strong>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ $patient->patient->patient_unique_id }}</small>
-                                    </td>
-                                    <td>
-                                        @if($patient->room_number)
-                                        <span class="badge bg-info">{{ $patient->room_number }}</span>
-                                        @else
-                                        <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($patient->is_priority)
-                                        <span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Priority</span>
-                                        @else
-                                        <span class="text-muted">Regular</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($patient->status === 'waiting')
-                                        <span class="badge bg-secondary">Waiting</span>
-                                        @elseif($patient->status === 'in_progress')
-                                        <span class="badge bg-warning">In Progress</span>
-                                        @elseif($patient->status === 'completed')
-                                        <span class="badge bg-success">Completed</span>
-                                        @elseif($patient->status === 'cancelled')
-                                        <span class="badge bg-dark">Cancelled</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($patient->called_at)
-                                        <small>{{ \Carbon\Carbon::parse($patient->called_at)->format('h:i A') }}</small>
-                                        @else
-                                        <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($patient->completed_at)
-                                        <small>{{ \Carbon\Carbon::parse($patient->completed_at)->format('h:i A') }}</small>
-                                        @else
-                                        <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <small>{{ $patient->addedBy->full_name ?? 'N/A' }}</small>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Today's Statistics -->
-                    <div class="row mt-4 pt-3 border-top">
-                        <div class="col-md-12">
-                            <h5 class="mb-3">Today's Statistics</h5>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-info">{{ $todayPatients->count() }}</h4>
-                                <small class="text-muted">Total Today</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-success">{{ $todayPatients->where('status', 'completed')->count() }}</h4>
-                                <small class="text-muted">Completed</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-warning">{{ $todayPatients->where('status', 'in_progress')->count() }}</h4>
-                                <small class="text-muted">In Progress</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-secondary">{{ $todayPatients->where('status', 'waiting')->count() }}</h4>
-                                <small class="text-muted">Waiting</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-dark">{{ $todayPatients->where('status', 'cancelled')->count() }}</h4>
-                                <small class="text-muted">Cancelled</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <h4 class="text-danger">{{ $todayPatients->where('is_priority', true)->count() }}</h4>
-                                <small class="text-muted">Priority Cases</small>
-                            </div>
-                        </div>
-                    </div>
-                    @else
-                    <div class="alert alert-info text-center mb-0">
-                        <i class="fas fa-info-circle"></i> No patients have been added to the queue today.
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
+    <!-- Dynamic queue content (refreshed via AJAX) -->
+    <div id="queue-dynamic-content">
+        @include('patient_queue.index_partial')
     </div>
 </div>
+
+<script>
+    const pqRefreshUrl = "{{ isRole('clinic_admin') ? route('patient-queue.refresh') : route('staff.patient-queue.refresh') }}";
+
+    window.pqAutoRefresh = {
+        enabled: localStorage.getItem('pqAutoRefresh') !== 'false',
+        countdownInterval: null,
+        refreshTimeout: null,
+        countdownSeconds: 5
+    };
+
+    // Fetch only the dynamic content and swap it — no full page reload
+    window.pqFetchContent = function () {
+        const icon = document.getElementById('pq-refresh-icon');
+        if (icon) icon.classList.add('spinning');
+
+        fetch(pqRefreshUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+                const container = document.getElementById('queue-dynamic-content');
+                if (container) container.innerHTML = html;
+                if (icon) icon.classList.remove('spinning');
+                if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
+            })
+            .catch(function () {
+                const icon = document.getElementById('pq-refresh-icon');
+                if (icon) icon.classList.remove('spinning');
+                if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
+            });
+    };
+
+    window.pqManualRefresh = function () {
+        const state = window.pqAutoRefresh;
+        if (state.enabled) {
+            if (state.countdownInterval) clearInterval(state.countdownInterval);
+            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+        }
+        window.pqFetchContent();
+    };
+
+    window.pqToggleAutoRefresh = function () {
+        const state = window.pqAutoRefresh;
+        state.enabled = !state.enabled;
+        localStorage.setItem('pqAutoRefresh', state.enabled);
+
+        const btn  = document.getElementById('pq-toggle-auto-refresh');
+        const text = document.getElementById('pq-toggle-text');
+        const icon = btn ? btn.querySelector('i') : null;
+
+        if (state.enabled) {
+            if (btn)  { btn.classList.remove('btn-outline-primary'); btn.classList.add('btn-outline-success'); }
+            if (icon) { icon.classList.remove('fa-play'); icon.classList.add('fa-pause'); }
+            if (text) text.textContent = 'Auto-Refresh ON';
+            window.pqStartCountdown();
+        } else {
+            if (btn)  { btn.classList.remove('btn-outline-success'); btn.classList.add('btn-outline-primary'); }
+            if (icon) { icon.classList.remove('fa-pause'); icon.classList.add('fa-play'); }
+            if (text) text.textContent = 'Auto-Refresh OFF';
+            if (state.countdownInterval) clearInterval(state.countdownInterval);
+            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+            pqUpdateCountdown();
+        }
+    };
+
+    window.pqStartCountdown = function () {
+        const state = window.pqAutoRefresh;
+        if (!state.enabled) return;
+
+        state.countdownSeconds = 5;
+        pqUpdateCountdown();
+
+        if (state.countdownInterval) clearInterval(state.countdownInterval);
+        if (state.refreshTimeout)    clearTimeout(state.refreshTimeout);
+
+        state.countdownInterval = setInterval(function () {
+            state.countdownSeconds--;
+            pqUpdateCountdown();
+            if (state.countdownSeconds <= 0) clearInterval(state.countdownInterval);
+        }, 1000);
+
+        state.refreshTimeout = setTimeout(function () {
+            if (state.enabled) window.pqFetchContent();
+        }, 5000);
+    };
+
+    function pqUpdateCountdown() {
+        const state = window.pqAutoRefresh;
+        const badge = document.getElementById('pq-countdown-badge');
+        const el    = document.getElementById('pq-countdown');
+        if (!badge || !el) return;
+
+        el.textContent = state.countdownSeconds;
+
+        if (state.enabled) {
+            badge.classList.remove('d-none', 'countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
+            if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
+                badge.classList.add('countdown-' + state.countdownSeconds);
+            }
+            badge.classList.add('pulse');
+            setTimeout(function () { badge.classList.remove('pulse'); }, 300);
+        } else {
+            badge.classList.add('d-none');
+        }
+    }
+
+    (function () {
+        function init() {
+            const state = window.pqAutoRefresh;
+            const btn   = document.getElementById('pq-toggle-auto-refresh');
+            const text  = document.getElementById('pq-toggle-text');
+            const icon  = btn ? btn.querySelector('i') : null;
+            const badge = document.getElementById('pq-countdown-badge');
+            if (!btn) return;
+
+            if (state.enabled) {
+                btn.classList.add('btn-outline-success');
+                btn.classList.remove('btn-outline-primary');
+                if (icon) { icon.classList.add('fa-pause'); icon.classList.remove('fa-play'); }
+                if (text) text.textContent = 'Auto-Refresh ON';
+                if (badge) badge.classList.remove('d-none');
+                window.pqStartCountdown();
+            } else {
+                btn.classList.add('btn-outline-primary');
+                btn.classList.remove('btn-outline-success');
+                if (icon) { icon.classList.add('fa-play'); icon.classList.remove('fa-pause'); }
+                if (text) text.textContent = 'Auto-Refresh OFF';
+                if (badge) badge.classList.add('d-none');
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>
 @endsection

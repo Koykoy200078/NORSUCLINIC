@@ -1,6 +1,6 @@
 // NORSUCLINIC Database Schema
 // Generated for dbdiagram.io
-// Updated: November 26, 2025
+// Updated: April 4, 2026
 // This represents the ACTIVE relational model of the NORSUCLINIC system
 // All deprecated and unused tables have been removed
 
@@ -39,6 +39,9 @@ Table users {
   department_id int [ref: > departments.id, null]
   office_id int [ref: > offices.id, null]
   vaccination_id int [ref: > vaccinations.id, null]
+  email_notification boolean [default: 1, null]
+  time_zone varchar(255) [default: 'Asia/Manila', null]
+  dark_mode boolean [default: false, null]
   remember_token varchar(100) [null]
   created_at timestamp
   updated_at timestamp
@@ -50,6 +53,9 @@ Table doctors {
   id bigint [pk, increment]
   user_id bigint [ref: > users.id]
   experience double [null]
+  twitter_url varchar(255) [null]
+  linkedin_url varchar(255) [null]
+  instagram_url varchar(255) [null]
   created_at timestamp
   updated_at timestamp
   
@@ -137,27 +143,6 @@ Table offices {
 // MEDICAL SERVICES & SPECIALIZATIONS
 // ==========================================
 
-Table service_categories {
-  id bigint [pk, increment]
-  name varchar(255)
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Categories for medical services'
-}
-
-Table services {
-  id bigint [pk, increment]
-  category_id bigint [ref: > service_categories.id]
-  name varchar(255)
-  charges double [null]
-  status boolean [default: 1]
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Medical services offered by the clinic'
-}
-
 Table specializations {
   id bigint [pk, increment]
   name varchar(255)
@@ -168,59 +153,19 @@ Table specializations {
 }
 
 // ==========================================
-// APPOINTMENTS & SCHEDULING
+// QUEUE MANAGEMENT
 // ==========================================
-
-Table appointments {
-  id bigint [pk, increment]
-  doctor_id bigint [ref: > doctors.id]
-  patient_id int [ref: > patients.id]
-  date varchar(255)
-  from_time varchar(255)
-  from_time_type varchar(255)
-  to_time varchar(255)
-  to_time_type varchar(255)
-  status boolean [default: 1]
-  description text [null]
-  service_id bigint [ref: > services.id]
-  payable_amount varchar(255)
-  appointment_unique_id varchar(255)
-  payment_type int [null]
-  payment_method int [null]
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Patient appointment bookings with payment tracking'
-}
-
-Table doctor_sessions {
-  id bigint [pk, increment]
-  doctor_id bigint [ref: > doctors.id]
-  available_on varchar(255)
-  available_from varchar(255)
-  available_to varchar(255)
-  session_meeting_time varchar(255)
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Doctor availability schedules'
-}
-
-Table holidays {
-  id bigint [pk, increment]
-  name varchar(255)
-  date date
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Holiday calendar for clinic closures'
-}
 
 Table patient_queues {
   id bigint [pk, increment]
   patient_id int [ref: > patients.id]
-  queue_number int
-  status varchar(255)
+  added_by bigint [ref: > users.id]
+  room_number varchar(255) [null]
+  is_priority boolean [default: false]
+  status varchar(255) [default: 'waiting', note: 'waiting | in_progress | completed | cancelled']
+  notes text [null]
+  latest_consultation_id bigint [ref: > request_documents.id, null]
+  has_consultation_attachment boolean [default: false]
   called_at timestamp [null]
   completed_at timestamp [null]
   created_at timestamp
@@ -235,7 +180,6 @@ Table patient_queues {
 
 Table prescriptions {
   id bigint [pk, increment]
-  appointment_id bigint [ref: > appointments.id]
   patient_id int [ref: > patients.id]
   doctor_id bigint [ref: > doctors.id, null]
   food_allergies varchar(255) [null]
@@ -333,7 +277,7 @@ Table request_documents {
   consult_mode varchar(255) [null]
   nursing_intervention varchar(255) [null]
   nursing_incharged_id varchar(255) [null]
-  examined_on datetime [null]
+  examined_on varchar(255) [null, note: 'Supports single date, date range (date1|date2|range), or multiple dates (d1,d2|multiple)']
   request_of varchar(255) [null]
   complaints_diagnosis text [null]
   medical_cert_remarks text [null]
@@ -360,68 +304,65 @@ Table categories {
   Note: 'Medicine categories'
 }
 
-Table brands {
+Table generics {
   id bigint [pk, increment]
   name varchar(255)
   created_at timestamp
   updated_at timestamp
   
-  Note: 'Medicine brands/manufacturers'
+  Note: 'Generic medicine names (renamed from brands in Dec 2025)'
 }
 
 Table medicines {
   id bigint [pk, increment]
   category_id bigint [ref: > categories.id, null]
-  brand_id bigint [ref: > brands.id, null]
+  generic_id bigint [ref: > generics.id, null]
   name varchar(255)
-  selling_price double
-  buying_price double
   quantity int
   available_quantity int
+  minimum_stock_alert int [null, note: 'Minimum quantity threshold for stock alert']
+  stock_alert_percentage decimal(5,2) [null, note: 'Percentage threshold for stock alert']
   salt_composition varchar(255)
   description text [null]
   side_effects text [null]
   currency_symbol varchar(100) [null]
-  stock_alert_enabled boolean [default: 0]
-  minimum_stock_level int [null]
   created_at timestamp
   updated_at timestamp
   
-  Note: 'Medicine inventory and details with stock alerts'
+  Note: 'Medicine inventory and details with stock alerts. buying_price and selling_price removed Dec 2025.'
+}
+
+Table medicine_availabilities {
+  id bigint [pk, increment]
+  availability_no varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Medicine stock availability batches (renamed from purchase_medicines Dec 2025; payment/pricing fields removed)'
 }
 
 Table purchased_medicines {
   id bigint [pk, increment]
-  purchase_id bigint [ref: > purchase_medicines.id]
+  medicine_availabilities_id bigint [ref: > medicine_availabilities.id]
   medicine_id bigint [ref: > medicines.id]
+  dosage varchar(255) [null]
   quantity int
   expiry_date varchar(255) [null]
   manufacturing_date date [null]
-  dosage varchar(255) [null]
   created_at timestamp
   updated_at timestamp
   
-  Note: 'Individual medicine batches from purchases with expiry tracking'
-}
-
-Table purchase_medicines {
-  id bigint [pk, increment]
-  purchase_no varchar(255)
-  purchase_date date
-  total double
-  note text [null]
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Purchase orders for medicine inventory'
+  Note: 'Individual medicine batches with expiry tracking. tax and amount fields removed Dec 2025.'
 }
 
 Table consultation_medicines {
   id bigint [pk, increment]
   request_document_id bigint [ref: > request_documents.id]
   medicine_id bigint [ref: > medicines.id]
-  quantity int
   dosage varchar(255) [null]
+  quantity int [default: 1]
+  used_for varchar(255) [null, note: 'plan or nursing_intervention']
+  dosage_instructions text [null]
   created_at timestamp
   updated_at timestamp
   
@@ -436,6 +377,7 @@ Table sale_medicines {
   sale_price double
   amount double
   tax double [null]
+  expiry_date datetime [null]
   created_at timestamp
   updated_at timestamp
   
@@ -444,23 +386,28 @@ Table sale_medicines {
 
 Table medicine_bills {
   id bigint [pk, increment]
-  history_number varchar(255) [unique]
+  history_number varchar(255)
   patient_id int [ref: > patients.id]
-  bill_date datetime
-  payable_amount double
-  tax_amount double [null]
-  discount double [null]
+  doctor_id bigint [null]
+  model_type varchar(255)
+  model_id varchar(255)
+  discount double
   net_amount double
-  status boolean [default: 0]
+  total double
+  tax_amount double
+  payment_status int [default: 0]
+  payment_type int
+  note varchar(255) [null]
+  bill_date datetime
   created_at timestamp
   updated_at timestamp
   
-  Note: 'Medicine sales bills/invoices'
+  Note: 'Medicine sales bills/invoices. bill_number renamed to history_number Oct 2025.'
 }
 
 // Database View (Read-only)
 Table used_medicines_view {
-  id bigint [pk]
+  id varchar(255) [pk, note: 'Prefixed: C{id} for consultations, S{id} for sales']
   medicine_id bigint [ref: > medicines.id]
   medicine_name varchar(255)
   quantity int
@@ -502,11 +449,22 @@ Table states {
 Table cities {
   id bigint [pk, increment]
   name varchar(255)
+  type varchar(255) [default: 'city', note: 'city | municipality']
   state_id bigint [ref: > states.id]
   created_at timestamp
   updated_at timestamp
   
   Note: 'City reference data'
+}
+
+Table barangays {
+  id bigint [pk, increment]
+  name varchar(191)
+  city_id bigint [ref: > cities.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Barangay (sub-municipality) reference data (added Feb 2026)'
 }
 
 Table addresses {
@@ -520,6 +478,7 @@ Table addresses {
   country_id bigint [ref: > countries.id, null]
   state_id bigint [ref: > states.id, null]
   city_id bigint [ref: > cities.id, null]
+  barangay_id bigint [ref: > barangays.id, null]
   created_at timestamp
   updated_at timestamp
   
@@ -538,14 +497,6 @@ Table doctor_specialization {
   updated_at timestamp
   
   Note: 'Many-to-many relationship: doctors can have multiple specializations'
-}
-
-Table service_doctor {
-  id bigint [pk, increment]
-  service_id bigint [ref: > services.id]
-  doctor_id bigint [ref: > doctors.id]
-  
-  Note: 'Many-to-many relationship: doctors can provide multiple services'
 }
 
 // ==========================================
@@ -610,64 +561,37 @@ Table role_has_permissions {
 }
 
 // ==========================================
-// FINANCIAL & TRANSACTIONS
-// ==========================================
-
-Table transactions {
-  id bigint [pk, increment]
-  transaction_id varchar(255) [unique]
-  appointment_id bigint [ref: > appointments.id]
-  amount double
-  type int
-  status int [default: 0]
-  accepted_by bigint [null]
-  payment_type int [null]
-  meta text [null]
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Financial transactions and payment tracking'
-}
-
-Table currencies {
-  id bigint [pk, increment]
-  currency_name varchar(255)
-  currency_icon varchar(255)
-  currency_code varchar(255)
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Supported currencies for payments'
-}
-
-Table payment_gateways {
-  id bigint [pk, increment]
-  payment_gateway_name varchar(255)
-  payment_gateway_id int
-  created_at timestamp
-  updated_at timestamp
-  
-  Note: 'Payment gateway configurations'
-}
-
-// ==========================================
 // ACTIVITY TRACKING
 // ==========================================
 
 Table activity_logs {
   id bigint [pk, increment]
   user_id bigint [ref: > users.id, null]
+  user_type varchar(255) [null, note: 'admin | staff | doctor']
+  user_name varchar(255) [null]
   action varchar(255)
-  model_type varchar(255) [null]
-  model_id bigint [null]
-  old_values json [null]
-  new_values json [null]
+  subject_type varchar(255) [null, note: 'e.g. Patient, RequestDocuments, Medicine']
+  subject_id bigint [null]
+  description text
+  date date [null]
+  patient_name varchar(255) [null]
+  patient_age int [null]
+  patient_gender varchar(255) [null]
+  college varchar(255) [null]
+  address varchar(255) [null]
+  contact_number varchar(255) [null]
+  complaints text [null]
+  diagnosis text [null]
+  informant varchar(255) [null]
+  consult_mode varchar(255) [null]
+  course_section varchar(255) [null]
+  properties json [null]
   ip_address varchar(45) [null]
   user_agent text [null]
   created_at timestamp
   updated_at timestamp
   
-  Note: 'System activity and audit trail logging'
+  Note: 'System activity and audit trail logging. Stores detailed consultation context for reporting.'
 }
 
 // ==========================================
@@ -740,21 +664,80 @@ Table password_reset_tokens {
   Note: 'Password reset token storage'
 }
 
+Table sessions {
+  id varchar(255) [pk]
+  user_id bigint [null]
+  ip_address varchar(45) [null]
+  user_agent text [null]
+  payload longtext
+  last_activity int
+  
+  Note: 'Laravel database session storage (added April 2026)'
+}
+
+// ==========================================
+// GUEST & LEGACY REFERENCE TABLES
+// ==========================================
+
+Table guests {
+  id bigint [pk, increment]
+  first_name varchar(255)
+  last_name varchar(255)
+  contact varchar(255) [null]
+  email varchar(255) [null]
+  purpose text [null]
+  address text [null]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Walk-in guest tracking (created Oct 2025)'
+}
+
+Table sliders {
+  id int [pk, increment]
+  title varchar(255)
+  short_description text
+  is_default boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Homepage slider/banner content'
+}
+
+Table qualifications {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  degree varchar(255)
+  university varchar(255)
+  year varchar(255)
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'User/doctor academic qualifications'
+}
+
 // ==========================================
 // SUMMARY & STATISTICS
 // ==========================================
-// Total Active Tables: 45
-// Removed Deprecated Tables: 9 (visits, visit_problems, visit_observations, 
-//   visit_notes, visit_prescriptions, clinic_schedules, enquiries, subscribes, 
-//   sliders, qualifications, session_week_days, guests, doctor_holidays, used_medicines)
+// Total Active Tables: 46 (+ 1 view)
+// 
+// Changes since Nov 2025 DBML:
+// DROPPED (April 2026): appointments, doctor_sessions, service_categories, services, 
+//   service_doctor, holidays, transactions, currencies, payment_gateways
+// RENAMED (Dec 2025): brands → generics, purchase_medicines → medicine_availabilities
+// ADDED (Feb–Apr 2026): barangays, sessions
+// RESTORED (were active but incorrectly excluded): guests, sliders, qualifications
 //
 // Key Table Categories:
-// - Core User Management: 5 tables (users, doctors, patients, addresses, permissions/roles)
-// - Educational: 6 tables (campuses, colleges, courses, year_levels, departments, offices)
-// - Medical Services: 10 tables (appointments, sessions, services, specializations, etc.)
-// - Prescriptions: 4 tables (prescriptions, prescriptions_medicines, diagnoses, request_documents)
-// - Pharmacy: 8 tables (medicines, purchases, sales, bills, categories, brands, view)
-// - Location: 3 tables (countries, states, cities)
-// - Financial: 3 tables (transactions, currencies, payment_gateways)
-// - System: 6 tables (settings, media, notifications, activity_logs, etc.)
+// - Core User Management: 3 tables (users, doctors, patients)
+// - Educational: 7 tables (campuses, colleges, courses, year_levels, departments, offices, vaccinations)
+// - Medical: 3 tables (specializations, doctor_specialization, patient_queues)
+// - Prescriptions/Records: 4 tables (prescriptions, prescriptions_medicines, diagnoses, request_documents)
+// - Pharmacy: 8 tables + 1 view (categories, generics, medicines, medicine_availabilities, 
+//     purchased_medicines, consultation_medicines, sale_medicines, medicine_bills, used_medicines_view)
+// - Location: 5 tables (countries, states, cities, barangays, addresses)
+// - Permissions/Roles: 5 tables (permissions, roles, model_has_permissions, model_has_roles, role_has_permissions)
+// - Activity: 1 table (activity_logs)
+// - System: 6 tables (settings, media, notifications, failed_jobs, password_reset_tokens, sessions)
+// - Reference/Legacy: 3 tables (guests, sliders, qualifications)
 // ==========================================

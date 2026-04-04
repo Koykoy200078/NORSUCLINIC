@@ -25,6 +25,19 @@ class PatientQueueController extends Controller
     }
 
     /**
+     * Return only the dynamic queue content as HTML (used by AJAX auto-refresh for staff/admin).
+     */
+    public function indexPartial()
+    {
+        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
+            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+            ->orderByQueue()
+            ->get();
+
+        return view('patient_queue.index_partial', compact('queues'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -168,6 +181,19 @@ class PatientQueueController extends Controller
             ->get();
 
         return view('patient_queue.doctor_view', compact('queues'));
+    }
+
+    /**
+     * Return only the dynamic queue content as HTML (used by AJAX auto-refresh)
+     */
+    public function doctorQueuePartial()
+    {
+        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
+            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+            ->orderByQueue()
+            ->get();
+
+        return view('patient_queue.doctor_view_partial', compact('queues'));
     }
 
     /**

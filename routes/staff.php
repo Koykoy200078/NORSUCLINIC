@@ -38,6 +38,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Patient Queue Management (Nurse/Staff can manage queue)
     Route::middleware('permission:manage_patients')->group(function () {
+        Route::get('patient-queue/refresh', [PatientQueueController::class, 'indexPartial'])->name('patient-queue.refresh');
         Route::resource('patient-queue', PatientQueueController::class);
         Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
         Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');

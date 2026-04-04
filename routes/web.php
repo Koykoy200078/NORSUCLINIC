@@ -199,6 +199,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Patient Queue Management
     Route::middleware('permission:manage_patients')->group(function () {
         Route::get('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'index'])->name('patient-queue.index');
+        Route::get('patient-queue/refresh', [\App\Http\Controllers\PatientQueueController::class, 'indexPartial'])->name('patient-queue.refresh');
         Route::get('patient-queue/create', [\App\Http\Controllers\PatientQueueController::class, 'create'])->name('patient-queue.create');
         Route::post('patient-queue', [\App\Http\Controllers\PatientQueueController::class, 'store'])->name('patient-queue.store');
         Route::get('patient-queue/{patientQueue}/edit', [\App\Http\Controllers\PatientQueueController::class, 'edit'])->name('patient-queue.edit');
