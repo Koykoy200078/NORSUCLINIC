@@ -17,4 +17,20 @@
     </div>
 </div>
 @include('dashboard.templates.templates')
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var hasDefaultPassword = @json($hasDefaultPassword ?? false);
+        if (hasDefaultPassword) {
+            setTimeout(function() {
+                var btn = document.getElementById('changePassword');
+                if (btn) {
+                    btn.click();
+                } else if (typeof $ !== 'undefined') {
+                    $('#changePassword').click();
+                }
+            }, 1000);
+        }
+    });
+</script>
 @endsection

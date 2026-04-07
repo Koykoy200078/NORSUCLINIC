@@ -130,25 +130,29 @@
         if (icon) icon.classList.add('spinning');
 
         fetch(queueRefreshUrl, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(function(response) { return response.text(); })
-        .then(function(html) {
-            const container = document.getElementById('queue-dynamic-content');
-            if (container) container.innerHTML = html;
-            if (icon) icon.classList.remove('spinning');
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(html) {
+                const container = document.getElementById('queue-dynamic-content');
+                if (container) container.innerHTML = html;
+                if (icon) icon.classList.remove('spinning');
 
-            // Restart countdown if auto-refresh is still ON
-            if (window.queueAutoRefresh.enabled) {
-                window.startQueueCountdown();
-            }
-        })
-        .catch(function() {
-            if (icon) icon.classList.remove('spinning');
-            if (window.queueAutoRefresh.enabled) {
-                window.startQueueCountdown();
-            }
-        });
+                // Restart countdown if auto-refresh is still ON
+                if (window.queueAutoRefresh.enabled) {
+                    window.startQueueCountdown();
+                }
+            })
+            .catch(function() {
+                if (icon) icon.classList.remove('spinning');
+                if (window.queueAutoRefresh.enabled) {
+                    window.startQueueCountdown();
+                }
+            });
     };
 
     // Manual refresh button

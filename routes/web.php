@@ -111,6 +111,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::resource('doctors', UserController::class);
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
+        Route::post('doctors/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('doctors.reset.password');
     });
 
     // Countries routes
@@ -178,6 +179,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Staff route
     Route::middleware('permission:manage_staff')->group(function () {
         Route::resource('staffs', StaffController::class);
+        Route::post('staffs/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('staffs.reset.password');
     });
 
     // CMS/Front Management
@@ -264,6 +266,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::resource('doctors', UserController::class);
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
+        Route::post('doctors/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('doctors.reset.password');
     });
 
     // Specializations

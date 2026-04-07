@@ -58,7 +58,8 @@ class DashboardController extends AppBaseController
     public function doctorDashboard(Request $request): \Illuminate\View\View
     {
         $appointments = $this->dashboardRepository->getDoctorData();
-        return view('doctor_dashboard.index', compact('appointments'));
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        return view('doctor_dashboard.index', compact('appointments', 'hasDefaultPassword'));
     }
 
     /**
@@ -79,12 +80,13 @@ class DashboardController extends AppBaseController
     {
         $data = $this->dashboardRepository->getStaffData();
         $clinic_name = getSettingValue('clinic_name');
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
 
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('staff_dashboard.index', compact('data', 'clinic_name'));
+        return view('staff_dashboard.index', compact('data', 'clinic_name', 'hasDefaultPassword'));
     }
 
     /**

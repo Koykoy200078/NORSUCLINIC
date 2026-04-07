@@ -55,6 +55,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::delete('doctors/{doctor}', [UserController::class, 'destroy'])->name('doctors.destroy');
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
+        Route::post('doctors/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('doctors.reset.password');
     });
 
     // Specializations (Staff can manage specializations)

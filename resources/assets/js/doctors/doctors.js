@@ -31,6 +31,55 @@ listenClick(".doctor-delete-btn", function () {
     deleteItem(deleteUserUrl, Lang.get("js.doctor"));
 });
 
+listenClick(".doctor-reset-password-btn", function () {
+    let userId = $(this).attr("data-id");
+    let resetUrl = $(this).attr("data-reset-url");
+    swal({
+        title: "Are you sure?",
+        text: "This will reset the doctor's password to default (123456)",
+        icon: "warning",
+        buttons: {
+            cancel: {
+                text: "Cancel",
+                value: false,
+                visible: true,
+                className: "btn btn-secondary",
+                closeModal: true,
+            },
+            confirm: {
+                text: "Yes, reset it!",
+                value: true,
+                visible: true,
+                className: "btn btn-warning",
+                closeModal: true,
+            },
+        },
+        dangerMode: true,
+    }).then(function (willReset) {
+        if (willReset) {
+            $.ajax({
+                type: "POST",
+                url: resetUrl,
+                success: function (result) {
+                    if (result.success) {
+                        displaySuccessMessage(result.message);
+                    } else {
+                        displayErrorMessage(
+                            result.message || "Failed to reset password",
+                        );
+                    }
+                },
+                error: function (result) {
+                    displayErrorMessage(
+                        (result.responseJSON && result.responseJSON.message) ||
+                            "Failed to reset password",
+                    );
+                },
+            });
+        }
+    });
+});
+
 listenClick(".add-qualification", function () {
     let userId = $(this).attr("data-id");
     $("#qualificationID").val(userId);

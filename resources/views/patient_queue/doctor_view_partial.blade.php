@@ -1,9 +1,9 @@
 @php
 $inProgressQueue = $queues->where('status', 'in_progress')->first();
-$priorityQueues   = $queues->where('is_priority', true)->where('status', 'waiting');
-$regularQueues    = $queues->where('is_priority', false)->where('status', 'waiting');
+$priorityQueues = $queues->where('is_priority', true)->where('status', 'waiting');
+$regularQueues = $queues->where('is_priority', false)->where('status', 'waiting');
 $avgWaitTime = $queues->where('status', 'waiting')->avg(function ($q) {
-    return $q->created_at->diffInMinutes(now());
+return $q->created_at->diffInMinutes(now());
 });
 @endphp
 

@@ -9,15 +9,60 @@
         padding: 0.5rem 0.75rem;
         transition: background-color 0.3s ease, transform 0.3s ease;
     }
-    #pq-countdown-badge.pulse { animation: pqPulse 1s ease-in-out; }
-    @keyframes pqPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-    #pq-countdown-badge.countdown-5 { background-color: #28a745 !important; }
-    #pq-countdown-badge.countdown-4 { background-color: #20c997 !important; }
-    #pq-countdown-badge.countdown-3 { background-color: #ffc107 !important; color:#000 !important; }
-    #pq-countdown-badge.countdown-2 { background-color: #fd7e14 !important; color:#fff !important; }
-    #pq-countdown-badge.countdown-1 { background-color: #dc3545 !important; color:#fff !important; animation: pqPulse 0.5s ease-in-out; }
-    #pq-refresh-icon.spinning { animation: pqSpin 1s linear; }
-    @keyframes pqSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+    #pq-countdown-badge.pulse {
+        animation: pqPulse 1s ease-in-out;
+    }
+
+    @keyframes pqPulse {
+
+        0%,
+        100% {
+            transform: scale(1)
+        }
+
+        50% {
+            transform: scale(1.1)
+        }
+    }
+
+    #pq-countdown-badge.countdown-5 {
+        background-color: #28a745 !important;
+    }
+
+    #pq-countdown-badge.countdown-4 {
+        background-color: #20c997 !important;
+    }
+
+    #pq-countdown-badge.countdown-3 {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+
+    #pq-countdown-badge.countdown-2 {
+        background-color: #fd7e14 !important;
+        color: #fff !important;
+    }
+
+    #pq-countdown-badge.countdown-1 {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+        animation: pqPulse 0.5s ease-in-out;
+    }
+
+    #pq-refresh-icon.spinning {
+        animation: pqSpin 1s linear;
+    }
+
+    @keyframes pqSpin {
+        from {
+            transform: rotate(0deg)
+        }
+
+        to {
+            transform: rotate(360deg)
+        }
+    }
 </style>
 <div class="container-fluid">
     @include('flash::message')
@@ -59,26 +104,32 @@
     };
 
     // Fetch only the dynamic content and swap it — no full page reload
-    window.pqFetchContent = function () {
+    window.pqFetchContent = function() {
         const icon = document.getElementById('pq-refresh-icon');
         if (icon) icon.classList.add('spinning');
 
-        fetch(pqRefreshUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(function (r) { return r.text(); })
-            .then(function (html) {
+        fetch(pqRefreshUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(r) {
+                return r.text();
+            })
+            .then(function(html) {
                 const container = document.getElementById('queue-dynamic-content');
                 if (container) container.innerHTML = html;
                 if (icon) icon.classList.remove('spinning');
                 if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
             })
-            .catch(function () {
+            .catch(function() {
                 const icon = document.getElementById('pq-refresh-icon');
                 if (icon) icon.classList.remove('spinning');
                 if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
             });
     };
 
-    window.pqManualRefresh = function () {
+    window.pqManualRefresh = function() {
         const state = window.pqAutoRefresh;
         if (state.enabled) {
             if (state.countdownInterval) clearInterval(state.countdownInterval);
@@ -87,23 +138,35 @@
         window.pqFetchContent();
     };
 
-    window.pqToggleAutoRefresh = function () {
+    window.pqToggleAutoRefresh = function() {
         const state = window.pqAutoRefresh;
         state.enabled = !state.enabled;
         localStorage.setItem('pqAutoRefresh', state.enabled);
 
-        const btn  = document.getElementById('pq-toggle-auto-refresh');
+        const btn = document.getElementById('pq-toggle-auto-refresh');
         const text = document.getElementById('pq-toggle-text');
         const icon = btn ? btn.querySelector('i') : null;
 
         if (state.enabled) {
-            if (btn)  { btn.classList.remove('btn-outline-primary'); btn.classList.add('btn-outline-success'); }
-            if (icon) { icon.classList.remove('fa-play'); icon.classList.add('fa-pause'); }
+            if (btn) {
+                btn.classList.remove('btn-outline-primary');
+                btn.classList.add('btn-outline-success');
+            }
+            if (icon) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            }
             if (text) text.textContent = 'Auto-Refresh ON';
             window.pqStartCountdown();
         } else {
-            if (btn)  { btn.classList.remove('btn-outline-success'); btn.classList.add('btn-outline-primary'); }
-            if (icon) { icon.classList.remove('fa-pause'); icon.classList.add('fa-play'); }
+            if (btn) {
+                btn.classList.remove('btn-outline-success');
+                btn.classList.add('btn-outline-primary');
+            }
+            if (icon) {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
             if (text) text.textContent = 'Auto-Refresh OFF';
             if (state.countdownInterval) clearInterval(state.countdownInterval);
             if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
@@ -111,7 +174,7 @@
         }
     };
 
-    window.pqStartCountdown = function () {
+    window.pqStartCountdown = function() {
         const state = window.pqAutoRefresh;
         if (!state.enabled) return;
 
@@ -119,15 +182,15 @@
         pqUpdateCountdown();
 
         if (state.countdownInterval) clearInterval(state.countdownInterval);
-        if (state.refreshTimeout)    clearTimeout(state.refreshTimeout);
+        if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
 
-        state.countdownInterval = setInterval(function () {
+        state.countdownInterval = setInterval(function() {
             state.countdownSeconds--;
             pqUpdateCountdown();
             if (state.countdownSeconds <= 0) clearInterval(state.countdownInterval);
         }, 1000);
 
-        state.refreshTimeout = setTimeout(function () {
+        state.refreshTimeout = setTimeout(function() {
             if (state.enabled) window.pqFetchContent();
         }, 5000);
     };
@@ -135,7 +198,7 @@
     function pqUpdateCountdown() {
         const state = window.pqAutoRefresh;
         const badge = document.getElementById('pq-countdown-badge');
-        const el    = document.getElementById('pq-countdown');
+        const el = document.getElementById('pq-countdown');
         if (!badge || !el) return;
 
         el.textContent = state.countdownSeconds;
@@ -146,32 +209,40 @@
                 badge.classList.add('countdown-' + state.countdownSeconds);
             }
             badge.classList.add('pulse');
-            setTimeout(function () { badge.classList.remove('pulse'); }, 300);
+            setTimeout(function() {
+                badge.classList.remove('pulse');
+            }, 300);
         } else {
             badge.classList.add('d-none');
         }
     }
 
-    (function () {
+    (function() {
         function init() {
             const state = window.pqAutoRefresh;
-            const btn   = document.getElementById('pq-toggle-auto-refresh');
-            const text  = document.getElementById('pq-toggle-text');
-            const icon  = btn ? btn.querySelector('i') : null;
+            const btn = document.getElementById('pq-toggle-auto-refresh');
+            const text = document.getElementById('pq-toggle-text');
+            const icon = btn ? btn.querySelector('i') : null;
             const badge = document.getElementById('pq-countdown-badge');
             if (!btn) return;
 
             if (state.enabled) {
                 btn.classList.add('btn-outline-success');
                 btn.classList.remove('btn-outline-primary');
-                if (icon) { icon.classList.add('fa-pause'); icon.classList.remove('fa-play'); }
+                if (icon) {
+                    icon.classList.add('fa-pause');
+                    icon.classList.remove('fa-play');
+                }
                 if (text) text.textContent = 'Auto-Refresh ON';
                 if (badge) badge.classList.remove('d-none');
                 window.pqStartCountdown();
             } else {
                 btn.classList.add('btn-outline-primary');
                 btn.classList.remove('btn-outline-success');
-                if (icon) { icon.classList.add('fa-play'); icon.classList.remove('fa-pause'); }
+                if (icon) {
+                    icon.classList.add('fa-play');
+                    icon.classList.remove('fa-pause');
+                }
                 if (text) text.textContent = 'Auto-Refresh OFF';
                 if (badge) badge.classList.add('d-none');
             }
