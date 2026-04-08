@@ -82,7 +82,7 @@
                 <i class="fas fa-play"></i> <span id="pq-toggle-text">Auto-Refresh OFF</span>
             </button>
             <span class="badge d-none d-flex align-items-center countdown-5" id="pq-countdown-badge">
-                <i class="fas fa-clock me-1"></i> <span id="pq-countdown">5</span>s
+                <i class="fas fa-clock me-1"></i> <span id="pq-countdown">5s</span>
             </span>
         </div>
     </div>
@@ -100,11 +100,20 @@
         enabled: localStorage.getItem('pqAutoRefresh') !== 'false',
         countdownInterval: null,
         refreshTimeout: null,
-        countdownSeconds: 5
+        countdownSeconds: 5,
+        isFetching: false
     };
 
     // Fetch only the dynamic content and swap it — no full page reload
     window.pqFetchContent = function() {
+        const state = window.pqAutoRefresh;
+        if (state.isFetching) {
+            // Previous request still in flight — reschedule instead of stacking
+            if (state.enabled) window.pqStartCountdown();
+            return;
+        }
+        state.isFetching = true;
+        pqUpdateCountdown();
         const icon = document.getElementById('pq-refresh-icon');
         if (icon) icon.classList.add('spinning');
 
@@ -120,11 +129,12 @@
                 const container = document.getElementById('queue-dynamic-content');
                 if (container) container.innerHTML = html;
                 if (icon) icon.classList.remove('spinning');
-                if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
+                state.isFetching = false;
+                if (state.enabled) window.pqStartCountdown();
             })
             .catch(function() {
-                const icon = document.getElementById('pq-refresh-icon');
                 if (icon) icon.classList.remove('spinning');
+                state.isFetching = false;
                 if (window.pqAutoRefresh.enabled) window.pqStartCountdown();
             });
     };
@@ -201,20 +211,27 @@
         const el = document.getElementById('pq-countdown');
         if (!badge || !el) return;
 
-        el.textContent = state.countdownSeconds;
-
-        if (state.enabled) {
-            badge.classList.remove('d-none', 'countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
-            if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
-                badge.classList.add('countdown-' + state.countdownSeconds);
-            }
-            badge.classList.add('pulse');
-            setTimeout(function() {
-                badge.classList.remove('pulse');
-            }, 300);
-        } else {
+        if (!state.enabled) {
             badge.classList.add('d-none');
+            return;
         }
+
+        badge.classList.remove('d-none', 'countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
+
+        if (state.isFetching) {
+            badge.classList.add('countdown-4');
+            el.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+            return;
+        }
+
+        el.textContent = state.countdownSeconds + 's';
+        if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
+            badge.classList.add('countdown-' + state.countdownSeconds);
+        }
+        badge.classList.add('pulse');
+        setTimeout(function() {
+            badge.classList.remove('pulse');
+        }, 300);
     }
 
     (function() {

@@ -102,7 +102,7 @@
                 <i class="fas fa-play"></i> <span id="toggle-text">Auto-Refresh OFF</span>
             </button>
             <span class="badge d-none d-flex align-items-center countdown-5" id="countdown-badge">
-                <i class="fas fa-clock me-1"></i> <span id="countdown">5</span>s
+                <i class="fas fa-clock me-1"></i> <span id="countdown">5s</span>
             </span>
         </div>
     </div>
@@ -121,11 +121,19 @@
         enabled: localStorage.getItem('queueAutoRefresh') !== 'false',
         countdownInterval: null,
         refreshTimeout: null,
-        countdownSeconds: 5
+        countdownSeconds: 5,
+        isFetching: false
     };
 
     // Fetch only the dynamic content and swap it in — no full page reload
     window.fetchQueueContent = function() {
+        const state = window.queueAutoRefresh;
+        if (state.isFetching) {
+            if (state.enabled) window.startQueueCountdown();
+            return;
+        }
+        state.isFetching = true;
+        updateCountdown();
         const icon = document.getElementById('refresh-icon');
         if (icon) icon.classList.add('spinning');
 
@@ -141,18 +149,55 @@
                 const container = document.getElementById('queue-dynamic-content');
                 if (container) container.innerHTML = html;
                 if (icon) icon.classList.remove('spinning');
+                state.isFetching = false;
 
                 // Restart countdown if auto-refresh is still ON
-                if (window.queueAutoRefresh.enabled) {
+                if (state.enabled) {
                     window.startQueueCountdown();
                 }
             })
             .catch(function() {
                 if (icon) icon.classList.remove('spinning');
+                state.isFetching = false;
                 if (window.queueAutoRefresh.enabled) {
                     window.startQueueCountdown();
                 }
             });
+    };
+
+    // AJAX complete consultation handler (called by Complete button in partial)
+    window.completeConsultation = function(formEl) {
+        const btn = formEl.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Completing...';
+        }
+
+        fetch(formEl.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': formEl.querySelector('[name=_token]').value
+                }
+            })
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    // Cancel current cycle and immediately refresh the partial
+                    const state = window.queueAutoRefresh;
+                    if (state.countdownInterval) clearInterval(state.countdownInterval);
+                    if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
+                    state.isFetching = false;
+                    window.fetchQueueContent();
+                }
+            })
+            .catch(function() {
+                // Fallback: full reload
+                window.location.reload();
+            });
+        return false;
     };
 
     // Manual refresh button
@@ -238,23 +283,27 @@
 
         if (!badge || !countdownEl) return;
 
-        countdownEl.textContent = state.countdownSeconds;
-
-        if (state.enabled) {
-            badge.classList.remove('d-none');
-            badge.classList.remove('countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
-
-            if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
-                badge.classList.add('countdown-' + state.countdownSeconds);
-            }
-
-            badge.classList.add('pulse');
-            setTimeout(function() {
-                badge.classList.remove('pulse');
-            }, 300);
-        } else {
+        if (!state.enabled) {
             badge.classList.add('d-none');
+            return;
         }
+
+        badge.classList.remove('d-none', 'countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
+
+        if (state.isFetching) {
+            badge.classList.add('countdown-4');
+            countdownEl.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+            return;
+        }
+
+        countdownEl.textContent = state.countdownSeconds + 's';
+        if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
+            badge.classList.add('countdown-' + state.countdownSeconds);
+        }
+        badge.classList.add('pulse');
+        setTimeout(function() {
+            badge.classList.remove('pulse');
+        }, 300);
     }
 
     // Initialize when page loads

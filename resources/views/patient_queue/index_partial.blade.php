@@ -1,10 +1,7 @@
 @php
 $priorityQueues = $queues->where('is_priority', true);
 $regularQueues = $queues->where('is_priority', false);
-$todayPatients = \App\Models\PatientQueue::with(['patient.user', 'addedBy'])
-->whereDate('created_at', today())
-->orderBy('created_at', 'desc')
-->get();
+// $todayPatients is passed from the controller (PatientQueueController::index / indexPartial)
 @endphp
 
 <div class="row">

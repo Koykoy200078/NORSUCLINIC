@@ -26,7 +26,7 @@ return $q->created_at->diffInMinutes(now());
             @endif
         </div>
         <div>
-            <form action="{{ route('doctors.patient-queue.complete', $inProgressQueue) }}" method="POST" class="d-inline">
+            <form action="{{ route('doctors.patient-queue.complete', $inProgressQueue) }}" method="POST" class="d-inline" onsubmit="return window.completeConsultation(this)">
                 @csrf
                 <button type="submit" class="btn btn-success btn-lg">
                     <i class="fas fa-check-circle"></i> Complete Consultation

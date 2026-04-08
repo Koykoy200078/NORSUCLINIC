@@ -21,7 +21,12 @@ class PatientQueueController extends Controller
             ->orderByQueue()
             ->get();
 
-        return view('patient_queue.index', compact('queues'));
+        $todayPatients = PatientQueue::with(['patient.user', 'addedBy'])
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('patient_queue.index', compact('queues', 'todayPatients'));
     }
 
     /**
@@ -34,7 +39,12 @@ class PatientQueueController extends Controller
             ->orderByQueue()
             ->get();
 
-        return view('patient_queue.index_partial', compact('queues'));
+        $todayPatients = PatientQueue::with(['patient.user', 'addedBy'])
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('patient_queue.index_partial', compact('queues', 'todayPatients'));
     }
 
     /**
@@ -219,6 +229,10 @@ class PatientQueueController extends Controller
             'status' => PatientQueue::STATUS_COMPLETED,
             'completed_at' => now(),
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Patient consultation completed.']);
+        }
 
         return redirect()->back()
             ->with('success', 'Patient consultation completed.');
