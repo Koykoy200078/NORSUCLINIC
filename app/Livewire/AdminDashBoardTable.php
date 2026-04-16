@@ -14,15 +14,15 @@ class AdminDashBoardTable extends Component
     public function mount()
     {
         $this->data['patients'] = Cache::remember('admin_dashboard_today_patients_' . today()->format('Y-m-d'), 60, function () {
-            return Patient::with(['user:id,first_name,last_name,email,created_at', 'media'])
+            return Patient::with(['user:id,first_name,last_name,email,created_at,university_id_number', 'media'])
                 ->whereDate('created_at', today())
                 ->orderBy('created_at', 'DESC')
                 ->get()
                 ->map(fn($p) => [
-                    'id'               => $p->id,
-                    'patient_unique_id' => $p->patient_unique_id,
-                    'profile'          => $p->profile,
-                    'user'             => [
+                    'id'                 => $p->id,
+                    'patient_identifier' => $p->user->university_id_number ?: $p->patient_unique_id,
+                    'profile'            => $p->profile,
+                    'user'               => [
                         'id'         => $p->user->id,
                         'full_name'  => $p->user->full_name,
                         'email'      => $p->user->email,

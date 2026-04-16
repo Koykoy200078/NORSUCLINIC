@@ -9,7 +9,9 @@ use App\Models\College;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\Diagnose;
+use App\Models\InsuranceProvider;
 use App\Models\Patient;
+use App\Models\PatientType;
 use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
@@ -57,7 +59,6 @@ class PatientRepository extends BaseRepository
 
     public function getData(): array
     {
-        $data['patientUniqueId'] = mb_strtoupper(Patient::generatePatientUniqueId());
         $data['countries'] = Country::toBase()->pluck('name', 'id');
         $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
         $data['provinces'] = State::toBase()->pluck('name', 'id');
@@ -73,8 +74,50 @@ class PatientRepository extends BaseRepository
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
+        $patientTypeSortOrder = [
+            'student' => 1,
+            'staff' => 2,
+            'faculty' => 3,
+            'guest' => 4,
+            'dependent' => 4,
+        ];
+
+        $data['patient_types'] = PatientType::query()
+            ->get(['id', 'code', 'name'])
+            ->sortBy(function ($patientType) use ($patientTypeSortOrder) {
+                $normalizedCode = strtolower(trim((string) $patientType->code));
+
+                return $patientTypeSortOrder[$normalizedCode] ?? 99;
+            })
+            ->mapWithKeys(function ($patientType) {
+                $normalizedCode = strtolower(trim((string) $patientType->code));
+                $normalizedName = strtolower(trim((string) $patientType->name));
+                $displayName = ($normalizedCode === 'dependent' || $normalizedName === 'dependent') ? 'Guest' : $patientType->name;
+
+                return [$patientType->id => $displayName];
+            });
+        $data['insurance_providers'] = InsuranceProvider::toBase()->pluck('name', 'id');
 
         return $data;
+    }
+
+    private function normalizeComorbiditiesInput($value): ?string
+    {
+        if (is_array($value)) {
+            $items = array_values(array_unique(array_filter(array_map(function ($item) {
+                return trim((string) $item);
+            }, $value))));
+
+            return empty($items) ? null : implode(', ', $items);
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
+
+            return $value === '' ? null : $value;
+        }
+
+        return null;
     }
 
     public function store($input): bool
@@ -87,9 +130,26 @@ class PatientRepository extends BaseRepository
                 ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
 
-            $input['patient_unique_id'] = Str::upper($input['patient_unique_id']);
+            $input['patient_unique_id'] = Str::upper((string) ($input['university_id_number'] ?? ''));
             $input['email'] = !empty($input['email']) ? setEmailLowerCase($input['email']) : null;
-            $patientArray = Arr::only($input, ['patient_unique_id']);
+            $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
+            $patientArray = Arr::only($input, [
+                'patient_unique_id',
+                'patient_type_id',
+                'allergies',
+                'comorbidities',
+                'admissions_surgeries',
+                'maintenance',
+                'covid_vaccination',
+                'campus_address',
+                'permanent_address',
+                'immunization_record',
+                'insurance_provider_id',
+                'insurance_policy_number',
+                'primary_care_physician_name',
+                'primary_care_physician_contact',
+                'primary_care_physician_email',
+            ]);
             $input['type'] = User::PATIENT;
             $input['language'] = 'en';
 
@@ -106,10 +166,25 @@ class PatientRepository extends BaseRepository
                 'postal_code',
                 'patient_unique_id',
                 'profile',
+                'patient_type_id',
+                'allergies',
+                'comorbidities',
+                'admissions_surgeries',
+                'maintenance',
+                'covid_vaccination',
+                'campus_address',
+                'permanent_address',
+                'immunization_record',
+                'insurance_provider_id',
+                'insurance_policy_number',
+                'primary_care_physician_name',
+                'primary_care_physician_contact',
+                'primary_care_physician_email',
                 'is_employee',
                 'is_guest',
                 'position_type',
                 'all_year_levels',
+                'patient_type_lookup',
             ]);
 
             $userInput['password'] = Hash::make(!empty($input['password']) ? $input['password'] : '123456');
@@ -129,7 +204,7 @@ class PatientRepository extends BaseRepository
                 // Log the email error but don't fail the registration
                 Log::warning('Failed to send registration email to patient: ' . $user->email, [
                     'error' => $mailException->getMessage(),
-                    'patient_id' => $patient->patient_unique_id
+                    'patient_id' => $user->university_id_number ?? $patient->id,
                 ]);
             }
 
@@ -165,7 +240,26 @@ class PatientRepository extends BaseRepository
                 ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
             $input['type'] = User::PATIENT;
-            $input['email'] = setEmailLowerCase($input['email']);
+            $input['email'] = ! empty($input['email']) ? setEmailLowerCase($input['email']) : null;
+            $input['patient_unique_id'] = Str::upper((string) ($input['university_id_number'] ?? ($patient->user->university_id_number ?? '')));
+            $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
+            $patientInput = Arr::only($input, [
+                'patient_unique_id',
+                'patient_type_id',
+                'allergies',
+                'comorbidities',
+                'admissions_surgeries',
+                'maintenance',
+                'covid_vaccination',
+                'campus_address',
+                'permanent_address',
+                'immunization_record',
+                'insurance_provider_id',
+                'insurance_policy_number',
+                'primary_care_physician_name',
+                'primary_care_physician_contact',
+                'primary_care_physician_email',
+            ]);
             /** @var Patient $patient */
             $patient->user()->update(Arr::except($input, [
                 'address1',
@@ -178,6 +272,20 @@ class PatientRepository extends BaseRepository
                 'patient_unique_id',
                 'avatar_remove',
                 'profile',
+                'patient_type_id',
+                'allergies',
+                'comorbidities',
+                'admissions_surgeries',
+                'maintenance',
+                'covid_vaccination',
+                'campus_address',
+                'permanent_address',
+                'immunization_record',
+                'insurance_provider_id',
+                'insurance_policy_number',
+                'primary_care_physician_name',
+                'primary_care_physician_contact',
+                'primary_care_physician_email',
                 'is_edit',
                 'edit_patient_country_id',
                 'edit_patient_state_id',
@@ -189,7 +297,10 @@ class PatientRepository extends BaseRepository
                 'is_guest',
                 'position_type',
                 'all_year_levels',
+                'patient_type_lookup',
             ]));
+
+            $patient->update($patientInput);
 
             if ($patient->address()->exists()) {
                 $patient->address()->update($addressInputArray);

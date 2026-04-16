@@ -12,6 +12,7 @@ use App\Models\Diagnose;
 use App\Models\Doctor;
 use App\Models\Office;
 use App\Models\Patient;
+use App\Models\PatientType;
 use App\Models\Qualification;
 use App\Models\Specialization;
 use App\Models\User;
@@ -64,7 +65,6 @@ class UserRepository extends BaseRepository
 
     public function getData(): array
     {
-        $data['patientUniqueId'] = mb_strtoupper(Patient::generatePatientUniqueId());
         $data['countries'] = Country::toBase()->pluck('name', 'id');
         $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
 
@@ -77,6 +77,29 @@ class UserRepository extends BaseRepository
         $data['year_levels'] = YearLevel::toBase()->pluck('year_level_name', 'id');
         $data['departments'] = Department::toBase()->pluck('department_name', 'id');
         $data['offices'] = Office::toBase()->pluck('office_name', 'id');
+
+        $patientTypeSortOrder = [
+            'student' => 1,
+            'staff' => 2,
+            'faculty' => 3,
+            'guest' => 4,
+            'dependent' => 4,
+        ];
+
+        $data['patient_types'] = PatientType::query()
+            ->get(['id', 'code', 'name'])
+            ->sortBy(function ($patientType) use ($patientTypeSortOrder) {
+                $normalizedCode = strtolower(trim((string) $patientType->code));
+
+                return $patientTypeSortOrder[$normalizedCode] ?? 99;
+            })
+            ->mapWithKeys(function ($patientType) {
+                $normalizedCode = strtolower(trim((string) $patientType->code));
+                $normalizedName = strtolower(trim((string) $patientType->name));
+                $displayName = ($normalizedCode === 'dependent' || $normalizedName === 'dependent') ? 'Guest' : $patientType->name;
+
+                return [$patientType->id => $displayName];
+            });
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
@@ -93,11 +116,20 @@ class UserRepository extends BaseRepository
             $input,
             ['address1', 'address2', 'country_id', 'city_id', 'barangay_id', 'state_id', 'postal_code']
         );
-        $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
+        $doctorArray = Arr::only($input, [
+            'experience',
+            'prc_license_number',
+            'ptr_number',
+            's2_license_number',
+            'consultation_hours',
+        ]);
         $specialization = $input['specializations'];
         try {
             DB::beginTransaction();
             $input['email'] = setEmailLowerCase($input['email']);
+            if (! empty($input['institutional_email'])) {
+                $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
+            }
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::DOCTOR;
@@ -128,12 +160,21 @@ class UserRepository extends BaseRepository
             $input,
             ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
         );
-        $doctorArray = Arr::only($input, ['experience', 'twitter_url', 'linkedin_url', 'instagram_url']);
+        $doctorArray = Arr::only($input, [
+            'experience',
+            'prc_license_number',
+            'ptr_number',
+            's2_license_number',
+            'consultation_hours',
+        ]);
         $qualificationArray = json_decode($input['qualifications'] ?? '[]', true) ?? [];
         $specialization = $input['specializations'];
         try {
             DB::beginTransaction();
             $input['email'] = setEmailLowerCase($input['email']);
+            if (! empty($input['institutional_email'])) {
+                $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
+            }
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['type'] = User::DOCTOR;
             $doctor->user->update($input);
@@ -178,8 +219,6 @@ class UserRepository extends BaseRepository
             DB::beginTransaction();
             $user = Auth::user();
 
-            \Log::info('UserRepository updateProfile - User Input:', $userInput);
-
             $addressInputArray = Arr::only(
                 $userInput,
                 ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
@@ -202,6 +241,36 @@ class UserRepository extends BaseRepository
             } elseif ($user->hasRole('patient')) {
                 $patient =  Patient::where('user_id', $user->id)->first();
 
+                $selectedPatientTypeId = $userInput['patient_type_id'] ?? $patient->patient_type_id;
+                $selectedPatientType = $selectedPatientTypeId ? PatientType::find($selectedPatientTypeId) : null;
+                $selectedPatientTypeCode = strtolower(trim((string) ($selectedPatientType->code ?? $selectedPatientType->name ?? '')));
+                if ($selectedPatientTypeCode === 'dependent') {
+                    $selectedPatientTypeCode = 'guest';
+                }
+
+                if ($selectedPatientTypeCode === 'faculty') {
+                    $userInput['campus_id'] = null;
+                    $userInput['course_id'] = null;
+                    $userInput['office_id'] = null;
+                    $userInput['year_level_id'] = YearLevel::query()->where('year_level_name', 'LIKE', '%Faculty%')->value('id');
+                } elseif ($selectedPatientTypeCode === 'staff') {
+                    $userInput['campus_id'] = null;
+                    $userInput['college_id'] = null;
+                    $userInput['course_id'] = null;
+                    $userInput['department_id'] = null;
+                    $userInput['year_level_id'] = YearLevel::query()->where('year_level_name', 'LIKE', '%Staff%')->value('id');
+                } elseif ($selectedPatientTypeCode === 'guest') {
+                    $userInput['campus_id'] = null;
+                    $userInput['college_id'] = null;
+                    $userInput['course_id'] = null;
+                    $userInput['department_id'] = null;
+                    $userInput['office_id'] = null;
+                    $userInput['year_level_id'] = YearLevel::query()->where('year_level_name', 'LIKE', '%Guest%')->value('id');
+                } else {
+                    $userInput['department_id'] = null;
+                    $userInput['office_id'] = null;
+                }
+
 
                 $userInput['type'] = User::PATIENT;
                 $userInput['email'] = setEmailLowerCase($userInput['email']);
@@ -215,9 +284,9 @@ class UserRepository extends BaseRepository
                     'state_id',
                     'country_id',
                     'postal_code',
-                    'patient_unique_id',
                     'avatar_remove',
                     'profile',
+                    'patient_type_id',
                     'is_edit',
                     'edit_patient_country_id',
                     'edit_patient_state_id',
@@ -225,11 +294,13 @@ class UserRepository extends BaseRepository
                     'edit_patient_barangay_id',
                     'backgroundImg',
                     'image',
-                    'is_employee',
-                    'is_guest',
-                    'position_type',
-                    'all_year_levels'
+                    'all_year_levels',
+                    'patient_type_lookup'
                 ]));
+
+                $patient->update([
+                    'patient_type_id' => $selectedPatientTypeId,
+                ]);
 
                 if (isset($patient->address)) {
                     $patient->address()->update($addressInputArray);
@@ -258,7 +329,6 @@ class UserRepository extends BaseRepository
                     'state_id',
                     'country_id',
                     'postal_code',
-                    'patient_unique_id',
                     'avatar_remove',
                     'profile',
                     'is_edit',

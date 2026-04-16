@@ -15,7 +15,7 @@ return $q->created_at->diffInMinutes(now());
             <h4 class="alert-heading"><i class="fas fa-user-md"></i> Current Patient</h4>
             <h5>{{ $inProgressQueue->patient->user->full_name }}</h5>
             <p class="mb-0">
-                <strong>Patient ID:</strong> {{ $inProgressQueue->patient->patient_unique_id }} |
+                <strong>Patient ID:</strong> {{ $inProgressQueue->patient->user->university_id_number ?? $inProgressQueue->patient->patient_unique_id }} |
                 @if($inProgressQueue->room_number)
                 <strong>Room:</strong> <span class="badge bg-info">{{ $inProgressQueue->room_number }}</span> |
                 @endif
@@ -57,7 +57,7 @@ return $q->created_at->diffInMinutes(now());
                             <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>
                         </div>
                         <p class="mb-1">
-                            <strong>ID:</strong> {{ $queue->patient->patient_unique_id }}
+                            <strong>ID:</strong> {{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}
                             @if($queue->room_number)
                             | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                             @endif
@@ -133,7 +133,7 @@ return $q->created_at->diffInMinutes(now());
                             <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>
                         </div>
                         <p class="mb-1">
-                            <strong>ID:</strong> {{ $queue->patient->patient_unique_id }}
+                            <strong>ID:</strong> {{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}
                             @if($queue->room_number)
                             | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                             @endif

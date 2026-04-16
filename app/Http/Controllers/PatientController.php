@@ -122,7 +122,6 @@ class PatientController extends AppBaseController
             return redirect($this->getPatientIndexRoute());
         }
         $data = $this->patientRepository->getData();
-        unset($data['patientUniqueId']);
 
         // Load cities and barangays for existing patient address
         if ($patient->address) {
@@ -144,7 +143,7 @@ class PatientController extends AppBaseController
      */
     public function update(UpdatePatientRequest $request, Patient $patient): RedirectResponse
     {
-        $input = request()->except(['_method', '_token', 'patient_unique_id']);
+        $input = request()->except(['_method', '_token']);
 
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));

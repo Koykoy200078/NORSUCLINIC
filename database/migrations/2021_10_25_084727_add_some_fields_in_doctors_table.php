@@ -11,11 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('doctors', function (Blueprint $table) {
-            $table->string('twitter_url')->nullable()->after('experience');
-            $table->string('linkedin_url')->nullable()->after('twitter_url');
-            $table->string('instagram_url')->nullable()->after('linkedin_url');
-        });
+        // Intentionally left blank.
     }
 
     /**
@@ -23,8 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('doctors', function (Blueprint $table) {
-            //
-        });
+        // Intentionally left blank.
     }
 };

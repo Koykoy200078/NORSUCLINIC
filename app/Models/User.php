@@ -132,18 +132,23 @@ class User extends Authenticatable implements HasMedia
         'middle_name',
         'last_name',
         'email',
+        'institutional_email',
         'contact',
+        'pager_extension',
         'emergency_contact_name',
         'emergency_contact_no',
         'emergency_relationship',
         'dob',
         'gender',
+        'nationality_citizenship',
         'status',
         'password',
         'language',
         'blood_type',
         'type',
         'country_code',
+        'university_id_number',
+        'employee_id',
         'email_verified_at',
         'email_notification',
         'time_zone',
@@ -223,11 +228,20 @@ class User extends Authenticatable implements HasMedia
         'middle_name' => 'nullable',
         'last_name' => 'required',
         'email' => 'nullable|email|unique:users,email|regex:/(.*)@(.*)\.(.*)/',
+        'institutional_email' => 'nullable|email|unique:users,institutional_email',
+        'university_id_number' => 'nullable|string|max:100|unique:users,university_id_number',
+        'employee_id' => 'nullable|string|max:100|unique:users,employee_id',
         'contact' => 'nullable|unique:users,contact',
+        'pager_extension' => 'nullable|string|max:60',
+        'nationality_citizenship' => 'nullable|string|max:120',
         'password' => 'nullable|same:password_confirmation|min:6',
         'dob' => 'nullable|date',
         'experience' => 'nullable|numeric',
         'specializations' => 'required',
+        'prc_license_number' => 'nullable|string|max:100|unique:doctors,prc_license_number',
+        'ptr_number' => 'nullable|string|max:100',
+        's2_license_number' => 'nullable|string|max:100',
+        'consultation_hours' => 'nullable|string',
         'gender' => 'required',
         'status' => 'nullable',
         'postal_code' => 'nullable',
@@ -253,15 +267,20 @@ class User extends Authenticatable implements HasMedia
         'first_name' => 'string',
         'last_name' => 'string',
         'email' => 'string',
+        'institutional_email' => 'string',
         'contact' => 'string',
+        'pager_extension' => 'string',
         'dob' => 'string',
         'gender' => 'integer',
+        'nationality_citizenship' => 'string',
         'status' => 'boolean',
         'password' => 'string',
         'language' => 'string',
         'blood_type' => 'string',
         'type' => 'integer',
         'country_code' => 'string',
+        'university_id_number' => 'string',
+        'employee_id' => 'string',
         'email_notification' => 'boolean',
         'time_zone' => 'string',
         'dark_mode' => 'boolean',
@@ -350,6 +369,11 @@ class User extends Authenticatable implements HasMedia
     public function staff(): HasOne
     {
         return $this->hasOne(Staff::class);
+    }
+
+    public function staffProfile(): HasOne
+    {
+        return $this->hasOne(StaffProfile::class, 'user_id');
     }
 
     public function campus()

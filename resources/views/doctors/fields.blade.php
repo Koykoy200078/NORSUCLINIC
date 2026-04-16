@@ -19,11 +19,29 @@
     </div>
     <div class="col-md-6">
         <div class="mb-5">
+            {{ Form::label('institutional_email', __('Institutional Email').':' ,['class' => 'form-label required']) }}
+            {{ Form::email('institutional_email', null,['class' => 'form-control','placeholder' => __('Institutional Email'),'required']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
+            {{ Form::label('employee_id', __('Employee ID').':' ,['class' => 'form-label required']) }}
+            {{ Form::text('employee_id', null,['class' => 'form-control','placeholder' => __('Employee ID'),'required']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
             {{ Form::label('Contact',__('messages.user.contact_number').':' ,['class' => 'form-label']) }}
             {{ Form::tel('contact', null,['class' => 'form-control','placeholder' => __('messages.user.contact_number'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
             {{ Form::hidden('country_code',null,['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
             <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
+            {{ Form::label('pager_extension', __('Pager / Extension Number').':' ,['class' => 'form-label']) }}
+            {{ Form::text('pager_extension', null,['class' => 'form-control','placeholder' => __('Pager or Extension Number')]) }}
         </div>
     </div>
     <div class="col-md-6 mb-5">
@@ -70,6 +88,30 @@
     </div>
     <div class="col-md-6">
         <div class="mb-5">
+            {{ Form::label('prc_license_number', __('PRC/Medical License Number').':' ,['class' => 'form-label required']) }}
+            {{ Form::text('prc_license_number', null,['class' => 'form-control','placeholder' => __('PRC/Medical License Number'),'required']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
+            {{ Form::label('ptr_number', __('PTR Number').':' ,['class' => 'form-label required']) }}
+            {{ Form::text('ptr_number', null,['class' => 'form-control','placeholder' => __('Professional Tax Receipt Number'),'required']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
+            {{ Form::label('s2_license_number', __('S2 License Number').':' ,['class' => 'form-label']) }}
+            {{ Form::text('s2_license_number', null,['class' => 'form-control','placeholder' => __('S2 License Number (if applicable)')]) }}
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="mb-5">
+            {{ Form::label('consultation_hours', __('Consultation Hours').':' ,['class' => 'form-label required']) }}
+            {{ Form::textarea('consultation_hours', null,['class' => 'form-control','rows' => 3,'placeholder' => __('e.g. Mon-Wed 8:00AM-12:00PM, Thu-Fri 1:00PM-5:00PM'),'required']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-5">
             <label class="form-label required">
                 {{__('messages.doctor.select_gender')}}
                 :
@@ -87,10 +129,6 @@
     <div class="col-md-6 mb-5">
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
         {{ Form::select('blood_type', $bloodGroup , null, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.patient.blood_type')]) }}
-    </div>
-    <div class="col-md-6 mb-5" style="visibility: hidden;">
-        {{ Form::label('twitter',__('messages.doctor.twitter').':' ,['class' => 'form-label']) }}
-        {{ Form::text('twitter_url', null,['class' => 'form-control','placeholder' => __('messages.common.twitter_url'), 'id' => 'twitterUrl']) }}
     </div>
     <div class="col-lg-6">
         <div class="mb-5">

@@ -24,7 +24,7 @@
                 <div class="col-md-12 mb-3">
                     <div class="alert alert-info">
                         <h5>Patient: {{ $patientQueue->patient->user->full_name }}</h5>
-                        <p class="mb-0">ID: {{ $patientQueue->patient->patient_unique_id }}</p>
+                        <p class="mb-0">ID: {{ $patientQueue->patient->user->university_id_number ?? $patientQueue->patient->patient_unique_id }}</p>
                     </div>
                 </div>
             </div>

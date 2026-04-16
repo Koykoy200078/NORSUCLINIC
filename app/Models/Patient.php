@@ -129,16 +129,27 @@ class Patient extends Model implements HasMedia
     public $fillable = [
         'patient_unique_id',
         'user_id',
+        'patient_type_id',
         'allergies',
         'comorbidities',
         'admissions_surgeries',
         'maintenance',
-        'covid_vaccination'
+        'covid_vaccination',
+        'campus_address',
+        'permanent_address',
+        'immunization_record',
+        'insurance_provider_id',
+        'insurance_policy_number',
+        'primary_care_physician_name',
+        'primary_care_physician_contact',
+        'primary_care_physician_email',
     ];
 
     protected $casts = [
         'patient_unique_id' => 'string',
         'user_id' => 'integer',
+        'patient_type_id' => 'integer',
+        'insurance_provider_id' => 'integer',
     ];
 
     /**
@@ -147,19 +158,30 @@ class Patient extends Model implements HasMedia
      * @var array
      */
     public static $rules = [
-        'patient_unique_id' => 'required|unique:patients,patient_unique_id|regex:/^\S*$/u',
         'first_name' => 'required',
         'last_name' => 'required',
         'email' => 'nullable|email|unique:users,email',
+        'university_id_number' => 'nullable|string|max:100|unique:users,university_id_number',
         'contact' => 'nullable',
+        'nationality_citizenship' => 'nullable|string|max:120',
         'password' => 'nullable|same:password_confirmation|min:6',
         'postal_code' => 'nullable',
+        'patient_type_id' => 'nullable|exists:patient_types,id',
+        'campus_address' => 'nullable|string',
+        'permanent_address' => 'nullable|string',
+        'immunization_record' => 'nullable|string',
+        'insurance_provider_id' => 'nullable|exists:insurance_providers,id',
+        'insurance_policy_number' => 'nullable|string|max:120',
+        'primary_care_physician_name' => 'nullable|string|max:191',
+        'primary_care_physician_contact' => 'nullable|string|max:100',
+        'primary_care_physician_email' => 'nullable|email|max:191',
         'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         'emergency_contact_name' => 'nullable',
         'emergency_contact_no' => 'nullable',
         'emergency_relationship' => 'nullable|string',
         'allergies' => 'nullable|string',
-        'comorbidities' => 'nullable|string',
+        'comorbidities' => 'nullable',
+        'comorbidities.*' => 'nullable|string|max:191',
         'admissions_surgeries' => 'nullable|string',
         'maintenance' => 'nullable|string',
         'covid_vaccination' => 'nullable|string',
@@ -173,12 +195,24 @@ class Patient extends Model implements HasMedia
     public static $editRules = [
         'first_name' => 'required',
         'last_name' => 'required',
+        'university_id_number' => 'nullable|string|max:100',
+        'nationality_citizenship' => 'nullable|string|max:120',
+        'patient_type_id' => 'nullable|exists:patient_types,id',
+        'campus_address' => 'nullable|string',
+        'permanent_address' => 'nullable|string',
+        'immunization_record' => 'nullable|string',
+        'insurance_provider_id' => 'nullable|exists:insurance_providers,id',
+        'insurance_policy_number' => 'nullable|string|max:120',
+        'primary_care_physician_name' => 'nullable|string|max:191',
+        'primary_care_physician_contact' => 'nullable|string|max:100',
+        'primary_care_physician_email' => 'nullable|email|max:191',
         'profile' => 'nullable|mimes:jpeg,jpg,png',
         'emergency_contact_name' => 'nullable',
         'emergency_contact_no' => 'nullable',
         'emergency_relationship' => 'nullable|string',
         'allergies' => 'nullable|string',
-        'comorbidities' => 'nullable|string',
+        'comorbidities' => 'nullable',
+        'comorbidities.*' => 'nullable|string|max:191',
         'admissions_surgeries' => 'nullable|string',
         'maintenance' => 'nullable|string',
         'covid_vaccination' => 'nullable|string',
@@ -310,6 +344,16 @@ class Patient extends Model implements HasMedia
     public function patientUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function patientType(): BelongsTo
+    {
+        return $this->belongsTo(PatientType::class, 'patient_type_id');
+    }
+
+    public function insuranceProvider(): BelongsTo
+    {
+        return $this->belongsTo(InsuranceProvider::class, 'insurance_provider_id');
     }
 
     public function requestDocuments(): HasMany

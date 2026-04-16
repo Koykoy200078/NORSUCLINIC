@@ -3,7 +3,6 @@
 use App\Models\Barangay;
 use App\Models\City;
 use App\Models\Notification;
-use App\Models\Patient;
 use App\Models\PurchasedMedicine;
 use App\Models\Setting;
 use App\Models\State;
@@ -534,14 +533,6 @@ if (! function_exists('generateUniqueAvailabilityNumber')) {
         } while (\App\Models\StockIn::where('availability_no', '=', $code)->first());
 
         return $code;
-    }
-}
-
-if (! function_exists('getPatientUniqueId')) {
-
-    function getPatientUniqueId()
-    {
-        return mb_strtoupper(Patient::generatePatientUniqueId());
     }
 }
 

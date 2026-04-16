@@ -39,6 +39,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(YearLevelSeeder::class);
         $this->call(OfficeSeeder::class);
         $this->call(VaccinationSeeder::class);
+        $this->call(PatientTypeSeeder::class);
+        $this->call(InsuranceProviderSeeder::class);
+        $this->call(StaffDesignationSeeder::class);
+        $this->call(ClinicStationSeeder::class);
 
         $this->call(MedicineSeeder::class);
         $this->call(DiagnoseSeeder::class);

@@ -14,10 +14,22 @@ class StaffDashBoardTable extends Component
     public function mount()
     {
         $this->data = []; // Initialize array
-        $this->data['patients'] = Patient::with(['user'])
+        $this->data['patients'] = Patient::with(['user:id,first_name,last_name,email,created_at,university_id_number', 'media'])
             ->whereDate('created_at', today())
             ->orderBy('created_at', 'DESC')
-            ->get()->toArray();
+            ->get()
+            ->map(fn($p) => [
+                'id'                 => $p->id,
+                'patient_identifier' => $p->user->university_id_number ?: $p->patient_unique_id,
+                'profile'            => $p->profile,
+                'user'               => [
+                    'id'         => $p->user->id,
+                    'full_name'  => $p->user->full_name,
+                    'email'      => $p->user->email,
+                    'created_at' => $p->user->created_at,
+                ],
+            ])
+            ->toArray();
     }
 
     public function placeholder()

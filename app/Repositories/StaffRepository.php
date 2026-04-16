@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\Staff;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -61,11 +62,15 @@ class StaffRepository extends BaseRepository
             DB::beginTransaction();
 
             $input['email'] = setEmailLowerCase($input['email']);
+            $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::STAFF;
             // Set email as verified with Philippine time
             $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
-            $staff = User::create($input);
+
+            $staffProfileInput = Arr::only($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']);
+            $staff = User::create(Arr::except($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']));
+            $staff->staffProfile()->updateOrCreate(['user_id' => $staff->id], $staffProfileInput);
 
             if (isset($input['role']) && ! empty($input['role'])) {
                 $staff->assignRole($input['role']);
@@ -91,6 +96,7 @@ class StaffRepository extends BaseRepository
 
             $staff = User::find($id);
             $input['email'] = setEmailLowerCase($input['email']);
+            $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
             if (isset($input['password']) && ! empty($input['password'])) {
                 $input['password'] = Hash::make($input['password']);
             } else {
@@ -98,7 +104,11 @@ class StaffRepository extends BaseRepository
             }
 
             $input['type'] = User::STAFF;
-            $staff->update($input);
+
+            $staffProfileInput = Arr::only($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']);
+            $staff->update(Arr::except($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']));
+            $staff->staffProfile()->updateOrCreate(['user_id' => $staff->id], $staffProfileInput);
+
             if (isset($input['role']) && ! empty($input['role'])) {
                 $staff->syncRoles($input['role']);
             }

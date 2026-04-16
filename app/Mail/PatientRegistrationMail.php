@@ -34,12 +34,13 @@ class PatientRegistrationMail extends Mailable
 
         // Get featured slider or first available slider
         $slider = Slider::where('is_default', true)->first() ?: Slider::first();
+        $patientIdentifier = $this->user->university_id_number ?: $this->patient->patient_unique_id;
 
         return $this->subject("Welcome to {$clinicName} - Registration Successful!")
             ->view('emails.patient-registration')
             ->with([
                 'patientName' => $this->user->first_name . ' ' . $this->user->last_name,
-                'patientId' => $this->patient->patient_unique_id,
+                'patientId' => $patientIdentifier,
                 'email' => $this->user->email,
                 'registrationDate' => now()->setTimezone('Asia/Manila')->format('F j, Y g:i A'),
                 'slider' => $slider,

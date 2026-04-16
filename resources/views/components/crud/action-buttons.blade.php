@@ -49,7 +49,7 @@
         @if($showTooltips) title="{{ __('messages.common.delete') }}" @endif
         class="btn btn-{{ $size }} btn-outline-danger action-btn delete-btn"
         data-url="{{ route($routes['delete'], $model) }}"
-        data-name="{{ $model->name ?? $model->patient_unique_id ?? $model->id }}"
+        data-name="{{ $model->name ?? ($model->user->university_id_number ?? $model->patient_unique_id ?? $model->id) }}"
         data-bs-toggle="modal"
         data-bs-target="#deleteConfirmationModal">
         <i class="fas fa-trash"></i>

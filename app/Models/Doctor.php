@@ -15,9 +15,10 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property float|null $experience
- * @property string|null $twitter_url
- * @property string|null $linkedin_url
- * @property string|null $instagram_url
+ * @property string|null $prc_license_number
+ * @property string|null $ptr_number
+ * @property string|null $s2_license_number
+ * @property string|null $consultation_hours
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Address|null $address
@@ -32,9 +33,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereExperience($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereInstagramUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereLinkedinUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereTwitterUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor wherePrcLicenseNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor wherePtrNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereS2LicenseNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereConsultationHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUserId($value)
  * @mixin \Eloquent
@@ -52,16 +54,18 @@ class Doctor extends Model
         'user_id',
         'specialization',
         'experience',
-        'twitter_url',
-        'linkedin_url',
-        'instagram_url',
+        'prc_license_number',
+        'ptr_number',
+        's2_license_number',
+        'consultation_hours',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
-        'twitter_url' => 'string',
-        'linkedin_url' => 'string',
-        'instagram_url' => 'string',
+        'prc_license_number' => 'string',
+        'ptr_number' => 'string',
+        's2_license_number' => 'string',
+        'consultation_hours' => 'string',
     ];
 
     const O_POSITIVE = 1;

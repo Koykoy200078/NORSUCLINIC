@@ -26,12 +26,16 @@ class PatientService
                 $data['course_id'] = null;
             }
 
+            $universityIdNumber = strtoupper(trim((string) ($data['university_id_number'] ?? '')));
+            $patientIdentifier = $universityIdNumber !== '' ? $universityIdNumber : $this->generateUniqueId();
+
             // Create user first
             $user = User::create([
                 'first_name' => $data['first_name'],
                 'middle_name' => $data['middle_name'] ?? null,
                 'last_name' => $data['last_name'],
                 'email' => $data['email'] ?? null,
+                'university_id_number' => $universityIdNumber !== '' ? $universityIdNumber : null,
                 'contact' => $data['contact'] ?? null,
                 'emergency_contact_name' => $data['emergency_contact_name'] ?? null,
                 'emergency_contact_no' => $data['emergency_contact_no'] ?? null,
@@ -61,7 +65,7 @@ class PatientService
             // Create patient
             $patient = Patient::create([
                 'user_id' => $user->id,
-                'patient_unique_id' => $this->generateUniqueId(),
+                'patient_unique_id' => $patientIdentifier,
             ]);
 
             // Handle address if provided
@@ -256,7 +260,7 @@ class PatientService
                 return [
                     'id' => $patient->id,
                     'name' => $patient->user->full_name,
-                    'unique_id' => $patient->patient_unique_id,
+                    'unique_id' => $patient->user->university_id_number ?: $patient->patient_unique_id,
                 ];
             });
     }

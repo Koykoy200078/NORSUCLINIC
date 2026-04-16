@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
+use App\Models\ClinicStation;
 use App\Models\Role;
+use App\Models\StaffDesignation;
 use App\Models\User;
 use App\Repositories\StaffRepository;
 use Laracasts\Flash\Flash;
@@ -45,7 +47,10 @@ class StaffController extends AppBaseController
         $roles = $this->staffRepository->getRole();
         $defaultRoleId = Role::whereName('staff')->value('id');
 
-        return view('staffs.create', compact('roles', 'defaultRoleId'));
+        $staffDesignations = StaffDesignation::pluck('name', 'id');
+        $clinicStations = ClinicStation::pluck('name', 'id');
+
+        return view('staffs.create', compact('roles', 'defaultRoleId', 'staffDesignations', 'clinicStations'));
     }
 
     /**
@@ -87,7 +92,10 @@ class StaffController extends AppBaseController
         $roles = $this->staffRepository->getRole();
         $defaultRoleId = Role::whereName('staff')->value('id');
 
-        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId'));
+        $staffDesignations = StaffDesignation::pluck('name', 'id');
+        $clinicStations = ClinicStation::pluck('name', 'id');
+
+        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId', 'staffDesignations', 'clinicStations'));
     }
 
     /**

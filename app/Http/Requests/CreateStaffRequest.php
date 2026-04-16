@@ -23,10 +23,16 @@ class CreateStaffRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email:filter|unique:users,email',
+            'institutional_email' => 'required|email:filter|unique:users,institutional_email',
+            'employee_id' => 'required|string|max:100|unique:users,employee_id',
             'contact' => 'nullable|unique:users,contact',
+            'pager_extension' => 'nullable|string|max:60',
             'password' => 'required|same:password_confirmation|min:6',
             'gender' => 'required',
             'role' => 'sometimes|integer|exists:roles,id', // Default value 3 will be set, validate only if provided
+            'role_designation_id' => 'required|exists:staff_designations,id',
+            'assigned_station_id' => 'required|exists:clinic_stations,id',
+            'shift_schedule' => 'required|string',
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];
     }

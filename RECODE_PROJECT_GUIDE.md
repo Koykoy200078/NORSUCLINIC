@@ -950,7 +950,7 @@ sessions                  — DB sessions
 | `prescriptions` + `prescription_medicines`        | Header-detail pattern — properly normalized ✅                                                                                                                                                                    |
 | `addresses`                                       | Polymorphic morphTo (`addressable_type` / `addressable_id`) — acceptable pattern for shared address across User/Doctor/Patient ✅. Fields renamed: `address1` → `present_address`, `address2` → `current_address` |
 | `users.time_zone`                                 | **Removed** — system is LAN-only, all users are in Philippine time (Asia/Manila). Timezone hardcoded once in `config/app.php` (`timezone = 'Asia/Manila'`), not stored per user                                   |
-| `doctors.twitter_url/linkedin_url/instagram_url`  | **Removed** — social media links are not relevant to a university clinic system                                                                                                                                   |
+| `doctors` social profile link fields              | **Removed** — social media links are not relevant to a university clinic system                                                                                                                                   |
 | `users.language` + `SetLanguage` middleware       | **Removed** — system is English-only. No multi-language support. Default locale set once in `config/app.php` (`locale = 'en'`)                                                                                    |
 
 ---

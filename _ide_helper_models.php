@@ -434,9 +434,6 @@ namespace App\Models{
  * @property int $id
  * @property int $user_id
  * @property float|null $experience
- * @property string|null $twitter_url
- * @property string|null $linkedin_url
- * @property string|null $instagram_url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Address|null $address
@@ -455,9 +452,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereExperience($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereInstagramUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereLinkedinUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereTwitterUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUserId($value)
  * @mixin \Eloquent

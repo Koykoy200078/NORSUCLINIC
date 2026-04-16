@@ -153,7 +153,7 @@
                     <span class="info-value">{{ $patientName }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label" style="margin-right: 5px;">🆔 Patient ID: </span>
+                    <span class="info-label" style="margin-right: 5px;">🆔 University ID Number: </span>
                     <span class="info-value">{{ $patientId }}</span>
                 </div>
                 <div class="info-row">
@@ -190,7 +190,7 @@
                 <li><strong>📞 Contact Support:</strong> Reach out to our medical staff for assistance</li>
             </ul>
 
-            <p style="margin-top: 25px;">Your account is now active and ready to use. Please keep your Patient ID <strong>({{ $patientId }})</strong> for future reference when visiting the clinic or booking appointments.</p>
+            <p style="margin-top: 25px;">Your account is now active and ready to use. Please keep your University ID Number <strong>({{ $patientId }})</strong> for future reference when visiting the clinic or booking appointments.</p>
 
             <p>If you have any questions or need assistance, please don't hesitate to contact our clinic staff.</p>
 

@@ -20,13 +20,21 @@ class CreatePatientRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Patient::$rules;
+        $rules = Patient::$rules;
+
+        $rules['university_id_number'] = 'required|string|max:100|unique:users,university_id_number';
+        $rules['patient_type_id'] = 'required|exists:patient_types,id';
+        $rules['nationality_citizenship'] = 'required|string|max:120';
+        $rules['campus_address'] = 'required|string';
+        $rules['permanent_address'] = 'required|string';
+        $rules['immunization_record'] = 'required|string';
+
+        return $rules;
     }
 
     public function messages(): array
     {
         return [
-            'patient_unique_id.regex' => __('messages.common.space_not_allowed_in_unique_id_field'),
             'profile.max' => __('messages.profile_size'),
         ];
     }

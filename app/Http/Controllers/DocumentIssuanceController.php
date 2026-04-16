@@ -281,7 +281,7 @@ class DocumentIssuanceController extends Controller
                         }
                     } catch (\Exception $e) {
                         // Log individual file upload error but continue with other files
-                        \Log::error('Error uploading consultation image: ' . $e->getMessage());
+                        Log::error('Error uploading consultation image: ' . $e->getMessage());
                     }
                 }
 
@@ -292,7 +292,7 @@ class DocumentIssuanceController extends Controller
                 }
             } catch (\Exception $e) {
                 // Log error but don't fail the entire consultation form submission
-                \Log::error('Error handling consultation images: ' . $e->getMessage());
+                Log::error('Error handling consultation images: ' . $e->getMessage());
             }
         }
 
@@ -1038,14 +1038,16 @@ class DocumentIssuanceController extends Controller
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             })
                 ->select('id', 'patient_unique_id', 'user_id')
-                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id', 'address' => function ($query) {
+                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id,university_id_number', 'address' => function ($query) {
                     $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
                         ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
                 }])
                 ->get();
 
-            // Add full_address attribute to each patient's address
+            // Add full_address and use university_id_number as the primary patient identifier.
             $patients->each(function ($patient) {
+                $patient->patient_unique_id = $patient->user->university_id_number ?: $patient->patient_unique_id;
+
                 if ($patient->address) {
                     $patient->address->full_address = $patient->address->full_address;
                 }

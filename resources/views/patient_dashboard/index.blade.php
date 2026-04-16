@@ -29,8 +29,8 @@
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-id-card text-muted fs-4 me-3" style="width: 25px;"></i>
                             <div>
-                                <span class="text-muted fs-7">{{ __('messages.patient.patient_unique_id') }}</span>
-                                <h6 class="mb-0 fw-bold">{{ $patient->patient_unique_id }}</h6>
+                                <span class="text-muted fs-7">{{ __('University ID Number') }}</span>
+                                <h6 class="mb-0 fw-bold">{{ getLogInUser()->university_id_number ?? $patient->patient_unique_id }}</h6>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mb-3">

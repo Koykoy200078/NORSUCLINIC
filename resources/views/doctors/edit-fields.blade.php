@@ -12,11 +12,23 @@
         {{ Form::email('email', $user->email,['class' => 'form-control','placeholder' =>  __('messages.web.email')]) }}
     </div>
     <div class="col-md-6 mb-5">
+        {{ Form::label('institutional_email', __('Institutional Email').':' ,['class' => 'form-label required']) }}
+        {{ Form::email('institutional_email', $user->institutional_email,['class' => 'form-control','placeholder' => __('Institutional Email'),'required']) }}
+    </div>
+    <div class="col-md-6 mb-5">
+        {{ Form::label('employee_id', __('Employee ID').':' ,['class' => 'form-label required']) }}
+        {{ Form::text('employee_id', $user->employee_id,['class' => 'form-control','placeholder' => __('Employee ID'),'required']) }}
+    </div>
+    <div class="col-md-6 mb-5">
         {{ Form::label('Contact',__('messages.user.contact_number').':' ,['class' => 'form-label']) }}
         {{ Form::tel('contact', '+'.$user->country_code.$user->contact,['class' => 'form-control','placeholder' =>  __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
         {{ Form::hidden('country_code',!empty($user->user) ? $user->user->country_code : null,['id'=>'prefix_code']) }}
         <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
         <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+    </div>
+    <div class="col-md-6 mb-5">
+        {{ Form::label('pager_extension', __('Pager / Extension Number').':' ,['class' => 'form-label']) }}
+        {{ Form::text('pager_extension', $user->pager_extension,['class' => 'form-control','placeholder' => __('Pager or Extension Number')]) }}
     </div>
     <div class="col-md-6 mb-5">
         {{ Form::label('DOB',__('messages.doctor.dob').':' ,['class' => 'form-label']) }}
@@ -29,6 +41,22 @@
     <div class="col-md-6 mb-5">
         {{ Form::label('Experience', __('messages.doctor.experience').':', ['class' => 'form-label']) }}
         {{ Form::text('experience', $doctor->experience, ['class' => 'form-control', 'placeholder' => __('messages.doctor.experience'),'step'=>'any']) }}
+    </div>
+    <div class="col-md-6 mb-5">
+        {{ Form::label('prc_license_number', __('PRC/Medical License Number').':' ,['class' => 'form-label required']) }}
+        {{ Form::text('prc_license_number', $doctor->prc_license_number, ['class' => 'form-control', 'placeholder' => __('PRC/Medical License Number'), 'required']) }}
+    </div>
+    <div class="col-md-6 mb-5">
+        {{ Form::label('ptr_number', __('PTR Number').':' ,['class' => 'form-label required']) }}
+        {{ Form::text('ptr_number', $doctor->ptr_number, ['class' => 'form-control', 'placeholder' => __('Professional Tax Receipt Number'), 'required']) }}
+    </div>
+    <div class="col-md-6 mb-5">
+        {{ Form::label('s2_license_number', __('S2 License Number').':' ,['class' => 'form-label']) }}
+        {{ Form::text('s2_license_number', $doctor->s2_license_number, ['class' => 'form-control', 'placeholder' => __('S2 License Number (if applicable)')]) }}
+    </div>
+    <div class="col-md-12 mb-5">
+        {{ Form::label('consultation_hours', __('Consultation Hours').':' ,['class' => 'form-label required']) }}
+        {{ Form::textarea('consultation_hours', $doctor->consultation_hours, ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Mon-Wed 8:00AM-12:00PM, Thu-Fri 1:00PM-5:00PM'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
         <label class="form-label required">
@@ -47,10 +75,6 @@
     <div class="col-md-6 mb-5">
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
         {{ Form::select('blood_type', $bloodGroup , $user->blood_type, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.doctor.select_blood_type')]) }}
-    </div>
-    <div class="col-md-6 mb-5" style="visibility: hidden;">
-        {{ Form::label('twitter',__('messages.doctor.twitter').':' ,['class' => 'form-label']) }}
-        {{ Form::text('twitter_url', !empty($doctor->twitter_url) ? $doctor->twitter_url : null,['class' => 'form-control','placeholder' =>  __('messages.common.twitter_url'),'id' => 'twitterUrl']) }}
     </div>
     <div class="col-md-6 mb-5">
         <div class="mb-3" io-image-input="true">

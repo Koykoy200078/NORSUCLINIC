@@ -24,7 +24,7 @@
                 <h4 class="alert-heading"><i class="fas fa-user-md"></i> Current Patient</h4>
                 <h5>{{ $inProgressQueue->patient->user->full_name }}</h5>
                 <p class="mb-0">
-                    <strong>Patient ID:</strong> {{ $inProgressQueue->patient->patient_unique_id }} |
+                    <strong>Patient ID:</strong> {{ $inProgressQueue->patient->user->university_id_number ?? $inProgressQueue->patient->patient_unique_id }} |
                     @if($inProgressQueue->room_number)
                     <strong>Room:</strong> <span class="badge bg-info">{{ $inProgressQueue->room_number }}</span> |
                     @endif
@@ -69,7 +69,7 @@
                                 <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>
                             </div>
                             <p class="mb-1">
-                                <strong>ID:</strong> {{ $queue->patient->patient_unique_id }}
+                                <strong>ID:</strong> {{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}
                                 @if($queue->room_number)
                                 | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                                 @endif
@@ -124,7 +124,7 @@
                                 <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>
                             </div>
                             <p class="mb-1">
-                                <strong>ID:</strong> {{ $queue->patient->patient_unique_id }}
+                                <strong>ID:</strong> {{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}
                                 @if($queue->room_number)
                                 | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                                 @endif
@@ -227,85 +227,87 @@
 <script>
     let lastUpdateTime = Date.now();
     let isUpdating = false;
-    
+
     // Real-time queue updates using AJAX polling
     function updateQueue() {
         if (isUpdating) return;
-        
+
         isUpdating = true;
-        
+
         console.log('[Queue Update] Fetching queue data...');
-        
+
         fetch('/api/patient-queue/data', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            console.log('[Queue Update] Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('[Queue Update] Received data:', data);
-            
-            // Update queue counts in statistics
-            updateStatistics(data);
-            
-            // Check if there are any changes
-            if (hasQueueChanged(data)) {
-                console.log('[Queue Update] Changes detected! Showing notification...');
-                
-                // Show notification
-                showNotification(data);
-                
-                // Reload page to show updated queue
-                setTimeout(() => {
-                    console.log('[Queue Update] Reloading page...');
-                    location.reload();
-                }, 1000);
-            } else {
-                console.log('[Queue Update] No changes detected');
-            }
-            
-            lastUpdateTime = Date.now();
-            isUpdating = false;
-        })
-        .catch(error => {
-            console.error('[Queue Update] Error fetching queue data:', error);
-            isUpdating = false;
-        });
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                console.log('[Queue Update] Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('[Queue Update] Received data:', data);
+
+                // Update queue counts in statistics
+                updateStatistics(data);
+
+                // Check if there are any changes
+                if (hasQueueChanged(data)) {
+                    console.log('[Queue Update] Changes detected! Showing notification...');
+
+                    // Show notification
+                    showNotification(data);
+
+                    // Reload page to show updated queue
+                    setTimeout(() => {
+                        console.log('[Queue Update] Reloading page...');
+                        location.reload();
+                    }, 1000);
+                } else {
+                    console.log('[Queue Update] No changes detected');
+                }
+
+                lastUpdateTime = Date.now();
+                isUpdating = false;
+            })
+            .catch(error => {
+                console.error('[Queue Update] Error fetching queue data:', error);
+                isUpdating = false;
+            });
     }
-    
+
     // Store initial queue state - properly encode from PHP
     const initialQueueData = {
         total: parseInt('{{ $queues->where("status", "waiting")->count() }}'),
         priority: parseInt('{{ $queues->where("is_priority", true)->where("status", "waiting")->count() }}'),
         inProgress: parseInt('{{ $queues->where("status", "in_progress")->count() }}')
     };
-    
-    let currentQueueState = { ...initialQueueData };
-    
+
+    let currentQueueState = {
+        ...initialQueueData
+    };
+
     console.log('[Queue Init] Initial state:', currentQueueState);
-    
+
     function hasQueueChanged(data) {
         const changed = data.total !== currentQueueState.total ||
-               data.priority_count !== currentQueueState.priority ||
-               data.in_progress_count !== currentQueueState.inProgress;
-        
+            data.priority_count !== currentQueueState.priority ||
+            data.in_progress_count !== currentQueueState.inProgress;
+
         console.log('[Queue Compare] Current:', currentQueueState, 'New:', {
             total: data.total,
             priority: data.priority_count,
             inProgress: data.in_progress_count
         }, 'Changed:', changed);
-        
+
         // Update current state for next comparison
         if (changed) {
             currentQueueState = {
@@ -314,27 +316,27 @@
                 inProgress: data.in_progress_count
             };
         }
-        
+
         return changed;
     }
-    
+
     function updateStatistics(data) {
         // Update statistics display (optional, for visual feedback without reload)
         const totalEl = document.querySelector('.text-primary.mb-0');
         const priorityEl = document.querySelector('.text-danger.mb-0');
         const inProgressEl = document.querySelector('.text-warning.mb-0');
-        
+
         if (totalEl && totalEl.textContent != data.total) {
             totalEl.textContent = data.total;
             totalEl.closest('.stat-box').classList.add('pulse-animation');
             setTimeout(() => totalEl.closest('.stat-box').classList.remove('pulse-animation'), 1000);
         }
     }
-    
+
     function showNotification(data) {
         // Play notification sound (optional)
         playNotificationSound();
-        
+
         // Show browser notification if permitted
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('Patient Queue Update', {
@@ -343,7 +345,7 @@
                 badge: '/assets/img/logo.png'
             });
         }
-        
+
         // Show toast notification
         const toast = document.createElement('div');
         toast.className = 'alert alert-info alert-dismissible fade show position-fixed top-0 end-0 m-3';
@@ -354,46 +356,46 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 5000);
     }
-    
+
     function playNotificationSound() {
         // Create and play a subtle notification sound
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = new(window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         oscillator.frequency.value = 800;
         oscillator.type = 'sine';
-        
+
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
+
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
     }
-    
+
     // Request notification permission on page load
     if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission();
     }
-    
+
     // Poll for updates every 5 seconds
     setInterval(updateQueue, 5000);
-    
+
     // Also update when page becomes visible again
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden) {
             updateQueue();
         }
     });
-    
+
     // Manual refresh button
     document.querySelector('.btn-info').addEventListener('click', function(e) {
         e.preventDefault();
@@ -404,32 +406,49 @@
 
 <style>
     @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
     }
-    
+
     .pulse-animation {
         animation: pulse 0.5s ease-in-out;
     }
-    
+
     .list-group-item {
         transition: all 0.3s ease;
     }
-    
+
     .list-group-item:hover {
         transform: translateX(5px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    
+
     /* New patient indicator */
     .new-patient-indicator {
         animation: blink 1s linear infinite;
     }
-    
+
     @keyframes blink {
-        0%, 50%, 100% { opacity: 1; }
-        25%, 75% { opacity: 0.5; }
+
+        0%,
+        50%,
+        100% {
+            opacity: 1;
+        }
+
+        25%,
+        75% {
+            opacity: 0.5;
+        }
     }
 </style>
 @endsection

@@ -22,12 +22,33 @@
 
     <div class="col-lg-6">
         <div class="mb-5">
+            {{ Form::label('institutional_email', __('Institutional Email').':', ['class' => 'form-label required']) }}
+            {{ Form::email('institutional_email', old('institutional_email', isset($staff) ? $staff->institutional_email : null), ['class' => 'form-control', 'placeholder' => __('Institutional Email'), 'required']) }}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="mb-5">
+            {{ Form::label('employee_id', __('Employee ID').':', ['class' => 'form-label required']) }}
+            {{ Form::text('employee_id', old('employee_id', isset($staff) ? $staff->employee_id : null), ['class' => 'form-control', 'placeholder' => __('Employee ID'), 'required']) }}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="mb-5">
             {{ Form::label('contact', __('messages.staff.contact_no').':', ['class' => 'form-label']) }}
             <br>
             {{ Form::tel('contact', old('contact', isset($staff) && $staff->contact ? '+'.$staff->country_code.$staff->contact : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
             {{ Form::hidden('country_code', old('country_code', isset($staff) ? $staff->country_code : null), ['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
             <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2"></span>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="mb-5">
+            {{ Form::label('pager_extension', __('Pager / Extension Number').':', ['class' => 'form-label']) }}
+            {{ Form::text('pager_extension', old('pager_extension', isset($staff) ? $staff->pager_extension : null), ['class' => 'form-control', 'placeholder' => __('Pager or Extension Number')]) }}
         </div>
     </div>
 
@@ -85,6 +106,27 @@
                     <label class="form-label mr-3">{{ __('messages.staff.female') }}</label>
                 </div>
             </span>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="mb-5">
+            {{ Form::label('role_designation_id', __('Role Designation').':', ['class' => 'form-label required']) }}
+            {{ Form::select('role_designation_id', $staffDesignations, old('role_designation_id', isset($staff) ? optional($staff->staffProfile)->role_designation_id : null), ['class' => 'form-select io-select2', 'data-control' => 'select2', 'placeholder' => __('Select Role Designation'), 'required']) }}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="mb-5">
+            {{ Form::label('assigned_station_id', __('Assigned Station').':', ['class' => 'form-label required']) }}
+            {{ Form::select('assigned_station_id', $clinicStations, old('assigned_station_id', isset($staff) ? optional($staff->staffProfile)->assigned_station_id : null), ['class' => 'form-select io-select2', 'data-control' => 'select2', 'placeholder' => __('Select Assigned Station'), 'required']) }}
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="mb-5">
+            {{ Form::label('shift_schedule', __('Shift Schedule').':', ['class' => 'form-label required']) }}
+            {{ Form::textarea('shift_schedule', old('shift_schedule', isset($staff) ? optional($staff->staffProfile)->shift_schedule : null), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Mon-Fri 8:00 AM - 5:00 PM'), 'required']) }}
         </div>
     </div>
 

@@ -23,10 +23,16 @@ class UpdateStaffRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email:filter|unique:users,email,' . $this->route('staff')->id,
+            'institutional_email' => 'required|email:filter|unique:users,institutional_email,' . $this->route('staff')->id,
+            'employee_id' => 'required|string|max:100|unique:users,employee_id,' . $this->route('staff')->id,
             'contact' => 'nullable|unique:users,contact,' . $this->route('staff')->id,
+            'pager_extension' => 'nullable|string|max:60',
             'password' => 'nullable|same:password_confirmation|min:6',
             'gender' => 'required',
             'role' => 'sometimes|integer|exists:roles,id', // Default value 3 will be set, validate only if provided
+            'role_designation_id' => 'required|exists:staff_designations,id',
+            'assigned_station_id' => 'required|exists:clinic_stations,id',
+            'shift_schedule' => 'required|string',
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];
     }

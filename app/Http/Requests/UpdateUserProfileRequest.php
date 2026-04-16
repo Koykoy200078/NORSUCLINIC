@@ -47,13 +47,10 @@ class UpdateUserProfileRequest extends FormRequest
             'college_id' => 'nullable|integer|exists:colleges,id',
             'course_id' => 'nullable|integer|exists:courses,id',
             'year_level_id' => 'nullable|integer|exists:year_levels,id',
+            'patient_type_id' => 'nullable|integer|exists:patient_types,id',
             'department_id' => 'nullable|integer',
             'office_id' => 'nullable|integer',
             'image' => 'nullable|mimes:jpeg,jpg,png|max:2000',
-            // UI helper fields (not stored in database)
-            'is_employee' => 'nullable|boolean',
-            'is_guest' => 'nullable|boolean',
-            'position_type' => 'nullable|string|in:faculty,staff',
         ];
     }
 

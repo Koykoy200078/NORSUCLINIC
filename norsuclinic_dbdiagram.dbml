@@ -53,9 +53,6 @@ Table doctors {
   id bigint [pk, increment]
   user_id bigint [ref: > users.id]
   experience double [null]
-  twitter_url varchar(255) [null]
-  linkedin_url varchar(255) [null]
-  instagram_url varchar(255) [null]
   created_at timestamp
   updated_at timestamp
   

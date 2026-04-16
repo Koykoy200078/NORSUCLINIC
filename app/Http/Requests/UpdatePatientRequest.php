@@ -28,8 +28,8 @@ class UpdatePatientRequest extends FormRequest
         $rules = Patient::$editRules;
 
         if ($patient instanceof Patient) {
-            $rules['patient_unique_id'] = 'required|regex:/^\S*$/u|unique:patients,patient_unique_id,' . $patient->id;
             $rules['email'] = 'nullable|email:filter|unique:users,email,' . $patient->user_id;
+            $rules['university_id_number'] = 'required|string|max:100|unique:users,university_id_number,' . $patient->user_id;
             $rules['contact'] = 'nullable';
         } else {
             // Fallback - should not reach here if route model binding works
@@ -37,11 +37,16 @@ class UpdatePatientRequest extends FormRequest
                 'route_name' => $this->route()->getName(),
                 'parameters' => $this->route()->parameters(),
             ]);
-            $rules['patient_unique_id'] = 'required|regex:/^\S*$/u';
             $rules['email'] = 'nullable|email:filter';
+            $rules['university_id_number'] = 'required|string|max:100';
             $rules['contact'] = 'nullable';
         }
 
+        $rules['patient_type_id'] = 'required|exists:patient_types,id';
+        $rules['nationality_citizenship'] = 'required|string|max:120';
+        $rules['campus_address'] = 'required|string';
+        $rules['permanent_address'] = 'required|string';
+        $rules['immunization_record'] = 'required|string';
         $rules['postal_code'] = 'nullable';
         $rules['profile'] = 'nullable|mimes:jpeg,jpg,png|max:2000';
 
@@ -51,7 +56,6 @@ class UpdatePatientRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'patient_unique_id.regex' => __('messages.common.space_not_allowed_in_unique_id_field'),
             'profile.max' => __('messages.profile_size'),
         ];
     }

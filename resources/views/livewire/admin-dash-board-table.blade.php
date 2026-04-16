@@ -62,7 +62,7 @@
                                 </div>
                             </td>
                             <td class="text-start">
-                                <span class="badge bg-light-success">{{ $patient['patient_unique_id'] }}</span>
+                                <span class="badge bg-light-success">{{ $patient['patient_identifier'] }}</span>
                             </td>
                             <td class="text-center text-muted fw-bold">
                                 <span class="badge bg-light-info">

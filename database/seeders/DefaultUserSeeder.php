@@ -7,7 +7,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Models\Doctor;
 use App\Models\Specialization;
 
@@ -43,7 +42,8 @@ class DefaultUserSeeder extends Seeder
                 $doctor->specializations()->sync($specializationIds);
             }
             if ($user->type == User::PATIENT) {
-                $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'UNIQUE' . $user->id]);
+                $patientIdentifier = strtoupper((string) ($user->university_id_number ?: ('UNIQUE' . $user->id)));
+                $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => $patientIdentifier]);
                 $patient->address()->create(['owner_id' => $patient['user_id']]);
             }
         }

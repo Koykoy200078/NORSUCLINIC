@@ -127,26 +127,6 @@
                             <label class="designation-label pb-4 mb-3 d-block">
                                 {{ $doctor->specializations->first()->name }}
                             </label>
-                            <ul class="social-media d-flex justify-content-center">
-                                @if(!empty($doctor->twitter_url))
-                                <span class="pe-2">
-                                    <a target="_blank" href="{{ $doctor->twitter_url }}"><i
-                                            class="fab fa-twitter"></i></a>
-                                </span>
-                                @endif
-                                @if(!empty($doctor->linkedin_url))
-                                <span class="pe-2">
-                                    <a target="_blank" href="{{ $doctor->linkedin_url }}"><i
-                                            class="fab fa-linkedin"></i></a>
-                                </span>
-                                @endif
-                                @if(!empty($doctor->instagram_url))
-                                <span class="pe-2">
-                                    <a target="_blank" href="{{ $doctor->instagram_url }}"><i
-                                            class="fab fa-instagram"></i></a>
-                                </span>
-                                @endif
-                            </ul>
                         </div>
                     </div>
                 </div>
