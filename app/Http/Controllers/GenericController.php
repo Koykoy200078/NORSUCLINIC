@@ -69,10 +69,15 @@ class GenericController extends AppBaseController
      *
      * @return Application|RedirectResponse|Redirector
      */
-    public function store(CreateGenericRequest $request): RedirectResponse
+    public function store(CreateGenericRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->all();
         $this->genericRepository->create($input);
+
+        if ($request->ajax()) {
+            return $this->sendSuccess(__('messages.medicine_generics') . ' ' . __('messages.medicine.saved_successfully'));
+        }
+
         Flash::success(__('messages.medicine_generics') . ' ' . __('messages.medicine.saved_successfully'));
 
         return redirect($this->getGenericIndexRoute());

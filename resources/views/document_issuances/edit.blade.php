@@ -11,18 +11,18 @@
                 (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => request('patient_id')]) : 
                 (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => request('patient_id')]) : 
                 route('patients.showMyHistory', ['patient' => request('patient_id')])))) :
-                (isRole('clinic_admin') ? route('request-documents.index') :
-                (isRole('staff') ? route('staff.request-documents.index') :
-                (isRole('doctor') ? route('doctors.request-documents.index') :
-                route('request-documents.index'))))
+                (isRole('clinic_admin') ? route('document-issuances.index') :
+                (isRole('staff') ? route('staff.document-issuances.index') :
+                (isRole('doctor') ? route('doctors.document-issuances.index') :
+                route('document-issuances.index'))))
         }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
     <form action="{{ 
-        isRole('clinic_admin') ? route('request-documents.update', $requestDocument) : 
-        (isRole('staff') ? route('staff.request-documents.update', $requestDocument) : 
-        (isRole('doctor') ? route('doctors.request-documents.update', $requestDocument) : route('request-documents.update', $requestDocument)))
+        isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
+        (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
+        (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
     }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -446,9 +446,9 @@
 
     @elseif ($requestDocument->document_type == 'medical_certificate')
     <form action="{{ 
-        isRole('clinic_admin') ? route('request-documents.update', $requestDocument) : 
-        (isRole('staff') ? route('staff.request-documents.update', $requestDocument) : 
-        (isRole('doctor') ? route('doctors.request-documents.update', $requestDocument) : route('request-documents.update', $requestDocument)))
+        isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
+        (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
+        (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
     }}" method="POST">
         @csrf
         @method('PUT')

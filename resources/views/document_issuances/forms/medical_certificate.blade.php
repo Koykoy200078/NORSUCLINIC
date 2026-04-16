@@ -31,9 +31,9 @@
 
         <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
         <form action="{{ 
-            isRole('clinic_admin') ? route('request-documents.store') : 
-            (isRole('staff') ? route('staff.request-documents.store') : 
-            (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
+            isRole('clinic_admin') ? route('document-issuances.store') : 
+            (isRole('staff') ? route('staff.document-issuances.store') : 
+            (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store')))
         }}" method="POST">
             @csrf
             <div class="form-group mb-5 d-none">
@@ -238,9 +238,9 @@
         @if(isRole('clinic_admin'))
         const searchRoute = '{{ route("search-users") }}';
         @elseif(isRole('staff'))
-        const searchRoute = '{{ route("staff.request-documents.search-users") }}';
+        const searchRoute = '{{ route("staff.document-issuances.search-users") }}';
         @elseif(isRole('doctor'))
-        const searchRoute = '{{ route("doctors.request-documents.search-users") }}';
+        const searchRoute = '{{ route("doctors.document-issuances.search-users") }}';
         @else
         const searchRoute = '{{ route("search-users") }}';
         @endif

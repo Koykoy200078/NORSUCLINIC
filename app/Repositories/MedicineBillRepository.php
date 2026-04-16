@@ -3,11 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use App\Models\DispenseRecord;
+use App\Models\DispenseRecordItem;
 use App\Models\Doctor;
 use App\Models\Medicine;
-use App\Models\MedicineBill;
 use App\Models\Patient;
-use App\Models\SaleMedicine;
+// MedicineBill / SaleMedicine kept for backward compat — use DispenseRecord/DispenseRecordItem instead
 use App\Models\Setting;
 use Exception;
 use Illuminate\Support\Collection;
@@ -44,7 +45,7 @@ class MedicineBillRepository extends BaseRepository
      **/
     public function model()
     {
-        return MedicineBill::class;
+        return DispenseRecord::class;
     }
 
     public function update($medicineBill, $input): bool
@@ -70,7 +71,7 @@ class MedicineBillRepository extends BaseRepository
                 'tax_amount'     => 0,
             ]);
 
-            $medicineBill->saleMedicine()->delete();
+            $medicineBill->dispenseItems()->delete();
 
             if (! empty($input['category_id'])) {
                 foreach ($input['category_id'] as $key => $value) {
@@ -78,7 +79,7 @@ class MedicineBillRepository extends BaseRepository
                     if (! $medicine) {
                         continue;
                     }
-                    SaleMedicine::create([
+                    DispenseRecordItem::create([
                         'medicine_bill_id' => $medicineBill->id,
                         'medicine_id'      => $medicine->id,
                         'sale_price'       => $input['sale_price'][$key] ?? 0,

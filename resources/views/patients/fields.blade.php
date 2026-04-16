@@ -46,11 +46,17 @@
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
+            @if (isset($patient))
             {{ Form::tel('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control',
-            'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
+                'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
             {{ Form::hidden('country_code',!empty($patient->user) ? $patient->user->country_code : null,['id'=>'prefix_code']) }}
             <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
             <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+            @else
+            {{ Form::text('contact', old('contact'), ['class' => 'form-control',
+                'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'patientContactNumber']) }}
+            {{ Form::hidden('country_code', old('country_code', getSettingValue('country_code')), ['id'=>'prefix_code']) }}
+            @endif
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('emergencyName',__('messages.patient.emergency_contact_name').':' ,['class' => 'form-label']) }}
@@ -364,6 +370,27 @@
             $(positionTypeSelect).off('change').on('change', updateFieldsDisplay);
         });
     </script>
+
+    <!-- Medical History Information -->
+    <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Medical History & Allergies') }}</div>
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            {{ Form::label('allergies','Allergies:' ,['class' => 'form-label']) }}
+            {{ Form::textarea('allergies',!empty($patient) ? $patient->allergies : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List any allergies (Drug, Food, etc.)']) }}
+        </div>
+        <div class="col-md-12 mb-5">
+            {{ Form::label('comorbidities','Comorbidities/Underlying Conditions:' ,['class' => 'form-label']) }}
+            {{ Form::textarea('comorbidities',!empty($patient) ? $patient->comorbidities : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List any comorbidities (e.g., Hypertension, Diabetes)']) }}
+        </div>
+        <div class="col-md-12 mb-5">
+            {{ Form::label('admissions_surgeries','Hospital Admissions / Surgeries:' ,['class' => 'form-label']) }}
+            {{ Form::textarea('admissions_surgeries',!empty($patient) ? $patient->admissions_surgeries : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List previous admissions or surgeries if any']) }}
+        </div>
+        <div class="col-md-12 mb-5">
+            {{ Form::label('maintenance','Maintenance/Current Medications:' ,['class' => 'form-label']) }}
+            {{ Form::textarea('maintenance',!empty($patient) ? $patient->maintenance : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List current maintenance medications']) }}
+        </div>
+    </div>
 
     <div>
         {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}

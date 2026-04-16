@@ -531,7 +531,7 @@ if (! function_exists('generateUniqueAvailabilityNumber')) {
     {
         do {
             $code = random_int(100000, 999999);
-        } while (\App\Models\MedicineAvailability::where('availability_no', '=', $code)->first());
+        } while (\App\Models\StockIn::where('availability_no', '=', $code)->first());
 
         return $code;
     }
@@ -551,7 +551,7 @@ if (! function_exists('generateUniqueHistoryNumber')) {
     {
         do {
             $code = random_int(1000, 9999);
-        } while (\App\Models\MedicineBill::where('history_number', '=', $code)->first());
+        } while (\App\Models\DispenseRecord::where('history_number', '=', $code)->first());
 
         return $code;
     }

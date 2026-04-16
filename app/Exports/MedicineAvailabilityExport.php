@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\MedicineAvailability;
+use App\Models\StockIn;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -21,7 +21,7 @@ class MedicineAvailabilityExport implements WithMultipleSheets
         $sheets = [];
 
         // Group data by `created_at` date
-        $groupedData = MedicineAvailability::all()->groupBy(function ($item) {
+        $groupedData = StockIn::all()->groupBy(function ($item) {
             return $item->created_at->format('Y-m-d'); // Group by date
         });
 

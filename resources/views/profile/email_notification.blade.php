@@ -1,4 +1,4 @@
-<div class="modal show fade" tabindex="-1" id="emailNotificationModal"  aria-modal="true" role="dialog">
+<div class="modal fade" tabindex="-1" id="emailNotificationModal" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,7 +6,7 @@
 
                 <!--begin::Close-->
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
                 <!--end::Close-->
             </div>
 
@@ -17,7 +17,7 @@
                         {{ Form::checkbox('email_notification', 1, getLogInUser()->email_notification,['class' => 'form-check-input  me-5']) }}
                     </div>
                     <label class="col-form-label fw-bold fs-6">
-                        <span>  {{__('messages.user.email_notification')}}</span>
+                        <span> {{__('messages.user.email_notification')}}</span>
                     </label>
                 </div>
                 <div class="pt-5">
@@ -26,7 +26,7 @@
                 </div>
                 {{ Form::close() }}
             </div>
-            
+
         </div>
     </div>
 </div>

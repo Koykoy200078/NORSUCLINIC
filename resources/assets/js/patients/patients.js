@@ -108,84 +108,103 @@ function cb(start, end) {
     );
 }
 
+// Enhanced patient archive function
+window.archivePatientWithCascade = function (url, patientName, patientId) {
+    swal({
+        title: "Archive Patient?",
+        text: `Are you sure you want to archive ${patientName}? The patient and their records will be hidden from the active list.`,
+        icon: "warning",
+        buttons: {
+            cancel: "Cancel",
+            confirm: {
+                text: "Yes, Archive Patient",
+                className: "btn btn-danger",
+            },
+        },
+        dangerMode: true,
+    }).then(function (willArchive) {
+        if (willArchive) {
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.success) {
+                        Livewire.dispatch("refresh");
+                        Livewire.dispatch("resetPage");
+                    }
+
+                    swal({
+                        icon: "success",
+                        title: "Archived!",
+                        text: obj.message || "Patient archived successfully.",
+                        timer: 2200,
+                        buttons: {
+                            confirm: Lang.get("js.ok"),
+                        },
+                    });
+                },
+                error: function (data) {
+                    swal({
+                        title: Lang.get("js.error"),
+                        icon: "error",
+                        text:
+                            data.responseJSON?.message ||
+                            "Failed to archive patient.",
+                        type: "error",
+                        timer: 4000,
+                        buttons: {
+                            confirm: Lang.get("js.ok"),
+                        },
+                    });
+                },
+            });
+        }
+    });
+};
+
 listenClick(".patient-delete-btn", function () {
     let patientId = $(this).attr("data-id");
     let deleteUrl = $(this).attr("data-delete-url");
     let patientName = $(this).attr("data-patient-name") || "Patient";
 
-    // Use the role-based delete URL from the button's data attribute
-    // Falls back to panel-aware route if not specified
     let url = deleteUrl || panelRoute("patients.destroy", patientId);
 
-    // Enhanced patient deletion with cascade information
-    deletePatientWithCascade(url, patientName, patientId);
+    archivePatientWithCascade(url, patientName, patientId);
 });
 
-// Enhanced patient deletion function with cascade information
-window.deletePatientWithCascade = function (url, patientName, patientId) {
-    // Show enhanced confirmation dialog with cascade information
-    swal({
-        title: "Delete Patient - Complete Data Removal",
-        content: {
-            element: "div",
-            attributes: {
-                innerHTML: `
-                    <div style="text-align: left; margin: 20px 0;">
-                        <p><strong>Patient:</strong> ${patientName}</p>
-                        <br>
-                        <p><strong>⚠️ Warning:</strong> This will permanently delete the patient and ALL related data including:</p>
-                        <ul style="margin: 15px 0; padding-left: 20px;">
-                            <li>📅 All appointments and scheduling records</li>
-                            <li>🏥 All queue entries and visit history</li>
-                            <li>💊 All prescriptions and medicine records</li>
-                            <li>🧾 All medicine bills and payment records</li>
-                            <li>📄 All request documents and files</li>
-                            <li>📱 User account and login credentials</li>
-                            <li>🏠 Address and contact information</li>
-                            <li>📁 All uploaded media files</li>
-                            <li>📋 All activity logs and audit trails</li>
-                        </ul>
-                        <p style="color: #d32f2f; font-weight: bold;">This action cannot be undone!</p>
-                    </div>
-                `,
-            },
-        },
-        buttons: {
-            cancel: {
-                text: "Cancel",
-                value: false,
-                visible: true,
-                className: "btn btn-secondary",
-                closeModal: true,
-            },
-            confirm: {
-                text: "Yes, Delete All Data",
-                value: true,
-                visible: true,
-                className: "btn btn-danger",
-                closeModal: true,
-            },
-        },
-        dangerMode: true,
-        icon: "warning",
-    }).then(function (willDelete) {
-        if (willDelete) {
-            // Show loading state
-            swal({
-                title: "Deleting Patient Data...",
-                text: "Please wait while we remove all patient records.",
-                icon: "info",
-                buttons: false,
-                closeOnClickOutside: false,
-                closeOnEsc: false,
-            });
+listenClick(".patient-restore-btn", function () {
+    let patientId = $(this).attr("data-id");
+    let restoreUrl = $(this).attr("data-restore-url");
+    let patientName = $(this).attr("data-patient-name") || "Patient";
 
-            // Execute the deletion
-            // Call the deleteItemAjax function from custom.js
-            window.deleteItemAjax(url, patientName, null);
+    swal({
+        title: "Restore Patient",
+        text: `Are you sure you want to restore ${patientName}?`,
+        icon: "info",
+        buttons: {
+            cancel: "Cancel",
+            confirm: {
+                text: "Yes, Restore Patient",
+                className: "btn btn-success",
+            },
+        },
+    }).then(function (willRestore) {
+        if (willRestore) {
+            $.ajax({
+                type: "POST",
+                url: restoreUrl,
+                success: function (result) {
+                    displaySuccessMessage(result.message);
+                    Livewire.dispatch("refresh");
+                },
+                error: function (result) {
+                    displayErrorMessage(result.responseJSON.message);
+                },
+            });
         }
     });
-};
+});
 
 listenClick(".patient-reset-password-btn", function () {
     let userId = $(this).attr("data-id");

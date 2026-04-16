@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Barangay;
 use App\Models\City;
 use App\Models\Country;
-use App\Models\State;
+use App\Models\Province;
 use Illuminate\Database\Seeder;
 
 class CreateCountriesSeeder extends Seeder
@@ -22,11 +22,11 @@ class CreateCountriesSeeder extends Seeder
             Country::insert($countries);
         }
 
-        // Seed states if not exists
-        if (State::count() === 0) {
+        // Seed provinces if not exists
+        if (Province::count() === 0) {
             $states = file_get_contents(storage_path('countries/states.json'));
             $states = json_decode($states, true)['states'];
-            State::insert($states);
+            Province::insert($states);
         }
 
         // Seed cities if not exists

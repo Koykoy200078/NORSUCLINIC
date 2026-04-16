@@ -111,11 +111,16 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereYearLevelId($value)
  * @mixin \Eloquent
  */
+
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class User extends Authenticatable implements HasMedia
 {
-    use HasFactory, Notifiable, InteractsWithMedia, HasRoles, Impersonate, HasPermissions;
+    use HasFactory, Notifiable, InteractsWithMedia, HasRoles, Impersonate, HasPermissions, SoftDeletes;
 
     protected $table = 'users';
+
+    public const DELETED_AT = 'archived_at';
 
     /**
      * The attributes that are mass assignable.

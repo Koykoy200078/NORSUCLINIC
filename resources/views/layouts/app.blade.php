@@ -162,6 +162,8 @@
         let bloodGroupArray = @json($bloodGroupArr);
         Lang.setLocale(checkLanguageSession);
     </script>
+
+    @yield('page_js')
 </body>
 
 </html>

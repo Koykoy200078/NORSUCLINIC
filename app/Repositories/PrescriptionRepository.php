@@ -2,14 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Models\DispenseRecord;
+use App\Models\DispenseRecordItem;
 use App\Models\Doctor;
 use App\Models\Medicine;
-use App\Models\MedicineBill;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Prescription;
-use App\Models\PrescriptionMedicineModal;
-use App\Models\SaleMedicine;
+use App\Models\PrescriptionMedicine;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Exception;
@@ -138,14 +138,14 @@ class PrescriptionRepository extends BaseRepository
             $amount = 0;
             $qty = 0;
             if (isset($input['medicine'])) {
-                $medicineBill = MedicineBill::create([
+                $medicineBill = DispenseRecord::create([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $input['patient_id'],
                     'doctor_id' => $input['doctor_id'],
                     'model_type' => \App\Models\Prescription::class,
                     'model_id' => $prescription->id,
                     'bill_date' => Carbon::now(),
-                    'payment_status' => MedicineBill::UNPAID,
+                    'payment_status' => 1,
                 ]);
                 foreach ($input['medicine'] as $key => $value) {
                     $PrescriptionItem = [
@@ -157,7 +157,7 @@ class PrescriptionRepository extends BaseRepository
                         'dose_interval' => $input['dose_interval'][$key],
                         'comment' => $input['comment'][$key],
                     ];
-                    $prescriptionMedcine = PrescriptionMedicineModal::create($PrescriptionItem);
+                    $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
@@ -169,7 +169,7 @@ class PrescriptionRepository extends BaseRepository
                         'tax' => 0,
 
                     ];
-                    SaleMedicine::create($saleMedicineArray);
+                    DispenseRecordItem::create($saleMedicineArray);
                 }
                 $medicineBill->update([
                     'net_amount' => $amount,
@@ -193,9 +193,9 @@ class PrescriptionRepository extends BaseRepository
             DB::beginTransaction();
             $prescriptionMedicineArr = Arr::only($input, $this->model->getFillable());
             $prescription->update($prescriptionMedicineArr);
-            $medicineBill = MedicineBill::with('saleMedicine')->whereModelType(\App\Models\Prescription::class)->whereModelId($prescription->id)->first();
+            $medicineBill = DispenseRecord::with('dispenseItems')->whereModelType(\App\Models\Prescription::class)->whereModelId($prescription->id)->first();
             $prescription->getMedicine()->delete();
-            $medicineBill->saleMedicine()->delete();
+            $medicineBill->dispenseItems()->delete();
             $amount = 0;
             $qty = 0;
 
@@ -210,7 +210,7 @@ class PrescriptionRepository extends BaseRepository
                         'dose_interval' => $input['dose_interval'][$key],
                         'comment' => $input['comment'][$key],
                     ];
-                    $prescriptionMedcine = PrescriptionMedicineModal::create($PrescriptionItem);
+                    $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
 
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
@@ -223,7 +223,7 @@ class PrescriptionRepository extends BaseRepository
                         'tax' => 0,
 
                     ];
-                    SaleMedicine::create($saleMedicineArray);
+                    DispenseRecordItem::create($saleMedicineArray);
                 }
                 $medicineBill->update([
                     'net_amount' => $amount,

@@ -6,15 +6,15 @@
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <a href="{{ 
-            isRole('clinic_admin') ? route('request-documents.index') : 
-            (isRole('staff') ? route('staff.request-documents.index') : 
-            (isRole('doctor') ? route('doctors.request-documents.index') : route('request-documents.index')))
+            isRole('clinic_admin') ? route('document-issuances.index') : 
+            (isRole('staff') ? route('staff.document-issuances.index') : 
+            (isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')))
         }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
         <a href="{{ 
-            isRole('clinic_admin') ? route('request-documents.export-pdf', $requestDocument->id) : 
-            (isRole('staff') ? route('staff.request-documents.export-pdf', $requestDocument->id) : 
-            (isRole('doctor') ? route('doctors.request-documents.export-pdf', $requestDocument->id) : route('request-documents.export-pdf', $requestDocument->id)))
+            isRole('clinic_admin') ? route('document-issuances.export-pdf', $requestDocument->id) : 
+            (isRole('staff') ? route('staff.document-issuances.export-pdf', $requestDocument->id) : 
+            (isRole('doctor') ? route('doctors.document-issuances.export-pdf', $requestDocument->id) : route('document-issuances.export-pdf', $requestDocument->id)))
         }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
     </div>
 
@@ -312,9 +312,9 @@
 
             <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
             <form action="{{ 
-                isRole('clinic_admin') ? route('request-documents.store') : 
-                (isRole('staff') ? route('staff.request-documents.store') : 
-                (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
+                isRole('clinic_admin') ? route('document-issuances.store') : 
+                (isRole('staff') ? route('staff.document-issuances.store') : 
+                (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store')))
             }}" method="POST">
                 @csrf
                 <div class="form-group mb-5 d-none">

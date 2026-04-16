@@ -9,7 +9,7 @@
             {{Form::hidden('medicineUrl',route('medicines.index'),['id'=>'indexMedicineUrl'])}}
             {{ Form::hidden('medicines-show-modal', url('medicines-show-modal'), ['id'=>'medicinesShowModal']) }}
             {{ Form::hidden('medicineLang',__('messages.delete.medicine'), ['id' => 'medicineLang']) }}
-            <livewire:medicine-availability-table/>
+            <livewire:stock-in-table/>
             @include('medicines.show_modal')
         </div>
     </div>

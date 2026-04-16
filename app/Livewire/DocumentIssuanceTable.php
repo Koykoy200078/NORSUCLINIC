@@ -4,16 +4,16 @@ namespace App\Livewire;
 
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use App\Models\RequestDocuments;
+use App\Models\DocumentIssuance;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class RequestDocumentTable extends DataTableComponent
+class DocumentIssuanceTable extends DataTableComponent
 {
-    protected $model = RequestDocuments::class;
+    protected $model = DocumentIssuance::class;
     public bool $showFilterOnHeader = false;
     public bool $showButtonOnHeader = false;
-    public string $buttonComponent = 'requests.components.table-buttons';
+    public string $buttonComponent = 'document_issuances.components.table-buttons';
     public ?int $patientId = null;
 
     public function configure(): void
@@ -25,7 +25,7 @@ class RequestDocumentTable extends DataTableComponent
         $this->setColumnSelectStatus(false);
         // Required so ->label() callbacks can access these fields (Rappasoft v3 only
         // SELECTs columns mapped in Column::make(), label columns are excluded)
-        $this->setAdditionalSelects(['request_documents.assessment', 'request_documents.plan']);
+        $this->setAdditionalSelects(['document_issuances.assessment', 'document_issuances.plan']);
     }
 
     public function placeholder()
@@ -35,7 +35,7 @@ class RequestDocumentTable extends DataTableComponent
 
     public function builder(): \Illuminate\Database\Eloquent\Builder
     {
-        $query = RequestDocuments::query();
+        $query = DocumentIssuance::query();
 
         // Check the user's role and filter data accordingly
         $user = Auth::user();
@@ -112,7 +112,7 @@ class RequestDocumentTable extends DataTableComponent
 
         $columns[] = Column::make("Actions")
             ->label(
-                fn($row) => view('requests.components.action-buttons', ['id' => $row->id, 'row' => $row])
+                fn($row) => view('document_issuances.components.action-buttons', ['id' => $row->id, 'row' => $row])
             );
 
         return $columns;

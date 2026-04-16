@@ -124,7 +124,7 @@ function initializeAllFlatpickrs() {
 }
 
 function loadMedicineAvailabilityCreate() {
-    if (!"#purchaseUniqueId".length) {
+    if (!$("#purchaseUniqueId").length) {
         return;
     }
 
@@ -328,13 +328,44 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
         }
     }
 
-    $(this)[0].submit();
+    if ($(this).closest(".modal").length) {
+        let form = this;
+        let loadingBtn = $("#stockInSaveBtn");
+        loadingBtn.prop("disabled", true);
+        $.ajax({
+            url: $(form).attr("action"),
+            type: "POST",
+            data: $(form).serialize(),
+            success: function (result) {
+                if (result.success) {
+                    displaySuccessMessage(result.message);
+                    $("#add_stock_in_modal").modal("hide");
+                    Livewire.dispatch("refresh");
+                }
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON.message);
+            },
+            complete: function () {
+                loadingBtn.prop("disabled", false);
+            },
+        });
+    } else {
+        $(this)[0].submit();
+    }
 });
 
-listenClick(".medicineAvailabilityDelete", function (event) {
+listen("hidden.bs.modal", "#add_stock_in_modal", function () {
+    let form = $("#purchaseMedicineFormId")[0];
+    if (form) form.reset();
+    $("#prescriptionMedicalTbl tbody tr:not(:first)").remove();
+    $("#purchaseUniqueId").val(2);
+});
+
+listenClick(".purchaseMedicineDelete", function (event) {
     let id = $(event.currentTarget).attr("data-id");
     deleteItem(
-        route("medicine-availability.destroy", id),
-        Lang.get("js.medicine_availability"),
+        panelRoute("stock-in.destroy", id),
+        Lang.get("js.purchase_medicine"),
     );
 });

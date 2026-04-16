@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Models\DispenseRecord;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -50,11 +51,16 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|Patient whereUserId($value)
  * @mixin \Eloquent
  */
+
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Patient extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasRoles;
+    use HasFactory, InteractsWithMedia, HasRoles, SoftDeletes;
 
     protected $table = 'patients';
+
+    public const DELETED_AT = 'archived_at';
 
     const PROFILE = 'profile';
 
@@ -123,6 +129,11 @@ class Patient extends Model implements HasMedia
     public $fillable = [
         'patient_unique_id',
         'user_id',
+        'allergies',
+        'comorbidities',
+        'admissions_surgeries',
+        'maintenance',
+        'covid_vaccination'
     ];
 
     protected $casts = [
@@ -147,6 +158,11 @@ class Patient extends Model implements HasMedia
         'emergency_contact_name' => 'nullable',
         'emergency_contact_no' => 'nullable',
         'emergency_relationship' => 'nullable|string',
+        'allergies' => 'nullable|string',
+        'comorbidities' => 'nullable|string',
+        'admissions_surgeries' => 'nullable|string',
+        'maintenance' => 'nullable|string',
+        'covid_vaccination' => 'nullable|string',
     ];
 
     /**
@@ -161,6 +177,11 @@ class Patient extends Model implements HasMedia
         'emergency_contact_name' => 'nullable',
         'emergency_contact_no' => 'nullable',
         'emergency_relationship' => 'nullable|string',
+        'allergies' => 'nullable|string',
+        'comorbidities' => 'nullable|string',
+        'admissions_surgeries' => 'nullable|string',
+        'maintenance' => 'nullable|string',
+        'covid_vaccination' => 'nullable|string',
     ];
 
     protected $appends = ['profile'];
@@ -174,6 +195,16 @@ class Patient extends Model implements HasMedia
 
         // When a patient is being deleted, delete all related data
         static::deleting(function ($patient) {
+
+            if (!$patient->isForceDeleting()) {
+                // If soft deleting, we also soft delete the user
+                if ($patient->user) {
+                    $patient->user->delete();
+                }
+                return;
+            }
+
+            // Force Deleting cascade operations:
             // Delete all patient queue entries
             $patient->queueEntries()->delete();
 
@@ -183,10 +214,9 @@ class Patient extends Model implements HasMedia
             // Delete all medicine bills
             $patient->medicineBills()->delete();
 
-            // Delete all request documents (consultation forms, medical certificates)
-            // Use get()->each() to trigger deleting events on each document
-            // This ensures images are deleted from storage
-            $patient->requestDocuments()->get()->each(function ($document) {
+            // Delete all document issuances (consultation forms, medical certificates)
+            $patient->documentIssuances()->get()->each(function ($document) {
+                // Force delete the document
                 $document->delete();
             });
 
@@ -209,7 +239,7 @@ class Patient extends Model implements HasMedia
                 }
 
                 // Delete the user
-                $patient->user->delete();
+                $patient->user->forceDelete();
             }
 
             // Delete patient's address if exists
@@ -219,6 +249,13 @@ class Patient extends Model implements HasMedia
 
             // Delete media files (profile images, etc.)
             $patient->clearMediaCollection(self::PROFILE);
+        });
+
+        static::restoring(function ($patient) {
+            // Restore user when patient is restored
+            if ($patient->user()->withTrashed()->first()) {
+                $patient->user()->withTrashed()->first()->restore();
+            }
         });
     }
 
@@ -252,7 +289,7 @@ class Patient extends Model implements HasMedia
             }
         }
 
-        $gender = $this->relationLoaded('user') ? $this->user->gender : null;
+        $gender = $this->relationLoaded('user') ? $this->user?->gender : null;
         if ($gender == self::FEMALE) {
             return asset('web/media/avatars/female.png');
         }
@@ -275,9 +312,14 @@ class Patient extends Model implements HasMedia
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function requestDocuments()
+    public function requestDocuments(): HasMany
     {
-        return $this->hasMany(RequestDocuments::class, 'user_id', 'user_id');
+        return $this->documentIssuances();
+    }
+
+    public function documentIssuances(): HasMany
+    {
+        return $this->hasMany(DocumentIssuance::class, 'user_id', 'user_id');
     }
 
     public function queueEntries(): HasMany
@@ -297,8 +339,14 @@ class Patient extends Model implements HasMedia
         return $this->hasMany(Prescription::class);
     }
 
+    public function dispenseRecords(): HasMany
+    {
+        return $this->hasMany(DispenseRecord::class);
+    }
+
+    /** @deprecated Use dispenseRecords() */
     public function medicineBills(): HasMany
     {
-        return $this->hasMany(MedicineBill::class);
+        return $this->dispenseRecords();
     }
 }

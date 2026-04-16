@@ -168,22 +168,25 @@ class PatientController extends AppBaseController
         try {
             DB::beginTransaction();
 
-            // Simply delete the patient
-            // Cascade delete will automatically handle:
-            // - All appointments (cancelled/finished)
-            // - All consultation forms
-            // - All medical certificates
-            // - All reviews
-            // - User account
-            // - Address
-            // - Media files
             $patient->delete();
 
             DB::commit();
 
-            return $this->sendSuccess('Patient and all related data deleted successfully!');
+            return $this->sendSuccess('Patient and all related data archived successfully!');
         } catch (Exception $e) {
             DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function restore($id): JsonResponse
+    {
+        try {
+            $patient = Patient::withTrashed()->findOrFail($id);
+            $patient->restore();
+
+            return $this->sendSuccess('Patient restored successfully!');
+        } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
@@ -199,14 +202,14 @@ class PatientController extends AppBaseController
     {
         // Load consultations and related data
         $patient->load([
-            'requestDocuments'
+            'documentIssuances'
         ]);
 
         // Fetch all consultations with `consultation_form` type
-        $consultations = $patient->requestDocuments->where('document_type', 'consultation_form');
+        $consultations = $patient->documentIssuances->where('document_type', 'consultation_form');
 
         // Fetch all medical certificates
-        $medicalCertificates = $patient->requestDocuments->where('document_type', 'medical_certificate');
+        $medicalCertificates = $patient->documentIssuances->where('document_type', 'medical_certificate');
 
         // Pass the data to the view
         return view('patients.view_patient', compact('patient', 'consultations', 'medicalCertificates'));

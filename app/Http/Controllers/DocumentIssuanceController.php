@@ -9,7 +9,7 @@ use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Office;
 use App\Models\Patient;
-use App\Models\RequestDocuments;
+use App\Models\DocumentIssuance;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Vaccination;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class RequestDocumentsController extends Controller
+class DocumentIssuanceController extends Controller
 {
     use LogsActivity;
     /**
@@ -29,7 +29,7 @@ class RequestDocumentsController extends Controller
      */
     public function index()
     {
-        return view('requests.index');
+        return view('document_issuances.index');
     }
 
     /**
@@ -61,7 +61,7 @@ class RequestDocumentsController extends Controller
             $patient = $user->patient;
         }
 
-        return view('requests.create', compact('data', 'user', 'patient'));
+        return view('document_issuances.create', compact('data', 'user', 'patient'));
     }
 
     /**
@@ -104,7 +104,7 @@ class RequestDocumentsController extends Controller
             }
 
             // Default: Return to request documents index with role-based redirect
-            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
+            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
 
             return redirect()->route($redirectRoute)
                 ->with('success', 'Request document created successfully.');
@@ -151,7 +151,7 @@ class RequestDocumentsController extends Controller
         $data['year_level'] = $user->yearLevel->year_level_name ?? 'Unknown Year Level';
 
         // Insert the data into the database
-        $requestDocument = RequestDocuments::create([
+        $requestDocument = DocumentIssuance::create([
             'document_type' => $data['document_type'],
             'document_creator_id' => $data['document_creator_id'], // Use the authenticated user ID
             'user_id' => $data['user_id'],
@@ -198,7 +198,7 @@ class RequestDocumentsController extends Controller
         // Handle comorbidities - accept custom input or predefined values
         $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';
 
-        $requestDocument = RequestDocuments::create([
+        $requestDocument = DocumentIssuance::create([
             'document_type' => $data['document_type'],
             'document_creator_id' => $data['document_creator_id'],
             'user_id' => $data['user_id'],
@@ -308,15 +308,15 @@ class RequestDocumentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RequestDocuments $requestDocument)
+    public function show(DocumentIssuance $requestDocument)
     {
-        return view('requests.view', compact('requestDocument'));
+        return view('document_issuances.view', compact('requestDocument'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RequestDocuments $requestDocument, PatientRepository $patientRepository)
+    public function edit(DocumentIssuance $requestDocument, PatientRepository $patientRepository)
     {
         $campuses = Campus::all();
         $colleges = College::all();
@@ -334,7 +334,7 @@ class RequestDocumentsController extends Controller
         // Load existing consultation medicines with medicine details
         $existingMedicines = $requestDocument->consultationMedicines()->with('medicine')->get();
 
-        return view('requests.edit', compact(
+        return view('document_issuances.edit', compact(
             'requestDocument',
             'campuses',
             'colleges',
@@ -353,7 +353,7 @@ class RequestDocumentsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RequestDocuments $requestDocument)
+    public function update(Request $request, DocumentIssuance $requestDocument)
     {
         $data = $request->except(['_token', '_method']);
 
@@ -382,7 +382,7 @@ class RequestDocumentsController extends Controller
             }
 
             // Default: Redirect to request documents index
-            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' : 'request-documents.index'));
+            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
 
             return redirect()->route($redirectRoute)
                 ->with('success', 'Request document updated successfully.');
@@ -396,7 +396,7 @@ class RequestDocumentsController extends Controller
     /**
      * Update a medical certificate document.
      */
-    private function updateMedicalCertificate(RequestDocuments $requestDocument, array $data)
+    private function updateMedicalCertificate(DocumentIssuance $requestDocument, array $data)
     {
         // Prepare the data for insertion
         $data['vital_signs_bp'] = (isset($data['vital_signs_bp_2']) && isset($data['vital_signs_bp_22']))
@@ -463,7 +463,7 @@ class RequestDocumentsController extends Controller
     /**
      * Update a consultation form document.
      */
-    private function updateConsultationForm(RequestDocuments $requestDocument, array $data)
+    private function updateConsultationForm(DocumentIssuance $requestDocument, array $data)
     {
         // Map related names for numeric fields using their IDs
         $data['campus'] = isset($data['campus_id']) ? (Campus::find($data['campus_id'])->campus_name ?? $requestDocument->campus) : $requestDocument->campus;
@@ -530,7 +530,7 @@ class RequestDocumentsController extends Controller
     /**
      * Handle image uploads and removals for consultation form updates
      */
-    private function handleImageUpdates(RequestDocuments $requestDocument, array $data)
+    private function handleImageUpdates(DocumentIssuance $requestDocument, array $data)
     {
         // Get existing images
         $existingImages = $requestDocument->consultation_images
@@ -605,7 +605,7 @@ class RequestDocumentsController extends Controller
      * 1. Restores stock for removed medicines
      * 2. Deducts stock only for newly added medicines
      */
-    private function handleMedicineUpdates(RequestDocuments $requestDocument, array $data)
+    private function handleMedicineUpdates(DocumentIssuance $requestDocument, array $data)
     {
         // Get existing medicines from database
         $existingMedicines = $requestDocument->consultationMedicines()->get();
@@ -812,7 +812,7 @@ class RequestDocumentsController extends Controller
     /**
      * Deduct medicine stock from inventory
      */
-    private function deductMedicineStock($medicineId, $dosage, $quantity, RequestDocuments $requestDocument)
+    private function deductMedicineStock($medicineId, $dosage, $quantity, DocumentIssuance $requestDocument)
     {
         $medicine = \App\Models\Medicine::find($medicineId);
 
@@ -870,7 +870,7 @@ class RequestDocumentsController extends Controller
     /**
      * Handle medicine deduction from inventory
      */
-    private function handleMedicineDeduction(RequestDocuments $requestDocument, array $data)
+    private function handleMedicineDeduction(DocumentIssuance $requestDocument, array $data)
     {
         if (!isset($data['medicines']) || !is_array($data['medicines'])) {
             return;
@@ -972,7 +972,7 @@ class RequestDocumentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RequestDocuments $request_document)
+    public function destroy(DocumentIssuance $request_document)
     {
         try {
             Log::info('Destroy method called', [
@@ -1009,8 +1009,8 @@ class RequestDocumentsController extends Controller
             Log::info('Redirecting to documents index');
 
             // Default: Redirect to request documents index
-            $redirectRoute = isRole('clinic_admin') ? 'request-documents.index' : (isRole('staff') ? 'staff.request-documents.index' : (isRole('doctor') ? 'doctors.request-documents.index' :
-                'request-documents.index'));
+            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' :
+                'document-issuances.index'));
 
             return redirect()->route($redirectRoute)
                 ->with('success', 'Request document deleted successfully.');
@@ -1065,14 +1065,14 @@ class RequestDocumentsController extends Controller
     {
         try {
             // Fetch the request document by ID
-            $requestDocument = RequestDocuments::findOrFail($id);
+            $requestDocument = DocumentIssuance::findOrFail($id);
 
             // Choose the PDF layout based on document type
             if ($requestDocument->document_type === 'medical_certificate') {
-                $view = 'requests.pdf_medical_certificate';
+                $view = 'document_issuances.pdf_medical_certificate';
                 $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 396], 'landscape'); // 5.5"x8.5" in points
             } else {
-                $view = 'requests.pdf_consultation_form';
+                $view = 'document_issuances.pdf_consultation_form';
                 $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 936], 'portrait'); // 8.5"x13"
             }
 
@@ -1101,7 +1101,7 @@ class RequestDocumentsController extends Controller
             }
 
             // Get the latest consultation for this user
-            $lastConsultation = RequestDocuments::where('user_id', $userId)
+            $lastConsultation = DocumentIssuance::where('user_id', $userId)
                 ->where('document_type', 'consultation_form')
                 ->orderBy('requested_at', 'desc')
                 ->first();

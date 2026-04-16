@@ -6,8 +6,9 @@ use App\Models\Accountant;
 use App\Models\Address;
 use App\Models\Category;
 use App\Models\Medicine;
-use App\Models\PurchasedMedicine;
 use App\Models\MedicineAvailability;
+use App\Models\PurchasedMedicine;
+use App\Models\StockIn;
 use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
@@ -49,7 +50,7 @@ class MedicineAvailabilityRepository extends BaseRepository
      **/
     public function model()
     {
-        return MedicineAvailability::class;
+        return StockIn::class;
     }
 
     public function getMedicine()

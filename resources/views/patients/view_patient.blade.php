@@ -8,20 +8,6 @@ Patient Data
         <h1 class="mb-0 me-1">Patient Data</h1>
         <div class="text-end mt-4 mt-md-0">
             <a href="{{ 
-                isRole('clinic_admin') ? route('request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : 
-                (isRole('staff') ? route('staff.request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : 
-                (isRole('doctor') ? route('doctors.request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : '#'))
-            }}" class="btn btn-success me-2">
-                <i class="fa-solid fa-file-medical"></i> Create Medical Certificate
-            </a>
-            <a href="{{ 
-                isRole('clinic_admin') ? route('request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : 
-                (isRole('staff') ? route('staff.request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : 
-                (isRole('doctor') ? route('doctors.request-documents.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : '#'))
-            }}" class="btn btn-primary me-2">
-                <i class="fa-solid fa-notes-medical"></i> Create Consultation Form
-            </a>
-            <a href="{{ 
                 isRole('clinic_admin') ? route('patients.index') : 
                 (isRole('staff') ? route('staff.patients.index') : 
                 (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
@@ -77,6 +63,32 @@ Patient Data
                         No consultations yet
                         @endif
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History & Allergies -->
+    <div class="card mb-4">
+        <div class="card-header" style="margin-left: -5px;">
+            <h3>Medical History & Allergies</h3>
+        </div>
+        <div class="card-body" style="margin-top: -35px;">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <p><strong>Allergies:</strong> {{ $patient->allergies ?: 'None reported' }}</p>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <p><strong>Comorbidities / Underlying Conditions:</strong> {{ $patient->comorbidities ?: 'None reported' }}</p>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <p><strong>Hospital Admissions / Surgeries:</strong> {{ $patient->admissions_surgeries ?: 'None reported' }}</p>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <p><strong>Maintenance/Current Medications:</strong> {{ $patient->maintenance ?: 'None reported' }}</p>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <p><strong>COVID-19 Vaccination Status:</strong> {{ $patient->covid_vaccination ?: 'Not specified' }}</p>
                 </div>
             </div>
         </div>
@@ -158,10 +170,10 @@ Patient Data
                                 <td style="white-space: nowrap;">
                                     <div class="d-flex gap-2">
                                         @if(isRole('clinic_admin'))
-                                        <a href="{{ route('request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <a href="{{ route('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('document-issuances.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
@@ -170,10 +182,10 @@ Patient Data
                                             </button>
                                         </form>
                                         @elseif(isRole('staff'))
-                                        <a href="{{ route('staff.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <a href="{{ route('staff.document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('staff.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('staff.document-issuances.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
@@ -182,10 +194,10 @@ Patient Data
                                             </button>
                                         </form>
                                         @elseif(isRole('doctor'))
-                                        <a href="{{ route('doctors.request-documents.edit', ['request_document' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <a href="{{ route('doctors.document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('doctors.request-documents.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('doctors.document-issuances.destroy', $consultation->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
@@ -234,18 +246,18 @@ Patient Data
                             <div class="d-flex gap-2">
                                 <!-- Edit Button -->
                                 <a href="{{ 
-                                    isRole('clinic_admin') ? route('request-documents.edit', $certificate->id) . '?patient_id=' . $patient->id : 
-                                    (isRole('staff') ? route('staff.request-documents.edit', $certificate->id) . '?patient_id=' . $patient->id : 
-                                    (isRole('doctor') ? route('doctors.request-documents.edit', $certificate->id) . '?patient_id=' . $patient->id : '#'))
+                                    isRole('clinic_admin') ? route('document-issuances.edit', $certificate->id) . '?patient_id=' . $patient->id : 
+                                    (isRole('staff') ? route('staff.document-issuances.edit', $certificate->id) . '?patient_id=' . $patient->id : 
+                                    (isRole('doctor') ? route('doctors.document-issuances.edit', $certificate->id) . '?patient_id=' . $patient->id : '#'))
                                 }}" class="btn btn-sm btn-info" title="Edit Certificate">
                                     <i class="fa-solid fa-edit"></i>
                                 </a>
 
                                 <!-- Export PDF Button -->
                                 <a href="{{ 
-                                    isRole('clinic_admin') ? route('request-documents.export-pdf', $certificate->id) : 
-                                    (isRole('staff') ? route('staff.request-documents.export-pdf', $certificate->id) : 
-                                    (isRole('doctor') ? route('doctors.request-documents.export-pdf', $certificate->id) : '#'))
+                                    isRole('clinic_admin') ? route('document-issuances.export-pdf', $certificate->id) : 
+                                    (isRole('staff') ? route('staff.document-issuances.export-pdf', $certificate->id) : 
+                                    (isRole('doctor') ? route('doctors.document-issuances.export-pdf', $certificate->id) : '#'))
                                 }}" class="btn btn-sm btn-primary" title="Download PDF">
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
@@ -262,9 +274,9 @@ Patient Data
                                     data-certificate-id="{{ $certificate->id }}"
                                     data-patient-id="{{ $patient->id }}"
                                     data-delete-url="{{ 
-                                        isRole('clinic_admin') ? route('request-documents.destroy', $certificate->id) : 
-                                        (isRole('staff') ? route('staff.request-documents.destroy', $certificate->id) : 
-                                        (isRole('doctor') ? route('doctors.request-documents.destroy', $certificate->id) : '#'))
+                                        isRole('clinic_admin') ? route('document-issuances.destroy', $certificate->id) : 
+                                        (isRole('staff') ? route('staff.document-issuances.destroy', $certificate->id) : 
+                                        (isRole('doctor') ? route('doctors.document-issuances.destroy', $certificate->id) : '#'))
                                     }}"
                                     title="Delete Certificate">
                                     <i class="fa-solid fa-trash"></i>
@@ -910,11 +922,11 @@ Patient Data
 
                 // Determine the role-based route for PDF export with print action
                 @if(isRole('clinic_admin'))
-                const pdfUrl = '{{ route("request-documents.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
+                const pdfUrl = '{{ route("document-issuances.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
                 @elseif(isRole('staff'))
-                const pdfUrl = '{{ route("staff.request-documents.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
+                const pdfUrl = '{{ route("staff.document-issuances.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
                 @elseif(isRole('doctor'))
-                const pdfUrl = '{{ route("doctors.request-documents.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
+                const pdfUrl = '{{ route("doctors.document-issuances.export-pdf", ":id") }}'.replace(':id', certificateId) + '?action=print';
                 @else
                 const pdfUrl = '#';
                 @endif

@@ -7,10 +7,7 @@
     </a>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <li>
-            <a href="{{ 
-                isRole('clinic_admin') ? route('generics.create') : 
-                (isRole('staff') ? route('staff.generics.create') : route('doctors.generics.create')) 
-            }}"
+            <a href="javascript:void(0)" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('add_generic_modal')).show()"
                 class="dropdown-item  px-5">{{ __('messages.medicine.new_medicine_generic') }}</a>
         </li>
         {{-- Excel export removed - route does not exist
@@ -24,10 +21,7 @@
         --}}
     </ul>
     @else
-    <a href="{{ 
-        isRole('clinic_admin') ? route('generics.create') : 
-        (isRole('staff') ? route('staff.generics.create') : route('doctors.generics.create')) 
-    }}"
+    <a href="javascript:void(0)" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('add_generic_modal')).show()"
         class="btn btn-primary">{{ __('messages.medicine.new_medicine_generic') }}</a>
     @endif
 </div>

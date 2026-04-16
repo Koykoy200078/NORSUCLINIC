@@ -175,7 +175,7 @@ class PatientService
                     ->orderBy('created_at', 'desc');
             },
             'medicineBills' => function ($query) {
-                $query->with(['saleMedicine.medicine'])
+                $query->with(['dispenseItems.medicine'])
                     ->orderBy('created_at', 'desc');
             },
             'requestDocuments' => function ($query) {

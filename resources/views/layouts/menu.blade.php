@@ -29,7 +29,7 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         });
 
         $_menuIncompleteDocsBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_incomplete_docs', 60, function () {
-        return \App\Models\RequestDocuments::where('document_type', 'consultation_form')
+        return \App\Models\DocumentIssuance::where('document_type', 'consultation_form')
         ->where(function ($q) {
         $q->whereNull('assessment')->orWhere('assessment', '')
         ->orWhereNull('plan')->orWhere('plan', '');
@@ -111,15 +111,23 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         @endif
 
         @can('manage_request_documents')
-        @if(isRole('doctor'))
+        @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
         <li
-            class="nav-item {{ Request::is('doctors/request-documents*') ? 'active' : '' }}">
+            class="nav-item {{ 
+                (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
+                (isRole('staff') && Request::is('staff/document-issuances*')) ||
+                (isRole('doctor') && Request::is('doctors/document-issuances*'))
+            ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                href="{{ route('doctors.request-documents.index') }}">
+                href="{{ 
+                    isRole('clinic_admin') ? route('document-issuances.index') : 
+                    (isRole('staff') ? route('staff.document-issuances.index') : 
+                    route('doctors.document-issuances.index'))
+                }}">
                 <span class="aside-menu-icon pe-3">
                     <i class="fa-solid fa-file-signature"></i>
                 </span>
-                <span class="aside-menu-title">Patients Data</span>
+                <span class="aside-menu-title">Document & Certificate Issuance</span>
                 @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
                 @if($incompleteDocsCount > 0)
                 <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
@@ -130,23 +138,6 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         </li>
         @endif
         @endcan
-
-        {{-- Request Documents temporarily disabled for patients - route not implemented
-@can('manage_request_documents')
-@if(isRole('patient'))
-<li
-    class="nav-item {{ Request::is('patients/request-documents*') ? 'active' : '' }}">
-        <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-            href="{{ route('patients.request-documents.index') }}">
-            <span class="aside-menu-icon pe-3">
-                <i class="fa-solid fa-file-signature"></i>
-            </span>
-            <span class="aside-menu-title">Request Documents</span>
-        </a>
-        </li>
-        @endif
-        @endcan
-        --}}
 
         {{-- Live Consultations temporarily disabled for patients - route not implemented
 @can('manage_live_consultations')
@@ -233,14 +224,14 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         @can('manage_medicines')
         <li
             class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/generics*', 'admin/medicines*', 'admin/medicine-availability*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
-        (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/medicine-availability*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
-        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/medicine-availability*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
+        (isRole('clinic_admin') && Request::is('admin/categories*', 'admin/generics*', 'admin/medicines*', 'admin/stock-in*', 'admin/used-medicine*', 'admin/medicine-history*')) ||
+        (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/stock-in*', 'staff/used-medicine*', 'staff/medicine-history*')) ||
+        (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/stock-in*', 'doctors/used-medicine*', 'doctors/medicine-history*'))
     ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('categories.index') : 
-        (isRole('staff') ? route('staff.categories.index') : 
-        (isRole('doctor') ? route('doctors.categories.index') : route('categories.index')))
+        isRole('clinic_admin') ? route('medicines.index') : 
+        (isRole('staff') ? route('staff.medicines.index') : 
+        (isRole('doctor') ? route('doctors.medicines.index') : route('medicines.index')))
     }}">
                 <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
                 <span class="aside-menu-title">{{ __('messages.medicines') }}</span>

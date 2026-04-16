@@ -191,7 +191,38 @@ listenSubmit("#CreateMedicineBillForm", function (e) {
         return false;
     }
 
-    $(this)[0].submit();
+    if ($(this).closest(".modal").length) {
+        let form = this;
+        let loadingBtn = $("#dispenseSaveBtn");
+        loadingBtn.prop("disabled", true);
+        $.ajax({
+            url: $(form).attr("action"),
+            type: "POST",
+            data: $(form).serialize(),
+            success: function (result) {
+                if (result.success) {
+                    displaySuccessMessage(result.message);
+                    $("#add_dispense_modal").modal("hide");
+                    Livewire.dispatch("refresh");
+                }
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON.message);
+            },
+            complete: function () {
+                loadingBtn.prop("disabled", false);
+            },
+        });
+    } else {
+        $(this)[0].submit();
+    }
+});
+
+listen("hidden.bs.modal", "#add_dispense_modal", function () {
+    let form = $("#CreateMedicineBillForm")[0];
+    if (form) form.reset();
+    $(".medicine-bill-container tr:not(:first)").remove();
+    $("#medicineUniqueId").val(2);
 });
 
 listenClick(".add-patient-modal", function () {

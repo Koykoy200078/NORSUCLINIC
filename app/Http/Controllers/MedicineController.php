@@ -6,7 +6,7 @@ use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\UpdateMedicineRequest;
 use App\Models\Medicine;
 use App\Models\PurchasedMedicine;
-use App\Models\SaleMedicine;
+use App\Models\DispenseRecordItem;
 use App\Repositories\MedicineRepository;
 use Exception;
 use Illuminate\Contracts\View\Factory;
@@ -77,11 +77,15 @@ class MedicineController extends AppBaseController
      *
      * @return RedirectResponse|Redirector
      */
-    public function store(CreateMedicineRequest $request): RedirectResponse
+    public function store(CreateMedicineRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->all();
 
         $this->medicineRepository->create($input);
+
+        if ($request->ajax()) {
+            return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
+        }
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
 
@@ -141,7 +145,7 @@ class MedicineController extends AppBaseController
             return $this->sendError(__('messages.flash.medicine_not_found'));
         }
         $purchaseMedicine = PurchasedMedicine::whereMedicineId($medicine->id)->first();
-        $saleMedicine = SaleMedicine::whereMedicineId($medicine->id)->first();
+        $saleMedicine = DispenseRecordItem::whereMedicineId($medicine->id)->first();
         if (isset($purchaseMedicine) && ! empty($purchaseMedicine)) {
             $purchaseMedicine->delete();
         }
@@ -221,7 +225,7 @@ class MedicineController extends AppBaseController
     {
 
         $SaleModel = [
-            SaleMedicine::class,
+            DispenseRecordItem::class,
             PurchasedMedicine::class,
         ];
         $result['result'] = canDelete($SaleModel, 'medicine_id', $medicine->id);

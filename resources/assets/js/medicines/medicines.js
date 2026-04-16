@@ -238,3 +238,31 @@ function deleteMedicineAjax(url, tableId = null, header, callFunction = null) {
         },
     });
 }
+
+listenSubmit("#addMedicineForm", function (e) {
+    e.preventDefault();
+    let loadingBtn = $(this).find("#medicineSaveModalBtn");
+    loadingBtn.prop("disabled", true);
+    $.ajax({
+        url: panelRoute("medicines.store"),
+        type: "POST",
+        data: $(this).serialize(),
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+                $("#add_medicine_modal").modal("hide");
+                Livewire.dispatch("refresh");
+            }
+        },
+        error: function (result) {
+            displayErrorMessage(result.responseJSON.message);
+        },
+        complete: function () {
+            loadingBtn.prop("disabled", false);
+        },
+    });
+});
+
+listen("hidden.bs.modal", "#add_medicine_modal", function () {
+    resetModalForm("#addMedicineForm", "#medicineCreateErrorsBox");
+});

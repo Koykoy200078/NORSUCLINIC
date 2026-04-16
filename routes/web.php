@@ -14,23 +14,23 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Front\SliderController;
-use App\Http\Controllers\MedicineBillController;
+use App\Http\Controllers\DispenseRecordController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PrescriptionController;
-use App\Http\Controllers\MedicineAvailabilityController;
+use App\Http\Controllers\StockInController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\StaffController;
-use App\Http\Controllers\StateController;
+use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
-use App\Http\Controllers\RequestDocumentsController;
+use App\Http\Controllers\DocumentIssuanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,8 +122,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // States routes
     Route::middleware('permission:manage_states')->group(function () {
-        Route::resource('states', StateController::class);
-        Route::post('states/{state}', [StateController::class, 'update']);
+        Route::resource('states', ProvinceController::class);
+        Route::post('states/{state}', [ProvinceController::class, 'update']);
     });
 
     // Cities Routes
@@ -151,6 +151,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Patient Routes
     Route::middleware('permission:manage_patients')->group(function () {
+        Route::post('patients/{patient}/restore', [PatientController::class, 'restore'])->name('patients.restore');
         Route::resource('patients', PatientController::class);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
@@ -158,10 +159,10 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Request Documents
     Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::resource('request-documents', RequestDocumentsController::class);
-        Route::get('/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('search-users');
-        Route::get('/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('get-last-consultation');
-        Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
+        Route::resource('document-issuances', DocumentIssuanceController::class);
+        Route::get('/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('search-users');
+        Route::get('/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('get-last-consultation');
+        Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
     });
 
     // Activity Logs Routes
@@ -223,8 +224,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus')->group(function ()
     // Medicine Generics
     Route::resource('generics', GenericController::class);
 
-    // Medicine Brands
-    Route::resource('brands', BrandController::class);
 
     // Medicines
     Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
@@ -232,17 +231,17 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus')->group(function ()
     Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
     Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
 
-    // Medicine Availability
-    Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
-    Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
-    Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
-    Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
+    // Stock In (Medicine Purchasing)
+    Route::resource('stock-in', StockInController::class);
+    Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
+    Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
+    Route::redirect('used-medicine', url('admin/medicines') . '?tab=medicines&sub=stock-out')->name('used-medicine.index');
 
     // Medicine History
-    Route::resource('medicine-history', MedicineBillController::class);
-    Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
-    Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
-    Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
+    Route::resource('medicine-history', DispenseRecordController::class);
+    Route::post('medicine-history/store-patient', [DispenseRecordController::class, 'storePatient'])->name('store.patient');
+    Route::get('medicine-history-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('medicine.bill.pdf');
+    Route::get('get-medicine-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('get-medicine-category');
 });
 
 // ============================================================================
@@ -255,6 +254,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Patient Management
     Route::middleware('permission:manage_patients')->group(function () {
+        Route::post('patients/{patient}/restore', [PatientController::class, 'restore'])->name('patients.restore');
         Route::resource('patients', PatientController::class);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
@@ -275,11 +275,11 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     });
 
     // Request Documents
-    Route::get('request-documents/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('request-documents.search-users');
-    Route::get('request-documents/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('request-documents.get-last-consultation');
+    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
+    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
     Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
-        Route::resource('request-documents', RequestDocumentsController::class);
+        Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+        Route::resource('document-issuances', DocumentIssuanceController::class);
     });
 
     // Prescription Management
@@ -300,10 +300,11 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
-        Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
-        Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
-        Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
+        // Stock In (Medicine Purchasing)
+        Route::resource('stock-in', StockInController::class);
+        Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
+        Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
+        Route::redirect('used-medicine', url('staff/medicines') . '?tab=medicines&sub=stock-out')->name('used-medicine.index');
     });
 
     // CMS Management

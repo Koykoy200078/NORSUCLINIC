@@ -7,9 +7,9 @@
     </div>
     @endif
     <form action="{{ 
-        isRole('clinic_admin') ? route('request-documents.store') : 
-        (isRole('staff') ? route('staff.request-documents.store') : 
-        (isRole('doctor') ? route('doctors.request-documents.store') : route('request-documents.store')))
+        isRole('clinic_admin') ? route('document-issuances.store') : 
+        (isRole('staff') ? route('staff.document-issuances.store') : 
+        (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store')))
     }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group mb-5 d-none">
@@ -868,9 +868,9 @@
         @if(isRole('clinic_admin'))
         searchRoute = '{{ route("search-users") }}';
         @elseif(isRole('staff'))
-        searchRoute = '{{ route("staff.request-documents.search-users") }}';
+        searchRoute = '{{ route("staff.document-issuances.search-users") }}';
         @elseif(isRole('doctor'))
-        searchRoute = '{{ route("doctors.request-documents.search-users") }}';
+        searchRoute = '{{ route("doctors.document-issuances.search-users") }}';
         @else
         searchRoute = '{{ route("search-users") }}';
         @endif
@@ -1233,9 +1233,9 @@
                     @if(isRole('clinic_admin'))
                     getLastConsultationRoute = '{{ route("get-last-consultation") }}';
                     @elseif(isRole('staff'))
-                    getLastConsultationRoute = '{{ route("staff.request-documents.get-last-consultation") }}';
+                    getLastConsultationRoute = '{{ route("staff.document-issuances.get-last-consultation") }}';
                     @elseif(isRole('doctor'))
-                    getLastConsultationRoute = '{{ route("doctors.request-documents.get-last-consultation") }}';
+                    getLastConsultationRoute = '{{ route("doctors.document-issuances.get-last-consultation") }}';
                     @else
                     getLastConsultationRoute = '{{ route("get-last-consultation") }}';
                     @endif

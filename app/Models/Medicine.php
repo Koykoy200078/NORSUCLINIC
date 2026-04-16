@@ -109,7 +109,7 @@ class Medicine extends Model
 
     public function prescriptionMedicines(): BelongsTo
     {
-        return $this->belongsTo(PrescriptionMedicineModal::class, 'medicine');
+        return $this->belongsTo(PrescriptionMedicine::class, 'medicine');
     }
 
     public function usedMedicines(): BelongsTo

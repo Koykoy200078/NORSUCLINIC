@@ -6,7 +6,7 @@ use App\Models\Address;
 use App\Models\Barangay;
 use App\Models\City;
 use App\Models\Country;
-use App\Models\State;
+use App\Models\Province;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,33 +15,33 @@ class UpdateLocationDataSeeder extends Seeder
     /**
      * Update location data with complete Philippines data including barangays.
      * This seeder will:
-     * 1. Map existing address city/state references to the new data
-     * 2. Clear and reseed cities, states, and barangays
+     * 1. Map existing address city/province references to the new data
+     * 2. Clear and reseed cities, provinces, and barangays
      * 3. Update existing addresses with new IDs
      */
     public function run(): void
     {
-        // Step 1: Get existing addresses with city/state references
+        // Step 1: Get existing addresses with city/province references
         $existingAddresses = Address::whereNotNull('city_id')
             ->orWhereNotNull('state_id')
             ->get();
 
-        // Step 2: Build a mapping of old city/state names to their IDs
+        // Step 2: Build a mapping of old city/province names to their IDs
         $addressMappings = [];
         foreach ($existingAddresses as $address) {
             $cityName = null;
             $stateName = null;
-            
+
             if ($address->city_id) {
                 $city = City::find($address->city_id);
                 $cityName = $city ? $city->name : null;
             }
-            
+
             if ($address->state_id) {
-                $state = State::find($address->state_id);
+                $state = Province::find($address->state_id);
                 $stateName = $state ? $state->name : null;
             }
-            
+
             $addressMappings[$address->id] = [
                 'city_name' => $cityName,
                 'state_name' => $stateName,
@@ -52,18 +52,18 @@ class UpdateLocationDataSeeder extends Seeder
 
         // Step 3: Disable foreign key checks and clear tables
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        
+
         Barangay::truncate();
         City::truncate();
-        State::truncate();
-        
+        Province::truncate();
+
         // Clear the addresses' city/state/barangay references temporarily
         Address::query()->update([
             'city_id' => null,
             'state_id' => null,
             'barangay_id' => null,
         ]);
-        
+
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Step 4: Reseed countries if needed
@@ -74,11 +74,11 @@ class UpdateLocationDataSeeder extends Seeder
             $this->command->info('Seeded ' . count($countries) . ' countries.');
         }
 
-        // Step 5: Seed states (provinces)
+        // Step 5: Seed provinces
         $states = file_get_contents(storage_path('countries/states.json'));
         $states = json_decode($states, true)['states'];
-        State::insert($states);
-        $this->command->info('Seeded ' . count($states) . ' states/provinces.');
+        Province::insert($states);
+        $this->command->info('Seeded ' . count($states) . ' provinces.');
 
         // Step 6: Seed cities
         $cities = file_get_contents(storage_path('countries/cities.json'));
@@ -113,9 +113,9 @@ class UpdateLocationDataSeeder extends Seeder
             $newStateId = null;
             $newCityId = null;
 
-            // Find new state by name
+            // Find new province by name
             if ($mapping['state_name']) {
-                $newState = State::where('name', $mapping['state_name'])->first();
+                $newState = Province::where('name', $mapping['state_name'])->first();
                 if ($newState) {
                     $newStateId = $newState->id;
                 }
@@ -123,15 +123,15 @@ class UpdateLocationDataSeeder extends Seeder
 
             // Find new city by name (within the state if possible)
             if ($mapping['city_name']) {
-                $cityQuery = City::where(function($q) use ($mapping) {
+                $cityQuery = City::where(function ($q) use ($mapping) {
                     $q->where('name', $mapping['city_name'])
-                      ->orWhere('name', 'like', '%' . str_replace('City', '', $mapping['city_name']) . '%');
+                        ->orWhere('name', 'like', '%' . str_replace('City', '', $mapping['city_name']) . '%');
                 });
-                
+
                 if ($newStateId) {
                     $cityQuery->where('state_id', $newStateId);
                 }
-                
+
                 $newCity = $cityQuery->first();
                 if ($newCity) {
                     $newCityId = $newCity->id;

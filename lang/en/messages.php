@@ -928,6 +928,7 @@ return [
         'created_note' => 'Created Note',
         'medicine_availability' => 'Medicine Availability',
         'medicine_availabilities' => 'Medicine Availabilities',
+        'new_stock_in' => 'New Stock In',
         'medicine_availability_details' => 'Medicine Availability Details',
         'medicine_availability_overview' => 'Medicine Availability Overview',
         'edit_medicine_availability' => 'Edit Medicine Availability',

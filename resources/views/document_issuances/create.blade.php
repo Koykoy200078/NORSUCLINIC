@@ -26,10 +26,10 @@
                     (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $patient->id]) : 
                     (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $patient->id]) : 
                     route('patients.showMyHistory', ['patient' => $patient->id])))) :
-                    (isRole('clinic_admin') ? route('request-documents.index') : 
-                    (isRole('staff') ? route('staff.request-documents.index') : 
-                    (isRole('doctor') ? route('doctors.request-documents.index') : 
-                    route('request-documents.index'))))
+                    (isRole('clinic_admin') ? route('document-issuances.index') : 
+                    (isRole('staff') ? route('staff.document-issuances.index') : 
+                    (isRole('doctor') ? route('doctors.document-issuances.index') : 
+                    route('document-issuances.index'))))
             }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
         </div>
     </div>

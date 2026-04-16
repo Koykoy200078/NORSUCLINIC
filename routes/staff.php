@@ -4,15 +4,15 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
-use App\Http\Controllers\MedicineBillController;
-use App\Http\Controllers\MedicineAvailabilityController;
+use App\Http\Controllers\DispenseRecordController;
+use App\Http\Controllers\StockInController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecializationController;
-use App\Http\Controllers\RequestDocumentsController;
+use App\Http\Controllers\DocumentIssuanceController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\SliderController;
 use App\Http\Controllers\SettingController;
@@ -64,13 +64,13 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     });
 
     // Search users route (moved outside middleware for testing)
-    Route::get('request-documents/search-users', [RequestDocumentsController::class, 'searchUsers'])->name('request-documents.search-users');
-    Route::get('request-documents/get-last-consultation', [RequestDocumentsController::class, 'getLastConsultation'])->name('request-documents.get-last-consultation');
+    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
+    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
 
     // Request Documents (Staff specific)
     Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::get('request-documents/{id}/export-pdf', [RequestDocumentsController::class, 'exportPdf'])->name('request-documents.export-pdf');
-        Route::resource('request-documents', RequestDocumentsController::class);
+        Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+        Route::resource('document-issuances', DocumentIssuanceController::class);
     });
 
     // Prescription Management (Staff can assist with prescriptions)
@@ -91,26 +91,23 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         // Medicine Generics
         Route::resource('generics', GenericController::class);
 
-        // Medicine Brands
-        Route::resource('brands', BrandController::class);
-
         // Medicines
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
 
-        // Medicine Purchase
-        Route::resource('medicine-availability', MedicineAvailabilityController::class)->parameters(['categories' => 'category']);
-        Route::get('export-medicine-availability', [MedicineAvailabilityController::class, 'purchaseMedicineExport'])->name('medicine-availability.excel');
-        Route::get('get-medicine/{medicine}', [MedicineAvailabilityController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', [MedicineAvailabilityController::class, 'usedMedicine'])->name('used-medicine.index');
+        // Stock In (Medicine Purchasing)
+        Route::resource('stock-in', StockInController::class);
+        Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
+        Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
+        Route::redirect('used-medicine', url('staff/medicines') . '?tab=medicines&sub=stock-out')->name('used-medicine.index');
 
         // Medicine History
-        Route::resource('medicine-history', MedicineBillController::class);
-        Route::post('medicine-history/store-patient', [MedicineBillController::class, 'storePatient'])->name('store.patient');
-        Route::get('medicine-history-pdf/{id}', [MedicineBillController::class, 'convertToPDF'])->name('medicine.bill.pdf');
-        Route::get('get-medicine-category/{category}', [MedicineBillController::class, 'getMedicineCategory'])->name('get-medicine-category');
+        Route::resource('medicine-history', DispenseRecordController::class);
+        Route::post('medicine-history/store-patient', [DispenseRecordController::class, 'storePatient'])->name('store.patient');
+        Route::get('medicine-history-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('medicine.bill.pdf');
+        Route::get('get-medicine-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('get-medicine-category');
     });
 
     // CMS Management (Staff can manage CMS with limited access)

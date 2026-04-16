@@ -211,6 +211,6 @@ class Prescription extends Model
 
     public function getMedicine(): HasMany
     {
-        return $this->hasMany(PrescriptionMedicineModal::class);
+        return $this->hasMany(PrescriptionMedicine::class);
     }
 }
