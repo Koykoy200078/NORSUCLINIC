@@ -7,6 +7,7 @@ use App\Models\College;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Diagnose;
+use App\Models\Doctor;
 use App\Models\Office;
 use App\Models\Patient;
 use App\Models\DocumentIssuance;
@@ -61,7 +62,9 @@ class DocumentIssuanceController extends Controller
             $patient = $user->patient;
         }
 
-        return view('document_issuances.create', compact('data', 'user', 'patient'));
+        $availableDoctors = $this->getAvailableCertificateDoctors();
+
+        return view('document_issuances.create', compact('data', 'user', 'patient', 'availableDoctors'));
     }
 
     /**
@@ -105,8 +108,9 @@ class DocumentIssuanceController extends Controller
 
             // Default: Return to request documents index with role-based redirect
             $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
+            $documentModule = ($data['document_type'] ?? null) === 'consultation_form' ? 'consultation' : 'certificate';
 
-            return redirect()->route($redirectRoute)
+            return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document created successfully.');
         } catch (\Exception $e) {
             // Log the error for debugging
@@ -308,16 +312,22 @@ class DocumentIssuanceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DocumentIssuance $requestDocument)
+    public function show(DocumentIssuance $document_issuance)
     {
-        return view('document_issuances.view', compact('requestDocument'));
+        $requestDocument = $document_issuance;
+        $medicalCertificateDoctorName = $requestDocument->document_type === 'medical_certificate'
+            ? $this->resolveMedicalCertificateDoctorName($requestDocument)
+            : null;
+
+        return view('document_issuances.view', compact('requestDocument', 'medicalCertificateDoctorName'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DocumentIssuance $requestDocument, PatientRepository $patientRepository)
+    public function edit(DocumentIssuance $document_issuance, PatientRepository $patientRepository)
     {
+        $requestDocument = $document_issuance;
         $campuses = Campus::all();
         $colleges = College::all();
         $courses = Course::all();
@@ -327,6 +337,7 @@ class DocumentIssuanceController extends Controller
         $vaccinations = Vaccination::all();
         $diagnoses = Diagnose::all();
         $nursingStaff = User::where('type', 'staff')->get(); // adjust as needed
+        $availableDoctors = $this->getAvailableCertificateDoctors();
 
         // Get the user data associated with this request document
         $user = User::find($requestDocument->user_id);
@@ -345,6 +356,7 @@ class DocumentIssuanceController extends Controller
             'vaccinations',
             'diagnoses',
             'nursingStaff',
+            'availableDoctors',
             'user',
             'existingMedicines'
         ));
@@ -353,8 +365,9 @@ class DocumentIssuanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DocumentIssuance $requestDocument)
+    public function update(Request $request, DocumentIssuance $document_issuance)
     {
+        $requestDocument = $document_issuance;
         $data = $request->except(['_token', '_method']);
 
         try {
@@ -383,8 +396,9 @@ class DocumentIssuanceController extends Controller
 
             // Default: Redirect to request documents index
             $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
+            $documentModule = $request->input('redirect_module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
 
-            return redirect()->route($redirectRoute)
+            return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document updated successfully.');
         } catch (\Exception $e) {
             Log::error('Error in update method: ' . $e->getMessage());
@@ -972,8 +986,9 @@ class DocumentIssuanceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DocumentIssuance $request_document)
+    public function destroy(DocumentIssuance $document_issuance)
     {
+        $request_document = $document_issuance;
         try {
             Log::info('Destroy method called', [
                 'certificate_id' => $request_document->id,
@@ -1011,8 +1026,9 @@ class DocumentIssuanceController extends Controller
             // Default: Redirect to request documents index
             $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' :
                 'document-issuances.index'));
+            $documentModule = request()->input('redirect_module', $request_document->document_type === 'consultation_form' ? 'consultation' : 'certificate');
 
-            return redirect()->route($redirectRoute)
+            return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Error deleting request document: ' . $e->getMessage());
@@ -1037,8 +1053,8 @@ class DocumentIssuanceController extends Controller
                 $query->where('first_name', 'LIKE', "%{$search}%")
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             })
-                ->select('id', 'patient_unique_id', 'user_id')
-                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id,university_id_number', 'address' => function ($query) {
+                ->select('id', 'patient_unique_id', 'user_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
+                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id,office_id,department_id,university_id_number', 'address' => function ($query) {
                     $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
                         ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
                 }])
@@ -1068,11 +1084,13 @@ class DocumentIssuanceController extends Controller
         try {
             // Fetch the request document by ID
             $requestDocument = DocumentIssuance::findOrFail($id);
+            $medicalCertificateDoctorName = null;
 
             // Choose the PDF layout based on document type
             if ($requestDocument->document_type === 'medical_certificate') {
                 $view = 'document_issuances.pdf_medical_certificate';
-                $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 396], 'landscape'); // 5.5"x8.5" in points
+                $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
+                $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName'))->setPaper([0, 0, 612, 396], 'landscape'); // 5.5"x8.5" in points
             } else {
                 $view = 'document_issuances.pdf_consultation_form';
                 $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 936], 'portrait'); // 8.5"x13"
@@ -1106,10 +1124,37 @@ class DocumentIssuanceController extends Controller
             $lastConsultation = DocumentIssuance::where('user_id', $userId)
                 ->where('document_type', 'consultation_form')
                 ->orderBy('requested_at', 'desc')
+                ->orderBy('id', 'desc')
                 ->first();
 
             if (!$lastConsultation) {
-                return response()->json(['error' => 'No previous consultation found'], 404);
+                $patientProfile = Patient::query()
+                    ->where('user_id', $userId)
+                    ->select('comorbidities', 'allergies', 'admissions_surgeries', 'maintenance')
+                    ->first();
+
+                return response()->json([
+                    'success' => true,
+                    'fallback' => true,
+                    'message' => 'No previous consultation found. Loaded patient profile values.',
+                    'data' => [
+                        'status' => null,
+                        'religion' => null,
+                        'comorbidities' => $patientProfile->comorbidities ?? null,
+                        'allergies' => $patientProfile->allergies ?? null,
+                        'admissions_surgeries' => $patientProfile->admissions_surgeries ?? null,
+                        'maintenance' => $patientProfile->maintenance ?? null,
+                        'pregnancy_status' => null,
+                        'lmp_aog' => null,
+                        'vital_signs_bp' => null,
+                        'vital_signs_pr' => null,
+                        'vital_signs_temp' => null,
+                        'vital_signs_rr' => null,
+                        'vital_signs_o2_sat' => null,
+                        'vital_signs_weight' => null,
+                        'vital_signs_height' => null,
+                    ],
+                ]);
             }
 
             // Return the relevant fields
@@ -1118,6 +1163,7 @@ class DocumentIssuanceController extends Controller
                 'data' => [
                     'status' => $lastConsultation->status,
                     'religion' => $lastConsultation->religion,
+                    'comorbidities' => $lastConsultation->comorbidities,
                     'allergies' => $lastConsultation->allergies,
                     'admissions_surgeries' => $lastConsultation->admissions_surgeries,
                     'maintenance' => $lastConsultation->maintenance,
@@ -1136,5 +1182,98 @@ class DocumentIssuanceController extends Controller
             Log::error('Error in getLastConsultation: ' . $e->getMessage());
             return response()->json(['error' => 'An error occurred while fetching consultation data'], 500);
         }
+    }
+
+    public function getLastMedicalCertificate(Request $request)
+    {
+        try {
+            $userId = $request->input('user_id');
+
+            if (empty($userId)) {
+                return response()->json(['error' => 'User ID is required'], 400);
+            }
+
+            $lastMedicalCertificate = DocumentIssuance::where('user_id', $userId)
+                ->where('document_type', 'medical_certificate')
+                ->orderBy('requested_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if (!$lastMedicalCertificate) {
+                return response()->json([
+                    'success' => true,
+                    'fallback' => true,
+                    'message' => 'No previous medical certificate found for this patient.',
+                    'data' => [
+                        'complaints_diagnosis' => null,
+                        'vital_signs_bp' => null,
+                        'vital_signs_pr' => null,
+                        'vital_signs_rr' => null,
+                        'vital_signs_temp' => null,
+                        'vital_signs_height' => null,
+                        'vital_signs_weight' => null,
+                        'medical_cert_remarks' => null,
+                        'request_of' => null,
+                    ],
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'complaints_diagnosis' => $lastMedicalCertificate->complaints_diagnosis,
+                    'vital_signs_bp' => $lastMedicalCertificate->vital_signs_bp,
+                    'vital_signs_pr' => $lastMedicalCertificate->vital_signs_pr,
+                    'vital_signs_rr' => $lastMedicalCertificate->vital_signs_rr,
+                    'vital_signs_temp' => $lastMedicalCertificate->vital_signs_temp,
+                    'vital_signs_height' => $lastMedicalCertificate->vital_signs_height,
+                    'vital_signs_weight' => $lastMedicalCertificate->vital_signs_weight,
+                    'medical_cert_remarks' => $lastMedicalCertificate->medical_cert_remarks,
+                    'request_of' => $lastMedicalCertificate->request_of,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getLastMedicalCertificate: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while fetching medical certificate data'], 500);
+        }
+    }
+
+    private function getAvailableCertificateDoctors()
+    {
+        return User::query()
+            ->where('type', User::DOCTOR)
+            ->whereHas('doctor')
+            ->with(['doctor:id,user_id,prc_license_number,ptr_number'])
+            ->orderBy('first_name')
+            ->orderBy('last_name')
+            ->get(['id', 'first_name', 'last_name']);
+    }
+
+    private function resolveMedicalCertificateDoctorName(DocumentIssuance $requestDocument): ?string
+    {
+        $docLicNo = trim((string) ($requestDocument->doc_lic_no ?? ''));
+        $docPtrNo = trim((string) ($requestDocument->doc_prt_no ?? ''));
+
+        if ($docLicNo !== '') {
+            $doctor = Doctor::with(['user:id,first_name,last_name'])
+                ->where('prc_license_number', $docLicNo)
+                ->first();
+
+            if ($doctor && $doctor->user) {
+                return trim($doctor->user->first_name . ' ' . $doctor->user->last_name);
+            }
+        }
+
+        if ($docPtrNo !== '') {
+            $doctor = Doctor::with(['user:id,first_name,last_name'])
+                ->where('ptr_number', $docPtrNo)
+                ->first();
+
+            if ($doctor && $doctor->user) {
+                return trim($doctor->user->first_name . ' ' . $doctor->user->last_name);
+            }
+        }
+
+        return null;
     }
 }

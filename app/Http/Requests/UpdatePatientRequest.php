@@ -44,8 +44,6 @@ class UpdatePatientRequest extends FormRequest
 
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
-        $rules['campus_address'] = 'required|string';
-        $rules['permanent_address'] = 'required|string';
         $rules['immunization_record'] = 'required|string';
         $rules['postal_code'] = 'nullable';
         $rules['profile'] = 'nullable|mimes:jpeg,jpg,png|max:2000';

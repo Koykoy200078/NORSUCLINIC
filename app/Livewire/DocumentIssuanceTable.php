@@ -15,6 +15,7 @@ class DocumentIssuanceTable extends DataTableComponent
     public bool $showButtonOnHeader = false;
     public string $buttonComponent = 'document_issuances.components.table-buttons';
     public ?int $patientId = null;
+    public string $module = 'consultation';
 
     public function configure(): void
     {
@@ -36,21 +37,24 @@ class DocumentIssuanceTable extends DataTableComponent
     public function builder(): \Illuminate\Database\Eloquent\Builder
     {
         $query = DocumentIssuance::query();
+        $isConsultationModule = $this->module !== 'certificate';
 
         // Check the user's role and filter data accordingly
         $user = Auth::user();
 
         if ($user->type === User::PATIENT) { // Patient sees only own documents
             $query->where('user_id', $user->id);
-        } elseif ($user->type === User::ADMIN || $user->type === User::STAFF) { // Admin or Staff
-            // If patient_id is set, filter by that patient's consultation forms only
+        } elseif ($user->type === User::ADMIN || $user->type === User::STAFF || $user->type === User::DOCTOR) {
+            // Admin, Staff, and Doctor can optionally scope records to a selected patient.
             if ($this->patientId) {
-                $query->where('user_id', $this->patientId)
-                    ->where('document_type', 'consultation_form');
-            } else {
-                // For Admin/Staff viewing "Patient Data", show only consultation forms
-                $query->where('document_type', 'consultation_form');
+                $query->where('user_id', $this->patientId);
             }
+        }
+
+        if ($isConsultationModule) {
+            $query->where('document_type', 'consultation_form');
+        } else {
+            $query->where('document_type', '!=', 'consultation_form');
         }
 
         return $query;
@@ -86,6 +90,12 @@ class DocumentIssuanceTable extends DataTableComponent
 
             Column::make("Completion Status")
                 ->label(function ($row, Column $column) {
+                    if ($row->document_type === 'medical_certificate') {
+                        return '<span class="badge bg-success text-white">
+                                    <i class="fas fa-check-circle"></i> Completed
+                                </span>';
+                    }
+
                     if ($row->document_type !== 'consultation_form') {
                         return '<span class="badge bg-secondary text-white">N/A</span>';
                     }
@@ -95,7 +105,7 @@ class DocumentIssuanceTable extends DataTableComponent
 
                     if ($hasAssessment && $hasPlan) {
                         return '<span class="badge bg-success text-white">
-                                    <i class="fas fa-check-circle"></i> Complete
+                                    <i class="fas fa-check-circle"></i> Completed
                                 </span>';
                     }
 

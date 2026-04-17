@@ -138,13 +138,20 @@
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities">Comorbidities</label>
                         <div class="relative">
-                            <input type="text"
+                            <input type="hidden"
                                 name="comorbidities_custom"
-                                id="comorbidities_input"
-                                list="comorbidities_list"
-                                class="w-full border-b border-black"
-                                placeholder="Select or type custom comorbidity"
-                                autocomplete="off">
+                                id="comorbidities_custom"
+                                value="{{ $user->type == 4 && isset($patient) ? ($patient->comorbidities ?? '') : '' }}">
+                            <div id="comorbidities_selected_list" class="comorbidities-selected-list"></div>
+                            <div class="flex gap-2 mt-1">
+                                <input type="text"
+                                    id="comorbidities_input"
+                                    list="comorbidities_list"
+                                    class="w-full border-b border-black"
+                                    placeholder="Type and press Enter"
+                                    autocomplete="off">
+                                <button type="button" id="add_comorbidity_btn" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">Add</button>
+                            </div>
                             <datalist id="comorbidities_list">
                                 <option value="None">
                                     @foreach($data['comorbidities'] as $key => $value)
@@ -155,15 +162,15 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
-                        <input type="text" id="allergies" name="allergies" class="w-full border-b border-black">
+                        <input type="text" id="allergies" name="allergies" class="w-full border-b border-black" value="{{ $user->type == 4 && isset($patient) ? ($patient->allergies ?? '') : '' }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
-                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black">
+                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black" value="{{ $user->type == 4 && isset($patient) ? ($patient->admissions_surgeries ?? '') : '' }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="maintenance">Maintenance<span class="text-red-500">*</span></label>
-                        <input type="text" id="maintenance" name="maintenance" class="w-full border-b border-black">
+                        <input type="text" id="maintenance" name="maintenance" class="w-full border-b border-black" value="{{ $user->type == 4 && isset($patient) ? ($patient->maintenance ?? '') : '' }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
@@ -451,6 +458,36 @@
         font-weight: 600;
     }
 
+    .comorbidities-selected-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        min-height: 1.75rem;
+    }
+
+    .comorbidity-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        color: #0c4a6e;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .comorbidity-chip-remove {
+        background: transparent;
+        border: none;
+        color: #0369a1;
+        cursor: pointer;
+        font-size: 0.75rem;
+        padding: 0;
+        line-height: 1;
+    }
+
     /* Drag and Drop Zone Styles */
     #drop_zone {
         cursor: pointer;
@@ -515,6 +552,64 @@
         font-size: 12px;
         font-weight: bold;
         border-radius: 0.375rem;
+    }
+
+    /* Load Past Data toast notice */
+    .load-past-data-toast {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 12000;
+        max-width: min(92vw, 420px);
+        padding: 0.75rem 0.95rem;
+        border-radius: 0.5rem;
+        border: 1px solid transparent;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+        font-size: 0.8125rem;
+        line-height: 1.35;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+    }
+
+    .load-past-data-toast.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .load-past-data-toast.toast-info {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .load-past-data-toast.toast-success {
+        background: #ecfdf5;
+        border-color: #a7f3d0;
+        color: #047857;
+    }
+
+    .load-past-data-toast.toast-warning {
+        background: #fffbeb;
+        border-color: #fde68a;
+        color: #b45309;
+    }
+
+    .load-past-data-toast.toast-error {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+
+    @media (max-width: 640px) {
+        .load-past-data-toast {
+            top: 0.75rem;
+            left: 0.75rem;
+            right: 0.75rem;
+            max-width: none;
+        }
     }
 </style>
 
@@ -594,6 +689,118 @@
             // Initialize height on page load
             autoResizeTextarea(textarea);
         });
+
+        // ==================== COMORBIDITIES MULTI-SELECT ====================
+        const comorbiditiesInput = document.getElementById('comorbidities_input');
+        const comorbiditiesHiddenInput = document.getElementById('comorbidities_custom');
+        const comorbiditiesSelectedList = document.getElementById('comorbidities_selected_list');
+        const addComorbidityBtn = document.getElementById('add_comorbidity_btn');
+        let selectedComorbidities = [];
+
+        function normalizeComorbidity(value) {
+            return String(value || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function updateComorbiditiesHiddenInput() {
+            if (comorbiditiesHiddenInput) {
+                comorbiditiesHiddenInput.value = selectedComorbidities.join(', ');
+            }
+        }
+
+        function renderComorbidityChips() {
+            if (!comorbiditiesSelectedList) {
+                return;
+            }
+
+            comorbiditiesSelectedList.innerHTML = '';
+
+            selectedComorbidities.forEach((item, index) => {
+                const chip = document.createElement('span');
+                chip.className = 'comorbidity-chip';
+                chip.textContent = item;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'comorbidity-chip-remove';
+                removeBtn.setAttribute('aria-label', `Remove ${item}`);
+                removeBtn.textContent = 'x';
+                removeBtn.addEventListener('click', function() {
+                    selectedComorbidities.splice(index, 1);
+                    renderComorbidityChips();
+                    updateComorbiditiesHiddenInput();
+                });
+
+                chip.appendChild(removeBtn);
+                comorbiditiesSelectedList.appendChild(chip);
+            });
+        }
+
+        function addComorbidity(value) {
+            const normalized = normalizeComorbidity(value);
+
+            if (!normalized) {
+                return;
+            }
+
+            const duplicate = selectedComorbidities.some((item) => item.toLowerCase() === normalized.toLowerCase());
+            if (duplicate) {
+                if (comorbiditiesInput) {
+                    comorbiditiesInput.value = '';
+                }
+                return;
+            }
+
+            selectedComorbidities.push(normalized);
+            renderComorbidityChips();
+            updateComorbiditiesHiddenInput();
+
+            if (comorbiditiesInput) {
+                comorbiditiesInput.value = '';
+            }
+        }
+
+        function setComorbidities(value) {
+            selectedComorbidities = [];
+
+            const values = String(value || '')
+                .split(',')
+                .map((item) => normalizeComorbidity(item))
+                .filter((item) => item !== '');
+
+            values.forEach((item) => {
+                const duplicate = selectedComorbidities.some((existingItem) => existingItem.toLowerCase() === item.toLowerCase());
+                if (!duplicate) {
+                    selectedComorbidities.push(item);
+                }
+            });
+
+            renderComorbidityChips();
+            updateComorbiditiesHiddenInput();
+        }
+
+        if (addComorbidityBtn) {
+            addComorbidityBtn.addEventListener('click', function() {
+                addComorbidity(comorbiditiesInput ? comorbiditiesInput.value : '');
+            });
+        }
+
+        if (comorbiditiesInput) {
+            comorbiditiesInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addComorbidity(this.value);
+                }
+            });
+
+            comorbiditiesInput.addEventListener('blur', function() {
+                const pendingValue = normalizeComorbidity(this.value);
+                if (pendingValue) {
+                    addComorbidity(pendingValue);
+                }
+            });
+        }
+
+        setComorbidities(comorbiditiesHiddenInput ? comorbiditiesHiddenInput.value : '');
 
         // ==================== IMAGE UPLOAD WITH DRAG & DROP AND URL DOWNLOAD ====================
         const imageInput = document.getElementById('consultation_images');
@@ -880,7 +1087,7 @@
                 const query = userSearchInput.value;
 
                 if (query.length > 1) {
-                    fetch(`${searchRoute}?query=${query}`)
+                    fetch(`${searchRoute}?query=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
                             userSearchResults.innerHTML = '';
@@ -911,6 +1118,12 @@
                                     document.getElementById('vaccination_id').value = patientData.user.vaccination_id || '';
                                     document.getElementById('patient_contact').value = patientData.user.contact;
                                     document.getElementById('emergency_contact').value = `${patientData.user.emergency_contact_name}/${patientData.user.emergency_contact_no}${patientData.user.emergency_relationship ? ' (' + patientData.user.emergency_relationship + ')' : ''}`;
+
+                                    // Load saved medical history from patient profile
+                                    setComorbidities(patientData.comorbidities || '');
+                                    document.getElementById('allergies').value = patientData.allergies || '';
+                                    document.getElementById('admissions_surgeries').value = patientData.admissions_surgeries || '';
+                                    document.getElementById('maintenance').value = patientData.maintenance || '';
 
                                     // Fill student fields
                                     document.getElementById('campus_id').value = patientData.user.campus_id || '';
@@ -1217,9 +1430,75 @@
         if (loadPastDataBtn) {
             loadPastDataBtn.addEventListener('click', async function() {
                 const userId = document.getElementById('user_id').value;
+                const noticeId = 'load_past_data_notice';
+
+                const showLoadPastDataNotice = (message, type = 'info') => {
+                    const noticeClassMap = {
+                        info: 'toast-info',
+                        success: 'toast-success',
+                        warning: 'toast-warning',
+                        error: 'toast-error',
+                    };
+
+                    let notice = document.getElementById(noticeId);
+
+                    if (!notice) {
+                        notice = document.createElement('div');
+                        notice.id = noticeId;
+                        notice.setAttribute('role', 'status');
+                        notice.setAttribute('aria-live', 'polite');
+                        document.body.appendChild(notice);
+                    }
+
+                    notice.textContent = message;
+                    notice.className = `load-past-data-toast ${noticeClassMap[type] || noticeClassMap.info}`;
+
+                    requestAnimationFrame(() => {
+                        const activeNotice = document.getElementById(noticeId);
+                        if (activeNotice) {
+                            activeNotice.classList.add('is-visible');
+                        }
+                    });
+
+                    if (showLoadPastDataNotice.hideTimerId) {
+                        clearTimeout(showLoadPastDataNotice.hideTimerId);
+                    }
+
+                    if (showLoadPastDataNotice.removeTimerId) {
+                        clearTimeout(showLoadPastDataNotice.removeTimerId);
+                    }
+
+                    showLoadPastDataNotice.hideTimerId = setTimeout(() => {
+                        const activeNotice = document.getElementById(noticeId);
+                        if (!activeNotice) {
+                            return;
+                        }
+
+                        activeNotice.classList.remove('is-visible');
+
+                        showLoadPastDataNotice.removeTimerId = setTimeout(() => {
+                            const staleNotice = document.getElementById(noticeId);
+                            if (staleNotice) {
+                                staleNotice.remove();
+                            }
+                        }, 220);
+                    }, 4500);
+                };
+
+                const setFieldValue = (fieldId, value) => {
+                    const field = document.getElementById(fieldId);
+
+                    if (!field) {
+                        return;
+                    }
+
+                    if (value !== null && value !== undefined && value !== '') {
+                        field.value = value;
+                    }
+                };
 
                 if (!userId) {
-                    alert('Please select a patient first.');
+                    showLoadPastDataNotice('Please select a patient first.', 'warning');
                     return;
                 }
 
@@ -1247,28 +1526,33 @@
                         const data = result.data;
 
                         // Populate the fields
-                        if (data.status) document.getElementById('status').value = data.status;
-                        if (data.religion) document.getElementById('religion').value = data.religion;
-                        if (data.allergies) document.getElementById('allergies').value = data.allergies;
-                        if (data.admissions_surgeries) document.getElementById('admissions_surgeries').value = data.admissions_surgeries;
-                        if (data.maintenance) document.getElementById('maintenance').value = data.maintenance;
-                        if (data.pregnancy_status) document.getElementById('pregnancy_status').value = data.pregnancy_status;
-                        if (data.lmp_aog) document.getElementById('lmp_aog').value = data.lmp_aog;
-                        if (data.vital_signs_bp) document.getElementById('vital_signs_bp').value = data.vital_signs_bp;
-                        if (data.vital_signs_pr) document.getElementById('vital_signs_pr').value = data.vital_signs_pr;
-                        if (data.vital_signs_temp) document.getElementById('vital_signs_temp').value = data.vital_signs_temp;
-                        if (data.vital_signs_rr) document.getElementById('vital_signs_rr').value = data.vital_signs_rr;
-                        if (data.vital_signs_o2_sat) document.getElementById('vital_signs_o2_sat').value = data.vital_signs_o2_sat;
-                        if (data.vital_signs_weight) document.getElementById('vital_signs_weight').value = data.vital_signs_weight;
-                        if (data.vital_signs_height) document.getElementById('vital_signs_height').value = data.vital_signs_height;
+                        setFieldValue('status', data.status);
+                        setFieldValue('religion', data.religion);
+                        setComorbidities(data.comorbidities);
+                        setFieldValue('allergies', data.allergies);
+                        setFieldValue('admissions_surgeries', data.admissions_surgeries);
+                        setFieldValue('maintenance', data.maintenance);
+                        setFieldValue('pregnancy_status', data.pregnancy_status);
+                        setFieldValue('lmp_aog', data.lmp_aog);
+                        setFieldValue('vital_signs_bp', data.vital_signs_bp);
+                        setFieldValue('vital_signs_pr', data.vital_signs_pr);
+                        setFieldValue('vital_signs_temp', data.vital_signs_temp);
+                        setFieldValue('vital_signs_rr', data.vital_signs_rr);
+                        setFieldValue('vital_signs_o2_sat', data.vital_signs_o2_sat);
+                        setFieldValue('vital_signs_weight', data.vital_signs_weight);
+                        setFieldValue('vital_signs_height', data.vital_signs_height);
 
-                        alert('Past data loaded successfully!');
+                        if (result.fallback) {
+                            showLoadPastDataNotice(result.message || 'No previous consultation found. Loaded patient profile values.', 'info');
+                        } else {
+                            showLoadPastDataNotice('Past data loaded successfully.', 'success');
+                        }
                     } else {
-                        alert(result.error || 'No previous consultation found for this patient.');
+                        showLoadPastDataNotice(result.error || 'Unable to load past consultation data.', 'warning');
                     }
                 } catch (error) {
                     console.error('Error loading past data:', error);
-                    alert('An error occurred while loading past data. Please try again.');
+                    showLoadPastDataNotice('An error occurred while loading past data. Please try again.', 'error');
                 } finally {
                     // Reset button state
                     loadPastDataBtn.disabled = false;

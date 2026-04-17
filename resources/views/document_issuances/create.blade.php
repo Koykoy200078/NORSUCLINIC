@@ -3,6 +3,13 @@
 {{ __('messages.request.create_request') }}
 @endsection
 @section('content')
+@php
+$documentModule = request('module', request('document_type') === 'medical_certificate' ? 'certificate' : 'consultation');
+$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
+(isRole('staff') ? route('staff.document-issuances.index') :
+(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
+@endphp
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-lg font-bold">
@@ -26,10 +33,7 @@
                     (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $patient->id]) : 
                     (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $patient->id]) : 
                     route('patients.showMyHistory', ['patient' => $patient->id])))) :
-                    (isRole('clinic_admin') ? route('document-issuances.index') : 
-                    (isRole('staff') ? route('staff.document-issuances.index') : 
-                    (isRole('doctor') ? route('doctors.document-issuances.index') : 
-                    route('document-issuances.index'))))
+                    $indexUrlWithModule
             }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
         </div>
     </div>
@@ -48,9 +52,9 @@
 
     <div id="form-container" class="flex items-center justify-center">
         @if(request('document_type') === 'medical_certificate')
-        @include('requests.forms.medical_certificate', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
+        @include('document_issuances.forms.medical_certificate', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
         @elseif(request('document_type') === 'consultation_form')
-        @include('requests.forms.consultation_form', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
+        @include('document_issuances.forms.consultation_form', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
         @elseif(!request('document_type'))
         <p class="text-gray-500">Please select a document type to continue.</p>
         @endif
@@ -68,6 +72,7 @@
 
                 // Preserve existing query parameters (like user_id)
                 currentUrl.searchParams.set('document_type', selectedType);
+                currentUrl.searchParams.set('module', selectedType === 'medical_certificate' ? 'certificate' : 'consultation');
 
                 // Redirect to the same page with the selected document type
                 window.location.href = currentUrl.toString();

@@ -180,28 +180,59 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
 
         @can('manage_request_documents')
         @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
-        <li
-            class="nav-item {{ 
-                (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
-                (isRole('staff') && Request::is('staff/document-issuances*')) ||
-                (isRole('doctor') && Request::is('doctors/document-issuances*'))
-            ? 'active' : '' }}">
+        @php
+        $documentIssuanceIndexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
+        (isRole('staff') ? route('staff.document-issuances.index') : route('doctors.document-issuances.index'));
+
+        $isDocumentIssuancePath =
+        (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
+        (isRole('staff') && Request::is('staff/document-issuances*')) ||
+        (isRole('doctor') && Request::is('doctors/document-issuances*'));
+
+        $activeDocumentModule = request()->query('module');
+        $activeDocumentType = request()->query('document_type');
+
+        $isConsultationNavActive = $isDocumentIssuancePath && (
+        $activeDocumentModule === 'consultation' ||
+        (!$activeDocumentModule && $activeDocumentType === 'consultation_form') ||
+        (!$activeDocumentModule && !$activeDocumentType)
+        );
+
+        $isCertificateNavActive = $isDocumentIssuancePath && (
+        $activeDocumentModule === 'certificate' ||
+        (!$activeDocumentModule && $activeDocumentType === 'medical_certificate')
+        );
+        @endphp
+
+        <li class="nav-item {{ $isConsultationNavActive ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                href="{{ 
-                    isRole('clinic_admin') ? route('document-issuances.index') : 
-                    (isRole('staff') ? route('staff.document-issuances.index') : 
-                    route('doctors.document-issuances.index'))
-                }}">
+                href="{{ $documentIssuanceIndexRoute . '?module=consultation' }}">
                 <span class="aside-menu-icon pe-3">
-                    <i class="fa-solid fa-file-signature"></i>
+                    <i class="fa-solid fa-notes-medical"></i>
                 </span>
-                <span class="aside-menu-title">Document & Certificate Issuance</span>
+                <span class="aside-menu-title">Consultation Management</span>
                 @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
                 @if($incompleteDocsCount > 0)
                 <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
                     <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
                 </span>
                 @endif
+                <span class="d-none">Record Walk-in or Schedule Visit</span>
+                <span class="d-none">Encode Patient Complaints</span>
+                <span class="d-none">Record Vital Signs and Findings</span>
+                <span class="d-none">Assessment Plan Add Medicines to Plan Add Medicines to Nursing Intervention</span>
+                <span class="d-none">Save Consultation Record</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ $isCertificateNavActive ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+                href="{{ $documentIssuanceIndexRoute . '?module=certificate' }}">
+                <span class="aside-menu-icon pe-3">
+                    <i class="fa-solid fa-file-medical"></i>
+                </span>
+                <span class="aside-menu-title">Certificate Issuance</span>
+                <span class="d-none">Medical Certificate</span>
             </a>
         </li>
         @endif

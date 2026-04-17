@@ -25,8 +25,6 @@ class CreatePatientRequest extends FormRequest
         $rules['university_id_number'] = 'required|string|max:100|unique:users,university_id_number';
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
-        $rules['campus_address'] = 'required|string';
-        $rules['permanent_address'] = 'required|string';
         $rules['immunization_record'] = 'required|string';
 
         return $rules;

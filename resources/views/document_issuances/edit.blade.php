@@ -3,23 +3,42 @@
 {{__('messages.request.edit_request')}}
 @endsection
 @section('content')
+@php
+$documentModule = request('module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
+$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
+(isRole('staff') ? route('staff.document-issuances.index') :
+(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
+@endphp
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
+        <h1 class="text-lg font-bold">
+            @if($requestDocument->document_type === 'consultation_form')
+            Update Consultation Form
+            @elseif($requestDocument->document_type === 'medical_certificate')
+            Update Medical Certificate
+            @else
+            {{ __('messages.request.edit_request') }}
+            @endif
+        </h1>
         <a href="{{ 
             request('patient_id') ? 
                 (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => request('patient_id')]) : 
                 (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => request('patient_id')]) : 
                 (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => request('patient_id')]) : 
                 route('patients.showMyHistory', ['patient' => request('patient_id')])))) :
-                (isRole('clinic_admin') ? route('document-issuances.index') :
-                (isRole('staff') ? route('staff.document-issuances.index') :
-                (isRole('doctor') ? route('doctors.document-issuances.index') :
-                route('document-issuances.index'))))
+                $indexUrlWithModule
         }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
-    <form action="{{ 
+    @php
+    $effectiveYearLevelId = (int) old('year_level_id', $user->year_level_id ?? 0);
+    $isStudentType = $effectiveYearLevelId >= 1 && $effectiveYearLevelId <= 6;
+        $isFacultyType=$effectiveYearLevelId===7;
+        $isStaffType=$effectiveYearLevelId===8;
+        @endphp
+        <form action="{{ 
         isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
         (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
         (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
@@ -31,6 +50,7 @@
         @if(request('patient_id'))
         <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
         @endif
+        <input type="hidden" name="redirect_module" value="{{ $documentModule }}">
 
         <div class="grid grid-cols-4 gap-2 pb-2">
             <div class="col-span-1">
@@ -68,7 +88,7 @@
 
 
             <!-- Campus Field (for Students only) -->
-            <div class="col-span-1" id="campus_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
+            <div class="col-span-1" id="campus_field" style="display: {{ $isStudentType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus_id">CAMPUS</label>
                 <select id="campus_id" name="campus_id" class="w-full border-b border-black">
                     <option value="">Select Campus</option>
@@ -81,7 +101,7 @@
             </div>
 
             <!-- College Field (for Students and Faculty) -->
-            <div class="col-span-1" id="college_field" style="display: {{ (isset($user->year_level_id) && (($user->year_level_id >= 1 && $user->year_level_id <= 6) || $user->year_level_id == 7)) ? 'block' : 'none' }};">
+            <div class="col-span-1" id="college_field" style="display: {{ ($isStudentType || $isFacultyType) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college_id">COLLEGE</label>
                 <select id="college_id" name="college_id" class="w-full border-b border-black">
                     <option value="">Select College</option>
@@ -94,7 +114,7 @@
             </div>
 
             <!-- Course & Year Field (for Students only) -->
-            <div class="col-span-1" id="course_year_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
+            <div class="col-span-1" id="course_year_field" style="display: {{ $isStudentType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
                     <select id="course_id" name="course_id" class="w-full border-b border-black">
@@ -117,7 +137,7 @@
             </div>
 
             <!-- Department Field (for Faculty only) -->
-            <div class="col-span-1" id="department_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 7) ? 'block' : 'none' }};">
+            <div class="col-span-1" id="department_field" style="display: {{ $isFacultyType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="department_id">DEPARTMENT</label>
                 <select id="department_id" name="department_id" class="w-full border-b border-black">
                     <option value="">Select Department</option>
@@ -130,7 +150,7 @@
             </div>
 
             <!-- Office Field (for Staff only) -->
-            <div class="col-span-1" id="office_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 8) ? 'block' : 'none' }};">
+            <div class="col-span-1" id="office_field" style="display: {{ $isStaffType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="office_id">OFFICE</label>
                 <select id="office_id" name="office_id" class="w-full border-b border-black">
                     <option value="">Select Office</option>
@@ -185,16 +205,22 @@
                         </select>
                     </div>
                     <div class="col-span-1">
-                        <label class="block text-xs" for="comorbidities_custom">Comorbidities</label>
+                        <label class="block text-xs" for="comorbidities_input">Comorbidities</label>
                         <div class="relative">
-                            <input type="text"
+                            <input type="hidden"
                                 name="comorbidities_custom"
-                                id="comorbidities_input"
-                                list="comorbidities_list"
-                                class="w-full border-b border-black"
-                                placeholder="Select or type custom comorbidity"
-                                value="{{ old('comorbidities_custom', $requestDocument->comorbidities) }}"
-                                autocomplete="off">
+                                id="comorbidities_custom"
+                                value="{{ old('comorbidities_custom', $requestDocument->comorbidities) }}">
+                            <div id="comorbidities_selected_list" class="comorbidities-selected-list"></div>
+                            <div class="flex gap-2 mt-1">
+                                <input type="text"
+                                    id="comorbidities_input"
+                                    list="comorbidities_list"
+                                    class="w-full border-b border-black"
+                                    placeholder="Type and press Enter"
+                                    autocomplete="off">
+                                <button type="button" id="add_comorbidity_btn" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">Add</button>
+                            </div>
                             <datalist id="comorbidities_list">
                                 <option value="None">
                                     @foreach($diagnoses as $diagnose)
@@ -442,192 +468,246 @@
         <div class="flex justify-end mt-6">
             <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded">Update</button>
         </div>
-    </form>
+        </form>
 
-    @elseif ($requestDocument->document_type == 'medical_certificate')
-    <form action="{{ 
+        @elseif ($requestDocument->document_type == 'medical_certificate')
+        @php
+        $doctorOptions = collect($availableDoctors ?? [])->filter(function ($doctor) {
+        return $doctor->doctor !== null;
+        })->map(function ($doctor) {
+        return [
+        'id' => $doctor->id,
+        'name' => trim(($doctor->first_name ?? '') . ' ' . ($doctor->last_name ?? '')),
+        'lic_no' => (string) ($doctor->doctor->prc_license_number ?? ''),
+        'ptr_no' => (string) ($doctor->doctor->ptr_number ?? ''),
+        ];
+        })->values();
+
+        $currentLicNo = (string) old('doc_lic_no', $requestDocument->doc_lic_no ?? '');
+        $currentPtrNo = (string) old('doc_prt_no', $requestDocument->doc_prt_no ?? '');
+
+        $matchedDoctor = $doctorOptions->first(function ($doctorOption) use ($currentLicNo, $currentPtrNo) {
+        return ($currentLicNo !== '' && (string) $doctorOption['lic_no'] === $currentLicNo)
+        || ($currentPtrNo !== '' && (string) $doctorOption['ptr_no'] === $currentPtrNo);
+        });
+
+        $selectedDoctorId = old('doctor_user_id', $matchedDoctor['id'] ?? '');
+        @endphp
+        <form action="{{ 
         isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
         (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
         (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
     }}" method="POST">
-        @csrf
-        @method('PUT')
+            @csrf
+            @method('PUT')
 
-        <!-- Hidden field to carry patient_id from query parameter -->
-        @if(request('patient_id'))
-        <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
-        @endif
+            <!-- Hidden field to carry patient_id from query parameter -->
+            @if(request('patient_id'))
+            <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
+            @endif
+            <input type="hidden" name="redirect_module" value="{{ $documentModule }}">
 
-        <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
-            <div class="flex items-center my-4">
-                <!-- Left Logo -->
-                <div>
-                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-28 h-28">
+            <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
+                <div class="flex items-center my-4">
+                    <!-- Left Logo -->
+                    <div>
+                        <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-28 h-28">
+                    </div>
+                    <!-- Text Content -->
+                    <div class="text-center flex-1">
+                        <h1 class="text-xl font-bold">Negros Oriental State University</h1>
+                        <h2 class="text-md">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
+                        <p class="text-sm">Tel #: 225-9400, then Local # 188, 09263829484</p>
+                    </div>
+                    <!-- Right Logo -->
+                    <div class="ml-4">
+                        <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" class="w-28 h-28">
+                    </div>
                 </div>
-                <!-- Text Content -->
-                <div class="text-center flex-1">
-                    <h1 class="text-xl font-bold">Negros Oriental State University</h1>
-                    <h2 class="text-md">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
-                    <p class="text-sm">Tel #: 225-9400, then Local # 188, 09263829484</p>
+                <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
+                <div class="form-group mb-5 d-none">
+                    <label for="document_type">Document Type</label>
+                    <select name="document_type" id="document_type" class="form-control" readonly>
+                        <option value="medical_certificate" selected>Medical Certificate</option>
+                    </select>
                 </div>
-                <!-- Right Logo -->
-                <div class="ml-4">
-                    <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" class="w-28 h-28">
+                <div class="flex row">
+                    <p>
+                        This is to certify that Mr./Ms.
+                        <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ old('name', $requestDocument->name) }}">
+                        <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ old('age', $requestDocument->age) }}"> yrs old,
+                        <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ old('gender', $requestDocument->gender) }}"> a resident of
+                    </p>
+                    <p>
+                        <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ old('address', $requestDocument->address) }}">
+                        @php
+                        $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
+                        if ($examinedOnRaw) {
+                        if (str_ends_with($examinedOnRaw, '|range')) {
+                        $parts = explode('|', $examinedOnRaw);
+                        $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
+                        } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
+                        $datesStr = explode('|', $examinedOnRaw)[0];
+                        $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
+                        } elseif (str_contains($examinedOnRaw, ',')) {
+                        $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
+                        } else {
+                        $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
+                        }
+                        } else {
+                        $examinedOnDisplay = '';
+                        }
+                        @endphp
+                        , was seen and examined at my clinic on
+                        <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" value="{{ $examinedOnDisplay }}" readonly required>
+                        <input type="hidden" id="examined_on" name="examined_on" value="{{ $examinedOnRaw }}">
+                        <button type="button" id="open_date_selector" class="btn btn-sm btn-primary ml-2" style="padding: 2px 8px; font-size: 12px;">
+                            <i class="fas fa-calendar-alt"></i> Select Dates
+                        </button>
+                        with the following
+                    <p class="font-semibold">complaints/diagnosis:</p>
+                    <div class="border border-gray-300 p-2 h-28 mb-4">
+                        <div class="col-span-3">
+                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="5">{{ old('complaints_diagnosis', trim($requestDocument->complaints_diagnosis)) }}</textarea>
+                        </div>
+                    </div>
+                    </p>
                 </div>
-            </div>
-            <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
-            <div class="form-group mb-5 d-none">
-                <label for="document_type">Document Type</label>
-                <select name="document_type" id="document_type" class="form-control" readonly>
-                    <option value="medical_certificate" selected>Medical Certificate</option>
-                </select>
-            </div>
-            <div class="flex row">
-                <p>
-                    This is to certify that Mr./Ms.
-                    <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ old('name', $requestDocument->name) }}">
-                    <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ old('age', $requestDocument->age) }}"> yrs old,
-                    <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ old('gender', $requestDocument->gender) }}"> a resident of
-                </p>
-                <p>
-                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ old('address', $requestDocument->address) }}">
-                    @php
-                    $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
-                    if ($examinedOnRaw) {
-                    if (str_ends_with($examinedOnRaw, '|range')) {
-                    $parts = explode('|', $examinedOnRaw);
-                    $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
-                    } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
-                    $datesStr = explode('|', $examinedOnRaw)[0];
-                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
-                    } elseif (str_contains($examinedOnRaw, ',')) {
-                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
-                    } else {
-                    $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
-                    }
-                    } else {
-                    $examinedOnDisplay = '';
-                    }
-                    @endphp
-                    , was seen and examined at my clinic on
-                    <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" value="{{ $examinedOnDisplay }}" readonly required>
-                    <input type="hidden" id="examined_on" name="examined_on" value="{{ $examinedOnRaw }}">
-                    <button type="button" id="open_date_selector" class="btn btn-sm btn-primary ml-2" style="padding: 2px 8px; font-size: 12px;">
-                        <i class="fas fa-calendar-alt"></i> Select Dates
-                    </button>
-                    with the following
-                <p class="font-semibold">complaints/diagnosis:</p>
+                <div class="grid grid-cols-6 grid-rows-1 gap-7 mb-2">
+                    <div>
+                        <p class="font-semibold">BP: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_2', $requestDocument->vital_signs_bp) }}"></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">P: <input type="text" id="vital_signs_pr_2" name="vital_signs_pr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_pr_2', $requestDocument->vital_signs_pr) }}"></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">R: <input type="text" id="vital_signs_rr_2" name="vital_signs_rr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_rr_2', $requestDocument->vital_signs_rr) }}"></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">T: <input type="text" id="vital_signs_temp_2" name="vital_signs_temp_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_temp_2', $requestDocument->vital_signs_temp) }}"></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Ht: <input type="text" id="vital_signs_height_2" name="vital_signs_height_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_height_2', $requestDocument->vital_signs_height) }}"></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Wt: <input type="text" id="vital_signs_weight_2" name="vital_signs_weight_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_weight_2', $requestDocument->vital_signs_weight) }}"></p>
+                    </div>
+                </div>
+                <p class="font-semibold">Remark/s:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="5">{{ old('complaints_diagnosis', trim($requestDocument->complaints_diagnosis)) }}</textarea>
+                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="5">{{ old('medical_cert_remarks', trim($requestDocument->medical_cert_remarks)) }}</textarea>
                     </div>
                 </div>
-                </p>
+                <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
+                <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ old('request_of', $requestDocument->request_of) }}"> for your reference.</p>
+                <div class="text-right mt-4 mr-5">
+                    @if($doctorOptions->count() > 1)
+                    <div class="inline-block text-left mb-2" style="min-width: 260px;">
+                        <label for="medical_cert_doctor_id" class="block text-xs font-semibold">Attending Doctor<span class="text-red-500">*</span></label>
+                        <select id="medical_cert_doctor_id" name="doctor_user_id" class="w-full border-b border-black" required>
+                            <option value="" disabled {{ $selectedDoctorId ? '' : 'selected' }}>Select Doctor</option>
+                            @foreach($doctorOptions as $doctorOption)
+                            <option
+                                value="{{ $doctorOption['id'] }}"
+                                data-name="{{ $doctorOption['name'] }}"
+                                data-lic="{{ $doctorOption['lic_no'] }}"
+                                data-ptr="{{ $doctorOption['ptr_no'] }}"
+                                {{ (string) $selectedDoctorId === (string) $doctorOption['id'] ? 'selected' : '' }}>
+                                {{ $doctorOption['name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <p class="font-semibold" id="doctor_display_name"></p>
+                    @else
+                    @php
+                    $singleDoctor = $doctorOptions->count() === 1 ? $doctorOptions->first() : null;
+                    @endphp
+                    <input
+                        type="hidden"
+                        id="medical_cert_doctor_id"
+                        name="doctor_user_id"
+                        value="{{ $singleDoctor['id'] ?? '' }}"
+                        data-name="{{ $singleDoctor['name'] ?? '' }}"
+                        data-lic="{{ $singleDoctor['lic_no'] ?? '' }}"
+                        data-ptr="{{ $singleDoctor['ptr_no'] ?? '' }}">
+                    <p class="font-semibold" id="doctor_display_name">{{ $singleDoctor ? 'Dr. ' . $singleDoctor['name'] : 'Doctor' }}</p>
+                    @endif
+                    <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ old('doc_lic_no', $requestDocument->doc_lic_no) }}"></p>
+                    <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ old('doc_prt_no', $requestDocument->doc_prt_no) }}"></p>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded">Update</button>
+                </div>
             </div>
-            <div class="grid grid-cols-6 grid-rows-1 gap-7 mb-2">
-                <div>
-                    <p class="font-semibold">BP: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_2', $requestDocument->vital_signs_bp) }}"></p>
-                </div>
-                <div>
-                    <p class="font-semibold">P: <input type="text" id="vital_signs_pr_2" name="vital_signs_pr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_pr_2', $requestDocument->vital_signs_pr) }}"></p>
-                </div>
-                <div>
-                    <p class="font-semibold">R: <input type="text" id="vital_signs_rr_2" name="vital_signs_rr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_rr_2', $requestDocument->vital_signs_rr) }}"></p>
-                </div>
-                <div>
-                    <p class="font-semibold">T: <input type="text" id="vital_signs_temp_2" name="vital_signs_temp_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_temp_2', $requestDocument->vital_signs_temp) }}"></p>
-                </div>
-                <div>
-                    <p class="font-semibold">Ht: <input type="text" id="vital_signs_height_2" name="vital_signs_height_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_height_2', $requestDocument->vital_signs_height) }}"></p>
-                </div>
-                <div>
-                    <p class="font-semibold">Wt: <input type="text" id="vital_signs_weight_2" name="vital_signs_weight_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_weight_2', $requestDocument->vital_signs_weight) }}"></p>
-                </div>
-            </div>
-            <p class="font-semibold">Remark/s:</p>
-            <div class="border border-gray-300 p-2 h-28 mb-4">
-                <div class="col-span-3">
-                    <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="5">{{ old('medical_cert_remarks', trim($requestDocument->medical_cert_remarks)) }}</textarea>
-                </div>
-            </div>
-            <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
-            <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ old('request_of', $requestDocument->request_of) }}"> for your reference.</p>
-            <div class="text-right mt-4 mr-5">
-                <p class="font-semibold">Dr. Michael S. Oliveros</p>
-                <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ old('doc_lic_no', $requestDocument->doc_lic_no) }}"></p>
-                <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ old('doc_prt_no', $requestDocument->doc_prt_no) }}"></p>
-            </div>
-            <div class="flex justify-end mt-6">
-                <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded">Update</button>
-            </div>
-        </div>
-    </form>
+        </form>
 
-    <!-- Date Selector Modal (Medical Certificate) -->
-    <div id="date_selector_modal" class="modal fade" tabindex="-1" aria-labelledby="dateSelectorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="dateSelectorModalLabel">Select Examination Date(s)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Select Date Type:</label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="date_type" id="single_date_radio" value="single" checked>
-                            <label class="btn btn-outline-primary" for="single_date_radio">Single Date</label>
-                            <input type="radio" class="btn-check" name="date_type" id="date_range_radio" value="range">
-                            <label class="btn btn-outline-primary" for="date_range_radio">Date Range</label>
-                            <input type="radio" class="btn-check" name="date_type" id="multiple_dates_radio" value="multiple">
-                            <label class="btn btn-outline-primary" for="multiple_dates_radio">Multiple Dates</label>
-                        </div>
+        <!-- Date Selector Modal (Medical Certificate) -->
+        <div id="date_selector_modal" class="modal fade" tabindex="-1" aria-labelledby="dateSelectorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dateSelectorModalLabel">Select Examination Date(s)</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <!-- Single Date -->
-                    <div id="single_date_section" class="date-section">
-                        <label for="single_date_input" class="form-label">Select Date:</label>
-                        <input type="date" id="single_date_input" class="form-control" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}">
-                    </div>
-                    <!-- Date Range -->
-                    <div id="date_range_section" class="date-section" style="display: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="start_date_input" class="form-label">Start Date:</label>
-                                <input type="date" id="start_date_input" class="form-control" max="{{ date('Y-m-d') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="end_date_input" class="form-label">End Date:</label>
-                                <input type="date" id="end_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Date Type:</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="date_type" id="single_date_radio" value="single" checked>
+                                <label class="btn btn-outline-primary" for="single_date_radio">Single Date</label>
+                                <input type="radio" class="btn-check" name="date_type" id="date_range_radio" value="range">
+                                <label class="btn btn-outline-primary" for="date_range_radio">Date Range</label>
+                                <input type="radio" class="btn-check" name="date_type" id="multiple_dates_radio" value="multiple">
+                                <label class="btn btn-outline-primary" for="multiple_dates_radio">Multiple Dates</label>
                             </div>
                         </div>
-                    </div>
-                    <!-- Multiple Dates -->
-                    <div id="multiple_dates_section" class="date-section" style="display: none;">
-                        <label for="add_date_input" class="form-label">Add Date:</label>
-                        <div class="input-group mb-3">
-                            <input type="date" id="add_date_input" class="form-control" max="{{ date('Y-m-d') }}">
-                            <button type="button" id="add_date_btn" class="btn btn-success">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
+                        <!-- Single Date -->
+                        <div id="single_date_section" class="date-section">
+                            <label for="single_date_input" class="form-label">Select Date:</label>
+                            <input type="date" id="single_date_input" class="form-control" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}">
                         </div>
-                        <div id="selected_dates_list" class="border rounded p-3" style="min-height: 100px; max-height: 200px; overflow-y: auto;">
-                            <p class="text-muted text-center mb-0">No dates selected</p>
+                        <!-- Date Range -->
+                        <div id="date_range_section" class="date-section" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="start_date_input" class="form-label">Start Date:</label>
+                                    <input type="date" id="start_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="end_date_input" class="form-label">End Date:</label>
+                                    <input type="date" id="end_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Multiple Dates -->
+                        <div id="multiple_dates_section" class="date-section" style="display: none;">
+                            <label for="add_date_input" class="form-label">Add Date:</label>
+                            <div class="input-group mb-3">
+                                <input type="date" id="add_date_input" class="form-control" max="{{ date('Y-m-d') }}">
+                                <button type="button" id="add_date_btn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            <div id="selected_dates_list" class="border rounded p-3" style="min-height: 100px; max-height: 200px; overflow-y: auto;">
+                                <p class="text-muted text-center mb-0">No dates selected</p>
+                            </div>
+                        </div>
+                        <!-- Preview -->
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <label class="form-label fw-bold">Preview:</label>
+                            <p id="date_preview" class="mb-0 text-primary">No date selected</p>
                         </div>
                     </div>
-                    <!-- Preview -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <label class="form-label fw-bold">Preview:</label>
-                        <p id="date_preview" class="mb-0 text-primary">No date selected</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" id="apply_dates_btn" class="btn btn-primary">Apply Dates</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" id="apply_dates_btn" class="btn btn-primary">Apply Dates</button>
                 </div>
             </div>
         </div>
-    </div>
-    @endif
+        @endif
 </div>
 
 <style>
@@ -787,6 +867,36 @@
         grid-column: 1 / -1;
     }
 
+    .comorbidities-selected-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        min-height: 1.75rem;
+    }
+
+    .comorbidity-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        color: #0c4a6e;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .comorbidity-chip-remove {
+        background: transparent;
+        border: none;
+        color: #0369a1;
+        cursor: pointer;
+        font-size: 0.75rem;
+        padding: 0;
+        line-height: 1;
+    }
+
     /* Drag and Drop Zone Styles */
     #drop_zone {
         cursor: pointer;
@@ -857,6 +967,7 @@
 <script>
     // Track removed existing images
     let removedImages = [];
+    const initialYearLevelId = @json((int) old('year_level_id', $user - > year_level_id ?? 0));
 
     function removeExistingImage(index) {
         if (confirm('Are you sure you want to remove this image?')) {
@@ -874,7 +985,8 @@
 
     // Function to update field visibility based on year_level_id
     function updateFieldsVisibility() {
-        const yearLevelId = document.getElementById('year_level_id')?.value;
+        const selectedYearLevelId = document.getElementById('year_level_id')?.value;
+        const yearLevelId = parseInt(selectedYearLevelId || initialYearLevelId || 0, 10);
 
         const campusField = document.getElementById('campus_field');
         const collegeField = document.getElementById('college_field');
@@ -889,17 +1001,17 @@
         if (departmentField) departmentField.style.display = 'none';
         if (officeField) officeField.style.display = 'none';
 
-        if (yearLevelId == '7') {
+        if (yearLevelId === 7) {
             // Faculty: Show College and Department
             if (collegeField) collegeField.style.display = 'block';
             if (departmentField) departmentField.style.display = 'block';
-        } else if (yearLevelId == '8') {
+        } else if (yearLevelId === 8) {
             // Staff: Show Office only
             if (officeField) officeField.style.display = 'block';
-        } else if (yearLevelId == '9') {
+        } else if (yearLevelId === 9) {
             // Guest: Hide all additional fields
             // All fields are already hidden
-        } else if (yearLevelId >= '1' && yearLevelId <= '6') {
+        } else if (yearLevelId >= 1 && yearLevelId <= 6) {
             // Students: Show Campus, College, Course & Year
             if (campusField) campusField.style.display = 'block';
             if (collegeField) collegeField.style.display = 'block';
@@ -911,8 +1023,125 @@
         // Add event listener for year_level_id changes
         const yearLevelSelect = document.getElementById('year_level_id');
         if (yearLevelSelect) {
+            if (!yearLevelSelect.value && initialYearLevelId > 0) {
+                yearLevelSelect.value = String(initialYearLevelId);
+            }
             yearLevelSelect.addEventListener('change', updateFieldsVisibility);
         }
+
+        updateFieldsVisibility();
+
+        // ==================== COMORBIDITIES MULTI-SELECT ====================
+        const comorbiditiesInput = document.getElementById('comorbidities_input');
+        const comorbiditiesHiddenInput = document.getElementById('comorbidities_custom');
+        const comorbiditiesSelectedList = document.getElementById('comorbidities_selected_list');
+        const addComorbidityBtn = document.getElementById('add_comorbidity_btn');
+        let selectedComorbidities = [];
+
+        function normalizeComorbidity(value) {
+            return String(value || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function updateComorbiditiesHiddenInput() {
+            if (comorbiditiesHiddenInput) {
+                comorbiditiesHiddenInput.value = selectedComorbidities.join(', ');
+            }
+        }
+
+        function renderComorbidityChips() {
+            if (!comorbiditiesSelectedList) {
+                return;
+            }
+
+            comorbiditiesSelectedList.innerHTML = '';
+
+            selectedComorbidities.forEach((item, index) => {
+                const chip = document.createElement('span');
+                chip.className = 'comorbidity-chip';
+                chip.textContent = item;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'comorbidity-chip-remove';
+                removeBtn.setAttribute('aria-label', `Remove ${item}`);
+                removeBtn.textContent = 'x';
+                removeBtn.addEventListener('click', function() {
+                    selectedComorbidities.splice(index, 1);
+                    renderComorbidityChips();
+                    updateComorbiditiesHiddenInput();
+                });
+
+                chip.appendChild(removeBtn);
+                comorbiditiesSelectedList.appendChild(chip);
+            });
+        }
+
+        function addComorbidity(value) {
+            const normalized = normalizeComorbidity(value);
+
+            if (!normalized) {
+                return;
+            }
+
+            const duplicate = selectedComorbidities.some((item) => item.toLowerCase() === normalized.toLowerCase());
+            if (duplicate) {
+                if (comorbiditiesInput) {
+                    comorbiditiesInput.value = '';
+                }
+                return;
+            }
+
+            selectedComorbidities.push(normalized);
+            renderComorbidityChips();
+            updateComorbiditiesHiddenInput();
+
+            if (comorbiditiesInput) {
+                comorbiditiesInput.value = '';
+            }
+        }
+
+        function setComorbidities(value) {
+            selectedComorbidities = [];
+
+            const values = String(value || '')
+                .split(',')
+                .map((item) => normalizeComorbidity(item))
+                .filter((item) => item !== '');
+
+            values.forEach((item) => {
+                const duplicate = selectedComorbidities.some((existingItem) => existingItem.toLowerCase() === item.toLowerCase());
+                if (!duplicate) {
+                    selectedComorbidities.push(item);
+                }
+            });
+
+            renderComorbidityChips();
+            updateComorbiditiesHiddenInput();
+        }
+
+        if (addComorbidityBtn) {
+            addComorbidityBtn.addEventListener('click', function() {
+                addComorbidity(comorbiditiesInput ? comorbiditiesInput.value : '');
+            });
+        }
+
+        if (comorbiditiesInput) {
+            comorbiditiesInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addComorbidity(this.value);
+                }
+            });
+
+            comorbiditiesInput.addEventListener('blur', function() {
+                const pendingValue = normalizeComorbidity(this.value);
+                if (pendingValue) {
+                    addComorbidity(pendingValue);
+                }
+            });
+        }
+
+        setComorbidities(comorbiditiesHiddenInput ? comorbiditiesHiddenInput.value : '');
 
 
         // ==================== IMAGE UPLOAD WITH DRAG & DROP AND URL DOWNLOAD ====================
@@ -1194,6 +1423,61 @@
             });
             autoResizeTextarea(textarea);
         });
+
+        // ==================== MEDICAL CERTIFICATE DOCTOR FIELD SYNC ====================
+
+        const doctorSelector = document.getElementById('medical_cert_doctor_id');
+        const doctorDisplayName = document.getElementById('doctor_display_name');
+        const doctorLicenseInput = document.getElementById('doc_lic_no');
+        const doctorPtrInput = document.getElementById('doc_prt_no');
+
+        const syncMedicalCertificateDoctorDetails = () => {
+            if (!doctorSelector) {
+                return;
+            }
+
+            let selectedDoctorName = '';
+            let selectedDoctorLic = '';
+            let selectedDoctorPtr = '';
+
+            if (doctorSelector.tagName === 'SELECT') {
+                const selectedOption = doctorSelector.options[doctorSelector.selectedIndex];
+
+                if (!selectedOption || !selectedOption.value) {
+                    if (doctorDisplayName) {
+                        doctorDisplayName.textContent = '';
+                    }
+                    return;
+                }
+
+                selectedDoctorName = selectedOption.dataset.name || selectedOption.textContent.trim();
+                selectedDoctorLic = selectedOption.dataset.lic || '';
+                selectedDoctorPtr = selectedOption.dataset.ptr || '';
+            } else {
+                selectedDoctorName = doctorSelector.dataset.name || '';
+                selectedDoctorLic = doctorSelector.dataset.lic || '';
+                selectedDoctorPtr = doctorSelector.dataset.ptr || '';
+            }
+
+            if (doctorDisplayName) {
+                doctorDisplayName.textContent = selectedDoctorName ? `Dr. ${selectedDoctorName}` : 'Doctor';
+            }
+
+            if (doctorLicenseInput && selectedDoctorLic !== '') {
+                doctorLicenseInput.value = selectedDoctorLic;
+            }
+
+            if (doctorPtrInput && selectedDoctorPtr !== '') {
+                doctorPtrInput.value = selectedDoctorPtr;
+            }
+        };
+
+        if (doctorSelector) {
+            if (doctorSelector.tagName === 'SELECT') {
+                doctorSelector.addEventListener('change', syncMedicalCertificateDoctorDetails);
+            }
+            syncMedicalCertificateDoctorDetails();
+        }
 
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 

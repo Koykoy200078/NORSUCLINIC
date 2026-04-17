@@ -84,6 +84,39 @@
 </head>
 
 <body>
+    @php
+    $cleanValue = static function ($value): string {
+    if ($value === null) {
+    return '';
+    }
+
+    $text = trim((string) $value);
+    if ($text === '') {
+    return '';
+    }
+
+    $normalized = strtolower($text);
+    if ($normalized === 'unknown' || str_starts_with($normalized, 'unknown ')) {
+    return '';
+    }
+
+    if (in_array($normalized, ['n/a', 'na', 'null'], true)) {
+    return '';
+    }
+
+    return $text;
+    };
+
+    $pdfCampus = $cleanValue($requestDocument->campus);
+    $pdfCollege = $cleanValue($requestDocument->college);
+    $pdfCourse = $cleanValue($requestDocument->course);
+    $pdfYearLevel = $cleanValue($requestDocument->year_level);
+    $pdfInformant = $cleanValue($requestDocument->informant);
+    $pdfYearOrRole = $pdfYearLevel !== '' ? $pdfYearLevel : $pdfInformant;
+    $hasEducationalInfo = $pdfCampus !== '' || $pdfCollege !== '' || $pdfCourse !== '' || $pdfYearOrRole !== '';
+    $pdfEmergencyContact = $cleanValue($requestDocument->emergency_contact);
+    @endphp
+
     <div class="header">
         <h2>Negros Oriental State University</h2>
         <div>University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</div>
@@ -119,31 +152,39 @@
         </tr>
     </table>
 
+    @if($hasEducationalInfo)
     <div class="section-title">Educational Information</div>
     <table class="info-table">
+        @if($pdfCampus !== '' || $pdfCollege !== '')
         <tr>
             <th>Campus</th>
-            <td>{{ $requestDocument->campus }}</td>
+            <td>{{ $pdfCampus }}</td>
             <th>College</th>
-            <td>{{ $requestDocument->college }}</td>
+            <td>{{ $pdfCollege }}</td>
         </tr>
+        @endif
+        @if($pdfCourse !== '' || $pdfYearOrRole !== '')
         <tr>
             <th>Course</th>
-            <td>{{ $requestDocument->course }}</td>
+            <td>{{ $pdfCourse }}</td>
             <th>Year Level</th>
-            <td>{{ $requestDocument->year_level }}</td>
+            <td>{{ $pdfYearOrRole }}</td>
         </tr>
+        @endif
     </table>
+    @endif
 
+    @if($pdfInformant !== '' || $pdfEmergencyContact !== '')
     <div class="section-title">Emergency Contact</div>
     <table class="info-table">
         <tr>
             <th>Informant</th>
-            <td>{{ $requestDocument->informant }}</td>
+            <td>{{ $pdfInformant }}</td>
             <th>Contact Person & Number</th>
-            <td>{{ $requestDocument->emergency_contact }}</td>
+            <td>{{ $pdfEmergencyContact }}</td>
         </tr>
     </table>
+    @endif
 
     <div class="section-title">Complaints</div>
     <table class="info-table">

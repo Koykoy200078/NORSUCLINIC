@@ -7,25 +7,36 @@ $assessmentEmpty = is_null($row->assessment) || trim($row->assessment) === '';
 $planEmpty = is_null($row->plan) || trim($row->plan) === '';
 $needsAttention = $assessmentEmpty || $planEmpty;
 }
+
+$queryParams = array_filter([
+'module' => request()->query('module'),
+'patient_id' => request()->query('patient_id'),
+], fn($value) => $value !== null && $value !== '');
+
+$showUrl = isRole('clinic_admin') ? route('document-issuances.show', $id) :
+(isRole('staff') ? route('staff.document-issuances.show', $id) :
+(isRole('doctor') ? route('doctors.document-issuances.show', $id) : route('document-issuances.show', $id)));
+
+$editUrl = isRole('clinic_admin') ? route('document-issuances.edit', $id) :
+(isRole('staff') ? route('staff.document-issuances.edit', $id) :
+(isRole('doctor') ? route('doctors.document-issuances.edit', $id) : route('document-issuances.edit', $id)));
+
+if (!empty($queryParams)) {
+$queryString = http_build_query($queryParams);
+$showUrl .= '?' . $queryString;
+$editUrl .= '?' . $queryString;
+}
 @endphp
 
 <div class="d-flex justify-content-center">
-    <a href="{{ 
-        isRole('clinic_admin') ? route('document-issuances.show', $id) : 
-        (isRole('staff') ? route('staff.document-issuances.show', $id) : 
-        (isRole('doctor') ? route('doctors.document-issuances.show', $id) : route('document-issuances.show', $id)))
-    }}"
+    <a href="{{ $showUrl }}"
         class="btn px-1 text-primary fs-3"
         data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.view') }}">
         <i class="fas fa-eye"></i>
     </a>
 
-    <a href="{{ 
-        isRole('clinic_admin') ? route('document-issuances.edit', $id) : 
-        (isRole('staff') ? route('staff.document-issuances.edit', $id) : 
-        (isRole('doctor') ? route('doctors.document-issuances.edit', $id) : route('document-issuances.edit', $id)))
-    }}"
+    <a href="{{ $editUrl }}"
         class="btn px-1 {{ $needsAttention ? 'text-warning' : 'text-primary' }} fs-3 {{ $needsAttention ? 'pulse-animation' : '' }}"
         data-bs-toggle="tooltip"
         data-bs-original-title="{{ $needsAttention ? 'Complete Assessment/Plan Required' : __('messages.common.edit') }}">

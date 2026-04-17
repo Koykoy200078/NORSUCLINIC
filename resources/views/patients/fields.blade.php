@@ -176,14 +176,6 @@
 
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Record Details') }}</div>
     <div class="row">
-        <div class="col-md-6 mb-5">
-            {{ Form::label('campus_address', __('Campus Address').':', ['class' => 'form-label required']) }}
-            {{ Form::textarea('campus_address', !empty($patient) ? $patient->campus_address : old('campus_address'), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('Dormitory/Building and Room Number'), 'required']) }}
-        </div>
-        <div class="col-md-6 mb-5">
-            {{ Form::label('permanent_address', __('Permanent Address').':', ['class' => 'form-label required']) }}
-            {{ Form::textarea('permanent_address', !empty($patient) ? $patient->permanent_address : old('permanent_address'), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('Home address for long-term records'), 'required']) }}
-        </div>
         <div class="col-md-12 mb-5">
             {{ Form::label('immunization_record', __('Immunization Record').':', ['class' => 'form-label required']) }}
             {{ Form::textarea('immunization_record', !empty($patient) ? $patient->immunization_record : old('immunization_record'), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('Include required vaccines (Hepatitis B, MMR, COVID-19, etc.)'), 'required']) }}

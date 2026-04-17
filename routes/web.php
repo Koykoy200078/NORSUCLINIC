@@ -162,6 +162,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::resource('document-issuances', DocumentIssuanceController::class);
         Route::get('/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('search-users');
         Route::get('/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('get-last-consultation');
+        Route::get('/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('get-last-medical-certificate');
         Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
     });
 
@@ -277,6 +278,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Request Documents
     Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
     Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
+    Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate');
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
         Route::resource('document-issuances', DocumentIssuanceController::class);

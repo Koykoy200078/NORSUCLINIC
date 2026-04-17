@@ -82,6 +82,7 @@ class PatientController extends AppBaseController
     public function store(CreatePatientRequest $request): RedirectResponse
     {
         $input = $request->all();
+        unset($input['campus_address'], $input['permanent_address']);
 
         $patient = $this->patientRepository->store($input);
 
@@ -144,6 +145,7 @@ class PatientController extends AppBaseController
     public function update(UpdatePatientRequest $request, Patient $patient): RedirectResponse
     {
         $input = request()->except(['_method', '_token']);
+        unset($input['campus_address'], $input['permanent_address']);
 
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));

@@ -208,7 +208,7 @@
         </div>
 
         <div class="text-right mt-4">
-            <p class="font-bold" style="margin-bottom: 0; font-size: 10px;">Dr. Michael S. Oliveros</p>
+            <p class="font-bold" style="margin-bottom: 0; font-size: 10px;">{{ $medicalCertificateDoctorName ? 'Dr. ' . $medicalCertificateDoctorName : 'Dr. Michael S. Oliveros' }}</p>
             <p style="margin: 0; font-size: 10px;">Lic #: <span class="input-line" style="min-width: 60px; font-size: 10px;">{{ $requestDocument->doc_lic_no }}</span></p>
             <p style="margin: 0; font-size: 10px;">PTR #: <span class="input-line" style="min-width: 60px; font-size: 10px;">{{ $requestDocument->doc_prt_no }}</span></p>
         </div>

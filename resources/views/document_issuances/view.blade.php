@@ -3,19 +3,31 @@
 {{__('messages.request.view_request')}}
 @endsection
 @section('content')
+@php
+$documentModule = request('module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
+$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
+(isRole('staff') ? route('staff.document-issuances.index') :
+(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
+
+$routeDocument = request()->route('document_issuance');
+$documentId = $requestDocument->id
+?? (is_object($routeDocument) ? ($routeDocument->id ?? null) : $routeDocument)
+?? request()->route('id');
+
+$exportPdfUrl = $documentId
+? (isRole('clinic_admin') ? route('document-issuances.export-pdf', $documentId) :
+(isRole('staff') ? route('staff.document-issuances.export-pdf', $documentId) :
+(isRole('doctor') ? route('doctors.document-issuances.export-pdf', $documentId) : route('document-issuances.export-pdf', $documentId))))
+: null;
+@endphp
 <div class="p-4">
     <div class="flex justify-between items-center mb-4">
-        <a href="{{ 
-            isRole('clinic_admin') ? route('document-issuances.index') : 
-            (isRole('staff') ? route('staff.document-issuances.index') : 
-            (isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')))
-        }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
+        <a href="{{ $indexUrlWithModule }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
-        <a href="{{ 
-            isRole('clinic_admin') ? route('document-issuances.export-pdf', $requestDocument->id) : 
-            (isRole('staff') ? route('staff.document-issuances.export-pdf', $requestDocument->id) : 
-            (isRole('doctor') ? route('doctors.document-issuances.export-pdf', $requestDocument->id) : route('document-issuances.export-pdf', $requestDocument->id)))
-        }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
+        @if($exportPdfUrl)
+        <a href="{{ $exportPdfUrl }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
+        @endif
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')
@@ -25,6 +37,33 @@
     $consultationImages = $requestDocument->consultation_images
     ? (is_string($requestDocument->consultation_images) ? json_decode($requestDocument->consultation_images, true) : $requestDocument->consultation_images)
     : [];
+
+    $isMeaningfulValue = static function ($value): bool {
+    if ($value === null) {
+    return false;
+    }
+
+    $text = trim((string) $value);
+    if ($text === '') {
+    return false;
+    }
+
+    $normalized = strtolower($text);
+    if ($normalized === 'unknown' || str_starts_with($normalized, 'unknown ')) {
+    return false;
+    }
+
+    return !in_array($normalized, ['n/a', 'na', 'null'], true);
+    };
+
+    $campusDisplay = $isMeaningfulValue($requestDocument->campus) ? trim((string) $requestDocument->campus) : null;
+    $collegeDisplay = $isMeaningfulValue($requestDocument->college) ? trim((string) $requestDocument->college) : null;
+    $courseDisplay = $isMeaningfulValue($requestDocument->course) ? trim((string) $requestDocument->course) : null;
+    $yearLevelDisplay = $isMeaningfulValue($requestDocument->year_level) ? trim((string) $requestDocument->year_level) : null;
+    $informantDisplay = $isMeaningfulValue($requestDocument->informant) ? trim((string) $requestDocument->informant) : null;
+
+    $yearOrRoleDisplay = $yearLevelDisplay ?? $informantDisplay;
+    $showCourseYearBlock = $courseDisplay !== null || $yearOrRoleDisplay !== null;
     @endphp
     <form>
         <div class="grid grid-cols-4 gap-2 pb-2">
@@ -60,25 +99,39 @@
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #</label>
                 <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ $requestDocument->patient_contact }}" readonly>
             </div>
+            @if($campusDisplay)
             <div class="col-span-1">
                 <label class="block text-xs" for="campus">CAMPUS</label>
-                <input type="text" id="campus_id" name="campus_id" class="w-full border-b border-black" value="{{ $requestDocument->campus }}" readonly>
+                <input type="text" id="campus_id" name="campus_id" class="w-full border-b border-black" value="{{ $campusDisplay }}" readonly>
             </div>
+            @endif
+            @if($collegeDisplay)
             <div class="col-span-1">
                 <label class="block text-xs" for="college">COLLEGE</label>
-                <input type="text" id="college_id" name="college_id" class="w-full border-b border-black" value="{{ $requestDocument->college }}" readonly>
+                <input type="text" id="college_id" name="college_id" class="w-full border-b border-black" value="{{ $collegeDisplay }}" readonly>
             </div>
+            @endif
+            @if($showCourseYearBlock)
             <div class="col-span-1">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
+                @if($courseDisplay && $yearOrRoleDisplay)
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="course_id" name="course_id" class="w-full border-b border-black" value="{{ $requestDocument->course }}" readonly>
-                    <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $requestDocument->year_level }}" readonly>
+                    <input type="text" id="course_id" name="course_id" class="w-full border-b border-black" value="{{ $courseDisplay }}" readonly>
+                    <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearOrRoleDisplay }}" readonly>
                 </div>
+                @elseif($courseDisplay)
+                <input type="text" id="course_id" name="course_id" class="w-full border-b border-black" value="{{ $courseDisplay }}" readonly>
+                @else
+                <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearOrRoleDisplay }}" readonly>
+                @endif
             </div>
+            @endif
+            @if($informantDisplay)
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
-                <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ $requestDocument->informant }}" readonly>
+                <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ $informantDisplay }}" readonly>
             </div>
+            @endif
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
                 <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" value="{{ $requestDocument->emergency_contact }}" readonly>
@@ -378,7 +431,7 @@
                 <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->request_of }}" readonly> for your reference.</p>
 
                 <div class="text-right mt-4 mr-5">
-                    <p class="font-semibold">Dr. Michael S. Oliveros</p>
+                    <p class="font-semibold">{{ $medicalCertificateDoctorName ? 'Dr. ' . $medicalCertificateDoctorName : 'Dr. Michael S. Oliveros' }}</p>
                     <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->doc_lic_no }}" readonly></p>
                     <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->doc_prt_no }}" readonly></p>
                 </div>

@@ -1,12 +1,27 @@
 <div>
-    @if($user->type != 3 && !request('user_id'))
-    <!-- Only show user search for consultation forms, not for medical certificates with user_id -->
+    @if($user->type != 4 && !request('user_id'))
     <div class="mb-10">
         <label class="block text-xs" for="user_search">Search User</label>
         <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name" autocomplete="off">
         <div id="user_search_results" class="absolute bg-white border border-gray-300 w-fit hidden z-10"></div>
     </div>
     @endif
+
+    @php
+    $doctorOptions = collect($availableDoctors ?? [])->filter(function ($doctor) {
+    return $doctor->doctor !== null;
+    })->map(function ($doctor) {
+    return [
+    'id' => $doctor->id,
+    'name' => trim(($doctor->first_name ?? '') . ' ' . ($doctor->last_name ?? '')),
+    'lic_no' => (string) ($doctor->doctor->prc_license_number ?? ''),
+    'ptr_no' => (string) ($doctor->doctor->ptr_number ?? ''),
+    ];
+    })->values();
+
+    $singleDoctor = $doctorOptions->count() === 1 ? $doctorOptions->first() : null;
+    $selectedDoctorId = old('doctor_user_id', $singleDoctor['id'] ?? '');
+    @endphp
 
 
     <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
@@ -46,7 +61,7 @@
             <div class="flex row">
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is to certify that Mr./Ms.
                     <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ auth()->user()->id }}" readonly required>
-                    <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" readonly required>
+                    <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly required>
                     <!-- Hidden field to indicate redirect to patient history -->
                     <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
                     <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '' }}" readonly required>,
@@ -101,12 +116,40 @@
 
             <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
 
-            <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" required> for your reference.</p>
+            <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ old('request_of', $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '') }}" required> for your reference.</p>
 
             <div class="text-right mt-4 mr-5">
-                <p class="font-semibold">Dr. Michael S. Oliveros</p>
-                <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="0113005" required></p>
-                <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" required></p>
+                @if($doctorOptions->count() > 1)
+                <div class="inline-block text-left mb-2" style="min-width: 260px;">
+                    <label for="medical_cert_doctor_id" class="block text-xs font-semibold">Attending Doctor<span class="text-red-500">*</span></label>
+                    <select id="medical_cert_doctor_id" name="doctor_user_id" class="w-full border-b border-black" required>
+                        <option value="" disabled {{ $selectedDoctorId ? '' : 'selected' }}>Select Doctor</option>
+                        @foreach($doctorOptions as $doctorOption)
+                        <option
+                            value="{{ $doctorOption['id'] }}"
+                            data-name="{{ $doctorOption['name'] }}"
+                            data-lic="{{ $doctorOption['lic_no'] }}"
+                            data-ptr="{{ $doctorOption['ptr_no'] }}"
+                            {{ (string) $selectedDoctorId === (string) $doctorOption['id'] ? 'selected' : '' }}>
+                            {{ $doctorOption['name'] }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <p class="font-semibold" id="doctor_display_name"></p>
+                @else
+                <input
+                    type="hidden"
+                    id="medical_cert_doctor_id"
+                    name="doctor_user_id"
+                    value="{{ $singleDoctor['id'] ?? '' }}"
+                    data-name="{{ $singleDoctor['name'] ?? '' }}"
+                    data-lic="{{ $singleDoctor['lic_no'] ?? '' }}"
+                    data-ptr="{{ $singleDoctor['ptr_no'] ?? '' }}">
+                <p class="font-semibold" id="doctor_display_name">{{ $singleDoctor ? 'Dr. ' . $singleDoctor['name'] : 'Doctor' }}</p>
+                @endif
+                <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ old('doc_lic_no', $singleDoctor['lic_no'] ?? '') }}" required></p>
+                <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ old('doc_prt_no', $singleDoctor['ptr_no'] ?? '') }}" required></p>
             </div>
 
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 text-center">
@@ -245,12 +288,80 @@
         const searchRoute = '{{ route("search-users") }}';
         @endif
 
+        @if(isRole('clinic_admin'))
+        const getLastMedicalCertificateRoute = '{{ route("get-last-medical-certificate") }}';
+        @elseif(isRole('staff'))
+        const getLastMedicalCertificateRoute = '{{ route("staff.document-issuances.get-last-medical-certificate") }}';
+        @elseif(isRole('doctor'))
+        const getLastMedicalCertificateRoute = '{{ route("doctors.document-issuances.get-last-medical-certificate") }}';
+        @else
+        const getLastMedicalCertificateRoute = '{{ route("get-last-medical-certificate") }}';
+        @endif
+
+        const setFieldValue = (fieldId, value) => {
+            const field = document.getElementById(fieldId);
+            if (!field) {
+                return;
+            }
+
+            if (value !== null && value !== undefined && value !== '') {
+                field.value = value;
+            }
+        };
+
+        const setBloodPressureFields = (value) => {
+            if (!value) {
+                return;
+            }
+
+            const parts = String(value).split('/');
+            setFieldValue('vital_signs_bp_2', (parts[0] || '').trim());
+            setFieldValue('vital_signs_bp_22', (parts[1] || '').trim());
+        };
+
+        const loadLastMedicalCertificateData = async (userId, fallbackRequestOf = '') => {
+            if (!userId) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getLastMedicalCertificateRoute}?user_id=${encodeURIComponent(userId)}`);
+                const result = await response.json();
+
+                if (!result.success) {
+                    if (fallbackRequestOf) {
+                        setFieldValue('request_of', fallbackRequestOf);
+                    }
+                    return;
+                }
+
+                const data = result.data || {};
+
+                setFieldValue('complaints_diagnosis', data.complaints_diagnosis);
+                setBloodPressureFields(data.vital_signs_bp);
+                setFieldValue('vital_signs_pr_2', data.vital_signs_pr);
+                setFieldValue('vital_signs_rr_2', data.vital_signs_rr);
+                setFieldValue('vital_signs_temp_2', data.vital_signs_temp);
+                setFieldValue('vital_signs_height_2', data.vital_signs_height);
+                setFieldValue('vital_signs_weight_2', data.vital_signs_weight);
+                setFieldValue('medical_cert_remarks', data.medical_cert_remarks);
+
+                if (data.request_of !== null && data.request_of !== undefined && data.request_of !== '') {
+                    setFieldValue('request_of', data.request_of);
+                } else if (fallbackRequestOf) {
+                    setFieldValue('request_of', fallbackRequestOf);
+                }
+            } catch (error) {
+                console.error('Error loading latest medical certificate data:', error);
+            }
+        };
+
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {
                 const query = userSearchInput.value;
 
                 if (query.length > 1) {
-                    fetch(`${searchRoute}?query=${query}`)
+                    fetch(`${searchRoute}?query=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
                             userSearchResults.innerHTML = '';
@@ -270,12 +381,13 @@
                                 option.textContent = `${patient.user.first_name} ${patient.user.last_name}`;
                                 option.dataset.patient = JSON.stringify(patient);
 
-                                option.addEventListener('click', function() {
+                                option.addEventListener('click', async function() {
                                     const patientData = JSON.parse(this.dataset.patient);
+                                    const fullName = patientData.user.full_name || `${patientData.user.first_name || ''} ${patientData.user.last_name || ''}`.trim();
 
                                     document.getElementById('user_id').value = patientData.user.id;
-                                    document.getElementById('name_2').value = `${patientData.user.full_name}`;
-                                    document.getElementById('request_of').value = `${patientData.user.full_name}`;
+                                    document.getElementById('name_2').value = fullName;
+                                    document.getElementById('request_of').value = fullName;
                                     document.getElementById('age_2').value = calculateAge(patientData.user.dob);
                                     document.getElementById('gender_2').value = patientData.user.gender === 1 ? 'Male' : 'Female';
 
@@ -301,6 +413,8 @@
                                             document.getElementById('address_2').value = addressParts.length > 0 ? addressParts.join(', ') : (patientData.address.address1 || '');
                                         }
                                     }
+
+                                    await loadLastMedicalCertificateData(patientData.user.id, fullName);
 
                                     userSearchResults.classList.add('hidden');
                                 });
@@ -336,6 +450,68 @@
                 age--;
             }
             return age;
+        }
+
+        const doctorSelector = document.getElementById('medical_cert_doctor_id');
+        const doctorDisplayName = document.getElementById('doctor_display_name');
+        const doctorLicenseInput = document.getElementById('doc_lic_no');
+        const doctorPtrInput = document.getElementById('doc_prt_no');
+
+        const syncDoctorDetails = () => {
+            if (!doctorSelector) {
+                return;
+            }
+
+            let selectedDoctorName = '';
+            let selectedDoctorLic = '';
+            let selectedDoctorPtr = '';
+
+            if (doctorSelector.tagName === 'SELECT') {
+                const selectedOption = doctorSelector.options[doctorSelector.selectedIndex];
+
+                if (!selectedOption || !selectedOption.value) {
+                    if (doctorDisplayName) {
+                        doctorDisplayName.textContent = '';
+                    }
+                    return;
+                }
+
+                selectedDoctorName = selectedOption.dataset.name || selectedOption.textContent.trim();
+                selectedDoctorLic = selectedOption.dataset.lic || '';
+                selectedDoctorPtr = selectedOption.dataset.ptr || '';
+            } else {
+                selectedDoctorName = doctorSelector.dataset.name || '';
+                selectedDoctorLic = doctorSelector.dataset.lic || '';
+                selectedDoctorPtr = doctorSelector.dataset.ptr || '';
+            }
+
+            if (doctorDisplayName) {
+                doctorDisplayName.textContent = selectedDoctorName ? `Dr. ${selectedDoctorName}` : 'Doctor';
+            }
+
+            if (doctorLicenseInput && selectedDoctorLic !== '') {
+                doctorLicenseInput.value = selectedDoctorLic;
+            }
+
+            if (doctorPtrInput && selectedDoctorPtr !== '') {
+                doctorPtrInput.value = selectedDoctorPtr;
+            }
+        };
+
+        if (doctorSelector) {
+            if (doctorSelector.tagName === 'SELECT') {
+                doctorSelector.addEventListener('change', syncDoctorDetails);
+            }
+            syncDoctorDetails();
+        }
+
+        const prefilledUserId = document.getElementById('user_id').value;
+        if (prefilledUserId) {
+            const fallbackRequestOf = document.getElementById('name_2').value || '';
+            if (fallbackRequestOf) {
+                setFieldValue('request_of', fallbackRequestOf);
+            }
+            loadLastMedicalCertificateData(prefilledUserId, fallbackRequestOf);
         }
 
         // ==================== DATE SELECTOR FUNCTIONALITY ====================

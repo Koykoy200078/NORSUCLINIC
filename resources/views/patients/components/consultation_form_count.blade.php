@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-center">
     @php
     $count = $row->consultation_form_count ?? 0;
-    $route = isRole('clinic_admin') ? route('document-issuances.index', ['patient_id' => $row->user_id]) :
-    (isRole('staff') ? route('staff.document-issuances.index', ['patient_id' => $row->user_id]) :
-    (isRole('doctor') ? route('doctors.document-issuances.index', ['patient_id' => $row->user_id]) : '#'));
+    $route = isRole('clinic_admin') ? route('document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'consultation']) :
+    (isRole('staff') ? route('staff.document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'consultation']) :
+    (isRole('doctor') ? route('doctors.document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'consultation']) : '#'));
     @endphp
 
     @if($count > 0)

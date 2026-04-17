@@ -26,14 +26,6 @@
     <label class="pb-2 fs-4 text-gray-600">{{ __('Nationality/Citizenship') }}</label>
     <span class="fs-4 text-gray-800">{{ !empty($patient->user->nationality_citizenship) ? $patient->user->nationality_citizenship : __('messages.common.n/a') }}</span>
 </div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Campus Address') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty($patient->campus_address) ? $patient->campus_address : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Permanent Address') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty($patient->permanent_address) ? $patient->permanent_address : __('messages.common.n/a') }}</span>
-</div>
 <div class="col-md-12 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-4 text-gray-600">{{ __('Immunization Record') }}</label>
     <span class="fs-4 text-gray-800">{{ !empty($patient->immunization_record) ? $patient->immunization_record : __('messages.common.n/a') }}</span>

@@ -139,8 +139,6 @@ return new class extends Migration
 
         if (Schema::hasTable('patients')) {
             $addPatientTypeId = ! Schema::hasColumn('patients', 'patient_type_id');
-            $addCampusAddress = ! Schema::hasColumn('patients', 'campus_address');
-            $addPermanentAddress = ! Schema::hasColumn('patients', 'permanent_address');
             $addImmunizationRecord = ! Schema::hasColumn('patients', 'immunization_record');
             $addInsuranceProviderId = ! Schema::hasColumn('patients', 'insurance_provider_id');
             $addInsurancePolicyNumber = ! Schema::hasColumn('patients', 'insurance_policy_number');
@@ -150,8 +148,6 @@ return new class extends Migration
 
             if (
                 $addPatientTypeId ||
-                $addCampusAddress ||
-                $addPermanentAddress ||
                 $addImmunizationRecord ||
                 $addInsuranceProviderId ||
                 $addInsurancePolicyNumber ||
@@ -161,8 +157,6 @@ return new class extends Migration
             ) {
                 Schema::table('patients', function (Blueprint $table) use (
                     $addPatientTypeId,
-                    $addCampusAddress,
-                    $addPermanentAddress,
                     $addImmunizationRecord,
                     $addInsuranceProviderId,
                     $addInsurancePolicyNumber,
@@ -172,14 +166,6 @@ return new class extends Migration
                 ) {
                     if ($addPatientTypeId) {
                         $table->unsignedBigInteger('patient_type_id')->nullable()->after('user_id');
-                    }
-
-                    if ($addCampusAddress) {
-                        $table->text('campus_address')->nullable()->after('maintenance');
-                    }
-
-                    if ($addPermanentAddress) {
-                        $table->text('permanent_address')->nullable()->after('campus_address');
                     }
 
                     if ($addImmunizationRecord) {
@@ -266,8 +252,6 @@ return new class extends Migration
                 foreach (
                     [
                         'patient_type_id',
-                        'campus_address',
-                        'permanent_address',
                         'immunization_record',
                         'insurance_provider_id',
                         'insurance_policy_number',

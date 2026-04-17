@@ -1,21 +1,34 @@
 @extends('layouts.app')
 @section('title')
-@if(request('patient_id'))
-Document Issuances
+@php
+$documentModule = request('module', request('document_type') === 'medical_certificate' ? 'certificate' : 'consultation');
+$isConsultationModule = $documentModule !== 'certificate';
+@endphp
+@if($isConsultationModule)
+Consultation Management
 @else
-Document & Certificate Issuance
+Certificate Issuance
 @endif
 @endsection
 
 @section('header_toolbar')
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">Document & Certificate Issuance</h1>
+        <h1 class="mb-0 me-1">{{ $isConsultationModule ? 'Consultation Management' : 'Certificate Issuance' }}</h1>
         <div class="text-end mt-4 mt-md-0">
             @if(!request('patient_id'))
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDocumentModal">
-                <i class="fa-solid fa-plus"></i> Create Document
-            </button>
+            @php
+            $createRoute = isRole('clinic_admin') ? route('document-issuances.create') :
+            (isRole('staff') ? route('staff.document-issuances.create') : route('doctors.document-issuances.create'));
+
+            $createUrl = $createRoute . ($isConsultationModule
+            ? '?document_type=consultation_form&module=consultation'
+            : '?document_type=medical_certificate&module=certificate');
+            @endphp
+            <a href="{{ $createUrl }}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i>
+                {{ $isConsultationModule ? 'Record Walk-in / Schedule Visit' : 'Create Medical Certificate' }}
+            </a>
             @endif
         </div>
     </div>
@@ -29,7 +42,7 @@ Document & Certificate Issuance
     @if(request('patient_id'))
     @php
     $patient = \App\Models\Patient::whereHas('user', function($q) {
-        $q->where('id', request('patient_id'));
+    $q->where('id', request('patient_id'));
     })->with('user')->first();
     @endphp
 
@@ -44,30 +57,33 @@ Document & Certificate Issuance
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                {{ $patient->user->first_name }} {{ $patient->user->last_name }} - Document Issuances
+                {{ $patient->user->first_name }} {{ $patient->user->last_name }} - {{ $isConsultationModule ? 'Consultation Management' : 'Certificate Issuance' }}
             </li>
         </ol>
     </nav>
     <div class="mb-3">
+        @if(!$isConsultationModule)
         <a href="{{ 
-            isRole('clinic_admin') ? route('document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : 
-            (isRole('staff') ? route('staff.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : 
-            (isRole('doctor') ? route('doctors.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate']) : '#'))
+            isRole('clinic_admin') ? route('document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate', 'module' => 'certificate']) : 
+            (isRole('staff') ? route('staff.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate', 'module' => 'certificate']) : 
+            (isRole('doctor') ? route('doctors.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'medical_certificate', 'module' => 'certificate']) : '#'))
         }}" class="btn btn-success me-2">
             <i class="fa-solid fa-file-medical"></i> Create Medical Certificate
         </a>
+        @else
         <a href="{{ 
-            isRole('clinic_admin') ? route('document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : 
-            (isRole('staff') ? route('staff.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : 
-            (isRole('doctor') ? route('doctors.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form']) : '#'))
+            isRole('clinic_admin') ? route('document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form', 'module' => 'consultation']) : 
+            (isRole('staff') ? route('staff.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form', 'module' => 'consultation']) : 
+            (isRole('doctor') ? route('doctors.document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form', 'module' => 'consultation']) : '#'))
         }}" class="btn btn-primary">
-            <i class="fa-solid fa-notes-medical"></i> Create Consultation Form
+            <i class="fa-solid fa-notes-medical"></i> Record Walk-in / Schedule Visit
         </a>
+        @endif
     </div>
     @endif
     @endif
 
-    @if(isRole('doctor'))
+    @if($isConsultationModule && isRole('doctor'))
     @php
     // Count incomplete consultation forms (missing assessment or plan)
     $incompleteCount = \App\Models\DocumentIssuance::where('document_type', 'consultation_form')
@@ -91,64 +107,7 @@ Document & Certificate Issuance
     @endif
 
     <div class="d-flex flex-column">
-        <livewire:document-issuance-table :patientId="request('patient_id')" />
+        <livewire:document-issuance-table :patientId="request('patient_id')" :module="$documentModule" />
     </div>
 </div>
-
-<!-- Create Document Modal -->
-@if(!request('patient_id'))
-<div class="modal fade" id="createDocumentModal" tabindex="-1" aria-labelledby="createDocumentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createDocumentModalLabel">Create New Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="createDocumentForm" method="GET" action="{{ isRole('clinic_admin') ? route('document-issuances.create') : (isRole('staff') ? route('staff.document-issuances.create') : route('doctors.document-issuances.create')) }}">
-                    <div class="mb-3">
-                        <label for="create_patient_id" class="form-label mb-1">Select Patient <span class="text-danger">*</span></label>
-                        <select class="form-select form-select-solid" name="user_id" id="create_patient_id" data-control="select2" data-placeholder="Choose a patient" required>
-                            <option value=""></option>
-                            @php
-                                $patients = \App\Models\User::where('type', \App\Models\User::PATIENT)
-                                    ->whereHas('patient')
-                                    ->orderBy('first_name')->get();
-                            @endphp
-                            @foreach($patients as $u)
-                                <option value="{{ $u->id }}">{{ $u->first_name }} {{ $u->last_name }} ({{ $u->email }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label for="document_type" class="form-label mb-1">Document Type <span class="text-danger">*</span></label>
-                        <select class="form-select form-select-solid mt-1" name="document_type" id="document_type" required>
-                            <option value="consultation_form">Consultation Form</option>
-                            <option value="medical_certificate">Medical Certificate</option>
-                        </select>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Proceed</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
 @endsection
-
-@if(!request('patient_id'))
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if ($('#create_patient_id').length) {
-            $('#create_patient_id').select2({
-                dropdownParent: $('#createDocumentModal')
-            });
-        }
-    });
-</script>
-@endpush
-@endif
