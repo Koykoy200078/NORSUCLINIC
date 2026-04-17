@@ -43,6 +43,17 @@ $patientDisplayName = $patientUser
         class="btn px-2 text-primary fs-2" data-turbolinks="false">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
+    @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+    <a href="{{ 
+        isRole('clinic_admin') ? route('prescriptions.create', ['patientId' => $row->id]) : 
+        (isRole('staff') ? route('staff.prescriptions.create', ['patientId' => $row->id]) : 
+        (isRole('doctor') ? route('doctors.prescriptions.create', ['patientId' => $row->id]) : '#'))
+    }}" title="Create Prescription" data-bs-toggle="tooltip"
+        data-bs-original-title="Create Prescription"
+        class="btn px-2 text-success fs-2" data-turbolinks="false">
+        <i class="fa-solid fa-file-prescription"></i>
+    </a>
+    @endif
     <a href="javascript:void(0)"
         data-id="{{ $row->user->id }}"
         data-reset-url="{{ 

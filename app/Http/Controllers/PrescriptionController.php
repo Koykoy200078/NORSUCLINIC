@@ -46,6 +46,14 @@ class PrescriptionController extends AppBaseController
     }
 
     /**
+     * Display a listing of prescriptions.
+     */
+    public function index(): View
+    {
+        return view('prescriptions.index');
+    }
+
+    /**
      * Show the form for creating a new Prescription.
      *
      * @return Factory|View

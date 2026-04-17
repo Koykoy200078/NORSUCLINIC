@@ -44,6 +44,9 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         {{-- 1) Dashboard                                                        --}}
         {{-- 2) Patients / Patient Record Management                             --}}
         {{-- 3) Patient Queuing                                                  --}}
+        {{-- 4) Consultation Management                                          --}}
+        {{-- 5) Prescription Management                                          --}}
+        {{-- 6) Certificate Issuance                                             --}}
         {{-- Keep the next sections in this exact order.                         --}}
         {{-- ===================================================================== --}}
 
@@ -99,11 +102,12 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         --}}
 
         {{-- [ORDER 2] Patients / Patient Record Management (clinic_admin/staff/doctor with manage_patients) --}}
+        @php $isPrescriptionSelectionMode = request()->query('module') === 'prescription'; @endphp
         @can('manage_patients')
         <li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/patients*')) ||
-    (isRole('staff') && Request::is('staff/patients*')) ||
-    (isRole('doctor') && Request::is('doctors/patients*'))
+    (isRole('clinic_admin') && Request::is('admin/patients*') && !$isPrescriptionSelectionMode) ||
+    (isRole('staff') && Request::is('staff/patients*') && !$isPrescriptionSelectionMode) ||
+    (isRole('doctor') && Request::is('doctors/patients*') && !$isPrescriptionSelectionMode)
 ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
         isRole('clinic_admin') ? route('patients.index') : 
@@ -202,6 +206,23 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         $activeDocumentModule === 'certificate' ||
         (!$activeDocumentModule && $activeDocumentType === 'medical_certificate')
         );
+
+        $prescriptionIndexRoute = isRole('clinic_admin') ? route('prescriptions.index') :
+        (isRole('staff') ? route('staff.prescriptions.index') : route('doctors.prescriptions.index'));
+
+        $isPrescriptionNavActive =
+        (isRole('clinic_admin') && (
+        Request::is('admin/prescriptions*', 'admin/prescription-medicine*', 'admin/prescription-pdf*', 'admin/patients/*/prescription-create') ||
+        (Request::is('admin/patients*') && request()->query('module') === 'prescription')
+        )) ||
+        (isRole('staff') && (
+        Request::is('staff/prescriptions*', 'staff/prescription-medicine*', 'staff/prescription-pdf*', 'staff/patients/*/prescription-create') ||
+        (Request::is('staff/patients*') && request()->query('module') === 'prescription')
+        )) ||
+        (isRole('doctor') && (
+        Request::is('doctors/prescriptions*', 'doctors/prescription-medicine*', 'doctors/prescription-pdf*', 'doctors/patients/*/prescription-create') ||
+        (Request::is('doctors/patients*') && request()->query('module') === 'prescription')
+        ));
         @endphp
 
         <li class="nav-item {{ $isConsultationNavActive ? 'active' : '' }}">
@@ -222,6 +243,17 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
                 <span class="d-none">Record Vital Signs and Findings</span>
                 <span class="d-none">Assessment Plan Add Medicines to Plan Add Medicines to Nursing Intervention</span>
                 <span class="d-none">Save Consultation Record</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ $isPrescriptionNavActive ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+                href="{{ $prescriptionIndexRoute }}">
+                <span class="aside-menu-icon pe-3">
+                    <i class="fa-solid fa-file-prescription"></i>
+                </span>
+                <span class="aside-menu-title">Prescription Management</span>
+                <span class="d-none">Select patient then create prescription</span>
             </a>
         </li>
 
