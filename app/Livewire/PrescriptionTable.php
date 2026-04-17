@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Doctor;
 use App\Models\Prescription;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 
@@ -13,19 +14,15 @@ class PrescriptionTable extends LivewireTableComponent
 
     public bool $showButtonOnHeader = true;
 
-    public bool $showFilterOnHeader = true;
+    public bool $showFilterOnHeader = false;
 
     public string $buttonComponent = 'prescriptions.add-button';
 
-    public $FilterComponent = ['prescriptions.filter-button', Prescription::STATUS_ARR];
-
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
 
     public $doctor;
 
     public $patient;
-
-    public $statusFilter = '';
 
     public function mount()
     {
@@ -38,23 +35,6 @@ class PrescriptionTable extends LivewireTableComponent
         $this->setPrimaryKey('id');
         $this->setDefaultSort('prescriptions.created_at', 'desc')
             ->setQueryStringStatus(false);
-
-        $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if ($column->isField('status')) {
-                return [
-                    'class' => 'p-5',
-                ];
-            }
-
-            return [];
-        });
-    }
-
-    public function changeFilter($value)
-    {
-        $this->resetPage($this->getComputedPageName());
-        $this->statusFilter = $value;
-        $this->setBuilder($this->builder());
     }
 
     public function columns(): array
@@ -70,11 +50,12 @@ class PrescriptionTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()->hideIf($this->doctor),
             Column::make(__('messages.doctor_opd_charge.doctor'), 'doctor_id')->hideIf(1),
-            Column::make(__('messages.prescription.medical_history'), 'medical_history')
-                ->view('prescriptions.columns.medical_history')
+            Column::make('Consultation Date', 'consultation_date')
+                ->format(fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : 'N/A')
                 ->sortable(),
-            Column::make(__('messages.web.status'), 'status')
-                ->view('prescriptions.columns.status'),
+            Column::make('ICD-10', 'diagnosis.diagnoses')
+                ->sortable()
+                ->searchable(),
             Column::make(__('messages.common.action'), 'id')
                 ->view('prescriptions.action'),
         ];
@@ -88,7 +69,8 @@ class PrescriptionTable extends LivewireTableComponent
                 'patient:id,user_id',
                 'patient.patientUser:id,first_name,last_name',
                 'doctor:id,user_id',
-                'doctor.doctorUser:id,first_name,last_name'
+                'doctor.doctorUser:id,first_name,last_name',
+                'diagnosis:id,diagnoses',
             ]);
         } else {
             $doctorId = Doctor::where('user_id', getLogInUserId())->first();
@@ -96,15 +78,11 @@ class PrescriptionTable extends LivewireTableComponent
                 'patient:id,user_id',
                 'patient.patientUser:id,first_name,last_name',
                 'doctor:id,user_id',
-                'doctor.doctorUser:id,first_name,last_name'
+                'doctor.doctorUser:id,first_name,last_name',
+                'diagnosis:id,diagnoses',
             ])->where('doctor_id', $doctorId->id);
         }
-        $query->when(
-            $this->statusFilter !== '' && $this->statusFilter != Prescription::STATUS_ALL,
-            function (Builder $query) {
-                return $query->where('prescriptions.status', $this->statusFilter);
-            }
-        );
+
         return $query;
     }
 }

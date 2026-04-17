@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\CreatePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
+use App\Models\Diagnose;
+use App\Models\DispenseRecord;
+use App\Models\DispenseRecordItem;
+use App\Models\DocumentIssuance;
+use App\Models\Doctor;
 use App\Models\Medicine;
+use App\Models\Patient;
 use App\Models\Prescription;
-use App\Repositories\DoctorRepository;
+use App\Models\PrescriptionMedicine;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
 use App\Services\PrescriptionService;
-use App\Services\SettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
 use Laracasts\Flash\Flash;
 use Illuminate\Contracts\View\Factory;
@@ -23,6 +29,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 
 class PrescriptionController extends AppBaseController
 {
@@ -60,20 +67,45 @@ class PrescriptionController extends AppBaseController
      */
     public function create($patientId = null): View
     {
-        $patients = $this->prescriptionRepository->getPatients();
-        $doctors = $this->prescriptionRepository->getDoctors();
-        $medicines = $this->prescriptionRepository->getMedicines();
-        $medicinesQuantity = $this->prescriptionRepository->getMedicinesQuantity();
-        $data = $this->medicineRepository->getSyncList();
-        $medicineList = $this->medicineRepository->getMedicineList();
-        $mealList = $this->medicineRepository->getMealList();
-        $doseDuration = $this->medicineRepository->getDoseDurationList();
-        $doseInverval = $this->medicineRepository->getDoseInterValList();
+        if (empty($patientId)) {
+            abort(404, 'Patient is required for prescription creation.');
+        }
 
-        return view(
-            'prescriptions.create',
-            compact('patients', 'doctors', 'medicines', 'medicinesQuantity', 'medicineList', 'mealList', 'doseDuration', 'doseInverval', 'patientId')
-        )->with($data);
+        $patient = Patient::with('user:id,first_name,last_name,university_id_number')->findOrFail($patientId);
+        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
+        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
+
+        $doctorOptions = $this->prescriptionRepository->getDoctors();
+        $doctors = $doctorOptions instanceof \Illuminate\Support\Collection ? $doctorOptions->toArray() : (array) $doctorOptions;
+
+        $doctorMeta = Doctor::query()
+            ->select('id', 'prc_license_number', 's2_license_number')
+            ->whereIn('id', array_keys($doctors))
+            ->get()
+            ->mapWithKeys(function (Doctor $doctor) {
+                return [
+                    $doctor->id => [
+                        'license' => $doctor->s2_license_number ?: $doctor->prc_license_number,
+                    ],
+                ];
+            });
+
+        $medicineOptions = Medicine::query()
+            ->select('id', 'name', 'available_quantity')
+            ->where('available_quantity', '>', 0)
+            ->orderBy('name')
+            ->get();
+
+        $diagnosisOptions = Diagnose::query()->orderBy('diagnoses')->pluck('diagnoses', 'id')->toArray();
+
+        return view('prescriptions.create', compact(
+            'patient',
+            'patientSummary',
+            'doctors',
+            'doctorMeta',
+            'medicineOptions',
+            'diagnosisOptions'
+        ));
     }
 
     /**
@@ -83,41 +115,127 @@ class PrescriptionController extends AppBaseController
      */
     public function store(CreatePrescriptionRequest $request): RedirectResponse
     {
-        $input = $request->all();
-        $input['status'] = isset($input['status']) ? 1 : 0;
+        $input = $request->validated();
+        $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
+        $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
-        if (isset($input['medicine'])) {
-            $arr = collect($input['medicine']);
-            $duplicateIds = $arr->duplicates();
-            foreach ($input['medicine'] as $key => $value) {
-                $medicine = Medicine::find($input['medicine'][$key]);
-                if (! empty($duplicateIds)) {
-                    foreach ($duplicateIds as $key => $value) {
-                        $medicine = Medicine::find($duplicateIds[$key]);
-                        Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
+        if ($duplicateIds->isNotEmpty()) {
+            Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
 
-                        return Redirect::back();
-                    }
-                }
-            }
-            foreach ($input['medicine'] as $key => $value) {
-                $medicine = Medicine::find($input['medicine'][$key]);
-                $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                if ($medicine->available_quantity < $qty) {
-                    $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
-                    // Flash::error('The available quantity of '.$medicine->name.' is '.$available.'.');
-                    Flash::error(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
-
-                    return Redirect::back();
-                }
-            }
+            return Redirect::back()->withInput();
         }
 
-        $prescription = $this->prescriptionRepository->create($input);
-        $this->prescriptionRepository->createPrescription($input, $prescription);
-        Flash::success(__('messages.prescription.prescription_saved'));
+        $patient = Patient::findOrFail($input['patient_id']);
+        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
+        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
 
-        return redirect(route('prescription.medicine.show', $prescription->id));
+        $doctor = Doctor::find($input['doctor_id']);
+        $doctorLicense = $input['doctor_license_s2_number']
+            ?? optional($doctor)->s2_license_number
+            ?? optional($doctor)->prc_license_number;
+
+        $prescriptionData = Arr::only($input, [
+            'patient_id',
+            'doctor_id',
+            'consultation_date',
+            'icd10_diagnosis_id',
+            'problem_description',
+            'advice',
+            'next_visit_days',
+            'weight_kg',
+            'pulse_rate',
+            'body_temperature',
+            'blood_pressure',
+            'height_cm',
+        ]);
+        $prescriptionData['doctor_license_s2_number'] = $doctorLicense;
+        $prescriptionData['weight_kg'] = $prescriptionData['weight_kg'] ?? $patientSummary['weight_kg'];
+        $prescriptionData['pulse_rate'] = $prescriptionData['pulse_rate'] ?? $patientSummary['pulse_rate'];
+        $prescriptionData['body_temperature'] = $prescriptionData['body_temperature'] ?? $patientSummary['body_temperature'];
+        $prescriptionData['blood_pressure'] = $prescriptionData['blood_pressure'] ?? $patientSummary['blood_pressure'];
+        $prescriptionData['height_cm'] = $prescriptionData['height_cm'] ?? $patientSummary['height_cm'];
+        $prescriptionData['status'] = 1;
+
+        DB::beginTransaction();
+        try {
+            $prescription = Prescription::create($prescriptionData);
+            $medicineBill = DispenseRecord::create([
+                'history_number' => 'HIS' . generateUniqueHistoryNumber(),
+                'patient_id' => $prescription->patient_id,
+                'doctor_id' => $prescription->doctor_id,
+                'model_type' => Prescription::class,
+                'model_id' => $prescription->id,
+                'bill_date' => now(),
+                'payment_status' => DispenseRecord::STATUS_UNPAID,
+                'net_amount' => 0,
+                'total' => 0,
+            ]);
+
+            $totalAmount = 0;
+
+            foreach ($medicineRows as $row) {
+                $medicine = Medicine::findOrFail($row['medicine_id']);
+                $totalQuantity = $this->resolveTotalQuantity($row);
+
+                if ((int) $medicine->available_quantity < $totalQuantity) {
+                    $available = $medicine->available_quantity ?? 0;
+                    throw new Exception(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
+                }
+
+                PrescriptionMedicine::create([
+                    'prescription_id' => $prescription->id,
+                    'medicine' => $row['medicine_id'],
+                    'dosage' => $row['dosage'],
+                    'route_of_administration' => $row['route_of_administration'],
+                    'frequency' => $row['frequency'],
+                    'duration_value' => $row['duration_value'],
+                    'duration_unit' => $row['duration_unit'],
+                    'total_quantity' => $totalQuantity,
+                    'instructions' => $row['instructions'] ?: null,
+                    // Keep legacy fields populated for compatibility with older readers.
+                    'day' => (string) $row['duration_value'],
+                    'dose_interval' => $row['frequency'],
+                    'comment' => $row['instructions'] ?: null,
+                ]);
+
+                DispenseRecordItem::create([
+                    'dispense_id' => $medicineBill->id,
+                    'category_id' => null,
+                    'item_type' => Medicine::class,
+                    'item_id' => $medicine->id,
+                    'item_name' => $medicine->name,
+                    'item_price' => $medicine->selling_price,
+                    'sale_quantity' => $totalQuantity,
+                    'purchase_quantity' => 1,
+                    'tax' => 0,
+                    'amount' => $medicine->selling_price,
+                    'sub_total' => $medicine->selling_price,
+                    'total' => ((float) $medicine->selling_price * $totalQuantity),
+                ]);
+
+                $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
+            }
+
+            $medicineBill->update([
+                'net_amount' => $totalAmount,
+                'total' => $totalAmount,
+            ]);
+
+            DB::commit();
+            Flash::success(__('messages.prescription.prescription_saved'));
+
+            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Prescription store failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Flash::error($e->getMessage());
+
+            return Redirect::back()->withInput();
+        }
     }
 
     /**
@@ -138,7 +256,7 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        return redirect(route('prescription.medicine.show', $prescription->id));
+        return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
     }
 
     /**
@@ -160,17 +278,68 @@ class PrescriptionController extends AppBaseController
             }
         }
 
-        $patients = $this->prescriptionRepository->getPatients();
-        $doctors = $this->prescriptionRepository->getDoctors();
-        $data['medicines'] = Medicine::pluck('name', 'id')->toArray();
-        $medicines = $data;
-        $data = $this->medicineRepository->getSyncList();
-        $medicineList = $this->medicineRepository->getMedicineList();
-        $mealList = $this->medicineRepository->getMealList();
-        $doseDuration = $this->medicineRepository->getDoseDurationList();
-        $doseInverval = $this->medicineRepository->getDoseInterValList();
+        $prescription->load([
+            'patient.user:id,first_name,last_name,university_id_number',
+            'doctor',
+            'diagnosis',
+            'getMedicine.medicines',
+        ]);
 
-        return view('prescriptions.edit', compact('patients', 'prescription', 'doctors', 'medicines', 'medicineList', 'mealList', 'doseDuration', 'doseInverval'))->with($data);
+        $patient = $prescription->patient;
+        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
+        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
+
+        $doctorOptions = $this->prescriptionRepository->getDoctors();
+        $doctors = $doctorOptions instanceof \Illuminate\Support\Collection ? $doctorOptions->toArray() : (array) $doctorOptions;
+
+        $doctorMeta = Doctor::query()
+            ->select('id', 'prc_license_number', 's2_license_number')
+            ->whereIn('id', array_keys($doctors))
+            ->get()
+            ->mapWithKeys(function (Doctor $doctor) {
+                return [
+                    $doctor->id => [
+                        'license' => $doctor->s2_license_number ?: $doctor->prc_license_number,
+                    ],
+                ];
+            });
+
+        $medicineOptions = Medicine::query()
+            ->select('id', 'name', 'available_quantity')
+            ->orderBy('name')
+            ->get();
+
+        $diagnosisOptions = Diagnose::query()->orderBy('diagnoses')->pluck('diagnoses', 'id')->toArray();
+
+        $medicineRows = $prescription->getMedicine
+            ->map(function (PrescriptionMedicine $medicineRow) {
+                $durationValue = (int) ($medicineRow->duration_value ?: $medicineRow->day ?: 1);
+                $frequency = (int) ($medicineRow->frequency ?: $medicineRow->dose_interval ?: 1);
+
+                return [
+                    'medicine_id' => (int) $medicineRow->medicine,
+                    'dosage' => (string) $medicineRow->dosage,
+                    'route_of_administration' => $medicineRow->route_of_administration ?: Prescription::ROUTE_ORAL,
+                    'frequency' => $frequency,
+                    'duration_value' => $durationValue,
+                    'duration_unit' => $medicineRow->duration_unit ?: Prescription::DURATION_UNIT_DAY,
+                    'total_quantity' => (int) ($medicineRow->total_quantity ?: ($durationValue * $frequency)),
+                    'instructions' => $medicineRow->instructions ?: (string) $medicineRow->comment,
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        return view('prescriptions.edit', compact(
+            'prescription',
+            'patient',
+            'patientSummary',
+            'doctors',
+            'doctorMeta',
+            'medicineOptions',
+            'diagnosisOptions',
+            'medicineRows'
+        ));
     }
 
     /**
@@ -179,55 +348,235 @@ class PrescriptionController extends AppBaseController
     public function update(Prescription $prescription, UpdatePrescriptionRequest $request): RedirectResponse
     {
         $prescription = $this->prescriptionRepository->find($prescription->id);
-        $input = $request->all();
-        $input['status'] = isset($input['status']) ? 1 : 0;
-        $prescription->load('getMedicine');
-        $arr = collect($input['medicine']);
-        $duplicateIds = $arr->duplicates();
-        foreach ($input['medicine'] as $key => $value) {
-            $medicine = Medicine::find($input['medicine'][$key]);
-            if (! empty($duplicateIds)) {
-                foreach ($duplicateIds as $key => $value) {
-                    $medicine = Medicine::find($duplicateIds[$key]);
-                    Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
-
-                    return Redirect::back();
-                }
-            }
-        }
-        $prescriptionMedicineArray = [];
-        $inputdoseAndMedicine = [];
-        foreach ($prescription->getMedicine as $prescriptionMedicine) {
-            $prescriptionMedicineArray[$prescriptionMedicine->medicine] = $prescriptionMedicine->dosage;
-        }
-        foreach ($request->medicine as $key => $value) {
-            $inputdoseAndMedicine[$value] = $request->dosage[$key];
-        }
-
         if (empty($prescription)) {
             Flash::error(__('messages.flash.prescription_not_found'));
 
             return Redirect::back();
         }
 
-        foreach ($input['medicine'] as $key => $value) {
-            $result = array_intersect($prescriptionMedicineArray, $inputdoseAndMedicine);
-            $medicine = Medicine::find($input['medicine'][$key]);
-            $qty = $input['day'][$key] * $input['dose_interval'][$key];
+        $input = $request->validated();
+        $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
+        $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
-            if (! array_key_exists($input['medicine'][$key], $result) && $medicine->available_quantity < $qty) {
-                $available = $medicine->available_quantity == null ? 0 : $medicine->available_quantity;
-                // Flash::error('The available quantity of '.$medicine->name.' is '.$available.'.');
-                Flash::error(__('messages.prescription.available_quantity_of') . $medicine->name . __('messages.prescription.is') . $available . '.');
+        if ($duplicateIds->isNotEmpty()) {
+            Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
 
-                return Redirect::back();
-            }
+            return Redirect::back()->withInput();
         }
-        $showRoute = 'prescription.medicine.show';
-        $this->prescriptionRepository->prescriptionUpdate($prescription, $request->all());
-        Flash::success(__('messages.prescription.prescription_updated'));
 
-        return redirect(route($showRoute, $prescription->id));
+        $patient = Patient::findOrFail($input['patient_id']);
+        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
+        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
+
+        $doctor = Doctor::find($input['doctor_id']);
+        $doctorLicense = $input['doctor_license_s2_number']
+            ?? optional($doctor)->s2_license_number
+            ?? optional($doctor)->prc_license_number;
+
+        $prescriptionData = Arr::only($input, [
+            'patient_id',
+            'doctor_id',
+            'consultation_date',
+            'icd10_diagnosis_id',
+            'problem_description',
+            'advice',
+            'next_visit_days',
+            'weight_kg',
+            'pulse_rate',
+            'body_temperature',
+            'blood_pressure',
+            'height_cm',
+        ]);
+        $prescriptionData['doctor_license_s2_number'] = $doctorLicense;
+        $prescriptionData['weight_kg'] = $prescriptionData['weight_kg'] ?? $patientSummary['weight_kg'];
+        $prescriptionData['pulse_rate'] = $prescriptionData['pulse_rate'] ?? $patientSummary['pulse_rate'];
+        $prescriptionData['body_temperature'] = $prescriptionData['body_temperature'] ?? $patientSummary['body_temperature'];
+        $prescriptionData['blood_pressure'] = $prescriptionData['blood_pressure'] ?? $patientSummary['blood_pressure'];
+        $prescriptionData['height_cm'] = $prescriptionData['height_cm'] ?? $patientSummary['height_cm'];
+
+        DB::beginTransaction();
+        try {
+            $prescription->update($prescriptionData);
+
+            $medicineBill = DispenseRecord::whereModelType(Prescription::class)
+                ->whereModelId($prescription->id)
+                ->first();
+
+            if (empty($medicineBill)) {
+                $medicineBill = DispenseRecord::create([
+                    'history_number' => 'HIS' . generateUniqueHistoryNumber(),
+                    'patient_id' => $prescription->patient_id,
+                    'doctor_id' => $prescription->doctor_id,
+                    'model_type' => Prescription::class,
+                    'model_id' => $prescription->id,
+                    'bill_date' => now(),
+                    'payment_status' => DispenseRecord::STATUS_UNPAID,
+                    'net_amount' => 0,
+                    'total' => 0,
+                ]);
+            } else {
+                $medicineBill->dispenseItems()->delete();
+            }
+
+            $prescription->getMedicine()->delete();
+
+            $totalAmount = 0;
+            foreach ($medicineRows as $row) {
+                $medicine = Medicine::findOrFail($row['medicine_id']);
+                $totalQuantity = $this->resolveTotalQuantity($row);
+
+                if ((int) $medicine->available_quantity < $totalQuantity) {
+                    $available = $medicine->available_quantity ?? 0;
+                    throw new Exception(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
+                }
+
+                PrescriptionMedicine::create([
+                    'prescription_id' => $prescription->id,
+                    'medicine' => $row['medicine_id'],
+                    'dosage' => $row['dosage'],
+                    'route_of_administration' => $row['route_of_administration'],
+                    'frequency' => $row['frequency'],
+                    'duration_value' => $row['duration_value'],
+                    'duration_unit' => $row['duration_unit'],
+                    'total_quantity' => $totalQuantity,
+                    'instructions' => $row['instructions'] ?: null,
+                    // Keep legacy fields populated for compatibility with older readers.
+                    'day' => (string) $row['duration_value'],
+                    'dose_interval' => $row['frequency'],
+                    'comment' => $row['instructions'] ?: null,
+                ]);
+
+                DispenseRecordItem::create([
+                    'dispense_id' => $medicineBill->id,
+                    'category_id' => null,
+                    'item_type' => Medicine::class,
+                    'item_id' => $medicine->id,
+                    'item_name' => $medicine->name,
+                    'item_price' => $medicine->selling_price,
+                    'sale_quantity' => $totalQuantity,
+                    'purchase_quantity' => 1,
+                    'tax' => 0,
+                    'amount' => $medicine->selling_price,
+                    'sub_total' => $medicine->selling_price,
+                    'total' => ((float) $medicine->selling_price * $totalQuantity),
+                ]);
+
+                $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
+            }
+
+            $medicineBill->update([
+                'patient_id' => $prescription->patient_id,
+                'net_amount' => $totalAmount,
+                'total' => $totalAmount,
+            ]);
+
+            DB::commit();
+            Flash::success(__('messages.prescription.prescription_updated'));
+
+            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Prescription update failed', [
+                'prescription_id' => $prescription->id,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Flash::error($e->getMessage());
+
+            return Redirect::back()->withInput();
+        }
+    }
+
+    private function getLatestPatientConsultation(?int $userId): ?DocumentIssuance
+    {
+        if (empty($userId)) {
+            return null;
+        }
+
+        return DocumentIssuance::query()
+            ->where('user_id', $userId)
+            ->where('document_type', 'consultation_form')
+            ->latest('id')
+            ->first();
+    }
+
+    private function buildPatientSummary(Patient $patient, ?DocumentIssuance $consultation): array
+    {
+        $comorbidities = $patient->comorbidities;
+        if (is_array($comorbidities)) {
+            $comorbidities = implode(', ', array_filter($comorbidities));
+        }
+
+        return [
+            'allergies' => $patient->allergies ?: optional($consultation)->allergies,
+            'comorbidities' => $comorbidities ?: optional($consultation)->comorbidities,
+            'maintenance' => $patient->maintenance ?: optional($consultation)->maintenance,
+            'weight_kg' => optional($consultation)->vital_signs_weight,
+            'pulse_rate' => optional($consultation)->vital_signs_pr,
+            'body_temperature' => optional($consultation)->vital_signs_temp,
+            'blood_pressure' => optional($consultation)->vital_signs_bp,
+            'height_cm' => optional($consultation)->vital_signs_height,
+            'consultation_date' => optional($consultation)->examined_on
+                ? Carbon::parse($consultation->examined_on)->format('Y-m-d')
+                : now()->format('Y-m-d'),
+        ];
+    }
+
+    private function normalizeMedicineRows(array $rows): array
+    {
+        return collect($rows)
+            ->map(function (array $row) {
+                return [
+                    'medicine_id' => (int) $row['medicine_id'],
+                    'dosage' => trim((string) $row['dosage']),
+                    'route_of_administration' => (string) $row['route_of_administration'],
+                    'frequency' => (int) $row['frequency'],
+                    'duration_value' => (int) $row['duration_value'],
+                    'duration_unit' => (string) $row['duration_unit'],
+                    'total_quantity' => ! empty($row['total_quantity']) ? (int) $row['total_quantity'] : null,
+                    'instructions' => isset($row['instructions']) ? trim((string) $row['instructions']) : null,
+                ];
+            })
+            ->values()
+            ->toArray();
+    }
+
+    private function resolveTotalQuantity(array $row): int
+    {
+        if (! empty($row['total_quantity'])) {
+            return max(1, (int) $row['total_quantity']);
+        }
+
+        $durationDays = $this->durationToDays((int) $row['duration_value'], (string) $row['duration_unit']);
+
+        return max(1, ((int) $row['frequency'] * $durationDays));
+    }
+
+    private function durationToDays(int $value, string $unit): int
+    {
+        $safeValue = max(1, $value);
+
+        return match ($unit) {
+            Prescription::DURATION_UNIT_WEEK => $safeValue * 7,
+            Prescription::DURATION_UNIT_MONTH => $safeValue * 30,
+            default => $safeValue,
+        };
+    }
+
+    private function resolvePrescriptionShowRoute(): string
+    {
+        $user = getLogInUser();
+
+        if ($user && $user->hasRole('staff')) {
+            return 'staff.prescription.medicine.show';
+        }
+
+        if ($user && $user->hasRole('doctor')) {
+            return 'doctors.prescription.medicine.show';
+        }
+
+        return 'prescription.medicine.show';
     }
 
     /**

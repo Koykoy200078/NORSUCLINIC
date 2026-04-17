@@ -75,15 +75,20 @@ class Prescription extends Model
     public $fillable = [
         'patient_id',
         'doctor_id',
+        'doctor_license_s2_number',
+        'consultation_date',
+        'icd10_diagnosis_id',
+        'next_visit_days',
+        'weight_kg',
+        'pulse_rate',
+        'body_temperature',
+        'blood_pressure',
+        'height_cm',
         'food_allergies',
         'tendency_bleed',
         'heart_disease',
         'high_blood_pressure',
         'diabetic',
-        'surgery',
-        'accident',
-        'others',
-        'medical_history',
         'current_medication',
         'female_pregnancy',
         'breast_feeding',
@@ -106,15 +111,21 @@ class Prescription extends Model
     protected $casts = [
         'id' => 'integer',
         'patient_id' => 'integer',
+        'doctor_id' => 'integer',
+        'doctor_license_s2_number' => 'string',
+        'consultation_date' => 'date',
+        'icd10_diagnosis_id' => 'integer',
+        'next_visit_days' => 'integer',
+        'weight_kg' => 'decimal:2',
+        'pulse_rate' => 'string',
+        'body_temperature' => 'decimal:1',
+        'blood_pressure' => 'string',
+        'height_cm' => 'decimal:2',
         'food_allergies' => 'string',
         'tendency_bleed' => 'string',
         'heart_disease' => 'string',
         'high_blood_pressure' => 'string',
         'diabetic' => 'string',
-        'surgery' => 'string',
-        'accident' => 'string',
-        'others' => 'string',
-        'medical_history' => 'string',
         'current_medication' => 'string',
         'female_pregnancy' => 'string',
         'breast_feeding' => 'string',
@@ -199,6 +210,22 @@ class Prescription extends Model
         self::ONE_MONTH => 'For 1 Month',
     ];
 
+    const ROUTE_OPTIONS = [
+        'oral' => 'Oral',
+        'iv' => 'IV',
+        'im' => 'IM',
+        'topical' => 'Topical',
+        'subcutaneous' => 'Subcutaneous',
+        'inhalation' => 'Inhalation',
+        'other' => 'Other',
+    ];
+
+    const DURATION_UNIT_OPTIONS = [
+        'day' => 'Day(s)',
+        'week' => 'Week(s)',
+        'month' => 'Month(s)',
+    ];
+
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class, 'patient_id');
@@ -207,6 +234,11 @@ class Prescription extends Model
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class, 'doctor_id');
+    }
+
+    public function diagnosis(): BelongsTo
+    {
+        return $this->belongsTo(Diagnose::class, 'icd10_diagnosis_id');
     }
 
     public function getMedicine(): HasMany

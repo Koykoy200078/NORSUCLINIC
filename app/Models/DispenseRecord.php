@@ -17,6 +17,12 @@ class DispenseRecord extends Model
 {
     use HasFactory;
 
+    public const STATUS_UNPAID = 0;
+
+    public const STATUS_FULL_PAID = 1;
+
+    public const STATUS_PARTIAL_PAID = 2;
+
     protected $table = 'medicine_bills';
 
     protected $fillable = [
@@ -25,6 +31,14 @@ class DispenseRecord extends Model
         'doctor_id',
         'model_type',
         'model_id',
+        'case_id',
+        'admission_id',
+        'discount',
+        'net_amount',
+        'payment_status',
+        'payment_type',
+        'tax_amount',
+        'total',
         'note',
         'bill_date',
     ];

@@ -1,8 +1,14 @@
 @php
 $medicineBill = App\Models\MedicineBill::whereModelType('App\Models\Prescription')->whereModelId($row->id)->first();
-$showRoute = isRole('doctor') ? 'doctors.prescription.medicine.show' : (isRole('patient') ? 'patients.prescription.medicine.show' :'prescription.medicine.show');
-$editRoute = isRole('doctor') ? 'doctors.prescriptions.edit' : (isRole('patient') ? 'patients.prescriptions.edit' :'prescriptions.edit');
-$pdfRoute = isRole('doctor') ? 'doctors.prescriptions.pdf' : (isRole('patient') ? 'patients.prescriptions.pdf' :'prescriptions.pdf');
+$showRoute = isRole('doctor')
+    ? 'doctors.prescription.medicine.show'
+    : (isRole('staff') ? 'staff.prescription.medicine.show' : (isRole('patient') ? 'patients.prescription.medicine.show' : 'prescription.medicine.show'));
+$editRoute = isRole('doctor')
+    ? 'doctors.prescriptions.edit'
+    : (isRole('staff') ? 'staff.prescriptions.edit' : (isRole('patient') ? 'patients.prescriptions.edit' : 'prescriptions.edit'));
+$pdfRoute = isRole('doctor')
+    ? 'doctors.prescriptions.pdf'
+    : (isRole('staff') ? 'staff.prescriptions.pdf' : (isRole('patient') ? 'patients.prescriptions.pdf' : 'prescriptions.pdf'));
 
 $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status == false;
 @endphp
