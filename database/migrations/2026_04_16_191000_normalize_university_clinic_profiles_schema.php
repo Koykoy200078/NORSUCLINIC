@@ -75,26 +75,16 @@ return new class extends Migration
         if (Schema::hasTable('users')) {
             $addUniversityIdNumber = ! Schema::hasColumn('users', 'university_id_number');
             $addEmployeeId = ! Schema::hasColumn('users', 'employee_id');
-            $addInstitutionalEmail = ! Schema::hasColumn('users', 'institutional_email');
-            $addPagerExtension = ! Schema::hasColumn('users', 'pager_extension');
             $addNationalityCitizenship = ! Schema::hasColumn('users', 'nationality_citizenship');
 
-            if ($addUniversityIdNumber || $addEmployeeId || $addInstitutionalEmail || $addPagerExtension || $addNationalityCitizenship) {
-                Schema::table('users', function (Blueprint $table) use ($addUniversityIdNumber, $addEmployeeId, $addInstitutionalEmail, $addPagerExtension, $addNationalityCitizenship) {
+            if ($addUniversityIdNumber || $addEmployeeId || $addNationalityCitizenship) {
+                Schema::table('users', function (Blueprint $table) use ($addUniversityIdNumber, $addEmployeeId, $addNationalityCitizenship) {
                     if ($addUniversityIdNumber) {
                         $table->string('university_id_number', 100)->nullable()->after('country_code');
                     }
 
                     if ($addEmployeeId) {
                         $table->string('employee_id', 100)->nullable()->after('university_id_number');
-                    }
-
-                    if ($addInstitutionalEmail) {
-                        $table->string('institutional_email', 191)->nullable()->after('email');
-                    }
-
-                    if ($addPagerExtension) {
-                        $table->string('pager_extension', 60)->nullable()->after('contact');
                     }
 
                     if ($addNationalityCitizenship) {
@@ -110,10 +100,6 @@ return new class extends Migration
 
                 if (! $this->indexExists('users', 'idx_users_employee_id')) {
                     $table->unique('employee_id', 'idx_users_employee_id');
-                }
-
-                if (! $this->indexExists('users', 'idx_users_institutional_email')) {
-                    $table->unique('institutional_email', 'idx_users_institutional_email');
                 }
             });
         }
@@ -325,9 +311,6 @@ return new class extends Migration
 
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-                if ($this->indexExists('users', 'idx_users_institutional_email')) {
-                    $table->dropIndex('idx_users_institutional_email');
-                }
                 if ($this->indexExists('users', 'idx_users_employee_id')) {
                     $table->dropIndex('idx_users_employee_id');
                 }
@@ -339,7 +322,7 @@ return new class extends Migration
             Schema::table('users', function (Blueprint $table) {
                 $dropColumns = [];
 
-                foreach (['university_id_number', 'employee_id', 'institutional_email', 'pager_extension', 'nationality_citizenship'] as $column) {
+                foreach (['university_id_number', 'employee_id', 'nationality_citizenship'] as $column) {
                     if (Schema::hasColumn('users', $column)) {
                         $dropColumns[] = $column;
                     }

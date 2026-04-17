@@ -22,13 +22,6 @@
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('institutional_email', __('Institutional Email').':', ['class' => 'form-label required']) }}
-            {{ Form::email('institutional_email', old('institutional_email', isset($staff) ? $staff->institutional_email : null), ['class' => 'form-control', 'placeholder' => __('Institutional Email'), 'required']) }}
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="mb-5">
             {{ Form::label('employee_id', __('Employee ID').':', ['class' => 'form-label required']) }}
             {{ Form::text('employee_id', old('employee_id', isset($staff) ? $staff->employee_id : null), ['class' => 'form-control', 'placeholder' => __('Employee ID'), 'required']) }}
         </div>
@@ -38,17 +31,7 @@
         <div class="mb-5">
             {{ Form::label('contact', __('messages.staff.contact_no').':', ['class' => 'form-label']) }}
             <br>
-            {{ Form::tel('contact', old('contact', isset($staff) && $staff->contact ? '+'.$staff->country_code.$staff->contact : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
-            {{ Form::hidden('country_code', old('country_code', isset($staff) ? $staff->country_code : null), ['id'=>'prefix_code']) }}
-            <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
-            <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2"></span>
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="mb-5">
-            {{ Form::label('pager_extension', __('Pager / Extension Number').':', ['class' => 'form-label']) }}
-            {{ Form::text('pager_extension', old('pager_extension', isset($staff) ? $staff->pager_extension : null), ['class' => 'form-control', 'placeholder' => __('Pager or Extension Number')]) }}
+            {{ Form::text('contact', old('contact', isset($staff) ? $staff->contact : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no')]) }}
         </div>
     </div>
 
@@ -81,15 +64,7 @@
         </div>
     </div>
 
-    <div class="col-lg-6">
-        <div class="mb-5">
-            {{ Form::label('role', __('messages.staff.role').':', ['class' => 'form-label']) }}
-            {{-- Hidden field to ensure role value is submitted --}}
-            {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : $defaultRoleId) }}
-            {{-- Display-only select field for visual purposes --}}
-            {{ Form::select('role_display', $roles, isset($staff) ? $staff->roles->first()->id : $defaultRoleId, ['class' => 'form-select io-select2', 'data-control'=>'select2','placeholder' => __('messages.staff.select_role'), 'readonly' => true, 'disabled' => true]) }}
-        </div>
-    </div>
+    {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : $defaultRoleId) }}
 
 
     <div class="col-lg-6">
@@ -130,7 +105,7 @@
         </div>
     </div>
 
-    <div class="col-lg-6 mb-7">
+    <div class="col-lg-6 mb-7 d-none">
         <div class="mb-3" io-image-input="true">
             <label for="exampleInputImage" class="form-label">{{__('messages.patient.profile')}}:</label>
             <div class="d-block">

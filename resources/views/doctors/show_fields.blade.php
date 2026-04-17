@@ -22,16 +22,8 @@
     <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->experience) ? $doctorDetailData['data']->experience : __('messages.common.n/a') }}</span>
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Institutional Email') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->user->institutional_email) ? $doctorDetailData['data']->user->institutional_email : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-4 text-gray-600">{{ __('Employee ID') }}</label>
     <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->user->employee_id) ? $doctorDetailData['data']->user->employee_id : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Pager / Extension Number') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty($doctorDetailData['data']->user->pager_extension) ? $doctorDetailData['data']->user->pager_extension : __('messages.common.n/a') }}</span>
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-4 text-gray-600">{{ __('PRC/Medical License Number') }}</label>

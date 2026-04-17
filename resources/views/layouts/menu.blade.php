@@ -38,7 +38,16 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         @endphp
         <div class="no-record text-center d-none">{{ __('messages.no_matching_records_found') }}</div>
 
-        {{-- Dashboard Menu Items - Show appropriate dashboard based on user role --}}
+        {{-- ===================================================================== --}}
+        {{-- SIDEBAR ORDER LOCK (DO NOT REORDER)                                 --}}
+        {{-- Applies to roles: clinic_admin, staff, doctor                       --}}
+        {{-- 1) Dashboard                                                        --}}
+        {{-- 2) Patients / Patient Record Management                             --}}
+        {{-- 3) Patient Queuing                                                  --}}
+        {{-- Keep the next sections in this exact order.                         --}}
+        {{-- ===================================================================== --}}
+
+        {{-- [ORDER 1] Dashboard - role-specific dashboard routes --}}
         @if(isRole('clinic_admin'))
         {{-- Admin Dashboard --}}
         @can('manage_admin_dashboard')
@@ -75,25 +84,82 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         </li>
         @endif
 
+        {{-- Live Consultations temporarily disabled for patients - route not implemented
+@can('manage_live_consultations')
+@if(isRole('patient'))
+<li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
+        <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+            href="{{ route('patients.live-consultations.index') }}">
+            <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
+            <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
+        </a>
+        </li>
+        @endif
+        @endcan
+        --}}
 
-        @can('manage_staff')
+        {{-- [ORDER 2] Patients / Patient Record Management (clinic_admin/staff/doctor with manage_patients) --}}
+        @can('manage_patients')
+        <li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/patients*')) ||
+    (isRole('staff') && Request::is('staff/patients*')) ||
+    (isRole('doctor') && Request::is('doctors/patients*'))
+? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('patients.index') : 
+        (isRole('staff') ? route('staff.patients.index') : 
+        (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
+    }}">
+                <span class="aside-menu-icon pe-3"><i class="fas fa-hospital-user"></i></span>
+                <span class="aside-menu-title">Patients / Patient Record Management</span>
+            </a>
+        </li>
+
+        {{-- [ORDER 3-A] Patient Queuing - Staff (requires manage_patients) --}}
+        @if(isRole('staff'))
+        <li class="nav-item {{ Request::is('staff/patient-queue*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.patient-queue.index') }}">
+                <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
+                <span class="aside-menu-title">Patient Queuing</span>
+                @php $queueData = $_menuQueueBadge; @endphp
+                @if($queueData && $queueData->total > 0)
+                @if($queueData->priority > 0)
+                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $queueData->priority }} priority patient(s)">{{ $queueData->priority }}</span>
+                @else
+                <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $queueData->total }}</span>
+                @endif
+                @endif
+                <span class="d-none">Queue Management</span>
+            </a>
+        </li>
+        @endif
+
+        {{-- [ORDER 3-B] Patient Queuing - Clinic Admin (requires manage_patients) --}}
         @if(isRole('clinic_admin'))
-        <li class="nav-item {{ Request::is('admin/staffs*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staffs.index') }}">
-                <span class="aside-menu-icon pe-3"><i class="fas fa-users"></i></span>
-                <span class="aside-menu-title">{{ __('messages.staffs') }}</span>
+        <li class="nav-item {{ Request::is('admin/patient-queue*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patient-queue.index') }}">
+                <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
+                <span class="aside-menu-title">Patient Queuing</span>
+                @php $adminQueueData = $_menuQueueBadge; @endphp
+                @if($adminQueueData && $adminQueueData->total > 0)
+                @if($adminQueueData->priority > 0)
+                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $adminQueueData->priority }} priority patient(s)">{{ $adminQueueData->priority }}</span>
+                @else
+                <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $adminQueueData->total }}</span>
+                @endif
+                @endif
+                <span class="d-none">Queue Monitoring</span>
             </a>
         </li>
         @endif
         @endcan
 
-
-        {{-- Patient Queue - For Doctors --}}
+        {{-- [ORDER 3-C] Patient Queuing - Doctor (doctor queue route) --}}
         @if(isRole('doctor'))
         <li class="nav-item {{ Request::is('doctors/patient-queue*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queue.index') }}">
                 <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
-                <span class="aside-menu-title">Patient Queue</span>
+                <span class="aside-menu-title">Patient Queuing</span>
                 @php $doctorQueueData = $_menuQueueBadge; @endphp
                 @if($doctorQueueData && $doctorQueueData->total > 0)
                 @if($doctorQueueData->in_progress > 0)
@@ -109,6 +175,8 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
             </a>
         </li>
         @endif
+
+        {{-- END SIDEBAR ORDER LOCK (items below can be reordered independently) --}}
 
         @can('manage_request_documents')
         @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
@@ -139,88 +207,6 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
         @endif
         @endcan
 
-        {{-- Live Consultations temporarily disabled for patients - route not implemented
-@can('manage_live_consultations')
-@if(isRole('patient'))
-<li class="nav-item {{ Request::is('patients/live-consultation*') ? 'active' : '' }}">
-        <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-            href="{{ route('patients.live-consultations.index') }}">
-            <span class="aside-menu-icon pe-3"><i class="fas fa-video"></i></span>
-            <span class="aside-menu-title">{{ __('messages.live_consultations') }}</span>
-        </a>
-        </li>
-        @endif
-        @endcan
-        --}}
-        @can('manage_doctors')
-        <li
-            class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/doctors*')) ||
-        (isRole('staff') && Request::is('staff/doctors*'))
-    ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('doctors.index') : 
-        (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
-    }}">
-                <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
-                <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
-            </a>
-        </li>
-        @endcan
-        @can('manage_patients')
-        <li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/patients*')) ||
-    (isRole('staff') && Request::is('staff/patients*')) ||
-    (isRole('doctor') && Request::is('doctors/patients*'))
-? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('patients.index') : 
-        (isRole('staff') ? route('staff.patients.index') : 
-        (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
-    }}">
-                <span class="aside-menu-icon pe-3"><i class="fas fa-hospital-user"></i></span>
-                <span class="aside-menu-title">{{ __('messages.patients') }}</span>
-            </a>
-        </li>
-
-        {{-- Patient Queue Management - For Staff (with manage_patients permission) --}}
-        @if(isRole('staff'))
-        <li class="nav-item {{ Request::is('staff/patient-queue*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.patient-queue.index') }}">
-                <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
-                <span class="aside-menu-title">Patient Queue</span>
-                @php $queueData = $_menuQueueBadge; @endphp
-                @if($queueData && $queueData->total > 0)
-                @if($queueData->priority > 0)
-                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $queueData->priority }} priority patient(s)">{{ $queueData->priority }}</span>
-                @else
-                <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $queueData->total }}</span>
-                @endif
-                @endif
-                <span class="d-none">Queue Management</span>
-            </a>
-        </li>
-        @endif
-
-        {{-- Patient Queue - For Clinic Admin --}}
-        @if(isRole('clinic_admin'))
-        <li class="nav-item {{ Request::is('admin/patient-queue*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patient-queue.index') }}">
-                <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
-                <span class="aside-menu-title">Patient Queue</span>
-                @php $adminQueueData = $_menuQueueBadge; @endphp
-                @if($adminQueueData && $adminQueueData->total > 0)
-                @if($adminQueueData->priority > 0)
-                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $adminQueueData->priority }} priority patient(s)">{{ $adminQueueData->priority }}</span>
-                @else
-                <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $adminQueueData->total }}</span>
-                @endif
-                @endif
-                <span class="d-none">Queue Monitoring</span>
-            </a>
-        </li>
-        @endif
-        @endcan
         @can('manage_medicines')
         <li
             class="nav-item {{ 
@@ -301,6 +287,61 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
             </a>
         </li>
         @endcan
+        {{-- Activity Logs - For clinic_admin, staff, and doctor --}}
+        @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+        <li class="nav-item {{ 
+    (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
+    (isRole('staff') && Request::is('staff/activity-logs*')) ||
+    (isRole('doctor') && Request::is('doctors/activity-logs*'))
+? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
+        isRole('clinic_admin') ? route('activity-logs.index') : 
+        (isRole('staff') ? route('staff.activity-logs.index') : route('doctors.activity-logs.index'))
+    }}">
+                <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
+                <span class="aside-menu-title">Activity Logs</span>
+            </a>
+        </li>
+        @endif
+
+        {{-- User Managements - placed as second to last --}}
+        @if((isRole('clinic_admin') && (auth()->user()->can('manage_staff') || auth()->user()->can('manage_doctors'))) || (isRole('staff') && auth()->user()->can('manage_doctors')))
+        @php $isUserManagementActive = Request::is('admin/staffs*', 'admin/doctors*', 'staff/doctors*'); @endphp
+        <li class="nav-item aside-item-collapse {{ $isUserManagementActive ? 'show collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ $isUserManagementActive ? 'true' : 'false' }}">
+                <span class="aside-menu-icon pe-3"><i class="fas fa-users-cog"></i></span>
+                <span class="aside-menu-title">User Managements</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-chevron-right fs-8"></i></span>
+            </a>
+
+            <ul class="aside-submenu list-unstyled mb-0">
+                @can('manage_staff')
+                @if(isRole('clinic_admin'))
+                <li class="nav-item {{ Request::is('admin/staffs*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ route('staffs.index') }}">
+                        <span class="aside-menu-icon pe-3"><i class="fas fa-users"></i></span>
+                        <span class="aside-menu-title">{{ __('messages.staffs') }}</span>
+                    </a>
+                </li>
+                @endif
+                @endcan
+
+                @can('manage_doctors')
+                @if(isRole('clinic_admin') || isRole('staff'))
+                <li class="nav-item {{ (isRole('clinic_admin') && Request::is('admin/doctors*')) || (isRole('staff') && Request::is('staff/doctors*')) ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ isRole('clinic_admin') ? route('doctors.index') : route('staff.doctors.index') }}">
+                        <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
+                        <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
+                    </a>
+                </li>
+                @endif
+                @endcan
+
+            </ul>
+        </li>
+        @endif
+
+        {{-- Settings - always last --}}
         @can('manage_settings')
         <li
             class="nav-item {{ 
@@ -322,20 +363,3 @@ $q->whereRaw('minimum_stock_alert IS NOT NULL AND available_quantity <= minimum_
             </a>
         </li>
         @endcan
-
-        {{-- Activity Logs - For clinic_admin, staff, and doctor --}}
-        @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
-        <li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
-    (isRole('staff') && Request::is('staff/activity-logs*')) ||
-    (isRole('doctor') && Request::is('doctors/activity-logs*'))
-? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('activity-logs.index') : 
-        (isRole('staff') ? route('staff.activity-logs.index') : route('doctors.activity-logs.index'))
-    }}">
-                <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
-                <span class="aside-menu-title">Activity Logs</span>
-            </a>
-        </li>
-        @endif

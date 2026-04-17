@@ -22,9 +22,7 @@ class CreateUserRequest extends FormRequest
     {
         $rules = User::$rules;
 
-        $rules['institutional_email'] = 'required|email:filter|unique:users,institutional_email';
         $rules['employee_id'] = 'required|string|max:100|unique:users,employee_id';
-        $rules['pager_extension'] = 'nullable|string|max:60';
         $rules['prc_license_number'] = 'required|string|max:100|unique:doctors,prc_license_number';
         $rules['ptr_number'] = 'required|string|max:100';
         $rules['s2_license_number'] = 'nullable|string|max:100';

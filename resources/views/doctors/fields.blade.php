@@ -19,12 +19,6 @@
     </div>
     <div class="col-md-6">
         <div class="mb-5">
-            {{ Form::label('institutional_email', __('Institutional Email').':' ,['class' => 'form-label required']) }}
-            {{ Form::email('institutional_email', null,['class' => 'form-control','placeholder' => __('Institutional Email'),'required']) }}
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="mb-5">
             {{ Form::label('employee_id', __('Employee ID').':' ,['class' => 'form-label required']) }}
             {{ Form::text('employee_id', null,['class' => 'form-control','placeholder' => __('Employee ID'),'required']) }}
         </div>
@@ -32,16 +26,7 @@
     <div class="col-md-6">
         <div class="mb-5">
             {{ Form::label('Contact',__('messages.user.contact_number').':' ,['class' => 'form-label']) }}
-            {{ Form::tel('contact', null,['class' => 'form-control','placeholder' => __('messages.user.contact_number'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
-            {{ Form::hidden('country_code',null,['id'=>'prefix_code']) }}
-            <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
-            <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="mb-5">
-            {{ Form::label('pager_extension', __('Pager / Extension Number').':' ,['class' => 'form-label']) }}
-            {{ Form::text('pager_extension', null,['class' => 'form-control','placeholder' => __('Pager or Extension Number')]) }}
+            {{ Form::text('contact', null,['class' => 'form-control','placeholder' => __('messages.user.contact_number')]) }}
         </div>
     </div>
     <div class="col-md-6 mb-5">
@@ -83,7 +68,7 @@
     <div class="col-md-6">
         <div class="mb-5">
             {{ Form::label('Experience',__('messages.doctor.experience').':' ,['class' => 'form-label']) }}
-            {{ Form::text('experience', null,['class' => 'form-control','onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','placeholder' => __('messages.doctor.experience'),'step'=>'any']) }}
+            {{ Form::number('experience', null,['class' => 'form-control','placeholder' => __('messages.doctor.experience'),'step'=>'any','min'=>'0']) }}
         </div>
     </div>
     <div class="col-md-6">
@@ -130,7 +115,7 @@
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
         {{ Form::select('blood_type', $bloodGroup , null, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.patient.blood_type')]) }}
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-6 d-none">
         <div class="mb-5">
             <div class="mb-3" io-image-input="true">
                 <label for="exampleInputImage" class="form-label">{{__('messages.doctor.profile')}}:</label>
@@ -150,7 +135,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-5">
+    <div class="col-md-6 mb-5 d-none">
         <label class="form-label">{{__('messages.doctor.status')}}:</label>
         <div class="col-lg-8">
             <div class="form-check form-check-solid form-switch">

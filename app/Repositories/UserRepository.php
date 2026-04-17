@@ -127,9 +127,6 @@ class UserRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $input['email'] = setEmailLowerCase($input['email']);
-            if (! empty($input['institutional_email'])) {
-                $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
-            }
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::DOCTOR;
@@ -172,9 +169,6 @@ class UserRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $input['email'] = setEmailLowerCase($input['email']);
-            if (! empty($input['institutional_email'])) {
-                $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
-            }
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['type'] = User::DOCTOR;
             $doctor->user->update($input);

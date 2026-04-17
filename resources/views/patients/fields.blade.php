@@ -48,14 +48,12 @@
         <div class="col-md-6 mb-5">
             {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
             @if (isset($patient))
-            {{ Form::tel('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control',
-                'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
+            {{ Form::text('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control',
+                'placeholder' => __('messages.patient.contact_no')]) }}
             {{ Form::hidden('country_code',!empty($patient->user) ? $patient->user->country_code : null,['id'=>'prefix_code']) }}
-            <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
-            <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
             @else
             {{ Form::text('contact', old('contact'), ['class' => 'form-control',
-                'placeholder' => __('messages.patient.contact_no'),'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'patientContactNumber']) }}
+                'placeholder' => __('messages.patient.contact_no')]) }}
             {{ Form::hidden('country_code', old('country_code', getSettingValue('country_code')), ['id'=>'prefix_code']) }}
             @endif
         </div>

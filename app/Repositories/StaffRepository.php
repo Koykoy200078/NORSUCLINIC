@@ -62,7 +62,6 @@ class StaffRepository extends BaseRepository
             DB::beginTransaction();
 
             $input['email'] = setEmailLowerCase($input['email']);
-            $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
             $input['password'] = Hash::make($input['password']);
             $input['type'] = User::STAFF;
             // Set email as verified with Philippine time
@@ -96,7 +95,6 @@ class StaffRepository extends BaseRepository
 
             $staff = User::find($id);
             $input['email'] = setEmailLowerCase($input['email']);
-            $input['institutional_email'] = setEmailLowerCase($input['institutional_email']);
             if (isset($input['password']) && ! empty($input['password'])) {
                 $input['password'] = Hash::make($input['password']);
             } else {

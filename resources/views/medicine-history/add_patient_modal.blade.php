@@ -5,7 +5,7 @@
             <div class="modal-header">
                 <h2>{{ __('messages.patient.add') }}</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             {{ Form::open(['id'=>'addPatientForm']) }}
             <div class="modal-body">
@@ -29,12 +29,8 @@
                         {{ Form::text('email', null, ['class' => 'form-control','required', 'placeholder' => __('messages.user.email')]) }}
                     </div>
                     <div class="form-group col-sm-6 mb-5">
-                        {{ Form::label('phone', __('messages.web.phone').':', ['class' => 'form-label']) }}<span
-                        class="required"></span><br>
-                        {{ Form::tel('phone', null, ['class' => 'form-control phoneNumber', 'id' => 'phoneNumber', 'required', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'tabindex' => '5']) }}
-                        {{ Form::hidden('prefix_code',null,['class'=>'prefix_code']) }}
-                        <span class="text-success valid-msg d-none fw-400 fs-small mt-2">✓ &nbsp; {{__('messages.valid')}}</span>
-                        <span class="text-danger error-msg d-none fw-400 fs-small mt-2"></span>
+                        {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}<br>
+                        {{ Form::text('contact', null, ['class' => 'form-control', 'tabindex' => '5', 'placeholder' => __('messages.patient.contact_no')]) }}
                     </div>
                 </div>
                 <div class="row">
@@ -74,7 +70,8 @@
                     <div class="col-sm-6 mb-5">
                         <div>
                             {{ Form::label('password_confirmation', __('auth.confirm_password') . ':', ['class' => 'form-label']) }}<span
-                                class="required"></span></div>
+                                class="required"></span>
+                        </div>
                         <div class="form-group col-12 mb-5 position-relative d-flex align-items-center">
                             <div class="position-relative w-100">
                                 {{ Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => __('messages.user.confirm_password'), 'minlength' => '6', 'maxlength' => '255', 'tabindex' => '11', 'aria-label' => __('auth.confirm_password'), 'data-toggle' => 'password']) }}
@@ -89,7 +86,7 @@
                 <div class="modal-footer p-0">
                     {{ Form::button(__('messages.common.save'), ['type'=>'submit','class' => 'btn btn-primary m-0','id'=>'patientBtnSave','data-loading-text'=>"<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
                     <button type="button" aria-label="Close" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{!! __('messages.common.cancel') !!}
+                        data-bs-dismiss="modal">{!! __('messages.common.cancel') !!}
                     </button>
                 </div>
             </div>

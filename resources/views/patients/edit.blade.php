@@ -3,12 +3,6 @@
 {{ __('messages.patient.edit') }}
 @endsection
 @section('content')
-@if(!empty($patient->user) && !empty($patient->user->contact))
-<script>
-    // Set phone number for intl-tel-input initialization - MUST be before the input is rendered
-    var phoneNo = '{{ $patient->user->country_code }}{{ $patient->user->contact }}';
-</script>
-@endif
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-end mb-5">
         <h1>@yield('title')</h1>

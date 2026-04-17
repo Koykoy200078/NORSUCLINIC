@@ -133,7 +133,7 @@
     @livewireScripts
 
     <!-- General Scripts -->
-    <script src="{{ mix('js/third-party.js') }}"></script>
+    <script src="{{ mix('js/third-party.js') . '&v=' . filemtime(public_path('js/third-party.js')) }}"></script>
     <script src="{{ mix('js/pages.js') }}"></script>
     <script src="{{ asset('vendor/laravel-livewire-tables.min.js') }}"></script>
     <script src="{{ asset('vendor/laravel-livewire-tables-thirdparty.min.js') }}"></script>
