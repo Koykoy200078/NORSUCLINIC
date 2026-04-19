@@ -31,11 +31,6 @@ $expiryDateOnly = $expiryCarbon->copy()->startOfDay();
 // Calculate days remaining (positive = future, negative = past)
 $daysRemaining = $today->diffInDays($expiryDateOnly, false);
 
-// Check if date is in the past
-if ($expiryDateOnly->isPast()) {
-$daysRemaining = -$daysRemaining;
-}
-
 if ($daysRemaining < 0) {
     // Already expired
     $isCritical=true;
@@ -66,7 +61,7 @@ if ($daysRemaining < 0) {
         {{ $displayDate }}
     </span>
     @if($isCritical)
-    <i class="fas fa-exclamation-triangle text-danger ms-2" title="Critical: {{ $daysRemaining < 0 ? 'Expired!' : $daysRemaining . ' day(s) left!' }}" style="font-size: 1.1rem;"></i>
+    <i class="fas fa-exclamation-triangle text-danger ms-2" title="Critical: {{ $daysRemaining < 0 ? 'Expired ' . abs($daysRemaining) . ' day(s) ago!' : $daysRemaining . ' day(s) left!' }}" style="font-size: 1.1rem;"></i>
     @elseif($isExpiring)
     <i class="fas fa-exclamation-circle text-warning ms-2" title="Warning: {{ $daysRemaining }} day(s) until expiry" style="font-size: 1.1rem;"></i>
     @else

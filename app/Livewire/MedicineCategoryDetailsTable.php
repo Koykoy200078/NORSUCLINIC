@@ -63,7 +63,7 @@ class MedicineCategoryDetailsTable extends LivewireTableComponent
     public function builder(): Builder
     {
         return Medicine::query()
-            ->with('category', 'generic')
+            ->with('medicineCategory', 'generic')
             ->where('category_id', $this->categoryDetails);
     }
 }

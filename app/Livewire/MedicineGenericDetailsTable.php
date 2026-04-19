@@ -51,7 +51,7 @@ class MedicineGenericDetailsTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.medicine.category'), 'category.name')
+            Column::make(__('messages.medicine.category'), 'medicineCategory.name')
                 ->view('generics.templates.columnsDetails.category')
                 ->searchable()
                 ->sortable(),
@@ -66,7 +66,7 @@ class MedicineGenericDetailsTable extends LivewireTableComponent
     public function builder(): Builder
     {
         /** @var Medicine $query */
-        $query = Medicine::with('category', 'generic')->where('generic_id', $this->genericDetails);
+        $query = Medicine::with('medicineCategory', 'generic')->where('generic_id', $this->genericDetails);
 
         return $query;
     }

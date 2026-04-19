@@ -51,8 +51,12 @@ class PrescriptionTable extends LivewireTableComponent
                 ->searchable()->hideIf($this->doctor),
             Column::make(__('messages.doctor_opd_charge.doctor'), 'doctor_id')->hideIf(1),
             Column::make('Consultation Date', 'consultation_date')
-                ->format(fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : 'N/A')
+                ->format(fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : 'N/A')
                 ->sortable(),
+            Column::make('Dispense Status', 'status')
+                ->view('prescriptions.columns.dispense_status')
+                ->sortable()
+                ->searchable(),
             Column::make('ICD-10', 'diagnosis.diagnoses')
                 ->sortable()
                 ->searchable(),

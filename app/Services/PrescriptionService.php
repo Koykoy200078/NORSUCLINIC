@@ -26,7 +26,8 @@ class PrescriptionService
                 'doctor_id' => $data['doctor_id'],
                 'appointment_id' => null,
                 'health_checkup' => $data['health_checkup'] ?? null,
-                'status' => $data['status'] ?? 1,
+                'status' => $data['status'] ?? Prescription::DISPENSE_STATUS_PENDING,
+                'is_active' => $data['is_active'] ?? true,
                 'is_completed' => $data['is_completed'] ?? false,
             ]);
 
@@ -51,6 +52,7 @@ class PrescriptionService
             $prescription->update([
                 'health_checkup' => $data['health_checkup'] ?? $prescription->health_checkup,
                 'status' => $data['status'] ?? $prescription->status,
+                'is_active' => $data['is_active'] ?? $prescription->is_active,
                 'is_completed' => $data['is_completed'] ?? $prescription->is_completed,
             ]);
 
@@ -122,7 +124,7 @@ class PrescriptionService
         return Prescription::with([
             'patient.user',
             'doctor.user',
-            'medicines.category',
+            'medicines.medicineCategory',
         ])->findOrFail($prescriptionId);
     }
 
@@ -169,7 +171,7 @@ class PrescriptionService
     public function toggleStatus(Prescription $prescription): Prescription
     {
         $prescription->update([
-            'status' => !$prescription->status
+            'is_active' => ! (bool) $prescription->is_active,
         ]);
 
         return $prescription;
@@ -182,7 +184,7 @@ class PrescriptionService
      */
     public function getAvailableMedicines(): Collection
     {
-        return Medicine::with('category')
+        return Medicine::with('medicineCategory')
             ->whereHas('purchasedMedicine', function ($query) {
                 $query->where('available_quantity', '>', 0);
             })

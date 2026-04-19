@@ -1,3 +1,8 @@
+@php
+$categories = $categories ?? [];
+$generics = $generics ?? [];
+@endphp
+
 <div id="add_new_medicine" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->

@@ -157,22 +157,42 @@
 @if(isRole('clinic_admin') || isRole('staff'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
     !(
-        (isRole('clinic_admin') && Request::is('admin/categories*','admin/generics*','admin/medicines*','admin/stock-in*','admin/used-medicine*','admin/medicine-history*')) ||
-        (isRole('staff') && Request::is('staff/categories*','staff/generics*','staff/medicines*','staff/stock-in*','staff/used-medicine*','staff/medicine-history*'))
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/generics*','admin/medicines*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
+        (isRole('staff') && Request::is('staff/categories*','staff/generics*','staff/medicines*','staff/stock-in*','staff/medicine-inventory-tracking*'))
     ) ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ 
-        (isRole('clinic_admin') && Request::is('admin/medicines*','admin/categories*','admin/generics*','admin/stock-in*','admin/medicine-history*')) ||
-        (isRole('staff') && Request::is('staff/medicines*','staff/categories*','staff/generics*','staff/stock-in*','staff/medicine-history*'))
+        (isRole('clinic_admin') && Request::is('admin/medicines*','admin/categories*','admin/generics*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
+        (isRole('staff') && Request::is('staff/medicines*','staff/categories*','staff/generics*','staff/stock-in*','staff/medicine-inventory-tracking*'))
         ? 'active' : '' }}"
-        href="{{ isRole('clinic_admin') ? route('medicines.index') : route('staff.medicines.index') }}">
-        {{ __('messages.medicines') }}
+        href="{{ isRole('clinic_admin') ? route('medicine-inventory.index') : route('staff.medicine-inventory.index') }}">
+        Medicine Inventory Tracking
+    </a>
+</li>
+
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ 
+    !(
+        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
+        (isRole('staff') && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ 
+        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
+        (isRole('staff') && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
+        ? 'active' : '' }}"
+        href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : route('staff.medicine-dispensing.index') }}">
+        Medicine Dispensing Management
     </a>
 </li>
 @elseif(isRole('doctor'))
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/medicine-history*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/medicine-history*') ? 'active' : '' }}"
-        href="{{ route('doctors.medicines.index') }}">
-        {{ __('messages.medicines') }}
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'active' : '' }}"
+        href="{{ route('doctors.medicine-inventory.index') }}">
+        Medicine Inventory Tracking
+    </a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'active' : '' }}"
+        href="{{ route('doctors.medicine-dispensing.index') }}">
+        Medicine Dispensing Management
     </a>
 </li>
 @endif

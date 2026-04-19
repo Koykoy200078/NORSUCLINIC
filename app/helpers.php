@@ -2,8 +2,8 @@
 
 use App\Models\Barangay;
 use App\Models\City;
+use App\Models\MedicineBatch;
 use App\Models\Notification;
-use App\Models\PurchasedMedicine;
 use App\Models\Setting;
 use App\Models\State;
 use App\Models\User;
@@ -722,16 +722,14 @@ if (!function_exists('getExpiringMedicinesCount')) {
     {
         // Cache the result for 1 hour to avoid repeated database queries
         return Cache::remember('expiring_medicines_count', 3600, function () {
-            $oneMonthFromNow = Carbon::now()->addMonth();
             $today = Carbon::now();
+            $oneMonthFromNow = $today->copy()->addMonth();
 
-            // Count unique medicines that have purchased batches expiring within a month
-            // and still have available quantity
-            return PurchasedMedicine::whereNotNull('expiry_date')
-                ->whereBetween('expiry_date', [$today, $oneMonthFromNow])
-                ->whereHas('medicines', function ($query) {
-                    $query->where('available_quantity', '>', 0);
-                })
+            // Count unique medicines that still have stock in batch ledger and expire within a month.
+            return MedicineBatch::where('quantity', '>', 0)
+                ->whereNotNull('expiration_date')
+                ->whereDate('expiration_date', '>=', $today->toDateString())
+                ->whereDate('expiration_date', '<=', $oneMonthFromNow->toDateString())
                 ->distinct('medicine_id')
                 ->count('medicine_id');
         });

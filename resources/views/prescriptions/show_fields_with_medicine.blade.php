@@ -15,7 +15,7 @@
         </div>
         <div class="d-flex flex-row">
             <label for="name" class="pb-2 fs-5 text-gray-600 me-1">{{ __('messages.appointment.date') }}:</label>
-            <span class="fs-5 text-gray-800">{{ \Carbon\Carbon::parse($prescription['prescription']->created_at)->isoFormat('DD/MM/Y')}}</span>
+            <span class="fs-5 text-gray-800">{{ \Carbon\Carbon::parse($prescription['prescription']->consultation_date ?: $prescription['prescription']->created_at)->isoFormat('DD/MM/Y')}}</span>
         </div>
         <div class="d-flex flex-row">
             <label for="name" class="pb-2 fs-5 text-gray-600 me-1">{{ __('messages.common.age') }}:</label>
@@ -66,9 +66,9 @@
         @endif
     </div>
     <div class="col-md-4 col-sm-6 co-12 mt-sm-0 mt-5">
-        <h6>{{ __('messages.prescription.test') }}:</h6>
-        @if($prescription['prescription']->test != null)
-        <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->test }}</p>
+        <h6>ICD-10 Diagnosis:</h6>
+        @if(!empty($prescription['prescription']->diagnosis->diagnoses))
+        <p class="text-gray-600 mb-2 fs-4">{{ $prescription['prescription']->diagnosis->diagnoses }}</p>
         @else
         {{ __('messages.common.n/a') }}
         @endif
@@ -89,8 +89,11 @@
                     <tr>
                         <th scope="col">{{ __('messages.prescription.medicine_name') }}</th>
                         <th scope="col">{{ __('messages.medicine.dosage') }}</th>
-                        <th scope="col">{{ __('messages.prescription.duration') }}</th>
-                        <th scope="col">{{ __('messages.medicine_bills.dose_interval') }}</th>
+                        <th scope="col">Route</th>
+                        <th scope="col">Frequency</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Total Qty</th>
+                        <th scope="col">Instructions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,18 +102,20 @@
                     @else
                     @foreach($prescription['prescription']->getMedicine as $medicine)
                     @if($medicine->medicines)
+                    @php
+                    $durationValue = $medicine->duration_value ?: $medicine->day;
+                    $durationUnit = $medicine->duration_unit ?: 'day';
+                    $frequency = $medicine->frequency ?: $medicine->dose_interval;
+                    $totalQuantity = $medicine->total_quantity ?: ((int) $frequency * (int) $durationValue);
+                    @endphp
                     <tr>
                         <td class="py-4 border-bottom-0">{{ $medicine->medicines->name ?? 'N/A' }}</td>
-                        <td class="py-4 border-bottom-0">
-                            {{ $medicine->dosage }}
-                            @if($medicine->time == 0)
-                            (After Meal)
-                            @else
-                            (Before Meal)
-                            @endif
-                        </td>
-                        <td class="py-4 border-bottom-0">{{ $medicine->day }} Day</td>
-                        <td class="py-4 border-bottom-0">{{ App\Models\Prescription::DOSE_INTERVAL[$medicine->dose_interval] }}</td>
+                        <td class="py-4 border-bottom-0">{{ $medicine->dosage }}</td>
+                        <td class="py-4 border-bottom-0">{{ ucfirst($medicine->route_of_administration ?: 'oral') }}</td>
+                        <td class="py-4 border-bottom-0">{{ $frequency }} / day</td>
+                        <td class="py-4 border-bottom-0">{{ $durationValue }} {{ \Illuminate\Support\Str::plural($durationUnit, (int) $durationValue) }}</td>
+                        <td class="py-4 border-bottom-0">{{ $totalQuantity }}</td>
+                        <td class="py-4 border-bottom-0">{{ $medicine->instructions ?: $medicine->comment ?: 'N/A' }}</td>
                     </tr>
                     @endif
                     @endforeach
@@ -122,15 +127,8 @@
     <div class="col-12">
         <div class="d-flex align-items-center justify-content-between flex-wrap mt-5">
             <h4 class="mb-0 me-3 mt-3">
-                @if($prescription['prescription']->next_visit_qty != null)
-                {{ __('messages.prescription.next_visit') }} : {{ $prescription['prescription']->next_visit_qty }}
-                @if($prescription['prescription']->next_visit_time == 0)
-                {{ __('messages.prescription.days') }}
-                @elseif($prescription['prescription']->next_visit_time == 1)
-                {{ __('messages.admin_dashboard.month') }}
-                @else
-                {{ __('messages.doctor.year') }}
-                @endif
+                @if($prescription['prescription']->next_visit_days !== null)
+                {{ __('messages.prescription.next_visit') }} : {{ $prescription['prescription']->next_visit_days }} day(s)
                 @endif
             </h4>
             <div class="mt-3">

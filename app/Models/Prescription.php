@@ -95,7 +95,10 @@ class Prescription extends Model
         'health_insurance',
         'low_income',
         'reference',
+        'is_active',
         'status',
+        'dispensed_at',
+        'dispensed_by',
         'plus_rate',
         'temperature',
         'problem_description',
@@ -132,7 +135,10 @@ class Prescription extends Model
         'health_insurance' => 'string',
         'low_income' => 'string',
         'reference' => 'string',
-        'status' => 'boolean',
+        'is_active' => 'boolean',
+        'status' => 'string',
+        'dispensed_at' => 'datetime',
+        'dispensed_by' => 'integer',
         'plus_rate' => 'string',
         'temperature' => 'string',
         'problem_description' => 'string',
@@ -159,6 +165,16 @@ class Prescription extends Model
         self::STATUS_ALL => 'All',
         self::ACTIVE => 'Active',
         self::INACTIVE => 'Deactive',
+    ];
+
+    public const DISPENSE_STATUS_PENDING = 'pending';
+    public const DISPENSE_STATUS_DISPENSED = 'dispensed';
+    public const DISPENSE_STATUS_CANCELLED = 'cancelled';
+
+    public const DISPENSE_STATUS_OPTIONS = [
+        self::DISPENSE_STATUS_PENDING => 'Pending',
+        self::DISPENSE_STATUS_DISPENSED => 'Dispensed',
+        self::DISPENSE_STATUS_CANCELLED => 'Cancelled',
     ];
 
     const DAYS = 0;
@@ -210,20 +226,40 @@ class Prescription extends Model
         self::ONE_MONTH => 'For 1 Month',
     ];
 
+    const ROUTE_ORAL = 'oral';
+
+    const ROUTE_IV = 'iv';
+
+    const ROUTE_IM = 'im';
+
+    const ROUTE_TOPICAL = 'topical';
+
+    const ROUTE_SUBCUTANEOUS = 'subcutaneous';
+
+    const ROUTE_INHALATION = 'inhalation';
+
+    const ROUTE_OTHER = 'other';
+
+    const DURATION_UNIT_DAY = 'day';
+
+    const DURATION_UNIT_WEEK = 'week';
+
+    const DURATION_UNIT_MONTH = 'month';
+
     const ROUTE_OPTIONS = [
-        'oral' => 'Oral',
-        'iv' => 'IV',
-        'im' => 'IM',
-        'topical' => 'Topical',
-        'subcutaneous' => 'Subcutaneous',
-        'inhalation' => 'Inhalation',
-        'other' => 'Other',
+        self::ROUTE_ORAL => 'Oral',
+        self::ROUTE_IV => 'IV',
+        self::ROUTE_IM => 'IM',
+        self::ROUTE_TOPICAL => 'Topical',
+        self::ROUTE_SUBCUTANEOUS => 'Subcutaneous',
+        self::ROUTE_INHALATION => 'Inhalation',
+        self::ROUTE_OTHER => 'Other',
     ];
 
     const DURATION_UNIT_OPTIONS = [
-        'day' => 'Day(s)',
-        'week' => 'Week(s)',
-        'month' => 'Month(s)',
+        self::DURATION_UNIT_DAY => 'Day(s)',
+        self::DURATION_UNIT_WEEK => 'Week(s)',
+        self::DURATION_UNIT_MONTH => 'Month(s)',
     ];
 
     public function patient(): BelongsTo

@@ -25,11 +25,11 @@
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('status', __('messages.web.status').(':'), ['class' => 'form-label']) }}
+            {{ Form::label('is_active', __('messages.web.status').(':'), ['class' => 'form-label']) }}
             <br>
             <div class="form-check form-check-solid form-switch fv-row">
-                <input name="status" class="form-check-input is-active cursor-pointer" value="1"
-                    type="checkbox" {{(isset($prescription) && ($prescription->status)) ? 'checked' : ''}}>
+                <input name="is_active" class="form-check-input is-active cursor-pointer" value="1"
+                    type="checkbox" {{(isset($prescription) && ($prescription->is_active)) ? 'checked' : ''}}>
                 <label class="form-check-label" for="allowmarketing"></label>
             </div>
         </div>

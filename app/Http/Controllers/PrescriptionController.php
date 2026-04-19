@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\CreatePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
+use App\Models\Category;
 use App\Models\Diagnose;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\DocumentIssuance;
 use App\Models\Doctor;
+use App\Models\Generic;
 use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\PrescriptionMedicine;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
+use App\Services\MedicineInventoryService;
 use App\Services\PrescriptionService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -42,14 +45,18 @@ class PrescriptionController extends AppBaseController
 
     private $prescriptionService;
 
+    private MedicineInventoryService $medicineInventoryService;
+
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
         MedicineRepository $medicineRepository,
-        PrescriptionService $prescriptionService
+        PrescriptionService $prescriptionService,
+        MedicineInventoryService $medicineInventoryService
     ) {
         $this->prescriptionRepository = $prescriptionRepo;
         $this->medicineRepository = $medicineRepository;
         $this->prescriptionService = $prescriptionService;
+        $this->medicineInventoryService = $medicineInventoryService;
     }
 
     /**
@@ -154,12 +161,13 @@ class PrescriptionController extends AppBaseController
         $prescriptionData['body_temperature'] = $prescriptionData['body_temperature'] ?? $patientSummary['body_temperature'];
         $prescriptionData['blood_pressure'] = $prescriptionData['blood_pressure'] ?? $patientSummary['blood_pressure'];
         $prescriptionData['height_cm'] = $prescriptionData['height_cm'] ?? $patientSummary['height_cm'];
-        $prescriptionData['status'] = 1;
+        $prescriptionData['is_active'] = true;
+        $prescriptionData['status'] = Prescription::DISPENSE_STATUS_PENDING;
 
         DB::beginTransaction();
         try {
             $prescription = Prescription::create($prescriptionData);
-            $medicineBill = DispenseRecord::create([
+            $dispenseRecord = DispenseRecord::create([
                 'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                 'patient_id' => $prescription->patient_id,
                 'doctor_id' => $prescription->doctor_id,
@@ -176,11 +184,6 @@ class PrescriptionController extends AppBaseController
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
-
-                if ((int) $medicine->available_quantity < $totalQuantity) {
-                    $available = $medicine->available_quantity ?? 0;
-                    throw new Exception(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
-                }
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -199,24 +202,18 @@ class PrescriptionController extends AppBaseController
                 ]);
 
                 DispenseRecordItem::create([
-                    'dispense_id' => $medicineBill->id,
-                    'category_id' => null,
-                    'item_type' => Medicine::class,
-                    'item_id' => $medicine->id,
-                    'item_name' => $medicine->name,
-                    'item_price' => $medicine->selling_price,
-                    'sale_quantity' => $totalQuantity,
-                    'purchase_quantity' => 1,
-                    'tax' => 0,
-                    'amount' => $medicine->selling_price,
-                    'sub_total' => $medicine->selling_price,
-                    'total' => ((float) $medicine->selling_price * $totalQuantity),
+                    'dispense_id' => $dispenseRecord->id,
+                    'medicine_id' => $medicine->id,
+                    'quantity' => $totalQuantity,
+                    'unit_price' => $medicine->selling_price,
+                    'charge_amount' => 0,
+                    'line_total' => ((float) $medicine->selling_price * $totalQuantity),
                 ]);
 
                 $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
             }
 
-            $medicineBill->update([
+            $dispenseRecord->update([
                 'net_amount' => $totalAmount,
                 'total' => $totalAmount,
             ]);
@@ -398,12 +395,12 @@ class PrescriptionController extends AppBaseController
         try {
             $prescription->update($prescriptionData);
 
-            $medicineBill = DispenseRecord::whereModelType(Prescription::class)
+            $dispenseRecord = DispenseRecord::whereModelType(Prescription::class)
                 ->whereModelId($prescription->id)
                 ->first();
 
-            if (empty($medicineBill)) {
-                $medicineBill = DispenseRecord::create([
+            if (empty($dispenseRecord)) {
+                $dispenseRecord = DispenseRecord::create([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $prescription->patient_id,
                     'doctor_id' => $prescription->doctor_id,
@@ -415,7 +412,7 @@ class PrescriptionController extends AppBaseController
                     'total' => 0,
                 ]);
             } else {
-                $medicineBill->dispenseItems()->delete();
+                $dispenseRecord->dispenseItems()->delete();
             }
 
             $prescription->getMedicine()->delete();
@@ -424,11 +421,6 @@ class PrescriptionController extends AppBaseController
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
-
-                if ((int) $medicine->available_quantity < $totalQuantity) {
-                    $available = $medicine->available_quantity ?? 0;
-                    throw new Exception(__('messages.prescription.available_quantity_of') . $medicine->name . ' ' . __('messages.prescription.is') . ' ' . $available . '.');
-                }
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -447,24 +439,18 @@ class PrescriptionController extends AppBaseController
                 ]);
 
                 DispenseRecordItem::create([
-                    'dispense_id' => $medicineBill->id,
-                    'category_id' => null,
-                    'item_type' => Medicine::class,
-                    'item_id' => $medicine->id,
-                    'item_name' => $medicine->name,
-                    'item_price' => $medicine->selling_price,
-                    'sale_quantity' => $totalQuantity,
-                    'purchase_quantity' => 1,
-                    'tax' => 0,
-                    'amount' => $medicine->selling_price,
-                    'sub_total' => $medicine->selling_price,
-                    'total' => ((float) $medicine->selling_price * $totalQuantity),
+                    'dispense_id' => $dispenseRecord->id,
+                    'medicine_id' => $medicine->id,
+                    'quantity' => $totalQuantity,
+                    'unit_price' => $medicine->selling_price,
+                    'charge_amount' => 0,
+                    'line_total' => ((float) $medicine->selling_price * $totalQuantity),
                 ]);
 
                 $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
             }
 
-            $medicineBill->update([
+            $dispenseRecord->update([
                 'patient_id' => $prescription->patient_id,
                 'net_amount' => $totalAmount,
                 'total' => $totalAmount,
@@ -568,6 +554,10 @@ class PrescriptionController extends AppBaseController
     {
         $user = getLogInUser();
 
+        if ($user && $user->hasRole('patient')) {
+            return 'patients.prescription.medicine.show';
+        }
+
         if ($user && $user->hasRole('staff')) {
             return 'staff.prescription.medicine.show';
         }
@@ -611,10 +601,53 @@ class PrescriptionController extends AppBaseController
     public function activeDeactiveStatus(int $id): JsonResponse
     {
         $prescription = Prescription::findOrFail($id);
-        $status = ! $prescription->status;
-        $prescription->update(['status' => $status]);
+        $isActive = ! (bool) $prescription->is_active;
+        $prescription->update(['is_active' => $isActive]);
 
         return $this->sendSuccess(__('messages.flash.status_update'));
+    }
+
+    public function dispense(Prescription $prescription): RedirectResponse|JsonResponse
+    {
+        if (! (isRole('clinic_admin') || isRole('staff'))) {
+            if (request()->ajax()) {
+                return $this->sendError('Only authorized staff can dispense prescriptions.');
+            }
+
+            Flash::error('Only authorized staff can dispense prescriptions.');
+
+            return Redirect::back();
+        }
+
+        if (! canAccessRecord(Prescription::class, $prescription->id)) {
+            if (request()->ajax()) {
+                return $this->sendError(__('messages.flash.prescription_not_found'));
+            }
+
+            Flash::error(__('messages.flash.prescription_not_found'));
+
+            return Redirect::back();
+        }
+
+        try {
+            $this->medicineInventoryService->dispensePrescription($prescription, getLogInUserId());
+
+            if (request()->ajax()) {
+                return $this->sendSuccess('Prescription marked as dispensed and stock was deducted using FEFO.');
+            }
+
+            Flash::success('Prescription marked as dispensed and stock was deducted using FEFO.');
+
+            return Redirect::back();
+        } catch (\Throwable $e) {
+            if (request()->ajax()) {
+                return $this->sendError($e->getMessage());
+            }
+
+            Flash::error($e->getMessage());
+
+            return Redirect::back();
+        }
     }
 
     public function showModal($id): JsonResponse
@@ -637,10 +670,68 @@ class PrescriptionController extends AppBaseController
 
     public function prescreptionMedicineStore(CreateMedicineRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $this->medicineRepository->create($input);
+        DB::beginTransaction();
+        try {
+            $input = $request->validated();
+            $genericName = trim((string) ($input['generic_name'] ?? ''));
+            $brandName = trim((string) ($input['brand_name'] ?? ''));
+            $categoryName = trim((string) ($input['category'] ?? ''));
 
-        return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
+            if ($genericName !== '') {
+                $generic = Generic::firstOrCreate(['name' => $genericName]);
+                $input['generic_id'] = $generic->id;
+            }
+
+            if ($categoryName !== '') {
+                $category = Category::firstOrCreate(['name' => $categoryName], ['is_active' => Category::ACTIVE]);
+                if ((int) $category->is_active !== Category::ACTIVE) {
+                    $category->update(['is_active' => Category::ACTIVE]);
+                }
+                $input['category_id'] = $category->id;
+            }
+
+            $input['category'] = $categoryName;
+            $input['category_name'] = $categoryName;
+            $input['name'] = $brandName !== '' ? $brandName : $genericName;
+            $input['quantity'] = 0;
+            $input['available_quantity'] = 0;
+            $input['minimum_stock_alert'] = $input['reorder_level'] ?? null;
+
+            $medicine = $this->medicineRepository->create(Arr::except($input, [
+                'initial_stock_quantity',
+                'batch_number',
+                'manufacturing_date',
+                'expiration_date',
+                'supplier_name',
+                'unit_cost',
+            ]));
+
+            $initialQty = (int) ($input['initial_stock_quantity'] ?? 0);
+            if ($initialQty > 0) {
+                $this->medicineInventoryService->recordStockIn([
+                    'medicine_id' => $medicine->id,
+                    'quantity' => $initialQty,
+                    'dosage' => $input['dosage'] ?? null,
+                    'batch_number' => $input['batch_number'] ?? null,
+                    'manufacturing_date' => $input['manufacturing_date'] ?? null,
+                    'expiration_date' => $input['expiration_date'] ?? null,
+                    'supplier_name' => $input['supplier_name'] ?? null,
+                    'unit_cost' => $input['unit_cost'] ?? null,
+                    'date_received' => now()->toDateString(),
+                    'user_id' => getLogInUserId(),
+                    'reference' => $medicine,
+                    'remarks' => 'Initial stock from prescription medicine modal',
+                ]);
+            }
+
+            DB::commit();
+
+            return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $this->sendError($e->getMessage());
+        }
     }
 
     /**
@@ -676,15 +767,19 @@ class PrescriptionController extends AppBaseController
                 'doctor.user',
                 'doctor.address',
                 'getMedicine.medicines',
-                'appointment'
+                'diagnosis',
             ])->findOrFail($id);
+
+            $patientAddress = optional($prescriptionModel->patient->address)->address1
+                ?: optional(optional($prescriptionModel->patient)->user->address)->address1
+                ?: '';
 
             // Prepare patient information
             $patientInfo = [
                 'name' => $prescriptionModel->patient->user->full_name ?? '',
-                'address' => $prescriptionModel->patient->address ?? $prescriptionModel->patient->user->address ?? '',
+                'address' => $patientAddress,
                 'age' => null,
-                'date' => \Carbon\Carbon::parse($prescriptionModel->created_at)->format('M d, Y')
+                'date' => \Carbon\Carbon::parse($prescriptionModel->consultation_date ?: $prescriptionModel->created_at)->format('M d, Y')
             ];
 
             // Calculate age if DOB exists
@@ -700,21 +795,33 @@ class PrescriptionController extends AppBaseController
                 $prescriptionContent['problem'] = $prescriptionModel->problem_description;
             }
 
+            if ($prescriptionModel->diagnosis && ! empty($prescriptionModel->diagnosis->diagnoses)) {
+                $prescriptionContent['diagnosis'] = $prescriptionModel->diagnosis->diagnoses;
+            }
+
             if (!$prescriptionModel->getMedicine->isEmpty()) {
                 $medications = [];
                 foreach ($prescriptionModel->getMedicine as $medicine) {
+                    $durationValue = $medicine->duration_value ?: $medicine->day;
+                    $durationUnit = $medicine->duration_unit ?: 'day';
+                    $frequency = $medicine->frequency ?: $medicine->dose_interval;
+                    $totalQuantity = $medicine->total_quantity ?: ((int) $frequency * (int) $durationValue);
+
                     $medications[] = [
                         'name' => $medicine->medicines->name ?? 'N/A',
                         'dosage' => $medicine->dosage,
-                        'timing' => ($medicine->time == 0) ? 'after meal' : 'before meal',
-                        'duration' => $medicine->day . ' days'
+                        'route' => ucfirst($medicine->route_of_administration ?: 'oral'),
+                        'frequency' => $frequency . ' / day',
+                        'duration' => $durationValue . ' ' . \Illuminate\Support\Str::plural($durationUnit, (int) $durationValue),
+                        'quantity' => $totalQuantity,
+                        'instructions' => $medicine->instructions ?: $medicine->comment,
                     ];
                 }
                 $prescriptionContent['medications'] = $medications;
             }
 
-            if ($prescriptionModel->test) {
-                $prescriptionContent['tests'] = $prescriptionModel->test;
+            if ($prescriptionModel->next_visit_days !== null) {
+                $prescriptionContent['next_visit'] = (int) $prescriptionModel->next_visit_days . ' day(s)';
             }
 
             if ($prescriptionModel->advice) {
@@ -731,7 +838,7 @@ class PrescriptionController extends AppBaseController
 
             // Prepare signature information
             $signatureInfo = [
-                'date' => \Carbon\Carbon::parse($prescriptionModel->created_at)->format('M d, Y'),
+                'date' => \Carbon\Carbon::parse($prescriptionModel->consultation_date ?: $prescriptionModel->created_at)->format('M d, Y'),
                 'doctor_name' => $prescriptionModel->doctor->user->full_name ?? ''
             ];
 

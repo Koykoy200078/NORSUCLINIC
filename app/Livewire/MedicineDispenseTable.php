@@ -28,10 +28,6 @@ class MedicineDispenseTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setDefaultSort('medicine_bills.created_at', 'desc');
 
-        if (isRole('doctor')) {
-            $this->showButtonOnHeader = false;
-        }
-
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {
                 return ['class' => 'text-center ml-5'];
@@ -49,10 +45,10 @@ class MedicineDispenseTable extends LivewireTableComponent
     public function columns(): array
     {
         $columns = [
-            Column::make(__('messages.medicine_bills.history_number'), 'history_number')
+            Column::make('Dispense ID', 'history_number')
                 ->sortable()->searchable()
                 ->view('medicine-history.columns.bill_id'),
-            Column::make(__('messages.medicine_bills.bill_date'), 'created_at')
+            Column::make('Dispensed At', 'created_at')
                 ->sortable()->searchable()
                 ->view('medicine-history.columns.bill_date'),
             Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
@@ -71,12 +67,9 @@ class MedicineDispenseTable extends LivewireTableComponent
                         $direction
                     );
                 })->searchable()->view('medicine-history.columns.doctor'),
+            Column::make(__('messages.common.action'), 'id')
+                ->view('medicine-history.columns.action'),
         ];
-
-        if (! isRole('doctor')) {
-            $columns[] = Column::make(__('messages.common.action'), 'id')
-                ->view('medicine-history.columns.action');
-        }
 
         return $columns;
     }

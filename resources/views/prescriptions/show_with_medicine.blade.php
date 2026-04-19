@@ -7,7 +7,15 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1"> @yield('title') </h1>
         <div class="text-end mt-4 mt-md-0">
-            <a href="{{ route('prescriptions.pdf',$prescription['prescription']) }}"
+            @php
+            $pdfRoute = isRole('doctor')
+            ? 'doctors.prescriptions.pdf'
+            : (isRole('staff') ? 'staff.prescriptions.pdf' : (isRole('patient') ? 'patients.prescriptions.pdf' : 'prescriptions.pdf'));
+            $editRoute = isRole('doctor')
+            ? 'doctors.prescriptions.edit'
+            : (isRole('staff') ? 'staff.prescriptions.edit' : (isRole('patient') ? 'patients.prescriptions.edit' : 'prescriptions.edit'));
+            @endphp
+            <a href="{{ route($pdfRoute, $prescription['prescription']) }}"
                 target="_blank"
                 class="btn btn-success me-2 edit-btn mt-3">{{ __('auth.app.print').' '.__('messages.prescription.prescription') }}
             </a>
@@ -16,7 +24,7 @@
             @endphp
             @if(isset($medicineBill->payment_status) && $medicineBill->payment_status == false)
             <a class="btn btn-primary edit-btn mt-3"
-                href="{{route('prescriptions.edit', $prescription['prescription']->id)}}">
+                href="{{ route($editRoute, $prescription['prescription']->id) }}">
                 {{ __('messages.common.edit') }}
             </a>
             @endif

@@ -1,69 +1,69 @@
 @php
-    $isEdit = isset($prescription);
-    $currentUserDoctorId = optional(optional(getLogInUser())->doctor)->id;
-    $selectedDoctorId = old('doctor_id', $isEdit ? $prescription->doctor_id : $currentUserDoctorId);
+$isEdit = isset($prescription);
+$currentUserDoctorId = optional(optional(getLogInUser())->doctor)->id;
+$selectedDoctorId = old('doctor_id', $isEdit ? $prescription->doctor_id : $currentUserDoctorId);
 
-    $doctorMetaArray = $doctorMeta instanceof \Illuminate\Support\Collection ? $doctorMeta->toArray() : (array) $doctorMeta;
-    $initialDoctorLicense = old(
-        'doctor_license_s2_number',
-        $isEdit
-            ? ($prescription->doctor_license_s2_number ?: ($doctorMetaArray[$selectedDoctorId]['license'] ?? ''))
-            : ($doctorMetaArray[$selectedDoctorId]['license'] ?? '')
-    );
+$doctorMetaArray = $doctorMeta instanceof \Illuminate\Support\Collection ? $doctorMeta->toArray() : (array) $doctorMeta;
+$initialDoctorLicense = old(
+'doctor_license_s2_number',
+$isEdit
+? ($prescription->doctor_license_s2_number ?: ($doctorMetaArray[$selectedDoctorId]['license'] ?? ''))
+: ($doctorMetaArray[$selectedDoctorId]['license'] ?? '')
+);
 
-    $consultationDateSource = $isEdit ? $prescription->consultation_date : ($patientSummary['consultation_date'] ?? now());
-    $consultationDateValue = old(
-        'consultation_date',
-        $consultationDateSource ? \Carbon\Carbon::parse($consultationDateSource)->format('Y-m-d') : now()->format('Y-m-d')
-    );
+$consultationDateSource = $isEdit ? $prescription->consultation_date : ($patientSummary['consultation_date'] ?? now());
+$consultationDateValue = old(
+'consultation_date',
+$consultationDateSource ? \Carbon\Carbon::parse($consultationDateSource)->format('Y-m-d') : now()->format('Y-m-d')
+);
 
-    $initialMedicineRows = old('medicines', $medicineRows ?? []);
-    if (empty($initialMedicineRows)) {
-        $initialMedicineRows = [[
-            'medicine_id' => '',
-            'dosage' => '',
-            'route_of_administration' => \App\Models\Prescription::ROUTE_ORAL,
-            'frequency' => 1,
-            'duration_value' => 1,
-            'duration_unit' => \App\Models\Prescription::DURATION_UNIT_DAY,
-            'total_quantity' => 1,
-            'instructions' => '',
-        ]];
-    }
+$initialMedicineRows = old('medicines', $medicineRows ?? []);
+if (empty($initialMedicineRows)) {
+$initialMedicineRows = [[
+'medicine_id' => '',
+'dosage' => '',
+'route_of_administration' => \App\Models\Prescription::ROUTE_ORAL,
+'frequency' => 1,
+'duration_value' => 1,
+'duration_unit' => \App\Models\Prescription::DURATION_UNIT_DAY,
+'total_quantity' => 1,
+'instructions' => '',
+]];
+}
 
-    $medicineCatalog = collect($medicineOptions)
-        ->map(function ($medicine) {
-            return [
-                'id' => (int) $medicine->id,
-                'name' => $medicine->name,
-                'available_quantity' => (int) ($medicine->available_quantity ?? 0),
-            ];
-        })
-        ->values()
-        ->toArray();
+$medicineCatalog = collect($medicineOptions)
+->map(function ($medicine) {
+return [
+'id' => (int) $medicine->id,
+'name' => $medicine->name,
+'available_quantity' => (int) ($medicine->available_quantity ?? 0),
+];
+})
+->values()
+->toArray();
 
-    $routeOptions = \App\Models\Prescription::ROUTE_OPTIONS;
-    $durationOptions = \App\Models\Prescription::DURATION_UNIT_OPTIONS;
+$routeOptions = \App\Models\Prescription::ROUTE_OPTIONS;
+$durationOptions = \App\Models\Prescription::DURATION_UNIT_OPTIONS;
 
-    $patientFullName = trim(optional($patient->user)->first_name . ' ' . optional($patient->user)->last_name);
-    $patientUniversityId = optional($patient->user)->university_id_number;
+$patientFullName = trim(optional($patient->user)->first_name . ' ' . optional($patient->user)->last_name);
+$patientUniversityId = optional($patient->user)->university_id_number;
 
-    $weightValue = old('weight_kg', $isEdit ? $prescription->weight_kg : ($patientSummary['weight_kg'] ?? null));
-    $pulseValue = old('pulse_rate', $isEdit ? $prescription->pulse_rate : ($patientSummary['pulse_rate'] ?? null));
-    $temperatureValue = old('body_temperature', $isEdit ? $prescription->body_temperature : ($patientSummary['body_temperature'] ?? null));
-    $bloodPressureValue = old('blood_pressure', $isEdit ? $prescription->blood_pressure : ($patientSummary['blood_pressure'] ?? null));
-    $heightValue = old('height_cm', $isEdit ? $prescription->height_cm : ($patientSummary['height_cm'] ?? null));
+$weightValue = old('weight_kg', $isEdit ? $prescription->weight_kg : ($patientSummary['weight_kg'] ?? null));
+$pulseValue = old('pulse_rate', $isEdit ? $prescription->pulse_rate : ($patientSummary['pulse_rate'] ?? null));
+$temperatureValue = old('body_temperature', $isEdit ? $prescription->body_temperature : ($patientSummary['body_temperature'] ?? null));
+$bloodPressureValue = old('blood_pressure', $isEdit ? $prescription->blood_pressure : ($patientSummary['blood_pressure'] ?? null));
+$heightValue = old('height_cm', $isEdit ? $prescription->height_cm : ($patientSummary['height_cm'] ?? null));
 
-    $storeRoute = isRole('doctor')
-        ? 'doctors.prescriptions.store'
-        : (isRole('staff') ? 'staff.prescriptions.store' : (isRole('patient') ? 'patients.prescriptions.store' : 'prescriptions.store'));
+$storeRoute = isRole('doctor')
+? 'doctors.prescriptions.store'
+: (isRole('staff') ? 'staff.prescriptions.store' : (isRole('patient') ? 'patients.prescriptions.store' : 'prescriptions.store'));
 
-    $updateRoute = isRole('doctor')
-        ? 'doctors.prescriptions.update'
-        : (isRole('staff') ? 'staff.prescriptions.update' : (isRole('patient') ? 'patients.prescriptions.update' : 'prescriptions.update'));
+$updateRoute = isRole('doctor')
+? 'doctors.prescriptions.update'
+: (isRole('staff') ? 'staff.prescriptions.update' : (isRole('patient') ? 'patients.prescriptions.update' : 'prescriptions.update'));
 
-    $formRoute = $isEdit ? [$updateRoute, $prescription->id] : $storeRoute;
-    $formMethod = $isEdit ? 'patch' : 'post';
+$formRoute = $isEdit ? [$updateRoute, $prescription->id] : $storeRoute;
+$formMethod = $isEdit ? 'patch' : 'post';
 @endphp
 
 <div
@@ -76,8 +76,7 @@
         'routeOptions' => $routeOptions,
         'durationOptions' => $durationOptions,
     ]))"
-    x-init="init()"
->
+    x-init="init()">
     {{ Form::model($isEdit ? $prescription : null, ['route' => $formRoute, 'method' => $formMethod, 'id' => $isEdit ? 'editPrescription' : 'createPrescription']) }}
 
     <input type="hidden" name="patient_id" value="{{ $patient->id }}">
@@ -130,15 +129,14 @@
                         class="form-select @error('doctor_id') is-invalid @enderror"
                         x-model="selectedDoctorId"
                         @change="syncDoctorLicense"
-                        required
-                    >
+                        required>
                         <option value="">Select doctor</option>
                         @foreach ($doctors as $doctorId => $doctorName)
-                            <option value="{{ $doctorId }}">{{ $doctorName }}</option>
+                        <option value="{{ $doctorId }}">{{ $doctorName }}</option>
                         @endforeach
                     </select>
                     @error('doctor_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -150,10 +148,9 @@
                         name="doctor_license_s2_number"
                         class="form-control @error('doctor_license_s2_number') is-invalid @enderror"
                         x-model="doctorLicense"
-                        readonly
-                    >
+                        readonly>
                     @error('doctor_license_s2_number')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -165,10 +162,9 @@
                         name="consultation_date"
                         class="form-control @error('consultation_date') is-invalid @enderror"
                         value="{{ $consultationDateValue }}"
-                        required
-                    >
+                        required>
                     @error('consultation_date')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -177,16 +173,15 @@
                     <select id="icd10_diagnosis_id" name="icd10_diagnosis_id" class="form-select @error('icd10_diagnosis_id') is-invalid @enderror">
                         <option value="">Select ICD-10 diagnosis</option>
                         @foreach ($diagnosisOptions as $diagnosisId => $diagnosisLabel)
-                            <option
-                                value="{{ $diagnosisId }}"
-                                {{ (string) old('icd10_diagnosis_id', $isEdit ? $prescription->icd10_diagnosis_id : '') === (string) $diagnosisId ? 'selected' : '' }}
-                            >
-                                {{ $diagnosisLabel }}
-                            </option>
+                        <option
+                            value="{{ $diagnosisId }}"
+                            {{ (string) old('icd10_diagnosis_id', $isEdit ? $prescription->icd10_diagnosis_id : '') === (string) $diagnosisId ? 'selected' : '' }}>
+                            {{ $diagnosisLabel }}
+                        </option>
                         @endforeach
                     </select>
                     @error('icd10_diagnosis_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -199,10 +194,9 @@
                         min="0"
                         class="form-control @error('next_visit_days') is-invalid @enderror"
                         value="{{ old('next_visit_days', $isEdit ? $prescription->next_visit_days : null) }}"
-                        placeholder="e.g. 7"
-                    >
+                        placeholder="e.g. 7">
                     @error('next_visit_days')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -213,10 +207,9 @@
                         name="problem_description"
                         class="form-control @error('problem_description') is-invalid @enderror"
                         rows="3"
-                        placeholder="Describe the patient concern"
-                    >{{ old('problem_description', $isEdit ? $prescription->problem_description : null) }}</textarea>
+                        placeholder="Describe the patient concern">{{ old('problem_description', $isEdit ? $prescription->problem_description : null) }}</textarea>
                     @error('problem_description')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -227,10 +220,9 @@
                         name="advice"
                         class="form-control @error('advice') is-invalid @enderror"
                         rows="3"
-                        placeholder="Doctor advice and reminders"
-                    >{{ old('advice', $isEdit ? $prescription->advice : null) }}</textarea>
+                        placeholder="Doctor advice and reminders">{{ old('advice', $isEdit ? $prescription->advice : null) }}</textarea>
                     @error('advice')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
@@ -267,15 +259,13 @@
                                         :name="'medicines[' + index + '][medicine_id]'"
                                         x-model="row.medicine_id"
                                         @change="onMedicineChanged(index)"
-                                        required
-                                    >
+                                        required>
                                         <option value="">Select medicine</option>
                                         <template x-for="medicine in medicineCatalog" :key="medicine.id">
                                             <option
                                                 :value="medicine.id"
                                                 :disabled="isSelectedElsewhere(medicine.id, index)"
-                                                x-text="medicine.name + ' (Stock: ' + medicine.available_quantity + ')'"
-                                            ></option>
+                                                x-text="medicine.name + ' (Stock: ' + medicine.available_quantity + ')'"></option>
                                         </template>
                                     </select>
                                     <div class="text-danger fs-7 mt-1" x-show="isDuplicate(index)">Duplicate medicine is not allowed.</div>
@@ -290,16 +280,14 @@
                                         :name="'medicines[' + index + '][dosage]'"
                                         x-model="row.dosage"
                                         placeholder="e.g. 1 tablet"
-                                        required
-                                    >
+                                        required>
                                 </td>
                                 <td>
                                     <select
                                         class="form-select"
                                         :name="'medicines[' + index + '][route_of_administration]'"
                                         x-model="row.route_of_administration"
-                                        required
-                                    >
+                                        required>
                                         <template x-for="(label, value) in routeOptions" :key="value">
                                             <option :value="value" x-text="label"></option>
                                         </template>
@@ -314,8 +302,7 @@
                                         min="1"
                                         max="24"
                                         @input="recalculateRow(index)"
-                                        required
-                                    >
+                                        required>
                                 </td>
                                 <td>
                                     <input
@@ -326,8 +313,7 @@
                                         min="1"
                                         max="365"
                                         @input="recalculateRow(index)"
-                                        required
-                                    >
+                                        required>
                                 </td>
                                 <td>
                                     <select
@@ -335,8 +321,7 @@
                                         :name="'medicines[' + index + '][duration_unit]'"
                                         x-model="row.duration_unit"
                                         @change="recalculateRow(index)"
-                                        required
-                                    >
+                                        required>
                                         <template x-for="(label, value) in durationOptions" :key="value">
                                             <option :value="value" x-text="label"></option>
                                         </template>
@@ -350,8 +335,7 @@
                                         x-model.number="row.total_quantity"
                                         min="1"
                                         readonly
-                                        required
-                                    >
+                                        required>
                                 </td>
                                 <td>
                                     <textarea
@@ -359,16 +343,14 @@
                                         rows="2"
                                         :name="'medicines[' + index + '][instructions]'"
                                         x-model="row.instructions"
-                                        placeholder="Optional instruction"
-                                    ></textarea>
+                                        placeholder="Optional instruction"></textarea>
                                 </td>
                                 <td>
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-light-danger"
                                         @click="removeRow(index)"
-                                        :disabled="medicines.length === 1"
-                                    >
+                                        :disabled="medicines.length === 1">
                                         Remove
                                     </button>
                                 </td>
@@ -378,7 +360,7 @@
                 </table>
             </div>
             @error('medicines')
-                <div class="text-danger mt-2">{{ $message }}</div>
+            <div class="text-danger mt-2">{{ $message }}</div>
             @enderror
         </div>
     </div>
@@ -393,35 +375,35 @@
                     <label for="weight_kg" class="form-label">Weight (kg)</label>
                     <input type="number" step="0.01" min="0" id="weight_kg" name="weight_kg" class="form-control @error('weight_kg') is-invalid @enderror" value="{{ $weightValue }}">
                     @error('weight_kg')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-3">
                     <label for="pulse_rate" class="form-label">Pulse Rate</label>
                     <input type="text" id="pulse_rate" name="pulse_rate" class="form-control @error('pulse_rate') is-invalid @enderror" value="{{ $pulseValue }}" placeholder="e.g. 72 bpm">
                     @error('pulse_rate')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-3">
                     <label for="body_temperature" class="form-label">Temperature (C)</label>
                     <input type="number" step="0.1" min="20" max="50" id="body_temperature" name="body_temperature" class="form-control @error('body_temperature') is-invalid @enderror" value="{{ $temperatureValue }}">
                     @error('body_temperature')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-3">
                     <label for="blood_pressure" class="form-label">Blood Pressure</label>
                     <input type="text" id="blood_pressure" name="blood_pressure" class="form-control @error('blood_pressure') is-invalid @enderror" value="{{ $bloodPressureValue }}" placeholder="e.g. 120/80">
                     @error('blood_pressure')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-3">
                     <label for="height_cm" class="form-label">Height (cm)</label>
                     <input type="number" step="0.01" min="0" id="height_cm" name="height_cm" class="form-control @error('height_cm') is-invalid @enderror" value="{{ $heightValue }}">
                     @error('height_cm')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>

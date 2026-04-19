@@ -10,6 +10,7 @@ use App\Models\MedicineAvailability;
 use App\Models\PurchasedMedicine;
 use App\Models\StockIn;
 use App\Models\User;
+use App\Services\MedicineInventoryService;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
 use Exception;
@@ -124,11 +125,28 @@ class MedicineAvailabilityRepository extends BaseRepository
 
                 PurchasedMedicine::create($purchasedMedicineArray);
                 $medicine = Medicine::find($input['medicine'][$key]);
+                $previousAvailable = (int) ($medicine->available_quantity ?? 0);
                 $medicineQtyArray = [
                     'quantity' => $input['quantity'][$key] + $medicine->quantity,
                     'available_quantity' => $input['quantity'][$key] + $medicine->available_quantity,
                 ];
                 $medicine->update($medicineQtyArray);
+
+                app(MedicineInventoryService::class)->recordStockIn([
+                    'medicine_id' => $medicine->id,
+                    'quantity' => (int) $input['quantity'][$key],
+                    'dosage' => $input['dosage'][$key] ?? null,
+                    'batch_number' => ($input['batch_number'][$key] ?? null)
+                        ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
+                    'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
+                    'expiration_date' => $input['expiry_date'][$key] ?? null,
+                    'supplier_name' => $input['supplier_name'] ?? null,
+                    'date_received' => now()->toDateString(),
+                    'opening_balance_before' => $previousAvailable,
+                    'user_id' => getLogInUserId(),
+                    'reference' => $medicineAvailability,
+                    'remarks' => 'Stock-in from procurement form',
+                ]);
 
                 // Log medicine procurement activity
                 self::logMedicineProcurement(
@@ -191,11 +209,39 @@ class MedicineAvailabilityRepository extends BaseRepository
                     // Update medicine quantities
                     $medicine = Medicine::find($medicineId);
                     if ($medicine) {
+                        $previousAvailable = (int) ($medicine->available_quantity ?? 0);
                         $medicineQtyArray = [
                             'quantity' => $medicine->quantity + $quantityDifference,
                             'available_quantity' => $medicine->available_quantity + $quantityDifference,
                         ];
                         $medicine->update($medicineQtyArray);
+
+                        if ($quantityDifference > 0) {
+                            app(MedicineInventoryService::class)->recordStockIn([
+                                'medicine_id' => $medicine->id,
+                                'quantity' => (int) $quantityDifference,
+                                'dosage' => $input['dosage'][$key] ?? null,
+                                'batch_number' => ($input['batch_number'][$key] ?? null)
+                                    ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
+                                'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
+                                'expiration_date' => $input['expiry_date'][$key] ?? null,
+                                'supplier_name' => $input['supplier_name'] ?? null,
+                                'date_received' => now()->toDateString(),
+                                'opening_balance_before' => $previousAvailable,
+                                'user_id' => getLogInUserId(),
+                                'reference' => $medicineAvailability,
+                                'remarks' => 'Stock-in adjustment from updated procurement',
+                            ]);
+                        } elseif ($quantityDifference < 0) {
+                            app(MedicineInventoryService::class)->deductStockFefo(
+                                $medicine->id,
+                                abs((int) $quantityDifference),
+                                getLogInUserId(),
+                                $medicineAvailability,
+                                'Stock-out adjustment from updated procurement',
+                                \App\Models\MedicineTransaction::TYPE_ADJUSTMENT
+                            );
+                        }
 
                         // Log the update
                         if ($quantityDifference != 0) {
@@ -228,11 +274,28 @@ class MedicineAvailabilityRepository extends BaseRepository
                     // Add to medicine quantity
                     $medicine = Medicine::find($medicineId);
                     if ($medicine) {
+                        $previousAvailable = (int) ($medicine->available_quantity ?? 0);
                         $medicineQtyArray = [
                             'quantity' => $medicine->quantity + $newQuantity,
                             'available_quantity' => $medicine->available_quantity + $newQuantity,
                         ];
                         $medicine->update($medicineQtyArray);
+
+                        app(MedicineInventoryService::class)->recordStockIn([
+                            'medicine_id' => $medicine->id,
+                            'quantity' => (int) $newQuantity,
+                            'dosage' => $input['dosage'][$key] ?? null,
+                            'batch_number' => ($input['batch_number'][$key] ?? null)
+                                ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
+                            'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
+                            'expiration_date' => $input['expiry_date'][$key] ?? null,
+                            'supplier_name' => $input['supplier_name'] ?? null,
+                            'date_received' => now()->toDateString(),
+                            'opening_balance_before' => $previousAvailable,
+                            'user_id' => getLogInUserId(),
+                            'reference' => $medicineAvailability,
+                            'remarks' => 'New batch from updated procurement',
+                        ]);
 
                         // Log medicine procurement
                         self::logMedicineProcurement(
@@ -256,6 +319,15 @@ class MedicineAvailabilityRepository extends BaseRepository
                         'available_quantity' => max(0, $medicine->available_quantity - $deletedMedicine->quantity),
                     ];
                     $medicine->update($medicineQtyArray);
+
+                    app(MedicineInventoryService::class)->deductStockFefo(
+                        $medicine->id,
+                        (int) $deletedMedicine->quantity,
+                        getLogInUserId(),
+                        $medicineAvailability,
+                        'Deleted batch adjustment from procurement update',
+                        \App\Models\MedicineTransaction::TYPE_ADJUSTMENT
+                    );
                 }
                 $deletedMedicine->delete();
             }

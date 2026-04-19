@@ -55,7 +55,10 @@ class MedicineTable extends LivewireTableComponent
                 ->view('medicines.templates.columns.name')
                 ->searchable()
                 ->sortable(),
-            Column::make('Generic Name', 'generic.name')
+            Column::make('Generic Name', 'generic_name')
+                ->searchable()
+                ->sortable(),
+            Column::make('Category', 'category_name')
                 ->searchable()
                 ->sortable(),
             Column::make(__('messages.medicine.available_quantity'), 'available_quantity')
@@ -79,7 +82,6 @@ class MedicineTable extends LivewireTableComponent
         return Medicine::query()
             ->select([
                 'medicines.*'
-            ])
-            ->with(['category', 'generic']);
+            ]);
     }
 }

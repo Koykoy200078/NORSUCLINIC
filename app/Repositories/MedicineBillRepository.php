@@ -10,6 +10,7 @@ use App\Models\Medicine;
 use App\Models\Patient;
 // MedicineBill / SaleMedicine kept for backward compat — use DispenseRecord/DispenseRecordItem instead
 use App\Models\Setting;
+use App\Services\MedicineInventoryService;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,7 @@ class MedicineBillRepository extends BaseRepository
         return DispenseRecord::class;
     }
 
-    public function update($medicineBill, $input): bool
+    public function update($dispenseRecord, $input): bool
     {
         try {
             DB::beginTransaction();
@@ -59,7 +60,7 @@ class MedicineBillRepository extends BaseRepository
                 throw new UnprocessableEntityHttpException(__('messages.medicine_bills.duplicate_medicine'));
             }
 
-            $medicineBill->update([
+            $dispenseRecord->update([
                 'patient_id'     => $input['patient_id'],
                 'note'           => $input['note'] ?? null,
                 'bill_date'      => $input['bill_date'],
@@ -71,7 +72,7 @@ class MedicineBillRepository extends BaseRepository
                 'tax_amount'     => 0,
             ]);
 
-            $medicineBill->dispenseItems()->delete();
+            $dispenseRecord->dispenseItems()->delete();
 
             if (! empty($input['category_id'])) {
                 foreach ($input['category_id'] as $key => $value) {
@@ -79,17 +80,25 @@ class MedicineBillRepository extends BaseRepository
                     if (! $medicine) {
                         continue;
                     }
+                    $unitPrice = (float) ($input['sale_price'][$key] ?? 0);
+                    $quantity = (int) ($input['quantity'][$key] ?? 0);
                     DispenseRecordItem::create([
-                        'medicine_bill_id' => $medicineBill->id,
-                        'medicine_id'      => $medicine->id,
-                        'sale_price'       => $input['sale_price'][$key] ?? 0,
-                        'expiry_date'      => $input['expiry_date'][$key] ?? null,
-                        'sale_quantity'    => $input['quantity'][$key],
-                        'tax'              => 0,
+                        'dispense_id'   => $dispenseRecord->id,
+                        'medicine_id'   => $medicine->id,
+                        'unit_price'    => $unitPrice,
+                        'expires_at'    => $input['expiry_date'][$key] ?? null,
+                        'quantity'      => $quantity,
+                        'charge_amount' => 0,
+                        'line_total'    => $unitPrice * $quantity,
                     ]);
-                    $medicine->update([
-                        'available_quantity' => max(0, ($medicine->available_quantity ?? 0) - $input['quantity'][$key]),
-                    ]);
+
+                    app(MedicineInventoryService::class)->deductStockFefo(
+                        $medicine->id,
+                        $quantity,
+                        getLogInUserId(),
+                        $dispenseRecord,
+                        'Manual dispensing update'
+                    );
                 }
             }
 

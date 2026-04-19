@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Patient;
+use App\Models\Prescription;
 use App\Models\User;
 use App\Models\Address;
 use Illuminate\Support\Facades\Cache;
@@ -306,7 +307,10 @@ class PatientService
 
         return [
             'total_prescriptions' => $patient->prescriptions()->count(),
-            'active_prescriptions' => $patient->prescriptions()->where('status', 1)->count(),
+            'active_prescriptions' => $patient->prescriptions()
+                ->where('is_active', true)
+                ->where('status', Prescription::DISPENSE_STATUS_PENDING)
+                ->count(),
         ];
     }
 

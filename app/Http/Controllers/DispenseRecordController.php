@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateMedicineBillRequest;
+use App\Http\Requests\CreateDispenseRecordRequest;
 use App\Http\Requests\CreatePatientRequest;
-use App\Http\Requests\UpdateMedicineBillRequest;
+use App\Http\Requests\UpdateDispenseRecordRequest;
 use App\Models\Category;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\Medicine;
-use App\Repositories\MedicineBillRepository;
+use App\Repositories\DispenseRecordRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PatientRepository;
 use App\Repositories\PrescriptionRepository;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -29,49 +28,49 @@ class DispenseRecordController extends AppBaseController
     private $prescriptionRepository;
     private $medicineRepository;
     private $patientRepository;
-    private $medicineBillRepository;
+    private $dispenseRecordRepository;
 
     private function getIndexRoute(): string
     {
         if (isRole('clinic_admin')) {
-            return route('medicine-history.index');
+            return route('medicine-dispensing.index', ['tab' => 'dispense-history']);
         } elseif (isRole('staff')) {
-            return route('staff.medicine-history.index');
+            return route('staff.medicine-dispensing.index', ['tab' => 'dispense-history']);
         } elseif (isRole('doctor')) {
-            return route('doctors.medicine-history.index');
+            return route('doctors.medicine-dispensing.index', ['tab' => 'dispense-history']);
         }
 
-        return route('medicine-history.index');
+        return route('medicine-dispensing.index', ['tab' => 'dispense-history']);
     }
 
     private function getCreateRoute(): string
     {
         if (isRole('clinic_admin')) {
-            return route('medicine-history.create');
+            return route('dispense-records.create');
         } elseif (isRole('staff')) {
-            return route('staff.medicine-history.create');
+            return route('staff.dispense-records.create');
         } elseif (isRole('doctor')) {
-            return route('doctors.medicine-history.create');
+            return route('doctors.dispense-records.create');
         }
 
-        return route('medicine-history.create');
+        return route('dispense-records.create');
     }
 
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
         MedicineRepository $medicineRepository,
         PatientRepository $patientRepo,
-        MedicineBillRepository $medicineBillRepository,
+        DispenseRecordRepository $dispenseRecordRepository,
     ) {
         $this->prescriptionRepository = $prescriptionRepo;
         $this->medicineRepository     = $medicineRepository;
         $this->patientRepository      = $patientRepo;
-        $this->medicineBillRepository = $medicineBillRepository;
+        $this->dispenseRecordRepository = $dispenseRecordRepository;
     }
 
     public function index(): View
     {
-        return view('medicine-history.index');
+        return view('medicine-dispensing.index');
     }
 
     public function create(): View
@@ -82,8 +81,8 @@ class DispenseRecordController extends AppBaseController
         $data                  = $this->medicineRepository->getSyncList();
         $medicineList          = $this->medicineRepository->getMedicineList();
         $mealList              = $this->medicineRepository->getMealList();
-        $medicineCategories    = $this->medicineBillRepository->getMedicinesCategoriesData();
-        $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
+        $medicineCategories    = $this->dispenseRecordRepository->getMedicinesCategoriesData();
+        $medicineCategoriesList = $this->dispenseRecordRepository->getMedicineCategoriesList();
 
         return view(
             'medicine-history.create',
@@ -91,7 +90,7 @@ class DispenseRecordController extends AppBaseController
         )->with($data);
     }
 
-    public function store(CreateMedicineBillRequest $request): JsonResponse|RedirectResponse
+    public function store(CreateDispenseRecordRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->all();
 
@@ -131,7 +130,7 @@ class DispenseRecordController extends AppBaseController
             }
         }
 
-        $record = DispenseRecord::create([
+        $dispenseRecord = DispenseRecord::create([
             'history_number' => 'HIS' . generateUniqueHistoryNumber(),
             'patient_id'     => $input['patient_id'],
             'note'           => $input['note'] ?? null,
@@ -145,19 +144,22 @@ class DispenseRecordController extends AppBaseController
             'total'          => 0,
             'tax_amount'     => 0,
         ]);
-        $record->update(['model_id' => $record->id]);
+        $dispenseRecord->update(['model_id' => $dispenseRecord->id]);
 
         if (! empty($input['category_id'])) {
             foreach ($input['category_id'] as $key => $value) {
                 $medicine = Medicine::find($input['medicine'][$key]);
-                $tax      = $input['tax_medicine'][$key] ?? 0;
+                $unitPrice = (float) ($input['sale_price'][$key] ?? 0);
+                $quantity = (int) ($input['quantity'][$key] ?? 0);
+                $chargeAmount = (float) ($input['tax_medicine'][$key] ?? 0);
                 DispenseRecordItem::create([
-                    'medicine_bill_id' => $record->id,
-                    'medicine_id'      => $medicine->id,
-                    'sale_price'       => $input['sale_price'][$key],
-                    'expiry_date'      => $input['expiry_date'][$key],
-                    'sale_quantity'    => $input['quantity'][$key],
-                    'tax'              => $tax,
+                    'dispense_id'   => $dispenseRecord->id,
+                    'medicine_id'   => $medicine->id,
+                    'unit_price'    => $unitPrice,
+                    'expires_at'    => $input['expiry_date'][$key] ?? null,
+                    'quantity'      => $quantity,
+                    'charge_amount' => $chargeAmount,
+                    'line_total'    => ($unitPrice * $quantity) + $chargeAmount,
                 ]);
                 $medicine->update([
                     'available_quantity' => max(0, ($medicine->available_quantity ?? 0) - $input['quantity'][$key]),
@@ -179,16 +181,19 @@ class DispenseRecordController extends AppBaseController
 
     public function show(DispenseRecord $medicine_history): View
     {
-        $medicineBill = $medicine_history;
-        $medicineBill->load(['dispenseItems.medicine']);
+        $dispenseRecord = $medicine_history;
+        $dispenseRecord->load(['dispenseItems.medicine']);
+
+        // Keep view variable name for legacy template compatibility.
+        $medicineBill = $dispenseRecord;
 
         return view('medicine-history.show', compact('medicineBill'));
     }
 
     public function edit(DispenseRecord $medicine_history): View
     {
-        $medicineBill = $medicine_history;
-        $medicineBill->load(['dispenseItems.medicine.category', 'dispenseItems.medicine.purchasedMedicine', 'patient', 'doctor']);
+        $dispenseRecord = $medicine_history;
+        $dispenseRecord->load(['dispenseItems.medicine.category', 'dispenseItems.medicine.purchasedMedicine', 'patient', 'doctor']);
 
         $patients               = $this->prescriptionRepository->getPatients();
         $doctors                = $this->prescriptionRepository->getDoctors();
@@ -196,8 +201,11 @@ class DispenseRecordController extends AppBaseController
         $data                   = $this->medicineRepository->getSyncList();
         $medicineList           = $this->medicineRepository->getMedicineList();
         $mealList               = $this->medicineRepository->getMealList();
-        $medicineCategories     = $this->medicineBillRepository->getMedicinesCategoriesData();
-        $medicineCategoriesList = $this->medicineBillRepository->getMedicineCategoriesList();
+        $medicineCategories     = $this->dispenseRecordRepository->getMedicinesCategoriesData();
+        $medicineCategoriesList = $this->dispenseRecordRepository->getMedicineCategoriesList();
+
+        // Keep view variable name for legacy template compatibility.
+        $medicineBill = $dispenseRecord;
 
         return view(
             'medicine-history.edit',
@@ -205,14 +213,14 @@ class DispenseRecordController extends AppBaseController
         )->with($data);
     }
 
-    public function update(DispenseRecord $medicine_history, UpdateMedicineBillRequest $request)
+    public function update(DispenseRecord $medicine_history, UpdateDispenseRecordRequest $request)
     {
-        $medicineBill = $medicine_history;
+        $dispenseRecord = $medicine_history;
         $input        = $request->all();
         if (empty($input['medicine'])) {
             return $this->sendError(__('messages.medicine_bills.medicine_not_selected'));
         }
-        $this->medicineBillRepository->update($medicineBill, $input);
+        $this->dispenseRecordRepository->update($dispenseRecord, $input);
 
         return $this->sendSuccess(__('messages.medicine_bills.saved_updated'));
     }
@@ -227,13 +235,13 @@ class DispenseRecordController extends AppBaseController
         );
     }
 
-    public function storePatient(\App\Http\Requests\CreatePatientRequest $request): JsonResponse
+    public function storePatient(CreatePatientRequest $request): JsonResponse
     {
         $input           = $request->all();
         $input['status'] = isset($input['status']) ? 1 : 0;
 
         $this->patientRepository->store($input);
-        $this->patientRepository->createNotification($input);
+        $this->prescriptionRepository->createNotification($input);
         $patients = $this->prescriptionRepository->getPatients();
 
         return $this->sendResponse($patients, __('messages.flash.Patient_saved'));

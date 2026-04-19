@@ -23,7 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // Medicines API for consultation form - grouped by category with dosage
 Route::middleware(['web', 'auth'])->get('/medicines', function () {
-    $medicines = Medicine::with(['category', 'generic'])
+    $medicines = Medicine::with(['medicineCategory', 'generic'])
         ->select('id', 'name', 'available_quantity', 'salt_composition', 'category_id', 'generic_id')
         ->where('available_quantity', '>', 0)
         ->orderBy('category_id', 'asc')
@@ -49,7 +49,7 @@ Route::middleware(['web', 'auth'])->get('/medicines', function () {
             'id' => $medicine->id,
             'name' => $medicine->name,
             'category_id' => $medicine->category_id,
-            'category_name' => $medicine->category ? $medicine->category->name : 'Uncategorized',
+            'category_name' => $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name ?: 'Uncategorized',
             'generic_name' => $medicine->generic ? $medicine->generic->name : 'N/A',
             'salt_composition' => $medicine->salt_composition,
             'available_quantity' => $medicine->available_quantity,

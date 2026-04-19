@@ -43,12 +43,50 @@ class SaleMedicine extends Model
     protected $table = 'sale_medicines';
 
     protected $fillable = [
+        'dispense_id',
+        'quantity',
+        'unit_price',
+        'charge_amount',
+        'expires_at',
+        'line_total',
         'medicine_bill_id',
         'medicine_id',
         'sale_quantity',
         'sale_price',
         'tax',
+        'expiry_date',
+        'amount',
     ];
+
+    public function setDispenseIdAttribute($value): void
+    {
+        $this->attributes['medicine_bill_id'] = $value;
+    }
+
+    public function setQuantityAttribute($value): void
+    {
+        $this->attributes['sale_quantity'] = $value;
+    }
+
+    public function setUnitPriceAttribute($value): void
+    {
+        $this->attributes['sale_price'] = $value;
+    }
+
+    public function setChargeAmountAttribute($value): void
+    {
+        $this->attributes['tax'] = $value;
+    }
+
+    public function setExpiresAtAttribute($value): void
+    {
+        $this->attributes['expiry_date'] = $value;
+    }
+
+    public function setLineTotalAttribute($value): void
+    {
+        $this->attributes['amount'] = $value;
+    }
 
     public function medicine(): BelongsTo
     {

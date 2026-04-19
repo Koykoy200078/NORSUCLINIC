@@ -4,6 +4,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\MedicineDispensingManagementController;
 use App\Http\Controllers\DispenseRecordController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\DashboardController;
@@ -82,17 +83,25 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
         // Medicines
         Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
+        Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
+        Route::get('medicine-dispensing-management', [MedicineDispensingManagementController::class, 'index'])->name('medicine-dispensing.index');
 
         // Stock In (Medicine Purchasing)
         Route::resource('stock-in', StockInController::class);
         Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
         Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
-        Route::redirect('used-medicine', url('doctors/medicines') . '?tab=medicines&sub=stock-out')->name('used-medicine.index');
+        Route::redirect('used-medicine', url('doctors/medicine-dispensing-management') . '?tab=stock-out')->name('used-medicine.index');
 
-        // Medicine History
+        // Dispense Records
+        Route::resource('dispense-records', DispenseRecordController::class)->parameters(['dispense-records' => 'medicine_history']);
+        Route::post('dispense-records/store-patient', [DispenseRecordController::class, 'storePatient'])->name('dispense-records.store-patient');
+        Route::get('dispense-records-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('dispense-records.pdf');
+        Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
+
+        // Medicine History (legacy route names)
         Route::resource('medicine-history', DispenseRecordController::class);
         Route::post('medicine-history/store-patient', [DispenseRecordController::class, 'storePatient'])->name('store.patient');
         Route::get('medicine-history-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('medicine.bill.pdf');

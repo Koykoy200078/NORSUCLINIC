@@ -10,7 +10,7 @@
         <div class="text-end mt-4 mt-md-0">
             <a class="btn btn-primary edit-btn me-2"
                 href="{{ isRole('clinic_admin') ? route('medicines.edit',['medicine' => $medicine->id]) : (isRole('staff') ? route('staff.medicines.edit',['medicine' => $medicine->id]) : route('doctors.medicines.edit',['medicine' => $medicine->id])) }}">{{ __('messages.common.edit') }}</a>
-            <a href="{{ isRole('clinic_admin') ? route('medicines.index') : (isRole('staff') ? route('staff.medicines.index') : route('doctors.medicines.index')) }}"
+            <a href="{{ isRole('clinic_admin') ? route('medicine-inventory.index') : (isRole('staff') ? route('staff.medicine-inventory.index') : route('doctors.medicine-inventory.index')) }}"
                 class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
         </div>
     </div>

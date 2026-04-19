@@ -34,22 +34,18 @@ class PrescriptionRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'patient_id',
-        'food_allergies',
-        'tendency_bleed',
-        'heart_disease',
-        'high_blood_pressure',
-        'diabetic',
-        'surgery',
-        'accident',
-        'others',
-        'medical_history',
-        'current_medication',
-        'female_pregnancy',
-        'breast_feeding',
-        'health_insurance',
-        'low_income',
-        'reference',
-        'status',
+        'doctor_id',
+        'doctor_license_s2_number',
+        'consultation_date',
+        'icd10_diagnosis_id',
+        'problem_description',
+        'advice',
+        'next_visit_days',
+        'weight_kg',
+        'pulse_rate',
+        'body_temperature',
+        'blood_pressure',
+        'height_cm',
     ];
 
     /**
@@ -161,15 +157,15 @@ class PrescriptionRepository extends BaseRepository
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $saleMedicineArray = [
-                        'medicine_bill_id' => $medicineBill->id,
+                    $dispenseItemArray = [
+                        'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
-                        'sale_quantity' => $qty,
-                        'sale_price' => $medicine->selling_price,
-                        'tax' => 0,
-
+                        'quantity' => $qty,
+                        'unit_price' => $medicine->selling_price,
+                        'charge_amount' => 0,
+                        'line_total' => ((float) $medicine->selling_price * (int) $qty),
                     ];
-                    DispenseRecordItem::create($saleMedicineArray);
+                    DispenseRecordItem::create($dispenseItemArray);
                 }
                 $medicineBill->update([
                     'net_amount' => $amount,
@@ -215,15 +211,15 @@ class PrescriptionRepository extends BaseRepository
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $saleMedicineArray = [
-                        'medicine_bill_id' => $medicineBill->id,
+                    $dispenseItemArray = [
+                        'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
-                        'sale_quantity' => $qty,
-                        'sale_price' => $medicine->selling_price,
-                        'tax' => 0,
-
+                        'quantity' => $qty,
+                        'unit_price' => $medicine->selling_price,
+                        'charge_amount' => 0,
+                        'line_total' => ((float) $medicine->selling_price * (int) $qty),
                     ];
-                    DispenseRecordItem::create($saleMedicineArray);
+                    DispenseRecordItem::create($dispenseItemArray);
                 }
                 $medicineBill->update([
                     'net_amount' => $amount,
@@ -247,8 +243,9 @@ class PrescriptionRepository extends BaseRepository
             'patient.user',
             'doctor.user',
             'doctor.address',
-            'getMedicine.medicines.category',
-            'getMedicine.medicines.brand',
+            'diagnosis',
+            'getMedicine.medicines.medicineCategory',
+            'getMedicine.medicines.generic',
         ])->findOrFail($id);
 
         return $data;
@@ -260,7 +257,7 @@ class PrescriptionRepository extends BaseRepository
         $prescription = Prescription::with([
             'getMedicine' => function ($query) {
                 $query->with(['medicines' => function ($medicineQuery) {
-                    $medicineQuery->select('id', 'name', 'category_id', 'generic_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
+                    $medicineQuery->select('id', 'name', 'brand_name', 'generic_name', 'category_name', 'dosage', 'uom', 'category_id', 'generic_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
                 }]);
             }
         ])->findOrFail($id);

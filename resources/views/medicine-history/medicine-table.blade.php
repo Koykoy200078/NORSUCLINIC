@@ -69,7 +69,7 @@
                         @foreach ($medicineBill->saleMedicine as $key => $saleMedicine)
                         <tr>
                             <td>
-                                {{ Form::select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->category->id) ? $saleMedicine->medicine->category->id : null   , ['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'placeholder' => __('messages.common.select_category'), 'data-id' => '1', 'data-control' => 'select2']) }}
+                                {{ Form::select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->medicineCategory->id) ? $saleMedicine->medicine->medicineCategory->id : null   , ['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'placeholder' => __('messages.common.select_category'), 'data-id' => '1', 'data-control' => 'select2']) }}
                             </td>
                             <td>
                                 {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}
@@ -203,7 +203,7 @@
 
                 <div class="float-end mt-5">
                     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
-                    <a href="{{ isRole('clinic_admin') ? route('medicine-history.index') : (isRole('staff') ? route('staff.medicine-history.index') : route('doctors.medicine-history.index')) }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
+                    <a href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : (isRole('staff') ? route('staff.medicine-dispensing.index') : route('doctors.medicine-dispensing.index')) }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
             </div>
         </div>

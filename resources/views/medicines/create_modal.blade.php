@@ -1,7 +1,3 @@
-@php
-$modalGenerics = \App\Models\Generic::all()->pluck('name', 'id')->toArray();
-$modalCategories = \App\Models\Category::all()->where('is_active', 1)->pluck('name', 'id')->toArray();
-@endphp
 <div class="modal fade" id="add_medicine_modal" tabindex="-1" role="dialog" aria-labelledby="addMedicineModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -14,31 +10,48 @@ $modalCategories = \App\Models\Category::all()->where('is_active', 1)->pluck('na
                 <div class="alert alert-danger d-none" id="medicineCreateErrorsBox"></div>
                 <div class="row">
                     <div class="form-group col-md-6 mb-4">
-                        {{ Form::label('generic_id', 'Generic Name:', ['class' => 'form-label']) }}
+                        {{ Form::label('generic_name', 'Generic Name:', ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::select('generic_id', $modalGenerics, null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_generic'), 'id' => 'createMedicineGenericId']) }}
+                        {{ Form::text('generic_name', null, ['class' => 'form-control', 'placeholder' => 'e.g., Paracetamol', 'required']) }}
                     </div>
                     <div class="form-group col-md-6 mb-4">
-                        {{ Form::label('name', 'Medicine Brand:', ['class' => 'form-label']) }}
+                        {{ Form::label('brand_name', 'Brand Name:', ['class' => 'form-label']) }}
+                        {{ Form::text('brand_name', null, ['class' => 'form-control', 'placeholder' => 'e.g., Biogesic']) }}
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        {{ Form::label('category', __('messages.medicine.category') . ':', ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('name', null, ['class' => 'form-control', 'minlength' => 2, 'placeholder' => 'Medicine Brand', 'required', 'id' => 'createMedicineNameId']) }}
+                        {{ Form::text('category', null, ['class' => 'form-control', 'placeholder' => 'e.g., Analgesic', 'required']) }}
                     </div>
                     <div class="form-group col-md-6 mb-4">
-                        {{ Form::label('category_id', __('messages.medicine.category') . ':', ['class' => 'form-label']) }}
+                        {{ Form::label('dosage', 'Dosage:', ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::select('category_id', $modalCategories, null, ['class' => 'form-select', 'placeholder' => 'Select a category', 'id' => 'createMedicineCategoryId']) }}
+                        {{ Form::text('dosage', null, ['class' => 'form-control', 'placeholder' => 'e.g., 500 mg', 'required']) }}
                     </div>
                     <div class="form-group col-md-6 mb-4">
-                        {{ Form::label('minimum_stock_alert', 'Minimum Stock Alert:', ['class' => 'form-label']) }}
-                        <span class="text-muted ms-1" style="font-size:0.85rem;">(Optional)</span>
-                        {{ Form::number('minimum_stock_alert', null, ['class' => 'form-control', 'placeholder' => 'e.g., 10', 'min' => 0]) }}
-                        <small class="form-text text-muted">Alert when stock reaches or falls below this quantity</small>
+                        {{ Form::label('uom', 'Unit of Measure:', ['class' => 'form-label']) }}
+                        <span class="required"></span>
+                        {{ Form::text('uom', null, ['class' => 'form-control', 'placeholder' => 'tablet, capsule, vial', 'required']) }}
                     </div>
                     <div class="form-group col-md-6 mb-4">
-                        {{ Form::label('stock_alert_percentage', 'Stock Alert Percentage:', ['class' => 'form-label']) }}
-                        <span class="text-muted ms-1" style="font-size:0.85rem;">(Optional)</span>
-                        {{ Form::number('stock_alert_percentage', null, ['class' => 'form-control', 'placeholder' => 'e.g., 20', 'min' => 0, 'max' => 100, 'step' => '0.01']) }}
-                        <small class="form-text text-muted">Alert when available stock falls below this percentage of total stock</small>
+                        {{ Form::label('sku', 'SKU:', ['class' => 'form-label']) }}
+                        {{ Form::text('sku', null, ['class' => 'form-control', 'placeholder' => 'Optional stock code']) }}
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        {{ Form::label('reorder_level', 'Reorder Level:', ['class' => 'form-label']) }}
+                        {{ Form::number('reorder_level', null, ['class' => 'form-control', 'placeholder' => 'e.g., 10', 'min' => 0]) }}
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        {{ Form::label('initial_stock_quantity', 'Initial Stock Quantity:', ['class' => 'form-label']) }}
+                        {{ Form::number('initial_stock_quantity', 0, ['class' => 'form-control', 'min' => 0]) }}
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        {{ Form::label('batch_number', 'Batch Number:', ['class' => 'form-label']) }}
+                        {{ Form::text('batch_number', null, ['class' => 'form-control', 'placeholder' => 'Required when stock > 0']) }}
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        {{ Form::label('expiration_date', 'Expiration Date:', ['class' => 'form-label']) }}
+                        {{ Form::date('expiration_date', null, ['class' => 'form-control']) }}
                     </div>
                     <div class="form-group col-md-6 mb-4">
                         {{ Form::label('description', __('messages.medicine.description') . ':', ['class' => 'form-label']) }}

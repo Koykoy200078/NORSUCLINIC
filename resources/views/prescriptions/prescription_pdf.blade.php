@@ -223,7 +223,7 @@
                     <label>Address</label>
                     <div class="address-container">
                         @php
-                        $address = $patientInfo['address']['address1'];
+                        $address = $patientInfo['address'] ?? '';
                         $maxLength = 35; // Approximate characters per line
                         $addressLines = [];
 
@@ -282,26 +282,38 @@
             <div class="prescription-label">Prescription:</div>
 
             <div class="prescription-content">
-                <!-- Empty space for handwritten prescriptions -->
                 @if (isset($prescriptionContent[' problem']))
                             <div style="margin-bottom: 15px">
                             <strong>Problem:</strong><br />
                             {{ $prescriptionContent['problem'] }}
                     </div>
-                    @endif @if (isset($prescriptionContent['medications']))
+                    @endif
+                    @if (isset($prescriptionContent['diagnosis']))
+                    <div style="margin-bottom: 15px">
+                        <strong>ICD-10 Diagnosis:</strong><br />
+                        {{ $prescriptionContent['diagnosis'] }}
+                    </div>
+                    @endif
+                    @if (isset($prescriptionContent['medications']))
                     <div style="margin-bottom: 15px">
                         <strong>Medications:</strong><br />
-                        @foreach ($prescriptionContent['medications'] as $medication) {{ $medication['name'] }} -
-                        {{ $medication['dosage'] }} {{ $medication['timing'] }} for {{ $medication['duration']
-					}}<br />
+                        @foreach ($prescriptionContent['medications'] as $medication)
+                        {{ $medication['name'] }} - {{ $medication['dosage'] }}, Route: {{ $medication['route'] }},
+                        Frequency: {{ $medication['frequency'] }}, Duration: {{ $medication['duration'] }}, Qty: {{ $medication['quantity'] }}
+                        @if(!empty($medication['instructions']))
+                        ({{ $medication['instructions'] }})
+                        @endif
+                        <br />
                         @endforeach
                     </div>
-                    @endif @if (isset($prescriptionContent['tests']))
+                    @endif
+                    @if (isset($prescriptionContent['next_visit']))
                     <div style="margin-bottom: 15px">
-                        <strong>Tests:</strong><br />
-                        {{ $prescriptionContent['tests'] }}
+                        <strong>Next Visit:</strong><br />
+                        {{ $prescriptionContent['next_visit'] }}
                     </div>
-                    @endif @if (isset($prescriptionContent['advice']))
+                    @endif
+                    @if (isset($prescriptionContent['advice']))
                     <div style="margin-bottom: 15px">
                         <strong>Advice:</strong><br />
                         {{ $prescriptionContent['advice'] }}

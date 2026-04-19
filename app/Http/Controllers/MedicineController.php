@@ -4,19 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateMedicineRequest;
 use App\Http\Requests\UpdateMedicineRequest;
+use App\Models\Category;
+use App\Models\Generic;
 use App\Models\Medicine;
-use App\Models\PurchasedMedicine;
 use App\Models\DispenseRecordItem;
+use App\Models\MedicineBatch;
+use App\Models\PurchasedMedicine;
 use App\Repositories\MedicineRepository;
+use App\Services\MedicineInventoryService;
 use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Response;
 use Laracasts\Flash\Flash;
@@ -26,9 +30,12 @@ class MedicineController extends AppBaseController
     /** @var MedicineRepository */
     private $medicineRepository;
 
-    public function __construct(MedicineRepository $medicineRepo)
+    private MedicineInventoryService $inventoryService;
+
+    public function __construct(MedicineRepository $medicineRepo, MedicineInventoryService $inventoryService)
     {
         $this->medicineRepository = $medicineRepo;
+        $this->inventoryService = $inventoryService;
     }
 
     /**
@@ -37,14 +44,14 @@ class MedicineController extends AppBaseController
     private function getMedicineIndexRoute(): string
     {
         if (isRole('clinic_admin')) {
-            return route('medicines.index');
+            return route('medicine-inventory.index');
         } elseif (isRole('staff')) {
-            return route('staff.medicines.index');
+            return route('staff.medicine-inventory.index');
         } elseif (isRole('doctor')) {
-            return route('doctors.medicines.index');
+            return route('doctors.medicine-inventory.index');
         }
 
-        return route('medicines.index');
+        return route('medicine-inventory.index');
     }
 
     /**
@@ -79,9 +86,28 @@ class MedicineController extends AppBaseController
      */
     public function store(CreateMedicineRequest $request): JsonResponse|RedirectResponse
     {
-        $input = $request->all();
+        $input = $this->prepareMedicineInput($request->validated());
 
-        $this->medicineRepository->create($input);
+        DB::beginTransaction();
+        try {
+            $medicine = $this->medicineRepository->create($this->extractPersistableFields($input));
+            $this->recordStockInIfProvided($medicine, $input);
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Medicine store failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->ajax()) {
+                return $this->sendError($e->getMessage());
+            }
+
+            Flash::error($e->getMessage());
+
+            return redirect()->back()->withInput();
+        }
 
         if ($request->ajax()) {
             return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
@@ -100,7 +126,7 @@ class MedicineController extends AppBaseController
     public function show(Medicine $medicine): View
     {
         $medicine->generic;
-        $medicine->category;
+        $medicine->medicineCategory;
 
         return view('medicines.show')->with('medicine', $medicine);
     }
@@ -125,8 +151,26 @@ class MedicineController extends AppBaseController
      */
     public function update(Medicine $medicine, UpdateMedicineRequest $request): RedirectResponse
     {
+        $input = $this->prepareMedicineInput($request->validated(), $medicine);
 
-        $this->medicineRepository->update($request->all(), $medicine->id);
+        DB::beginTransaction();
+        try {
+            $this->medicineRepository->update($this->extractPersistableFields($input), $medicine->id);
+            $medicine->refresh();
+            $this->recordStockInIfProvided($medicine, $input);
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Medicine update failed', [
+                'medicine_id' => $medicine->id,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Flash::error($e->getMessage());
+
+            return redirect()->back()->withInput();
+        }
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.updated_successfully'));
 
@@ -164,48 +208,67 @@ class MedicineController extends AppBaseController
     {
         $medicine->load(['generic', 'category']);
 
-        // Get purchased medicines with dosage information grouped by dosage with earliest expiry date
-        $purchasedMedicines = PurchasedMedicine::where('medicine_id', $medicine->id)
-            ->where('quantity', '>', 0) // Only show batches with available stock
-            ->select(
-                'dosage',
-                DB::raw('SUM(quantity) as total_quantity'),
-                DB::raw('MIN(expiry_date) as earliest_expiry')
-            )
-            ->groupBy('dosage')
-            ->orderBy('dosage')
-            ->get()
-            ->map(function ($item) {
-                $expiryDate = $item->earliest_expiry;
+        // Build dosage stock table from batch-ledger so initial-stock entries are included.
+        $purchasedMedicines = MedicineBatch::where('medicine_id', $medicine->id)
+            ->where('quantity', '>', 0)
+            ->orderBy('expiration_date')
+            ->get(['dosage', 'quantity', 'expiration_date'])
+            ->groupBy(function (MedicineBatch $batch) use ($medicine) {
+                $dosage = trim((string) ($batch->dosage ?? ''));
+                if ($dosage !== '') {
+                    return $dosage;
+                }
+
+                $fallbackDosage = trim((string) ($medicine->dosage ?? ''));
+
+                return $fallbackDosage !== '' ? $fallbackDosage : 'N/A';
+            })
+            ->map(function ($rows, $dosage) {
+                $expiryCandidates = collect($rows)
+                    ->pluck('expiration_date')
+                    ->filter()
+                    ->map(function ($date) {
+                        try {
+                            return \Carbon\Carbon::parse($date)->startOfDay();
+                        } catch (\Throwable $e) {
+                            return null;
+                        }
+                    })
+                    ->filter()
+                    ->sortBy(fn(\Carbon\Carbon $date) => $date->getTimestamp());
+
+                $earliestExpiry = $expiryCandidates->first();
                 $remainingDays = null;
                 $expiryFormatted = 'N/A';
 
-                if ($expiryDate && $expiryDate !== '' && $expiryDate !== 'N/A') {
-                    try {
-                        $expiry = \Carbon\Carbon::parse($expiryDate);
-                        $now = \Carbon\Carbon::now();
-                        $remainingDays = (int) $now->diffInDays($expiry, false); // false to get negative for past dates
-                        $expiryFormatted = $expiry->format('M d, Y');
-                    } catch (\Exception $e) {
-                        // If parsing fails, keep N/A
-                        Log::info('Failed to parse expiry date: ' . $expiryDate . ' - ' . $e->getMessage());
-                        $remainingDays = null;
-                    }
+                if ($earliestExpiry) {
+                    $remainingDays = (int) \Carbon\Carbon::now()->startOfDay()->diffInDays($earliestExpiry, false);
+                    $expiryFormatted = $earliestExpiry->format('M d, Y');
                 }
 
                 return [
-                    'dosage' => $item->dosage ?? 'N/A',
-                    'quantity' => $item->total_quantity,
+                    'dosage' => $dosage,
+                    'quantity' => (int) collect($rows)->sum('quantity'),
                     'expiry_date' => $expiryFormatted,
-                    'remaining_days' => $remainingDays
+                    'remaining_days' => $remainingDays,
                 ];
-            });
+            })
+            ->values();
 
         $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
+        $genericName = $medicine->generic_name ?: optional($medicine->generic)->name;
+        $categoryName = $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name;
+
         $medicineData = [
-            'name' => $medicine->name,
-            'generic_name' => $medicine->generic->name,
-            'category_name' => $medicine->category->name,
+            'name' => $medicine->display_name,
+            'brand_name' => $medicine->brand_name ?: $medicine->name,
+            'generic_name' => $genericName ?: 'N/A',
+            'category' => $categoryName ?: 'Uncategorized',
+            'category_name' => $categoryName ?: 'Uncategorized',
+            'dosage' => $medicine->dosage,
+            'uom' => $medicine->uom,
+            'sku' => $medicine->sku,
+            'reorder_level' => $medicine->reorder_level,
             'salt_composition' => $medicine->salt_composition,
             'side_effects' => $medicine->side_effects,
             'created_at' => $medicine->created_at,
@@ -244,7 +307,7 @@ class MedicineController extends AppBaseController
      */
     public function getMedicinesByCategory(): JsonResponse
     {
-        $categories = \App\Models\Category::with(['medicines' => function ($query) {
+        $categories = Category::with(['medicines' => function ($query) {
             $query->where('available_quantity', '>', 0)
                 ->orderBy('name');
         }])->whereHas('medicines', function ($query) {
@@ -256,19 +319,34 @@ class MedicineController extends AppBaseController
                 'id' => $category->id,
                 'name' => $category->name,
                 'medicines' => $category->medicines->map(function ($medicine) {
-                    // Get dosage information for this medicine
-                    $dosages = PurchasedMedicine::where('medicine_id', $medicine->id)
+                    // Dosage availability from batch-ledger to include all stock-in paths.
+                    $dosages = MedicineBatch::where('medicine_id', $medicine->id)
                         ->where('quantity', '>', 0)
-                        ->select('dosage', DB::raw('SUM(quantity) as available_quantity'))
-                        ->groupBy('dosage')
-                        ->orderBy('dosage')
                         ->get()
-                        ->map(function ($item) {
+                        ->groupBy(function (MedicineBatch $batch) use ($medicine) {
+                            $dosage = trim((string) ($batch->dosage ?? ''));
+                            if ($dosage !== '') {
+                                return $dosage;
+                            }
+
+                            $fallbackDosage = trim((string) ($medicine->dosage ?? ''));
+
+                            return $fallbackDosage !== '' ? $fallbackDosage : 'N/A';
+                        })
+                        ->map(function ($rows, $dosage) {
                             return [
-                                'dosage' => $item->dosage ?? 'N/A',
-                                'available_quantity' => (int) $item->available_quantity
+                                'dosage' => $dosage,
+                                'available_quantity' => (int) collect($rows)->sum('quantity'),
                             ];
-                        });
+                        })
+                        ->values();
+
+                    if ($dosages->isEmpty() && (int) $medicine->available_quantity > 0) {
+                        $dosages = collect([[
+                            'dosage' => $medicine->dosage ?: 'N/A',
+                            'available_quantity' => (int) $medicine->available_quantity,
+                        ]]);
+                    }
 
                     return [
                         'id' => $medicine->id,
@@ -281,5 +359,82 @@ class MedicineController extends AppBaseController
         });
 
         return $this->sendResponse($result, 'Medicines retrieved successfully');
+    }
+
+    private function prepareMedicineInput(array $input, ?Medicine $existingMedicine = null): array
+    {
+        $genericName = trim((string) ($input['generic_name'] ?? ''));
+        $brandName = trim((string) ($input['brand_name'] ?? ''));
+        $categoryName = trim((string) ($input['category'] ?? ''));
+
+        $input['generic_name'] = $genericName;
+        $input['brand_name'] = $brandName !== '' ? $brandName : null;
+        $input['category'] = $categoryName;
+        $input['category_name'] = $categoryName;
+        $input['name'] = $brandName !== '' ? $brandName : $genericName;
+        $input['minimum_stock_alert'] = $input['reorder_level'] ?? $input['minimum_stock_alert'] ?? null;
+
+        if ($existingMedicine) {
+            $input['quantity'] = (int) $existingMedicine->quantity;
+            $input['available_quantity'] = (int) $existingMedicine->available_quantity;
+        } else {
+            $input['quantity'] = (int) ($input['quantity'] ?? 0);
+            $input['available_quantity'] = (int) ($input['available_quantity'] ?? 0);
+        }
+
+        if ($genericName !== '') {
+            $generic = Generic::firstOrCreate(['name' => $genericName]);
+            $input['generic_id'] = $generic->id;
+        }
+
+        if ($categoryName !== '') {
+            $category = Category::firstOrCreate(
+                ['name' => $categoryName],
+                ['is_active' => Category::ACTIVE]
+            );
+
+            if ((int) $category->is_active !== Category::ACTIVE) {
+                $category->update(['is_active' => Category::ACTIVE]);
+            }
+
+            $input['category_id'] = $category->id;
+        }
+
+        return $input;
+    }
+
+    private function extractPersistableFields(array $input): array
+    {
+        return Arr::except($input, [
+            'initial_stock_quantity',
+            'batch_number',
+            'manufacturing_date',
+            'expiration_date',
+            'supplier_name',
+            'unit_cost',
+        ]);
+    }
+
+    private function recordStockInIfProvided(Medicine $medicine, array $input): void
+    {
+        $initialQty = (int) ($input['initial_stock_quantity'] ?? 0);
+        if ($initialQty <= 0) {
+            return;
+        }
+
+        $this->inventoryService->recordStockIn([
+            'medicine_id' => $medicine->id,
+            'quantity' => $initialQty,
+            'dosage' => $input['dosage'] ?? null,
+            'batch_number' => $input['batch_number'] ?? null,
+            'manufacturing_date' => $input['manufacturing_date'] ?? null,
+            'expiration_date' => $input['expiration_date'] ?? null,
+            'supplier_name' => $input['supplier_name'] ?? null,
+            'unit_cost' => $input['unit_cost'] ?? null,
+            'date_received' => now()->toDateString(),
+            'user_id' => getLogInUserId(),
+            'reference' => $medicine,
+            'remarks' => 'Initial stock from medicine form',
+        ]);
     }
 }

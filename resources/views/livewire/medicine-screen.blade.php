@@ -1,6 +1,12 @@
 <div
     x-data="{
         tab: '{{ request('tab', 'medicines') }}',
+        validTabs: ['medicines', 'stock-in'],
+        init() {
+            if (!this.validTabs.includes(this.tab)) {
+                this.setTab('medicines');
+            }
+        },
         setTab(t) {
             this.tab = t;
             const url = new URL(window.location);
@@ -9,7 +15,7 @@
         }
     }">
     {{-- ============================================================
-         MEDICINE SCREEN — All medicine management in one tabbed screen
+            MEDICINE SCREEN — Inventory tracking tabs only
          Tab switching uses Alpine x-show so child Livewire components
          are NEVER destroyed, avoiding the #[Lazy] race-condition error.
          No @entangle — parent NEVER re-renders on tab change.
@@ -24,17 +30,6 @@
     {{ Form::hidden('medicine-language', getCurrentLoginUserLanguageName(), ['id' => 'medicineLanguage']) }}
     {{ Form::hidden('medicine', __('messages.medicine.medicine'), ['id' => 'Medicine']) }}
     {{ Form::hidden('medicineLang', __('messages.delete.medicine'), ['id' => 'medicineLang']) }}
-    {{ Form::hidden('categoryCreateUrl', route('categories.store'), ['id' => 'indexCategoryCreateUrl']) }}
-    {{ Form::hidden('categoriesUrl', url('categories'), ['id' => 'indexCategoriesUrl']) }}
-    {{ Form::hidden('category', __('messages.charge.charge_category'), ['id' => 'Category']) }}
-    {{ Form::hidden('genericUrl',
-        isRole('clinic_admin') ? route('generics.index') :
-        (isRole('staff') ? route('staff.generics.index') :
-        (isRole('doctor') ? route('doctors.generics.index') : route('generics.index'))),
-        ['id' => 'indexGenericUrl']) }}
-    {{ Form::hidden('medicine_generic',
-        __('messages.medicine.medicine') . ' ' . __('messages.medicine.generic'),
-        ['id' => 'medicineGeneric']) }}
 
     {{-- ================================================================
          MAIN TABS — Alpine handles active state, no Livewire re-render
@@ -52,32 +47,6 @@
                 <i class="fas fa-arrow-circle-down me-1"></i> Stock In
             </button>
         </li>
-        <li class="nav-item">
-            <button class="nav-link" :class="{ active: tab === 'stock-out' }"
-                @click="setTab('stock-out')" type="button" role="tab">
-                <i class="fas fa-arrow-circle-up me-1"></i> Stock Out
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" :class="{ active: tab === 'categories' }"
-                @click="setTab('categories')" type="button" role="tab">
-                <i class="fas fa-tags me-1"></i> {{ __('messages.medicine_categories') }}
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" :class="{ active: tab === 'generics' }"
-                @click="setTab('generics')" type="button" role="tab">
-                <i class="fas fa-dna me-1"></i> {{ __('messages.medicine.medicine_generics') }}
-            </button>
-        </li>
-        @if (!isRole('doctor'))
-        <li class="nav-item">
-            <button class="nav-link" :class="{ active: tab === 'history' }"
-                @click="setTab('history')" type="button" role="tab">
-                <i class="fas fa-history me-1"></i> Dispense History
-            </button>
-        </li>
-        @endif
     </ul>
 
     {{-- ================================================================
@@ -94,27 +63,5 @@
     <div x-show="tab === 'stock-in'" x-cloak>
         <livewire:stock-in-table key="stock-in" :lazy="false" />
     </div>
-
-    {{-- TAB: STOCK OUT --}}
-    <div x-show="tab === 'stock-out'" x-cloak>
-        <livewire:stock-out-table key="stock-out" :lazy="false" />
-    </div>
-
-    {{-- TAB: CATEGORIES --}}
-    <div x-show="tab === 'categories'" x-cloak>
-        <livewire:medicine-category-table key="cats" :lazy="false" />
-    </div>
-
-    {{-- TAB: GENERICS --}}
-    <div x-show="tab === 'generics'" x-cloak>
-        <livewire:medicine-generic-table key="gens" :lazy="false" />
-    </div>
-
-    {{-- TAB: DISPENSE HISTORY --}}
-    @if (!isRole('doctor'))
-    <div x-show="tab === 'history'" x-cloak>
-        <livewire:medicine-dispense-table key="hist" :lazy="false" />
-    </div>
-    @endif
 
 </div>

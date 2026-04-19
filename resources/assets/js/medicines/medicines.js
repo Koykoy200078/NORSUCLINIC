@@ -19,19 +19,18 @@ function loadMedicineCreateData() {
             success: function (result) {
                 if (result.success) {
                     $("#showMedicineName").text(result.data.name);
+                    $("#showMedicineBrand").text(
+                        result.data.brand_name || "N/A",
+                    );
                     $("#showMedicineGeneric").text(result.data.generic_name);
                     $("#showMedicineCategory").text(result.data.category_name);
-                    $("#showMedicineSaltComposition").text(
-                        result.data.salt_composition,
-                    );
-                    $("#showMedicineMinStockAlert").text(
-                        result.data.minimum_stock_alert
-                            ? result.data.minimum_stock_alert
-                            : "Not set",
-                    );
-                    $("#showMedicineStockAlertPercentage").text(
-                        result.data.stock_alert_percentage
-                            ? result.data.stock_alert_percentage + "%"
+                    $("#showMedicineDosage").text(result.data.dosage || "N/A");
+                    $("#showMedicineUom").text(result.data.uom || "N/A");
+                    $("#showMedicineSku").text(result.data.sku || "N/A");
+                    $("#showMedicineReorderLevel").text(
+                        result.data.reorder_level !== null &&
+                            result.data.reorder_level !== undefined
+                            ? result.data.reorder_level
                             : "Not set",
                     );
                     $("#showMedicineQuanity").text(
@@ -39,9 +38,6 @@ function loadMedicineCreateData() {
                     );
                     $("#showMedicineAvailableQuanity").text(
                         addCommas(result.data.available_quantity),
-                    );
-                    $("#showMedicineSideEffects").text(
-                        result.data.side_effects,
                     );
                     moment.locale($("#medicineLanguage").val());
                     let createDate = moment(result.data.created_at);

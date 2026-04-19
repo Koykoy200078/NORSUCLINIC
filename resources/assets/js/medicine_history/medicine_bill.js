@@ -52,7 +52,7 @@ listenChange(".medicineBillCategoriesId", function () {
     }
     $.ajax({
         type: "get",
-        url: panelRoute("get-medicine-category", categoryId),
+        url: panelRoute("dispense-records.by-category", categoryId),
         success: function (result) {
             let array = result.data.medicine;
             $(medicineId).find("option").remove();
@@ -234,7 +234,7 @@ listenSubmit("#addPatientForm", function (e) {
     processingBtn("#addPatientForm", "#patientBtnSave", "loading");
     $("#patientBtnSave").attr("disabled", true);
     $.ajax({
-        url: panelRoute("store.patient"),
+        url: panelRoute("dispense-records.store-patient"),
         type: "POST",
         data: $(this).serialize(),
         success: function (result) {
@@ -271,7 +271,7 @@ listen("hidden.bs.modal", "#addPatientModal", function () {
 listenClick(".medicine-bill-delete-btn", function (event) {
     let id = $(event.currentTarget).attr("data-id");
 
-    deleteItem(panelRoute("medicine-history.destroy", id), "");
+    deleteItem(panelRoute("dispense-records.destroy", id), "");
 });
 
 listenSubmit("#MedicinebillForm", function (e) {
@@ -287,7 +287,7 @@ listenSubmit("#MedicinebillForm", function (e) {
     }
     $medicineBillId = $("#medicineBillId").val();
     $.ajax({
-        url: panelRoute("medicine-history.update", $medicineBillId),
+        url: panelRoute("dispense-records.update", $medicineBillId),
         type: "post",
         data: $(this).serialize(),
         success: function (result) {
@@ -295,7 +295,9 @@ listenSubmit("#MedicinebillForm", function (e) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
                     // Turbo.visit(route("medicine-history.index")); // true
-                    window.location.href = panelRoute("medicine-history.index");
+                    window.location.href = panelRoute(
+                        "medicine-dispensing.index",
+                    );
                 }, 2000);
             }
         },

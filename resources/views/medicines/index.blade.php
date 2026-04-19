@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-{{ __('messages.medicine.medicines') }}
+Medicine Inventory Tracking
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -13,9 +13,4 @@
 @include('medicines.show_modal')
 @include('medicines.create_modal')
 @include('medicine-availabilities.create_modal')
-@include('categories.modal')
-@include('categories.edit_modal')
-@include('categories.templates.templates')
-@include('generics.create_modal')
-@include('medicine-history.create_modal')
 @endsection

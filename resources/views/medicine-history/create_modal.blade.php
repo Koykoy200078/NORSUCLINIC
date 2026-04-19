@@ -19,7 +19,7 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addDispenseModalLabel">{{ __('messages.medicine_bills.add_medicine_bill') }}</h5>
+                <h5 class="modal-title" id="addDispenseModalLabel">Add Dispense Record</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -27,7 +27,7 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
                 {{ Form::hidden('uniqueId', 2, ['id' => 'medicineUniqueId']) }}
                 {{ Form::hidden('associateMedicines', json_encode($modalMedicineList), ['class' => 'associatePurchaseMedicines']) }}
                 {{ Form::hidden('medicineCategories', json_encode($modalMedicineCategoriesList), ['id' => 'showMedicineCategoriesMedicineBill']) }}
-                {{ Form::open(['route' => isRole('clinic_admin') ? 'medicine-history.store' : (isRole('staff') ? 'staff.medicine-history.store' : (isRole('doctor') ? 'doctors.medicine-history.store' : 'medicine-history.store')), 'id' => 'CreateMedicineBillForm']) }}
+                {{ Form::open(['route' => isRole('clinic_admin') ? 'dispense-records.store' : (isRole('staff') ? 'staff.dispense-records.store' : (isRole('doctor') ? 'doctors.dispense-records.store' : 'dispense-records.store')), 'id' => 'CreateMedicineBillForm']) }}
                 @include('medicine-history.medicine-table', [
                 'patients' => $modalPatients,
                 'medicines' => $modalMedicines,

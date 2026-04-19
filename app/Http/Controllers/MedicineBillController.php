@@ -168,12 +168,13 @@ class MedicineBillController extends AppBaseController
                 $medicine = Medicine::find($input['medicine'][$key]);
                 $tax = $input['tax_medicine'][$key] == null ? $input['tax_medicine'][$key] : 0;
                 SaleMedicine::create([
-                    'medicine_bill_id' => $medicineBill->id,
+                    'dispense_id' => $medicineBill->id,
                     'medicine_id' => $medicine->id,
-                    'sale_price' => $input['sale_price'][$key],
-                    'expiry_date' => $input['expiry_date'][$key],
-                    'sale_quantity' => $input['quantity'][$key],
-                    'tax' => $tax,
+                    'unit_price' => $input['sale_price'][$key],
+                    'expires_at' => $input['expiry_date'][$key],
+                    'quantity' => $input['quantity'][$key],
+                    'charge_amount' => $tax,
+                    'line_total' => ((float) ($input['sale_price'][$key] ?? 0) * (int) ($input['quantity'][$key] ?? 0)) + (float) ($tax ?? 0),
 
                 ]);
                 $medicine->update([

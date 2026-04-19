@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * App\Models\Medicine
@@ -51,6 +53,15 @@ class Medicine extends Model
     public $fillable = [
         'category_id',
         'generic_id',
+        'generic_name',
+        'brand_name',
+        'category',
+        'category_name',
+        'dosage',
+        'uom',
+        'sku',
+        'reorder_level',
+        'baseline_quantity',
         'name',
         'side_effects',
         'description',
@@ -71,6 +82,15 @@ class Medicine extends Model
         'id' => 'integer',
         'category_id' => 'integer',
         'generic_id' => 'integer',
+        'generic_name' => 'string',
+        'brand_name' => 'string',
+        'category' => 'string',
+        'category_name' => 'string',
+        'dosage' => 'string',
+        'uom' => 'string',
+        'sku' => 'string',
+        'reorder_level' => 'integer',
+        'baseline_quantity' => 'integer',
         'name' => 'string',
         'side_effects' => 'string',
         'description' => 'string',
@@ -88,9 +108,15 @@ class Medicine extends Model
      * @var array
      */
     public static $rules = [
-        'category_id' => 'required',
-        'generic_id' => 'required',
-        'name' => 'required|min:2|unique:medicines,name',
+        'generic_name' => 'required|string|max:255',
+        'brand_name' => 'nullable|string|max:255',
+        'category' => 'required|string|max:255',
+        'category_name' => 'nullable|string|max:255',
+        'dosage' => 'required|string|max:100',
+        'uom' => 'required|string|max:50',
+        'sku' => 'nullable|string|max:100|unique:medicines,sku',
+        'reorder_level' => 'nullable|integer|min:0',
+        'name' => 'nullable|min:2',
         'side_effects' => 'nullable',
         'salt_composition' => 'nullable|string',
         // 'quantity'    => 'required|integer',
@@ -99,7 +125,12 @@ class Medicine extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->medicineCategory();
+    }
+
+    public function medicineCategory(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function generic(): BelongsTo
@@ -122,13 +153,79 @@ class Medicine extends Model
         return $this->belongsTo(PurchasedMedicine::class);
     }
 
+    public function batches(): HasMany
+    {
+        return $this->hasMany(MedicineBatch::class, 'medicine_id');
+    }
+
+    public function transactions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            MedicineTransaction::class,
+            MedicineBatch::class,
+            'medicine_id',
+            'batch_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        $brand = trim((string) $this->brand_name);
+        if ($brand !== '') {
+            return $brand;
+        }
+
+        $name = trim((string) $this->name);
+        if ($name !== '') {
+            return $name;
+        }
+
+        return (string) $this->generic_label;
+    }
+
+    public function getGenericLabelAttribute(): string
+    {
+        return $this->generic_name ?: optional($this->generic)->name ?: 'N/A';
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return $this->category ?: $this->category_name ?: optional($this->medicineCategory)->name ?: 'Uncategorized';
+    }
+
+    public function setCategoryAttribute($value): void
+    {
+        $normalized = trim((string) $value);
+        $normalized = $normalized !== '' ? $normalized : null;
+
+        $this->attributes['category'] = $normalized;
+
+        if (empty($this->attributes['category_name']) && $normalized !== null) {
+            $this->attributes['category_name'] = $normalized;
+        }
+    }
+
+    public function setCategoryNameAttribute($value): void
+    {
+        $normalized = trim((string) $value);
+        $normalized = $normalized !== '' ? $normalized : null;
+
+        $this->attributes['category_name'] = $normalized;
+
+        if (empty($this->attributes['category']) && $normalized !== null) {
+            $this->attributes['category'] = $normalized;
+        }
+    }
+
     /**
-     * Get the earliest expiry date for this medicine from purchased medicines
+     * Get earliest expiry from the batch ledger.
      */
     public function getEarliestExpiryDateAttribute()
     {
-        return PurchasedMedicine::where('medicine_id', $this->id)
-            ->whereNotNull('expiry_date')
-            ->min('expiry_date');
+        return MedicineBatch::where('medicine_id', $this->id)
+            ->whereNotNull('expiration_date')
+            ->min('expiration_date');
     }
 }
