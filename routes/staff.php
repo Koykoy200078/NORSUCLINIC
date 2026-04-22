@@ -29,6 +29,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Patient Management (Staff can manage patients but with limited access)
     Route::middleware('permission:manage_patients')->group(function () {
+        Route::post('patients/{patient}/restore', [PatientController::class, 'restore'])->name('patients.restore');
         Route::resource('patients', PatientController::class);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
         // Email verification for patients
@@ -108,7 +109,9 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         Route::resource('stock-in', StockInController::class);
         Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
         Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
-        Route::redirect('used-medicine', url('staff/medicine-dispensing-management') . '?tab=stock-out')->name('used-medicine.index');
+        Route::get('used-medicine', function () {
+            return redirect()->route('staff.medicine-dispensing.index', ['tab' => 'stock-out']);
+        })->name('used-medicine.index');
 
         // Dispense Records
         Route::resource('dispense-records', DispenseRecordController::class)->parameters(['dispense-records' => 'medicine_history']);

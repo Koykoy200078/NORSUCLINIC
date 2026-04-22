@@ -281,4 +281,9 @@ class Prescription extends Model
     {
         return $this->hasMany(PrescriptionMedicine::class);
     }
+
+    public function dispensedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dispensed_by');
+    }
 }

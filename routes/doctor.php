@@ -42,6 +42,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
         Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
         Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
+        Route::post('prescriptions/{prescription}/dispense', [PrescriptionController::class, 'dispense'])->name('prescriptions.dispense');
     });
 
     // Patient Management (Doctors can manage patients)
@@ -93,7 +94,9 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::resource('stock-in', StockInController::class);
         Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
         Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
-        Route::redirect('used-medicine', url('doctors/medicine-dispensing-management') . '?tab=stock-out')->name('used-medicine.index');
+        Route::get('used-medicine', function () {
+            return redirect()->route('doctors.medicine-dispensing.index', ['tab' => 'stock-out']);
+        })->name('used-medicine.index');
 
         // Dispense Records
         Route::resource('dispense-records', DispenseRecordController::class)->parameters(['dispense-records' => 'medicine_history']);

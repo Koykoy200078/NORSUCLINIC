@@ -30,7 +30,9 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         ->distinct('medicine_id')
         ->count('medicine_id');
 
-        $hasBaselineColumn = \Illuminate\Support\Facades\Schema::hasColumn('medicines', 'baseline_quantity');
+        $hasBaselineColumn = \Illuminate\Support\Facades\Cache::remember('schema_has_baseline_qty', 3600, function () {
+            return \Illuminate\Support\Facades\Schema::hasColumn('medicines', 'baseline_quantity');
+        });
         $stableDenominatorSql = $hasBaselineColumn
         ? 'COALESCE(NULLIF(baseline_quantity, 0), NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)'
         : 'COALESCE(NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)';
@@ -61,46 +63,20 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- 3) Patient Queuing                                                  --}}
                 {{-- 4) Consultation Management                                          --}}
                 {{-- 5) Prescription Management                                          --}}
-                {{-- 6) Certificate Issuance                                             --}}
+                {{-- 6) Medicine Inventory Tracking                                      --}}
+                {{-- 7) Medicine Dispensing Management                                   --}}
+                {{-- 8) Certificate Issuance                                             --}}
                 {{-- Keep the next sections in this exact order.                         --}}
                 {{-- ===================================================================== --}}
 
                 {{-- [ORDER 1] Dashboard - role-specific dashboard routes --}}
-                @if(isRole('clinic_admin'))
-                {{-- Admin Dashboard --}}
-                @can('manage_admin_dashboard')
-                <li class="nav-item {{ Request::is('admin/dashboard*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('admin.dashboard') }}">
+                @php $dashboardUrl = getDashboardURL(); @endphp
+                <li class="nav-item {{ Request::is('admin/dashboard*', 'staff/dashboard*', 'doctors/dashboard*', 'patients/dashboard*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ url($dashboardUrl) }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
                         <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
                     </a>
                 </li>
-                @endcan
-                @elseif(isRole('staff'))
-                {{-- Staff Dashboard - Always accessible for staff users --}}
-                <li class="nav-item {{ Request::is('staff/dashboard*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.dashboard') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
-                    </a>
-                </li>
-                @elseif(isRole('doctor'))
-                {{-- Doctor Dashboard - Only for doctor users --}}
-                <li class="nav-item {{ Request::is('doctors/dashboard*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.dashboard') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
-                    </a>
-                </li>
-                @elseif(isRole('patient'))
-                {{-- Patient Dashboard - Only for patient users --}}
-                <li class="nav-item {{ Request::is('patients/dashboard*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patients.dashboard') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
-                    </a>
-                </li>
-                @endif
 
                 {{-- Live Consultations temporarily disabled for patients - route not implemented
 @can('manage_live_consultations')
@@ -124,22 +100,18 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
     (isRole('staff') && Request::is('staff/patients*') && !$isPrescriptionSelectionMode) ||
     (isRole('doctor') && Request::is('doctors/patients*') && !$isPrescriptionSelectionMode)
 ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('patients.index') : 
-        (isRole('staff') ? route('staff.patients.index') : 
-        (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patients.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-hospital-user"></i></span>
-                        <span class="aside-menu-title">Patients / Patient Record Management</span>
+                        <span class="aside-menu-title">Patients</span>
                     </a>
                 </li>
 
                 {{-- [ORDER 3-A] Patient Queuing - Staff (requires manage_patients) --}}
                 @if(isRole('staff'))
                 <li class="nav-item {{ Request::is('staff/patient-queue*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('staff.patient-queue.index') }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patient-queue.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
-                        <span class="aside-menu-title">Patient Queuing</span>
+                        <span class="aside-menu-title">Queue</span>
                         @php $queueData = $_menuQueueBadge; @endphp
                         @if($queueData && $queueData->total > 0)
                         @if($queueData->priority > 0)
@@ -156,9 +128,9 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- [ORDER 3-B] Patient Queuing - Clinic Admin (requires manage_patients) --}}
                 @if(isRole('clinic_admin'))
                 <li class="nav-item {{ Request::is('admin/patient-queue*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('patient-queue.index') }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patient-queue.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
-                        <span class="aside-menu-title">Patient Queuing</span>
+                        <span class="aside-menu-title">Queue</span>
                         @php $adminQueueData = $_menuQueueBadge; @endphp
                         @if($adminQueueData && $adminQueueData->total > 0)
                         @if($adminQueueData->priority > 0)
@@ -176,9 +148,9 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- [ORDER 3-C] Patient Queuing - Doctor (doctor queue route) --}}
                 @if(isRole('doctor'))
                 <li class="nav-item {{ Request::is('doctors/patient-queue*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ route('doctors.patient-queue.index') }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patient-queue.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
-                        <span class="aside-menu-title">Patient Queuing</span>
+                        <span class="aside-menu-title">Queue</span>
                         @php $doctorQueueData = $_menuQueueBadge; @endphp
                         @if($doctorQueueData && $doctorQueueData->total > 0)
                         @if($doctorQueueData->in_progress > 0)
@@ -200,8 +172,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 @can('manage_request_documents')
                 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
                 @php
-                $documentIssuanceIndexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
-                (isRole('staff') ? route('staff.document-issuances.index') : route('doctors.document-issuances.index'));
+                $documentIssuanceIndexRoute = getRouteByRole('document-issuances.index');
 
                 $isDocumentIssuancePath =
                 (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
@@ -222,8 +193,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 (!$activeDocumentModule && $activeDocumentType === 'medical_certificate')
                 );
 
-                $prescriptionIndexRoute = isRole('clinic_admin') ? route('prescriptions.index') :
-                (isRole('staff') ? route('staff.prescriptions.index') : route('doctors.prescriptions.index'));
+                $prescriptionIndexRoute = getRouteByRole('prescriptions.index');
 
                 $isPrescriptionNavActive =
                 (isRole('clinic_admin') && (
@@ -246,7 +216,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         <span class="aside-menu-icon pe-3">
                             <i class="fa-solid fa-notes-medical"></i>
                         </span>
-                        <span class="aside-menu-title">Consultation Management</span>
+                        <span class="aside-menu-title">Consultations</span>
                         @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
                         @if($incompleteDocsCount > 0)
                         <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
@@ -267,7 +237,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         <span class="aside-menu-icon pe-3">
                             <i class="fa-solid fa-file-prescription"></i>
                         </span>
-                        <span class="aside-menu-title">Prescription Management</span>
+                        <span class="aside-menu-title">Prescriptions</span>
                         <span class="d-none">Select patient then create prescription</span>
                     </a>
                 </li>
@@ -278,7 +248,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         <span class="aside-menu-icon pe-3">
                             <i class="fa-solid fa-file-medical"></i>
                         </span>
-                        <span class="aside-menu-title">Certificate Issuance</span>
+                        <span class="aside-menu-title">Certificates</span>
                         <span class="d-none">Medical Certificate</span>
                     </a>
                 </li>
@@ -292,17 +262,13 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         (isRole('staff') && Request::is('staff/categories*', 'staff/generics*', 'staff/medicines*', 'staff/stock-in*', 'staff/medicine-inventory-tracking*')) ||
         (isRole('doctor') && Request::is('doctors/categories*', 'doctors/generics*', 'doctors/medicines*', 'doctors/stock-in*', 'doctors/medicine-inventory-tracking*'))
     ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('medicine-inventory.index') : 
-        (isRole('staff') ? route('staff.medicine-inventory.index') : 
-        (isRole('doctor') ? route('doctors.medicine-inventory.index') : route('medicine-inventory.index')))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('medicine-inventory.index') }}">
                         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
-                        <span class="aside-menu-title">Medicine Inventory Tracking</span>
+                        <span class="aside-menu-title">Inventory</span>
                         @php
-                        $criticalCount = $_menuMedicineBadge['criticalCount'];
-                        $warningCount = $_menuMedicineBadge['warningCount'];
-                        $lowStockCount = $_menuMedicineBadge['lowStockCount'];
+                        $criticalCount = $_menuMedicineBadge['criticalCount'] ?? 0;
+                        $warningCount = $_menuMedicineBadge['warningCount'] ?? 0;
+                        $lowStockCount = $_menuMedicineBadge['lowStockCount'] ?? 0;
                         @endphp
 
                         <div class="d-flex align-items-center ms-auto gap-1">
@@ -335,13 +301,9 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         (isRole('staff') && Request::is('staff/used-medicine*', 'staff/medicine-history*', 'staff/dispense-records*', 'staff/medicine-dispensing-management*')) ||
         (isRole('doctor') && Request::is('doctors/used-medicine*', 'doctors/medicine-history*', 'doctors/dispense-records*', 'doctors/medicine-dispensing-management*'))
     ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('medicine-dispensing.index') : 
-        (isRole('staff') ? route('staff.medicine-dispensing.index') : 
-        (isRole('doctor') ? route('doctors.medicine-dispensing.index') : route('medicine-dispensing.index')))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('medicine-dispensing.index') }}">
                         <span class="aside-menu-icon me-3"><i class="fas fa-notes-medical"></i></span>
-                        <span class="aside-menu-title">Medicine Dispensing Management</span>
+                        <span class="aside-menu-title">Dispensing</span>
                         <span class="d-none">{{ __('messages.used_medicine.used_medicines') }}</span>
                         <span class="d-none">{{ __('messages.medicine_bills.medicine_bills') }}</span>
                     </a>
@@ -354,11 +316,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
     (isRole('doctor') && Request::is('doctors/specializations*'))
 ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                        href="{{ 
-            isRole('clinic_admin') ? route('specializations.index') : 
-            (isRole('staff') ? route('staff.specializations.index') : 
-            (isRole('doctor') ? route('doctors.specializations.index') : route('specializations.index')))
-        }}">
+                        href="{{ getRouteByRole('specializations.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-user-shield"></i></span>
                         <span class="aside-menu-title">{{ __('messages.specializations') }}</span>
                     </a>
@@ -370,10 +328,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         (isRole('clinic_admin') && Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*')) ||
         (isRole('staff') && Request::is('staff/cms*', 'staff/sliders*', 'staff/front-medical-services*', 'staff/front-patient-testimonials*'))
     ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('cms.index') : 
-        (isRole('staff') ? route('staff.cms.index') : route('cms.index'))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('cms.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>
                         <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
                         <span class="d-none">{{ __('messages.cms.cms') }}</span>
@@ -388,10 +343,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
     (isRole('staff') && Request::is('staff/activity-logs*')) ||
     (isRole('doctor') && Request::is('doctors/activity-logs*'))
 ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('activity-logs.index') : 
-        (isRole('staff') ? route('staff.activity-logs.index') : route('doctors.activity-logs.index'))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('activity-logs.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
                         <span class="aside-menu-title">Activity Logs</span>
                     </a>
@@ -404,7 +356,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 <li class="nav-item aside-item-collapse {{ $isUserManagementActive ? 'show collapse-submenu' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ $isUserManagementActive ? 'true' : 'false' }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-cog"></i></span>
-                        <span class="aside-menu-title">User Managements</span>
+                        <span class="aside-menu-title">User Management</span>
                         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-chevron-right fs-8"></i></span>
                     </a>
 
@@ -423,7 +375,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         @can('manage_doctors')
                         @if(isRole('clinic_admin') || isRole('staff'))
                         <li class="nav-item {{ (isRole('clinic_admin') && Request::is('admin/doctors*')) || (isRole('staff') && Request::is('staff/doctors*')) ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ isRole('clinic_admin') ? route('doctors.index') : route('staff.doctors.index') }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ getRouteByRole('doctors.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
                                 <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
                             </a>
@@ -442,10 +394,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
         (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
     ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ 
-        isRole('clinic_admin') ? route('setting.index') : 
-        (isRole('staff') ? route('staff.setting.index') : route('setting.index'))
-    }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('setting.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
                         <span class="aside-menu-title">{{ __('messages.settings') }}</span>
                         <span class="d-none">{{ __('messages.settings') }}</span>

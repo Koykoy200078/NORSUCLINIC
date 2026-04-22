@@ -71,7 +71,7 @@
         <h1>@yield('title')</h1>
         <div class="d-flex gap-2 align-items-center">
             @if(!isRole('doctor'))
-            <a class="btn btn-primary" href="{{ isRole('clinic_admin') ? route('patient-queue.create') : route('staff.patient-queue.create') }}">
+            <a class="btn btn-primary" href="{{ getRouteByRole('patient-queue.create') }}">
                 <i class="fas fa-plus"></i> Add Patient to Queue
             </a>
             @endif
@@ -94,7 +94,7 @@
 </div>
 
 <script>
-    const pqRefreshUrl = "{{ isRole('clinic_admin') ? route('patient-queue.refresh') : route('staff.patient-queue.refresh') }}";
+    const pqRefreshUrl = "{{ getRouteByRole('patient-queue.refresh') }}";
 
     window.pqAutoRefresh = {
         enabled: localStorage.getItem('pqAutoRefresh') !== 'false',

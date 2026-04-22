@@ -425,10 +425,6 @@
 
     <div>
         {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
-        <a href="{{ 
-            isRole('clinic_admin') ? route('patients.index') : 
-            (isRole('staff') ? route('staff.patients.index') : 
-            (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
-        }}" type="reset"
+        <a href="{{ getRouteByRole('patients.index') }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

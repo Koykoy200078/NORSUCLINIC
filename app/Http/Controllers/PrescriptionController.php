@@ -611,12 +611,13 @@ class PrescriptionController extends AppBaseController
 
     public function dispense(Prescription $prescription): RedirectResponse|JsonResponse
     {
-        if (! (isRole('clinic_admin') || isRole('staff'))) {
+        // Allow clinic_admin, staff, and doctor to dispense
+        if (! (isRole('clinic_admin') || isRole('staff') || isRole('doctor'))) {
             if (request()->ajax()) {
-                return $this->sendError('Only authorized staff can dispense prescriptions.');
+                return $this->sendError('Only authorized staff or doctors can dispense prescriptions.');
             }
 
-            Flash::error('Only authorized staff can dispense prescriptions.');
+            Flash::error('Only authorized staff or doctors can dispense prescriptions.');
 
             return Redirect::back();
         }

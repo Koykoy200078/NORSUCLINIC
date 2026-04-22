@@ -203,7 +203,7 @@ class PatientController extends AppBaseController
     {
         // Load consultations and related data
         $patient->load([
-            'documentIssuances'
+            'documentIssuances',
         ]);
 
         // Fetch all consultations with `consultation_form` type
@@ -212,8 +212,27 @@ class PatientController extends AppBaseController
         // Fetch all medical certificates
         $medicalCertificates = $patient->documentIssuances->where('document_type', 'medical_certificate');
 
+        // Load prescriptions with associated medicines and dispenser info
+        $prescriptions = \App\Models\Prescription::with([
+            'getMedicine.medicines',   // PrescriptionMedicine::medicines() → Medicine
+            'doctor.user',             // Prescription::doctor() → Doctor::user() → User
+            'dispensedBy',             // Prescription::dispensedBy() → User
+        ])->where('patient_id', $patient->id)->latest()->get();
+
+        // Load dispense records (medicine bills) with items
+        $dispenseRecords = \App\Models\DispenseRecord::with([
+            'dispenseItems.medicine',  // DispenseRecord::dispenseItems() → DispenseRecordItem::medicine() → Medicine
+            'doctor.user',             // DispenseRecord::doctor() → Doctor::user() → User
+        ])->where('patient_id', $patient->id)->latest()->get();
+
         // Pass the data to the view
-        return view('patients.view_patient', compact('patient', 'consultations', 'medicalCertificates'));
+        return view('patients.view_patient', compact(
+            'patient',
+            'consultations',
+            'medicalCertificates',
+            'prescriptions',
+            'dispenseRecords'
+        ));
     }
 
     public function resetPassword(User $user): JsonResponse

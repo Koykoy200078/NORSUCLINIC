@@ -1,21 +1,15 @@
 @php
 $medicineBill = App\Models\MedicineBill::whereModelType('App\Models\Prescription')->whereModelId($row->id)->first();
-$showRoute = isRole('doctor')
-? 'doctors.prescription.medicine.show'
-: (isRole('staff') ? 'staff.prescription.medicine.show' : (isRole('patient') ? 'patients.prescription.medicine.show' : 'prescription.medicine.show'));
-$editRoute = isRole('doctor')
-? 'doctors.prescriptions.edit'
-: (isRole('staff') ? 'staff.prescriptions.edit' : (isRole('patient') ? 'patients.prescriptions.edit' : 'prescriptions.edit'));
-$pdfRoute = isRole('doctor')
-? 'doctors.prescriptions.pdf'
-: (isRole('staff') ? 'staff.prescriptions.pdf' : (isRole('patient') ? 'patients.prescriptions.pdf' : 'prescriptions.pdf'));
+$showUrl = getRouteByRole('prescription.medicine.show', ['id' => $row->id]);
+$editUrl = getRouteByRole('prescriptions.edit', ['prescription' => $row->id]);
+$pdfUrl = getRouteByRole('prescriptions.pdf', ['id' => $row->id]);
 
 $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status == false;
 @endphp
 
 <div class="d-flex align-items-center gap-2">
     {{-- Show Button --}}
-    <a href="{{ route($showRoute, $row->id) }}"
+    <a href="{{ $showUrl }}"
         title="{{ __('messages.common.view') }}"
         class="btn btn-sm btn-outline-info action-btn">
         <i class="fas fa-eye"></i>
@@ -23,7 +17,7 @@ $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status
 
     {{-- Edit Button - Only show if medicine bill is not paid --}}
     @if($canEdit)
-    <a href="{{ route($editRoute, $row->id) }}"
+    <a href="{{ $editUrl }}"
         title="{{ __('messages.common.edit') }}"
         class="btn btn-sm btn-outline-primary action-btn">
         <i class="fas fa-edit"></i>
@@ -31,7 +25,7 @@ $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status
     @endif
 
     {{-- PDF Button --}}
-    <a href="{{ route($pdfRoute, $row->id) }}"
+    <a href="{{ $pdfUrl }}"
         title="{{ __('messages.prescription.download_pdf') }}"
         class="btn btn-sm btn-outline-secondary action-btn"
         target="_blank">

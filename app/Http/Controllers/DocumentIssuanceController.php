@@ -193,11 +193,11 @@ class DocumentIssuanceController extends Controller
     private function storeConsultationForm(array $data)
     {
         // Map related names for numeric fields using their IDs
-        $data['campus'] = Campus::find($data['campus_id'])->campus_name ?? 'Unknown Campus';
-        $data['college'] = College::find($data['college_id'])->college_name ?? 'Unknown College';
-        $data['course'] = Course::find($data['course_id'])->course_name ?? 'Unknown Course';
-        $data['year_level'] = YearLevel::find($data['year_level_id'])->year_level_name ?? 'Unknown Year Level';
-        $data['vaccination_id'] = Vaccination::find($data['vaccination_id'])->vaccination_status ?? 'Unknown Vaccination';
+        $data['campus'] = Campus::find($data['campus_id'] ?? null)?->campus_name ?? 'Unknown Campus';
+        $data['college'] = College::find($data['college_id'] ?? null)?->college_name ?? 'Unknown College';
+        $data['course'] = Course::find($data['course_id'] ?? null)?->course_name ?? 'Unknown Course';
+        $data['year_level'] = YearLevel::find($data['year_level_id'] ?? null)?->year_level_name ?? 'Unknown Year Level';
+        $data['vaccination_id'] = Vaccination::find($data['vaccination_id'] ?? null)?->vaccination_status ?? 'Unknown Vaccination';
 
         // Handle comorbidities - accept custom input or predefined values
         $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';

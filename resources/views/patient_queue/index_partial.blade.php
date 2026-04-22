@@ -58,7 +58,7 @@ $regularQueues = $queues->where('is_priority', false);
                                 <td>
                                     <div class="btn-group" role="group">
                                         @if($queue->status === 'waiting')
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.call-next', $queue) : route('staff.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
+                                        <form action="{{ getRouteByRole('patient-queue.call-next', ['patientQueue' => $queue]) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
                                                 <i class="fas fa-phone"></i>
@@ -67,7 +67,7 @@ $regularQueues = $queues->where('is_priority', false);
                                         @endif
 
                                         @if($queue->status === 'in_progress')
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.complete', $queue) : route('staff.patient-queue.complete', $queue) }}" method="POST" class="d-inline">
+                                        <form action="{{ getRouteByRole('patient-queue.complete', ['patientQueue' => $queue]) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-primary" title="Complete">
                                                 <i class="fas fa-check"></i>
@@ -75,11 +75,11 @@ $regularQueues = $queues->where('is_priority', false);
                                         </form>
                                         @endif
 
-                                        <a href="{{ isRole('clinic_admin') ? route('patient-queue.edit', $queue) : route('staff.patient-queue.edit', $queue) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <a href="{{ getRouteByRole('patient-queue.edit', ['patientQueue' => $queue]) }}" class="btn btn-sm btn-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.destroy', $queue) : route('staff.patient-queue.destroy', $queue) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                        <form action="{{ getRouteByRole('patient-queue.destroy', ['patientQueue' => $queue]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" title="Remove">
@@ -153,7 +153,7 @@ $regularQueues = $queues->where('is_priority', false);
                                 <td>
                                     <div class="btn-group" role="group">
                                         @if($queue->status === 'waiting')
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.call-next', $queue) : route('staff.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
+                                        <form action="{{ getRouteByRole('patient-queue.call-next', ['patientQueue' => $queue]) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
                                                 <i class="fas fa-phone"></i>
@@ -162,7 +162,7 @@ $regularQueues = $queues->where('is_priority', false);
                                         @endif
 
                                         @if($queue->status === 'in_progress')
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.complete', $queue) : route('staff.patient-queue.complete', $queue) }}" method="POST" class="d-inline">
+                                        <form action="{{ getRouteByRole('patient-queue.complete', ['patientQueue' => $queue]) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-primary" title="Complete">
                                                 <i class="fas fa-check"></i>
@@ -170,11 +170,11 @@ $regularQueues = $queues->where('is_priority', false);
                                         </form>
                                         @endif
 
-                                        <a href="{{ isRole('clinic_admin') ? route('patient-queue.edit', $queue) : route('staff.patient-queue.edit', $queue) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <a href="{{ getRouteByRole('patient-queue.edit', ['patientQueue' => $queue]) }}" class="btn btn-sm btn-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <form action="{{ isRole('clinic_admin') ? route('patient-queue.destroy', $queue) : route('staff.patient-queue.destroy', $queue) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                        <form action="{{ getRouteByRole('patient-queue.destroy', ['patientQueue' => $queue]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" title="Remove">

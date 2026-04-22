@@ -5,9 +5,7 @@
 @section('content')
 @php
 $documentModule = request('module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
-$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
-(isRole('staff') ? route('staff.document-issuances.index') :
-(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexRoute = getRouteByRole('document-issuances.index');
 $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 @endphp
 <div class="p-4">
@@ -22,11 +20,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             @endif
         </h1>
         <a href="{{ 
-            request('patient_id') ? 
-                (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => request('patient_id')]) : 
-                (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => request('patient_id')]) : 
-                (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => request('patient_id')]) : 
-                route('patients.showMyHistory', ['patient' => request('patient_id')])))) :
+            request('patient_id') ? getRouteByRole('patients.showMyHistory', ['patient' => request('patient_id')]) :
                 $indexUrlWithModule
         }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
     </div>
@@ -38,11 +32,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         $isFacultyType=$effectiveYearLevelId===7;
         $isStaffType=$effectiveYearLevelId===8;
         @endphp
-        <form action="{{ 
-        isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
-        (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
-        (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
-    }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ getRouteByRole('document-issuances.update', ['document_issuance' => $requestDocument]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -55,42 +45,42 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         <div class="grid grid-cols-4 gap-2 pb-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME</label>
-                <input type="text" id="name" name="name" class="w-full border-b border-black" value="{{ old('name', $requestDocument->name) }}">
+                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('name', $requestDocument->name) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE</label>
-                <input type="text" id="age" name="age" class="w-full border-b border-black" value="{{ old('age', $requestDocument->age) }}">
+                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('age', $requestDocument->age) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="gender">GENDER</label>
-                <input type="text" id="gender" name="gender" class="w-full border-b border-black" value="{{ old('gender', $requestDocument->gender) }}">
+                <input type="text" id="gender" name="gender" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('gender', $requestDocument->gender) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="status">STATUS</label>
-                <input type="text" id="status" name="status" class="w-full border-b border-black" value="{{ old('status', $requestDocument->status) }}">
+                <input type="text" id="status" name="status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('status', $requestDocument->status) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="date_of_birth">DATE OF BIRTH</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border-b border-black" value="{{ old('date_of_birth', $requestDocument->date_of_birth ? \Carbon\Carbon::parse($requestDocument->date_of_birth)->format('Y-m-d') : '') }}">
+                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('date_of_birth', $requestDocument->date_of_birth ? \Carbon\Carbon::parse($requestDocument->date_of_birth)->format('Y-m-d') : '') }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS</label>
-                <input type="text" id="address" name="address" class="w-full border-b border-black" value="{{ old('address', $requestDocument->address) }}">
+                <input type="text" id="address" name="address" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('address', $requestDocument->address) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="religion">RELIGION</label>
-                <input type="text" id="religion" name="religion" class="w-full border-b border-black" value="{{ old('religion', $requestDocument->religion) }}">
+                <input type="text" id="religion" name="religion" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('religion', $requestDocument->religion) }}">
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #</label>
-                <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ old('patient_contact', $requestDocument->patient_contact) }}">
+                <input type="text" id="patient_contact" name="patient_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('patient_contact', $requestDocument->patient_contact) }}">
             </div>
 
 
             <!-- Campus Field (for Students only) -->
             <div class="col-span-1" id="campus_field" style="display: {{ $isStudentType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus_id">CAMPUS</label>
-                <select id="campus_id" name="campus_id" class="w-full border-b border-black">
+                <select id="campus_id" name="campus_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     <option value="">Select Campus</option>
                     @foreach($campuses as $campus)
                     <option value="{{ $campus->id }}" {{ old('campus_id', $requestDocument->campus_id ?? $user->campus_id ?? '') == $campus->id ? 'selected' : '' }}>
@@ -103,7 +93,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <!-- College Field (for Students and Faculty) -->
             <div class="col-span-1" id="college_field" style="display: {{ ($isStudentType || $isFacultyType) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college_id">COLLEGE</label>
-                <select id="college_id" name="college_id" class="w-full border-b border-black">
+                <select id="college_id" name="college_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     <option value="">Select College</option>
                     @foreach($colleges as $college)
                     <option value="{{ $college->id }}" {{ old('college_id', $requestDocument->college_id ?? $user->college_id ?? '') == $college->id ? 'selected' : '' }}>
@@ -117,7 +107,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <div class="col-span-1" id="course_year_field" style="display: {{ $isStudentType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="course_id" name="course_id" class="w-full border-b border-black">
+                    <select id="course_id" name="course_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                         <option value="">Select Course</option>
                         @foreach($courses as $course)
                         <option value="{{ $course->id }}" {{ old('course_id', $requestDocument->course_id ?? $user->course_id ?? '') == $course->id ? 'selected' : '' }}>
@@ -125,7 +115,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                         </option>
                         @endforeach
                     </select>
-                    <select id="year_level_id" name="year_level_id" class="w-full border-b border-black">
+                    <select id="year_level_id" name="year_level_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                         <option value="">Select Year Level</option>
                         @foreach($yearLevels as $level)
                         <option value="{{ $level->id }}" {{ old('year_level_id', $requestDocument->year_level_id ?? $user->year_level_id ?? '') == $level->id ? 'selected' : '' }}>
@@ -139,7 +129,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <!-- Department Field (for Faculty only) -->
             <div class="col-span-1" id="department_field" style="display: {{ $isFacultyType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="department_id">DEPARTMENT</label>
-                <select id="department_id" name="department_id" class="w-full border-b border-black">
+                <select id="department_id" name="department_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     <option value="">Select Department</option>
                     @foreach($departments as $department)
                     <option value="{{ $department->id }}" {{ old('department_id', $requestDocument->department_id ?? $user->department_id ?? '') == $department->id ? 'selected' : '' }}>
@@ -152,7 +142,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <!-- Office Field (for Staff only) -->
             <div class="col-span-1" id="office_field" style="display: {{ $isStaffType ? 'block' : 'none' }};">
                 <label class="block text-xs" for="office_id">OFFICE</label>
-                <select id="office_id" name="office_id" class="w-full border-b border-black">
+                <select id="office_id" name="office_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     <option value="">Select Office</option>
                     @foreach($offices as $office)
                     <option value="{{ $office->id }}" {{ old('office_id', $requestDocument->office_id ?? $user->office_id ?? '') == $office->id ? 'selected' : '' }}>
@@ -164,25 +154,25 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
-                <input type="text" id="informant" name="informant" class="w-full border-b border-black" value="{{ old('informant', $requestDocument->informant) }}">
+                <input type="text" id="informant" name="informant" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('informant', $requestDocument->informant) }}">
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
-                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border-b border-black" value="{{ old('emergency_contact', $requestDocument->emergency_contact) }}">
+                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('emergency_contact', $requestDocument->emergency_contact) }}">
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
-                <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" max="{{ date('Y-m-d') }}" value="{{ old('requested_at', $requestDocument->requested_at->format('Y-m-d')) }}" required>
+                <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" max="{{ date('Y-m-d') }}" value="{{ old('requested_at', $requestDocument->requested_at->format('Y-m-d')) }}" required>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border-b border-black auto-resize-textarea" rows="2">{{ old('complaints', $requestDocument->complaints) }}</textarea>
+                <textarea id="complaints" name="complaints" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="2">{{ old('complaints', $requestDocument->complaints) }}</textarea>
             </div>
             <div class="col-span-1"></div>
             <div class="col-span-3">
-                <textarea id="note" name="note" class="w-full border-b border-black auto-resize-textarea" rows="3">{{ old('note', $requestDocument->note) }}</textarea>
+                <textarea id="note" name="note" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="3">{{ old('note', $requestDocument->note) }}</textarea>
             </div>
         </div>
         <!-- Subjective Complaints -->
@@ -195,7 +185,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vaccination_id">COVID Vaccination<span class="text-red-500">*</span></label>
-                        <select id="vaccination_id" name="vaccination_id" class="w-full border-b border-black" required>
+                        <select id="vaccination_id" name="vaccination_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
                             <option value="">Select Vaccination Status</option>
                             @foreach($vaccinations as $vaccination)
                             <option value="{{ $vaccination->id }}" {{ old('vaccination_id', $requestDocument->covid_vaccination ?? '') == $vaccination->vaccination_status ? 'selected' : '' }}>
@@ -216,7 +206,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                                 <input type="text"
                                     id="comorbidities_input"
                                     list="comorbidities_list"
-                                    class="w-full border-b border-black"
+                                    class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="Type and press Enter"
                                     autocomplete="off">
                                 <button type="button" id="add_comorbidity_btn" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">Add</button>
@@ -231,23 +221,23 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
-                        <input type="text" id="allergies" name="allergies" class="w-full border-b border-black" value="{{ old('allergies', $requestDocument->allergies) }}" required>
+                        <input type="text" id="allergies" name="allergies" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('allergies', $requestDocument->allergies) }}" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
-                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border-b border-black" value="{{ old('admissions_surgeries', $requestDocument->admissions_surgeries) }}">
+                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('admissions_surgeries', $requestDocument->admissions_surgeries) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="maintenance">Maintenance<span class="text-red-500">*</span></label>
-                        <input type="text" id="maintenance" name="maintenance" class="w-full border-b border-black" value="{{ old('maintenance', $requestDocument->maintenance) }}" required>
+                        <input type="text" id="maintenance" name="maintenance" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('maintenance', $requestDocument->maintenance) }}" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
-                        <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border-b border-black" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}" required>
+                        <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}" required>
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="lmp_aog">If YES, LMP/AOG</label>
-                        <input type="text" id="lmp_aog" name="lmp_aog" class="w-full border-b border-black" value="{{ old('lmp_aog', $requestDocument->lmp_aog) }}">
+                        <input type="text" id="lmp_aog" name="lmp_aog" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('lmp_aog', $requestDocument->lmp_aog) }}">
                     </div>
                 </div>
             </div>
@@ -262,36 +252,36 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_bp">BP</label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border-b border-black" placeholder="mmHg" value="{{ old('vital_signs_bp', $requestDocument->vital_signs_bp) }}">
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="mmHg" value="{{ old('vital_signs_bp', $requestDocument->vital_signs_bp) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_pr">PR</label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border-b border-black" placeholder="bpm" value="{{ old('vital_signs_pr', $requestDocument->vital_signs_pr) }}">
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="bpm" value="{{ old('vital_signs_pr', $requestDocument->vital_signs_pr) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_temp">Temp</label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border-b border-black" placeholder="°C" value="{{ old('vital_signs_temp', $requestDocument->vital_signs_temp) }}">
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="°C" value="{{ old('vital_signs_temp', $requestDocument->vital_signs_temp) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border-b border-black" placeholder="cycles/min" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cycles/min" value="{{ old('vital_signs_rr', $requestDocument->vital_signs_rr) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border-b border-black" placeholder="%" value="{{ old('vital_signs_o2_sat', $requestDocument->vital_signs_o2_sat) }}">
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="%" value="{{ old('vital_signs_o2_sat', $requestDocument->vital_signs_o2_sat) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
-                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border-b border-black" placeholder="kg" value="{{ old('vital_signs_weight', $requestDocument->vital_signs_weight) }}">
+                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="kg" value="{{ old('vital_signs_weight', $requestDocument->vital_signs_weight) }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_height">Height (cm)</label>
-                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border-b border-black" placeholder="cm" value="{{ old('vital_signs_height', $requestDocument->vital_signs_height) }}">
+                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cm" value="{{ old('vital_signs_height', $requestDocument->vital_signs_height) }}">
                     </div>
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border-b border-black auto-resize-textarea" rows="5">{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('pertinent_exam', $requestDocument->pertinent_exam) }}</textarea>
                 </div>
             </div>
         </div>
@@ -302,7 +292,10 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border-b border-black auto-resize-textarea" rows="5">{{ old('assessment', $requestDocument->assessment) }}</textarea>
+                <textarea id="assessment" name="assessment" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'readonly' : '' }}>{{ old('assessment', $requestDocument->assessment) }}</textarea>
+                @if(!isRole('doctor') && !isRole('clinic_admin'))
+                <small class="text-gray-500"><i class="fa-solid fa-lock text-xs"></i> Only doctors can edit the assessment.</small>
+                @endif
             </div>
         </div>
         <!-- Plan -->
@@ -312,29 +305,55 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border-b border-black auto-resize-textarea" rows="5">{{ old('plan', $requestDocument->plan) }}</textarea>
+                <textarea id="plan" name="plan" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'readonly' : '' }}>{{ old('plan', $requestDocument->plan) }}</textarea>
+                @if(!isRole('doctor') && !isRole('clinic_admin'))
+                <small class="text-gray-500"><i class="fa-solid fa-lock text-xs"></i> Only doctors can edit the plan.</small>
+                @endif
 
                 <!-- Medicine Selection for Plan -->
+                @if(isRole('doctor') || isRole('clinic_admin'))
                 <div class="mt-3">
                     <label class="block text-xs font-semibold mb-2">Add Medicines to Plan:</label>
                     <button type="button" id="add_plan_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
                         <i class="fas fa-plus"></i> Add Medicine
                     </button>
-                    <div id="plan_medicines_container" class="mt-2 space-y-2"></div>
                 </div>
+                @endif
+                <div id="plan_medicines_container" class="mt-2 space-y-2"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-2 py-2">
-            <div class="col-span-1">
-                <label class="block">Consult Mode<span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-4 gap-4 py-3 bg-blue-50/50 rounded p-3 mb-2 border border-blue-100">
+            <div class="col-span-1 d-flex align-items-center">
+                <label class="block font-bold text-gray-700 text-sm">Consult Mode<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <select id="consult_mode" name="consult_mode" class="w-full border-b border-black" required>
-                    <option value="">Select Consultation Mode</option>
-                    <option value="physical" {{ old('consult_mode', $requestDocument->consult_mode) == 'physical' ? 'selected' : '' }}>Physical</option>
-                    <option value="virtual" {{ old('consult_mode', $requestDocument->consult_mode) == 'virtual' ? 'selected' : '' }}>Virtual</option>
-                </select>
+                <div class="flex gap-4">
+                    <label class="flex-1 {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'cursor-not-allowed opacity-75' : 'cursor-pointer' }} custom-radio-card">
+                        <input type="radio" name="consult_mode" value="physical" class="sr-only-custom" required {{ old('consult_mode', $requestDocument->consult_mode) == 'physical' ? 'checked' : '' }} {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'disabled' : '' }}>
+                        <div class="rounded-lg border-2 border-gray-200 p-3 hover:bg-gray-50 transition-all flex items-center gap-3 card-content physical-card">
+                            <div class="bg-blue-100 text-blue-600 p-2 rounded-full flex-shrink-0">
+                                <i class="fa-solid fa-user-doctor text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">Physical Visit</div>
+                                <div class="text-xs text-gray-500">In-person clinic consultation</div>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="flex-1 {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'cursor-not-allowed opacity-75' : 'cursor-pointer' }} custom-radio-card">
+                        <input type="radio" name="consult_mode" value="virtual" class="sr-only-custom" required {{ old('consult_mode', $requestDocument->consult_mode) == 'virtual' ? 'checked' : '' }} {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'disabled' : '' }}>
+                        <div class="rounded-lg border-2 border-gray-200 p-3 hover:bg-gray-50 transition-all flex items-center gap-3 card-content virtual-card">
+                            <div class="bg-green-100 text-green-600 p-2 rounded-full flex-shrink-0">
+                                <i class="fa-solid fa-video text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">Virtual</div>
+                                <div class="text-xs text-gray-500">Online/remote consultation</div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -343,7 +362,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 <label class="block">Nursing Intervention<span class="text-red-500">*</span></label>
             </div>
             <div class="col-span-3">
-                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border-b border-black auto-resize-textarea" rows="5" required>{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}</textarea>
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5" required>{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}</textarea>
 
                 <!-- Medicine Selection for Nursing Intervention -->
                 <div class="mt-3">
@@ -363,7 +382,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <div class="col-span-3">
                 @if(auth()->user()->type == \App\Models\User::ADMIN || auth()->user()->type == \App\Models\User::DOCTOR)
                 <!-- Admin and Doctor can select the nursing in-charged -->
-                <select id="nursing_incharged" name="nursing_incharged" class="w-full border-b border-black" required>
+                <select id="nursing_incharged" name="nursing_incharged" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
                     <option value="" disabled {{ empty(old('nursing_incharged', $requestDocument->nursing_incharged_id ?? '')) ? 'selected' : '' }}>Select Nursing In-charged</option>
                     @foreach(\App\Models\User::where('type', \App\Models\User::STAFF)->get() as $staff)
                     <option value="{{ $staff->id }}"
@@ -374,7 +393,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 </select>
                 @elseif(auth()->user()->type == \App\Models\User::STAFF)
                 <!-- Staff's account is pre-filled -->
-                <input type="text" id="nursing_incharged_display" class="w-full border-b border-black" value="{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}" readonly>
+                <input type="text" id="nursing_incharged_display" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}" readonly>
                 <input type="hidden" id="nursing_incharged" name="nursing_incharged" value="{{ auth()->user()->id }}">
                 @endif
             </div>
@@ -493,11 +512,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
         $selectedDoctorId = old('doctor_user_id', $matchedDoctor['id'] ?? '');
         @endphp
-        <form action="{{ 
-        isRole('clinic_admin') ? route('document-issuances.update', $requestDocument) : 
-        (isRole('staff') ? route('staff.document-issuances.update', $requestDocument) : 
-        (isRole('doctor') ? route('doctors.document-issuances.update', $requestDocument) : route('document-issuances.update', $requestDocument)))
-    }}" method="POST">
+        <form action="{{ getRouteByRole('document-issuances.update', ['document_issuance' => $requestDocument]) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -711,10 +726,56 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 </div>
 
 <style>
+    .sr-only-custom {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .custom-radio-card input:checked + .card-content {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+    }
+
+    .custom-radio-card input:checked + .physical-card {
+        border-color: #3b82f6;
+    }
+
+    .custom-radio-card input:checked + .virtual-card {
+        border-color: #22c55e;
+        background-color: #f0fdf4;
+    }
+
+    .custom-radio-card input:disabled + .card-content {
+        cursor: not-allowed;
+        filter: grayscale(0.5);
+    }
+
     .auto-resize-textarea {
         resize: none;
         overflow: hidden;
     }
+
+    .image-preview-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+    }
+</style>
 
     #complaints_diagnosis,
     #medical_cert_remarks {

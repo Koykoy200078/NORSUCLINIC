@@ -9,11 +9,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
 <div class="d-flex justify-content-center">
     @if($isPrescriptionModule)
     @if($patientUser && !$row->trashed() && (isRole('clinic_admin') || isRole('staff') || isRole('doctor')))
-    <a href="{{ 
-        isRole('clinic_admin') ? route('prescriptions.create', ['patientId' => $row->id]) : 
-        (isRole('staff') ? route('staff.prescriptions.create', ['patientId' => $row->id]) : 
-        (isRole('doctor') ? route('doctors.prescriptions.create', ['patientId' => $row->id]) : '#'))
-    }}" title="Create Prescription" data-bs-toggle="tooltip"
+    <a href="{{ getRouteByRole('prescriptions.create', ['patientId' => $row->id]) }}" title="Create Prescription" data-bs-toggle="tooltip"
         data-bs-original-title="Create Prescription"
         class="btn px-2 text-success fs-2" data-turbolinks="false">
         <i class="fa-solid fa-file-prescription"></i>
@@ -22,11 +18,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     @else
     @if($patientUser && !$row->trashed() && empty($patientUser->email_verified_at))
     <a href="javascript:void(0)" data-id="{{ $row->user->id }}"
-        data-verification-url="{{
-            isRole('clinic_admin') ? route('resend.email.verification', $row->user->id) : 
-            (isRole('staff') ? route('staff.resend.email.verification', $row->user->id) : 
-            (isRole('doctor') ? route('doctors.resend.email.verification', $row->user->id) : route('resend.email.verification', $row->user->id)))
-        }}"
+        data-verification-url="{{ getRouteByRole('resend.email.verification', ['userId' => $row->user->id]) }}"
         class="btn px-2 text-primary fs-2 patient-email-verification" data-bs-toggle="tooltip"
         data-bs-original-title="{{__('messages.resend_email_verification')}}">
         <span class="svg-icon svg-icon-3">
@@ -37,32 +29,20 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
 
     @if($patientUser && !$row->trashed())
     <!-- View Select Patient -->
-    <a href="{{ 
-        isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => $row->id]) : 
-        (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $row->id]) : 
-        (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $row->id]) : route('patients.showMyHistory', ['patient' => $row->id])))
-    }}" title="View Patient" data-bs-toggle="tooltip"
+    <a href="{{ getRouteByRole('patients.showMyHistory', ['patient' => $row->id]) }}" title="View Patient" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.edit') }}"
         class="btn px-2 text-primary fs-2" data-turbolinks="false">
         <i class="fa fa-eye" aria-hidden="true"></i>
     </a>
 
     <!-- End View Select Patient -->
-    <a href="{{ 
-        isRole('clinic_admin') ? route('patients.edit', $row->id) : 
-        (isRole('staff') ? route('staff.patients.edit', $row->id) : 
-        (isRole('doctor') ? route('doctors.patients.edit', $row->id) : route('patients.edit', $row->id)))
-    }}" title="{{ __('messages.common.edit') }}" data-bs-toggle="tooltip"
+    <a href="{{ getRouteByRole('patients.edit', ['patient' => $row->id]) }}" title="{{ __('messages.common.edit') }}" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.edit') }}"
         class="btn px-2 text-primary fs-2" data-turbolinks="false">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
     @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
-    <a href="{{ 
-        isRole('clinic_admin') ? route('prescriptions.create', ['patientId' => $row->id]) : 
-        (isRole('staff') ? route('staff.prescriptions.create', ['patientId' => $row->id]) : 
-        (isRole('doctor') ? route('doctors.prescriptions.create', ['patientId' => $row->id]) : '#'))
-    }}" title="Create Prescription" data-bs-toggle="tooltip"
+    <a href="{{ getRouteByRole('prescriptions.create', ['patientId' => $row->id]) }}" title="Create Prescription" data-bs-toggle="tooltip"
         data-bs-original-title="Create Prescription"
         class="btn px-2 text-success fs-2" data-turbolinks="false">
         <i class="fa-solid fa-file-prescription"></i>
@@ -70,11 +50,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     @endif
     <a href="javascript:void(0)"
         data-id="{{ $row->user->id }}"
-        data-reset-url="{{ 
-            isRole('clinic_admin') ? route('patients.reset.password', $row->user->id) : 
-            (isRole('staff') ? route('staff.patients.reset.password', $row->user->id) : 
-            (isRole('doctor') ? route('doctors.patients.reset.password', $row->user->id) : route('patients.reset.password', $row->user->id)))
-        }}"
+        data-reset-url="{{ getRouteByRole('patients.reset.password', ['user' => $row->user->id]) }}"
         title="{{ __('Reset Password') }}"
         data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('Reset Password') }}"
@@ -87,11 +63,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     <a href="javascript:void(0)"
         data-id="{{ $row->id }}"
         data-patient-name="{{ $patientDisplayName }}"
-        data-restore-url="{{ 
-            isRole('clinic_admin') ? route('patients.restore', $row->id) : 
-            (isRole('staff') ? route('staff.patients.restore', $row->id) : 
-            (isRole('doctor') ? route('doctors.patients.restore', $row->id) : route('patients.restore', $row->id)))
-        }}"
+        data-restore-url="{{ getRouteByRole('patients.restore', ['patient' => $row->id]) }}"
         title="Restore Patient"
         data-bs-toggle="tooltip"
         data-bs-original-title="Restore Patient"
@@ -102,11 +74,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     <a href="javascript:void(0)"
         data-id="{{ $row->id }}"
         data-patient-name="{{ $patientDisplayName }}"
-        data-delete-url="{{ 
-            isRole('clinic_admin') ? route('patients.destroy', $row->id) : 
-            (isRole('staff') ? route('staff.patients.destroy', $row->id) : 
-            (isRole('doctor') ? route('doctors.patients.destroy', $row->id) : route('patients.destroy', $row->id)))
-        }}"
+        data-delete-url="{{ getRouteByRole('patients.destroy', ['patient' => $row->id]) }}"
         title="Archive Patient"
         data-bs-toggle="tooltip"
         data-bs-original-title="Archive Patient"

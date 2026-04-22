@@ -672,17 +672,23 @@ if (! function_exists('getRouteByRole')) {
     function getRouteByRole(string $baseName, array $parameters = []): string
     {
         $user = getLogInUser();
+        if (!$user) {
+            return route($baseName, $parameters);
+        }
 
-        if ($user->hasRole('clinic_admin')) {
-            $routeName = 'admin.' . $baseName;
-        } elseif ($user->hasRole('staff')) {
+        $routeName = $baseName;
+
+        if ($user->hasRole('staff')) {
             $routeName = 'staff.' . $baseName;
         } elseif ($user->hasRole('doctor')) {
             $routeName = 'doctors.' . $baseName;
         } elseif ($user->hasRole('patient')) {
             $routeName = 'patients.' . $baseName;
-        } else {
-            $routeName = $baseName;
+        }
+
+        // Check if route exists, if not fallback to baseName
+        if (!\Illuminate\Support\Facades\Route::has($routeName)) {
+            return route($baseName, $parameters);
         }
 
         return route($routeName, $parameters);
