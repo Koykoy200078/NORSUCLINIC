@@ -15,6 +15,8 @@ class PatientTable extends LivewireTableComponent
 
     public bool $showButtonOnHeader = true;
 
+    public ?string $module = null;
+
     protected string $tableName = 'patients';
 
     public string $buttonComponent = 'patients.components.add_button';
@@ -29,8 +31,10 @@ class PatientTable extends LivewireTableComponent
 
     public string $statusFilter = 'active';
 
-    public function mount(): void
+    public function mount(?string $module = null): void
     {
+        $this->module = $module ?? request()->query('module');
+        $this->showButtonOnHeader = ! $this->isPrescriptionModule();
         $this->initializeDefaultStatusFilter();
         $this->syncEmptyMessage();
     }
@@ -40,6 +44,8 @@ class PatientTable extends LivewireTableComponent
      */
     public function configure(): void
     {
+        $this->showButtonOnHeader = ! $this->isPrescriptionModule();
+
         $this->setPrimaryKey('id')
             ->setDefaultSort('created_at', 'desc')
             ->setQueryStringStatus(false);
@@ -132,6 +138,10 @@ class PatientTable extends LivewireTableComponent
      */
     public function columns(): array
     {
+        $actionView = $this->isPrescriptionModule()
+            ? 'patients.components.action_prescription'
+            : 'patients.components.action';
+
         return [
             Column::make(__('messages.patient.name'), 'user.first_name')
                 ->view('patients.components.name')
@@ -150,7 +160,7 @@ class PatientTable extends LivewireTableComponent
                 ->sortable()
                 ->view('patients.components.registered_on'),
             Column::make(__('messages.common.action'), 'user.id')
-                ->view('patients.components.action'),
+                ->view($actionView),
         ];
     }
 
@@ -191,5 +201,10 @@ class PatientTable extends LivewireTableComponent
         }
 
         $this->setEmptyMessage('No patients found');
+    }
+
+    private function isPrescriptionModule(): bool
+    {
+        return ($this->module ?? request()->query('module')) === 'prescription';
     }
 }

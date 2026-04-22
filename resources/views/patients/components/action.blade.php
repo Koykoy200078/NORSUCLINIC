@@ -3,9 +3,23 @@ $patientUser = $row->user;
 $patientDisplayName = $patientUser
 ? trim(($patientUser->first_name ?? '') . ' ' . ($patientUser->last_name ?? ''))
 : ('Patient #' . $row->id);
+$isPrescriptionModule = request()->query('module') === 'prescription';
 @endphp
 
 <div class="d-flex justify-content-center">
+    @if($isPrescriptionModule)
+    @if($patientUser && !$row->trashed() && (isRole('clinic_admin') || isRole('staff') || isRole('doctor')))
+    <a href="{{ 
+        isRole('clinic_admin') ? route('prescriptions.create', ['patientId' => $row->id]) : 
+        (isRole('staff') ? route('staff.prescriptions.create', ['patientId' => $row->id]) : 
+        (isRole('doctor') ? route('doctors.prescriptions.create', ['patientId' => $row->id]) : '#'))
+    }}" title="Create Prescription" data-bs-toggle="tooltip"
+        data-bs-original-title="Create Prescription"
+        class="btn px-2 text-success fs-2" data-turbolinks="false">
+        <i class="fa-solid fa-file-prescription"></i>
+    </a>
+    @endif
+    @else
     @if($patientUser && !$row->trashed() && empty($patientUser->email_verified_at))
     <a href="javascript:void(0)" data-id="{{ $row->user->id }}"
         data-verification-url="{{
@@ -99,5 +113,6 @@ $patientDisplayName = $patientUser
         class="btn px-2 text-danger fs-2 patient-delete-btn">
         <i class="fa-solid fa-box-archive"></i>
     </a>
+    @endif
     @endif
 </div>

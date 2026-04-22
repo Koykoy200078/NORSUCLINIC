@@ -158,7 +158,7 @@ class MedicineInventoryService
             return [];
         }
 
-        return DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks) {
+        return DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $transactionType) {
             $this->ensureLegacyOpeningBatch($medicineId);
 
             $remaining = $quantity;
@@ -274,6 +274,7 @@ class MedicineInventoryService
             'batch_number' => 'OPENING-' . $medicineId,
             'dosage' => $medicine->dosage,
             'quantity' => $openingQty,
+            'expiration_date' => Carbon::today()->toDateString(),
             'date_received' => Carbon::today()->toDateString(),
             'supplier_name' => 'Legacy opening balance',
         ]);

@@ -62,6 +62,10 @@ $updateRoute = isRole('doctor')
 ? 'doctors.prescriptions.update'
 : (isRole('staff') ? 'staff.prescriptions.update' : (isRole('patient') ? 'patients.prescriptions.update' : 'prescriptions.update'));
 
+$cancelRoute = isRole('doctor')
+? 'doctors.prescriptions.index'
+: (isRole('staff') ? 'staff.prescriptions.index' : (isRole('patient') ? 'patients.dashboard' : 'prescriptions.index'));
+
 $formRoute = $isEdit ? [$updateRoute, $prescription->id] : $storeRoute;
 $formMethod = $isEdit ? 'patch' : 'post';
 @endphp
@@ -260,10 +264,11 @@ $formMethod = $isEdit ? 'patch' : 'post';
                                         x-model="row.medicine_id"
                                         @change="onMedicineChanged(index)"
                                         required>
-                                        <option value="">Select medicine</option>
+                                        <option :value="''" :selected="!row.medicine_id">Select medicine</option>
                                         <template x-for="medicine in medicineCatalog" :key="medicine.id">
                                             <option
-                                                :value="medicine.id"
+                                                :value="String(medicine.id)"
+                                                :selected="String(medicine.id) === String(row.medicine_id)"
                                                 :disabled="isSelectedElsewhere(medicine.id, index)"
                                                 x-text="medicine.name + ' (Stock: ' + medicine.available_quantity + ')'"></option>
                                         </template>
@@ -411,7 +416,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
     </div>
 
     <div class="d-flex justify-content-end gap-3">
-        <a href="{{ url()->previous() }}" class="btn btn-outline-primary">{{ __('messages.common.cancel') }}</a>
+        <a href="{{ route($cancelRoute) }}" class="btn btn-outline-primary">{{ __('messages.common.cancel') }}</a>
         <button type="submit" class="btn btn-primary btnPrescriptionSave">{{ $isEdit ? __('messages.common.save') : __('messages.common.save') }}</button>
     </div>
 
@@ -437,6 +442,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
                 this.medicines = this.medicines.map((row) => this.normalizeRow(row));
                 this.syncDoctorLicense();
                 this.medicines.forEach((_, index) => this.recalculateRow(index));
+                this.syncMedicineSelectValues();
             },
 
             emptyRow() {
@@ -472,6 +478,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
 
             addRow() {
                 this.medicines.push(this.emptyRow());
+                this.syncMedicineSelectValues();
             },
 
             removeRow(index) {
@@ -480,6 +487,22 @@ $formMethod = $isEdit ? 'patch' : 'post';
                 }
 
                 this.medicines.splice(index, 1);
+                this.syncMedicineSelectValues();
+            },
+
+            syncMedicineSelectValues() {
+                this.$nextTick(() => {
+                    window.requestAnimationFrame(() => {
+                        this.medicines.forEach((row, index) => {
+                            const select = document.querySelector(`select[name="medicines[${index}][medicine_id]"]`);
+                            if (!select) {
+                                return;
+                            }
+
+                            select.value = row.medicine_id ? String(row.medicine_id) : '';
+                        });
+                    });
+                });
             },
 
             daysFor(row) {

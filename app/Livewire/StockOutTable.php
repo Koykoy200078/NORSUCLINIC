@@ -43,7 +43,7 @@ class StockOutTable extends LivewireTableComponent
             Column::make(__('messages.used_medicine.used_at'), 'source')->sortable(),
             Column::make('Patient', 'patient_name')->sortable()->searchable(),
             Column::make('Nurse In Charge', 'nurse_incharged')->sortable()->searchable(),
-            Column::make(__('messages.appointment.date'), 'created_at')->sortable()->searchable(),
+            Column::make(__('messages.common.date'), 'created_at')->sortable()->searchable(),
         ];
     }
 

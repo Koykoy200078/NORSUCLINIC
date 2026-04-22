@@ -46,7 +46,7 @@ class UsedMedicineTable extends LivewireTableComponent
                 ->sortable()->searchable(),
             Column::make('Nurse In Charge', 'nurse_incharged')
                 ->sortable()->searchable(),
-            Column::make(__('messages.appointment.date'), 'created_at')
+            Column::make(__('messages.common.date'), 'created_at')
                 ->sortable()->searchable(),
         ];
     }

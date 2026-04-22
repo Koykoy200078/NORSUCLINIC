@@ -26,7 +26,7 @@
 
     @if(isset($routes['pdf']) && (!isset($permissions['pdf']) || auth()->user()->can($permissions['pdf'])))
     <a href="{{ route($routes['pdf'], $model) }}"
-        @if($showTooltips) title="{{ __('messages.common.download_pdf') }}" @endif
+        @if($showTooltips) title="{{ __('messages.prescription.download_pdf') }}" @endif
         class="btn btn-{{ $size }} btn-outline-secondary action-btn"
         target="_blank">
         <i class="fas fa-file-pdf"></i>

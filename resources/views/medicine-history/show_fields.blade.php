@@ -1,12 +1,15 @@
 <div class="d-flex align-items-center pb-10">
     <img alt="Logo" src="{{ asset(getAppLogo()) }}" height="100px" width="100px">
 </div>
+@php
+$patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUser;
+@endphp
 <div class="m-0">
     <div class="fs-3 text-gray-800 mb-8"> #{{ $medicineBill->history_number }}</div>
     <div class="row g-5 mb-11">
         <div class="col-sm-3">
             <div class="pb-2 fs-5 text-gray-600">{{ __('Patient Name').':' }}</div>
-            <div class="fs-5 text-gray-800">{{ $medicineBill->patient->patientUser->full_name }}</div>
+            <div class="fs-5 text-gray-800">{{ $patientUser?->full_name ?? __('messages.common.n/a') }}</div>
         </div>
         <div class="col-sm-3">
             <div class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine_bills.bill_date').':' }}</div>
@@ -19,12 +22,12 @@
 </div> --}}
 <div class="col-sm-3">
     <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('auth.email').':' }}</div>
-    <div class="fs-5 text-gray-800">{{ $medicineBill->patient->patientUser->email }}</div>
+    <div class="fs-5 text-gray-800">{{ $patientUser?->email ?? __('messages.common.n/a') }}</div>
 </div>
 <div class="col-sm-3">
     <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.user.gender').':' }}</div>
     <div class="fs-5 text-gray-800">
-        {{ ($medicineBill->patient->patientUser->gender == 1) ? __('messages.staff.male') : (($medicineBill->patient->patientUser->gender == 2) ? __('messages.staff.female') : __('messages.common.n/a')) }}
+        {{ (($patientUser?->gender ?? null) == 1) ? __('messages.staff.male') : ((($patientUser?->gender ?? null) == 2) ? __('messages.staff.female') : __('messages.common.n/a')) }}
     </div>
 </div>
 <!-- <div class="col-sm-3">
@@ -35,12 +38,12 @@
 <div class="row g-5 mb-11">
     <div class="col-sm-3">
         <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.medicine_bills.cell_no').':' }}</div>
-        <div class="fs-5 text-gray-800">{{ !empty($medicineBill->patient->patientUser->phone) ? $medicineBill->patient->patientUser->phone : __('messages.common.n/a') }}</div>
+        <div class="fs-5 text-gray-800">{{ !empty($patientUser?->contact) ? $patientUser->contact : __('messages.common.n/a') }}</div>
     </div>
 
     <div class="col-sm-3">
         <div class="pb-2 fs-5 text-gray-600">{{ __('Patient ').' '.__('messages.doctor.dob').':' }}</div>
-        <div class="fs-5 text-gray-800">{{ (!empty($medicineBill->patient->patientUser->dob)) ? \Carbon\Carbon::parse($medicineBill->patient->patientUser->dob)->translatedFormat('jS M, Y') : __('messages.common.n/a') }}</div>
+        <div class="fs-5 text-gray-800">{{ (!empty($patientUser?->dob)) ? \Carbon\Carbon::parse($patientUser->dob)->translatedFormat('jS M, Y') : __('messages.common.n/a') }}</div>
     </div>
 
     <div class="col-sm-3">

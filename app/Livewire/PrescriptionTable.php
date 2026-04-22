@@ -40,12 +40,12 @@ class PrescriptionTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.patients'), 'patient.patientUser.first_name')
+            Column::make(__('messages.patients'), 'patient.user.first_name')
                 ->view('prescriptions.columns.patient_name')
                 ->sortable()
                 ->searchable()->hideIf($this->patient),
             Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
-            Column::make(__('messages.doctors'), 'doctor.doctorUser.first_name')
+            Column::make(__('messages.doctors'), 'doctor.user.first_name')
                 ->view('prescriptions.columns.doctor_name')
                 ->sortable()
                 ->searchable()->hideIf($this->doctor),
@@ -71,18 +71,18 @@ class PrescriptionTable extends LivewireTableComponent
         if (! getLoggedinDoctor()) {
             $query = Prescription::query()->select('prescriptions.*')->with([
                 'patient:id,user_id',
-                'patient.patientUser:id,first_name,last_name',
+                'patient.user:id,first_name,last_name,email,gender',
                 'doctor:id,user_id',
-                'doctor.doctorUser:id,first_name,last_name',
+                'doctor.user:id,first_name,last_name,email,gender',
                 'diagnosis:id,diagnoses',
             ]);
         } else {
             $doctorId = Doctor::where('user_id', getLogInUserId())->first();
             $query = Prescription::query()->select('prescriptions.*')->with([
                 'patient:id,user_id',
-                'patient.patientUser:id,first_name,last_name',
+                'patient.user:id,first_name,last_name,email,gender',
                 'doctor:id,user_id',
-                'doctor.doctorUser:id,first_name,last_name',
+                'doctor.user:id,first_name,last_name,email,gender',
                 'diagnosis:id,diagnoses',
             ])->where('doctor_id', $doctorId->id);
         }

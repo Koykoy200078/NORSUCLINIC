@@ -5,9 +5,7 @@ namespace App\Livewire;
 use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use Livewire\Attributes\Lazy;
 
-#[Lazy]
 class MedicineTable extends LivewireTableComponent
 {
     protected $model = Medicine::class;

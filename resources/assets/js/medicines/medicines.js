@@ -24,7 +24,11 @@ function loadMedicineCreateData() {
                     );
                     $("#showMedicineGeneric").text(result.data.generic_name);
                     $("#showMedicineCategory").text(result.data.category_name);
-                    $("#showMedicineDosage").text(result.data.dosage || "N/A");
+                    $("#showMedicineDosage").text(
+                        result.data.dosage_summary ||
+                            result.data.dosage ||
+                            "N/A",
+                    );
                     $("#showMedicineUom").text(result.data.uom || "N/A");
                     $("#showMedicineSku").text(result.data.sku || "N/A");
                     $("#showMedicineReorderLevel").text(
@@ -247,7 +251,25 @@ listenSubmit("#addMedicineForm", function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 $("#add_medicine_modal").modal("hide");
-                Livewire.dispatch("refresh");
+
+                // Keep the table on page 1 and force refresh so newly-created rows appear immediately.
+                if (typeof window.Livewire !== "undefined") {
+                    if (typeof window.Livewire.dispatchTo === "function") {
+                        window.Livewire.dispatchTo(
+                            "medicine-table",
+                            "resetPage",
+                        );
+                        window.Livewire.dispatchTo("medicine-table", "refresh");
+                    } else if (typeof window.Livewire.dispatch === "function") {
+                        window.Livewire.dispatch("resetPage");
+                        window.Livewire.dispatch("refresh");
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    // Fallback for cases where Livewire global is not yet available.
+                    window.location.reload();
+                }
             }
         },
         error: function (result) {

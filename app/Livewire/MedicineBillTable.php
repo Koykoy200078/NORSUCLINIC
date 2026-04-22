@@ -22,7 +22,7 @@ class MedicineBillTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('medicine_bills.created_at', 'desc');
+            ->setDefaultSort('medicine_bills.bill_date', 'desc');
 
         // Hide add button for doctor users
         if (isRole('doctor')) {
@@ -62,17 +62,17 @@ class MedicineBillTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()
                 ->view('medicine-history.columns.bill_id'),
-            Column::make(__('messages.medicine_bills.bill_date'), 'created_at')
+            Column::make(__('messages.medicine_bills.bill_date'), 'bill_date')
                 ->sortable()
                 ->searchable()
                 ->view('medicine-history.columns.bill_date'),
             Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
-            Column::make(__('messages.prescription.patient'), 'patient.patientUser.first_name')
+            Column::make(__('messages.prescription.patient'), 'patient.user.first_name')
                 ->sortable(function (Builder $query, $direction) {
                     return $query->orderBy(User::select('first_name')->whereColumn('id', 'patient.user_id'), $direction);
                 })->searchable()->view('medicine-history.columns.patient'),
             Column::make(__('messages.doctor.doctor'), 'doctor_id')->hideIf(1),
-            Column::make(__('messages.doctor.doctor'), 'doctor.doctorUser.first_name')
+            Column::make(__('messages.doctor.doctor'), 'doctor.user.first_name')
                 ->sortable(function (Builder $query, $direction) {
                     return $query->orderBy(User::select('first_name')->whereColumn('id', 'doctor.user_id'), $direction);
                 })->searchable()->view('medicine-history.columns.doctor'),
@@ -103,9 +103,9 @@ class MedicineBillTable extends LivewireTableComponent
         // Optimized eager loading with selective columns
         return MedicineBill::with([
             'patient:id,user_id',
-            'patient.patientUser:id,first_name,last_name',
+            'patient.user:id,first_name,last_name,email,gender,contact',
             'doctor:id,user_id',
-            'doctor.doctorUser:id,first_name,last_name'
+            'doctor.user:id,first_name,last_name,email,gender'
         ]);
     }
 }

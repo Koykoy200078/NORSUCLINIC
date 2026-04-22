@@ -184,6 +184,7 @@ class PrescriptionController extends AppBaseController
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
+                $unitPrice = (float) ($medicine->selling_price ?? 0);
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -205,12 +206,12 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => $medicine->selling_price,
+                    'unit_price' => $unitPrice,
                     'charge_amount' => 0,
-                    'line_total' => ((float) $medicine->selling_price * $totalQuantity),
+                    'line_total' => ($unitPrice * $totalQuantity),
                 ]);
 
-                $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
+                $totalAmount += ($unitPrice * $totalQuantity);
             }
 
             $dispenseRecord->update([
@@ -421,6 +422,7 @@ class PrescriptionController extends AppBaseController
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
+                $unitPrice = (float) ($medicine->selling_price ?? 0);
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -442,12 +444,12 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => $medicine->selling_price,
+                    'unit_price' => $unitPrice,
                     'charge_amount' => 0,
-                    'line_total' => ((float) $medicine->selling_price * $totalQuantity),
+                    'line_total' => ($unitPrice * $totalQuantity),
                 ]);
 
-                $totalAmount += ((float) $medicine->selling_price * $totalQuantity);
+                $totalAmount += ($unitPrice * $totalQuantity);
             }
 
             $dispenseRecord->update([
@@ -631,6 +633,9 @@ class PrescriptionController extends AppBaseController
 
         try {
             $this->medicineInventoryService->dispensePrescription($prescription, getLogInUserId());
+            DispenseRecord::whereModelType(Prescription::class)
+                ->whereModelId($prescription->id)
+                ->update(['bill_date' => now()]);
 
             if (request()->ajax()) {
                 return $this->sendSuccess('Prescription marked as dispensed and stock was deducted using FEFO.');

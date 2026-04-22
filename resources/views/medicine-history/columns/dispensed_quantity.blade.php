@@ -1,0 +1,1 @@
+{{ number_format((float) ($row->dispensed_quantity ?? 0)) }}

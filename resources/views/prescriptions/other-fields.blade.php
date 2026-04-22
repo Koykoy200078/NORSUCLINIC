@@ -25,6 +25,6 @@
 </div>
 <div class="float-end">
     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2','id' => 'btnSave']) !!}
-    <a href="{{ url()->previous() }}"
+    <a href="{{ route(isRole('doctor') ? 'doctors.prescriptions.index' : (isRole('staff') ? 'staff.prescriptions.index' : (isRole('patient') ? 'patients.dashboard' : 'prescriptions.index'))) }}"
         class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
 </div>

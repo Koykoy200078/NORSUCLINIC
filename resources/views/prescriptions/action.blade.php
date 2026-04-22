@@ -9,13 +9,8 @@ $editRoute = isRole('doctor')
 $pdfRoute = isRole('doctor')
 ? 'doctors.prescriptions.pdf'
 : (isRole('staff') ? 'staff.prescriptions.pdf' : (isRole('patient') ? 'patients.prescriptions.pdf' : 'prescriptions.pdf'));
-$dispenseRoute = isRole('doctor')
-? 'doctors.prescriptions.dispense'
-: (isRole('staff') ? 'staff.prescriptions.dispense' : (isRole('patient') ? '' : 'prescriptions.dispense'));
 
 $canEdit = isset($medicineBill->payment_status) && $medicineBill->payment_status == false;
-$canDispense = (isRole('clinic_admin') || isRole('staff'))
-&& $row->status === \App\Models\Prescription::DISPENSE_STATUS_PENDING;
 @endphp
 
 <div class="d-flex align-items-center gap-2">
@@ -37,23 +32,11 @@ $canDispense = (isRole('clinic_admin') || isRole('staff'))
 
     {{-- PDF Button --}}
     <a href="{{ route($pdfRoute, $row->id) }}"
-        title="{{ __('messages.common.download_pdf') }}"
+        title="{{ __('messages.prescription.download_pdf') }}"
         class="btn btn-sm btn-outline-secondary action-btn"
         target="_blank">
         <i class="fas fa-file-pdf"></i>
     </a>
-
-    @if($canDispense)
-    <form action="{{ route($dispenseRoute, $row->id) }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit"
-            title="Dispense"
-            class="btn btn-sm btn-outline-success action-btn"
-            onclick="return confirm('Dispense this prescription and deduct stock using FEFO?')">
-            <i class="fas fa-check-circle"></i>
-        </button>
-    </form>
-    @endif
 
     {{-- Delete Button --}}
     <button type="button"

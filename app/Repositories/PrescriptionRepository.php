@@ -155,15 +155,16 @@ class PrescriptionRepository extends BaseRepository
                     ];
                     $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
                     $medicine = Medicine::find($input['medicine'][$key]);
-                    $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
+                    $unitPrice = (float) ($medicine->selling_price ?? 0);
+                    $amount += $qty * $unitPrice;
                     $dispenseItemArray = [
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => $medicine->selling_price,
+                        'unit_price' => $unitPrice,
                         'charge_amount' => 0,
-                        'line_total' => ((float) $medicine->selling_price * (int) $qty),
+                        'line_total' => ($unitPrice * (int) $qty),
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }
@@ -209,15 +210,16 @@ class PrescriptionRepository extends BaseRepository
                     $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
 
                     $medicine = Medicine::find($input['medicine'][$key]);
-                    $amount += $input['day'][$key] * $input['dose_interval'][$key] * $medicine->selling_price;
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
+                    $unitPrice = (float) ($medicine->selling_price ?? 0);
+                    $amount += $qty * $unitPrice;
                     $dispenseItemArray = [
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => $medicine->selling_price,
+                        'unit_price' => $unitPrice,
                         'charge_amount' => 0,
-                        'line_total' => ((float) $medicine->selling_price * (int) $qty),
+                        'line_total' => ($unitPrice * (int) $qty),
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }
@@ -257,7 +259,7 @@ class PrescriptionRepository extends BaseRepository
         $prescription = Prescription::with([
             'getMedicine' => function ($query) {
                 $query->with(['medicines' => function ($medicineQuery) {
-                    $medicineQuery->select('id', 'name', 'brand_name', 'generic_name', 'category_name', 'dosage', 'uom', 'category_id', 'generic_id', 'salt_composition', 'selling_price', 'description', 'side_effects');
+                    $medicineQuery->select('id', 'name', 'brand_name', 'generic_name', 'category_name', 'dosage', 'uom', 'category_id', 'generic_id', 'salt_composition', 'description', 'side_effects');
                 }]);
             }
         ])->findOrFail($id);

@@ -262,6 +262,7 @@ return [
         'view' => 'View',
         'error_default_records' => 'This action not allowed for default records.',
         'download' => 'Download',
+
         'select_generic' => 'Select Generic',
         'observation_white_space' => 'Observation field is not contain only white space.',
         'problem_white_space' => 'Problem field is not contain only white space.',
@@ -560,17 +561,6 @@ return [
 
     'doctor_dashboard' => [
         'total_appointments' => 'Total Appointments',
-    ],
-
-    'prescription' => [
-        'name' => 'Name',
-        'frequency' => 'Frequency',
-        'duration' => 'Duration',
-        'medicine_history' => 'Medicine History',
-        'recent_prescriptions' => 'Recent Prescriptions',
-        'medicines' => 'Medicines',
-        'no_prescriptions' => 'No prescriptions found',
-        'download_pdf' => 'Download PDF',
     ],
 
     'slider' => [
@@ -1018,6 +1008,8 @@ return [
         'others' => 'Others',
         'medical_history' => 'Medical History',
         'current_medication' => 'Current Medication',
+        'medicine_history' => 'Medicine History',
+        'recent_prescriptions' => 'Recent Prescriptions',
         'female_pregnancy' => 'Female Pregnancy',
         'breast_feeding' => 'Breast Feeding',
         'health_insurance' => 'Health Insurance',
@@ -1053,7 +1045,8 @@ return [
         'selectMedicine' => "Select medicine",
         'total_quantity' => 'Total Quantity',
         'medicines' => 'Medicines',
-        'no_prescriptions' => 'No prescriptions found'
+        'no_prescriptions' => 'No prescriptions found',
+        'download_pdf' => 'Download PDF'
     ],
 
     'qr_patient_detail' => [

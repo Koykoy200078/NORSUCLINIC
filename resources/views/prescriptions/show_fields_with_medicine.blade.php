@@ -14,7 +14,7 @@
             <span class="fs-5 text-gray-800">{{ $prescription['prescription']->patient->user->full_name }}</span>
         </div>
         <div class="d-flex flex-row">
-            <label for="name" class="pb-2 fs-5 text-gray-600 me-1">{{ __('messages.appointment.date') }}:</label>
+            <label for="name" class="pb-2 fs-5 text-gray-600 me-1">{{ __('messages.common.date') }}:</label>
             <span class="fs-5 text-gray-800">{{ \Carbon\Carbon::parse($prescription['prescription']->consultation_date ?: $prescription['prescription']->created_at)->isoFormat('DD/MM/Y')}}</span>
         </div>
         <div class="d-flex flex-row">

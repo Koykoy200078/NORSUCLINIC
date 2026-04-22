@@ -14,6 +14,9 @@
             $editRoute = isRole('doctor')
             ? 'doctors.prescriptions.edit'
             : (isRole('staff') ? 'staff.prescriptions.edit' : (isRole('patient') ? 'patients.prescriptions.edit' : 'prescriptions.edit'));
+            $backRoute = isRole('doctor')
+            ? 'doctors.prescriptions.index'
+            : (isRole('staff') ? 'staff.prescriptions.index' : (isRole('patient') ? 'patients.dashboard' : 'prescriptions.index'));
             @endphp
             <a href="{{ route($pdfRoute, $prescription['prescription']) }}"
                 target="_blank"
@@ -28,7 +31,7 @@
                 {{ __('messages.common.edit') }}
             </a>
             @endif
-            <a href="{{ url()->previous()}}"
+            <a href="{{ route($backRoute) }}"
                 class="btn btn-outline-primary ms-2 mt-3">{{ __('messages.common.back') }}</a>
         </div>
     </div>

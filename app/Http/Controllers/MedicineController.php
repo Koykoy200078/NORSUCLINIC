@@ -258,6 +258,22 @@ class MedicineController extends AppBaseController
         $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
         $genericName = $medicine->generic_name ?: optional($medicine->generic)->name;
         $categoryName = $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name;
+        $defaultDosage = trim((string) ($medicine->dosage ?? ''));
+
+        $dosageSummaryParts = $purchasedMedicines
+            ->pluck('dosage')
+            ->map(fn($value) => trim((string) $value))
+            ->filter(fn($value) => $value !== '' && strcasecmp($value, 'N/A') !== 0)
+            ->unique()
+            ->values();
+
+        if ($defaultDosage !== '' && ! $dosageSummaryParts->contains($defaultDosage)) {
+            $dosageSummaryParts = $dosageSummaryParts->prepend($defaultDosage)->values();
+        }
+
+        $dosageSummary = $dosageSummaryParts->isNotEmpty()
+            ? $dosageSummaryParts->implode(', ')
+            : ($defaultDosage !== '' ? $defaultDosage : 'N/A');
 
         $medicineData = [
             'name' => $medicine->display_name,
@@ -266,6 +282,7 @@ class MedicineController extends AppBaseController
             'category' => $categoryName ?: 'Uncategorized',
             'category_name' => $categoryName ?: 'Uncategorized',
             'dosage' => $medicine->dosage,
+            'dosage_summary' => $dosageSummary,
             'uom' => $medicine->uom,
             'sku' => $medicine->sku,
             'reorder_level' => $medicine->reorder_level,

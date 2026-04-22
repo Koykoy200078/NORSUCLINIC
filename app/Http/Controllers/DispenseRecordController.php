@@ -13,8 +13,11 @@ use App\Repositories\DispenseRecordRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PatientRepository;
 use App\Repositories\PrescriptionRepository;
+use App\Services\MedicineInventoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Laracasts\Flash\Flash;
 
@@ -29,6 +32,7 @@ class DispenseRecordController extends AppBaseController
     private $medicineRepository;
     private $patientRepository;
     private $dispenseRecordRepository;
+    private MedicineInventoryService $medicineInventoryService;
 
     private function getIndexRoute(): string
     {
@@ -61,11 +65,13 @@ class DispenseRecordController extends AppBaseController
         MedicineRepository $medicineRepository,
         PatientRepository $patientRepo,
         DispenseRecordRepository $dispenseRecordRepository,
+        MedicineInventoryService $medicineInventoryService,
     ) {
         $this->prescriptionRepository = $prescriptionRepo;
         $this->medicineRepository     = $medicineRepository;
         $this->patientRepository      = $patientRepo;
         $this->dispenseRecordRepository = $dispenseRecordRepository;
+        $this->medicineInventoryService = $medicineInventoryService;
     }
 
     public function index(): View
@@ -130,28 +136,34 @@ class DispenseRecordController extends AppBaseController
             }
         }
 
-        $dispenseRecord = DispenseRecord::create([
-            'history_number' => 'HIS' . generateUniqueHistoryNumber(),
-            'patient_id'     => $input['patient_id'],
-            'note'           => $input['note'] ?? null,
-            'model_type'     => DispenseRecord::class,
-            'bill_date'      => $input['bill_date'],
-            // legacy nullable fields still in DB schema
-            'net_amount'     => 0,
-            'discount'       => 0,
-            'payment_status' => 1,
-            'payment_type'   => 0,
-            'total'          => 0,
-            'tax_amount'     => 0,
-        ]);
-        $dispenseRecord->update(['model_id' => $dispenseRecord->id]);
+        DB::beginTransaction();
+        try {
+            $dispenseRecord = DispenseRecord::create([
+                'history_number' => 'HIS' . generateUniqueHistoryNumber(),
+                'patient_id'     => $input['patient_id'],
+                'note'           => $input['note'] ?? null,
+                'model_type'     => DispenseRecord::class,
+                'bill_date'      => $input['bill_date'],
+                // legacy nullable fields still in DB schema
+                'net_amount'     => 0,
+                'discount'       => 0,
+                'payment_status' => 1,
+                'payment_type'   => 0,
+                'total'          => 0,
+                'tax_amount'     => 0,
+            ]);
+            $dispenseRecord->update(['model_id' => $dispenseRecord->id]);
 
-        if (! empty($input['category_id'])) {
+            if (empty($input['category_id'])) {
+                throw new \RuntimeException(__('messages.medicine_bills.something_went_wrong'));
+            }
+
             foreach ($input['category_id'] as $key => $value) {
                 $medicine = Medicine::find($input['medicine'][$key]);
                 $unitPrice = (float) ($input['sale_price'][$key] ?? 0);
                 $quantity = (int) ($input['quantity'][$key] ?? 0);
                 $chargeAmount = (float) ($input['tax_medicine'][$key] ?? 0);
+
                 DispenseRecordItem::create([
                     'dispense_id'   => $dispenseRecord->id,
                     'medicine_id'   => $medicine->id,
@@ -161,28 +173,50 @@ class DispenseRecordController extends AppBaseController
                     'charge_amount' => $chargeAmount,
                     'line_total'    => ($unitPrice * $quantity) + $chargeAmount,
                 ]);
-                $medicine->update([
-                    'available_quantity' => max(0, ($medicine->available_quantity ?? 0) - $input['quantity'][$key]),
-                ]);
+
+                $this->medicineInventoryService->deductStockFefo(
+                    $medicine->id,
+                    $quantity,
+                    getLogInUserId(),
+                    $dispenseRecord,
+                    'Dispense record #' . $dispenseRecord->history_number . ' deduction'
+                );
             }
+
+            DB::commit();
+
             if ($request->ajax()) {
                 return $this->sendSuccess(__('messages.medicine_bills.saved_created'));
             }
-            Flash::success(__('messages.medicine_bills.saved_created'));
-            return redirect($this->getIndexRoute());
-        }
 
-        if ($request->ajax()) {
-            return $this->sendError(__('messages.medicine_bills.something_went_wrong'));
+            Flash::success(__('messages.medicine_bills.saved_created'));
+
+            return redirect($this->getIndexRoute());
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Dispense record store failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->ajax()) {
+                return $this->sendError($e->getMessage());
+            }
+
+            Flash::error($e->getMessage());
+
+            return redirect($this->getCreateRoute());
         }
-        Flash::error(__('messages.medicine_bills.something_went_wrong'));
-        return redirect($this->getCreateRoute());
     }
 
     public function show(DispenseRecord $medicine_history): View
     {
         $dispenseRecord = $medicine_history;
-        $dispenseRecord->load(['dispenseItems.medicine']);
+        $dispenseRecord->load([
+            'dispenseItems.medicine',
+            'patient.user:id,first_name,last_name,email,contact,gender,dob',
+            'doctor.user:id,first_name,last_name,email,gender',
+        ]);
 
         // Keep view variable name for legacy template compatibility.
         $medicineBill = $dispenseRecord;
@@ -193,7 +227,12 @@ class DispenseRecordController extends AppBaseController
     public function edit(DispenseRecord $medicine_history): View
     {
         $dispenseRecord = $medicine_history;
-        $dispenseRecord->load(['dispenseItems.medicine.category', 'dispenseItems.medicine.purchasedMedicine', 'patient', 'doctor']);
+        $dispenseRecord->load([
+            'dispenseItems.medicine.category',
+            'dispenseItems.medicine.purchasedMedicine',
+            'patient.user:id,first_name,last_name,email,contact,gender,dob',
+            'doctor.user:id,first_name,last_name,email,gender',
+        ]);
 
         $patients               = $this->prescriptionRepository->getPatients();
         $doctors                = $this->prescriptionRepository->getDoctors();
