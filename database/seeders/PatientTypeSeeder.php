@@ -11,10 +11,26 @@ class PatientTypeSeeder extends Seeder
     public function run(): void
     {
         $items = [
-            ['code' => 'student', 'name' => 'Student'],
-            ['code' => 'staff', 'name' => 'Staff'],
-            ['code' => 'faculty', 'name' => 'Faculty'],
-            ['code' => 'guest', 'name' => 'Guest'],
+            [
+                'id' => 1,
+                'code' => 'student',
+                'name' => 'Student',
+            ],
+            [
+                'id' => 2,
+                'code' => 'staff',
+                'name' => 'Staff',
+            ],
+            [
+                'id' => 3,
+                'code' => 'faculty',
+                'name' => 'Faculty',
+            ],
+            [
+                'id' => 4,
+                'code' => 'guest',
+                'name' => 'Guest',
+            ],
         ];
 
         foreach ($items as $item) {

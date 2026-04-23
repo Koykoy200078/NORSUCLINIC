@@ -14,6 +14,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\DocumentIssuanceController;
+use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\Front\CMSController;
 use App\Http\Controllers\Front\SliderController;
 use App\Http\Controllers\SettingController;
@@ -69,11 +70,17 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
     Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
     Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate');
+    Route::get('lab-requests/search-users', [LabRequestController::class, 'searchUsers'])->name('lab-requests.search-users');
 
     // Request Documents (Staff specific)
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
         Route::resource('document-issuances', DocumentIssuanceController::class);
+
+        // Lab Requests
+        Route::post('lab-requests/{lab_request}/status', [LabRequestController::class, 'updateStatus'])->name('lab-requests.update-status');
+        Route::get('lab-requests/{id}/pdf', [LabRequestController::class, 'exportPdf'])->name('lab-requests.pdf');
+        Route::resource('lab-requests', LabRequestController::class);
     });
 
     // Prescription Management (Staff can assist with prescriptions)

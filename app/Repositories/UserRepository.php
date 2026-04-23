@@ -79,11 +79,10 @@ class UserRepository extends BaseRepository
         $data['offices'] = Office::toBase()->pluck('office_name', 'id');
 
         $patientTypeSortOrder = [
-            'student' => 1,
-            'staff' => 2,
-            'faculty' => 3,
-            'guest' => 4,
-            'dependent' => 4,
+            'student' => User::STUDENT,
+            'faculty' => User::FACULTY,
+            'staff'   => User::EMPLOYEE,
+            'guest'   => User::GUEST
         ];
 
         $data['patient_types'] = PatientType::query()

@@ -170,16 +170,29 @@ class User extends Authenticatable implements HasMedia
 
     const PROFILE = 'profile';
 
+    // Type of user
     const ADMIN = 1;
     const DOCTOR = 2;
     const STAFF = 3;
     const PATIENT = 4;
-
     const TYPE = [
         self::ADMIN => 'Admin',
         self::DOCTOR => 'Doctor',
         self::PATIENT => 'Patient',
         self::STAFF => 'Staff',
+    ];
+
+    // Status of affiliation with the university
+    const STUDENT = 1;
+    const EMPLOYEE = 2;
+    const FACULTY = 3;
+    const GUEST = 4;
+
+    const STATUS_AFFILIATION = [
+        self::STUDENT => 'student',
+        self::EMPLOYEE => 'staff',
+        self::FACULTY => 'faculty',
+        self::GUEST => 'guest',
     ];
 
     const ALL = 2;
@@ -393,5 +406,15 @@ class User extends Authenticatable implements HasMedia
     public function vaccination()
     {
         return $this->belongsTo(Vaccination::class, 'vaccination_id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id');
     }
 }

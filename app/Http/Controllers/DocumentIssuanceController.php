@@ -1049,15 +1049,26 @@ class DocumentIssuanceController extends Controller
             }
 
             // Search patients by first name, last name
-            $patients = Patient::whereHas('user', function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', "%{$search}%")
-                    ->orWhere('last_name', 'LIKE', "%{$search}%");
+            $patients = Patient::whereHas('user', function ($query) {
+                $query->where('type', User::PATIENT);
             })
+                ->whereHas('user', function ($query) use ($search) {
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%")
+                        ->orWhere('university_id_number', 'LIKE', "%{$search}%")
+                        ->orWhere('employee_id', 'LIKE', "%{$search}%");
+                })
                 ->select('id', 'patient_unique_id', 'user_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
-                ->with(['user:id,first_name,last_name,dob,gender,contact,emergency_contact_name,emergency_contact_no,emergency_relationship,campus_id,college_id,course_id,year_level_id,vaccination_id,office_id,department_id,university_id_number', 'address' => function ($query) {
-                    $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
-                        ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
-                }])
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'first_name', 'last_name', 'dob', 'gender', 'contact', 'campus_id', 'college_id', 'course_id', 'year_level_id', 'university_id_number', 'employee_id')
+                            ->with(['campus', 'college', 'course', 'yearLevel']);
+                    },
+                    'address' => function ($query) {
+                        $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
+                            ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
+                    }
+                ])
                 ->get();
 
             // Add full_address and use university_id_number as the primary patient identifier.

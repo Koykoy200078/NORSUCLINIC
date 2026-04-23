@@ -46,5 +46,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(MedicineSeeder::class);
         $this->call(DiagnoseSeeder::class);
+        $this->call(LabTestSeeder::class);
     }
 }

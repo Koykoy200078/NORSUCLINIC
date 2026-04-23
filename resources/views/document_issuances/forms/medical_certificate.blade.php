@@ -278,25 +278,9 @@
         const userSearchResults = document.getElementById('user_search_results');
 
         // Set the search route based on user role
-        @if(isRole('clinic_admin'))
-        const searchRoute = '{{ route("search-users") }}';
-        @elseif(isRole('staff'))
-        const searchRoute = '{{ route("staff.document-issuances.search-users") }}';
-        @elseif(isRole('doctor'))
-        const searchRoute = '{{ route("doctors.document-issuances.search-users") }}';
-        @else
-        const searchRoute = '{{ route("search-users") }}';
-        @endif
+        const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
 
-        @if(isRole('clinic_admin'))
-        const getLastMedicalCertificateRoute = '{{ route("get-last-medical-certificate") }}';
-        @elseif(isRole('staff'))
-        const getLastMedicalCertificateRoute = '{{ route("staff.document-issuances.get-last-medical-certificate") }}';
-        @elseif(isRole('doctor'))
-        const getLastMedicalCertificateRoute = '{{ route("doctors.document-issuances.get-last-medical-certificate") }}';
-        @else
-        const getLastMedicalCertificateRoute = '{{ route("get-last-medical-certificate") }}';
-        @endif
+        const getLastMedicalCertificateRoute = '{{ getRouteByRole("document-issuances.get-last-medical-certificate") }}';
 
         const setFieldValue = (fieldId, value) => {
             const field = document.getElementById(fieldId);

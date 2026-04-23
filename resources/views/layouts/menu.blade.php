@@ -65,7 +65,8 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- 5) Prescription Management                                          --}}
                 {{-- 6) Medicine Inventory Tracking                                      --}}
                 {{-- 7) Medicine Dispensing Management                                   --}}
-                {{-- 8) Certificate Issuance                                             --}}
+                {{-- 8) Laboratory & Medical Request Management                          --}}
+                {{-- 9) Certificate Issuance                                             --}}
                 {{-- Keep the next sections in this exact order.                         --}}
                 {{-- ===================================================================== --}}
 
@@ -308,6 +309,29 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         <span class="d-none">{{ __('messages.medicine_bills.medicine_bills') }}</span>
                     </a>
                 </li>
+                @endcan
+
+                {{-- [ORDER 8] Laboratory & Medical Request Management --}}
+                @can('manage_request_documents')
+                @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+                @php
+                $isLabRequestNavActive =
+                (isRole('clinic_admin') && Request::is('admin/lab-requests*')) ||
+                (isRole('staff')        && Request::is('staff/lab-requests*')) ||
+                (isRole('doctor')       && Request::is('doctors/lab-requests*'));
+                @endphp
+                <li class="nav-item {{ $isLabRequestNavActive ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+                        href="{{ getRouteByRole('lab-requests.index') }}">
+                        <span class="aside-menu-icon pe-3">
+                            <i class="fa-solid fa-flask"></i>
+                        </span>
+                        <span class="aside-menu-title">Lab Requests</span>
+                        <span class="d-none">Laboratory Medical Request Management</span>
+                        <span class="d-none">Create Lab Request Record Details Track Status Print Form</span>
+                    </a>
+                </li>
+                @endif
                 @endcan
                 @can('manage_specialties')
                 <li class="nav-item {{ 

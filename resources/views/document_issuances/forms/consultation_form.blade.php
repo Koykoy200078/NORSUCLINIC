@@ -1120,17 +1120,8 @@
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
 
-        // Set the search route based on user role  
-        let searchRoute = '';
-        @if(isRole('clinic_admin'))
-        searchRoute = '{{ route("search-users") }}';
-        @elseif(isRole('staff'))
-        searchRoute = '{{ route("staff.document-issuances.search-users") }}';
-        @elseif(isRole('doctor'))
-        searchRoute = '{{ route("doctors.document-issuances.search-users") }}';
-        @else
-        searchRoute = '{{ route("search-users") }}';
-        @endif
+        // Set the search route based on user role
+        const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
 
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {
@@ -1289,14 +1280,20 @@
         let nursingMedicineCounter = 0;
 
         // Add medicine for Plan
-        document.getElementById('add_plan_medicine_btn').addEventListener('click', function() {
-            addMedicineRow('plan', planMedicineCounter++);
-        });
+        const addPlanMedicineBtn = document.getElementById('add_plan_medicine_btn');
+        if (addPlanMedicineBtn) {
+            addPlanMedicineBtn.addEventListener('click', function() {
+                addMedicineRow('plan', planMedicineCounter++);
+            });
+        }
 
         // Add medicine for Nursing Intervention
-        document.getElementById('add_nursing_medicine_btn').addEventListener('click', function() {
-            addMedicineRow('nursing', nursingMedicineCounter++);
-        });
+        const addNursingMedicineBtn = document.getElementById('add_nursing_medicine_btn');
+        if (addNursingMedicineBtn) {
+            addNursingMedicineBtn.addEventListener('click', function() {
+                addMedicineRow('nursing', nursingMedicineCounter++);
+            });
+        }
 
         function addMedicineRow(type, index) {
             const container = type === 'plan' ?

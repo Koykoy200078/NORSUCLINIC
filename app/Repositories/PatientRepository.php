@@ -75,11 +75,10 @@ class PatientRepository extends BaseRepository
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
         $patientTypeSortOrder = [
-            'student' => 1,
-            'staff' => 2,
-            'faculty' => 3,
-            'guest' => 4,
-            'dependent' => 4,
+            'student' => User::STUDENT,
+            'faculty' => User::FACULTY,
+            'staff'   => User::EMPLOYEE,
+            'guest'   => User::GUEST
         ];
 
         $data['patient_types'] = PatientType::query()

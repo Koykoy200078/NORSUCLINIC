@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,12 @@ Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUs
     Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
     Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
     Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
+
+    // Lab Requests — patients can create, view their own requests and print PDF
+    Route::get('lab-requests', [LabRequestController::class, 'index'])->name('lab-requests.index');
+    Route::get('lab-requests/create', [LabRequestController::class, 'create'])->name('lab-requests.create');
+    Route::post('lab-requests', [LabRequestController::class, 'store'])->name('lab-requests.store');
+    Route::get('lab-requests/{lab_request}', [LabRequestController::class, 'show'])->name('lab-requests.show');
+    Route::get('lab-requests/{id}/pdf', [LabRequestController::class, 'exportPdf'])->name('lab-requests.pdf');
 });
+

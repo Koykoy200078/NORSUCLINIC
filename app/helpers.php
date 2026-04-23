@@ -753,3 +753,21 @@ if (! function_exists('getCurrencyIcon')) {
         return '₱';
     }
 }
+
+if (! function_exists('generateUniqueLabRequestNumber')) {
+    /**
+     * Generate a unique 6-digit lab request number.
+     * Follows the same pattern as generateUniqueAvailabilityNumber().
+     *
+     * @return int
+     */
+    function generateUniqueLabRequestNumber(): int
+    {
+        do {
+            $code = random_int(100000, 999999);
+        } while (\App\Models\LabRequest::where('request_number', $code)->exists());
+
+        return $code;
+    }
+}
+

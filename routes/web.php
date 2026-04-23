@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\DocumentIssuanceController;
+use App\Http\Controllers\LabRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -158,13 +159,21 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
     });
 
+    // Search users route (moved outside middleware for testing)
+    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
+    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
+    Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate');
+    Route::get('lab-requests/search-users', [LabRequestController::class, 'searchUsers'])->name('lab-requests.search-users');
+
     // Request Documents
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::resource('document-issuances', DocumentIssuanceController::class);
-        Route::get('/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('search-users');
-        Route::get('/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('get-last-consultation');
-        Route::get('/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('get-last-medical-certificate');
         Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+
+        // Lab Requests
+        Route::post('lab-requests/{lab_request}/status', [LabRequestController::class, 'updateStatus'])->name('lab-requests.update-status');
+        Route::get('lab-requests/{id}/pdf', [LabRequestController::class, 'exportPdf'])->name('lab-requests.pdf');
+        Route::resource('lab-requests', LabRequestController::class);
     });
 
     // Activity Logs Routes
