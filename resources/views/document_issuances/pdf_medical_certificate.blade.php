@@ -157,7 +157,7 @@
             <table style="margin-left: auto; margin-right: auto">
                 <tr>
                     <td width="20%" class="text-center">
-                        <img src="{{ public_path('assets/image/norsu_logo.png') }}" class="logo" />
+                        <img src="{{ $norsuLogoBase64 }}" class="logo" />
                     </td>
                     <td width="60%" class="text-center">
                         <h2 class="font-bold">Negros Oriental State University</h2>
@@ -165,7 +165,7 @@
                         <div style="font-size: 10px">Tel #: 225-9400, then Local # 188, 09263829484</div>
                     </td>
                     <td width="20%" class="text-center">
-                        <img src="{{ public_path('assets/image/norsu_clinic_logo.png') }}" class="logo" />
+                        <img src="{{ $clinicLogoBase64 }}" class="logo" />
                     </td>
                 </tr>
             </table>

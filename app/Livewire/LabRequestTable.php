@@ -5,9 +5,9 @@ namespace App\Livewire;
 use App\Models\LabRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Url;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 
 class LabRequestTable extends DataTableComponent
 {
@@ -19,8 +19,9 @@ class LabRequestTable extends DataTableComponent
     /** If set, show only this patient's requests (from patient history page) */
     public ?int $patientId = null;
 
-    // Active status filter value
-    public string $statusFilter = '';
+    // Active status filter value synced with URL ?status=...
+    #[Url(as: 'status')]
+    public ?string $status = null;
 
     public function configure(): void
     {
@@ -30,6 +31,7 @@ class LabRequestTable extends DataTableComponent
         ]);
         $this->setColumnSelectStatus(false);
         $this->setAdditionalSelects([
+            'lab_requests.id',
             'lab_requests.status',
             'lab_requests.patient_gender',
             'lab_requests.patient_age',
@@ -58,8 +60,8 @@ class LabRequestTable extends DataTableComponent
         }
 
         // Status filter
-        if (!empty($this->statusFilter)) {
-            $query->where('status', $this->statusFilter);
+        if (!empty($this->status)) {
+            $query->where('status', $this->status);
         }
 
         return $query->orderByDesc('requested_at')->orderByDesc('id');
@@ -67,17 +69,7 @@ class LabRequestTable extends DataTableComponent
 
     public function filters(): array
     {
-        $statuses = ['all' => 'All Statuses'] + array_map('ucfirst', LabRequest::statusLabels());
-
-        return [
-            SelectFilter::make('Status')
-                ->options($statuses)
-                ->filter(function ($builder, string $value) {
-                    if ($value !== 'all') {
-                        $builder->where('status', $value);
-                    }
-                }),
-        ];
+        return [];
     }
 
     public function columns(): array

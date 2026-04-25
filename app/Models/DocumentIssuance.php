@@ -177,6 +177,7 @@ class DocumentIssuance extends Model implements HasMedia
         'doc_lic_no',
         'doc_prt_no',
         'consultation_images',
+        'subjects',
     ];
 
     protected $casts = [
@@ -184,6 +185,7 @@ class DocumentIssuance extends Model implements HasMedia
         // 'examined_on' => 'date', // Removed: Now supports date ranges and multiple dates as string
         'date_of_birth' => 'date',
         'consultation_images' => 'array',
+        'subjects' => 'array',
     ];
 
     /**
@@ -264,6 +266,14 @@ class DocumentIssuance extends Model implements HasMedia
         $timestamp = now()->format('Y-m-d_H-i-s');
 
         return "consultation_images/{$patientName}/{$timestamp}";
+    }
+
+    /**
+     * Get the user who created this document.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'document_creator_id');
     }
 
     /**

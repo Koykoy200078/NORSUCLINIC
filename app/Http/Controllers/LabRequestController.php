@@ -183,7 +183,7 @@ class LabRequestController extends Controller
         $labTestsGrouped = LabTest::groupedByCategory();
         $selectedTestIds = $lab_request->items->pluck('lab_test_id')->filter()->toArray();
 
-        $physicians = User::where('type', User::DOCTOR)->orderBy('first_name')->get();
+        $physicians = User::whereIn('type', [User::DOCTOR, User::ADMIN])->orderBy('first_name')->get();
 
         $allowedStatuses = LabRequest::allowedTransitions()[$lab_request->status] ?? [];
 

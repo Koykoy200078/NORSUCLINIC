@@ -29,17 +29,19 @@ Certificate Issuance
         </div>
         <div class="text-end mt-4 mt-md-0">
             @if(!request('patient_id'))
-            @php
-            $createRoute = getRouteByRole('document-issuances.create');
-
-            $createUrl = $createRoute . ($isConsultationModule
-            ? '?document_type=consultation_form&module=consultation'
-            : '?document_type=medical_certificate&module=certificate');
-            @endphp
-            <a href="{{ $createUrl }}" class="btn btn-primary d-inline-flex align-items-center gap-2">
-                <i class="fa-solid fa-plus"></i>
-                {{ $isConsultationModule ? 'Record Walk-in / Schedule Visit' : 'Create Medical Certificate' }}
-            </a>
+            @php $createRoute = getRouteByRole('document-issuances.create'); @endphp
+            <div class="d-flex gap-2">
+                <a href="{{ $createRoute . ($isConsultationModule ? '?document_type=consultation_form&module=consultation' : '?document_type=medical_certificate&module=certificate') }}" class="btn btn-primary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    {{ $isConsultationModule ? 'Record Walk-in / Schedule Visit' : 'Create Medical Certificate' }}
+                </a>
+                @if(!$isConsultationModule)
+                <a href="{{ $createRoute . '?document_type=excuse_slip&module=certificate' }}" class="btn btn-outline-primary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-file-signature"></i>
+                    Create Excuse Slip
+                </a>
+                @endif
+            </div>
             @endif
         </div>
     </div>

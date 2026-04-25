@@ -168,6 +168,7 @@ New Laboratory / Medical Request
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Requesting Physician</label>
+
                         <select name="requesting_physician" id="requesting_physician" class="form-select @error('requesting_physician') is-invalid @enderror">
                             <option value="">Select Physician</option>
                             @foreach($physicians as $physician)

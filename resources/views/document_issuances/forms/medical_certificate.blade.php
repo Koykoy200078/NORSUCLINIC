@@ -1,5 +1,5 @@
 <div>
-    @if($user->type != 4 && !request('user_id'))
+    @if($user->type != 4 && !request('user_id') && !isset($requestDocument))
     <div class="mb-10">
         <label class="block text-xs" for="user_search">Search User</label>
         <input type="text" id="user_search" class="w-full border-b border-black" placeholder="Search by name" autocomplete="off">
@@ -20,9 +20,23 @@
     })->values();
 
     $singleDoctor = $doctorOptions->count() === 1 ? $doctorOptions->first() : null;
-    $selectedDoctorId = old('doctor_user_id', $singleDoctor['id'] ?? '');
+    
+    // Logic to match existing doctor if editing
+    $selectedDoctorId = old('doctor_user_id', '');
+    if (isset($requestDocument) && !$selectedDoctorId) {
+        $currentLicNo = (string) $requestDocument->doc_lic_no;
+        $currentPtrNo = (string) $requestDocument->doc_prt_no;
+        $matchedDoctor = $doctorOptions->first(function ($doctorOption) use ($currentLicNo, $currentPtrNo) {
+            return ($currentLicNo !== '' && (string) $doctorOption['lic_no'] === $currentLicNo)
+                || ($currentPtrNo !== '' && (string) $doctorOption['ptr_no'] === $currentPtrNo);
+        });
+        $selectedDoctorId = $matchedDoctor['id'] ?? '';
+    }
+    
+    if (!$selectedDoctorId && $singleDoctor) {
+        $selectedDoctorId = $singleDoctor['id'];
+    }
     @endphp
-
 
     <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
         <div class="flex items-center my-4">
@@ -46,11 +60,17 @@
 
         <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
         <form action="{{ 
-            isRole('clinic_admin') ? route('document-issuances.store') : 
+            isset($requestDocument) ? 
+            getRouteByRole('document-issuances.update', ['document_issuance' => $requestDocument]) :
+            (isRole('clinic_admin') ? route('document-issuances.store') : 
             (isRole('staff') ? route('staff.document-issuances.store') : 
-            (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store')))
+            (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store'))))
         }}" method="POST">
             @csrf
+            @if(isset($requestDocument))
+                @method('PUT')
+            @endif
+
             <div class="form-group mb-5 d-none">
                 <label for="document_type">Document Type</label>
                 <select name="document_type" id="document_type" class="form-control" required>
@@ -60,19 +80,38 @@
 
             <div class="flex row">
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is to certify that Mr./Ms.
-                    <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ auth()->user()->id }}" readonly required>
-                    <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly required>
+                    <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ isset($requestDocument) ? $requestDocument->document_creator_id : auth()->user()->id }}" readonly required>
+                    <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ isset($requestDocument) ? $requestDocument->user_id : (request('user_id') ?? ($user->type == 4 ? $user->id : '')) }}" readonly required>
                     <!-- Hidden field to indicate redirect to patient history -->
                     <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
-                    <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '' }}" readonly required>,
-                    <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required> yrs old,
-                    <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" readonly required> a resident of
+                    
+                    <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->name : ($user->type == 4 ? $user->first_name . ' ' . $user->last_name : '') }}" readonly required>,
+                    <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->age : ($user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '') }}" readonly required> yrs old,
+                    <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->gender : ($user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '') }}" readonly required> a resident of
                 </p>
                 <p>
-                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ $user->type == 4 && $patient->address ? $patient->address->full_address : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                    <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->address : ($user->type == 4 && $patient->address ? $patient->address->full_address : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
                     , was seen and examined at my clinic on
-                    <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" readonly required>
-                    <input type="hidden" id="examined_on" name="examined_on">
+                    @php
+                        $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
+                        if ($examinedOnRaw) {
+                            if (str_ends_with($examinedOnRaw, '|range')) {
+                                $parts = explode('|', $examinedOnRaw);
+                                $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
+                            } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
+                                $datesStr = explode('|', $examinedOnRaw)[0];
+                                $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
+                            } elseif (str_contains($examinedOnRaw, ',')) {
+                                $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
+                            } else {
+                                $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
+                            }
+                        } else {
+                            $examinedOnDisplay = '';
+                        }
+                    @endphp
+                    <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" value="{{ $examinedOnDisplay }}" readonly required>
+                    <input type="hidden" id="examined_on" name="examined_on" value="{{ $examinedOnRaw }}">
                     <button type="button" id="open_date_selector" class="btn btn-sm btn-primary ml-2" style="padding: 2px 8px; font-size: 12px;">
                         <i class="fas fa-calendar-alt"></i> Select Dates
                     </button>
@@ -80,43 +119,46 @@
                 <p class="font-semibold">complaints/diagnosis:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="4" required></textarea>
+                        <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim($requestDocument->complaints_diagnosis) : '' }}</textarea>
                     </div>
                 </div>
                 </p>
             </div>
 
             <div class="grid grid-cols-6 grid-rows-1 gap-7 mb-2">
+                @php
+                    $bp = isset($requestDocument) ? explode('/', $requestDocument->vital_signs_bp) : ['', ''];
+                @endphp
                 <div>
-                    <p class="font-semibold">BP<span class="text-red-500">*</span>: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 30px; text-align: center;" class="border-b border-black" required> / <input type="text" id="vital_signs_bp_22" name="vital_signs_bp_22" style="width: 30px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">BP<span class="text-red-500">*</span>: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_2', $bp[0] ?? '') }}" required> / <input type="text" id="vital_signs_bp_22" name="vital_signs_bp_22" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_22', $bp[1] ?? '') }}" required></p>
                 </div>
                 <div>
-                    <p class="font-semibold">P<span class="text-red-500">*</span>: <input type="text" id="vital_signs_pr_2" name="vital_signs_pr_2" style="width: 50px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">P<span class="text-red-500">*</span>: <input type="text" id="vital_signs_pr_2" name="vital_signs_pr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->vital_signs_pr : '' }}" required></p>
                 </div>
                 <div>
-                    <p class="font-semibold">R<span class="text-red-500">*</span>: <input type="text" id="vital_signs_rr_2" name="vital_signs_rr_2" style="width: 50px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">R<span class="text-red-500">*</span>: <input type="text" id="vital_signs_rr_2" name="vital_signs_rr_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->vital_signs_rr : '' }}" required></p>
                 </div>
                 <div>
-                    <p class="font-semibold">T<span class="text-red-500">*</span>: <input type="text" id="vital_signs_temp_2" name="vital_signs_temp_2" style="width: 50px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">T<span class="text-red-500">*</span>: <input type="text" id="vital_signs_temp_2" name="vital_signs_temp_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->vital_signs_temp : '' }}" required></p>
                 </div>
                 <div>
-                    <p class="font-semibold">Ht<span class="text-red-500">*</span>: <input type="text" id="vital_signs_height_2" name="vital_signs_height_2" style="width: 50px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">Ht<span class="text-red-500">*</span>: <input type="text" id="vital_signs_height_2" name="vital_signs_height_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->vital_signs_height : '' }}" required></p>
                 </div>
                 <div>
-                    <p class="font-semibold">Wt<span class="text-red-500">*</span>: <input type="text" id="vital_signs_weight_2" name="vital_signs_weight_2" style="width: 50px; text-align: center;" class="border-b border-black" required></p>
+                    <p class="font-semibold">Wt<span class="text-red-500">*</span>: <input type="text" id="vital_signs_weight_2" name="vital_signs_weight_2" style="width: 50px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->vital_signs_weight : '' }}" required></p>
                 </div>
             </div>
 
             <p class="font-semibold">Remark/s:</p>
             <div class="border border-gray-300 p-2 h-28 mb-4">
                 <div class="col-span-3">
-                    <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="4" required></textarea>
+                    <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim($requestDocument->medical_cert_remarks) : '' }}</textarea>
                 </div>
             </div>
 
             <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
 
-            <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ old('request_of', $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '') }}" required> for your reference.</p>
+            <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ old('request_of', isset($requestDocument) ? $requestDocument->request_of : ($user->type == 4 ? $user->first_name . ' ' . $user->last_name : '')) }}" required> for your reference.</p>
 
             <div class="text-right mt-4 mr-5">
                 @if($doctorOptions->count() > 1)
@@ -148,12 +190,12 @@
                     data-ptr="{{ $singleDoctor['ptr_no'] ?? '' }}">
                 <p class="font-semibold" id="doctor_display_name">{{ $singleDoctor ? 'Dr. ' . $singleDoctor['name'] : 'Doctor' }}</p>
                 @endif
-                <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ old('doc_lic_no', $singleDoctor['lic_no'] ?? '') }}" required></p>
-                <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ old('doc_prt_no', $singleDoctor['ptr_no'] ?? '') }}" required></p>
+                <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ old('doc_lic_no', isset($requestDocument) ? $requestDocument->doc_lic_no : ($singleDoctor['lic_no'] ?? '')) }}" required></p>
+                <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ old('doc_prt_no', isset($requestDocument) ? $requestDocument->doc_prt_no : ($singleDoctor['ptr_no'] ?? '')) }}" required></p>
             </div>
 
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 text-center">
-                Submit
+                {{ isset($requestDocument) ? 'Update' : 'Submit' }}
             </button>
         </form>
     </div>
@@ -161,6 +203,7 @@
 </div>
 
 <!-- Date Selector Modal -->
+@if(!isset($requestDocument))
 <div id="date_selector_modal" class="modal fade" tabindex="-1" aria-labelledby="dateSelectorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -230,6 +273,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <style>
     #complaints_diagnosis,
@@ -260,67 +304,50 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Pre-fill user_id if coming from patient history
-        @if(request('user_id') && $patient)
-        document.getElementById('user_id').value = '{{ request("user_id") }}';
+        // Shared logic with Excuse Slip
+        @if(!isset($requestDocument))
+            // Initialize with today's date if creating
+            const todayStr = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const examinedOnDisplay = document.getElementById('examined_on_display');
+            if (examinedOnDisplay && !examinedOnDisplay.value) {
+                examinedOnDisplay.value = todayStr;
+                document.getElementById('examined_on').value = '{{ date("Y-m-d") }}';
+            }
         @endif
-
-        // Initialize with today's date
-        const today = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
-        document.getElementById('examined_on_display').value = today;
-        document.getElementById('examined_on').value = '{{ date("Y-m-d") }}';
 
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
-
-        // Set the search route based on user role
         const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
-
         const getLastMedicalCertificateRoute = '{{ getRouteByRole("document-issuances.get-last-medical-certificate") }}';
 
         const setFieldValue = (fieldId, value) => {
             const field = document.getElementById(fieldId);
-            if (!field) {
-                return;
-            }
-
-            if (value !== null && value !== undefined && value !== '') {
+            if (field && value !== null && value !== undefined && value !== '') {
                 field.value = value;
             }
         };
 
         const setBloodPressureFields = (value) => {
-            if (!value) {
-                return;
-            }
-
+            if (!value) return;
             const parts = String(value).split('/');
             setFieldValue('vital_signs_bp_2', (parts[0] || '').trim());
             setFieldValue('vital_signs_bp_22', (parts[1] || '').trim());
         };
 
-        const loadLastMedicalCertificateData = async (userId, fallbackRequestOf = '') => {
-            if (!userId) {
-                return;
-            }
-
+        const loadLastData = async (userId, fallbackRequestOf = '') => {
+            if (!userId) return;
             try {
                 const response = await fetch(`${getLastMedicalCertificateRoute}?user_id=${encodeURIComponent(userId)}`);
                 const result = await response.json();
-
                 if (!result.success) {
-                    if (fallbackRequestOf) {
-                        setFieldValue('request_of', fallbackRequestOf);
-                    }
+                    if (fallbackRequestOf) setFieldValue('request_of', fallbackRequestOf);
                     return;
                 }
-
                 const data = result.data || {};
-
                 setFieldValue('complaints_diagnosis', data.complaints_diagnosis);
                 setBloodPressureFields(data.vital_signs_bp);
                 setFieldValue('vital_signs_pr_2', data.vital_signs_pr);
@@ -329,110 +356,59 @@
                 setFieldValue('vital_signs_height_2', data.vital_signs_height);
                 setFieldValue('vital_signs_weight_2', data.vital_signs_weight);
                 setFieldValue('medical_cert_remarks', data.medical_cert_remarks);
-
-                if (data.request_of !== null && data.request_of !== undefined && data.request_of !== '') {
-                    setFieldValue('request_of', data.request_of);
-                } else if (fallbackRequestOf) {
-                    setFieldValue('request_of', fallbackRequestOf);
-                }
+                if (data.request_of) setFieldValue('request_of', data.request_of);
+                else if (fallbackRequestOf) setFieldValue('request_of', fallbackRequestOf);
             } catch (error) {
-                console.error('Error loading latest medical certificate data:', error);
+                console.error('Error loading latest data:', error);
             }
         };
 
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {
-                const query = userSearchInput.value;
-
+                const query = this.value;
                 if (query.length > 1) {
                     fetch(`${searchRoute}?query=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
                             userSearchResults.innerHTML = '';
                             userSearchResults.classList.remove('hidden');
-
                             if (data.length === 0) {
-                                const noResults = document.createElement('div');
-                                noResults.classList.add('p-2', 'text-gray-500');
-                                noResults.textContent = 'No patients found.';
-                                userSearchResults.appendChild(noResults);
+                                userSearchResults.innerHTML = '<div class="p-2 text-gray-500">No patients found.</div>';
                                 return;
                             }
-
                             data.forEach(patient => {
                                 const option = document.createElement('div');
-                                option.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                                option.className = 'p-2 cursor-pointer hover:bg-gray-200';
                                 option.textContent = `${patient.user.first_name} ${patient.user.last_name}`;
-                                option.dataset.patient = JSON.stringify(patient);
-
                                 option.addEventListener('click', async function() {
-                                    const patientData = JSON.parse(this.dataset.patient);
-                                    const fullName = patientData.user.full_name || `${patientData.user.first_name || ''} ${patientData.user.last_name || ''}`.trim();
-
-                                    document.getElementById('user_id').value = patientData.user.id;
+                                    const fullName = `${patient.user.first_name} ${patient.user.last_name}`;
+                                    document.getElementById('user_id').value = patient.user.id;
                                     document.getElementById('name_2').value = fullName;
                                     document.getElementById('request_of').value = fullName;
-                                    document.getElementById('age_2').value = calculateAge(patientData.user.dob);
-                                    document.getElementById('gender_2').value = patientData.user.gender === 1 ? 'Male' : 'Female';
-
-                                    if (patientData.address) {
-                                        // Use full_address if available, otherwise fall back to building it from parts
-                                        if (patientData.address.full_address) {
-                                            document.getElementById('address_2').value = patientData.address.full_address;
-                                        } else {
-                                            // Build address from available parts
-                                            let addressParts = [];
-                                            if (patientData.address.barangay && patientData.address.barangay.name) {
-                                                addressParts.push('Barangay ' + patientData.address.barangay.name);
-                                            }
-                                            if (patientData.address.city && patientData.address.city.name) {
-                                                addressParts.push(patientData.address.city.name);
-                                            }
-                                            if (patientData.address.state && patientData.address.state.name) {
-                                                addressParts.push(patientData.address.state.name);
-                                            }
-                                            if (patientData.address.postal_code) {
-                                                addressParts.push(patientData.address.postal_code);
-                                            }
-                                            document.getElementById('address_2').value = addressParts.length > 0 ? addressParts.join(', ') : (patientData.address.address1 || '');
-                                        }
+                                    document.getElementById('age_2').value = calculateAge(patient.user.dob);
+                                    document.getElementById('gender_2').value = patient.user.gender === 1 ? 'Male' : 'Female';
+                                    if (patient.address) {
+                                        document.getElementById('address_2').value = patient.address.full_address || patient.address.address1 || '';
                                     }
-
-                                    await loadLastMedicalCertificateData(patientData.user.id, fullName);
-
+                                    await loadLastData(patient.user.id, fullName);
                                     userSearchResults.classList.add('hidden');
                                 });
-
                                 userSearchResults.appendChild(option);
                             });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching patients:', error);
                         });
                 } else {
                     userSearchResults.classList.add('hidden');
                 }
             });
-
-            document.addEventListener('click', function(e) {
-                if (!userSearchResults.contains(e.target) && e.target !== userSearchInput) {
-                    userSearchResults.classList.add('hidden');
-                }
-            });
-        } else {
-            console.warn('Element with id "user_search" not found. Skipping event listener.');
         }
 
         function calculateAge(dob) {
             if (!dob) return '';
             const birthDate = new Date(dob);
-            if (isNaN(birthDate)) return '';
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
             return age;
         }
 
@@ -442,246 +418,112 @@
         const doctorPtrInput = document.getElementById('doc_prt_no');
 
         const syncDoctorDetails = () => {
-            if (!doctorSelector) {
-                return;
-            }
-
-            let selectedDoctorName = '';
-            let selectedDoctorLic = '';
-            let selectedDoctorPtr = '';
-
+            if (!doctorSelector) return;
+            let name = '', lic = '', ptr = '';
             if (doctorSelector.tagName === 'SELECT') {
-                const selectedOption = doctorSelector.options[doctorSelector.selectedIndex];
-
-                if (!selectedOption || !selectedOption.value) {
-                    if (doctorDisplayName) {
-                        doctorDisplayName.textContent = '';
-                    }
-                    return;
-                }
-
-                selectedDoctorName = selectedOption.dataset.name || selectedOption.textContent.trim();
-                selectedDoctorLic = selectedOption.dataset.lic || '';
-                selectedDoctorPtr = selectedOption.dataset.ptr || '';
+                const opt = doctorSelector.options[doctorSelector.selectedIndex];
+                if (!opt || !opt.value) return;
+                name = opt.dataset.name || opt.textContent.trim();
+                lic = opt.dataset.lic || '';
+                ptr = opt.dataset.ptr || '';
             } else {
-                selectedDoctorName = doctorSelector.dataset.name || '';
-                selectedDoctorLic = doctorSelector.dataset.lic || '';
-                selectedDoctorPtr = doctorSelector.dataset.ptr || '';
+                name = doctorSelector.dataset.name || '';
+                lic = doctorSelector.dataset.lic || '';
+                ptr = doctorSelector.dataset.ptr || '';
             }
-
-            if (doctorDisplayName) {
-                doctorDisplayName.textContent = selectedDoctorName ? `Dr. ${selectedDoctorName}` : 'Doctor';
-            }
-
-            if (doctorLicenseInput && selectedDoctorLic !== '') {
-                doctorLicenseInput.value = selectedDoctorLic;
-            }
-
-            if (doctorPtrInput && selectedDoctorPtr !== '') {
-                doctorPtrInput.value = selectedDoctorPtr;
-            }
+            if (doctorDisplayName) doctorDisplayName.textContent = name ? `Dr. ${name}` : 'Doctor';
+            if (doctorLicenseInput && lic) doctorLicenseInput.value = lic;
+            if (doctorPtrInput && ptr) doctorPtrInput.value = ptr;
         };
 
         if (doctorSelector) {
-            if (doctorSelector.tagName === 'SELECT') {
-                doctorSelector.addEventListener('change', syncDoctorDetails);
-            }
+            if (doctorSelector.tagName === 'SELECT') doctorSelector.addEventListener('change', syncDoctorDetails);
             syncDoctorDetails();
         }
 
-        const prefilledUserId = document.getElementById('user_id').value;
-        if (prefilledUserId) {
-            const fallbackRequestOf = document.getElementById('name_2').value || '';
-            if (fallbackRequestOf) {
-                setFieldValue('request_of', fallbackRequestOf);
-            }
-            loadLastMedicalCertificateData(prefilledUserId, fallbackRequestOf);
-        }
+        // Initialize Date Selector if exists
+        const dateModalEl = document.getElementById('date_selector_modal');
+        if (dateModalEl) {
+            const dateSelectorModal = new bootstrap.Modal(dateModalEl);
+            const openBtn = document.getElementById('open_date_selector');
+            const applyBtn = document.getElementById('apply_dates_btn');
+            let selectedDatesArray = [];
+            let currentDateType = 'single';
 
-        // ==================== DATE SELECTOR FUNCTIONALITY ====================
+            openBtn.addEventListener('click', () => dateSelectorModal.show());
 
-        let selectedDatesArray = []; // For multiple dates mode
-        let currentDateType = 'single';
-
-        const dateSelectorModal = new bootstrap.Modal(document.getElementById('date_selector_modal'));
-        const openDateSelectorBtn = document.getElementById('open_date_selector');
-        const applyDatesBtn = document.getElementById('apply_dates_btn');
-        const dateTypeRadios = document.querySelectorAll('input[name="date_type"]');
-
-        // Open modal
-        openDateSelectorBtn.addEventListener('click', function() {
-            dateSelectorModal.show();
-            updatePreview();
-        });
-
-        // Switch between date types
-        dateTypeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                currentDateType = this.value;
-
-                // Hide all sections
-                document.getElementById('single_date_section').style.display = 'none';
-                document.getElementById('date_range_section').style.display = 'none';
-                document.getElementById('multiple_dates_section').style.display = 'none';
-
-                // Show selected section
-                if (currentDateType === 'single') {
-                    document.getElementById('single_date_section').style.display = 'block';
-                } else if (currentDateType === 'range') {
-                    document.getElementById('date_range_section').style.display = 'block';
-                } else if (currentDateType === 'multiple') {
-                    document.getElementById('multiple_dates_section').style.display = 'block';
-                }
-
-                updatePreview();
-            });
-        });
-
-        // Single date change
-        document.getElementById('single_date_input').addEventListener('change', updatePreview);
-
-        // Date range changes
-        document.getElementById('start_date_input').addEventListener('change', function() {
-            // Set end date minimum to start date
-            const startDate = this.value;
-            document.getElementById('end_date_input').min = startDate;
-            updatePreview();
-        });
-
-        document.getElementById('end_date_input').addEventListener('change', updatePreview);
-
-        // Add date to multiple dates
-        document.getElementById('add_date_btn').addEventListener('click', function() {
-            const dateInput = document.getElementById('add_date_input');
-            const dateValue = dateInput.value;
-
-            if (!dateValue) {
-                alert('Please select a date');
-                return;
-            }
-
-            if (selectedDatesArray.includes(dateValue)) {
-                alert('This date is already added');
-                return;
-            }
-
-            selectedDatesArray.push(dateValue);
-            selectedDatesArray.sort(); // Sort dates chronologically
-            renderSelectedDates();
-            updatePreview();
-            dateInput.value = '';
-        });
-
-        function renderSelectedDates() {
-            const listContainer = document.getElementById('selected_dates_list');
-
-            if (selectedDatesArray.length === 0) {
-                listContainer.innerHTML = '<p class="text-muted text-center mb-0">No dates selected</p>';
-                return;
-            }
-
-            listContainer.innerHTML = '';
-            selectedDatesArray.forEach((date, index) => {
-                const dateItem = document.createElement('span');
-                dateItem.className = 'selected-date-item';
-                dateItem.innerHTML = `
-                    ${formatDateDisplay(date)}
-                    <span class="remove-date" data-index="${index}">&times;</span>
-                `;
-                listContainer.appendChild(dateItem);
-            });
-
-            // Add remove functionality
-            document.querySelectorAll('.remove-date').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    selectedDatesArray.splice(index, 1);
-                    renderSelectedDates();
+            document.querySelectorAll('input[name="date_type"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentDateType = this.value;
+                    document.getElementById('single_date_section').style.display = currentDateType === 'single' ? 'block' : 'none';
+                    document.getElementById('date_range_section').style.display = currentDateType === 'range' ? 'block' : 'none';
+                    document.getElementById('multiple_dates_section').style.display = currentDateType === 'multiple' ? 'block' : 'none';
                     updatePreview();
                 });
             });
-        }
 
-        function updatePreview() {
-            const preview = document.getElementById('date_preview');
-            let previewText = '';
-
-            if (currentDateType === 'single') {
-                const singleDate = document.getElementById('single_date_input').value;
-                previewText = singleDate ? formatDateDisplay(singleDate) : 'No date selected';
-            } else if (currentDateType === 'range') {
-                const startDate = document.getElementById('start_date_input').value;
-                const endDate = document.getElementById('end_date_input').value;
-
-                if (startDate && endDate) {
-                    previewText = `${formatDateDisplay(startDate)} - ${formatDateDisplay(endDate)}`;
-                } else if (startDate) {
-                    previewText = `${formatDateDisplay(startDate)} - (End date not selected)`;
+            const updatePreview = () => {
+                const preview = document.getElementById('date_preview');
+                let text = '';
+                if (currentDateType === 'single') {
+                    const d = document.getElementById('single_date_input').value;
+                    text = d ? formatDateDisplay(d) : 'No date selected';
+                } else if (currentDateType === 'range') {
+                    const s = document.getElementById('start_date_input').value;
+                    const e = document.getElementById('end_date_input').value;
+                    text = s && e ? `${formatDateDisplay(s)} - ${formatDateDisplay(e)}` : (s ? `${formatDateDisplay(s)} - ...` : 'No range');
                 } else {
-                    previewText = 'No date range selected';
+                    text = selectedDatesArray.length ? selectedDatesArray.map(formatDateDisplay).join(', ') : 'No dates';
                 }
-            } else if (currentDateType === 'multiple') {
-                if (selectedDatesArray.length === 0) {
-                    previewText = 'No dates selected';
+                preview.textContent = text;
+            };
+
+            const formatDateDisplay = (ds) => {
+                const d = new Date(ds + 'T00:00:00');
+                return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+            };
+
+            document.getElementById('add_date_btn')?.addEventListener('click', () => {
+                const val = document.getElementById('add_date_input').value;
+                if (val && !selectedDatesArray.includes(val)) {
+                    selectedDatesArray.push(val);
+                    selectedDatesArray.sort();
+                    renderDates();
+                    updatePreview();
+                }
+            });
+
+            const renderDates = () => {
+                const cont = document.getElementById('selected_dates_list');
+                cont.innerHTML = selectedDatesArray.map((d, i) => `
+                    <span class="selected-date-item">${formatDateDisplay(d)} <span class="remove-date" data-index="${i}">&times;</span></span>
+                `).join('') || '<p class="text-muted text-center">None</p>';
+                cont.querySelectorAll('.remove-date').forEach(b => b.addEventListener('click', function() {
+                    selectedDatesArray.splice(this.dataset.index, 1);
+                    renderDates();
+                    updatePreview();
+                }));
+            };
+
+            applyBtn.addEventListener('click', () => {
+                let disp = '', stor = '';
+                if (currentDateType === 'single') {
+                    const d = document.getElementById('single_date_input').value;
+                    if (!d) return alert('Select date');
+                    disp = formatDateDisplay(d); stor = d;
+                } else if (currentDateType === 'range') {
+                    const s = document.getElementById('start_date_input').value;
+                    const e = document.getElementById('end_date_input').value;
+                    if (!s || !e) return alert('Select range');
+                    disp = `${formatDateDisplay(s)} - ${formatDateDisplay(e)}`; stor = `${s}|${e}|range`;
                 } else {
-                    previewText = selectedDatesArray.map(date => formatDateDisplay(date)).join(', ');
+                    if (!selectedDatesArray.length) return alert('Add dates');
+                    disp = selectedDatesArray.map(formatDateDisplay).join(', '); stor = selectedDatesArray.join(',') + '|multiple';
                 }
-            }
-
-            preview.textContent = previewText;
-        }
-
-        function formatDateDisplay(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
-            return date.toLocaleDateString('en-US', {
-                month: '2-digit',
-                day: '2-digit',
-                year: 'numeric'
+                document.getElementById('examined_on_display').value = disp;
+                document.getElementById('examined_on').value = stor;
+                dateSelectorModal.hide();
             });
         }
-
-        // Apply dates
-        applyDatesBtn.addEventListener('click', function() {
-            let displayValue = '';
-            let storageValue = '';
-
-            if (currentDateType === 'single') {
-                const singleDate = document.getElementById('single_date_input').value;
-                if (!singleDate) {
-                    alert('Please select a date');
-                    return;
-                }
-                displayValue = formatDateDisplay(singleDate);
-                storageValue = singleDate;
-            } else if (currentDateType === 'range') {
-                const startDate = document.getElementById('start_date_input').value;
-                const endDate = document.getElementById('end_date_input').value;
-
-                if (!startDate || !endDate) {
-                    alert('Please select both start and end dates');
-                    return;
-                }
-
-                if (new Date(endDate) < new Date(startDate)) {
-                    alert('End date cannot be before start date');
-                    return;
-                }
-
-                displayValue = `${formatDateDisplay(startDate)} - ${formatDateDisplay(endDate)}`;
-                storageValue = `${startDate}|${endDate}|range`;
-            } else if (currentDateType === 'multiple') {
-                if (selectedDatesArray.length === 0) {
-                    alert('Please add at least one date');
-                    return;
-                }
-                displayValue = selectedDatesArray.map(date => formatDateDisplay(date)).join(', ');
-                storageValue = selectedDatesArray.join(',') + '|multiple';
-            }
-
-            document.getElementById('examined_on_display').value = displayValue;
-            document.getElementById('examined_on').value = storageValue;
-            dateSelectorModal.hide();
-        });
     });
 </script>

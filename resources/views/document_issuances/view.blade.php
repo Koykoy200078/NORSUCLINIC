@@ -363,20 +363,10 @@ $exportPdfUrl = $documentId
                 </div>
             </div>
 
-            <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
-            <form action="{{ 
-                isRole('clinic_admin') ? route('document-issuances.store') : 
-                (isRole('staff') ? route('staff.document-issuances.store') : 
-                (isRole('doctor') ? route('doctors.document-issuances.store') : route('document-issuances.store')))
-            }}" method="POST">
-                @csrf
-                <div class="form-group mb-5 d-none">
-                    <label for="document_type">Document Type</label>
-                    <select name="document_type" id="document_type" class="form-control" readonly>
-                        <option value="medical_certificate" selected>Medical Certificate</option>
-                    </select>
-                </div>
-
+            <h3 class="text-lg text-center font-semibold mb-8">
+                MEDICAL CERTIFICATE
+            </h3>
+            <form>
                 <div class="flex row">
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is to certify that Mr./Ms.
                         <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->name }}" readonly>,
@@ -389,9 +379,7 @@ $exportPdfUrl = $documentId
                     <p class="font-semibold">complaints/diagnosis:</p>
                     <div class="border border-gray-300 p-2 h-28 mb-4">
                         <div class="col-span-3">
-                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="5" readonly>
-                            {{ trim($requestDocument->complaints_diagnosis) }}
-                            </textarea>
+                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black view-textarea" rows="4" readonly>{{ trim($requestDocument->complaints_diagnosis) }}</textarea>
                         </div>
                     </div>
                     </p>
@@ -421,21 +409,162 @@ $exportPdfUrl = $documentId
                 <p class="font-semibold">Remark/s:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="5" readonly>
-                        {{ trim($requestDocument->medical_cert_remarks) }}
-                        </textarea>
+                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black view-textarea" rows="4" readonly>{{ trim($requestDocument->medical_cert_remarks) }}</textarea>
                     </div>
                 </div>
 
-                <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied med cert. This medical certificate is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
+                <p class="text-sm text-black">Note: Please check the original copy of med cert before accepting the photocopied one. This document is <span class="font-bold underline">not to be used</span> outside school purposes or medico-legal purposes.</p>
                 <p class="text-sm">This certificate is issued upon the request of <input type="text" id="request_of" name="request_of" style="width: 350px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->request_of }}" readonly> for your reference.</p>
 
                 <div class="text-right mt-4 mr-5">
-                    <p class="font-semibold">{{ $medicalCertificateDoctorName ? 'Dr. ' . $medicalCertificateDoctorName : 'Dr. Michael S. Oliveros' }}</p>
+                    <p class="font-semibold">{{ $medicalCertificateDoctorName ? 'Dr. ' . $medicalCertificateDoctorName : 'Doctor' }}</p>
                     <p class="text-xs">Lic #: <input type="text" id="doc_lic_no" name="doc_lic_no" style="width: 110px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->doc_lic_no }}" readonly></p>
                     <p class=" text-xs">PTR #: <input type="text" id="doc_prt_no" name="doc_prt_no" style="width: 105px; text-align: center;" class="border-b border-black" value="{{ $requestDocument->doc_prt_no }}" readonly></p>
                 </div>
             </form>
+        </div>
+    </div>
+    @elseif ($requestDocument->document_type == 'excuse_slip')
+    <div class="flex justify-center items-center mb-10">
+        <div class="bg-white shadow-2xl rounded-sm p-12 border border-gray-200" style="width: 10in; min-width: 10in; font-family: 'Arial', sans-serif; color: #000;">
+            <!-- Header -->
+            <table class="w-full mb-10" style="border-collapse: collapse; table-layout: auto;">
+                <tr>
+                    <td style="width: 100px; text-align: left; vertical-align: middle;">
+                        <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        <h1 class="text-2xl font-bold uppercase tracking-wider leading-tight" style="margin: 0;">Negros Oriental State University</h1>
+                        <h2 class="text-xs font-medium" style="margin: 2px 0;">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
+                        <p class="text-[10px] text-gray-600" style="margin: 0;">Tel #: 225-9400, then Local # 188, 09263829484</p>
+                    </td>
+                    <td style="width: 100px; text-align: right; vertical-align: middle;">
+                        <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                    </td>
+                </tr>
+            </table>
+
+            <div class="text-center mb-10 border-t border-b border-black py-4">
+                <h3 class="text-3xl font-black tracking-widest" style="margin: 0;">STUDENT EXCUSE SLIP</h3>
+            </div>
+
+            <table class="w-full mb-10" style="border-collapse: collapse; table-layout: auto;">
+                <tr>
+                    <!-- Left Side: Student Information -->
+                    <td style="width: 70%; vertical-align: top; padding-right: 40px;">
+                        <div class="space-y-8">
+                            <div class="flex items-baseline border-b-2 border-black pb-1 gap-10">
+                                <label class="font-bold text-[13px] whitespace-nowrap uppercase tracking-tighter">DATE FILED:</label>
+                                <span class="text-base font-bold">{{ $requestDocument->created_at->format('M d, Y') }}</span>
+                            </div>
+
+                            <div class="flex items-baseline border-b-2 border-black pb-1 px-1 gap-10">
+                                <label class="font-bold text-[13px] whitespace-nowrap uppercase tracking-tighter">STUDENT'S NAME:</label>
+                                <span class="flex-1 text-base font-bold uppercase">{{ $requestDocument->name }}</span>
+                            </div>
+
+                            <div class="flex items-baseline border-b-2 border-black pb-1 px-1 gap-10">
+                                <label class="font-bold text-[13px] whitespace-nowrap uppercase tracking-tighter">SECTION:</label>
+                                <span class="flex-1 text-base font-bold">{{ $requestDocument->course }} {{ $requestDocument->year_level }}</span>
+                            </div>
+
+                            <div class="flex items-baseline border-b-2 border-black pb-1 px-1 gap-10">
+                                <label class="font-bold text-[13px] whitespace-nowrap uppercase tracking-tighter">DATE/S ABSENT:</label>
+                                <span class="flex-1 text-base font-bold">{{ $requestDocument->examined_on ? formatExaminedOnForPDF($requestDocument->examined_on) : '' }}</span>
+                            </div>
+
+                            <div class="pt-4">
+                                <label class="font-bold text-[13px] block mb-3 uppercase tracking-tighter">REASON (COMPLAINTS/DIAGNOSIS):</label>
+                                <textarea class="w-full border-2 border-black p-4 text-base leading-relaxed overflow-hidden view-textarea" readonly>{{ $requestDocument->complaints_diagnosis }}</textarea>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Right Side: Subject Table -->
+                    <td style="width: 45%; vertical-align: top;">
+                        <table class="w-full border-collapse border-2 border-black" style="font-size: 10px;">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-black p-2 text-center font-bold" style="width: 50%;">SUBJECT</th>
+                                    <th class="border border-black p-2 text-center font-bold" style="width: 50%;">TEACHER</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                $subjects = isset($requestDocument) && isset($requestDocument->subjects) ? (is_array($requestDocument->subjects) ? $requestDocument->subjects : json_decode($requestDocument->subjects, true)) : array_fill(0, 10, ['subject' => '', 'teacher' => '']);
+                                @endphp
+                                @for($i=0; $i<10; $i++)
+                                    <tr>
+                                        <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
+                                            {{ $subjects[$i]['subject'] ?? '' }}
+                                        </td>
+                                        <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
+                                            {{ $subjects[$i]['teacher'] ?? '' }}
+                                        </td>
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
+                        <p class="text-[9px] italic mt-2 text-gray-500 text-center uppercase tracking-widest">To be filled by Subject Teachers upon return</p>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Parent Signature Area -->
+            <div class="mt-12 bg-gray-50/50 p-6 rounded-xl border border-dashed border-gray-200">
+                <div class="flex items-baseline border-b-2 border-black/10 pb-2">
+                    <label class="font-bold text-[11px] mr-2 whitespace-nowrap text-gray-500 uppercase tracking-tighter">PARENT'S OR GUARDIAN'S SIGNATURE:</label>
+                    <div class="flex-1"></div>
+                </div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="mt-12 border-t border-black pt-4">
+                <label class="font-bold text-sm block mb-2">CLINIC REMARKS / RECOMMENDATION:</label>
+                <textarea class="w-full border-none p-0 text-sm leading-relaxed overflow-hidden view-textarea" readonly>{{ $requestDocument->medical_cert_remarks }}</textarea>
+            </div>
+
+            <!-- Vital Signs -->
+            <div class="mt-8 pt-4 border-t border-gray-200">
+                <table class="w-full" style="border-collapse: collapse; table-layout: fixed; font-size: 11px;">
+                    <tr>
+                        <td style="width: 16%;"><label class="font-bold">BP:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_bp }}</span></td>
+                        <td style="width: 16%;"><label class="font-bold">P:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_pr }}</span></td>
+                        <td style="width: 16%;"><label class="font-bold">R:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_rr }}</span></td>
+                        <td style="width: 16%;"><label class="font-bold">T:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_temp }}</span></td>
+                        <td style="width: 16%;"><label class="font-bold">Ht:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_height }}</span></td>
+                        <td style="width: 16%;"><label class="font-bold">Wt:</label> <span class="border-b border-black px-1">{{ $requestDocument->vital_signs_weight }}</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Approvals Section -->
+            <table class="w-full mt-12" style="border-collapse: collapse; table-layout: fixed;">
+                <tr>
+                    <td class="text-center" style="width: 50%; vertical-align: top;">
+                        <div style="border-top: 2px solid #e5e7eb; padding-top: 12px; margin: 0 40px;">
+                            <div class="font-bold text-sm tracking-tighter text-gray-200">-----------------</div>
+                            <div class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">PROGRAM CHAIR</div>
+                        </div>
+                    </td>
+                    <td class="text-center" style="width: 50%; vertical-align: top;">
+                        <div style="border-top: 2px solid #e5e7eb; padding-top: 12px; margin: 0 40px;">
+                            <div class="font-bold text-sm tracking-tighter text-blue-900 uppercase">
+                                DR. {{ $medicalCertificateDoctorName ?? 'UNIVERSITY PHYSICIAN' }}
+                            </div>
+                            <div class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">UNIVERSITY PHYSICIAN</div>
+                            <div class="text-[9px] mt-2 space-y-1 text-gray-500">
+                                <p>Lic #: {{ $requestDocument->doc_lic_no }}</p>
+                                <p>PTR #: {{ $requestDocument->doc_prt_no }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="text-right mt-4 text-[8px] text-gray-400">
+                NORSU-CLINIC-FORM-02
+            </div>
         </div>
     </div>
     @endif

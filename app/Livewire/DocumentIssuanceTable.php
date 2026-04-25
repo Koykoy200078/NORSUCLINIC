@@ -74,6 +74,7 @@ class DocumentIssuanceTable extends DataTableComponent
                     // Map the document_type to a user-friendly label
                     $documentTypes = [
                         'medical_certificate' => 'Medical Certificate',
+                        'excuse_slip' => 'Excuse Slip',
                         'referral_letter' => 'Referral Letter',
                         'clearance' => 'Clearance',
                         'consultation_form' => 'Consultation Form',
@@ -90,7 +91,7 @@ class DocumentIssuanceTable extends DataTableComponent
 
             Column::make("Completion Status")
                 ->label(function ($row, Column $column) {
-                    if ($row->document_type === 'medical_certificate') {
+                    if ($row->document_type === 'medical_certificate' || $row->document_type === 'excuse_slip') {
                         return '<span class="badge bg-success text-white">
                                     <i class="fas fa-check-circle"></i> Completed
                                 </span>';

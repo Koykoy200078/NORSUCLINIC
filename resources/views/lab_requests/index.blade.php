@@ -93,7 +93,7 @@ Laboratory & Medical Request Management
     </div>
 
     <div class="d-flex flex-column">
-        <livewire:lab-request-table :patientId="request('patient_id')" />
+        <livewire:lab-request-table :patientId="request('patient_id')" :status="request('status', '')" />
     </div>
 </div>
 @endsection

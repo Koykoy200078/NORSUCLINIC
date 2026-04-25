@@ -18,12 +18,12 @@ Lab Request #{{ $lab_request->request_number }} — {{ $lab_request->patient_nam
         </div>
         <div class="d-flex gap-2 flex-wrap mt-4 mt-md-0">
             @if(!$lab_request->isTerminal())
-            <a href="{{ getRouteByRole('lab-requests.edit', ['lab_request' => $lab_request->id]) }}"
+            <a href="{{ getRouteByRole('lab-requests.edit', [$lab_request]) }}"
                class="btn btn-warning text-dark">
                 <i class="fas fa-edit me-1"></i> Edit
             </a>
             @endif
-            <a href="{{ getRouteByRole('lab-requests.pdf', ['id' => $lab_request->id]) }}"
+            <a href="{{ getRouteByRole('lab-requests.pdf', [$lab_request]) }}"
                target="_blank" class="btn btn-secondary">
                 <i class="fas fa-print me-1"></i> Print PDF
             </a>
@@ -250,7 +250,7 @@ Lab Request #{{ $lab_request->request_number }} — {{ $lab_request->patient_nam
                     @endphp
                     @if(!$lab_request->isTerminal() && count($allowedStatuses) > 0)
                     <hr>
-                    <form action="{{ getRouteByRole('lab-requests.update-status', ['lab_request' => $lab_request->id]) }}"
+                    <form action="{{ getRouteByRole('lab-requests.update-status', [$lab_request]) }}"
                           method="POST">
                         @csrf
                         <label class="form-label fw-semibold small">Update Status</label>

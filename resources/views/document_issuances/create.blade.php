@@ -15,6 +15,8 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         <h1 class="text-lg font-bold">
             @if(request('document_type') === 'medical_certificate')
             Create Medical Certificate
+            @elseif(request('document_type') === 'excuse_slip')
+            Create Excuse Slip
             @elseif(request('document_type') === 'consultation_form')
             Create Consultation Form
             @else
@@ -45,6 +47,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         <select name="document_type" id="document_type" class="form-control" required>
             <option value="" disabled selected>Select Document Type</option>
             <option value="medical_certificate">Medical Certificate</option>
+            <option value="excuse_slip">Excuse Slip</option>
             <option value="consultation_form">Consultation Form</option>
         </select>
     </div>
@@ -53,6 +56,8 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
     <div id="form-container" class="flex items-center justify-center">
         @if(request('document_type') === 'medical_certificate')
         @include('document_issuances.forms.medical_certificate', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
+        @elseif(request('document_type') === 'excuse_slip')
+        @include('document_issuances.forms.excuse_slip', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
         @elseif(request('document_type') === 'consultation_form')
         @include('document_issuances.forms.consultation_form', ['data' => $data, 'user' => $user, 'patient' => $patient ?? null])
         @elseif(!request('document_type'))
@@ -72,7 +77,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
                 // Preserve existing query parameters (like user_id)
                 currentUrl.searchParams.set('document_type', selectedType);
-                currentUrl.searchParams.set('module', selectedType === 'medical_certificate' ? 'certificate' : 'consultation');
+                currentUrl.searchParams.set('module', (selectedType === 'medical_certificate' || selectedType === 'excuse_slip') ? 'certificate' : 'consultation');
 
                 // Redirect to the same page with the selected document type
                 window.location.href = currentUrl.toString();

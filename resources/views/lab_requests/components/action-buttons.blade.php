@@ -1,8 +1,8 @@
 @php
-    $showRoute  = getRouteByRole('lab-requests.show', ['lab_request' => $row->id]);
-    $editRoute  = getRouteByRole('lab-requests.edit', ['lab_request' => $row->id]);
-    $pdfRoute   = getRouteByRole('lab-requests.pdf',  ['id' => $row->id]);
-    $deleteRoute = getRouteByRole('lab-requests.destroy', ['lab_request' => $row->id]);
+    $showRoute  = getRouteByRole('lab-requests.show', [$row]);
+    $editRoute  = getRouteByRole('lab-requests.edit', [$row]);
+    $pdfRoute   = getRouteByRole('lab-requests.pdf',  [$row]);
+    $deleteRoute = getRouteByRole('lab-requests.destroy', [$row]);
 @endphp
 
 <div class="d-flex gap-1 flex-wrap">

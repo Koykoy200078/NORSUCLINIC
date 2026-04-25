@@ -17,7 +17,7 @@ Edit Lab Request #{{ $lab_request->request_number }}
             </p>
         </div>
         <div class="d-flex gap-2 mt-4 mt-md-0">
-            <a href="{{ getRouteByRole('lab-requests.show', ['lab_request' => $lab_request->id]) }}"
+            <a href="{{ getRouteByRole('lab-requests.show', [$lab_request]) }}"
                class="btn btn-outline-info">
                 <i class="fas fa-eye me-1"></i> View
             </a>
@@ -33,7 +33,7 @@ Edit Lab Request #{{ $lab_request->request_number }}
 <div class="container-fluid">
     @include('flash::message')
 
-    <form action="{{ getRouteByRole('lab-requests.update', ['lab_request' => $lab_request->id]) }}"
+    <form action="{{ getRouteByRole('lab-requests.update', [$lab_request]) }}"
           method="POST" id="lab-edit-form">
         @csrf
         @method('PUT')
@@ -275,7 +275,7 @@ Edit Lab Request #{{ $lab_request->request_number }}
                 <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Update Request Status</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ getRouteByRole('lab-requests.update-status', ['lab_request' => $lab_request->id]) }}"
+            <form action="{{ getRouteByRole('lab-requests.update-status', [$lab_request]) }}"
                   method="POST">
                 @csrf
                 <div class="modal-body">

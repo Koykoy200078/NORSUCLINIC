@@ -73,11 +73,12 @@ class DocumentIssuanceController extends Controller
     public function store(Request $request)
     {
         $data = $request->except('_token');
-
+        $documentType = $request->input('document_type');
+        
         try {
-            if ($data['document_type'] === 'medical_certificate') {
+            if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->storeMedicalCertificate($data);
-            } elseif ($data['document_type'] === 'consultation_form') {
+            } elseif ($documentType === 'consultation_form') {
                 $this->storeConsultationForm($data);
             }
 
@@ -90,7 +91,7 @@ class DocumentIssuanceController extends Controller
                     // Determine success message based on document type
                     $successMessage = $data['document_type'] === 'medical_certificate'
                         ? 'Medical certificate created successfully.'
-                        : 'Consultation form created successfully.';
+                        : ($data['document_type'] === 'excuse_slip' ? 'Excuse slip created successfully.' : 'Consultation form created successfully.');
 
                     // Role-based patient history redirect
                     if (isRole('clinic_admin')) {
@@ -128,59 +129,81 @@ class DocumentIssuanceController extends Controller
     private function storeMedicalCertificate(array $data)
     {
         // Prepare the data for insertion
-        $data['vital_signs_bp'] = $data['vital_signs_bp_2'] . '/' . $data['vital_signs_bp_22'];
-        $data['vital_signs_pr'] = $data['vital_signs_pr_2'];
-        $data['vital_signs_rr'] = $data['vital_signs_rr_2'];
-        $data['vital_signs_temp'] = $data['vital_signs_temp_2'];
-        $data['vital_signs_height'] = $data['vital_signs_height_2'];
-        $data['vital_signs_weight'] = $data['vital_signs_weight_2'];
-
-        // examined_on is now coming from the hidden field with the correct format
-        // No need to process it further
+        $data['vital_signs_bp'] = ($data['vital_signs_bp_2'] ?? '') . '/' . ($data['vital_signs_bp_22'] ?? '');
+        $data['vital_signs_pr'] = $data['vital_signs_pr_2'] ?? null;
+        $data['vital_signs_rr'] = $data['vital_signs_rr_2'] ?? null;
+        $data['vital_signs_temp'] = $data['vital_signs_temp_2'] ?? null;
+        $data['vital_signs_height'] = $data['vital_signs_height_2'] ?? null;
+        $data['vital_signs_weight'] = $data['vital_signs_weight_2'] ?? null;
 
         // Log the user_id for debugging
         Log::info('Attempting to create medical certificate for user_id: ' . ($data['user_id'] ?? 'NULL'));
 
-        // Retrieve the user and related IDs
-        $user = User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']);
-        if (!$user) {
-            Log::error('User not found with ID: ' . ($data['user_id'] ?? 'NULL'));
-            throw new \Exception('User not found. Please select a patient.');
+        // Retrieve the user and related IDs (allow null for manual entries)
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+        
+        // Use request data for campus/college/course/year_level if provided (allows manual override)
+        $data['campus'] = $data['campus'] ?? ($user ? ($user->campus->campus_name ?? 'Unknown Campus') : 'N/A');
+        $data['college'] = $data['college'] ?? ($user ? ($user->college->college_name ?? 'Unknown College') : 'N/A');
+        
+        // Calculate age from DOB if not provided in request
+        if (!isset($data['age']) || $data['age'] === '') {
+            if ($user && $user->dob) {
+                try {
+                    $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
+                } catch (\Exception $e) {
+                    $data['age'] = 0;
+                }
+            } else {
+                $data['age'] = 0;
+            }
         }
 
-        // Retrieve the names using relationships
-        $data['campus'] = $user->campus->campus_name ?? 'Unknown Campus';
-        $data['college'] = $user->college->college_name ?? 'Unknown College';
-        $data['course'] = $user->course->course_name ?? 'Unknown Course';
-        $data['year_level'] = $user->yearLevel->year_level_name ?? 'Unknown Year Level';
+        $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
+        
+        // Improve address fetching
+        if (!isset($data['address']) || $data['address'] === '' || $data['address'] === 'N/A') {
+            if ($user) {
+                $data['address'] = $user->patient?->address?->full_address 
+                                ?? $user->patient?->address?->address1 
+                                ?? $user->address?->full_address 
+                                ?? $user->address?->address1 
+                                ?? 'N/A';
+            } else {
+                $data['address'] = 'N/A';
+            }
+        }
+
+        $data['dob'] = $user ? $user->dob : null;
 
         // Insert the data into the database
         $requestDocument = DocumentIssuance::create([
             'document_type' => $data['document_type'],
-            'document_creator_id' => $data['document_creator_id'], // Use the authenticated user ID
-            'user_id' => $data['user_id'],
-            'name' => $data['name'],
+            'document_creator_id' => $data['document_creator_id'] ?? auth()->id(),
+            'user_id' => $data['user_id'] ?? null,
+            'name' => $data['name'] ?? 'N/A',
             'age' => $data['age'],
             'gender' => $data['gender'],
-            'date_of_birth' => $user->dob,
+            'date_of_birth' => $data['dob'] ?? null,
             'address' => $data['address'],
-            'request_of' => $data['request_of'],
+            'request_of' => $data['request_of'] ?? ($data['name'] ?? 'N/A'),
             'requested_at' => now()->format('Y-m-d'),
             'campus' => $data['campus'],
             'college' => $data['college'],
-            'course' => $data['course'],
-            'year_level' => $data['year_level'],
-            'examined_on' => $data['examined_on'],
-            'complaints_diagnosis' => $data['complaints_diagnosis'],
+            'course' => $data['course'] ?? null,
+            'year_level' => $data['year_level'] ?? null,
+            'examined_on' => $data['examined_on'] ?? null,
+            'complaints_diagnosis' => $data['complaints_diagnosis'] ?? null,
             'vital_signs_bp' => $data['vital_signs_bp'],
             'vital_signs_pr' => $data['vital_signs_pr'],
             'vital_signs_temp' => $data['vital_signs_temp'],
             'vital_signs_rr' => $data['vital_signs_rr'],
             'vital_signs_height' => $data['vital_signs_height'],
             'vital_signs_weight' => $data['vital_signs_weight'],
-            'medical_cert_remarks' => $data['medical_cert_remarks'],
-            'doc_lic_no' => $data['doc_lic_no'],
-            'doc_prt_no' => $data['doc_prt_no'],
+            'medical_cert_remarks' => $data['medical_cert_remarks'] ?? null,
+            'doc_lic_no' => $data['doc_lic_no'] ?? null,
+            'doc_prt_no' => $data['doc_prt_no'] ?? null,
+            'subjects' => $data['subjects'] ?? null,
         ]);
 
         // Log medical certificate creation activity
@@ -192,56 +215,87 @@ class DocumentIssuanceController extends Controller
      */
     private function storeConsultationForm(array $data)
     {
+        // Retrieve the user and related IDs (allow null for manual entries)
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+
         // Map related names for numeric fields using their IDs
-        $data['campus'] = Campus::find($data['campus_id'] ?? null)?->campus_name ?? 'Unknown Campus';
-        $data['college'] = College::find($data['college_id'] ?? null)?->college_name ?? 'Unknown College';
-        $data['course'] = Course::find($data['course_id'] ?? null)?->course_name ?? 'Unknown Course';
-        $data['year_level'] = YearLevel::find($data['year_level_id'] ?? null)?->year_level_name ?? 'Unknown Year Level';
-        $data['vaccination_id'] = Vaccination::find($data['vaccination_id'] ?? null)?->vaccination_status ?? 'Unknown Vaccination';
+        $data['campus'] = $data['campus'] ?? (Campus::find($data['campus_id'] ?? null)?->campus_name ?? ($user?->campus?->campus_name ?? 'Unknown Campus'));
+        $data['college'] = $data['college'] ?? (College::find($data['college_id'] ?? null)?->college_name ?? ($user?->college?->college_name ?? 'Unknown College'));
+        $data['course'] = $data['course'] ?? (Course::find($data['course_id'] ?? null)?->course_name ?? ($user?->course?->course_name ?? 'Unknown Course'));
+        $data['year_level'] = $data['year_level'] ?? (YearLevel::find($data['year_level_id'] ?? null)?->year_level_name ?? ($user?->yearLevel?->year_level_name ?? 'Unknown Year Level'));
+        $data['covid_vaccination'] = $data['covid_vaccination'] ?? (Vaccination::find($data['vaccination_id'] ?? null)?->vaccination_status ?? ($user?->vaccination?->vaccination_status ?? 'Unknown Vaccination'));
 
         // Handle comorbidities - accept custom input or predefined values
         $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';
 
+        // Calculate age from DOB if not provided in request
+        if (!isset($data['age']) || $data['age'] === '') {
+            if ($user && $user->dob) {
+                try {
+                    $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
+                } catch (\Exception $e) {
+                    $data['age'] = 0;
+                }
+            } else {
+                $data['age'] = 0;
+            }
+        }
+
+        $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
+        
+        // Improve address fetching
+        if (!isset($data['address']) || $data['address'] === '' || $data['address'] === 'N/A') {
+            if ($user) {
+                $data['address'] = $user->patient?->address?->full_address 
+                                ?? $user->patient?->address?->address1 
+                                ?? $user->address?->full_address 
+                                ?? $user->address?->address1 
+                                ?? 'N/A';
+            } else {
+                $data['address'] = 'N/A';
+            }
+        }
+
         $requestDocument = DocumentIssuance::create([
-            'document_type' => $data['document_type'],
-            'document_creator_id' => $data['document_creator_id'],
-            'user_id' => $data['user_id'],
-            'name' => $data['name'],
+            'document_type' => $data['document_type'] ?? 'consultation_form',
+            'document_creator_id' => $data['document_creator_id'] ?? auth()->id(),
+            'user_id' => $data['user_id'] ?? null,
+            'name' => $data['name'] ?? 'N/A',
             'age' => $data['age'],
             'gender' => $data['gender'],
-            'status' => $data['status'],
-            'date_of_birth' => $data['date_of_birth'],
+            'status' => $data['status'] ?? 'N/A',
+            'date_of_birth' => $data['date_of_birth'] ?? ($user?->dob ?? null),
             'address' => $data['address'],
-            'religion' => $data['religion'],
-            'patient_contact' => $data['patient_contact'],
+            'religion' => $data['religion'] ?? null,
+            'patient_contact' => $data['patient_contact'] ?? ($user?->contact ?? null),
             'campus' => $data['campus'],
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
-            'informant' => $data['informant'],
-            'emergency_contact' => $data['emergency_contact'],
-            'requested_at' => $data['requested_at'],
-            'complaints' => $data['complaints'],
+            'informant' => $data['informant'] ?? null,
+            'emergency_contact' => $data['emergency_contact'] ?? null,
+            'requested_at' => $data['requested_at'] ?? now()->format('Y-m-d'),
+            'complaints' => $data['complaints'] ?? null,
             'note' => $data['note'] ?? null,
-            'covid_vaccination' => $data['vaccination_id'],
+            'covid_vaccination' => $data['covid_vaccination'],
             'comorbidities' => $data['comorbidities_value'],
             'allergies' => $data['allergies'] ?? null,
             'admissions_surgeries' => $data['admissions_surgeries'] ?? null,
             'maintenance' => $data['maintenance'] ?? null,
             'pregnancy_status' => $data['pregnancy_status'] ?? null,
             'lmp_aog' => $data['lmp_aog'] ?? null,
-            'vital_signs_bp' => $data['vital_signs_bp'],
-            'vital_signs_pr' => $data['vital_signs_pr'],
-            'vital_signs_temp' => $data['vital_signs_temp'],
+            'vital_signs_bp' => $data['vital_signs_bp'] ?? null,
+            'vital_signs_pr' => $data['vital_signs_pr'] ?? null,
+            'vital_signs_temp' => $data['vital_signs_temp'] ?? null,
             'vital_signs_rr' => $data['vital_signs_rr'] ?? null,
-            'vital_signs_o2_sat' => $data['vital_signs_o2_sat'],
+            'vital_signs_o2_sat' => $data['vital_signs_o2_sat'] ?? null,
             'vital_signs_height' => $data['vital_signs_height'] ?? null,
             'vital_signs_weight' => $data['vital_signs_weight'] ?? null,
             'pertinent_exam' => $data['pertinent_exam'] ?? null,
             'assessment' => $data['assessment'] ?? null,
             'plan' => $data['plan'] ?? null,
-            'consult_mode' => $data['consult_mode'],
-            'nursing_intervention' => $data['nursing_intervention'],
+            'consult_mode' => $data['consult_mode'] ?? 'physical',
+            'nursing_intervention' => $data['nursing_intervention'] ?? null,
             'nursing_incharged_id' => $data['nursing_incharged'] ?? null,
         ]);
 
@@ -315,7 +369,7 @@ class DocumentIssuanceController extends Controller
     public function show(DocumentIssuance $document_issuance)
     {
         $requestDocument = $document_issuance;
-        $medicalCertificateDoctorName = $requestDocument->document_type === 'medical_certificate'
+        $medicalCertificateDoctorName = ($requestDocument->document_type === 'medical_certificate' || $requestDocument->document_type === 'excuse_slip')
             ? $this->resolveMedicalCertificateDoctorName($requestDocument)
             : null;
 
@@ -369,11 +423,12 @@ class DocumentIssuanceController extends Controller
     {
         $requestDocument = $document_issuance;
         $data = $request->except(['_token', '_method']);
-
+        $documentType = $request->input('document_type', $requestDocument->document_type);
+        
         try {
-            if ($requestDocument->document_type === 'medical_certificate') {
+            if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->updateMedicalCertificate($requestDocument, $data);
-            } elseif ($requestDocument->document_type === 'consultation_form') {
+            } elseif ($documentType === 'consultation_form') {
                 $this->updateConsultationForm($requestDocument, $data);
             }
 
@@ -423,7 +478,7 @@ class DocumentIssuanceController extends Controller
         $data['vital_signs_weight'] = $data['vital_signs_weight_2'] ?? $requestDocument->vital_signs_weight;
 
         // Only update user/campus/college/course/year_level if user_id is present
-        if (isset($data['user_id'])) {
+        if (isset($data['user_id']) && !empty($data['user_id'])) {
             $user = User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']);
             if ($user) {
                 $data['campus'] = $user->campus->campus_name ?? $requestDocument->campus;
@@ -431,6 +486,26 @@ class DocumentIssuanceController extends Controller
                 $data['course'] = $user->course->course_name ?? $requestDocument->course;
                 $data['year_level'] = $user->yearLevel->year_level_name ?? $requestDocument->year_level;
                 $data['date_of_birth'] = $user->dob ?? $requestDocument->date_of_birth;
+                
+                if ((!isset($data['age']) || $data['age'] === '') && $user->dob) {
+                    try {
+                        $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
+                    } catch (\Exception $e) {
+                        $data['age'] = $requestDocument->age;
+                    }
+                }
+                
+                if (!isset($data['gender']) || empty($data['gender'])) {
+                    $data['gender'] = ($user->gender == 1 ? 'Male' : 'Female');
+                }
+
+                if (!isset($data['address']) || empty($data['address']) || $data['address'] === 'N/A') {
+                    $data['address'] = $user->patient?->address?->full_address 
+                                    ?? $user->patient?->address?->address1 
+                                    ?? $user->address?->full_address 
+                                    ?? $user->address?->address1 
+                                    ?? $requestDocument->address;
+                }
             } else {
                 $data['campus'] = $requestDocument->campus;
                 $data['college'] = $requestDocument->college;
@@ -468,6 +543,7 @@ class DocumentIssuanceController extends Controller
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
+            'subjects' => $data['subjects'] ?? $requestDocument->subjects,
         ]);
 
         // Log medical certificate update (will update existing log instead of creating new)
@@ -479,12 +555,40 @@ class DocumentIssuanceController extends Controller
      */
     private function updateConsultationForm(DocumentIssuance $requestDocument, array $data)
     {
+        // Retrieve the user and related IDs (allow null for manual entries)
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+
         // Map related names for numeric fields using their IDs
         $data['campus'] = isset($data['campus_id']) ? (Campus::find($data['campus_id'])->campus_name ?? $requestDocument->campus) : $requestDocument->campus;
         $data['college'] = isset($data['college_id']) ? (College::find($data['college_id'])->college_name ?? $requestDocument->college) : $requestDocument->college;
         $data['course'] = isset($data['course_id']) ? (Course::find($data['course_id'])->course_name ?? $requestDocument->course) : $requestDocument->course;
         $data['year_level'] = isset($data['year_level_id']) ? (YearLevel::find($data['year_level_id'])->year_level_name ?? $requestDocument->year_level) : $requestDocument->year_level;
         $data['covid_vaccination'] = isset($data['vaccination_id']) ? (Vaccination::find($data['vaccination_id'])->vaccination_status ?? $requestDocument->covid_vaccination) : $requestDocument->covid_vaccination;
+
+        // Calculate age from DOB if not provided in request
+        if ((!isset($data['age']) || $data['age'] === '') && $user && $user->dob) {
+            try {
+                $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
+            } catch (\Exception $e) {
+                $data['age'] = $requestDocument->age;
+            }
+        }
+
+        if (!isset($data['gender']) || empty($data['gender'])) {
+            if ($user) {
+                $data['gender'] = ($user->gender == 1 ? 'Male' : 'Female');
+            }
+        }
+
+        if (!isset($data['address']) || empty($data['address']) || $data['address'] === 'N/A') {
+            if ($user) {
+                $data['address'] = $user->patient?->address?->full_address 
+                                ?? $user->patient?->address?->address1 
+                                ?? $user->address?->full_address 
+                                ?? $user->address?->address1 
+                                ?? $requestDocument->address;
+            }
+        }
 
         // Handle comorbidities - accept custom input or keep existing value
         $data['comorbidities'] = isset($data['comorbidities_custom']) ? $data['comorbidities_custom'] : $requestDocument->comorbidities;
@@ -1093,18 +1197,50 @@ class DocumentIssuanceController extends Controller
     public function exportPdf($id)
     {
         try {
+            // Set a higher time limit for PDF generation if needed
+            set_time_limit(120);
+
             // Fetch the request document by ID
             $requestDocument = DocumentIssuance::findOrFail($id);
             $medicalCertificateDoctorName = null;
+
+            // Optimization: Convert logos to base64 to avoid local HTTP requests or slow file lookups in DomPDF
+            $norsuLogoPath = public_path('assets/image/norsu_logo.png');
+            $clinicLogoPath = public_path('assets/image/norsu_clinic_logo.png');
+            
+            $norsuLogoBase64 = '';
+            $clinicLogoBase64 = '';
+            
+            if (file_exists($norsuLogoPath)) {
+                $type = pathinfo($norsuLogoPath, PATHINFO_EXTENSION);
+                $data = file_get_contents($norsuLogoPath);
+                $norsuLogoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            
+            if (file_exists($clinicLogoPath)) {
+                $type = pathinfo($clinicLogoPath, PATHINFO_EXTENSION);
+                $data = file_get_contents($clinicLogoPath);
+                $clinicLogoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
 
             // Choose the PDF layout based on document type
             if ($requestDocument->document_type === 'medical_certificate') {
                 $view = 'document_issuances.pdf_medical_certificate';
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
-                $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName'))->setPaper([0, 0, 612, 396], 'landscape'); // 5.5"x8.5" in points
+                $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName', 'norsuLogoBase64', 'clinicLogoBase64'))
+                    ->setPaper([0, 0, 612, 396], 'landscape') // 5.5"x8.5" in points
+                    ->setWarnings(false);
+            } elseif ($requestDocument->document_type === 'excuse_slip') {
+                $view = 'document_issuances.pdf_excuse_slip';
+                $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
+                $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName', 'norsuLogoBase64', 'clinicLogoBase64'))
+                    ->setPaper([0, 0, 612, 396], 'landscape')
+                    ->setWarnings(false);
             } else {
                 $view = 'document_issuances.pdf_consultation_form';
-                $pdf = Pdf::loadView($view, compact('requestDocument'))->setPaper([0, 0, 612, 936], 'portrait'); // 8.5"x13"
+                $pdf = Pdf::loadView($view, compact('requestDocument'))
+                    ->setPaper([0, 0, 612, 936], 'portrait') // 8.5"x13"
+                    ->setWarnings(false);
             }
 
             // Check if request wants to stream (for printing) or download
