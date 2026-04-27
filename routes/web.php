@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\DocumentIssuanceController;
 use App\Http\Controllers\LabRequestController;
+use App\Http\Controllers\BackupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -149,6 +150,13 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::post('/settings', [SettingController::class, 'update'])->name('setting.update');
         Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
         Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
+
+        // Backups
+        Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('backups/create', [BackupController::class, 'create'])->name('backups.create');
+        Route::get('backups/download/{fileName}', [BackupController::class, 'download'])->name('backups.download');
+        Route::delete('backups/destroy/{fileName}', [BackupController::class, 'destroy'])->name('backups.destroy');
+        Route::post('backups/import', [BackupController::class, 'import'])->name('backups.import');
     });
 
     // Patient Routes

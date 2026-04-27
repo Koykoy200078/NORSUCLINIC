@@ -5,7 +5,7 @@
 </li>
 
 {{-- ========================================================= --}}
-{{-- Patient Record Management                                  --}}
+{{-- [ORDER 2] Patient Record Management                        --}}
 {{-- ========================================================= --}}
 @can('manage_patients')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
@@ -26,7 +26,7 @@
 @endcan
 
 {{-- ========================================================= --}}
-{{-- Patient Queue                                              --}}
+{{-- [ORDER 3] Patient Queue                                    --}}
 {{-- ========================================================= --}}
 @can('manage_patients')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
@@ -47,7 +47,7 @@
 @endcan
 
 {{-- ========================================================= --}}
-{{-- Consultation Management                                    --}}
+{{-- [ORDER 4] Consultation Management                          --}}
 {{-- ========================================================= --}}
 @can('manage_request_documents')
 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor') || isRole('nurse'))
@@ -69,7 +69,7 @@ $isConsultSubMenu =
 @endcan
 
 {{-- ========================================================= --}}
-{{-- Prescription Management                                    --}}
+{{-- [ORDER 5] Prescription Management                          --}}
 {{-- ========================================================= --}}
 @can('manage_request_documents')
 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor') || isRole('nurse'))
@@ -91,7 +91,77 @@ $isPrescSubMenu =
 @endcan
 
 {{-- ========================================================= --}}
-{{-- Certificate Issuance                                       --}}
+{{-- [ORDER 6 & 7] Medicine Inventory & Dispensing              --}}
+{{-- ========================================================= --}}
+@can('manage_medicines')
+@if(isRole('clinic_admin') || isRole('staff') || isRole('nurse'))
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{
+    !(
+        (isRole('clinic_admin') && Request::is('admin/categories*','admin/generics*','admin/medicines*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
+        ((isRole('staff') || isRole('nurse')) && Request::is('staff/categories*','staff/generics*','staff/medicines*','staff/stock-in*','staff/medicine-inventory-tracking*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{
+        (isRole('clinic_admin') && Request::is('admin/medicines*','admin/categories*','admin/generics*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
+        ((isRole('staff') || isRole('nurse')) && Request::is('staff/medicines*','staff/categories*','staff/generics*','staff/stock-in*','staff/medicine-inventory-tracking*'))
+        ? 'active' : '' }}"
+        href="{{ getRouteByRole('medicine-inventory.index') }}">
+        Inventory
+    </a>
+</li>
+
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{
+    !(
+        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
+        ((isRole('staff') || isRole('nurse')) && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
+    ) ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{
+        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
+        ((isRole('staff') || isRole('nurse')) && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
+        ? 'active' : '' }}"
+        href="{{ getRouteByRole('medicine-dispensing.index') }}">
+        Dispensing
+    </a>
+</li>
+@if(isRole('doctor'))
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'active' : '' }}"
+        href="{{ getRouteByRole('medicine-inventory.index') }}">
+        Inventory
+    </a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'active' : '' }}"
+        href="{{ getRouteByRole('medicine-dispensing.index') }}">
+        Dispensing
+    </a>
+</li>
+@endif
+@endif
+@endcan
+
+{{-- ========================================================= --}}
+{{-- [ORDER 8] Laboratory Requests                              --}}
+{{-- ========================================================= --}}
+@can('manage_request_documents')
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
+    {{
+        !(
+            (isRole('clinic_admin') && Request::is('admin/lab-requests*')) ||
+            (isRole('staff') && Request::is('staff/lab-requests*')) ||
+            (isRole('doctor') && Request::is('doctors/lab-requests*'))
+        ) ? 'd-none' : ''
+    }}">
+    <a class="nav-link p-0 {{
+        (isRole('clinic_admin') && Request::is('admin/lab-requests*')) ||
+        (isRole('staff') && Request::is('staff/lab-requests*')) ||
+        (isRole('doctor') && Request::is('doctors/lab-requests*'))
+    ? 'active' : '' }}"
+        href="{{ getRouteByRole('lab-requests.index') }}">Lab Requests</a>
+</li>
+@endcan
+
+{{-- ========================================================= --}}
+{{-- [ORDER 9] Certificate Issuance                             --}}
 {{-- ========================================================= --}}
 @can('manage_request_documents')
 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
@@ -109,7 +179,28 @@ $isCertSubMenu =
 @endcan
 
 {{-- ========================================================= --}}
-{{-- User Management Breadcrumbs                                --}}
+{{-- [ORDER 10] Report Generation                               --}}
+{{-- ========================================================= --}}
+@if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
+    {{
+        !(
+            (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
+            (isRole('staff') && Request::is('staff/activity-logs*')) ||
+            (isRole('doctor') && Request::is('doctors/activity-logs*'))
+        ) ? 'd-none' : ''
+    }}">
+    <a class="nav-link p-0 {{
+        (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
+        (isRole('staff') && Request::is('staff/activity-logs*')) ||
+        (isRole('doctor') && Request::is('doctors/activity-logs*'))
+    ? 'active' : '' }}"
+        href="{{ getRouteByRole('activity-logs.index') }}">Reports</a>
+</li>
+@endif
+
+{{-- ========================================================= --}}
+{{-- [ORDER 12] Settings & User Management                      --}}
 {{-- ========================================================= --}}
 @can('manage_staff')
 @if(getLogInUser()->hasRole('clinic_admin'))
@@ -120,6 +211,7 @@ $isCertSubMenu =
 </li>
 @endif
 @endcan
+
 @can('manage_doctors')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{
@@ -136,17 +228,14 @@ $isCertSubMenu =
 </li>
 @endcan
 
-{{-- ========================================================= --}}
-{{-- Settings Breadcrumbs                                       --}}
-{{-- ========================================================= --}}
 @can('manage_settings')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/settings*','admin/roles*','admin/countries*','admin/states*','admin/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/settings*') ? 'active' : '' }}"
         href="{{ route('setting.index') }}">{{ __('messages.settings') }}</a>
 </li>
-
 @endcan
+
 @can('manage_roles')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/settings*','admin/roles*','admin/countries*','admin/states*','admin/cities*','admin/barangays*') ? 'd-none' : '' }}">
@@ -154,6 +243,7 @@ $isCertSubMenu =
         href="{{ route('roles.index') }}">{{ __('messages.roles') }}</a>
 </li>
 @endcan
+
 @can('manage_countries')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0
     {{ !Request::is('admin/settings*','admin/roles*','admin/countries*','admin/states*','admin/cities*','admin/barangays*') ? 'd-none' : '' }}">
@@ -202,10 +292,6 @@ $isCertSubMenu =
 </li>
 @endcan
 
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('profile/edit*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('profile/edit*') ? 'active' : '' }}"
-        href="{{ route('profile.setting') }}">{{ __('messages.user.profile_details') }}</a>
-</li>
 @can('manage_front_cms')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/front-services*','admin/front-patient-testimonials*','admin/cms*','admin/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/cms*') ? 'active' : '' }}"
@@ -217,51 +303,7 @@ $isCertSubMenu =
 </li>
 @endcan
 
-{{-- ========================================================= --}}
-{{-- Medicine Inventory & Dispensing Breadcrumbs (all roles)   --}}
-{{-- ========================================================= --}}
-@can('manage_medicines')
-@if(isRole('clinic_admin') || isRole('staff') || isRole('nurse'))
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{
-    !(
-        (isRole('clinic_admin') && Request::is('admin/categories*','admin/generics*','admin/medicines*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
-        ((isRole('staff') || isRole('nurse')) && Request::is('staff/categories*','staff/generics*','staff/medicines*','staff/stock-in*','staff/medicine-inventory-tracking*'))
-    ) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{
-        (isRole('clinic_admin') && Request::is('admin/medicines*','admin/categories*','admin/generics*','admin/stock-in*','admin/medicine-inventory-tracking*')) ||
-        ((isRole('staff') || isRole('nurse')) && Request::is('staff/medicines*','staff/categories*','staff/generics*','staff/stock-in*','staff/medicine-inventory-tracking*'))
-        ? 'active' : '' }}"
-        href="{{ getRouteByRole('medicine-inventory.index') }}">
-        Inventory
-    </a>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('profile/edit*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('profile/edit*') ? 'active' : '' }}"
+        href="{{ route('profile.setting') }}">{{ __('messages.user.profile_details') }}</a>
 </li>
-
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{
-    !(
-        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
-        ((isRole('staff') || isRole('nurse')) && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
-    ) ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{
-        (isRole('clinic_admin') && Request::is('admin/used-medicine*','admin/medicine-history*','admin/dispense-records*','admin/medicine-dispensing-management*')) ||
-        ((isRole('staff') || isRole('nurse')) && Request::is('staff/used-medicine*','staff/medicine-history*','staff/dispense-records*','staff/medicine-dispensing-management*'))
-        ? 'active' : '' }}"
-        href="{{ getRouteByRole('medicine-dispensing.index') }}">
-        Dispensing
-    </a>
-</li>
-@if(isRole('doctor'))
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/medicines*','doctors/categories*','doctors/generics*','doctors/stock-in*','doctors/medicine-inventory-tracking*') ? 'active' : '' }}"
-        href="{{ getRouteByRole('medicine-inventory.index') }}">
-        Inventory
-    </a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('doctors/used-medicine*','doctors/medicine-history*','doctors/dispense-records*','doctors/medicine-dispensing-management*') ? 'active' : '' }}"
-        href="{{ getRouteByRole('medicine-dispensing.index') }}">
-        Dispensing
-    </a>
-</li>
-@endif
-@endif
-@endcan

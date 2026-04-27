@@ -68,6 +68,8 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- 8) Laboratory & Medical Request Management                          --}}
                 {{-- 9) Certificate Issuance                                             --}}
                 {{-- 10) Report Generation                                               --}}
+                {{-- 11) Notifications & Alerts                                          --}}
+                {{-- 12) Settings                                                        --}}
                 {{-- Keep the next sections in this exact order.                         --}}
                 {{-- ===================================================================== --}}
 
@@ -316,33 +318,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 </li>
                 @endif
                 @endcan
-                @can('manage_specialties')
-                <li class="nav-item {{ 
-    (isRole('clinic_admin') && Request::is('admin/specializations*')) ||
-    (isRole('staff') && Request::is('staff/specializations*')) ||
-    (isRole('doctor') && Request::is('doctors/specializations*'))
-? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                        href="{{ getRouteByRole('specializations.index') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa-user-shield"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.specializations') }}</span>
-                    </a>
-                </li>
-                @endcan
-                @can('manage_front_cms')
-                <li
-                    class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/cms*', 'admin/sliders*', 'admin/front-medical-services*', 'admin/front-patient-testimonials*')) ||
-        (isRole('staff') && Request::is('staff/cms*', 'staff/sliders*', 'staff/front-medical-services*', 'staff/front-patient-testimonials*'))
-    ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('cms.index') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
-                        <span class="d-none">{{ __('messages.cms.cms') }}</span>
-                        <span class="d-none">{{ __('messages.sliders') }}</span>
-                    </a>
-                </li>
-                @endcan
+
                 {{-- [ORDER 9] Certificate Issuance --}}
                 @can('manage_request_documents')
                 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
@@ -387,59 +363,118 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 </li>
                 @endif
 
-                {{-- User Managements - placed as second to last --}}
-                @if((isRole('clinic_admin') && (auth()->user()->can('manage_staff') || auth()->user()->can('manage_doctors'))) || (isRole('staff') && auth()->user()->can('manage_doctors')))
-                @php $isUserManagementActive = Request::is('admin/staffs*', 'admin/doctors*', 'staff/doctors*'); @endphp
-                <li class="nav-item aside-item-collapse {{ $isUserManagementActive ? 'show collapse-submenu' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ $isUserManagementActive ? 'true' : 'false' }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa-users-cog"></i></span>
-                        <span class="aside-menu-title">User Management</span>
+                {{-- [ORDER 11] Notifications & Alerts --}}
+                @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+                @php 
+                $isNotificationsActive = Request::is('*/activity-logs*') && (request()->query('tab') === 'inventory' || request()->query('tab') === 'logs');
+                @endphp
+                <li class="nav-item aside-item-collapse {{ $isNotificationsActive ? 'show collapse-submenu' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ $isNotificationsActive ? 'true' : 'false' }}">
+                        <span class="aside-menu-icon pe-3"><i class="fas fa-bell"></i></span>
+                        <span class="aside-menu-title">Notifications & Alerts</span>
                         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-chevron-right fs-8"></i></span>
                     </a>
+                    <ul class="aside-submenu list-unstyled mb-0" style="display: {{ $isNotificationsActive ? 'block' : 'none' }};">
+                        <li class="nav-item {{ Request::is('*/activity-logs*') && request()->query('status') === 'low_stock' ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('activity-logs.index') . '?tab=inventory&status=low_stock' }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-exclamation-triangle"></i></span>
+                                <span class="aside-menu-title">Low stocks alert</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('medicine-inventory.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-times"></i></span>
+                                <span class="aside-menu-title">Expiry medicine alert</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('*/activity-logs*') && request()->query('tab') === 'logs' ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('activity-logs.index') . '?tab=logs' }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-info-circle"></i></span>
+                                <span class="aside-menu-title">System notifications</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
 
-                    <ul class="aside-submenu list-unstyled mb-0">
+                {{-- [ORDER 12] Settings --}}
+                @can('manage_settings')
+                @php 
+                $isSettingsCollapseActive = Request::is('*/settings*', '*/roles*', '*/backups*', '*/staffs*', '*/doctors*', '*/specializations*', '*/cms*');
+                @endphp
+                <li class="nav-item aside-item-collapse {{ $isSettingsCollapseActive ? 'show collapse-submenu' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ $isSettingsCollapseActive ? 'true' : 'false' }}">
+                        <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
+                        <span class="aside-menu-title">Settings</span>
+                        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-chevron-right fs-8"></i></span>
+                    </a>
+                    <ul class="aside-submenu list-unstyled mb-0" style="display: {{ $isSettingsCollapseActive ? 'block' : 'none' }};">
+                        {{-- User Management Items --}}
                         @can('manage_staff')
                         @if(isRole('clinic_admin'))
-                        <li class="nav-item {{ Request::is('admin/staffs*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ route('staffs.index') }}">
+                        <li class="nav-item {{ Request::is('*/staffs*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ route('staffs.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-users"></i></span>
                                 <span class="aside-menu-title">{{ __('messages.staffs') }}</span>
                             </a>
                         </li>
                         @endif
                         @endcan
-
                         @can('manage_doctors')
-                        @if(isRole('clinic_admin') || isRole('staff'))
-                        <li class="nav-item {{ (isRole('clinic_admin') && Request::is('admin/doctors*')) || (isRole('staff') && Request::is('staff/doctors*')) ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-4 ps-10" aria-current="page" href="{{ getRouteByRole('doctors.index') }}">
-                                <span class="aside-menu-icon pe-3"><i class="fa-solid fa-user-doctor"></i></span>
+                        <li class="nav-item {{ Request::is('*/doctors*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('doctors.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-user-doctor"></i></span>
                                 <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
                             </a>
                         </li>
-                        @endif
                         @endcan
 
+                        {{-- Roles & Permissions --}}
+                        @can('manage_roles')
+                        <li class="nav-item {{ Request::is('*/roles*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('roles.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-user-tag"></i></span>
+                                <span class="aside-menu-title">Manage User roles</span>
+                            </a>
+                        </li>
+                        @endcan
+
+                        {{-- Specializations --}}
+                        @can('manage_specialties')
+                        <li class="nav-item {{ Request::is('*/specializations*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('specializations.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-user-shield"></i></span>
+                                <span class="aside-menu-title">{{ __('messages.specializations') }}</span>
+                            </a>
+                        </li>
+                        @endcan
+
+                        {{-- System Settings --}}
+                        <li class="nav-item {{ Request::is('*/settings*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('setting.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-sliders-h"></i></span>
+                                <span class="aside-menu-title">Manage system settings</span>
+                            </a>
+                        </li>
+
+                        {{-- Front CMS --}}
+                        @can('manage_front_cms')
+                        <li class="nav-item {{ Request::is('*/cms*', '*/sliders*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('cms.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>
+                                <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
+                            </a>
+                        </li>
+                        @endcan
+
+                        {{-- Backup --}}
+                        <li class="nav-item {{ Request::is('*/backups*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ route('backups.index') }}">
+                                <span class="aside-menu-icon pe-3"><i class="fas fa-database"></i></span>
+                                <span class="aside-menu-title">Backup data</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
-                @endif
-
-                {{-- Settings - always last --}}
-                @can('manage_settings')
-                <li
-                    class="nav-item {{ 
-        (isRole('clinic_admin') && Request::is('admin/settings*', 'admin/roles*', 'admin/countries*', 'admin/provinces*', 'admin/cities*')) ||
-        (isRole('staff') && Request::is('staff/settings*', 'staff/roles*', 'staff/countries*', 'staff/provinces*', 'staff/cities*'))
-    ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('setting.index') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
-                        <span class="aside-menu-title">{{ __('messages.settings') }}</span>
-                        <span class="d-none">{{ __('messages.settings') }}</span>
-                        <span class="d-none">{{ __('messages.roles') }}</span>
-                        <span class="d-none">{{ __('messages.countries') }}</span>
-                        <span class="d-none">{{ __('messages.states') }}</span>
-                        <span class="d-none">{{ __('messages.cities') }}</span>
-                        {{-- <span class="d-none">{{ __('messages.holiday.doctor_holiday') }}</span> --}}
-                    </a>
-                </li>
                 @endcan
+

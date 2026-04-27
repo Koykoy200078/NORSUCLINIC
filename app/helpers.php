@@ -313,7 +313,7 @@ if (! function_exists('version')) {
     function version()
     {
         if (config('app.is_version') == 'true') {
-            $composerFile = file_get_contents('../composer.json');
+            $composerFile = file_get_contents(base_path('composer.json'));
             $composerData = json_decode($composerFile, true);
             $currentVersion = $composerData['version'];
 

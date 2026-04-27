@@ -85,6 +85,7 @@
                 }
             }
         }
+        }
     </style>
 
     <!-- Laravel Routes -->
@@ -161,6 +162,11 @@
         let currentLoginUserId = "{{ getLogInUserId() }}";
         let bloodGroupArray = @json($bloodGroupArr);
         Lang.setLocale(checkLanguageSession);
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof IOInitSideBarCollapse === 'function') {
+                IOInitSideBarCollapse();
+            }
+        });
     </script>
 
     @yield('page_js')
