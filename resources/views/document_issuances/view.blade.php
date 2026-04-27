@@ -16,9 +16,9 @@ $documentId = $requestDocument->id
 ?? request()->route('id');
 
 $exportPdfUrl = $documentId
-? (isRole('clinic_admin') ? route('document-issuances.export-pdf', $documentId) :
-(isRole('staff') ? route('staff.document-issuances.export-pdf', $documentId) :
-(isRole('doctor') ? route('doctors.document-issuances.export-pdf', $documentId) : route('document-issuances.export-pdf', $documentId))))
+? (isRole('clinic_admin') ? route('document-issuances.export-pdf', ['document_issuance' => $documentId]) :
+(isRole('staff') ? route('staff.document-issuances.export-pdf', ['document_issuance' => $documentId]) :
+(isRole('doctor') ? route('doctors.document-issuances.export-pdf', ['document_issuance' => $documentId]) : route('document-issuances.export-pdf', ['document_issuance' => $documentId]))))
 : null;
 @endphp
 <div class="p-4">
@@ -26,7 +26,16 @@ $exportPdfUrl = $documentId
         <a href="{{ $indexUrlWithModule }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
         @if($exportPdfUrl)
-        <a href="{{ $exportPdfUrl }}" class="bg-green-500 text-white px-4 py-2 rounded" target="_blank">Export via PDF</a>
+        <div class="flex gap-2">
+            @if($requestDocument->document_type == 'excuse_slip' || $requestDocument->document_type == 'medical_certificate')
+            <a href="{{ $exportPdfUrl }}{{ str_contains($exportPdfUrl, '?') ? '&' : '?' }}action=print" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2" target="_blank">
+                <i class="fas fa-print"></i> Direct Print (Fast)
+            </a>
+            @endif
+            <a href="{{ $exportPdfUrl }}" class="bg-green-500 text-white px-4 py-2 rounded shadow-sm hover:bg-green-600 transition-colors flex items-center gap-2" target="_blank">
+                <i class="fas fa-file-pdf"></i> Export via PDF
+            </a>
+        </div>
         @endif
     </div>
 

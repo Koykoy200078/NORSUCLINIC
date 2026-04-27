@@ -71,7 +71,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Request Documents (Doctors can manage)
     Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::get('document-issuances/{id}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+        Route::get('document-issuances/{document_issuance}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
         Route::resource('document-issuances', DocumentIssuanceController::class);
 
         // Lab Requests

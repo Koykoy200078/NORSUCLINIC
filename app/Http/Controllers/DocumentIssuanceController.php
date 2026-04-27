@@ -1194,45 +1194,52 @@ class DocumentIssuanceController extends Controller
         }
     }
 
-    public function exportPdf($id)
+    public function exportPdf(DocumentIssuance $document_issuance)
     {
+        $id = $document_issuance->id;
+        Log::info('exportPdf hit for ID: ' . $id . ' with action: ' . request('action'));
         try {
             // Set a higher time limit for PDF generation if needed
             set_time_limit(120);
 
-            // Fetch the request document by ID
-            $requestDocument = DocumentIssuance::findOrFail($id);
+            // The model is already fetched by Route Model Binding
+            $requestDocument = $document_issuance;
             $medicalCertificateDoctorName = null;
-
-            // Optimization: Convert logos to base64 to avoid local HTTP requests or slow file lookups in DomPDF
-            $norsuLogoPath = public_path('assets/image/norsu_logo.png');
-            $clinicLogoPath = public_path('assets/image/norsu_clinic_logo.png');
-            
-            $norsuLogoBase64 = '';
-            $clinicLogoBase64 = '';
-            
-            if (file_exists($norsuLogoPath)) {
-                $type = pathinfo($norsuLogoPath, PATHINFO_EXTENSION);
-                $data = file_get_contents($norsuLogoPath);
-                $norsuLogoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-            }
-            
-            if (file_exists($clinicLogoPath)) {
-                $type = pathinfo($clinicLogoPath, PATHINFO_EXTENSION);
-                $data = file_get_contents($clinicLogoPath);
-                $clinicLogoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-            }
 
             // Choose the PDF layout based on document type
             if ($requestDocument->document_type === 'medical_certificate') {
-                $view = 'document_issuances.pdf_medical_certificate';
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
+
+                // Direct HTML Print optimization for Medical Certificate
+                if (request()->has('action') && request()->get('action') === 'print') {
+                    return view('document_issuances.print_medical_certificate', compact('requestDocument', 'medicalCertificateDoctorName'));
+                }
+
+                // Optimization: Convert logos to base64 to avoid local HTTP requests or slow file lookups in DomPDF
+                $norsuLogoPath = public_path('assets/image/norsu_logo.png');
+                $clinicLogoPath = public_path('assets/image/norsu_clinic_logo.png');
+                $norsuLogoBase64 = file_exists($norsuLogoPath) ? 'data:image/' . pathinfo($norsuLogoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($norsuLogoPath)) : '';
+                $clinicLogoBase64 = file_exists($clinicLogoPath) ? 'data:image/' . pathinfo($clinicLogoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($clinicLogoPath)) : '';
+
+                $view = 'document_issuances.pdf_medical_certificate';
                 $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName', 'norsuLogoBase64', 'clinicLogoBase64'))
                     ->setPaper([0, 0, 612, 396], 'landscape') // 5.5"x8.5" in points
                     ->setWarnings(false);
             } elseif ($requestDocument->document_type === 'excuse_slip') {
-                $view = 'document_issuances.pdf_excuse_slip';
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
+                
+                // Direct HTML Print optimization for Excuse Slip (No PDF generation, very fast)
+                if (request()->has('action') && request()->get('action') === 'print') {
+                    return view('document_issuances.print_excuse_slip', compact('requestDocument', 'medicalCertificateDoctorName'));
+                }
+
+                // Optimization: Convert logos to base64 for PDF
+                $norsuLogoPath = public_path('assets/image/norsu_logo.png');
+                $clinicLogoPath = public_path('assets/image/norsu_clinic_logo.png');
+                $norsuLogoBase64 = file_exists($norsuLogoPath) ? 'data:image/' . pathinfo($norsuLogoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($norsuLogoPath)) : '';
+                $clinicLogoBase64 = file_exists($clinicLogoPath) ? 'data:image/' . pathinfo($clinicLogoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($clinicLogoPath)) : '';
+
+                $view = 'document_issuances.pdf_excuse_slip';
                 $pdf = Pdf::loadView($view, compact('requestDocument', 'medicalCertificateDoctorName', 'norsuLogoBase64', 'clinicLogoBase64'))
                     ->setPaper([0, 0, 612, 396], 'landscape')
                     ->setWarnings(false);
