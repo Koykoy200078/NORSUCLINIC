@@ -67,6 +67,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- 7) Medicine Dispensing Management                                   --}}
                 {{-- 8) Laboratory & Medical Request Management                          --}}
                 {{-- 9) Certificate Issuance                                             --}}
+                {{-- 10) Report Generation                                               --}}
                 {{-- Keep the next sections in this exact order.                         --}}
                 {{-- ===================================================================== --}}
 
@@ -170,11 +171,11 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- END SIDEBAR ORDER LOCK (items below can be reordered independently) --}}
 
+                {{-- [ORDER 4] Consultations --}}
                 @can('manage_request_documents')
                 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
                 @php
                 $documentIssuanceIndexRoute = getRouteByRole('document-issuances.index');
-
                 $isDocumentIssuancePath =
                 (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
                 (isRole('staff') && Request::is('staff/document-issuances*')) ||
@@ -188,14 +189,30 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 (!$activeDocumentModule && $activeDocumentType === 'consultation_form') ||
                 (!$activeDocumentModule && !$activeDocumentType)
                 );
+                @endphp
+                <li class="nav-item {{ $isConsultationNavActive ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+                        href="{{ $documentIssuanceIndexRoute . '?module=consultation' }}">
+                        <span class="aside-menu-icon pe-3">
+                            <i class="fa-solid fa-notes-medical"></i>
+                        </span>
+                        <span class="aside-menu-title">Consultations</span>
+                        @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
+                        @if($incompleteDocsCount > 0)
+                        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
+                            <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
+                        </span>
+                        @endif
+                    </a>
+                </li>
+                @endif
+                @endcan
 
-                $isCertificateNavActive = $isDocumentIssuancePath && (
-                $activeDocumentModule === 'certificate' ||
-                (!$activeDocumentModule && $activeDocumentType === 'medical_certificate')
-                );
-
+                {{-- [ORDER 5] Prescription Management --}}
+                @can('manage_request_documents')
+                @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+                @php
                 $prescriptionIndexRoute = getRouteByRole('prescriptions.index');
-
                 $isPrescriptionNavActive =
                 (isRole('clinic_admin') && (
                 Request::is('admin/prescriptions*', 'admin/prescription-medicine*', 'admin/prescription-pdf*', 'admin/patients/*/prescription-create') ||
@@ -210,28 +227,6 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 (Request::is('doctors/patients*') && request()->query('module') === 'prescription')
                 ));
                 @endphp
-
-                <li class="nav-item {{ $isConsultationNavActive ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                        href="{{ $documentIssuanceIndexRoute . '?module=consultation' }}">
-                        <span class="aside-menu-icon pe-3">
-                            <i class="fa-solid fa-notes-medical"></i>
-                        </span>
-                        <span class="aside-menu-title">Consultations</span>
-                        @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
-                        @if($incompleteDocsCount > 0)
-                        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
-                            <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
-                        </span>
-                        @endif
-                        <span class="d-none">Record Walk-in or Schedule Visit</span>
-                        <span class="d-none">Encode Patient Complaints</span>
-                        <span class="d-none">Record Vital Signs and Findings</span>
-                        <span class="d-none">Assessment Plan Add Medicines to Plan Add Medicines to Nursing Intervention</span>
-                        <span class="d-none">Save Consultation Record</span>
-                    </a>
-                </li>
-
                 <li class="nav-item {{ $isPrescriptionNavActive ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
                         href="{{ $prescriptionIndexRoute }}">
@@ -239,18 +234,6 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                             <i class="fa-solid fa-file-prescription"></i>
                         </span>
                         <span class="aside-menu-title">Prescriptions</span>
-                        <span class="d-none">Select patient then create prescription</span>
-                    </a>
-                </li>
-
-                <li class="nav-item {{ $isCertificateNavActive ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
-                        href="{{ $documentIssuanceIndexRoute . '?module=certificate' }}">
-                        <span class="aside-menu-icon pe-3">
-                            <i class="fa-solid fa-file-medical"></i>
-                        </span>
-                        <span class="aside-menu-title">Certificates</span>
-                        <span class="d-none">Medical Certificate</span>
                     </a>
                 </li>
                 @endif
@@ -360,7 +343,37 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                     </a>
                 </li>
                 @endcan
-                {{-- Activity Logs - For clinic_admin, staff, and doctor --}}
+                {{-- [ORDER 9] Certificate Issuance --}}
+                @can('manage_request_documents')
+                @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
+                @php
+                $isDocumentIssuancePath =
+                (isRole('clinic_admin') && Request::is('admin/document-issuances*')) ||
+                (isRole('staff') && Request::is('staff/document-issuances*')) ||
+                (isRole('doctor') && Request::is('doctors/document-issuances*'));
+
+                $activeDocumentModule = request()->query('module');
+                $activeDocumentType = request()->query('document_type');
+
+                $isCertificateNavActive = $isDocumentIssuancePath && (
+                $activeDocumentModule === 'certificate' ||
+                (!$activeDocumentModule && $activeDocumentType === 'medical_certificate')
+                );
+                $documentIssuanceIndexRoute = getRouteByRole('document-issuances.index');
+                @endphp
+                <li class="nav-item {{ $isCertificateNavActive ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page"
+                        href="{{ $documentIssuanceIndexRoute . '?module=certificate' }}">
+                        <span class="aside-menu-icon pe-3">
+                            <i class="fa-solid fa-file-medical"></i>
+                        </span>
+                        <span class="aside-menu-title">Certificates</span>
+                    </a>
+                </li>
+                @endif
+                @endcan
+
+                {{-- [ORDER 10] Report Generation (Formerly Activity Logs) --}}
                 @if(isRole('clinic_admin') || isRole('staff') || isRole('doctor'))
                 <li class="nav-item {{ 
     (isRole('clinic_admin') && Request::is('admin/activity-logs*')) ||
@@ -368,8 +381,8 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
     (isRole('doctor') && Request::is('doctors/activity-logs*'))
 ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('activity-logs.index') }}">
-                        <span class="aside-menu-icon pe-3"><i class="fas fa-clipboard-list"></i></span>
-                        <span class="aside-menu-title">Activity Logs</span>
+                        <span class="aside-menu-icon pe-3"><i class="fas fa-chart-line"></i></span>
+                        <span class="aside-menu-title">Report Generation</span>
                     </a>
                 </li>
                 @endif

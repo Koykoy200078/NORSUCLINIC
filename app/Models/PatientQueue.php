@@ -21,12 +21,14 @@ class PatientQueue extends Model
         'has_consultation_attachment',
         'called_at',
         'completed_at',
+        'scheduled_at',
     ];
 
     protected $casts = [
         'is_priority' => 'boolean',
         'called_at' => 'datetime',
         'completed_at' => 'datetime',
+        'scheduled_at' => 'datetime',
     ];
 
     const STATUS_WAITING = 'waiting';

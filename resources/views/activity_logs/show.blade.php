@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-Activity Log Details
+Report Details
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@ Activity Log Details
         <div class="card">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h3 class="fw-bolder m-0">Activity Log Details</h3>
+                    <h3 class="fw-bolder m-0">Report Details</h3>
                 </div>
                 <div class="card-toolbar">
                     <a href="{{ 

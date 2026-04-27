@@ -3,57 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\Patient;
+use App\Models\DocumentIssuance;
+use App\Models\Medicine;
+use App\Models\MedicineBatch;
+use App\Models\Prescription;
+use App\Models\PatientQueue;
+use App\Models\UsedMedicine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ActivityLogController extends Controller
 {
     /**
-     * Display a listing of activity logs
+     * Display a listing of activity logs and clinical reports
      */
     public function index(Request $request)
     {
-        $query = ActivityLog::query()->with('user')->orderBy('created_at', 'desc');
-
-        // Filter by user type
-        if ($request->filled('user_type') && $request->user_type !== 'all') {
-            $query->where('user_type', $request->user_type);
-        }
-
-        // Filter by action
-        if ($request->filled('action') && $request->action !== 'all') {
-            $query->where('action', $request->action);
-        }
-
-        // Filter by date range
-        if ($request->filled('date_from')) {
-            $query->where('date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('date', '<=', $request->date_to);
-        }
-
-        // Search by patient name or description
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('patient_name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('user_name', 'like', "%{$search}%");
-            });
-        }
-
-        $activityLogs = $query->paginate(20);
-
-        // Get unique actions for filter dropdown (exclude 'created_patient')
-        $actions = ActivityLog::select('action')
-            ->distinct()
-            ->whereNotIn('action', ['created_patient'])
-            ->pluck('action')
-            ->toArray();
-
-        return view('activity_logs.index', compact('activityLogs', 'actions'));
+        return view('activity_logs.index');
     }
 
     /**
@@ -67,92 +35,101 @@ class ActivityLogController extends Controller
     }
 
     /**
-     * Export activity logs to CSV
+     * Export activity logs or clinical reports to CSV
      */
     public function export(Request $request)
     {
-        $query = ActivityLog::query()->with('user')->orderBy('created_at', 'desc');
+        $tab = $request->get('tab', 'logs');
+        $search = $request->get('search');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
 
-        // Apply same filters as index
-        if ($request->filled('user_type') && $request->user_type !== 'all') {
-            $query->where('user_type', $request->user_type);
-        }
-
-        if ($request->filled('action') && $request->action !== 'all') {
-            $query->where('action', $request->action);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->where('date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('date', '<=', $request->date_to);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('patient_name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('user_name', 'like', "%{$search}%");
-            });
-        }
-
-        $activityLogs = $query->get();
-
-        $filename = 'activity_logs_' . now()->format('Y-m-d_His') . '.csv';
-
+        $filename = 'report_' . $tab . '_' . now()->format('Y-m-d_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function () use ($activityLogs) {
+        $callback = function () use ($tab, $search, $dateFrom, $dateTo, $request) {
             $file = fopen('php://output', 'w');
 
-            // CSV Headers
-            fputcsv($file, [
-                'Date',
-                'Time',
-                'User',
-                'User Type',
-                'Action',
-                'Patient Name',
-                'Age',
-                'Gender',
-                'College',
-                'Course/Section',
-                'Address',
-                'Contact Number',
-                'Complaints',
-                'Diagnosis',
-                'Informant',
-                'Consult Mode',
-                'Description',
-            ]);
+            switch ($tab) {
+                case 'logs':
+                    fputcsv($file, ['Date', 'Time', 'User', 'User Type', 'Action', 'Patient Name', 'Description']);
+                    $query = ActivityLog::query()->orderBy('created_at', 'desc');
+                    if ($request->filled('user_type') && $request->user_type !== 'all') $query->where('user_type', $request->user_type);
+                    if ($request->filled('action') && $request->action !== 'all') $query->where('action', $request->action);
+                    if ($dateFrom) $query->where('date', '>=', $dateFrom);
+                    if ($dateTo) $query->where('date', '<=', $dateTo);
+                    if ($search) $query->where('patient_name', 'like', "%{$search}%")->orWhere('description', 'like', "%{$search}%");
+                    
+                    $query->chunk(100, function ($logs) use ($file) {
+                        foreach ($logs as $log) {
+                            fputcsv($file, [
+                                $log->date ? $log->date->format('Y-m-d') : $log->created_at->format('Y-m-d'),
+                                $log->created_at->format('H:i:s'),
+                                $log->user_name,
+                                $log->formatted_user_type,
+                                $log->formatted_action,
+                                $log->patient_name,
+                                $log->description,
+                            ]);
+                        }
+                    });
+                    break;
 
-            // CSV Data
-            foreach ($activityLogs as $log) {
-                fputcsv($file, [
-                    $log->date ? $log->date->format('Y-m-d') : $log->created_at->format('Y-m-d'),
-                    $log->created_at->format('H:i:s'),
-                    $log->user_name,
-                    $log->formatted_user_type,
-                    $log->formatted_action,
-                    $log->patient_name,
-                    $log->patient_age,
-                    $log->patient_gender,
-                    $log->college,
-                    $log->course_section,
-                    $log->address,
-                    $log->contact_number,
-                    $log->complaints,
-                    $log->diagnosis,
-                    $log->informant,
-                    $log->consult_mode,
-                    $log->description,
-                ]);
+                case 'visits':
+                    fputcsv($file, ['Date', 'Patient Name', 'Age', 'Gender', 'Complaints', 'Assessment', 'Plan', 'Encoder']);
+                    $query = DocumentIssuance::where('document_type', 'consultation_form')->orderBy('created_at', 'desc');
+                    if ($dateFrom) $query->whereDate('created_at', '>=', $dateFrom);
+                    if ($dateTo) $query->whereDate('created_at', '<=', $dateTo);
+                    if ($search) $query->where('name', 'like', "%{$search}%")->orWhere('complaints', 'like', "%{$search}%");
+                    
+                    $query->chunk(100, function ($records) use ($file) {
+                        foreach ($records as $r) {
+                            fputcsv($file, [$r->created_at->format('Y-m-d H:i'), $r->name, $r->age, $r->gender, $r->complaints, $r->assessment, $r->plan, $r->creator->full_name ?? 'System']);
+                        }
+                    });
+                    break;
+
+                case 'inventory':
+                    fputcsv($file, ['Medicine Name', 'Category', 'Generic', 'Current Quantity', 'Min Alert', 'Status']);
+                    $query = Medicine::with(['category', 'generic'])->orderBy('name', 'asc');
+                    if ($search) $query->where('name', 'like', "%{$search}%");
+                    
+                    $query->chunk(100, function ($medicines) use ($file) {
+                        foreach ($medicines as $m) {
+                            $status = $m->available_quantity <= 0 ? 'Out of Stock' : ($m->available_quantity <= $m->minimum_stock_alert ? 'Low Stock' : 'Healthy');
+                            fputcsv($file, [$m->name, $m->category->name ?? 'N/A', $m->generic->name ?? 'N/A', $m->available_quantity, $m->minimum_stock_alert, $status]);
+                        }
+                    });
+                    break;
+
+                case 'dispensing':
+                    fputcsv($file, ['Date', 'Medicine', 'Quantity Used', 'Reference Type', 'Reference ID']);
+                    $query = UsedMedicine::with('medicine')->orderBy('created_at', 'desc');
+                    if ($dateFrom) $query->whereDate('created_at', '>=', $dateFrom);
+                    if ($dateTo) $query->whereDate('created_at', '<=', $dateTo);
+                    
+                    $query->chunk(100, function ($dispenses) use ($file) {
+                        foreach ($dispenses as $d) {
+                            fputcsv($file, [$d->created_at->format('Y-m-d H:i'), $d->medicine->name ?? 'N/A', $d->stock_used, $d->model_type, $d->model_id]);
+                        }
+                    });
+                    break;
+
+                case 'appointments':
+                    fputcsv($file, ['Scheduled At', 'Patient Name', 'Added By', 'Status', 'Notes']);
+                    $query = PatientQueue::with(['patient', 'addedBy'])->whereNotNull('scheduled_at')->orderBy('scheduled_at', 'asc');
+                    if ($dateFrom) $query->whereDate('scheduled_at', '>=', $dateFrom);
+                    if ($dateTo) $query->whereDate('scheduled_at', '<=', $dateTo);
+                    
+                    $query->chunk(100, function ($apps) use ($file) {
+                        foreach ($apps as $a) {
+                            fputcsv($file, [$a->scheduled_at->format('Y-m-d H:i'), $a->patient->user->full_name ?? 'Unknown', $a->addedBy->full_name ?? 'System', $a->status, $a->notes]);
+                        }
+                    });
+                    break;
             }
 
             fclose($file);
