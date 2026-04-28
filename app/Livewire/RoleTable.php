@@ -23,12 +23,18 @@ class RoleTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id')
             ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setQueryStringStatus(false)
+            ->setTableAttributes([
+                'class' => 'table table-striped table-row-bordered gy-5 gs-7 align-middle',
+            ]);
     }
 
     public function builder(): Builder
     {
-        return Role::with('permissions')->select('roles.*');
+        return Role::with('permissions')
+            ->whereNotNull('display_name')
+            ->where('display_name', '!=', '')
+            ->select('roles.*');
     }
 
     public function placeholder()

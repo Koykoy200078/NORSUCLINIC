@@ -13,9 +13,9 @@ $styleCss = 'style';
             <div class="row align-items-center flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 text-lg-end text-center">
                     <div class="hero-content mt-5 mt-lg-0">
-                        <p class="text-primary fs-5 fw-bold">{{ $sliders->title }}</p>
+                        <p class="text-primary fs-5 fw-bold">{{ $sliders->title ?? __('messages.web.welcome_to_norsu_clinic') }}</p>
                         <h1 class="mb-5">
-                            {{ $sliders->short_description }}
+                            {{ $sliders->short_description ?? __('messages.web.your_health_our_priority') }}
                         </h1>
                         <!-- @if(!getLogInUser())
                         <a href="{{ route('register') }}"
@@ -24,7 +24,7 @@ $styleCss = 'style';
                     </div>
                 </div>
                 <div class="col-lg-6 text-lg-end text-center">
-                    <img src="{{ $sliders->slider_image }}" alt="NORSU LOGO" class="img-fluid object-image-cover" loading="lazy" />
+                    <img src="{{ $sliders ? $sliders->slider_image : asset('assets/image/norsu_logo.png') }}" alt="NORSU LOGO" class="img-fluid object-image-cover" loading="lazy" />
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@ $styleCss = 'style';
                             <div
                                 class="about-content-box rounded-20 bg-white d-flex align-items-center justify-content-center h-100">
                                 <div class="text-center">
-                                    <h2 class="number-big text-primary">{{ $aboutExperience->value }}</h2>
+                                    <h2 class="number-big text-primary">{{ $aboutExperience->value ?? '' }}</h2>
                                     <p class="mb-0">{{ __('messages.web.year_experience') }}</p>
                                 </div>
                             </div>

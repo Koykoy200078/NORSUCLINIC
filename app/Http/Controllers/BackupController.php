@@ -81,7 +81,6 @@ class BackupController extends Controller
 
             Flash::success('Backup created successfully: ' . $fileName);
             return redirect()->back();
-
         } catch (Exception $e) {
             Flash::error('Failed to create backup: ' . $e->getMessage());
             return redirect()->back();
@@ -90,9 +89,9 @@ class BackupController extends Controller
 
     public function download($fileName)
     {
-        $filePath = $this->backupPath . DIRECTORY_SEPARATOR . $fileName;
+        $filePath = $this->resolveBackupPath($fileName);
 
-        if (File::exists($filePath)) {
+        if ($filePath && File::exists($filePath)) {
             return Response::download($filePath);
         }
 
@@ -102,14 +101,19 @@ class BackupController extends Controller
 
     public function destroy($fileName)
     {
-        $filePath = $this->backupPath . DIRECTORY_SEPARATOR . $fileName;
+        $filePath = $this->resolveBackupPath($fileName);
 
-        if (File::exists($filePath)) {
-            File::delete($filePath);
-            Flash::success('Backup deleted successfully.');
-        } else {
+        if (! $filePath || ! File::exists($filePath)) {
             Flash::error('File not found.');
+            return redirect()->back();
         }
+
+        if (! File::delete($filePath)) {
+            Flash::error('Failed to delete backup. Please try again.');
+            return redirect()->back();
+        }
+
+        Flash::success('Backup deleted successfully.');
 
         return redirect()->back();
     }
@@ -155,7 +159,6 @@ class BackupController extends Controller
 
             Flash::success('Database restored successfully from ' . $file->getClientOriginalName());
             return redirect()->back();
-
         } catch (Exception $e) {
             Flash::error('Failed to restore database: ' . $e->getMessage());
             return redirect()->back();
@@ -173,5 +176,16 @@ class BackupController extends Controller
         $bytes /= (1 << (10 * $pow));
 
         return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    protected function resolveBackupPath(string $fileName): ?string
+    {
+        $safeFileName = basename($fileName);
+
+        if ($safeFileName !== $fileName) {
+            return null;
+        }
+
+        return $this->backupPath . DIRECTORY_SEPARATOR . $safeFileName;
     }
 }

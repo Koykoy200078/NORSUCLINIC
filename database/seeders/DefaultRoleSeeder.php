@@ -38,7 +38,7 @@ class DefaultRoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            $roleExist = Role::whereName($role)->exists();
+            $roleExist = Role::whereName($role['name'])->exists();
             if (! $roleExist) {
                 Role::create($role);
             }

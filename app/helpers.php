@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Request;
 
 if (! function_exists('getLogInUser')) {
     /**
@@ -136,6 +137,8 @@ if (!function_exists('getDashboardURL')) {
         if ($user->hasRole('clinic_admin')) {
             return 'admin/dashboard';
         } elseif ($user->hasRole('staff')) {
+            return 'staff/dashboard';
+        } elseif ($user->hasRole('nurse')) {
             return 'staff/dashboard';
         } elseif ($user->hasRole('doctor')) {
             return 'doctors/dashboard';
@@ -680,6 +683,8 @@ if (! function_exists('getRouteByRole')) {
 
         if ($user->hasRole('staff')) {
             $routeName = 'staff.' . $baseName;
+        } elseif ($user->hasRole('nurse')) {
+            $routeName = 'staff.' . $baseName;
         } elseif ($user->hasRole('doctor')) {
             $routeName = 'doctors.' . $baseName;
         } elseif ($user->hasRole('patient')) {
@@ -692,6 +697,78 @@ if (! function_exists('getRouteByRole')) {
         }
 
         return route($routeName, $parameters);
+    }
+}
+
+if (! function_exists('getRouteNameByRole')) {
+    /**
+     * Get the route name for the current role without fallback.
+     * @param string $baseName
+     * @return string
+     */
+    function getRouteNameByRole(string $baseName): string
+    {
+        $user = getLogInUser();
+        if (! $user) {
+            return $baseName;
+        }
+
+        if ($user->hasRole('staff') || $user->hasRole('nurse')) {
+            return 'staff.' . $baseName;
+        }
+
+        if ($user->hasRole('doctor')) {
+            return 'doctors.' . $baseName;
+        }
+
+        if ($user->hasRole('patient')) {
+            return 'patients.' . $baseName;
+        }
+
+        return $baseName;
+    }
+}
+
+if (! function_exists('isModuleActive')) {
+    /**
+     * Check if the current request belongs to a specific module
+     * @param string $moduleName
+     * @return bool
+     */
+    function isModuleActive(string $moduleName): bool
+    {
+        $module = request()->query('module');
+        $type = request()->query('document_type');
+        $tab = request()->query('tab');
+
+        switch ($moduleName) {
+            case 'dashboard':
+                return Request::is('*/dashboard*');
+            case 'patients':
+                return Request::is('*/patients*') && $module !== 'prescription';
+            case 'patient-queue':
+                return Request::is('*/patient-queue*');
+            case 'consultations':
+                return Request::is('*/document-issuances*') && ($module === 'consultation' || (!$module && $type === 'consultation_form') || (!$module && !$type && !request()->query('status')));
+            case 'prescriptions':
+                return Request::is('*/prescriptions*', '*/prescription-medicine*', '*/prescription-pdf*') || (Request::is('*/patients*') && $module === 'prescription');
+            case 'inventory':
+                return Request::is('*/categories*', '*/generics*', '*/medicines*', '*/stock-in*', '*/medicine-inventory-tracking*');
+            case 'dispensing':
+                return Request::is('*/used-medicine*', '*/medicine-history*', '*/dispense-records*', '*/medicine-dispensing-management*');
+            case 'lab-requests':
+                return Request::is('*/lab-requests*');
+            case 'certificates':
+                return Request::is('*/document-issuances*') && ($module === 'certificate' || (!$module && $type === 'medical_certificate'));
+            case 'reports':
+                return Request::is('*/activity-logs*') && !$tab && !request()->query('status');
+            case 'notifications':
+                return Request::is('*/activity-logs*') && ($tab === 'inventory' || $tab === 'logs' || request()->query('status') === 'low_stock');
+            case 'settings':
+                return Request::is('*/settings*', '*/roles*', '*/backups*', '*/staffs*', '*/doctors*', '*/specializations*', '*/cms*', '*/countries*', '*/states*', '*/cities*', '*/barangays*');
+            default:
+                return Request::is("*/$moduleName*");
+        }
     }
 }
 
@@ -770,4 +847,3 @@ if (! function_exists('generateUniqueLabRequestNumber')) {
         return $code;
     }
 }
-
