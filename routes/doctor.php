@@ -111,11 +111,9 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
         Route::get('dispense-records-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('dispense-records.pdf');
         Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
 
-        // Medicine History (legacy route names)
-        Route::resource('medicine-history', DispenseRecordController::class);
-        Route::post('medicine-history/store-patient', [DispenseRecordController::class, 'storePatient'])->name('store.patient');
-        Route::get('medicine-history-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('medicine.bill.pdf');
-        Route::get('get-medicine-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('get-medicine-category');
+        // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
+        Route::redirect('medicine-history', '/doctors/dispense-records');
+        Route::redirect('medicine-history/{id}', '/doctors/dispense-records/{id}');
     });
 
     // Activity Logs (Doctors can view activity logs)

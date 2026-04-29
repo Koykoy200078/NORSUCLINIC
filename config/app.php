@@ -60,6 +60,10 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
     'media_disc' => env('MEDIA_DISK', 'public'),
+    'local_media_hosts' => array_values(array_filter(array_map(
+        static fn (string $host): string => strtolower(trim($host)),
+        explode(',', (string) env('LOCAL_MEDIA_HOSTS', 'localhost,127.0.0.1'))
+    ))),
 
     /*
     |--------------------------------------------------------------------------

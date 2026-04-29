@@ -48,7 +48,7 @@ use App\Http\Controllers\BackupController;
 
 Route::get('/login', function () {
     return (! Auth::check()) ? view('auth.login') : Redirect::to(getDashboardURL());
-})->name('login');
+})->name('login')->middleware('setLanguage');
 
 Route::middleware('setLanguage')->group(function () {
     Route::get('/', [FrontController::class, 'medical'])->name('medical');
@@ -63,18 +63,20 @@ Route::middleware('setLanguage')->group(function () {
 Route::post('/change-language', [FrontController::class, 'changeLanguage'])->name('front.change.language');
 
 //Dark Mode
-Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])->name('update-dark-mode');
+Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])
+    ->middleware(['auth', 'checkUserStatus'])
+    ->name('update-dark-mode');
 
 // Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
 Route::post(
     '/notification/{notification}/read',
     [NotificationController::class, 'readNotification']
-)->name('notifications.read');
+)->middleware(['auth', 'checkUserStatus'])->name('notifications.read');
 Route::post(
     '/read-all-notification',
     [NotificationController::class, 'readAllNotification']
-)->name('notifications.read.all');
+)->middleware(['auth', 'checkUserStatus'])->name('notifications.read.all');
 
 Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
     // Update profile
@@ -85,9 +87,15 @@ Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
 });
 
 //get States and cities route
-Route::get('get-states', [UserController::class, 'getStates'])->name('get-state');
-Route::get('get-cities', [UserController::class, 'getCity'])->name('get-city');
-Route::get('get-barangays', [UserController::class, 'getBarangays'])->name('get-barangay');
+Route::get('get-states', [UserController::class, 'getStates'])
+    ->middleware(['auth', 'checkUserStatus'])
+    ->name('get-state');
+Route::get('get-cities', [UserController::class, 'getCity'])
+    ->middleware(['auth', 'checkUserStatus'])
+    ->name('get-city');
+Route::get('get-barangays', [UserController::class, 'getBarangays'])
+    ->middleware(['auth', 'checkUserStatus'])
+    ->name('get-barangay');
 
 // ============================================================================
 // ADMIN ROUTES
@@ -199,7 +207,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Staff route
     Route::middleware('permission:manage_staff')->group(function () {
         Route::resource('staffs', StaffController::class);
-        Route::post('staffs/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('staffs.reset.password');
+        Route::post('staffs/{user}/reset-password', [StaffController::class, 'resetPassword'])->name('staffs.reset.password');
     });
 
     // CMS/Front Management
@@ -230,7 +238,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('patient-queue/{patientQueue}/edit', [\App\Http\Controllers\PatientQueueController::class, 'edit'])->name('patient-queue.edit');
         Route::put('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'update'])->name('patient-queue.update');
         Route::delete('patient-queue/{patientQueue}', [\App\Http\Controllers\PatientQueueController::class, 'destroy'])->name('patient-queue.destroy');
-        Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
         Route::post('patient-queue/{patientQueue}/complete', [\App\Http\Controllers\PatientQueueController::class, 'complete'])->name('patient-queue.complete');
         Route::post('patient-queue/{patientQueue}/call-next', [\App\Http\Controllers\PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
     });
@@ -267,17 +274,16 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::get('dispense-records-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('dispense-records.pdf');
     Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
 
-    // Medicine History (legacy route names)
-    Route::resource('medicine-history', DispenseRecordController::class);
-    Route::post('medicine-history/store-patient', [DispenseRecordController::class, 'storePatient'])->name('store.patient');
-    Route::get('medicine-history-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('medicine.bill.pdf');
-    Route::get('get-medicine-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('get-medicine-category');
+    // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
+    Route::redirect('medicine-history', '/dispense-records');
+    Route::redirect('medicine-history/{id}', '/dispense-records/{id}');
 });
 
 // Note: Doctor and Staff routes are defined in their respective route files
 // to avoid duplication and maintain role-based separation.
 
-Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient']);
+Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient'])
+    ->middleware(['auth', 'checkUserStatus', 'role:clinic_admin', 'permission:manage_patients']);
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/patient.php';

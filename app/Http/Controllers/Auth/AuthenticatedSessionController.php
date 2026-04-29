@@ -47,6 +47,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         Session::put('languageName', 'en');
-        return redirect('/');
+
+        return redirect()->route('medical');
     }
 }

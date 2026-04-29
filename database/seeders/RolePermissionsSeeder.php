@@ -12,6 +12,10 @@ class RolePermissionsSeeder extends Seeder
     /**
      * Run the database seeds.
      *
+     * CENTRAL AUTHORITY for role-permission assignments.
+     * When adding a new permission, create it in the relevant permission
+     * seeder first, then add it here for the roles that need it.
+     *
      * Permission Rules:
      *  - clinic_admin : ALL permissions (manages everything including staff accounts)
      *  - staff        : Can manage doctors, patients, medicines, specialties, requests

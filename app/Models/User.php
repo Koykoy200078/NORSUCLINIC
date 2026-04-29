@@ -309,11 +309,7 @@ class User extends Authenticatable implements HasMedia
         $media = $this->getMedia(self::PROFILE)->first();
 
         if ($media) {
-            $fullUrl = $media->getFullUrl();
-            if (str_starts_with($fullUrl, 'http://localhost')) {
-                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
-            }
-            return $fullUrl;
+            return normalizeLocalUrl($media->getFullUrl()) ?? $media->getFullUrl();
         }
 
         $gender = $this->gender;

@@ -6,7 +6,6 @@ use Closure;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -25,13 +24,13 @@ class CheckUserStatus
             Auth::logout();
             Flash::error('Please verify your email.');
 
-            return Redirect::to('login');
+            return redirect()->route('login');
         }
         if (Auth::check() && ! getLogInUser()->status) {
             Auth::logout();
             Flash::error('Your Account is currently disabled, please contact to administrator.');
 
-            return Redirect::to('login');
+            return redirect()->route('login');
         }
 
         return $response;

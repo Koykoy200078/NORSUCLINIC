@@ -18,7 +18,7 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('/*') ? 'active' : '' }}" aria-current="page" href="{{ url('/') }}">{{ __('messages.web.home') }}</a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link {{ Request::is('medical-doctors*') ? 'active' : '' }}"
                                     href="{{ route('medicalDoctors') }}">{{ __('messages.web.our_team') }}</a>
                             </li>
@@ -29,7 +29,7 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('medical-about-us*') ? 'active' : '' }}"
                                     href="{{ route('medicalAboutUs') }}">{{ __('messages.web.about_us') }}</a>
-                            </li>
+                            </li> -->
                             <!-- <li class="nav-item">
                                 <a class="nav-link {{ Request::is('medical-contact*') ? 'active' : '' }}"
                                     href="{{ route('medicalContact') }}">{{ __('messages.web.contact_us') }}</a>

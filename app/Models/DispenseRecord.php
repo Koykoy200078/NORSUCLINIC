@@ -6,22 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Renamed from MedicineBill → DispenseRecord.
  * Table stays `medicine_bills` (old workspace — DB not yet migrated).
- * No payment semantics: discount/net_amount/payment_status columns exist in DB
- * but are not used in the recode logic.
+ * No payment semantics in the recode logic.
+ *
+ * Legacy financial columns may still exist in older databases. Use
+ * legacyFinancialDefaults() when creating records to keep compatibility.
  */
 class DispenseRecord extends Model
 {
     use HasFactory;
 
-    public const STATUS_UNPAID = 0;
-
-    public const STATUS_FULL_PAID = 1;
-
-    public const STATUS_PARTIAL_PAID = 2;
+    private static ?array $legacyFinancialColumns = null;
 
     protected $table = 'medicine_bills';
 
@@ -42,6 +41,33 @@ class DispenseRecord extends Model
         'note',
         'bill_date',
     ];
+
+    public static function legacyFinancialDefaults(): array
+    {
+        $defaults = [
+            'net_amount' => 0,
+            'discount' => 0,
+            'payment_status' => 1,
+            'payment_type' => 0,
+            'total' => 0,
+            'tax_amount' => 0,
+        ];
+
+        if (self::$legacyFinancialColumns === null) {
+            $table = (new static())->getTable();
+            self::$legacyFinancialColumns = [];
+
+            if (Schema::hasTable($table)) {
+                foreach (array_keys($defaults) as $column) {
+                    if (Schema::hasColumn($table, $column)) {
+                        self::$legacyFinancialColumns[] = $column;
+                    }
+                }
+            }
+        }
+
+        return array_intersect_key($defaults, array_flip(self::$legacyFinancialColumns));
+    }
 
     public function patient(): BelongsTo
     {

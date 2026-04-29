@@ -14,13 +14,7 @@ return new class extends Migration
         Schema::create('purchase_medicines', function (Blueprint $table) {
             $table->id();
             $table->string('purchase_no');
-            $table->float('tax');
-            $table->float('total');
-            $table->float('net_amount');
-            $table->integer('payment_type');
-            $table->float('discount');
             $table->string('note')->nullable();
-            $table->string('payment_note')->nullable();
             $table->timestamps();
         });
     }

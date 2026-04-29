@@ -59,6 +59,6 @@ class RegisteredUserController extends Controller
 
         Flash::success(__('messages.flash.your_reg_success'));
 
-        return redirect('login');
+        return redirect()->route('login');
     }
 }

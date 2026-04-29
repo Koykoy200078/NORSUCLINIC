@@ -3,148 +3,100 @@
 {{ __('messages.web.medical') }}
 @endsection
 @section('front-content')
-@php
-$styleCss = 'style';
-@endphp
-<div class="home-page">
-    <!-- start hero section -->
-    <section class="hero-section p-t-100 p-b-100">
-        <div class="container p-t-120">
-            <div class="row align-items-center flex-column-reverse flex-lg-row">
-                <div class="col-lg-6 text-lg-end text-center">
-                    <div class="hero-content mt-5 mt-lg-0">
-                        <p class="text-primary fs-5 fw-bold">{{ $sliders->title ?? __('messages.web.welcome_to_norsu_clinic') }}</p>
-                        <h1 class="mb-5">
-                            {{ $sliders->short_description ?? __('messages.web.your_health_our_priority') }}
-                        </h1>
-                        <!-- @if(!getLogInUser())
-                        <a href="{{ route('register') }}"
-                            class="btn btn-primary">{{ __('messages.web.sign_up') }}</a>
-                        @endif -->
+<style>
+.landing-premium{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--primary-color:#667eea;--primary-dark:#764ba2}
+.landing-hero{background:var(--primary-gradient);position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center}
+.landing-hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:50px 50px;opacity:0.4;animation:grain 8s steps(10) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}20%{transform:translate(-15%,5%)}30%{transform:translate(7%,-25%)}40%{transform:translate(-5%,25%)}50%{transform:translate(-15%,10%)}60%{transform:translate(15%,0%)}70%{transform:translate(0%,15%)}80%{transform:translate(3%,35%)}90%{transform:translate(-10%,10%)}}
+.landing-floating-shapes{position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:0}
+.landing-shape{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);animation:float 20s infinite ease-in-out}
+.landing-shape-1{width:120px;height:120px;top:15%;left:8%;animation-delay:0s}
+.landing-shape-2{width:80px;height:80px;top:65%;left:75%;animation-delay:-5s}
+.landing-shape-3{width:160px;height:160px;top:30%;left:85%;animation-delay:-10s}
+.landing-shape-4{width:60px;height:60px;top:80%;left:20%;animation-delay:-15s}
+@keyframes float{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(30px,-30px) rotate(120deg)}66%{transform:translate(-20px,20px) rotate(240deg)}}
+.landing-hero-content{position:relative;z-index:1}
+.landing-hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.15;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.15)}
+.landing-hero .hero-subtitle{font-size:1.15rem;color:rgba(255,255,255,0.85);font-weight:500;letter-spacing:0.5px}
+.landing-hero .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:0.5rem 1.25rem;color:#fff;font-size:0.9rem;font-weight:600;margin-bottom:1.5rem}
+.landing-hero-img{position:relative;z-index:1;filter:drop-shadow(0 25px 50px rgba(0,0,0,0.25));max-height:420px;object-fit:contain}
+.landing-btn-white{background:#fff;color:#667eea;border:none;padding:0.875rem 2rem;border-radius:14px;font-weight:700;font-size:1rem;transition:all 0.3s ease;box-shadow:0 10px 30px -5px rgba(0,0,0,0.2)}
+.landing-btn-white:hover{transform:translateY(-3px);box-shadow:0 20px 40px -5px rgba(0,0,0,0.25);color:#764ba2}
+.landing-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.4);padding:0.875rem 2rem;border-radius:14px;font-weight:700;font-size:1rem;transition:all 0.3s ease}
+.landing-btn-outline:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.6);color:#fff}
+.landing-features{background:#f8fafc;position:relative}
+.landing-features::before{content:'';position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,#667eea,#f8fafc)}
+.landing-card{background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:24px;box-shadow:0 4px 20px rgba(0,0,0,0.06);padding:2.5rem 2rem;transition:all 0.4s ease;height:100%}
+.landing-card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(102,126,234,0.12)}
+.landing-card-icon{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;margin-bottom:1.5rem;box-shadow:0 10px 25px rgba(102,126,234,0.3)}
+.landing-card h3{font-size:1.25rem;font-weight:700;color:#1e293b;margin-bottom:0.75rem}
+.landing-card p{color:#64748b;font-size:0.95rem;line-height:1.65;margin-bottom:0}
+.landing-stats{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden}
+.landing-stats::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,0.08) 0%,transparent 50%)}
+.stat-item h3{font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:0.5rem}
+.stat-item p{color:rgba(255,255,255,0.8);font-size:1rem;font-weight:500;margin-bottom:0}
+.stat-divider{width:1px;height:60px;background:rgba(255,255,255,0.2)}
+.landing-cta{background:#f8fafc}
+.landing-cta-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:24px;padding:4rem 2rem;position:relative;overflow:hidden;text-align:center}
+.landing-cta-card::before{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);top:-100px;right:-50px;border-radius:50%}
+.landing-cta-card h2{color:#fff;font-size:2rem;font-weight:700;margin-bottom:1rem;position:relative;z-index:1}
+.landing-cta-card p{color:rgba(255,255,255,0.85);font-size:1.1rem;margin-bottom:2rem;position:relative;z-index:1}
+.landing-cta-btn{background:#fff;color:#667eea;border:none;padding:1rem 2.5rem;border-radius:14px;font-weight:700;font-size:1.05rem;transition:all 0.3s ease;position:relative;z-index:1;box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+.landing-cta-btn:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(0,0,0,0.2);color:#764ba2}
+@media(max-width:991px){.landing-hero{min-height:auto;padding:6rem 0 4rem}.stat-divider{display:none!important}.landing-hero h1{font-size:2rem}}
+.page-header-fix{position:absolute!important;top:0;left:0;right:0;z-index:1000;background:transparent!important}
+.page-header-fix .nav-link{color:#fff!important;font-weight:500;opacity:0.95}
+.page-header-fix .nav-link:hover{opacity:1}
+.page-header-fix .navbar-toggler-icon{filter:invert(1)}
+.page-header-fix .btn-outline-primary{background:#fff!important;color:#667eea!important;border-color:#fff!important;font-weight:700!important;box-shadow:0 4px 15px rgba(0,0,0,0.15)!important}
+.page-header-fix .btn-outline-primary:hover{background:linear-gradient(135deg,#667eea,#764ba2)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 8px 25px rgba(102,126,234,0.4)!important}
+</style>
+
+<div class="landing-premium">
+    <!-- Hero Section -->
+    <section class="landing-hero">
+        <div class="landing-floating-shapes">
+            <div class="landing-shape landing-shape-1"></div>
+            <div class="landing-shape landing-shape-2"></div>
+            <div class="landing-shape landing-shape-3"></div>
+            <div class="landing-shape landing-shape-4"></div>
+        </div>
+        <div class="container landing-hero-content py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <div class="hero-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>{{ $sliders->title ?? __('messages.web.welcome_to_norsu_clinic') }}</span>
+                    </div>
+                    <h1 class="mb-4">
+                        {{ $sliders->short_description ?? __('messages.web.your_health_our_priority') }}
+                    </h1>
+                    <p class="hero-subtitle mb-5">
+                        Providing exceptional healthcare services to the NORSU community. Your well-being is our commitment.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                        @if(!getLogInUser())
+                        <a href="{{ route('login') }}" class="landing-btn-white text-decoration-none">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ __('messages.login') }}
+                        </a>
+                        @else
+                        <a href="{{ route('patients.index') }}" class="landing-btn-white text-decoration-none">
+                            <i class="fas fa-th-large me-2"></i>{{ __('messages.web.dashboard') }}
+                        </a>
+                        @endif
                     </div>
                 </div>
-                <div class="col-lg-6 text-lg-end text-center">
-                    <img src="{{ $sliders ? $sliders->slider_image : asset('assets/image/norsu_logo.png') }}" alt="NORSU LOGO" class="img-fluid object-image-cover" loading="lazy" />
+                <div class="col-lg-6 text-center">
+                    <img src="{{ $sliders ? $sliders->slider_image : asset('assets/image/norsu_logo.png') }}" alt="NORSU Clinic" class="landing-hero-img img-fluid" loading="lazy" />
                 </div>
             </div>
         </div>
     </section>
-    <!-- end hero section -->
-
-    <!-- start about section -->
-    <!-- <section class="about-section p-b-100">
-        <div class="container">
-            <div class="row align-items-center flex-column-reverse flex-xl-row">
-                <div class="col-xxl-6 col-xl-5 after-rectangle-shape position-relative about-left-content left-shape">
-                    <div class="row position-relative z-index-1">
-                        <div class="col-xl-6 col-md-3 about-block">
-                            <div class="about-image-box rounded-20 bg-white">
-                                <img src="{{ getSettingValue('about_image_2') }}" alt="About" class="rounded-20" loading="lazy" />
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-md-3 about-block">
-                            <div class="about-image-box rounded-20 bg-white">
-                                <img src="{{ getSettingValue('about_image_1') }}" alt="About" class="rounded-20" loading="lazy" />
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-md-3 about-block">
-                            <div
-                                class="about-content-box rounded-20 bg-white d-flex align-items-center justify-content-center h-100">
-                                <div class="text-center">
-                                    <h2 class="number-big text-primary">{{ $aboutExperience->value ?? '' }}</h2>
-                                    <p class="mb-0">{{ __('messages.web.year_experience') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-md-3 about-block">
-                            <div class="about-image-box bg-white rounded-20">
-                                <img src="{{ getSettingValue('about_image_3') }}" alt="About" class="rounded-20" loading="lazy" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-6 col-xl-7">
-                    <div class="about-right-content mb-md-5 mb-4 mb-xl-0 text-center text-xl-start">
-                        <h5 class="text-primary top-heading fs-6 mb-3">{{ __('messages.web.about_us') }}</h5>
-                        <h2 class="pb-2">{{ getSettingValue('about_title') }}</h2>
-                        <p class="paragraph pb-1">
-                            {{ getSettingValue('about_short_description') }}
-                        </p>
-                        <ul class="d-flex ps-0 mb-4 pb-2 justify-content-center justify-content-xl-start flex-wrap">
-                            <li class="mb-2">{{__('messages.web.emergency_help')}}</li>
-                            <li class="mb-2">{{__('messages.web.qualified_doctors')}}</li>
-                            <li class="mb-2">{{__('messages.web.best_professionals')}}</li>
-                            <li class="mb-2">{{__('messages.web.medical_treatment')}}</li>
-                        </ul>
-                        <a href="{{ route('medicalContact') }}"
-                            class="btn btn-primary ">{{__('messages.web.contact_us')}}</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    <!-- end about section -->
-
-    <!-- start how-it-work section -->
-    <!-- <section class="how-work-section p-t-100 p-b-100">
-        <div class="container">
-            <div class="text-center mb-lg-5 mb-4">
-                <h5 class="text-primary top-heading fs-6 mb-3">{{__('messages.web.working_process')}}</h5>
-                <h2 class="pb-2">{{__('messages.web.how_we_works')}}?</h2>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-xl-4 col-md-6">
-                    <div class="card mx-lg-2 h-100 text-md-start text-center">
-                        <div class="card-body">
-                            <h3 class="card-number mb-4 pb-3">
-                                1
-                            </h3>
-                            <h4 class="card-title fs-5">
-                                {{__('messages.web.registration')}}
-                            </h4>
-                            <p class="paragraph mb-0">
-                                {{__('messages.web.patient_can_do_registration___')}}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 mt-md-0 mt-4">
-                    <div class="card mx-lg-2 h-100 text-md-start text-center">
-                        <div class="card-body">
-                            <h3 class="card-number mb-4 pb-3">
-                                2
-                            </h3>
-                            <h4 class="card-title fs-5">
-                                {{__('messages.web.make_appointment')}}
-                            </h4>
-                            <p class="paragraph mb-0">
-                                {{__('messages.web.patient_can_book_an_appointment___')}}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 mt-xl-0 mt-4 pt-xl-0 pt-lg-3">
-                    <div class="card mx-lg-2 h-100 text-md-start text-center">
-                        <div class="card-body">
-                            <h3 class="card-number mb-4 pb-3">
-                                3
-                            </h3>
-                            <h4 class="card-title fs-5">
-                                {{__('messages.web.take_treatment')}}
-                            </h4>
-                            <p class="paragraph mb-0">
-                                {{__('messages.web.doctors_can_interact___')}}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    <!-- end how-it-work section -->
-
-    {{-- appointment section removed (Phase 2 cleanup) --}}
-
-    {{-- services section removed (Phase 2 cleanup) --}}
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var header = document.querySelector('.header');
+    if(header) header.classList.add('page-header-fix');
+});
+</script>
 @endsection

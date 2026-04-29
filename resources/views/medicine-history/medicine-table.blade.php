@@ -1,7 +1,5 @@
 {{ Form::hidden('medicine_bill', isset($medicineBill) ? $medicineBill->id : null, ['id' => 'medicineBillId']) }}
 
-{{ Form::hidden('medicine_bill_status', isset($medicineBill) ? $medicineBill->payment_status : null, ['id' => 'medicineBillStatus']) }}
-
 <div>
     <div class="row">
         <div class="form-group col-md-3 mb-5">
@@ -9,25 +7,10 @@
             <span class="required"></span>
             {{ Form::select('patient_id', $patients, isset($medicineBill) ? $medicineBill->patient_id : null, ['class' => 'form-select w-80', 'required', 'id' => 'prescriptionPatientId', 'placeholder' => __('messages.medicine_bills.select_patient')]) }}
         </div>
-        @if (isset($medicineBill))
-        <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
-            {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
-            <span class="required"></span>
-            {{ Form::text('bill_date', isset($medicineBill->bill_date) ? $medicineBill->bill_date : $medicineBill->updated_at , ['class' => getLogInUser()->thememode ? 'bg-light form-control edit_medicine_bill_date' : 'bg-white form-control edit_medicine_bill_date', 'id' => 'editBillDate', 'autocomplete' => 'off']) }}
-        </div>
-        @else
         <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
             {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
             <span class="required"></span>
             {{ Form::text('bill_date', null, ['class' => getLogInUser()->thememode ? 'bg-light form-control medicine_bill_date' : 'bg-white form-control medicine_bill_date', 'id' => 'medicine_bill_date', 'autocomplete' => 'off']) }}
-        </div>
-        @endif
-        <div class="col-lg-3 col-md-4 col-sm-12 d-none">
-            <span class="form-label">{{ __('messages.medicine_bills.payment_status') . ' :' }}</span>
-            <label class="form-check form-switch form-switch-sm">
-                <input type="checkbox" name="payment_status" class="form-check-input mt-5" value="1" id="medicineBillPaymentStatus" {{ isset($medicineBill) && $medicineBill->payment_status !== '1' ? 'checked' : 'checked' }}>
-                <span class="custom-switch-indicator"></span>
-            </label>
         </div>
     </div>
 
@@ -53,14 +36,12 @@
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
                             <th class="d-none">{{ __('messages.purchase_medicine.tax') }}</th>
                             <th class="d-none">{{ __('messages.purchase_medicine.amount') }}<span class="required"></span></th>
-                            @if ( !(isset($medicineBill))||(isset($medicineBill) && $medicineBill->payment_status != 1))
                             <th class="table__add-btn-heading text-center form-label fw-bolder text-gray-700 mb-3">
                                 <a href="javascript:void(0)" type="button"
                                     class="btn btn-primary text-star add-medicine-btn-medicine-bill">
                                     {{ __('messages.common.add') }}
                                 </a>
                             </th>
-                            @endif
                         </tr>
                     </thead>
                     <tbody class="medicine-bill-container">
@@ -149,57 +130,6 @@
                 </table>
             </div>
             <div class="row mt-5 justify-content-between">
-
-                <div class="col-xl-4 col-md-5 d-none">
-                    <div class="d-none justify-content-between mb-3">
-                        <div>
-                            <label class="fw-bold text-muted py-3 required me-5">{{ __('messages.purchase_medicine.total') }}</label>
-                        </div>
-                        <div>
-                            {{ Form::text('total', isset($medicineBill) ? number_format($medicineBill->total,2,'.','') : '0.00', ['class' => 'form-control required price-format', 'readonly', 'id' => 'total']) }}
-                        </div>
-                    </div>
-                    <div class="d-none justify-content-between mb-3">
-                        <div>
-                            <label class="fw-bold text-muted required py-3 me-5">{{ __('messages.purchase_medicine.discount') }}</label>
-                        </div>
-                        <div>
-                            {{ Form::text('discount', isset($medicineBill) ?  number_format($medicineBill->discount,2,'.','') : '0.00', ['class' => 'form-control medicineBill-discount required price-format', 'id' => 'discountAmount']) }}
-                        </div>
-                    </div>
-                    <div class="d-none justify-content-between mb-3">
-                        <div>
-                            <label class="fw-bold text-muted py-3">{{ __('messages.purchase_medicine.tax_amount') }}</label>
-                        </div>
-                        <div>
-                            <div class="input-group">
-                                {{ Form::number('tax', isset($medicineBill) ?  number_format($medicineBill->tax_amount,2,'.','') : '0.00', ['class' => 'form-control', 'id' => 'medicineTotalTaxId', 'readonly', 'value' => '0.00']) }}
-                                {{-- <span class="input-group-text ms-0" id="amountTypeSymbol"> {{ __('$') }}</span> --}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-none justify-content-between mb-3">
-                        <div>
-                            <label class="fw-bold text-muted required py-3">{{ __('messages.purchase_medicine.net_amount') }}</label>
-                        </div>
-                        <div>
-                            {{ Form::text('net_amount', isset($medicineBill) ? number_format($medicineBill->net_amount,2,'.','') : '0.00', ['class' => 'form-control required price-format', 'id' => 'netAmount', 'readonly']) }}
-                        </div>
-                    </div>
-                    <div class="d-none justify-content-between mb-3">
-                        <div>
-                            <label class="fw-bold text-muted required py-3">{{ __('messages.medicine_bills.payment_type') }}</label>
-                        </div>
-                        <div>
-                            {{ Form::select('payment_type', [0 => 'Cash', 1 => 'Cheque', 2 => 'Online'], 0, ['class' => 'form-select medicine-payment-mode', 'placeholder' => __('messages.medicine_bills.select_payment_type'), 'id' => 'paymentMode', 'required']) }}
-                        </div>
-                    </div>
-                    <div class="d-none">
-                        <label class="fw-bold text-muted py-3">{{ __('messages.purchase_medicine.payment_note') }}</label>
-                        {{ Form::textarea('payment_note', null, ['class' => 'form-control', 'placeholder' => __('messages.purchase_medicine.payment_note'), 'rows' => 3]) }}
-                    </div>
-
-                </div>
 
                 <div class="float-end mt-5">
                     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}

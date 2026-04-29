@@ -75,19 +75,6 @@ class MedicineBill extends Model
         'bill_date',
     ];
 
-    const UNPAID = 0;
-
-    const FULLPAID = 1;
-
-    const PARTIALY_PAID = 2;
-
-    const PAYMENT_STATUS_ARRAY =
-    [
-        self::UNPAID => 'Unpaid',
-        self::FULLPAID => 'Full Paid',
-        self::PARTIALY_PAID => 'Partially Paid',
-    ];
-
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class, 'patient_id');

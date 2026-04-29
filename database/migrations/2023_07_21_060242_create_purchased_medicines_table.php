@@ -17,9 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('medicine_id')->nullable();
             $table->dateTime('expiry_date')->nullable();
             $table->string('lot_no');
-            $table->float('tax');
             $table->integer('quantity');
-            $table->float('amount');
             $table->timestamps();
 
             $table->foreign('medicine_id')->references('id')->on('medicines')

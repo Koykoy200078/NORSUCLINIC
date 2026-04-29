@@ -18,12 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('doctor_id')->nullable();
             $table->string('model_type');
             $table->string('model_id');
-            $table->float('discount');
-            $table->float('net_amount');
-            $table->float('total');
-            $table->float('tax_amount');
-            $table->integer('payment_status');
-            $table->integer('payment_type');
             $table->string('note')->nullable();
             $table->timestamps();
         });

@@ -22,15 +22,10 @@
                 target="_blank"
                 class="btn btn-success me-2 edit-btn mt-3">{{ __('auth.app.print').' '.__('messages.prescription.prescription') }}
             </a>
-            @php
-            $medicineBill = App\Models\MedicineBill::whereModelType('App\Models\Prescription')->whereModelId( $prescription['prescription']->id)->first();
-            @endphp
-            @if(isset($medicineBill->payment_status) && $medicineBill->payment_status == false)
             <a class="btn btn-primary edit-btn mt-3"
                 href="{{ route($editRoute, $prescription['prescription']->id) }}">
                 {{ __('messages.common.edit') }}
             </a>
-            @endif
             <a href="{{ route($backRoute) }}"
                 class="btn btn-outline-primary ms-2 mt-3">{{ __('messages.common.back') }}</a>
         </div>

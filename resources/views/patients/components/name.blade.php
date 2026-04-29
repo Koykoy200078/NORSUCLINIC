@@ -33,9 +33,6 @@ $patientEmail = $patientUser->email ?? 'No email available';
             @else
             <span class="fs-6">{{$patientFullName}}</span>
             @endif
-            @if($patientUser && $patientUser->year_level_id == 8)
-            <span class="badge badge-light-info ms-2">Guest</span>
-            @endif
         </div>
         <span class="fs-6">{{$patientEmail}}</span>
     </div>

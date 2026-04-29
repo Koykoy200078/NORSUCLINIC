@@ -73,6 +73,66 @@ if (! function_exists('getAppFavicon')) {
     }
 }
 
+if (! function_exists('normalizeLocalUrl')) {
+    /**
+     * Normalize stored absolute URLs to the current request host.
+     *
+     * @param  string|null  $url
+     * @return string|null
+     */
+    function normalizeLocalUrl(?string $url): ?string
+    {
+        if (! $url) {
+            return $url;
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+        if (! $host) {
+            return $url;
+        }
+
+        $normalizedHost = strtolower((string) $host);
+        $currentHost = strtolower((string) request()->getHost());
+        if ($normalizedHost === $currentHost) {
+            return $url;
+        }
+
+        $configuredAppHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $configuredLocalHosts = config('app.local_media_hosts', []);
+        if (! is_array($configuredLocalHosts)) {
+            $configuredLocalHosts = [];
+        }
+
+        $localHosts = array_values(array_filter(array_map(
+            static fn ($localHost): string => strtolower(trim((string) $localHost)),
+            array_merge($configuredLocalHosts, [(string) $configuredAppHost])
+        )));
+
+        if (! in_array($normalizedHost, $localHosts, true)) {
+            return $url;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+        $query = parse_url($url, PHP_URL_QUERY);
+        $fragment = parse_url($url, PHP_URL_FRAGMENT);
+
+        $baseUrl = request()->getSchemeAndHttpHost();
+        if (! $baseUrl) {
+            $baseUrl = rtrim((string) config('app.url'), '/');
+        }
+
+        $normalized = rtrim($baseUrl, '/') . $path;
+        if ($query) {
+            $normalized .= '?' . $query;
+        }
+        if ($fragment) {
+            $normalized .= '#' . $fragment;
+        }
+
+        return $normalized;
+    }
+}
+
 if (! function_exists('getLogInUserId')) {
     /**
      * @return int
@@ -130,44 +190,48 @@ if (!function_exists('getDashboardURL')) {
 
         // Return the default home URL if no user is authenticated
         if (!$user) {
-            return RouteServiceProvider::HOME;
+            return url(RouteServiceProvider::HOME);
         }
 
-        // Role-based dashboard URLs - check most common roles first
+        $routeName = null;
+
+        // Role-based dashboard routes - check most common roles first
         if ($user->hasRole('clinic_admin')) {
-            return 'admin/dashboard';
-        } elseif ($user->hasRole('staff')) {
-            return 'staff/dashboard';
-        } elseif ($user->hasRole('nurse')) {
-            return 'staff/dashboard';
+            $routeName = 'admin.dashboard';
+        } elseif ($user->hasRole('staff') || $user->hasRole('nurse')) {
+            $routeName = 'staff.dashboard';
         } elseif ($user->hasRole('doctor')) {
-            return 'doctors/dashboard';
+            $routeName = 'doctors.dashboard';
         } elseif ($user->hasRole('patient')) {
-            return 'patients/dashboard';
-        } else {
-            // Fallback to permission-based check for admin users only
-            if ($user->hasRole('clinic_admin')) {
-                $permissions = Cache::remember("user_permissions_{$user->id}", 300, function () use ($user) {
-                    return $user->getAllPermissions()->pluck('name')->toArray();
-                });
+            $routeName = 'patients.dashboard';
+        }
 
-                $permissionDashboardMap = [
-                    'manage_admin_dashboard' => 'admin/dashboard',
-                    'manage_doctors' => 'admin/doctors',
-                    'manage_patients' => 'admin/patients',
-                    'manage_staff' => 'admin/staff',
-                ];
+        if ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
+            return route($routeName);
+        }
 
-                foreach ($permissionDashboardMap as $permission => $url) {
-                    if (in_array($permission, $permissions, true)) {
-                        return $url;
-                    }
+        // Fallback to permission-based check for admin users only
+        if ($user->hasRole('clinic_admin')) {
+            $permissions = Cache::remember("user_permissions_{$user->id}", 300, function () use ($user) {
+                return $user->getAllPermissions()->pluck('name')->toArray();
+            });
+
+            $permissionDashboardMap = [
+                'manage_admin_dashboard' => 'admin.dashboard',
+                'manage_doctors' => 'doctors.index',
+                'manage_patients' => 'patients.index',
+                'manage_staff' => 'staffs.index',
+            ];
+
+            foreach ($permissionDashboardMap as $permission => $permissionRouteName) {
+                if (in_array($permission, $permissions, true) && \Illuminate\Support\Facades\Route::has($permissionRouteName)) {
+                    return route($permissionRouteName);
                 }
             }
-
-            // Default fallback
-            return RouteServiceProvider::HOME;
         }
+
+        // Default fallback
+        return url(RouteServiceProvider::HOME);
     }
 }
 
@@ -378,8 +442,6 @@ if (! function_exists('getNotificationIcon')) {
         switch ($notificationFor) {
             case $notificationFor == Notification::CHECKOUT:
                 return 'fas fa-check-square';
-            case $notificationFor == Notification::PAYMENT_DONE:
-                return 'fas fa-money-bill-wave';
             case $notificationFor == Notification::BOOKED:
                 return 'fas fa-calendar-alt';
             case $notificationFor == Notification::CANCELED:

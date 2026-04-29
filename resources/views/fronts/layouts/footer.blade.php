@@ -1,5 +1,6 @@
-<footer class="bg-primary">
-    <div class="container">
+<footer class="bg-primary" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)!important;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(255,255,255,0.06) 0%,transparent 60%)"></div>
+    <div class="container position-relative" style="z-index:1">
         <div class="row">
             <div class="col-lg-4 col-md-6 order-1 order-lg-0">
                 <h5 class="text-white mb-4 pb-1">{{ __('messages.web.contact_us') }}</h5>

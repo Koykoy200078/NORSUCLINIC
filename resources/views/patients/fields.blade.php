@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 mb-5">
+        <div class="col-md-6 mb-5" id="universityIdFieldContainer">
             {{ Form::label('university_id_number',__('University ID Number').':' ,['class' => 'form-label required']) }}
             {{ Form::text('university_id_number', !empty($patient->user) ? $patient->user->university_id_number : old('university_id_number'), ['class' => 'form-control','placeholder' => __('Student/Staff ID Number'),'required']) }}
         </div>
@@ -92,10 +92,6 @@
             {{ Form::text('nationality_citizenship', !empty($patient->user) ? $patient->user->nationality_citizenship : old('nationality_citizenship'), ['class' => 'form-control','placeholder' => __('Nationality/Citizenship'),'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('patient_type_id',__('Patient Type').':' ,['class' => 'form-label required']) }}
-            {{ Form::select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'), ['placeholder' => __('Select Patient Type'),'class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
-        </div>
-        <div class="col-md-6 mb-5">
             <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
             {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_type'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
         </div>
@@ -141,7 +137,14 @@
     </div>
 
     <!-- Patient Information -->
-    <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Information') }}</div>
+      <div class="col-md-6 mb-5">
+            {{ Form::label('patient_type_id',__('Patient Type').':' ,['class' => 'form-label required']) }}
+            {{ Form::select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'), ['placeholder' => __('Select Patient Type'),'class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
+        </div>
+        
+    <div id="patientInformationHeadingContainer">
+        <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Information') }}</div>
+    </div>
     <div class="row">
         <div class="col-md-6 mb-7" id="campusFieldContainer">
             {{ Form::label('campus_id',__('messages.student.campus').':',['class'=>'form-label']) }}
@@ -225,6 +228,9 @@
             const departmentFieldContainer = document.getElementById('departmentFieldContainer');
             const officeFieldContainer = document.getElementById('officeFieldContainer');
             const yearLevelFieldContainer = document.getElementById('yearLevelFieldContainer');
+            const universityIdFieldContainer = document.getElementById('universityIdFieldContainer');
+            const patientInformationHeadingContainer = document.getElementById('patientInformationHeadingContainer');
+            const universityIdInput = document.querySelector('#universityIdFieldContainer input[name="university_id_number"]');
 
             const campusSelect = document.getElementById('campusSelect');
             const collegeSelect = document.getElementById('collegeSelect');
@@ -325,6 +331,17 @@
                 setVisible(departmentFieldContainer, isFaculty);
                 setVisible(officeFieldContainer, isStaff);
                 setVisible(yearLevelFieldContainer, isStudent);
+                setVisible(universityIdFieldContainer, !isGuest);
+                setVisible(patientInformationHeadingContainer, selectedPatientTypeId !== '' && !isGuest);
+
+                if (universityIdInput) {
+                    if (isGuest) {
+                        universityIdInput.removeAttribute('required');
+                        universityIdInput.value = '';
+                    } else {
+                        universityIdInput.setAttribute('required', 'required');
+                    }
+                }
 
                 if (!isStudent) {
                     clearSelectValue(campusSelect);

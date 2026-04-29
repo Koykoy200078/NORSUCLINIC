@@ -53,8 +53,6 @@ class Notification extends Model
 
     const CANCELED = 'canceled';
 
-    const PAYMENT_DONE = 'payment_done';
-
     const REVIEW = 'review';
 
     const LIVE_CONSULTATION = 'live_consultation';

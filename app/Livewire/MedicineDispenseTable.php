@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
-use App\Models\MedicineBill;
 use App\Models\Prescription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -101,7 +100,7 @@ class MedicineDispenseTable extends LivewireTableComponent
             ->where(function (Builder $query) {
                 $query->whereIn('medicine_bills.model_type', [
                     DispenseRecord::class,
-                    MedicineBill::class,
+                    'App\Models\MedicineBill',
                 ])->orWhere(function (Builder $prescriptionQuery) {
                     $prescriptionQuery->where('medicine_bills.model_type', Prescription::class)
                         ->whereExists(function ($exists) {

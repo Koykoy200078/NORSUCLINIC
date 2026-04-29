@@ -255,7 +255,7 @@ class MedicineController extends AppBaseController
             })
             ->values();
 
-        $currency = $medicine->currency_symbol ? strtoupper($medicine->currency_symbol) : strtoupper(getCurrentCurrency());
+        $currency = strtoupper(getCurrentCurrency());
         $genericName = $medicine->generic_name ?: optional($medicine->generic)->name;
         $categoryName = $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name;
         $defaultDosage = trim((string) ($medicine->dosage ?? ''));

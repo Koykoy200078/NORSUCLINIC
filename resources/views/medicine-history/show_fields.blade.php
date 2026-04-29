@@ -30,10 +30,6 @@ $patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUs
         {{ (($patientUser?->gender ?? null) == 1) ? __('messages.staff.male') : ((($patientUser?->gender ?? null) == 2) ? __('messages.staff.female') : __('messages.common.n/a')) }}
     </div>
 </div>
-<!-- <div class="col-sm-3">
-    <div class="pb-2 fs-5 text-gray-600">{{ __('messages.medicine_bills.payment_status').':' }}</div>
-    <div class="fs-5 text-gray-800">{{ App\Models\MedicineBill::PAYMENT_STATUS_ARRAY[$medicineBill->payment_status] }}</div>
-</div> -->
 </div>
 <div class="row g-5 mb-11">
     <div class="col-sm-3">
@@ -61,9 +57,6 @@ $patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUs
             <tr class="border-bottom fs-6 fw-bolder text-muted">
                 <th class="min-w-175px pb-2">{{ __('messages.medicine_bills.item_name') }}</th>
                 <th class="min-w-70px text-end pb-2">{{ __('messages.medicine.quantity') }}</th>
-                <th class="min-w-70px text-end pb-2 d-none">{{ __('messages.medicine_bills.price') }}</th>
-                <th class="min-w-80px text-end pb-2 d-none">{{ __('messages.purchase_medicine.tax') }}</th>
-                <th class="min-w-80px text-end pb-2 d-none">{{ __('messages.purchase_medicine.amount') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -71,15 +64,6 @@ $patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUs
             <tr class="text-gray-700 fs-5 text-end">
                 <td class="d-flex align-items-center pt-6 text-gray-700">{{ $saleMedicine->medicine->name }}</td>
                 <td class="pt-6 text-gray-700">{{ $saleMedicine->sale_quantity }}</td>
-                <td class="pt-6 text-gray-700 d-none">
-                    {{ getCurrencyFormat(getCurrencyCode(),$saleMedicine->sale_price ) }}
-                </td>
-                <td class="pt-6 text-dark fw-boldest d-none">
-                    {{ $saleMedicine->tax.'%' }}
-                </td>
-                <td class="pt-6 text-dark fw-boldest d-none">
-                    {{ getCurrencyFormat(getCurrencyCode(),$saleMedicine->sale_price * $saleMedicine->sale_quantity) }}
-                </td>
             </tr>
             @endforeach
         </tbody>

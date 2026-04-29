@@ -23,19 +23,16 @@ class CMSController extends AppBaseController
     {
         $cmsData = Setting::pluck('value', 'key')->toArray();
 
-        // Check and update the URL for about_image_1
-        if (isset($cmsData['about_image_1']) && str_starts_with($cmsData['about_image_1'], 'http://localhost')) {
-            $cmsData['about_image_1'] = request()->getSchemeAndHttpHost() . parse_url($cmsData['about_image_1'], PHP_URL_PATH);
+        if (isset($cmsData['about_image_1'])) {
+            $cmsData['about_image_1'] = normalizeLocalUrl($cmsData['about_image_1']);
         }
 
-        // Check and update the URL for about_image_2
-        if (isset($cmsData['about_image_2']) && str_starts_with($cmsData['about_image_2'], 'http://localhost')) {
-            $cmsData['about_image_2'] = request()->getSchemeAndHttpHost() . parse_url($cmsData['about_image_2'], PHP_URL_PATH);
+        if (isset($cmsData['about_image_2'])) {
+            $cmsData['about_image_2'] = normalizeLocalUrl($cmsData['about_image_2']);
         }
 
-        // Check and update the URL for about_image_3
-        if (isset($cmsData['about_image_3']) && str_starts_with($cmsData['about_image_3'], 'http://localhost')) {
-            $cmsData['about_image_3'] = request()->getSchemeAndHttpHost() . parse_url($cmsData['about_image_3'], PHP_URL_PATH);
+        if (isset($cmsData['about_image_3'])) {
+            $cmsData['about_image_3'] = normalizeLocalUrl($cmsData['about_image_3']);
         }
 
         return view('fronts.cms.cms', compact('cmsData'));

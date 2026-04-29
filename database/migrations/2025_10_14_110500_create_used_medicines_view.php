@@ -54,9 +54,8 @@ return new class extends Migration
             FROM sale_medicines sm
             INNER JOIN medicines m ON sm.medicine_id = m.id
             INNER JOIN medicine_bills mb ON sm.medicine_bill_id = mb.id
-            LEFT JOIN patients p ON mb.model_id = p.id AND mb.model_type = 'App\\\\Models\\\\Patient'
+            LEFT JOIN patients p ON mb.model_id = p.id AND mb.model_type = 'App\\Models\\Patient'
             LEFT JOIN users u ON p.user_id = u.id
-            WHERE mb.payment_status = 1
         ");
     }
 

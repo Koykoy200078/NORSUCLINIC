@@ -167,24 +167,18 @@ class PrescriptionController extends AppBaseController
         DB::beginTransaction();
         try {
             $prescription = Prescription::create($prescriptionData);
-            $dispenseRecord = DispenseRecord::create([
+            $dispenseRecord = DispenseRecord::create(array_merge([
                 'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                 'patient_id' => $prescription->patient_id,
                 'doctor_id' => $prescription->doctor_id,
                 'model_type' => Prescription::class,
                 'model_id' => $prescription->id,
                 'bill_date' => now(),
-                'payment_status' => DispenseRecord::STATUS_UNPAID,
-                'net_amount' => 0,
-                'total' => 0,
-            ]);
-
-            $totalAmount = 0;
+            ], DispenseRecord::legacyFinancialDefaults()));
 
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
-                $unitPrice = (float) ($medicine->selling_price ?? 0);
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -206,18 +200,11 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => $unitPrice,
+                    'unit_price' => 0,
                     'charge_amount' => 0,
-                    'line_total' => ($unitPrice * $totalQuantity),
+                    'line_total' => 0,
                 ]);
-
-                $totalAmount += ($unitPrice * $totalQuantity);
             }
-
-            $dispenseRecord->update([
-                'net_amount' => $totalAmount,
-                'total' => $totalAmount,
-            ]);
 
             DB::commit();
             Flash::success(__('messages.prescription.prescription_saved'));
@@ -401,28 +388,23 @@ class PrescriptionController extends AppBaseController
                 ->first();
 
             if (empty($dispenseRecord)) {
-                $dispenseRecord = DispenseRecord::create([
+                $dispenseRecord = DispenseRecord::create(array_merge([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $prescription->patient_id,
                     'doctor_id' => $prescription->doctor_id,
                     'model_type' => Prescription::class,
                     'model_id' => $prescription->id,
                     'bill_date' => now(),
-                    'payment_status' => DispenseRecord::STATUS_UNPAID,
-                    'net_amount' => 0,
-                    'total' => 0,
-                ]);
+                ], DispenseRecord::legacyFinancialDefaults()));
             } else {
                 $dispenseRecord->dispenseItems()->delete();
             }
 
             $prescription->getMedicine()->delete();
 
-            $totalAmount = 0;
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
-                $unitPrice = (float) ($medicine->selling_price ?? 0);
 
                 PrescriptionMedicine::create([
                     'prescription_id' => $prescription->id,
@@ -444,19 +426,11 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => $unitPrice,
+                    'unit_price' => 0,
                     'charge_amount' => 0,
-                    'line_total' => ($unitPrice * $totalQuantity),
+                    'line_total' => 0,
                 ]);
-
-                $totalAmount += ($unitPrice * $totalQuantity);
             }
-
-            $dispenseRecord->update([
-                'patient_id' => $prescription->patient_id,
-                'net_amount' => $totalAmount,
-                'total' => $totalAmount,
-            ]);
 
             DB::commit();
             Flash::success(__('messages.prescription.prescription_updated'));

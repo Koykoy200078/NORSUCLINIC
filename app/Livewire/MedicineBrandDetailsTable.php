@@ -26,19 +26,6 @@ class MedicineBrandDetailsTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setQueryStringStatus(false);
         $this->setThAttributes(function (Column $column) {
-            if ($column->isField('selling_price')) {
-                return [
-                    'class' => 'text-end',
-                    'style' => 'padding: 0rem !important',
-                ];
-            }
-            if ($column->isField('buying_price')) {
-                return [
-                    'class' => 'text-end',
-                    'style' => 'padding: 0rem !important',
-                ];
-            }
-
             return [];
         });
     }

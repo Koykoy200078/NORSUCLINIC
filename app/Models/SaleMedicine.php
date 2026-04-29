@@ -93,8 +93,14 @@ class SaleMedicine extends Model
         return $this->belongsTo(Medicine::class);
     }
 
+    /** @deprecated Use dispenseRecord() */
     public function medicineBill(): BelongsTo
     {
-        return $this->belongsTo(MedicineBill::class, 'medicine_bill_id');
+        return $this->belongsTo(DispenseRecord::class, 'medicine_bill_id');
+    }
+
+    public function dispenseRecord(): BelongsTo
+    {
+        return $this->belongsTo(DispenseRecord::class, 'medicine_bill_id');
     }
 }

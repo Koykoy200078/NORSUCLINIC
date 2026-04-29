@@ -131,18 +131,16 @@ class PrescriptionRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            $amount = 0;
             $qty = 0;
             if (isset($input['medicine'])) {
-                $medicineBill = DispenseRecord::create([
+                $medicineBill = DispenseRecord::create(array_merge([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $input['patient_id'],
                     'doctor_id' => $input['doctor_id'],
                     'model_type' => \App\Models\Prescription::class,
                     'model_id' => $prescription->id,
                     'bill_date' => Carbon::now(),
-                    'payment_status' => 1,
-                ]);
+                ], DispenseRecord::legacyFinancialDefaults()));
                 foreach ($input['medicine'] as $key => $value) {
                     $PrescriptionItem = [
                         'prescription_id' => $prescription->id,
@@ -156,22 +154,16 @@ class PrescriptionRepository extends BaseRepository
                     $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $unitPrice = (float) ($medicine->selling_price ?? 0);
-                    $amount += $qty * $unitPrice;
                     $dispenseItemArray = [
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => $unitPrice,
+                        'unit_price' => 0,
                         'charge_amount' => 0,
-                        'line_total' => ($unitPrice * (int) $qty),
+                        'line_total' => 0,
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }
-                $medicineBill->update([
-                    'net_amount' => $amount,
-                    'total' => $amount,
-                ]);
             }
             DB::commit();
         } catch (Exception $e) {
@@ -193,7 +185,6 @@ class PrescriptionRepository extends BaseRepository
             $medicineBill = DispenseRecord::with('dispenseItems')->whereModelType(\App\Models\Prescription::class)->whereModelId($prescription->id)->first();
             $prescription->getMedicine()->delete();
             $medicineBill->dispenseItems()->delete();
-            $amount = 0;
             $qty = 0;
 
             if (! empty($input['medicine'])) {
@@ -211,23 +202,16 @@ class PrescriptionRepository extends BaseRepository
 
                     $medicine = Medicine::find($input['medicine'][$key]);
                     $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $unitPrice = (float) ($medicine->selling_price ?? 0);
-                    $amount += $qty * $unitPrice;
                     $dispenseItemArray = [
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => $unitPrice,
+                        'unit_price' => 0,
                         'charge_amount' => 0,
-                        'line_total' => ($unitPrice * (int) $qty),
+                        'line_total' => 0,
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }
-                $medicineBill->update([
-                    'net_amount' => $amount,
-                    //  'discount'=>$input['discount'],
-                    //  'tax_amount'=>$input['tax'],
-                ]);
             }
             DB::commit();
         } catch (Exception $e) {

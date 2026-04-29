@@ -86,7 +86,7 @@
         </td>
                 <td class="d-none">
             <input type="number" class="form-control medicine-bill-amount" readonly required="" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
-        </td>purchaseMedicineTemplate
+        </td>
         <td class="text-center">
             <a href="javascript:void(0)" title="<?php echo __('messages.common.delete') ?>"
                class="delete-medicine-bill-item  btn px-1 text-danger fs-3 pe-0">

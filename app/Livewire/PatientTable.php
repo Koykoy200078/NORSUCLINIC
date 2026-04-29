@@ -72,6 +72,7 @@ class PatientTable extends LivewireTableComponent
             'user' => function ($query) {
                 $query->withTrashed()->select('id', 'first_name', 'last_name', 'email', 'email_verified_at', 'year_level_id', 'gender');
             },
+            'patientType',
         ])
             ->withCount(['documentIssuances as consultation_form_count' => function ($subQuery) {
                 $subQuery->where('document_type', 'consultation_form');
@@ -152,8 +153,9 @@ class PatientTable extends LivewireTableComponent
                             ->whereRaw("TRIM(CONCAT(first_name, ' ', last_name)) LIKE ?", ["%{$direction}%"]);
                     });
                 }),
-            Column::make(__('messages.patient.email'), 'user.email')
-                ->searchable(),
+            Column::make(__('Patient Type'), 'patient_type_id')
+                ->view('patients.components.patient_type')
+                ->sortable(),
             Column::make(__('Total Consultations'), 'id')
                 ->view('patients.components.consultation_form_count'),
             Column::make(__('messages.patient.registered_on'), 'created_at')

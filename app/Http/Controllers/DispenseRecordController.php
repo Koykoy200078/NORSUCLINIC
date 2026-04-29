@@ -138,20 +138,18 @@ class DispenseRecordController extends AppBaseController
 
         DB::beginTransaction();
         try {
-            $dispenseRecord = DispenseRecord::create([
+            $dispenseRecordData = [
                 'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                 'patient_id'     => $input['patient_id'],
                 'note'           => $input['note'] ?? null,
                 'model_type'     => DispenseRecord::class,
                 'bill_date'      => $input['bill_date'],
-                // legacy nullable fields still in DB schema
-                'net_amount'     => 0,
-                'discount'       => 0,
-                'payment_status' => 1,
-                'payment_type'   => 0,
-                'total'          => 0,
-                'tax_amount'     => 0,
-            ]);
+            ];
+
+            $dispenseRecord = DispenseRecord::create(array_merge(
+                $dispenseRecordData,
+                DispenseRecord::legacyFinancialDefaults()
+            ));
             $dispenseRecord->update(['model_id' => $dispenseRecord->id]);
 
             if (empty($input['category_id'])) {
@@ -160,18 +158,16 @@ class DispenseRecordController extends AppBaseController
 
             foreach ($input['category_id'] as $key => $value) {
                 $medicine = Medicine::find($input['medicine'][$key]);
-                $unitPrice = (float) ($input['sale_price'][$key] ?? 0);
                 $quantity = (int) ($input['quantity'][$key] ?? 0);
-                $chargeAmount = (float) ($input['tax_medicine'][$key] ?? 0);
 
                 DispenseRecordItem::create([
                     'dispense_id'   => $dispenseRecord->id,
                     'medicine_id'   => $medicine->id,
-                    'unit_price'    => $unitPrice,
+                    'unit_price'    => 0,
                     'expires_at'    => $input['expiry_date'][$key] ?? null,
                     'quantity'      => $quantity,
-                    'charge_amount' => $chargeAmount,
-                    'line_total'    => ($unitPrice * $quantity) + $chargeAmount,
+                    'charge_amount' => 0,
+                    'line_total'    => 0,
                 ]);
 
                 $this->medicineInventoryService->deductStockFefo(
@@ -297,13 +293,9 @@ class DispenseRecordController extends AppBaseController
             'history_number',
             'bill_date',
             'patient_id',
-            'doctor_id',
-            'total',
-            'tax_amount',
-            'discount',
-            'net_amount'
+            'doctor_id'
         )->with([
-            'dispenseItems' => fn($q) => $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity', 'tax'),
+            'dispenseItems' => fn($q) => $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity'),
             'dispenseItems.medicine' => fn($q) => $q->select('id', 'name'),
             'patient.user:id,first_name,last_name,email,contact,gender,dob',
             'doctor.user:id,first_name,last_name',

@@ -85,11 +85,7 @@ class Slider extends Model implements HasMedia
         $media = $this->getMedia(self::SLIDER_IMAGE)->first();
 
         if ($media) {
-            $fullUrl = $media->getFullUrl();
-            if (str_starts_with($fullUrl, 'http://localhost')) {
-                $fullUrl = request()->getSchemeAndHttpHost() . parse_url($fullUrl, PHP_URL_PATH);
-            }
-            return $fullUrl;
+            return normalizeLocalUrl($media->getFullUrl()) ?? $media->getFullUrl();
         }
 
         return asset('assets/image/norsu_logo.png');

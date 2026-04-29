@@ -51,6 +51,7 @@ return new class extends Migration
         if (! Schema::hasTable('clinic_stations')) {
             Schema::create('clinic_stations', function (Blueprint $table) {
                 $table->id();
+                $table->string('code', 60)->unique();
                 $table->string('name', 120)->unique();
                 $table->text('description')->nullable();
                 $table->timestamps();

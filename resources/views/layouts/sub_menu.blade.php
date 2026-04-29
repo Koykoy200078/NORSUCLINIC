@@ -5,7 +5,7 @@ $dashboardUrl = getDashboardURL();
 {{-- [ORDER 1] Dashboard --}}
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('dashboard') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('dashboard') ? 'active' : '' }}"
-        href="{{ url($dashboardUrl) }}">{{ __('messages.dashboard') }}</a>
+        href="{{ $dashboardUrl }}">{{ __('messages.dashboard') }}</a>
 </li>
 
 {{-- [ORDER 2] Patients --}}
@@ -88,7 +88,7 @@ $dashboardUrl = getDashboardURL();
 @if(isRole('clinic_admin'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/staffs*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/staffs*') ? 'active' : '' }}"
-        href="{{ route('staffs.index') }}">{{ __('messages.staffs') }}</a>
+        href="{{ getRouteByRole('staffs.index') }}">{{ __('messages.staffs') }}</a>
 </li>
 @endif
 @endcan
@@ -117,25 +117,25 @@ $dashboardUrl = getDashboardURL();
 @can('manage_countries')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/countries*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/countries*') ? 'active' : '' }}"
-        href="{{ route('countries.index') }}">{{ __('messages.countries') }}</a>
+        href="{{ getRouteByRole('countries.index') }}">{{ __('messages.countries') }}</a>
 </li>
 @endcan
 
 @can('manage_states')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/states*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/states*') ? 'active' : '' }}"
-        href="{{ route('states.index') }}">{{ __('messages.states') }}</a>
+        href="{{ getRouteByRole('states.index') }}">{{ __('messages.states') }}</a>
 </li>
 @endcan
 
 @can('manage_cities')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/cities*') ? 'active' : '' }}"
-        href="{{ route('cities.index') }}">{{ __('messages.cities') }}</a>
+        href="{{ getRouteByRole('cities.index') }}">{{ __('messages.cities') }}</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/barangays*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/barangays*') ? 'active' : '' }}"
-        href="{{ route('barangays.index') }}">{{ __('messages.barangays') }}</a>
+        href="{{ getRouteByRole('barangays.index') }}">{{ __('messages.barangays') }}</a>
 </li>
 @endcan
 
@@ -149,11 +149,11 @@ $dashboardUrl = getDashboardURL();
 @can('manage_front_cms')
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/cms*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/cms*') ? 'active' : '' }}"
-        href="{{ route('cms.index') }}">{{ __('messages.cms.cms') }}</a>
+        href="{{ getRouteByRole('cms.index') }}">{{ __('messages.cms.cms') }}</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/banner*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/banner*') ? 'active' : '' }}"
-        href="{{ route('banner.index') }}">{{ __('messages.sliders') }}</a>
+        href="{{ getRouteByRole('banner.index') }}">{{ __('messages.sliders') }}</a>
 </li>
 @endcan
 

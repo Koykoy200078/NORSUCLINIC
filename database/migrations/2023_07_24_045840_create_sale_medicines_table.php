@@ -16,10 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('medicine_bill_id');
             $table->unsignedBigInteger('medicine_id');
             $table->integer('sale_quantity');
-            $table->float('sale_price');
-            $table->float('tax');
             $table->dateTime('expiry_date');
-            $table->float('amount');
             $table->timestamps();
         });
     }

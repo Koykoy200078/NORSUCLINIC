@@ -10,11 +10,14 @@ class StaffDesignationSeeder extends Seeder
     public function run(): void
     {
         $designations = [
-            ['code' => 'nurse', 'name' => 'Nurse'],
-            ['code' => 'clinic_admin', 'name' => 'Clinic Admin'],
-            ['code' => 'secretary', 'name' => 'Secretary'],
-            ['code' => 'pharmacy_assistant', 'name' => 'Pharmacy Assistant'],
+            ['code' => 'clinic_head', 'name' => 'Head of University Health Services'],
+            ['code' => 'university_physician', 'name' => 'University Physician'],
+            ['code' => 'university_dentist', 'name' => 'University Dentist'],
+            ['code' => 'nurse', 'name' => 'Registered Nurse'],
+            ['code' => 'pharmacist', 'name' => 'Pharmacist'], // Aligns with NORSU BS Pharmacy grads
             ['code' => 'triage_officer', 'name' => 'Triage Officer'],
+            ['code' => 'clinic_staff', 'name' => 'Clinic Staff / Secretary'], // As listed in NORSU directory
+            ['code' => 'records_officer', 'name' => 'Medical Records Officer'],
         ];
 
         foreach ($designations as $designation) {

@@ -12,29 +12,34 @@ return new class extends Migration
     public function up(): void
     {
 
-        Schema::table('sale_medicines', function (Blueprint $table) {
-            $table->float('sale_price', 25, 2)->change();
-            $table->float('tax', 25, 2)->change();
-            $table->float('amount', 25, 2)->change();
-        });
+        $hasMedicineBillDiscount = Schema::hasColumn('medicine_bills', 'discount');
+        $hasMedicineBillNetAmount = Schema::hasColumn('medicine_bills', 'net_amount');
+        $hasMedicineBillTotal = Schema::hasColumn('medicine_bills', 'total');
+        $hasMedicineBillTaxAmount = Schema::hasColumn('medicine_bills', 'tax_amount');
+        $hasMedicineBillDate = Schema::hasColumn('medicine_bills', 'bill_date');
 
-        Schema::table('medicine_bills', function (Blueprint $table) {
-            $table->float('discount', 25, 2)->change();
-            $table->float('net_amount', 25, 2)->change();
-            $table->float('total', 25, 2)->change();
-            $table->float('tax_amount', 25, 2)->change();
-            $table->datetime('bill_date')->after('note');
-        });
-        Schema::table('purchase_medicines', function (Blueprint $table) {
-            $table->float('tax', 25, 2)->change();
-            $table->float('total', 25, 2)->change();
-            $table->float('discount', 25, 2)->change();
-            $table->float('net_amount', 25, 2)->change();
-
-        });
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->float('tax', 25, 2)->change();
-            $table->float('amount', 25, 2)->change();
+        Schema::table('medicine_bills', function (Blueprint $table) use (
+            $hasMedicineBillDiscount,
+            $hasMedicineBillNetAmount,
+            $hasMedicineBillTotal,
+            $hasMedicineBillTaxAmount,
+            $hasMedicineBillDate
+        ) {
+            if ($hasMedicineBillDiscount) {
+                $table->float('discount', 25, 2)->change();
+            }
+            if ($hasMedicineBillNetAmount) {
+                $table->float('net_amount', 25, 2)->change();
+            }
+            if ($hasMedicineBillTotal) {
+                $table->float('total', 25, 2)->change();
+            }
+            if ($hasMedicineBillTaxAmount) {
+                $table->float('tax_amount', 25, 2)->change();
+            }
+            if (! $hasMedicineBillDate) {
+                $table->datetime('bill_date')->after('note');
+            }
         });
     }
 

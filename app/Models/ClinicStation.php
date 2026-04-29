@@ -13,6 +13,7 @@ class ClinicStation extends Model
     protected $table = 'clinic_stations';
 
     protected $fillable = [
+        'code',
         'name',
         'description',
     ];

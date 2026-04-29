@@ -80,17 +80,6 @@
         {{ Form::label('policy_no', __('messages.bill.policy_no').(':'),['class'=>'form-label']) }}
         {{ Form::text('policy_no', null, ['class' => 'form-control', 'id' => 'policyNo', 'readonly']) }}
     </div>
-    <div class="col-lg-3 col-md-4 col-sm-12">
-        <span class="form-label">{{ __('Payment Status') . ' :' }}</span>
-        <label class="form-check form-switch form-switch-sm">
-            <input type="checkbox" name="payment" class="form-check-input mt-5"
-                   value="1"
-                   {{ !empty($medicineBill->payment_status)  == '1' ? 'checked' : ''
-}}
-                   id="medicineBillPaymentStatus">
-            <span class="custom-switch-indicator"></span>
-        </label>
-    </div>
 </div>
 
 {{--  <div class="com-sm-12">

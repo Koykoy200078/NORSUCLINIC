@@ -25,19 +25,6 @@ class MedicineCategoryDetailsTable extends LivewireTableComponent
             //            ->setDefaultSort('created_at', 'desc')
             ->setQueryStringStatus(false);
         $this->setThAttributes(function (Column $column) {
-            if ($column->isField('selling_price')) {
-                return [
-                    'class' => 'text-end',
-                    'style' => 'padding: 0rem !important',
-                ];
-            }
-            if ($column->isField('buying_price')) {
-                return [
-                    'class' => 'text-end',
-                    'style' => 'padding: 0rem !important',
-                ];
-            }
-
             return [];
         });
     }

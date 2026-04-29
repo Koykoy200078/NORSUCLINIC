@@ -75,7 +75,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- [ORDER 1] Dashboard --}}
                 <li class="nav-item {{ isModuleActive('dashboard') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ url(getDashboardURL()) }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getDashboardURL() }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa fa-digital-tachograph"></i></span>
                         <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
                     </a>
@@ -91,7 +91,6 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 </li>
 
                 {{-- [ORDER 3] Patient Queuing --}}
-                @can('manage_patients')
                 <li class="nav-item {{ isModuleActive('patient-queue') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patient-queue.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
@@ -191,7 +190,6 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         <span class="aside-menu-title">Dispensing</span>
                     </a>
                 </li>
-                @endcan
                 @endcan
 
                 {{-- [ORDER 8] Laboratory & Medical Request Management --}}

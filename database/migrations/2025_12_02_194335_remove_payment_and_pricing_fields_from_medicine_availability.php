@@ -16,23 +16,28 @@ return new class extends Migration
     {
         // Remove payment-related columns from medicine_availabilities table
         Schema::table('medicine_availabilities', function (Blueprint $table) {
-            $table->dropColumn([
-                'tax',
-                'total',
-                'net_amount',
-                'payment_type',
-                'discount',
-                'payment_note',
-                'note'
-            ]);
+            $columnsToDrop = [];
+            foreach (['tax', 'total', 'net_amount', 'payment_type', 'discount', 'payment_note', 'note'] as $column) {
+                if (Schema::hasColumn('medicine_availabilities', $column)) {
+                    $columnsToDrop[] = $column;
+                }
+            }
+            if (! empty($columnsToDrop)) {
+                $table->dropColumn($columnsToDrop);
+            }
         });
 
         // Remove pricing columns from purchased_medicines table
         Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->dropColumn([
-                'tax',
-                'amount'
-            ]);
+            $columnsToDrop = [];
+            foreach (['tax', 'amount'] as $column) {
+                if (Schema::hasColumn('purchased_medicines', $column)) {
+                    $columnsToDrop[] = $column;
+                }
+            }
+            if (! empty($columnsToDrop)) {
+                $table->dropColumn($columnsToDrop);
+            }
         });
     }
 
