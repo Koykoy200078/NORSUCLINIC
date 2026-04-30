@@ -393,4 +393,23 @@ class UserController extends AppBaseController
 
         return $this->sendSuccess(__('messages.flash.theme_change'));
     }
+
+    public function resetPassword(User $user): JsonResponse
+    {
+        try {
+            $user->update([
+                'password' => Hash::make('123456')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password has been reset to default (123456) successfully.'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

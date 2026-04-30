@@ -10,10 +10,10 @@ The Staff module manages clinic staff (receptionists, nurses, pharmacists, etc.)
 
 | Concern | Finding |
 |---------|---------|
-| **Role Designation** | FK to `staff_designations` (8 seeded values). |
-| **Assigned Station** | FK to `clinic_stations` (8 seeded values). |
+| **Role Designation** | FK to `staff_designations` (6 seeded values). |
+| **Assigned Station** | FK to `clinic_stations` (7 seeded values). |
 | **Data integrity** | Both fields are `required` in form requests and guarded by `exists:...` rules. |
-| **Bugs / Issues** | Routing bug, dead-code, N+1, model-migration mismatch on `clinic_stations.code` (see §6). |
+| **Bugs / Issues** | Dead-code, N+1 risk, and repository/model architectural inconsistencies remain (see §7). |
 
 ---
 
@@ -61,12 +61,10 @@ CREATE TABLE staff_designations (
     updated_at TIMESTAMP
 );
 ```
-**Seeded values** (`database/seeders/StaffDesignationSeeder.php:12-20`):
+**Seeded values** (`database/seeders/StaffDesignationSeeder.php:12-18`):
 | code | name |
 |------|------|
 | `clinic_head` | Head of University Health Services |
-| `university_physician` | University Physician |
-| `university_dentist` | University Dentist |
 | `nurse` | Registered Nurse |
 | `pharmacist` | Pharmacist |
 | `triage_officer` | Triage Officer |
@@ -84,13 +82,12 @@ CREATE TABLE clinic_stations (
     updated_at TIMESTAMP
 );
 ```
-**Seeded values** (`database/seeders/ClinicStationSeeder.php:12-52`):
+**Seeded values** (`database/seeders/ClinicStationSeeder.php:12-47`):
 | code | name | description |
 |------|------|-------------|
 | `front_desk` | Front Desk & Receiving | Patient reception, queueing, and NORSU ID verification. |
 | `triage_area` | Triage Area | Initial patient assessment, vitals checking (BP, Temp), and basic history taking. |
 | `medical_consultation` | Medical Consultation Room | Private physician consultation and physical examination area. |
-| `dental_consultation` | Dental Clinic | Dental consultation and extraction/cleaning procedures area. |
 | `pharmacy` | Clinic Pharmacy | Medicine dispensing, medication counseling, and FEFO inventory management. |
 | `records_area` | Records Area | Secure filing of physical medical records and digital data encoding. |
 | `observation_room` | Observation & Recovery Room | Rest area with beds for students resting from dysmenorrhea, dizziness, or minor PE injuries. |
@@ -121,8 +118,8 @@ CREATE TABLE staff_profiles (
 ```php
 Route::middleware('permission:manage_staff')->group(function () {
     Route::resource('staffs', StaffController::class);
-    Route::post('staffs/{user}/reset-password', [PatientController::class, 'resetPassword'])
-        ->name('staffs.reset.password');  // ⚠️ BUG: uses PatientController (see §6)
+    Route::post('staffs/{user}/reset-password', [StaffController::class, 'resetPassword'])
+        ->name('staffs.reset.password');
 });
 ```
 
@@ -216,7 +213,7 @@ public function staffProfiles(): HasMany  // reverse relation
 
 ### 5.4 `ClinicStation` (`app/Models/ClinicStation.php`)
 ```php
-protected $fillable = ['name', 'description'];
+protected $fillable = ['code', 'name', 'description'];
 public function staffProfiles(): HasMany  // reverse relation
 ```
 
@@ -276,7 +273,7 @@ public function staffProfiles(): HasMany  // reverse relation
 ```php
 public function builder(): Builder
 {
-    return User::with(['roles'])
+    return User::with(['roles', 'staffProfile.roleDesignation:id,code,name', 'staffProfile.assignedStation:id,code,name'])
         ->where('type', User::STAFF)
         ->where('id', '!=', getLogInUserId())
         ->select(['id', 'first_name', 'last_name', 'email', 'email_verified_at', 'type']);
@@ -287,9 +284,11 @@ public function builder(): Builder
 2. `email` (hidden)
 3. `email` (hidden)
 4. `role` — `{{ $row->role_name }}`
-5. `action` — edit, reset-password, delete
+5. `designation` — `{{ $row->staffProfile?->roleDesignation?->name ?? 'N/A' }}`
+6. `station` — `{{ $row->staffProfile?->assignedStation?->name ?? 'N/A' }}`
+7. `action` — edit, reset-password, delete
 
-> **⚠️ N+1 risk:** `builder()` does **not** eager-load `staffProfile`, `roleDesignation`, or `assignedStation`. If these were added as table columns, each row would trigger extra queries.
+> **N+1 resolved:** `builder()` now eager-loads `staffProfile.roleDesignation` and `staffProfile.assignedStation` via selective column loading (`id,code,name`).
 
 ---
 
@@ -297,16 +296,25 @@ public function builder(): Builder
 
 | # | Severity | Location | Issue | Recommendation |
 |---|----------|----------|-------|----------------|
-| 1 | **High** | `routes/web.php:210` | Reset-password route uses `PatientController::class` instead of `StaffController::class` (or a shared controller). | Change to `[StaffController::class, 'resetPassword']` or create a dedicated method. |
-| 2 | **Medium** | `app/Repositories/StaffRepository.php:55-56` | Dead code: `$roles` variable is returned after an unconditional `return`. | Remove unreachable line `return $roles;`. |
-| 3 | **Medium** | `app/Models/Staff.php` | Entire `Staff` model and `staff` table are unused. Repository claims `Staff::class` but works with `User`. | Either remove the dead model/table or refactor repository to use `User` as its formal model. |
-| 4 | **Medium** | `StaffTable::builder()` | Missing eager-load of `staffProfile.roleDesignation` and `staffProfile.assignedStation`. | Add `->with(['staffProfile.roleDesignation', 'staffProfile.assignedStation'])`. |
-| 5 | **Low** | `StaffTable` columns | Role Designation and Assigned Station are **not displayed** in the staff listing table. | Add two new `Column::make()` entries with custom blade views to surface this data. |
-| 6 | **Low** | `StaffController::destroy()` | Directly calls `$staff->delete()` on `User`, bypassing repository and potential soft-delete / cascade logic. | Delegate to repository or handle media/profile cleanup explicitly. |
-| 7 | **Low** | `StaffController::show()` | Re-queries `User::whereType(User::STAFF)->findOrFail($staff->id)` after route-model binding already provided a `User`. | Either trust route-model binding or use a custom `StaffUser` binding if type-scoping is required. |
-| 8 | **Low** | `database/seeders/DefaultStaffSeeder.php` | Entire file is commented out; no default demo staff are seeded. | Either restore seed data or remove the file from `DatabaseSeeder` call chain. |
-| 9 | **Medium** | `app/Models/ClinicStation.php:15-18` | `ClinicStation` model `$fillable` is missing `'code'` even though the migration now defines `code VARCHAR(60) UNIQUE`. The seeder passes `code` but Laravel silently discards it on create/update. | Add `'code'` to `$fillable` array in `ClinicStation` model. |
-| 10 | **Medium** | `database/seeders/ClinicStationSeeder.php:56` | `updateOrCreate` is keyed on `name`, but `name` values changed (e.g. *Front Desk* → *Front Desk & Receiving*). Old records won't update; new rows may duplicate if unique constraint is bypassed. | Change key to `['code' => $station['code']]` so idempotency works by stable code instead of changing name. |
+| 1 | ~~Medium~~ | `app/Repositories/StaffRepository.php:55-56` | ~~Dead code: `$roles` variable is returned after an unconditional `return`.~~ | **Resolved** — unreachable `return $roles;` removed. |
+| 2 | ~~Medium~~ | `app/Models/Staff.php` | ~~Entire `Staff` model and `staff` table are unused. Repository claims `Staff::class` but works with `User`.~~ | **Resolved** — `StaffRepository::model()` now returns `User::class`; all `Staff::PROFILE` references replaced with `User::PROFILE`. `Staff` model remains only as a legacy relation on `User` (`hasOne(Staff::class)`). |
+| 3 | ~~Medium~~ | `StaffTable::builder()` | ~~Missing eager-load of `staffProfile.roleDesignation` and `staffProfile.assignedStation`.~~ | **Resolved** — eager-loads added and two blade columns (`designation.blade.php`, `station.blade.php`) created. |
+| 4 | ~~Low~~ | `StaffTable` columns | ~~Role Designation and Assigned Station are **not displayed**.~~ | **Resolved** — `Column::make('Designation')` and `Column::make('Assigned Station')` added to table. |
+| 5 | ~~Low~~ | `StaffController::destroy()` | ~~Directly calls `$staff->delete()` on `User`, bypassing repository and potential soft-delete / cascade logic.~~ | **Resolved** — now delegates to `StaffRepository::delete($id)` which cleans up `staffProfile`, media collection, and then deletes the user within a transaction. |
+| 6 | ~~Low~~ | `StaffController::show()` | ~~Re-queries `User::whereType(User::STAFF)->findOrFail($staff->id)` after route-model binding already provided a `User`.~~ | **Resolved** — now trusts route-model binding and uses `$staff` directly from the resolved `User` parameter. |
+| 7 | ~~Low~~ | `database/seeders/DefaultStaffSeeder.php` | ~~Entire file is commented out; no default demo staff are seeded.~~ | **Resolved** — removed the `$this->call(DefaultStaffSeeder::class)` line from `DatabaseSeeder.php`. |
+| 8 | ~~Medium~~ | `routes/staff.php:61` | ~~`doctors.reset.password` route uses `PatientController::resetPassword` instead of `UserController` or `StaffController`.~~ | **Resolved** — route now points to `UserController::resetPassword`; method added to `UserController` with identical logic (reset to `123456`). |
+| 9 | **Low** | `app/Http/Controllers/MedicineAvailabilityController.php` | Redirects to `medicine-availability.index` but no route registers `MedicineAvailabilityController` in any route file. | Verify if this controller is dead code or if routes are missing. |
+
+Resolved in current codebase (verified during re-audit):
+- `staffs.reset.password` now points to `StaffController` (in `routes/web.php`).
+- `ClinicStation` now persists `code` and `ClinicStationSeeder` now keys `updateOrCreate` by `code`.
+- `StaffTable` now surfaces designation + station with eager-loaded relations.
+- `StaffRepository` now returns `User::class` from `model()` and uses `User::PROFILE` for media collections.
+- `StaffRepository::delete()` performs transactional cleanup of `staffProfile` and media before deleting the user.
+- `StaffController::show()` no longer re-queries the user after route-model binding.
+- `DatabaseSeeder` no longer calls the empty `DefaultStaffSeeder`.
+- `routes/staff.php` doctors reset-password route now uses `UserController::resetPassword`.
 
 ---
 
@@ -322,47 +330,58 @@ This relies on **Spatie Laravel-Permission**. The `manage_staff` permission must
 
 ## 9. Seed Execution Order (`database/seeders/DatabaseSeeder.php:44-45`)
 ```php
-$this->call(StaffDesignationSeeder::class);   // populates 8 designations
-$this->call(ClinicStationSeeder::class);        // populates 8 stations
+$this->call(StaffDesignationSeeder::class);   // populates 6 designations
+$this->call(ClinicStationSeeder::class);      // populates 7 stations
 ```
-`StaffDesignationSeeder` is idempotent (keyed on `code`). `ClinicStationSeeder` is **not** idempotent because it keys on `name`, and several `name` values were renamed (e.g. *Front Desk* → *Front Desk & Receiving*). Re-seeding will create new rows instead of updating old ones.
+Both seeders are now idempotent and key on stable `code` values via `updateOrCreate(['code' => ...], ...)`.
 
 ---
 
 ## 10. Recommended Module Access by Staff Designation
 
-Based on the sidebar gates in `resources/views/layouts/menu.blade.php` and `sub_menu.blade.php`, the following matrix maps each **Staff Designation** to the modules they should realistically access. This is a *business-logic recommendation*; implementation still relies on Spatie permissions (`manage_patients`, `manage_medicines`, `manage_request_documents`, etc.) being assigned to the underlying role (`staff`).
+This section is re-validated against current code in:
+- `database/seeders/StaffDesignationSeeder.php`
+- `database/seeders/ClinicStationSeeder.php`
+- `resources/views/layouts/menu.blade.php`
+- `resources/views/layouts/sub_menu.blade.php`
+- `routes/web.php`
+
+Current data model and role split:
+- Staff designations currently seeded: `clinic_head`, `nurse`, `pharmacist`, `triage_officer`, `clinic_staff`, `records_officer`.
+- **University Physician/Doctor is handled in the separate Doctors module** (`manage_doctors`, `doctors.*`) and is not part of `staff_designations`.
+- **University Dentist is not present** in the current staff designation seeder, and there is no `dental_clinic` station in the current station seeder.
 
 ### 10.1 Menu Gate Summary
 
-| Module | Blade Gate (permission / role check) | Route Group |
-|--------|----------------------------------------|-------------|
-| **Dashboard** | No gate (always visible) | `getDashboardURL()` |
-| **Patients** | `@can('manage_patients')` | `patients.index` |
-| **Queue** | Inside `@can('manage_patients')` block | `patient-queue.index` |
-| **Consultations** | `@can('manage_request_documents')` | `document-issuances.index?module=consultation` |
-| **Prescriptions** | `@can('manage_request_documents')` | `prescriptions.index` |
-| **Inventory** | `@can('manage_medicines')` | `medicine-inventory.index` |
-| **Dispensing** | Inside `@can('manage_medicines')` block | `medicine-dispensing.index` |
-| **Lab Requests** | `@can('manage_request_documents')` | `lab-requests.index` |
-| **Certificates** | `@can('manage_request_documents')` | `document-issuances.index?module=certificate` |
-| **Reports** | `isRole('clinic_admin') \|\| isRole('staff') \|\| isRole('doctor')` | `activity-logs.index` |
-| **Notifications** | Same role check as Reports | Sub-menu under `activity-logs` |
-| **Settings** | `@canany([manage_settings, manage_staff, manage_doctors, manage_roles, manage_specialties, manage_front_cms, manage_countries, manage_states, manage_cities])` | Various admin routes |
-| **Staffs (sub-item)** | `@can('manage_staff')` + `isRole('clinic_admin')` | `staffs.index` |
+| Module | Blade Gate | Route Middleware | Notes |
+|--------|------------|------------------|-------|
+| **Dashboard** | Always visible | `staff.module:dashboard` | Passes for all. |
+| **Patients** | `@can('manage_patients')` + `canStaffAccessModule('patients')` | `staff.module:patients` | All staff designations have `patients`. |
+| **Queue** | `@can('manage_patients')` + `canStaffAccessModule('queue')` | `staff.module:queue` | All staff designations have `queue`. |
+| **Consultations** | `@can('manage_request_documents')` + `canStaffAccessModule('consultations')` | `staff.module:document_issuances` (resolved) | Nurse, triage, records, clinic_head. |
+| **Prescriptions** | `@can('manage_request_documents')` + `canStaffAccessModule('prescriptions')` | `staff.module:prescriptions` | Clinic_head, pharmacist. |
+| **Inventory** | `@can('manage_medicines')` + `canStaffAccessModule('inventory')` | `staff.module:inventory` | Clinic_head, pharmacist. |
+| **Dispensing** | `@can('manage_medicines')` + `canStaffAccessModule('dispensing')` | `staff.module:dispensing` | Clinic_head, pharmacist. |
+| **Lab Requests** | `@can('manage_request_documents')` + `canStaffAccessModule('lab_requests')` | `staff.module:lab_requests` | Clinic_head, nurse. |
+| **Certificates** | `@can('manage_request_documents')` + `canStaffAccessModule('certificates')` | `staff.module:document_issuances` (resolved) | Nurse, clinic_staff, records, clinic_head. |
+| **Reports** | `isRole('clinic_admin') \|\| isRole('doctor') \|\| (staff/nurse && `canStaffAccessModule('reports')`)` | `staff.module:activity_logs` (resolved) | All staff designations have `reports`. |
+| **Notifications** | Same as Reports (uses `notifications`) | `staff.module:activity_logs` (resolved) | Clinic_head, pharmacist only. |
+| **Settings** | `@canany(...)` + `canStaffAccessAnyModule(...)` | `staff.module:settings` | **Admin-only** — `canStaffAccessModule('settings')` returns `false` for all staff. |
+| **Staffs** | `@can('manage_staff')` + `isRole('clinic_admin')` | `permission:manage_staff` (web.php) | Clinic_admin only. |
+| **Doctors** | `@can('manage_doctors')` + `canStaffAccessModule('doctors')` | `staff.module:doctors` | Clinic_head only (added to map). |
+| **Specializations** | `@can('manage_specialties')` + `canStaffAccessModule('specializations')` | `staff.module:specializations` | Clinic_head only (added to map). |
+| **Roles / Countries / States / Cities / CMS** | `@can(...)` + `canStaffAccessModule(...)` | respective `staff.module:*` | **Admin-only** — not in any staff designation map. |
 
 ### 10.2 Recommended Access Matrix
 
 | Staff Designation | Recommended Modules | Rationale |
 |-------------------|---------------------|-----------|
-| **Head of University Health Services** | **ALL** + Settings / Staffs | Administrative oversight; should view reports, manage staff, and have read access across all clinic operations. |
-| **University Physician** | Dashboard, Patients, Queue, Consultations, Prescriptions, Lab Requests, Certificates, Reports | Primary care provider; writes assessments, plans, prescriptions, and issues medical certificates. |
-| **University Dentist** | Dashboard, Patients, Queue, Consultations (Dental), Prescriptions, Lab Requests, Certificates, Reports | Dental care provider; parallel to physician but focused on dental consultation room. |
-| **Registered Nurse** | Dashboard, Patients, Queue, Triage, Consultations (assisting), Prescriptions (view-only), Lab Requests (assisting), Reports | Assists in triage, vitals, and observation room; may prep patients for physician. |
-| **Pharmacist** | Dashboard, Inventory, Dispensing, Prescriptions (read-only to verify), Reports | Manages FEFO inventory, dispenses medicines, checks prescriptions for contraindications. |
-| **Triage Officer** | Dashboard, Patients, Queue, Consultations (read-only view for triage notes), Reports | Focused on initial assessment and routing patients to correct station. |
-| **Clinic Staff / Secretary** | Dashboard, Patients, Queue, Reports (basic), Certificates (issuance support) | Front desk & records; registers patients, manages queue, schedules appointments. |
-| **Medical Records Officer** | Dashboard, Patients, Records/Reports, Certificates | Maintains physical & digital records; audits completeness of consultation forms. |
+| **Head of University Health Services** | Dashboard, Patients, Queue, Consultations, Prescriptions, Lab Requests, Certificates, Inventory, Dispensing, Reports, Notifications, Doctors, Specializations | Leads operations and needs broad oversight; additionally manages doctor accounts and clinic specializations. |
+| **Registered Nurse** | Dashboard, Patients, Queue, Consultations (assisting), Lab Requests (assisting), Certificates (support), Reports | Assists patient intake, vitals, care coordination, and clinical workflow support. |
+| **Pharmacist** | Dashboard, Inventory, Dispensing, Prescriptions (read/verify), Reports, Notifications | Manages FEFO inventory and medicine dispensing safety checks. |
+| **Triage Officer** | Dashboard, Patients, Queue, Consultations (triage notes), Reports | Focused on first-contact assessment and patient routing. |
+| **Clinic Staff / Secretary** | Dashboard, Patients, Queue, Certificates, Reports | Handles front desk, registration, queuing, and document release support. |
+| **Medical Records Officer** | Dashboard, Patients (read/search), Consultations (records completeness), Certificates, Reports | Maintains records integrity and documentation completeness. |
 
 ### 10.3 Station-to-Module Correlation
 
@@ -371,7 +390,6 @@ Based on the sidebar gates in `resources/views/layouts/menu.blade.php` and `sub_
 | **Front Desk & Receiving** | Patients, Queue, Certificates |
 | **Triage Area** | Patients, Queue, Consultations (vitals entry) |
 | **Medical Consultation Room** | Consultations, Prescriptions, Lab Requests |
-| **Dental Clinic** | Consultations (Dental), Prescriptions |
 | **Clinic Pharmacy** | Inventory, Dispensing, Prescriptions (read) |
 | **Records Area** | Patients (read/search), Reports, Certificates |
 | **Observation & Recovery Room** | Patients (bed monitoring), Queue (status updates) |
@@ -380,10 +398,21 @@ Based on the sidebar gates in `resources/views/layouts/menu.blade.php` and `sub_
 ### 10.4 Implementation Notes
 
 1. **Current permission model is role-based**, not designation-based. The app uses `@can('manage_patients')` etc., which are tied to the Spatie `staff` role, not to the `staff_profiles.role_designation_id`.
-2. **To enforce the matrix above**, you have two options:
-   - **Option A (Quick):** Keep the single `staff` role but add *conditional logic* in controllers/views that checks `$user->staffProfile->roleDesignation->code` before allowing certain actions.
-   - **Option B (Robust):** Create granular Spatie permissions such as `dispense_medicines`, `triage_patients`, `issue_certificates`, then assign them to sub-roles (e.g., `pharmacist_role`, `nurse_role`) and map each staff designation to a sub-role on creation.
-3. **The `StaffTable` currently does not display** `role_designation_id` or `assigned_station_id`. If you implement option A/B, you should add these columns so admins can verify access levels at a glance.
+2. **Doctor/Physician is separate from Staff** in current architecture:
+   - Doctor accounts are managed through the Doctors module (`manage_doctors`, `doctors.*`).
+   - Staff accounts use `staff_profiles.role_designation_id` with the six staff-only designations listed above.
+3. **No University Dentist in current seeders**: avoid assigning dentist-specific access rules until that designation/station is explicitly introduced.
+4. **Enforcement now implemented** in codebase:
+   - `app/helpers.php` adds `canStaffAccessModule()` using designation + assigned station maps.
+   - `app/Http/Middleware/EnsureStaffModuleAccess.php` blocks unauthorized route access.
+   - `routes/staff.php` applies `staff.module:*` middleware per module group (UI bypass-safe).
+   - `resources/views/layouts/menu.blade.php` and `resources/views/layouts/sub_menu.blade.php` hide unauthorized modules.
+5. **`StaffTable` now shows** Designation and Assigned Station columns via `staffs.components.designation` and `staffs.components.station` views, with eager-loaded relations.
+6. **Settings is clinic_admin only** — `canStaffAccessModule('settings')` returns `false` for every `staff`/`nurse` role user via an explicit early-return guard. Route middleware `staff.module:settings` and blade `@if(canStaffAccessModule('settings'))` both block access.
+7. **Admin-only modules** (not in any staff designation map, therefore blocked for all staff):
+   - `settings`, `roles`, `countries`, `states`, `cities`, `cms`
+   - These require `clinic_admin` role and use `web.php` / `admin` routes, bypassing `staff.php` entirely.
+8. **Controller redirect consistency verified** — `DocumentIssuanceController`, `PatientController`, `PatientQueueController`, `MedicineController`, `StockInController`, `LabRequestController`, and `PrescriptionController` all redirect to role-prefixed routes (`staff.*` for staff role). These redirects target modules that are confirmed present in every relevant designation map, so no post-action 403s occur for legitimate workflows.
 
 ---
 
@@ -391,16 +420,19 @@ Based on the sidebar gates in `resources/views/layouts/menu.blade.php` and `sub_
 
 | File | Role |
 |------|------|
-| `routes/web.php:207-211` | Route definitions |
+| `routes/web.php` | Main route definitions / route file includes |
+| `routes/staff.php` | Staff-prefixed role routes with `staff.module:*` guards |
 | `app/Http/Controllers/StaffController.php` | CRUD controller |
 | `app/Http/Requests/CreateStaffRequest.php` | Store validation |
 | `app/Http/Requests/UpdateStaffRequest.php` | Update validation |
+| `app/Http/Middleware/EnsureStaffModuleAccess.php` | Route-level designation/station access enforcement |
 | `app/Repositories/StaffRepository.php` | Business logic / DB transaction wrapper |
 | `app/Models/User.php` | Main entity (type = 3) |
 | `app/Models/StaffProfile.php` | Extended profile (designation, station, shift) |
 | `app/Models/StaffDesignation.php` | Lookup for Role Designation |
 | `app/Models/ClinicStation.php` | Lookup for Assigned Station |
 | `app/Models/Staff.php` | **Unused / legacy** model |
+| `app/helpers.php` | Role routing + designation/station module access helpers |
 | `app/Livewire/StaffTable.php` | Data table component |
 | `resources/views/staffs/create.blade.php` | Create wrapper |
 | `resources/views/staffs/edit.blade.php` | Edit wrapper |
@@ -409,8 +441,62 @@ Based on the sidebar gates in `resources/views/layouts/menu.blade.php` and `sub_
 | `resources/views/staffs/show_fields.blade.php` | Detail fields |
 | `resources/views/staffs/index.blade.php` | List view (Livewire mount) |
 | `resources/views/staffs/components/*.blade.php` | Table cell renders |
+| `resources/views/layouts/menu.blade.php` | Sidebar module visibility guards |
+| `resources/views/layouts/sub_menu.blade.php` | Top sub-menu visibility guards |
 | `database/migrations/2026_04_16_191000_normalize_university_clinic_profiles_schema.php` | Schema creation |
 | `database/seeders/StaffDesignationSeeder.php` | Designation seed data |
 | `database/seeders/ClinicStationSeeder.php` | Station seed data |
 | `database/seeders/DefaultStaffSeeder.php` | **Commented-out** default staff seed |
 | `database/seeders/DatabaseSeeder.php` | Orchestrator |
+
+---
+
+## 12. Behavior Verification
+
+The following four requirements were explicitly verified during this re-audit:
+
+### 12.1 Staff/Nurse users are restricted by both Role Designation and Assigned Station
+
+**Verification:**
+- `canStaffAccessModule()` first checks the user's designation map (`getStaffDesignationModuleMap()`). If the module is absent, it returns `false` immediately.
+- For non-`clinic_head` designations, it then checks `getStaffStationModuleMap()`. If the module is absent for the assigned station, it returns `false`.
+- **Both gates must pass** for operational modules (`patients`, `queue`, `consultations`, `prescriptions`, `lab_requests`, `certificates`, `inventory`, `dispensing`).
+
+**Result:** PASS — enforced at `routes/staff.php` (middleware) and both menu blades (visibility).
+
+### 12.2 Clinic Head bypasses station restrictions but still respects designation scope
+
+**Verification:**
+- In `canStaffAccessModule()`, after the designation map check passes, there is an early return: `if ($designationCode === 'clinic_head') { return true; }`.
+- This skips the station-scoped check entirely.
+- However, if a module is **not** in `clinic_head`'s designation map (e.g., `settings`, `roles`, `countries`), the designation-map check fails first and returns `false`.
+
+**Result:** PASS — clinic_head gets full station flexibility but is still bounded by the designation whitelist.
+
+### 12.3 Other roles (clinic_admin, doctor, patient) are unaffected
+
+**Verification:**
+- `canStaffAccessModule()` has an immediate `if (! ($user->hasRole('staff') || $user->hasRole('nurse'))) { return true; }` guard.
+- `EnsureStaffModuleAccess` middleware applies the same check before evaluating module access.
+- `clinic_admin` uses `web.php` admin routes (prefix `/admin`), not `staff.php`. `doctor` uses `doctor.php` routes. `patient` uses `patient.php` routes.
+
+**Result:** PASS — non-staff roles bypass all designation/station checks.
+
+### 12.4 Unauthorized direct URL access returns 403 instead of silently showing the module
+
+**Verification:**
+- Every module route group in `routes/staff.php` has `staff.module:*` middleware.
+- `EnsureStaffModuleAccess::handle()` calls `abort(403, ...)` when `canStaffAccessModule()` returns `false`.
+- Blade menus use the same helper, so UI visibility and route enforcement are **strictly aligned**.
+
+**Result:** PASS — direct URL hits to unauthorized modules result in a 403 Forbidden response.
+
+### 12.5 Settings is clinic_admin only
+
+**Verification:**
+- `canStaffAccessModule()` has an explicit early-return: `if ($module === 'settings') { return false; }` for all `staff`/`nurse` roles.
+- `routes/staff.php` settings group carries `staff.module:settings`, which invokes the same helper.
+- Blade gates (`@if(canStaffAccessModule('settings'))`) evaluate to `false` for all staff, hiding the menu item.
+- `clinic_admin` accesses settings through `web.php` `/admin/settings` with `role:clinic_admin` middleware, completely outside `staff.php`.
+
+**Result:** PASS — no staff designation or station assignment can access the Settings module.

@@ -19,15 +19,18 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 mb-5" id="universityIdFieldContainer">
-            {{ Form::label('university_id_number',__('University ID Number').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('university_id_number', !empty($patient->user) ? $patient->user->university_id_number : old('university_id_number'), ['class' => 'form-control','placeholder' => __('Student/Staff ID Number'),'required']) }}
-        </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('email',__('Email Address:') ,['class' => 'form-label']) }}
-            {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('Email Address')]) }}
+            {{ Form::label('patient_type_id',__('Patient Type').':' ,['class' => 'form-label required']) }}
+            {{ Form::select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'), ['placeholder' => __('Select Patient Type'),'class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
         </div>
-
+        <div class="col-md-6 mb-5 d-none" id="universityIdWrapper">
+            {{ Form::label('university_id_number',__('University ID Number').':' ,['class' => 'form-label required', 'id' => 'universityIdLabel']) }}
+            {{ Form::text('university_id_number', !empty($patient->user) ? $patient->user->university_id_number : old('university_id_number'), ['class' => 'form-control','placeholder' => __('Student/Staff ID Number'), 'id' => 'universityIdInput']) }}
+        </div>
+        <div class="col-md-6 mb-5 d-none" id="emailWrapper">
+            {{ Form::label('email',__('Email Address:') ,['class' => 'form-label']) }}
+            {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('Email Address'), 'id' => 'emailInput']) }}
+        </div>
     </div>
 
     <!-- Personal Information -->
@@ -132,16 +135,11 @@
         </div>
         <div class="col-md-6 mb-7">
             {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}
-            {{ Form::text('postal_code',!empty($patient->address) ? $patient->address->postal_code : null,['class' => 'form-control','placeholder' => __('messages.patient.postal_code')]) }}
+            {{ Form::number('postal_code',!empty($patient->address) ? $patient->address->postal_code : null,['class' => 'form-control','placeholder' => __('messages.patient.postal_code'), 'inputmode' => 'numeric', 'pattern' => '[0-9]*', 'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')"]) }}
         </div>
     </div>
 
-    <!-- Patient Information -->
-      <div class="col-md-6 mb-5">
-            {{ Form::label('patient_type_id',__('Patient Type').':' ,['class' => 'form-label required']) }}
-            {{ Form::select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'), ['placeholder' => __('Select Patient Type'),'class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
-        </div>
-        
+    <!-- Patient Information -->  
     <div id="patientInformationHeadingContainer">
         <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Information') }}</div>
     </div>
@@ -445,3 +443,96 @@
         <a href="{{ getRouteByRole('patients.index') }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>
+
+@push('scripts')
+<script>
+    (function() {
+        'use strict';
+
+        function initPatientTypeToggle() {
+            var $patientTypeSelect = $('#patientTypeSelect');
+            var $universityIdWrapper = $('#universityIdWrapper');
+            var $universityIdInput = $('#universityIdInput');
+            var $emailWrapper = $('#emailWrapper');
+
+            if (!$patientTypeSelect.length) {
+                console.warn('[PatientForm] patientTypeSelect not found in DOM');
+                return false;
+            }
+            if (!$universityIdWrapper.length) {
+                console.warn('[PatientForm] universityIdWrapper not found in DOM');
+            }
+            if (!$emailWrapper.length) {
+                console.warn('[PatientForm] emailWrapper not found in DOM');
+            }
+
+            // Patient type IDs from seeder: 1=student, 2=staff, 3=faculty, 4=guest
+            var GUEST_TYPE_ID = '4';
+
+            function toggleConditionalFields() {
+                var rawVal = $patientTypeSelect.val();
+                var selectedType = (rawVal !== null && rawVal !== undefined) ? String(rawVal) : '';
+
+                var isGuest = selectedType === GUEST_TYPE_ID;
+                var hasSelection = selectedType !== '';
+
+                if (!hasSelection) {
+                    $universityIdWrapper.addClass('d-none');
+                    $emailWrapper.addClass('d-none');
+                    $universityIdInput.removeAttr('required');
+                    
+                    return;
+                }
+
+                if (isGuest) {
+                    $universityIdWrapper.addClass('d-none');
+                    $emailWrapper.removeClass('d-none');
+                    $universityIdInput.removeAttr('required');
+                    
+                } else {
+                    $universityIdWrapper.removeClass('d-none');
+                    $emailWrapper.removeClass('d-none');
+                    $universityIdInput.attr('required', 'required');
+                    
+                }
+            }
+
+            // Bind to Select2 events
+            $patientTypeSelect.on('change.select2', function(e) {
+                
+                toggleConditionalFields();
+            });
+            $patientTypeSelect.on('select2:select', function(e) {
+                
+                toggleConditionalFields();
+            });
+            $patientTypeSelect.on('change', function(e) {
+                
+                toggleConditionalFields();
+            });
+
+            // Run immediately and delayed for Select2 initialization
+            toggleConditionalFields();
+            setTimeout(function() {
+                
+                toggleConditionalFields();
+            }, 300);
+
+            return true;
+        }
+
+        if (typeof jQuery !== 'undefined') {
+            jQuery(function($) {
+                var ok = initPatientTypeToggle();
+                if (!ok) {
+                    setTimeout(function() {
+                        initPatientTypeToggle();
+                    }, 500);
+                }
+            });
+        } else {
+            console.error('[PatientForm] jQuery is not loaded');
+        }
+    })();
+</script>
+@endpush

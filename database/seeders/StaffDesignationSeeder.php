@@ -11,8 +11,6 @@ class StaffDesignationSeeder extends Seeder
     {
         $designations = [
             ['code' => 'clinic_head', 'name' => 'Head of University Health Services'],
-            ['code' => 'university_physician', 'name' => 'University Physician'],
-            ['code' => 'university_dentist', 'name' => 'University Dentist'],
             ['code' => 'nurse', 'name' => 'Registered Nurse'],
             ['code' => 'pharmacist', 'name' => 'Pharmacist'], // Aligns with NORSU BS Pharmacy grads
             ['code' => 'triage_officer', 'name' => 'Triage Officer'],

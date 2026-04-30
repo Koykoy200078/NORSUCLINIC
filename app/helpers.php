@@ -791,6 +791,187 @@ if (! function_exists('getRouteNameByRole')) {
     }
 }
 
+if (! function_exists('normalizeStaffModuleKey')) {
+    /**
+     * Normalize module keys to a stable internal format.
+     */
+    function normalizeStaffModuleKey(string $module): string
+    {
+        $module = strtolower(trim(str_replace('-', '_', $module)));
+
+        $aliases = [
+            'patient_queue' => 'queue',
+            'consultation' => 'consultations',
+            'certificate' => 'certificates',
+            'lab_requests' => 'lab_requests',
+            'document_issuance' => 'document_issuances',
+            'medicine_inventory' => 'inventory',
+            'medicine_inventory_tracking' => 'inventory',
+            'medicine_dispensing' => 'dispensing',
+            'dispense_records' => 'dispensing',
+        ];
+
+        return $aliases[$module] ?? $module;
+    }
+}
+
+if (! function_exists('getStaffDesignationModuleMap')) {
+    /**
+     * Recommended module mapping by staff designation code.
+     */
+    function getStaffDesignationModuleMap(): array
+    {
+        return [
+            'clinic_head' => [
+                'dashboard', 'patients', 'queue', 'consultations', 'prescriptions',
+                'lab_requests', 'certificates', 'inventory', 'dispensing', 'reports', 'notifications',
+                'doctors', 'specializations',
+            ],
+            'nurse' => [
+                'dashboard', 'patients', 'queue', 'consultations', 'lab_requests', 'certificates', 'reports',
+            ],
+            'pharmacist' => [
+                'dashboard', 'inventory', 'dispensing', 'prescriptions', 'reports', 'notifications',
+            ],
+            'triage_officer' => [
+                'dashboard', 'patients', 'queue', 'consultations', 'reports',
+            ],
+            'clinic_staff' => [
+                'dashboard', 'patients', 'queue', 'certificates', 'reports',
+            ],
+            'records_officer' => [
+                'dashboard', 'patients', 'consultations', 'certificates', 'reports',
+            ],
+        ];
+    }
+}
+
+if (! function_exists('getStaffStationModuleMap')) {
+    /**
+     * Operational module mapping by assigned station code.
+     */
+    function getStaffStationModuleMap(): array
+    {
+        return [
+            'front_desk' => ['patients', 'queue', 'certificates'],
+            'triage_area' => ['patients', 'queue', 'consultations'],
+            'medical_consultation' => ['consultations', 'prescriptions', 'lab_requests'],
+            'pharmacy' => ['inventory', 'dispensing', 'prescriptions'],
+            'records_area' => ['patients', 'reports', 'certificates'],
+            'observation_room' => ['patients', 'queue'],
+            'isolation_room' => ['patients', 'queue', 'consultations'],
+        ];
+    }
+}
+
+if (! function_exists('getStaffProfileForUser')) {
+    /**
+     * Return the staff profile for the given user (cached per request).
+     */
+    function getStaffProfileForUser(?Authenticatable $user = null)
+    {
+        $user = $user ?: getLogInUser();
+        if (! $user || ! method_exists($user, 'staffProfile')) {
+            return null;
+        }
+
+        static $profileCache = [];
+        $cacheKey = (int) $user->id;
+
+        if (array_key_exists($cacheKey, $profileCache)) {
+            return $profileCache[$cacheKey];
+        }
+
+        $profile = $user->relationLoaded('staffProfile')
+            ? $user->staffProfile
+            : $user->staffProfile()->with(['roleDesignation:id,code,name', 'assignedStation:id,code,name'])->first();
+
+        if ($profile) {
+            $profile->loadMissing(['roleDesignation:id,code,name', 'assignedStation:id,code,name']);
+        }
+
+        $profileCache[$cacheKey] = $profile;
+
+        return $profile;
+    }
+}
+
+if (! function_exists('canStaffAccessModule')) {
+    /**
+     * Enforce designation + station-based module access for staff/nurse users.
+     */
+    function canStaffAccessModule(string $module, ?Authenticatable $user = null): bool
+    {
+        $user = $user ?: getLogInUser();
+        if (! $user) {
+            return false;
+        }
+
+        if (! ($user->hasRole('staff') || $user->hasRole('nurse'))) {
+            return true;
+        }
+
+        $module = normalizeStaffModuleKey($module);
+        if ($module === 'dashboard') {
+            return true;
+        }
+
+        // Settings is clinic_admin only — never accessible to staff/nurse roles
+        if ($module === 'settings') {
+            return false;
+        }
+
+        $staffProfile = getStaffProfileForUser($user);
+        if (! $staffProfile || ! $staffProfile->roleDesignation) {
+            return false;
+        }
+
+        $designationCode = normalizeStaffModuleKey((string) $staffProfile->roleDesignation->code);
+        $designationModules = getStaffDesignationModuleMap()[$designationCode] ?? [];
+        if (! in_array($module, $designationModules, true)) {
+            return false;
+        }
+
+        if ($designationCode === 'clinic_head') {
+            return true;
+        }
+
+        $stationScopedModules = [
+            'patients', 'queue', 'consultations', 'prescriptions',
+            'lab_requests', 'certificates', 'inventory', 'dispensing',
+        ];
+
+        if (! in_array($module, $stationScopedModules, true)) {
+            return true;
+        }
+
+        if (! $staffProfile->assignedStation) {
+            return false;
+        }
+
+        $stationCode = normalizeStaffModuleKey((string) $staffProfile->assignedStation->code);
+        $stationModules = getStaffStationModuleMap()[$stationCode] ?? [];
+
+        return in_array($module, $stationModules, true);
+    }
+}
+
+if (! function_exists('canStaffAccessAnyModule')) {
+    /**
+     * Convenience helper for checking multiple module keys.
+     */
+    function canStaffAccessAnyModule(array $modules, ?Authenticatable $user = null): bool
+    {
+        foreach ($modules as $module) {
+            if (canStaffAccessModule((string) $module, $user)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
 if (! function_exists('isModuleActive')) {
     /**
      * Check if the current request belongs to a specific module

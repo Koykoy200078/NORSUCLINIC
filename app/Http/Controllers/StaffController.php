@@ -77,8 +77,6 @@ class StaffController extends AppBaseController
      */
     public function show(User $staff): \Illuminate\View\View
     {
-        $staff = User::whereType(User::STAFF)->findOrFail($staff['id']);
-
         return view('staffs.show', compact('staff'));
     }
 
@@ -122,7 +120,7 @@ class StaffController extends AppBaseController
      */
     public function destroy(User $staff)
     {
-        $staff->delete();
+        $this->staffRepository->delete($staff->id);
 
         return $this->sendSuccess(__('messages.flash.staff_delete'));
     }

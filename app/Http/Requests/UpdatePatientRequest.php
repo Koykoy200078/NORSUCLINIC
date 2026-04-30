@@ -29,7 +29,7 @@ class UpdatePatientRequest extends FormRequest
 
         if ($patient instanceof Patient) {
             $rules['email'] = 'nullable|email:filter|unique:users,email,' . $patient->user_id;
-            $rules['university_id_number'] = 'required|string|max:100|unique:users,university_id_number,' . $patient->user_id;
+            $rules['university_id_number'] = 'nullable|string|max:100|unique:users,university_id_number,' . $patient->user_id;
             $rules['contact'] = 'nullable';
         } else {
             // Fallback - should not reach here if route model binding works
@@ -38,17 +38,30 @@ class UpdatePatientRequest extends FormRequest
                 'parameters' => $this->route()->parameters(),
             ]);
             $rules['email'] = 'nullable|email:filter';
-            $rules['university_id_number'] = 'required|string|max:100';
+            $rules['university_id_number'] = 'nullable|string|max:100';
             $rules['contact'] = 'nullable';
         }
 
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
         $rules['immunization_record'] = 'required|string';
-        $rules['postal_code'] = 'nullable';
+        $rules['postal_code'] = 'nullable|numeric';
         $rules['profile'] = 'nullable|mimes:jpeg,jpg,png|max:2000';
 
         return $rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $patientTypeId = $this->input('patient_type_id');
+            $universityId = $this->input('university_id_number');
+
+            // Guest (id=4) is exempt; all other types require university_id_number
+            if ($patientTypeId != '4' && (empty($universityId) || trim($universityId) === '')) {
+                $validator->errors()->add('university_id_number', 'The university id number field is required.');
+            }
+        });
     }
 
     public function messages(): array

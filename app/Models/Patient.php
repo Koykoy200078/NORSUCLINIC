@@ -163,7 +163,7 @@ class Patient extends Model implements HasMedia
         'contact' => 'nullable',
         'nationality_citizenship' => 'nullable|string|max:120',
         'password' => 'nullable|same:password_confirmation|min:6',
-        'postal_code' => 'nullable',
+        'postal_code' => 'nullable|numeric',
         'patient_type_id' => 'nullable|exists:patient_types,id',
         'immunization_record' => 'nullable|string',
         'insurance_provider_id' => 'nullable|exists:insurance_providers,id',
@@ -210,6 +210,7 @@ class Patient extends Model implements HasMedia
         'admissions_surgeries' => 'nullable|string',
         'maintenance' => 'nullable|string',
         'covid_vaccination' => 'nullable|string',
+        'postal_code' => 'nullable|numeric',
     ];
 
     protected $appends = ['profile'];

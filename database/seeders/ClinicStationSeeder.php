@@ -26,11 +26,6 @@ class ClinicStationSeeder extends Seeder
                 'description' => 'Private physician consultation and physical examination area.'
             ],
             [
-                'code' => 'dental_consultation', 
-                'name' => 'Dental Clinic', 
-                'description' => 'Dental consultation and extraction/cleaning procedures area.'
-            ],
-            [
                 'code' => 'pharmacy', 
                 'name' => 'Clinic Pharmacy', 
                 'description' => 'Medicine dispensing, medication counseling, and FEFO inventory management.'

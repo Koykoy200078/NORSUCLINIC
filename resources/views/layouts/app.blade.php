@@ -170,6 +170,7 @@
     </script>
 
     @yield('page_js')
+    @stack('scripts')
 </body>
 
 </html>

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Role;
-use App\Models\Staff;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Arr;
@@ -44,7 +43,7 @@ class StaffRepository extends BaseRepository
      **/
     public function model()
     {
-        return Staff::class;
+        return User::class;
     }
 
     /**
@@ -53,7 +52,6 @@ class StaffRepository extends BaseRepository
     public function getRole()
     {
         return Role::pluck('display_name', 'id');
-        return $roles;
     }
 
     public function store($input): bool
@@ -76,7 +74,7 @@ class StaffRepository extends BaseRepository
             }
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
-                $staff->addMedia($input['profile'])->toMediaCollection(Staff::PROFILE, config('app.media_disc'));
+                $staff->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
 
             DB::commit();
@@ -112,10 +110,34 @@ class StaffRepository extends BaseRepository
             }
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
-                $staff->clearMediaCollection(Staff::PROFILE);
+                $staff->clearMediaCollection(User::PROFILE);
                 $staff->media()->delete();
-                $staff->addMedia($input['profile'])->toMediaCollection(Staff::PROFILE, config('app.media_disc'));
+                $staff->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $staff = User::findOrFail($id);
+
+            // Clean up associated staff profile
+            $staff->staffProfile()->delete();
+
+            // Clean up media collection
+            $staff->clearMediaCollection(User::PROFILE);
+
+            $staff->delete();
 
             DB::commit();
 

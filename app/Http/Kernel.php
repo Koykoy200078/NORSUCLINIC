@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\checkImpersonateUser;
 use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\EnsureStaffModuleAccess;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -90,6 +91,7 @@ class Kernel extends HttpKernel
         'verified' => EnsureEmailIsVerified::class,
         'role' => RoleMiddleware::class,
         'permission' => PermissionMiddleware::class,
+        'staff.module' => EnsureStaffModuleAccess::class,
         'checkUserStatus' => CheckUserStatus::class,
         'xss' => XSS::class,
         'checkImpersonateUser' => checkImpersonateUser::class,
