@@ -129,7 +129,9 @@ class PatientRepository extends BaseRepository
                 ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
 
-            $input['patient_unique_id'] = Str::upper((string) ($input['university_id_number'] ?? ''));
+            $normalizedUniversityIdNumber = Str::upper(trim((string) ($input['university_id_number'] ?? '')));
+            $input['university_id_number'] = $normalizedUniversityIdNumber !== '' ? $normalizedUniversityIdNumber : null;
+            $input['patient_unique_id'] = $input['university_id_number'] ?: Patient::generatePatientUniqueId();
             $input['email'] = !empty($input['email']) ? setEmailLowerCase($input['email']) : null;
             $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
             $patientArray = Arr::only($input, [
@@ -236,7 +238,12 @@ class PatientRepository extends BaseRepository
             );
             $input['type'] = User::PATIENT;
             $input['email'] = ! empty($input['email']) ? setEmailLowerCase($input['email']) : null;
-            $input['patient_unique_id'] = Str::upper((string) ($input['university_id_number'] ?? ($patient->user->university_id_number ?? '')));
+            $normalizedUniversityIdNumber = Str::upper(trim((string) ($input['university_id_number'] ?? ($patient->user->university_id_number ?? ''))));
+            $input['university_id_number'] = $normalizedUniversityIdNumber !== '' ? $normalizedUniversityIdNumber : null;
+
+            $existingPatientUniqueId = Str::upper(trim((string) ($patient->patient_unique_id ?? '')));
+            $input['patient_unique_id'] = $input['university_id_number']
+                ?: ($existingPatientUniqueId !== '' ? $existingPatientUniqueId : Patient::generatePatientUniqueId());
             $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
             $patientInput = Arr::only($input, [
                 'patient_unique_id',

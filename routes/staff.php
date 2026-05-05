@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MedicineController;
@@ -15,11 +14,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\DocumentIssuanceController;
 use App\Http\Controllers\LabRequestController;
-use App\Http\Controllers\Front\CMSController;
-use App\Http\Controllers\Front\SliderController;
-use App\Http\Controllers\SettingController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -143,33 +137,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
         // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
         Route::redirect('medicine-history', '/staff/dispense-records');
         Route::redirect('medicine-history/{id}', '/staff/dispense-records/{id}');
-    });
-
-    // CMS Management (Staff can manage CMS with limited access)
-    Route::middleware(['permission:manage_front_cms', 'staff.module:cms'])->group(function () {
-        Route::get('cms', [CMSController::class, 'index'])->name('cms.index');
-        Route::post('cms', [CMSController::class, 'update'])->name('cms.update');
-
-        // Banner/Slider management
-        Route::resource('banner', SliderController::class)->except('create', 'store', 'destroy', 'show');
-    });
-
-    // Settings Management (Staff can view settings but limited editing)
-    Route::middleware(['permission:manage_settings', 'staff.module:settings'])->group(function () {
-        Route::get('settings', [SettingController::class, 'index'])->name('setting.index');
-        Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
-        Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
-    });
-
-    // Additional management routes (view-only for staff)
-    Route::middleware(['permission:manage_roles', 'staff.module:roles'])->group(function () {
-        Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
-        Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    });
-
-    Route::middleware(['permission:manage_countries', 'staff.module:countries'])->group(function () {
-        Route::get('countries', [CountryController::class, 'index'])->name('countries.index');
-        Route::get('countries/{country}', [CountryController::class, 'show'])->name('countries.show');
     });
 
     // Activity Logs (Staff can view activity logs)

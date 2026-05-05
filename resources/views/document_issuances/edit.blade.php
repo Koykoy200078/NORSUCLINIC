@@ -315,7 +315,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     @endif
 
                     <!-- Medicine Selection for Plan -->
-                    @if(isRole('doctor') || isRole('clinic_admin'))
+                    @if(isRole('doctor'))
                     <div class="mt-3">
                         <label class="block text-xs font-semibold mb-2">Add Medicines to Plan:</label>
                         <button type="button" id="add_plan_medicine_btn" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
@@ -1370,11 +1370,28 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
+        const medicinesByCategoryUrl = '{{ getRouteByRole("medicines.by.category") }}';
+        const canManagePlanMedicines = @json(isRole('doctor'));
         let medicinesData = [];
 
         async function fetchMedicines() {
             try {
-                const response = await fetch('{{ route("medicines.by.category") }}');
+                const response = await fetch(medicinesByCategoryUrl, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch medicines (${response.status})`);
+                }
+
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error(`Unexpected response format while fetching medicines (${response.status})`);
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1417,6 +1434,10 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
             existingMedicines.forEach(medicine => {
                 const type = medicine.used_for; // 'plan' or 'nursing'
+                if (type === 'plan' && !canManagePlanMedicines) {
+                    return;
+                }
+
                 const counter = type === 'plan' ? planMedicineCounter++ : nursingMedicineCounter++;
 
                 // Add medicine row with existing data
@@ -1437,7 +1458,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         const addPlanMedicineBtn = document.getElementById('add_plan_medicine_btn');
         const addNursingMedicineBtn = document.getElementById('add_nursing_medicine_btn');
 
-        if (addPlanMedicineBtn) {
+        if (addPlanMedicineBtn && canManagePlanMedicines) {
             addPlanMedicineBtn.addEventListener('click', function() {
                 addMedicineRow('plan', planMedicineCounter++);
             });
@@ -1634,9 +1655,17 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         }
 
         function addMedicineRow(type, index, existingData = null) {
+            if (type === 'plan' && !canManagePlanMedicines) {
+                return;
+            }
+
             const container = type === 'plan' ?
                 document.getElementById('plan_medicines_container') :
                 document.getElementById('nursing_medicines_container');
+
+            if (!container) {
+                return;
+            }
 
             const row = document.createElement('div');
             row.className = 'medicine-row';

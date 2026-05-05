@@ -256,12 +256,14 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                                 <span class="aside-menu-title">Low stocks alert</span>
                             </a>
                         </li>
+                        @if(canStaffAccessModule('inventory'))
                         <li class="nav-item">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('medicine-inventory.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-times"></i></span>
                                 <span class="aside-menu-title">Expiry medicine alert</span>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item {{ Request::is('*/activity-logs*') && request()->query('tab') === 'logs' ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('activity-logs.index') . '?tab=logs' }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-info-circle"></i></span>

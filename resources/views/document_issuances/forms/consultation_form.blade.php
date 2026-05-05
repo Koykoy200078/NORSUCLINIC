@@ -1337,11 +1337,28 @@
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
         // Fetch medicines from API (grouped by category with dosages)
+        const medicinesByCategoryUrl = '{{ getRouteByRole("medicines.by.category") }}';
+        const canManagePlanMedicines = @json(isRole('doctor'));
         let medicinesData = [];
 
         async function fetchMedicines() {
             try {
-                const response = await fetch('{{ route("medicines.by.category") }}');
+                const response = await fetch(medicinesByCategoryUrl, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch medicines (${response.status})`);
+                }
+
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error(`Unexpected response format while fetching medicines (${response.status})`);
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1362,7 +1379,7 @@
 
         // Add medicine for Plan
         const addPlanMedicineBtn = document.getElementById('add_plan_medicine_btn');
-        if (addPlanMedicineBtn) {
+        if (addPlanMedicineBtn && canManagePlanMedicines) {
             addPlanMedicineBtn.addEventListener('click', function() {
                 addMedicineRow('plan', planMedicineCounter++);
             });
@@ -1377,9 +1394,17 @@
         }
 
         function addMedicineRow(type, index) {
+            if (type === 'plan' && !canManagePlanMedicines) {
+                return;
+            }
+
             const container = type === 'plan' ?
                 document.getElementById('plan_medicines_container') :
                 document.getElementById('nursing_medicines_container');
+
+            if (!container) {
+                return;
+            }
 
             const row = document.createElement('div');
             row.className = 'medicine-row';

@@ -157,11 +157,7 @@ class PatientService
      */
     private function generateUniqueId(): string
     {
-        do {
-            $id = 'PT' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-        } while (Patient::where('patient_unique_id', $id)->exists());
-
-        return $id;
+        return Patient::generatePatientUniqueId();
     }
 
     /**

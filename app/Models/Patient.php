@@ -290,14 +290,10 @@ class Patient extends Model implements HasMedia
 
     public static function generatePatientUniqueId(): string
     {
-        $patientUniqueId = Str::random(8);
-        while (true) {
-            $isExist = self::wherePatientUniqueId($patientUniqueId)->exists();
-            if ($isExist) {
-                self::generatePatientUniqueId();
-            }
-            break;
-        }
+        do {
+            // Datetime-based fallback ID reduces collision risk when university ID is not provided.
+            $patientUniqueId = 'PT' . now()->format('YmdHisv') . Str::upper(Str::random(3));
+        } while (self::wherePatientUniqueId($patientUniqueId)->exists());
 
         return $patientUniqueId;
     }

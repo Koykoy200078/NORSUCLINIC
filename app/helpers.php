@@ -104,7 +104,7 @@ if (! function_exists('normalizeLocalUrl')) {
         }
 
         $localHosts = array_values(array_filter(array_map(
-            static fn ($localHost): string => strtolower(trim((string) $localHost)),
+            static fn($localHost): string => strtolower(trim((string) $localHost)),
             array_merge($configuredLocalHosts, [(string) $configuredAppHost])
         )));
 
@@ -823,24 +823,57 @@ if (! function_exists('getStaffDesignationModuleMap')) {
     {
         return [
             'clinic_head' => [
-                'dashboard', 'patients', 'queue', 'consultations', 'prescriptions',
-                'lab_requests', 'certificates', 'inventory', 'dispensing', 'reports', 'notifications',
-                'doctors', 'specializations',
+                'dashboard',
+                'patients',
+                'queue',
+                'consultations',
+                'prescriptions',
+                'lab_requests',
+                'certificates',
+                'inventory',
+                'dispensing',
+                'reports',
+                'notifications',
+                'doctors',
+                'specializations',
             ],
             'nurse' => [
-                'dashboard', 'patients', 'queue', 'consultations', 'lab_requests', 'certificates', 'reports',
+                'dashboard',
+                'patients',
+                'queue',
+                'consultations',
+                'lab_requests',
+                'certificates',
+                'reports',
             ],
             'pharmacist' => [
-                'dashboard', 'inventory', 'dispensing', 'prescriptions', 'reports', 'notifications',
+                'dashboard',
+                'inventory',
+                'dispensing',
+                'prescriptions',
+                'reports',
+                'notifications',
             ],
             'triage_officer' => [
-                'dashboard', 'patients', 'queue', 'consultations', 'reports',
+                'dashboard',
+                'patients',
+                'queue',
+                'consultations',
+                'reports',
             ],
             'clinic_staff' => [
-                'dashboard', 'patients', 'queue', 'certificates', 'reports',
+                'dashboard',
+                'patients',
+                'queue',
+                'certificates',
+                'reports',
             ],
             'records_officer' => [
-                'dashboard', 'patients', 'consultations', 'certificates', 'reports',
+                'dashboard',
+                'patients',
+                'consultations',
+                'certificates',
+                'reports',
             ],
         ];
     }
@@ -857,10 +890,55 @@ if (! function_exists('getStaffStationModuleMap')) {
             'triage_area' => ['patients', 'queue', 'consultations'],
             'medical_consultation' => ['consultations', 'prescriptions', 'lab_requests'],
             'pharmacy' => ['inventory', 'dispensing', 'prescriptions'],
-            'records_area' => ['patients', 'reports', 'certificates'],
+            'records_area' => ['patients', 'certificates'],
             'observation_room' => ['patients', 'queue'],
             'isolation_room' => ['patients', 'queue', 'consultations'],
         ];
+    }
+}
+
+if (! function_exists('getStaffDesignationStationMap')) {
+    /**
+     * Allowed station assignment per staff designation code.
+     */
+    function getStaffDesignationStationMap(): array
+    {
+        return [
+            'clinic_head' => ['*'],
+            'pharmacist' => ['pharmacy'],
+            'records_officer' => ['records_area'],
+            'clinic_staff' => ['front_desk', 'records_area'],
+            'triage_officer' => ['triage_area', 'isolation_room', 'observation_room'],
+            'nurse' => ['triage_area', 'medical_consultation', 'isolation_room', 'observation_room'],
+        ];
+    }
+}
+
+if (! function_exists('canStaffDesignationWorkAtStation')) {
+    /**
+     * Validate if a designation is allowed to be assigned to a station.
+     */
+    function canStaffDesignationWorkAtStation(?string $designationCode, ?string $stationCode): bool
+    {
+        if (! $designationCode || ! $stationCode) {
+            return false;
+        }
+
+        $designationCode = normalizeStaffModuleKey($designationCode);
+        $stationCode = normalizeStaffModuleKey($stationCode);
+
+        $designationStationMap = getStaffDesignationStationMap();
+        $allowedStations = $designationStationMap[$designationCode] ?? [];
+
+        if (empty($allowedStations)) {
+            return false;
+        }
+
+        if (in_array('*', $allowedStations, true)) {
+            return true;
+        }
+
+        return in_array($stationCode, $allowedStations, true);
     }
 }
 
@@ -937,8 +1015,14 @@ if (! function_exists('canStaffAccessModule')) {
         }
 
         $stationScopedModules = [
-            'patients', 'queue', 'consultations', 'prescriptions',
-            'lab_requests', 'certificates', 'inventory', 'dispensing',
+            'patients',
+            'queue',
+            'consultations',
+            'prescriptions',
+            'lab_requests',
+            'certificates',
+            'inventory',
+            'dispensing',
         ];
 
         if (! in_array($module, $stationScopedModules, true)) {

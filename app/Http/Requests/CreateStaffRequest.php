@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidStaffDesignationStationPair;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateStaffRequest extends FormRequest
@@ -29,7 +30,11 @@ class CreateStaffRequest extends FormRequest
             'gender' => 'required',
             'role' => 'sometimes|integer|exists:roles,id', // Default value 3 will be set, validate only if provided
             'role_designation_id' => 'required|exists:staff_designations,id',
-            'assigned_station_id' => 'required|exists:clinic_stations,id',
+            'assigned_station_id' => [
+                'required',
+                'exists:clinic_stations,id',
+                new ValidStaffDesignationStationPair($this->input('role_designation_id')),
+            ],
             'shift_schedule' => 'required|string',
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];

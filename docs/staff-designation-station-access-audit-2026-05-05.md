@@ -1,7 +1,7 @@
 # Staff Role Designation + Assigned Station Access Audit (Deep Scan)
 
 Date: 2026-05-05  
-Scope: Audit only (no enforcement changes applied)
+Scope: Audit + enforcement phase applied in this workspace
 
 ## 1. Audit Goal
 
@@ -250,7 +250,7 @@ Admin-only for staff/nurse (recommended blocked):
 
 ---
 
-## 7. Recommendations Before Applying Any Code Change
+## 7. Pre-Implementation Recommendations (Historical)
 
 1. Correct current mismatched assignment immediately:
     - Staff id 5 (`pharmacist`) should be moved to `pharmacy` station.
@@ -265,11 +265,59 @@ Admin-only for staff/nurse (recommended blocked):
 
 ## 8. Ready-to-Apply Next Step (If Approved)
 
-If you approve, next implementation phase can include:
+Status: completed on 2026-05-05.
 
-- validation rule for allowed designation-station pairs,
-- menu guard fix for notifications -> inventory link,
-- route cleanup for unreachable staff groups,
-- automated policy tests for module/submodule access.
+Implemented in this workspace:
 
-(No changes were applied in this audit run.)
+- Designation-station enforcement at request validation:
+    - `app/Rules/ValidStaffDesignationStationPair.php` (new)
+    - `app/Http/Requests/CreateStaffRequest.php`
+    - `app/Http/Requests/UpdateStaffRequest.php`
+- Policy helpers for designation-station pairing:
+    - `app/helpers.php`
+    - Added `getStaffDesignationStationMap()`
+    - Added `canStaffDesignationWorkAtStation()`
+- Station map cleanup:
+    - `app/helpers.php`
+    - `records_area` operational map now excludes `reports` (reports is designation-based, not station-scoped)
+- Notifications submenu guard fix:
+    - `resources/views/layouts/menu.blade.php`
+    - "Expiry medicine alert" link is now shown only when `canStaffAccessModule('inventory')` is true
+- Route cleanup for unreachable admin-like modules under `staff/*`:
+    - `routes/staff.php`
+    - Removed staff namespace groups for `settings`, `roles`, `countries`, and `cms/banner`
+- Automated policy tests:
+    - `tests/Feature/StaffModuleAccessPolicyTest.php` (new)
+    - Covers designation/station module behavior, key route middleware guards, staff route guard completeness, and removed admin-only staff routes
+    - Test run result: 5 passed
+
+## 9. Post-Enforcement Notes
+
+1. Existing data mismatch still requires admin correction:
+    - current pharmacist account assigned to `triage_area` should be reassigned to `pharmacy`.
+2. Validation now prevents creating/updating invalid designation-station combinations.
+3. Route and UI policy are now tighter and aligned with the access model described in this audit.
+
+## 10. Doctor Consultation Hotfix (May 5, 2026)
+
+Issue observed during doctor edit consultation flow:
+
+- Add Medicines to Plan attempted to call `/admin/medicines-by-category`, returning 403 for doctor accounts.
+- Frontend then attempted to parse the 403 HTML response as JSON, causing `Unexpected token '<'`.
+
+Applied fixes:
+
+1. Role-aware medicines endpoint in consultation scripts:
+    - `resources/views/document_issuances/edit.blade.php`
+    - `resources/views/document_issuances/forms/consultation_form.blade.php`
+    - Replaced hardcoded `route("medicines.by.category")` usage with `getRouteByRole("medicines.by.category")`.
+2. Added stricter fetch handling with JSON content-type validation to prevent misleading parse errors.
+3. Enforced doctor-only plan medicine manipulation:
+    - Frontend: Plan medicine add control on edit page is now doctor-only.
+    - Backend: `app/Http/Controllers/DocumentIssuanceController.php`
+        - non-doctor submissions for `used_for = plan` are ignored in both create (`handleMedicineDeduction`) and edit (`handleMedicineUpdates`).
+
+Result:
+
+- Doctor account now hits doctor-scoped medicine endpoint and can add plan medicines.
+- Non-doctor users cannot add or mutate plan medicines through UI or direct payload tampering.

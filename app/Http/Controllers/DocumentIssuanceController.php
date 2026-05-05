@@ -21,7 +21,6 @@ use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DocumentIssuanceController extends Controller
@@ -752,6 +751,8 @@ class DocumentIssuanceController extends Controller
      */
     private function handleMedicineUpdates(DocumentIssuance $requestDocument, array $data)
     {
+        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
+
         // Get existing medicines from database
         $existingMedicines = $requestDocument->consultationMedicines()->get();
 
@@ -759,6 +760,10 @@ class DocumentIssuanceController extends Controller
         // Key format: "medicineId_dosage_usedFor"
         $existingMedicinesMap = [];
         foreach ($existingMedicines as $existingMedicine) {
+            if (! $canManagePlanMedicines && $existingMedicine->used_for === 'plan') {
+                continue;
+            }
+
             $key = "{$existingMedicine->medicine_id}_{$existingMedicine->dosage}_{$existingMedicine->used_for}";
             $existingMedicinesMap[$key] = $existingMedicine;
         }
@@ -767,6 +772,14 @@ class DocumentIssuanceController extends Controller
         $newMedicinesMap = [];
         if (isset($data['medicines']) && is_array($data['medicines'])) {
             foreach ($data['medicines'] as $usedFor => $medicines) {
+                if (! in_array($usedFor, ['plan', 'nursing'], true)) {
+                    continue;
+                }
+
+                if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
+                    continue;
+                }
+
                 if (!is_array($medicines)) {
                     continue;
                 }
@@ -1017,12 +1030,22 @@ class DocumentIssuanceController extends Controller
      */
     private function handleMedicineDeduction(DocumentIssuance $requestDocument, array $data)
     {
+        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
+
         if (!isset($data['medicines']) || !is_array($data['medicines'])) {
             return;
         }
 
         // Process medicines from both Plan and Nursing Intervention
         foreach ($data['medicines'] as $usedFor => $medicines) {
+            if (! in_array($usedFor, ['plan', 'nursing'], true)) {
+                continue;
+            }
+
+            if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
+                continue;
+            }
+
             if (!is_array($medicines)) {
                 continue;
             }
@@ -1068,6 +1091,14 @@ class DocumentIssuanceController extends Controller
                 ]);
             }
         }
+    }
+
+    /**
+     * Only doctors can add/edit medicines under Plan.
+     */
+    private function canCurrentUserManagePlanMedicines(): bool
+    {
+        return isRole('doctor');
     }
 
     /**
