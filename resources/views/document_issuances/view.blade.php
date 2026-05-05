@@ -47,6 +47,10 @@ $exportPdfUrl = $documentId
     ? (is_string($requestDocument->consultation_images) ? json_decode($requestDocument->consultation_images, true) : $requestDocument->consultation_images)
     : [];
 
+    $documentUser = $requestDocument->user_id
+    ? \App\Models\User::with(['department:id,department_name', 'office:id,office_name'])->find($requestDocument->user_id)
+    : null;
+
     $isMeaningfulValue = static function ($value): bool {
     if ($value === null) {
     return false;
@@ -70,9 +74,16 @@ $exportPdfUrl = $documentId
     $courseDisplay = $isMeaningfulValue($requestDocument->course) ? trim((string) $requestDocument->course) : null;
     $yearLevelDisplay = $isMeaningfulValue($requestDocument->year_level) ? trim((string) $requestDocument->year_level) : null;
     $informantDisplay = $isMeaningfulValue($requestDocument->informant) ? trim((string) $requestDocument->informant) : null;
+    $departmentDisplay = $isMeaningfulValue($documentUser?->department?->department_name) ? trim((string) $documentUser->department->department_name) : null;
+    $officeDisplay = $isMeaningfulValue($documentUser?->office?->office_name) ? trim((string) $documentUser->office->office_name) : null;
 
-    $yearOrRoleDisplay = $yearLevelDisplay ?? $informantDisplay;
-    $showCourseYearBlock = $courseDisplay !== null || $yearOrRoleDisplay !== null;
+    $patientTypeSource = strtolower(trim((string) ($informantDisplay ?? $yearLevelDisplay ?? '')));
+    $isFacultyType = $patientTypeSource === 'faculty';
+    $isStaffType = $patientTypeSource === 'staff';
+    $isGuestType = $patientTypeSource === 'guest';
+    $isStudentType = ! $isFacultyType && ! $isStaffType && ! $isGuestType;
+
+    $showCourseYearBlock = $isStudentType && ($courseDisplay !== null || $yearLevelDisplay !== null);
     @endphp
     <form>
         <div class="grid grid-cols-4 gap-2 pb-2">
@@ -108,13 +119,13 @@ $exportPdfUrl = $documentId
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #</label>
                 <input type="text" id="patient_contact" name="patient_contact" class="w-full border-b border-black" value="{{ $requestDocument->patient_contact }}" readonly>
             </div>
-            @if($campusDisplay)
+            @if($isStudentType && $campusDisplay)
             <div class="col-span-1">
                 <label class="block text-xs" for="campus">CAMPUS</label>
                 <input type="text" id="campus_id" name="campus_id" class="w-full border-b border-black" value="{{ $campusDisplay }}" readonly>
             </div>
             @endif
-            @if($collegeDisplay)
+            @if(($isStudentType || $isFacultyType) && $collegeDisplay)
             <div class="col-span-1">
                 <label class="block text-xs" for="college">COLLEGE</label>
                 <input type="text" id="college_id" name="college_id" class="w-full border-b border-black" value="{{ $collegeDisplay }}" readonly>
@@ -123,16 +134,28 @@ $exportPdfUrl = $documentId
             @if($showCourseYearBlock)
             <div class="col-span-1">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
-                @if($courseDisplay && $yearOrRoleDisplay)
+                @if($courseDisplay && $yearLevelDisplay)
                 <div class="grid grid-cols-2 gap-2">
                     <input type="text" id="course_id" name="course_id" class="w-full border-b border-black" value="{{ $courseDisplay }}" readonly>
-                    <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearOrRoleDisplay }}" readonly>
+                    <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearLevelDisplay }}" readonly>
                 </div>
                 @elseif($courseDisplay)
                 <input type="text" id="course_id" name="course_id" class="w-full border-b border-black" value="{{ $courseDisplay }}" readonly>
                 @else
-                <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearOrRoleDisplay }}" readonly>
+                <input type="text" id="year_level_id" name="year_level_id" class="w-full border-b border-black" value="{{ $yearLevelDisplay }}" readonly>
                 @endif
+            </div>
+            @endif
+            @if($isFacultyType && $departmentDisplay)
+            <div class="col-span-1">
+                <label class="block text-xs" for="department">DEPARTMENT</label>
+                <input type="text" id="department" name="department" class="w-full border-b border-black" value="{{ $departmentDisplay }}" readonly>
+            </div>
+            @endif
+            @if($isStaffType && $officeDisplay)
+            <div class="col-span-1">
+                <label class="block text-xs" for="office">OFFICE</label>
+                <input type="text" id="office" name="office" class="w-full border-b border-black" value="{{ $officeDisplay }}" readonly>
             </div>
             @endif
             @if($informantDisplay)
@@ -504,19 +527,19 @@ $exportPdfUrl = $documentId
                                 @endphp
                                 @for($i=0; $i<10; $i++)
                                     <tr>
-                                        <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
-                                            {{ $subjects[$i]['subject'] ?? '' }}
-                                        </td>
-                                        <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
-                                            {{ $subjects[$i]['teacher'] ?? '' }}
-                                        </td>
-                                    </tr>
-                                @endfor
-                            </tbody>
-                        </table>
-                        <p class="text-[9px] italic mt-2 text-gray-500 text-center uppercase tracking-widest">To be filled by Subject Teachers upon return</p>
-                    </td>
+                                    <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
+                                        {{ $subjects[$i]['subject'] ?? '' }}
+                                    </td>
+                                    <td class="border border-black h-9 px-2 font-medium text-[12px] align-middle">
+                                        {{ $subjects[$i]['teacher'] ?? '' }}
+                                    </td>
                 </tr>
+                @endfor
+                </tbody>
+            </table>
+            <p class="text-[9px] italic mt-2 text-gray-500 text-center uppercase tracking-widest">To be filled by Subject Teachers upon return</p>
+            </td>
+            </tr>
             </table>
 
             <!-- Parent Signature Area -->

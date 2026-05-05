@@ -63,29 +63,22 @@
                 {{/for}}
             </select> -->
             <select class="form-select medicinePurchaseId purchaseMedicineId" name="medicine[]" data-id="{{:uniqueId}}" required >
-                <!-- <option value="" disabled selected>Select your option</option> -->
+                <option value="">Select Medicine</option>
+            </select>
+        </td>
+        <td class="table__item-desc">
+            <select class="form-select medicineBillDosage" name="dosage[]" data-id="{{:uniqueId}}" required>
+                <option value="">Select Dosage/Strength</option>
             </select>
         </td>
         <!-- <td>
             <input class="form-control" placeholder="Manufacturing Date" required="" name="manufacturing_date[]" type="text" id="manufacturing_date{{:uniqueId}}">
         </td> -->
         <td>
-            <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('Expiry Date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text">
-        </td>
-        <td class="d-none">
-            <input class="form-control medicineBill-sale-price" required="" value='0.00' name="sale_price[]" id="medicine_sale_price{{:uniqueId}}" type="text">
+            <input class="form-control medicineBillExpiryDate" placeholder="<?php echo __('Expiry Date') ?>" name="expiry_date[]"  id="expiry_date{{:uniqueId}}" type="text" readonly>
         </td>
         <td>
-            <input type="number" class="form-control medicineBill-quantity" required="" value='0' name="quantity[]"  id="quantity{{:uniqueId}}">
-        </td>
-            <td class="d-none">
-            <div class="input-group">
-            <input type="number" class="form-control medicineBill-tax" value='0'  name="tax_medicine[]"  id="tax{{:uniqueId}}">
-             <span class="input-group-text ms-0" id="amountTypeSymbol">%</span>
-            </div>
-        </td>
-                <td class="d-none">
-            <input type="number" class="form-control medicine-bill-amount" readonly required="" value='0.00' name="amount[]" id="amount{{:uniqueId}}">
+            <input type="number" class="form-control medicineBill-quantity" required="" value="1" min="1" name="quantity[]"  id="quantity{{:uniqueId}}">
         </td>
         <td class="text-center">
             <a href="javascript:void(0)" title="<?php echo __('messages.common.delete') ?>"

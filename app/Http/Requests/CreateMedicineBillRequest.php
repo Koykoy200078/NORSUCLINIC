@@ -22,7 +22,19 @@ class CreateMedicineBillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'discount' => 'nullable|numeric',
+            'patient_id' => 'required|integer|exists:patients,id',
+            'bill_date' => 'required|date',
+            'category_id' => 'required|array|min:1',
+            'category_id.*' => 'required|integer|exists:categories,id',
+            'medicine' => 'required|array|min:1',
+            'medicine.*' => 'required|integer|exists:medicines,id',
+            'dosage' => 'required|array|min:1',
+            'dosage.*' => 'required|string|max:100',
+            'quantity' => 'required|array|min:1',
+            'quantity.*' => 'required|integer|min:1',
+            'expiry_date' => 'nullable|array',
+            'expiry_date.*' => 'nullable|date',
+            'note' => 'nullable|string|max:2000',
         ];
     }
 }

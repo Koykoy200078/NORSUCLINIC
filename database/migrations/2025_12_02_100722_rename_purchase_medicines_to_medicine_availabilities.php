@@ -12,12 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         // Rename the table
-        Schema::rename('purchase_medicines', 'medicine_availabilities');
+        if (Schema::hasTable('purchase_medicines') && ! Schema::hasTable('medicine_availabilities')) {
+            Schema::rename('purchase_medicines', 'medicine_availabilities');
+        }
 
         // Rename the foreign key column in purchased_medicines table
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->renameColumn('purchase_medicines_id', 'medicine_availabilities_id');
-        });
+        if (
+            Schema::hasTable('purchased_medicines') &&
+            Schema::hasColumn('purchased_medicines', 'purchase_medicines_id') &&
+            ! Schema::hasColumn('purchased_medicines', 'medicine_availabilities_id')
+        ) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $table->renameColumn('purchase_medicines_id', 'medicine_availabilities_id');
+            });
+        }
     }
 
     /**
@@ -26,11 +34,19 @@ return new class extends Migration
     public function down(): void
     {
         // Rename back the foreign key column in purchased_medicines table
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->renameColumn('medicine_availabilities_id', 'purchase_medicines_id');
-        });
+        if (
+            Schema::hasTable('purchased_medicines') &&
+            Schema::hasColumn('purchased_medicines', 'medicine_availabilities_id') &&
+            ! Schema::hasColumn('purchased_medicines', 'purchase_medicines_id')
+        ) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $table->renameColumn('medicine_availabilities_id', 'purchase_medicines_id');
+            });
+        }
 
         // Rename the table back
-        Schema::rename('medicine_availabilities', 'purchase_medicines');
+        if (Schema::hasTable('medicine_availabilities') && ! Schema::hasTable('purchase_medicines')) {
+            Schema::rename('medicine_availabilities', 'purchase_medicines');
+        }
     }
 };

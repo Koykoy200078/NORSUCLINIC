@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('medicine_bills')) {
+            return;
+        }
 
         $hasMedicineBillDiscount = Schema::hasColumn('medicine_bills', 'discount');
         $hasMedicineBillNetAmount = Schema::hasColumn('medicine_bills', 'net_amount');

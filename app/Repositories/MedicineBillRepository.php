@@ -49,14 +49,25 @@ class MedicineBillRepository extends BaseRepository
         return DispenseRecord::class;
     }
 
+    /**
+     * Update a dispense record and recreate its item rows.
+     *
+     * @param  DispenseRecord  $dispenseRecord
+     * @param  array<string, mixed>  $input
+     */
     public function update($dispenseRecord, $input): bool
     {
         try {
             DB::beginTransaction();
 
-            $arr = collect($input['medicine']);
-            $duplicateIds = $arr->duplicates();
-            if ($duplicateIds->isNotEmpty()) {
+            $lineIdentifiers = collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
+                $dosage = trim((string) ($input['dosage'][$key] ?? ''));
+                $expiry = trim((string) ($input['expiry_date'][$key] ?? ''));
+
+                return $medicineId . '|' . $dosage . '|' . $expiry;
+            });
+
+            if ($lineIdentifiers->duplicates()->isNotEmpty()) {
                 throw new UnprocessableEntityHttpException(__('messages.medicine_bills.duplicate_medicine'));
             }
 
@@ -64,7 +75,7 @@ class MedicineBillRepository extends BaseRepository
                 'patient_id'     => $input['patient_id'],
                 'note'           => $input['note'] ?? null,
                 'bill_date'      => $input['bill_date'],
-            ] + DispenseRecord::legacyFinancialDefaults());
+            ]);
 
             $dispenseRecord->dispenseItems()->delete();
 
@@ -74,23 +85,27 @@ class MedicineBillRepository extends BaseRepository
                     if (! $medicine) {
                         continue;
                     }
-                    $quantity = (int) ($input['quantity'][$key] ?? 0);
-                    DispenseRecordItem::create([
-                        'dispense_id'   => $dispenseRecord->id,
-                        'medicine_id'   => $medicine->id,
-                        'unit_price'    => 0,
-                        'expires_at'    => $input['expiry_date'][$key] ?? null,
-                        'quantity'      => $quantity,
-                        'charge_amount' => 0,
-                        'line_total'    => 0,
-                    ]);
 
-                    app(MedicineInventoryService::class)->deductStockFefo(
+                    $quantity = (int) ($input['quantity'][$key] ?? 0);
+                    $dosage = trim((string) ($input['dosage'][$key] ?? ''));
+
+                    $allocations = app(MedicineInventoryService::class)->deductStockFefo(
                         $medicine->id,
                         $quantity,
                         getLogInUserId(),
                         $dispenseRecord,
-                        'Manual dispensing update'
+                        'Manual dispensing update',
+                        \App\Models\MedicineTransaction::TYPE_DISPENSE,
+                        $dosage
+                    );
+
+                    $this->storeDispenseItemsFromAllocations(
+                        $dispenseRecord->id,
+                        $medicine->id,
+                        $dosage,
+                        $input['expiry_date'][$key] ?? null,
+                        $quantity,
+                        $allocations
                     );
                 }
             }
@@ -102,6 +117,62 @@ class MedicineBillRepository extends BaseRepository
         }
 
         return true;
+    }
+
+    /**
+     * Persist one or more dispense rows from FEFO allocation payload.
+     */
+    private function storeDispenseItemsFromAllocations(
+        int $dispenseRecordId,
+        int $medicineId,
+        string $requestedDosage,
+        ?string $requestedExpiry,
+        int $requestedQuantity,
+        array $allocations
+    ): void {
+        if (empty($allocations)) {
+            DispenseRecordItem::create([
+                'dispense_id' => $dispenseRecordId,
+                'medicine_id' => $medicineId,
+                'dosage' => $requestedDosage,
+                'expires_at' => $requestedExpiry,
+                'quantity' => $requestedQuantity,
+            ]);
+
+            return;
+        }
+
+        $groupedAllocations = collect($allocations)
+            ->filter(function (array $allocation) {
+                return (int) ($allocation['deducted'] ?? 0) > 0;
+            })
+            ->groupBy(function (array $allocation) use ($requestedDosage) {
+                $allocationDosage = trim((string) ($allocation['dosage'] ?? $requestedDosage));
+                $allocationExpiry = $allocation['expiration_date'] ?? '';
+
+                return $allocationDosage . '|' . (string) $allocationExpiry;
+            });
+
+        foreach ($groupedAllocations as $rows) {
+            $firstRow = $rows->first();
+            $allocationDosage = trim((string) ($firstRow['dosage'] ?? $requestedDosage));
+            $allocationExpiry = $firstRow['expiration_date'] ?? $requestedExpiry;
+            $deductedQuantity = (int) collect($rows)->sum(function (array $allocation) {
+                return (int) ($allocation['deducted'] ?? 0);
+            });
+
+            if ($deductedQuantity <= 0) {
+                continue;
+            }
+
+            DispenseRecordItem::create([
+                'dispense_id' => $dispenseRecordId,
+                'medicine_id' => $medicineId,
+                'dosage' => $allocationDosage !== '' ? $allocationDosage : $requestedDosage,
+                'expires_at' => $allocationExpiry,
+                'quantity' => $deductedQuantity,
+            ]);
+        }
     }
 
     public function getPatients(): Collection

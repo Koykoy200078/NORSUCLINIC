@@ -167,14 +167,14 @@ class PrescriptionController extends AppBaseController
         DB::beginTransaction();
         try {
             $prescription = Prescription::create($prescriptionData);
-            $dispenseRecord = DispenseRecord::create(array_merge([
+            $dispenseRecord = DispenseRecord::create([
                 'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                 'patient_id' => $prescription->patient_id,
                 'doctor_id' => $prescription->doctor_id,
                 'model_type' => Prescription::class,
                 'model_id' => $prescription->id,
                 'bill_date' => now(),
-            ], DispenseRecord::legacyFinancialDefaults()));
+            ]);
 
             foreach ($medicineRows as $row) {
                 $medicine = Medicine::findOrFail($row['medicine_id']);
@@ -200,9 +200,6 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => 0,
-                    'charge_amount' => 0,
-                    'line_total' => 0,
                 ]);
             }
 
@@ -388,14 +385,14 @@ class PrescriptionController extends AppBaseController
                 ->first();
 
             if (empty($dispenseRecord)) {
-                $dispenseRecord = DispenseRecord::create(array_merge([
+                $dispenseRecord = DispenseRecord::create([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $prescription->patient_id,
                     'doctor_id' => $prescription->doctor_id,
                     'model_type' => Prescription::class,
                     'model_id' => $prescription->id,
                     'bill_date' => now(),
-                ], DispenseRecord::legacyFinancialDefaults()));
+                ]);
             } else {
                 $dispenseRecord->dispenseItems()->delete();
             }
@@ -426,9 +423,6 @@ class PrescriptionController extends AppBaseController
                     'dispense_id' => $dispenseRecord->id,
                     'medicine_id' => $medicine->id,
                     'quantity' => $totalQuantity,
-                    'unit_price' => 0,
-                    'charge_amount' => 0,
-                    'line_total' => 0,
                 ]);
             }
 

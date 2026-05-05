@@ -16,7 +16,7 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
 }
 @endphp
 <div class="modal fade" id="add_dispense_modal" tabindex="-1" role="dialog" aria-labelledby="addDispenseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 96vw; width: 96vw;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addDispenseModalLabel">Add Dispense Record</h5>
@@ -32,6 +32,7 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
                 'patients' => $modalPatients,
                 'medicines' => $modalMedicines,
                 'medicineCategories' => $modalMedicineCategories,
+                'hideFormButtons' => true,
                 ])
                 <div class="modal-footer px-0 mt-3">
                     {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'id' => 'dispenseSaveBtn']) }}

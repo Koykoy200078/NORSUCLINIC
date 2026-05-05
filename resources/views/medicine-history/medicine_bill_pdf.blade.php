@@ -97,6 +97,8 @@
                         <tr>
                             <th>#</th>
                             <th>{{ __('messages.medicine_bills.item_name') }}</th>
+                            <th>{{ __('messages.medicine.dosage') }}</th>
+                            <th>{{ __('Expiry Date') }}</th>
                             <th class="number-align">{{ __('messages.medicine.quantity') }}</th>
 
                         </tr>
@@ -107,6 +109,21 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $saleMedicine->medicine->name }}
+                            </td>
+                            <td>{{ !empty($saleMedicine->dosage) ? $saleMedicine->dosage : __('messages.common.n/a') }}</td>
+                            <td>
+                                @if (!empty($saleMedicine->expires_at))
+                                @php
+                                $expiryDate = (string) $saleMedicine->expires_at;
+                                @endphp
+                                @if (strlen($expiryDate) === 7 && substr_count($expiryDate, '-') === 1)
+                                {{ \Carbon\Carbon::parse($expiryDate . '-01')->format('F Y') }}
+                                @else
+                                {{ \Carbon\Carbon::parse($expiryDate)->format('Y-m-d') }}
+                                @endif
+                                @else
+                                {{ __('messages.common.n/a') }}
+                                @endif
                             </td>
                             <td class="number-align">{{ $saleMedicine->sale_quantity }}</td>
 

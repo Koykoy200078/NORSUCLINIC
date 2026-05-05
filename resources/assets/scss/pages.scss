@@ -871,3 +871,12 @@ body {
 .custom-margin-filter {
     margin-right: 10px !important;
 }
+
+/* Make blocked dates visibly disabled in flatpickr (e.g., future DOB dates). */
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-calendar .flatpickr-day.notAllowed,
+.flatpickr-calendar .flatpickr-day.notAllowed:hover {
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+}

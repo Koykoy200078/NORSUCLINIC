@@ -35,7 +35,7 @@ class StaffTable extends LivewireTableComponent
         });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if ($columnIndex == '4') {
+            if ($column->isField('id')) {
                 return [
                     'class' => 'text-center',
                 ];

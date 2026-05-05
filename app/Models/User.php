@@ -244,7 +244,7 @@ class User extends Authenticatable implements HasMedia
         'contact' => 'nullable|unique:users,contact',
         'nationality_citizenship' => 'nullable|string|max:120',
         'password' => 'nullable|same:password_confirmation|min:6',
-        'dob' => 'nullable|date',
+        'dob' => 'nullable|date|before_or_equal:today',
         'experience' => 'nullable|numeric',
         'specializations' => 'required',
         'prc_license_number' => 'nullable|string|max:100|unique:doctors,prc_license_number',

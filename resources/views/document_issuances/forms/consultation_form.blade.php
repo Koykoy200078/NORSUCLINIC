@@ -42,7 +42,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="date_of_birth">DATE OF BIRTH<span class="text-red-500">*</span></label>
-                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? $user->dob : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? $user->dob : '' }}" max="{{ now()->format('Y-m-d') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS<span class="text-red-500">*</span></label>
@@ -103,7 +103,22 @@
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
-                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? ($user->emergency_contact_name . ' / ' . $user->emergency_contact_no . ($user->emergency_relationship ? ' (' . $user->emergency_relationship . ')' : '')) : '' }}" required>
+                @php
+                $initialEmergencyParts = collect([
+                $user->type == 4 ? $user->emergency_contact_name : null,
+                $user->type == 4 ? $user->emergency_contact_no : null,
+                ])->filter(function ($value) {
+                $normalized = strtolower(trim((string) $value));
+
+                return $normalized !== '' && $normalized !== 'undefined' && $normalized !== 'null';
+                })->values();
+                $initialEmergencyRelationship = $user->type == 4 ? trim((string) $user->emergency_relationship) : '';
+                $hasEmergencyRelationship = $initialEmergencyRelationship !== ''
+                && ! in_array(strtolower($initialEmergencyRelationship), ['undefined', 'null'], true);
+                $initialEmergencyContact = $initialEmergencyParts->implode(' / ')
+                . ($hasEmergencyRelationship ? ' (' . $initialEmergencyRelationship . ')' : '');
+                @endphp
+                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $initialEmergencyContact }}" required>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -641,17 +656,17 @@
         border-width: 0;
     }
 
-    .custom-radio-card input:checked + .card-content {
+    .custom-radio-card input:checked+.card-content {
         border-color: #3b82f6;
         background-color: #eff6ff;
         box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
     }
 
-    .custom-radio-card input:checked + .physical-card {
+    .custom-radio-card input:checked+.physical-card {
         border-color: #3b82f6;
     }
-    
-    .custom-radio-card input:checked + .virtual-card {
+
+    .custom-radio-card input:checked+.virtual-card {
         border-color: #22c55e;
         background-color: #f0fdf4;
     }
@@ -678,37 +693,92 @@
         const departmentField = document.getElementById('department_field');
         const officeField = document.getElementById('office_field');
 
+        function normalizeTextValue(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            const normalized = String(value).trim();
+            const lowered = normalized.toLowerCase();
+
+            if (normalized === '' || lowered === 'undefined' || lowered === 'null') {
+                return '';
+            }
+
+            return normalized;
+        }
+
+        function buildEmergencyContact(userData) {
+            const emergencyName = normalizeTextValue(userData?.emergency_contact_name);
+            const emergencyNumber = normalizeTextValue(userData?.emergency_contact_no);
+            const emergencyRelation = normalizeTextValue(userData?.emergency_relationship);
+            const emergencyLabel = [emergencyName, emergencyNumber].filter(Boolean).join(' / ');
+
+            return `${emergencyLabel}${emergencyRelation ? ' (' + emergencyRelation + ')' : ''}`;
+        }
+
+        function resolveInformantByYearLevel(yearLevelId) {
+            const normalizedYearLevel = Number(yearLevelId);
+
+            if (normalizedYearLevel === 7) {
+                return 'Faculty';
+            }
+
+            if (normalizedYearLevel === 8) {
+                return 'Staff';
+            }
+
+            if (normalizedYearLevel === 9) {
+                return 'Guest';
+            }
+
+            return 'Student';
+        }
+
+        function updateInformantField(yearLevelId) {
+            const informantField = document.getElementById('informant');
+            if (!informantField) {
+                return;
+            }
+
+            informantField.value = resolveInformantByYearLevel(yearLevelId);
+        }
+
         function updateFieldsVisibility() {
-            const yearLevelId = yearLevelSelect ? yearLevelSelect.value : '';
+            const yearLevelId = Number(yearLevelSelect ? yearLevelSelect.value : 0);
 
             // Hide all fields first
-            campusField.style.display = 'none';
-            collegeField.style.display = 'none';
-            courseYearField.style.display = 'none';
-            departmentField.style.display = 'none';
-            officeField.style.display = 'none';
+            if (campusField) campusField.style.display = 'none';
+            if (collegeField) collegeField.style.display = 'none';
+            if (courseYearField) courseYearField.style.display = 'none';
+            if (departmentField) departmentField.style.display = 'none';
+            if (officeField) officeField.style.display = 'none';
 
-            if (yearLevelId == '7') {
+            if (yearLevelId === 7) {
                 // Faculty (ID 7) - show college and department
-                collegeField.style.display = 'block';
-                departmentField.style.display = 'block';
-            } else if (yearLevelId == '8') {
+                if (collegeField) collegeField.style.display = 'block';
+                if (departmentField) departmentField.style.display = 'block';
+            } else if (yearLevelId === 8) {
                 // Staff (ID 8) - show office only
-                officeField.style.display = 'block';
-            } else if (yearLevelId == '9') {
+                if (officeField) officeField.style.display = 'block';
+            } else if (yearLevelId === 9) {
                 // Guest (ID 9) - no additional fields needed
-            } else if (yearLevelId >= '1' && yearLevelId <= '6') {
+            } else if (yearLevelId >= 1 && yearLevelId <= 6) {
                 // Student (IDs 1-6) - show campus, college, course & year
-                campusField.style.display = 'block';
-                collegeField.style.display = 'block';
-                courseYearField.style.display = 'block';
+                if (campusField) campusField.style.display = 'block';
+                if (collegeField) collegeField.style.display = 'block';
+                if (courseYearField) courseYearField.style.display = 'block';
             }
         }
 
         // Run on page load if year level is already selected
         if (yearLevelSelect) {
             updateFieldsVisibility();
-            yearLevelSelect.addEventListener('change', updateFieldsVisibility);
+            updateInformantField(yearLevelSelect.value);
+            yearLevelSelect.addEventListener('change', function() {
+                updateFieldsVisibility();
+                updateInformantField(yearLevelSelect.value);
+            });
         }
 
         // Auto-fill PERTINENT EXAM when Complaint/s is filled
@@ -1123,6 +1193,15 @@
         // Set the search route based on user role
         const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
 
+        function setSelectValue(fieldId, value) {
+            const field = document.getElementById(fieldId);
+            if (!field) {
+                return;
+            }
+
+            field.value = value || '';
+        }
+
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {
                 const query = userSearchInput.value;
@@ -1150,15 +1229,18 @@
 
                                 option.addEventListener('click', function() {
                                     const patientData = JSON.parse(this.dataset.patient);
+                                    if (!patientData || !patientData.user) {
+                                        return;
+                                    }
 
                                     document.getElementById('user_id').value = patientData.user.id;
                                     document.getElementById('name').value = `${patientData.user.first_name} ${patientData.user.last_name}`;
                                     document.getElementById('age').value = calculateAge(patientData.user.dob);
                                     document.getElementById('gender').value = patientData.user.gender === 1 ? 'Male' : 'Female';
                                     document.getElementById('date_of_birth').value = patientData.user.dob || '';
-                                    document.getElementById('vaccination_id').value = patientData.user.vaccination_id || '';
-                                    document.getElementById('patient_contact').value = patientData.user.contact;
-                                    document.getElementById('emergency_contact').value = `${patientData.user.emergency_contact_name}/${patientData.user.emergency_contact_no}${patientData.user.emergency_relationship ? ' (' + patientData.user.emergency_relationship + ')' : ''}`;
+                                    setSelectValue('vaccination_id', patientData.user.vaccination_id || patientData.user.vaccination?.id || '');
+                                    document.getElementById('patient_contact').value = normalizeTextValue(patientData.user.contact);
+                                    document.getElementById('emergency_contact').value = buildEmergencyContact(patientData.user || {});
 
                                     // Load saved medical history from patient profile
                                     setComorbidities(patientData.comorbidities || '');
@@ -1167,32 +1249,31 @@
                                     document.getElementById('maintenance').value = patientData.maintenance || '';
 
                                     // Fill student fields
-                                    document.getElementById('campus_id').value = patientData.user.campus_id || '';
-                                    document.getElementById('college_id').value = patientData.user.college_id || '';
-                                    document.getElementById('course_id').value = patientData.user.course_id || '';
-                                    document.getElementById('year_level_id').value = patientData.user.year_level_id || '';
+                                    setSelectValue('campus_id', patientData.user.campus_id);
+                                    setSelectValue('college_id', patientData.user.college_id);
+                                    setSelectValue('course_id', patientData.user.course_id);
+                                    setSelectValue('year_level_id', patientData.user.year_level_id);
+
+                                    const departmentId = patientData.user.department_id || patientData.user.department?.id || '';
+                                    const officeId = patientData.user.office_id || patientData.user.office?.id || '';
 
                                     // Fill employee fields
                                     if (document.getElementById('department_id')) {
-                                        document.getElementById('department_id').value = patientData.user.department_id || '';
+                                        setSelectValue('department_id', departmentId);
                                     }
                                     if (document.getElementById('office_id')) {
-                                        document.getElementById('office_id').value = patientData.user.office_id || '';
+                                        setSelectValue('office_id', officeId);
                                     }
 
                                     // Update field visibility based on year level
                                     updateFieldsVisibility();
 
+                                    // Re-apply employee fields after visibility updates.
+                                    setSelectValue('department_id', departmentId);
+                                    setSelectValue('office_id', officeId);
+
                                     // Update informant field based on year_level_id
-                                    let informantValue = 'Student'; // Default
-                                    if (patientData.user.year_level_id == 7) {
-                                        informantValue = 'Faculty';
-                                    } else if (patientData.user.year_level_id == 8) {
-                                        informantValue = 'Staff';
-                                    } else if (patientData.user.year_level_id == 9) {
-                                        informantValue = 'Guest';
-                                    }
-                                    document.getElementById('informant').value = informantValue;
+                                    updateInformantField(patientData.user.year_level_id);
 
                                     if (patientData.address) {
                                         // Use full_address if available, otherwise fall back to building it from parts

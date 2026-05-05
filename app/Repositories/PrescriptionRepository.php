@@ -133,14 +133,14 @@ class PrescriptionRepository extends BaseRepository
 
             $qty = 0;
             if (isset($input['medicine'])) {
-                $medicineBill = DispenseRecord::create(array_merge([
+                $medicineBill = DispenseRecord::create([
                     'history_number' => 'HIS' . generateUniqueHistoryNumber(),
                     'patient_id' => $input['patient_id'],
                     'doctor_id' => $input['doctor_id'],
                     'model_type' => \App\Models\Prescription::class,
                     'model_id' => $prescription->id,
                     'bill_date' => Carbon::now(),
-                ], DispenseRecord::legacyFinancialDefaults()));
+                ]);
                 foreach ($input['medicine'] as $key => $value) {
                     $PrescriptionItem = [
                         'prescription_id' => $prescription->id,
@@ -158,9 +158,6 @@ class PrescriptionRepository extends BaseRepository
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => 0,
-                        'charge_amount' => 0,
-                        'line_total' => 0,
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }
@@ -206,9 +203,6 @@ class PrescriptionRepository extends BaseRepository
                         'dispense_id' => $medicineBill->id,
                         'medicine_id' => $medicine->id,
                         'quantity' => $qty,
-                        'unit_price' => 0,
-                        'charge_amount' => 0,
-                        'line_total' => 0,
                     ];
                     DispenseRecordItem::create($dispenseItemArray);
                 }

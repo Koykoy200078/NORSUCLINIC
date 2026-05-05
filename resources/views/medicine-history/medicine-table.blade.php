@@ -29,13 +29,11 @@
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="">{{ __('messages.medicine_categories') }}<span class="required"></span></th>
                             <th class="">{{ __('messages.medicines') }}<span class="required"></span></th>
+                            <th class="">{{ __('messages.medicine.dosage') }}<span class="required"></span></th>
                             {{-- <th class="">{{ __('lot no.') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('Expiry Date') }}</th>
-                            <th class="d-none">{{ __('messages.medicine_bills.sale_price') }}<span class="required"></span></th>
                             {{-- <th class="">{{ __('Purchase Price') }}<span class="required"></span></th> --}}
                             <th class="">{{ __('messages.medicine.quantity') }}<span class="required"></span></th>
-                            <th class="d-none">{{ __('messages.purchase_medicine.tax') }}</th>
-                            <th class="d-none">{{ __('messages.purchase_medicine.amount') }}<span class="required"></span></th>
                             <th class="table__add-btn-heading text-center form-label fw-bolder text-gray-700 mb-3">
                                 <a href="javascript:void(0)" type="button"
                                     class="btn btn-primary text-star add-medicine-btn-medicine-bill">
@@ -56,25 +54,21 @@
                                 {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}
                             </td>
                             <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('Expiry Date')]) }}
+                                @php
+                                $selectedDosage = old('dosage.' . $key, $saleMedicine->dosage ?? optional($saleMedicine->medicine)->dosage);
+                                @endphp
+                                {{ Form::select('dosage[]', !empty($selectedDosage) ? [$selectedDosage => $selectedDosage] : [], $selectedDosage, ['class' => 'form-select medicineBillDosage', 'placeholder' => 'Select Dosage/Strength', 'data-selected-dosage' => $selectedDosage, 'required']) }}
                             </td>
-                            <td class="d-none">
-                                {{ Form::text('sale_price[]', number_format($saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicineBill-sale-price price-format ', 'id' => 'medicine_sale_price' . $key + 1, 'required']) }}
+                            <td>
+                                @php
+                                $existingExpiryDate = old('expiry_date.' . $key, !empty($saleMedicine->expires_at) ? \Carbon\Carbon::parse($saleMedicine->expires_at)->format('Y-m-d') : null);
+                                @endphp
+                                {{ Form::text('expiry_date[]', $existingExpiryDate, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('Expiry Date'), 'readonly']) }}
                             </td>
 
                             {{ Form::hidden('quantity1[]', $saleMedicine->sale_quantity, ['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
                             <td>
-                                {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'required']) }}
-                            </td>
-                            <td class="d-none">
-                                <div class="input-group">
-                                    {{ Form::number('tax_medicine[]', $saleMedicine->tax, ['class' => 'form-control medicineBill-tax','id' => 'tax' . $key + 1]) }}
-                                    <span class="input-group-text ms-0" id="amountTypeSymbol">
-                                        {{ __('%') }}</span>
-                                </div>
-                            </td>
-                            <td class="d-none">
-                                {{ Form::text('amount[]', number_format($saleMedicine->sale_quantity * $saleMedicine->sale_price,2,'.',''), ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount' . $key + 1]) }}
+                                {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'min' => 1, 'required']) }}
                             </td>
                             <td class="text-center">
                                 <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
@@ -92,30 +86,20 @@
                             <td>
                                 {{ Form::select('medicine[]', [], null,['class' => 'form-select medicinePurchaseId purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'c1','data-control'=>'select2','data-id'=>1,'required']) }}
                             </td>
+                            <td>
+                                {{ Form::select('dosage[]', [], null, ['class' => 'form-select medicineBillDosage', 'placeholder' => 'Select Dosage/Strength', 'data-selected-dosage' => '', 'required']) }}
+                            </td>
                             {{-- <td>
                         {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control', 'id' => 'manufacturing_date1','required','placeholder'=>'Manufacturing Date']) }}
                             </td> --}}
                             <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('Expiry Date')]) }}
-                            </td>
-                            <td class="d-none">
-                                {{ Form::text('sale_price[]', 0, ['class' => 'form-control medicineBill-sale-price price-format', 'required', 'id' => 'medicine_sale_price1']) }}
+                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('Expiry Date'), 'readonly']) }}
                             </td>
                             {{-- <td>
                         {{ Form::number('purchase_price[]', '0.00', ['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1','required' ]) }}
                             </td> --}}
                             <td>
-                                {{ Form::number('quantity[]', 0, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'required']) }}
-                            </td>
-                            <td class="d-none">
-                                <div class="input-group">
-                                    {{ Form::number('tax_medicine[]', 0, ['class' => 'form-control medicineBill-tax', 'id' => 'tax1']) }}
-                                    <span class="input-group-text ms-0" id="amountTypeSymbol">
-                                        {{ __('%') }}</span>
-                                </div>
-                            </td>
-                            <td class="d-none">
-                                {{ Form::text('amount[]', '0.00', ['class' => 'form-control medicine-bill-amount price-format', 'readonly', 'id' => 'amount1']) }}
+                                {{ Form::number('quantity[]', 1, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'min' => 1, 'required']) }}
                             </td>
                             <td class="text-center">
 
@@ -129,6 +113,7 @@
                     </tbody>
                 </table>
             </div>
+            @if (!($hideFormButtons ?? false))
             <div class="row mt-5 justify-content-between">
 
                 <div class="float-end mt-5">
@@ -136,29 +121,16 @@
                     <a href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : (isRole('staff') ? route('staff.medicine-dispensing.index') : route('doctors.medicine-dispensing.index')) }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.medicine-bill-container').forEach(function(container) {
-            container.addEventListener('input', function(e) {
-                if (e.target.classList.contains('medicineBill-quantity')) {
-                    let row = e.target.closest('tr');
-                    let qtyInput = row.querySelector('.medicineBill-quantity');
-                    let priceInput = row.querySelector('.medicineBill-sale-price');
-                    if (qtyInput && priceInput) {
-                        priceInput.value = qtyInput.value;
-                    }
-                    // Optionally, update amount as well
-                    let qty = parseFloat(qtyInput.value) || 0;
-                    let price = parseFloat(priceInput.value) || 0;
-                    let amountInput = row.querySelector('.medicine-bill-amount');
-                    if (amountInput) {
-                        amountInput.value = (qty * price).toFixed(2);
-                    }
-                }
-            });
+        document.querySelectorAll('.medicineBill-quantity').forEach(function(input) {
+            if (Number(input.value) < 1) {
+                input.value = 1;
+            }
         });
     });
 </script>

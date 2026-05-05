@@ -109,6 +109,28 @@
                                                  </table>
                                           </div>
                                    </div>
+
+                                   <!-- Expired Dosage and Quantity Table -->
+                                   <div class="col-12 mt-5">
+                                          <h4 class="mb-3">{{ __('Expired Stock by Dosage') }}</h4>
+                                          <div class="table-responsive">
+                                                 <table class="table table-striped table-bordered">
+                                                        <thead class="thead-light">
+                                                               <tr>
+                                                                      <th>{{ __('messages.medicine_availability.dosage') }}</th>
+                                                                      <th>{{ __('Expired Quantity') }}</th>
+                                                                      <th>{{ __('Expiry Date') }}</th>
+                                                                      <th>{{ __('Expired Since') }}</th>
+                                                               </tr>
+                                                        </thead>
+                                                        <tbody id="showMedicineExpiredDosageTable">
+                                                               <tr>
+                                                                      <td colspan="4" class="text-center text-muted">{{ __('No expired stock') }}</td>
+                                                               </tr>
+                                                        </tbody>
+                                                 </table>
+                                          </div>
+                                   </div>
                             </div>
                      </div>
               </div>

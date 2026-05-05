@@ -25,6 +25,7 @@ class StockOutView extends Model
         'id',
         'medicine_id',
         'medicine_name',
+        'dosage',
         'quantity',
         'source',
         'patient_name',
@@ -35,6 +36,7 @@ class StockOutView extends Model
     ];
 
     protected $casts = [
+        'dosage' => 'string',
         'created_at' => 'datetime',
         'expiry_date' => 'datetime',
     ];

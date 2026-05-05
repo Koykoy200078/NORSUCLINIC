@@ -51,64 +51,30 @@ function loadMedicineCreateData() {
                     );
                     $("#showMedicineDescription").text(result.data.description);
 
-                    // Populate dosage table
-                    let dosageTableBody = $("#showMedicineDosageTable");
-                    dosageTableBody.empty();
+                    const availableRows = Array.isArray(
+                        result.data.available_purchased_medicines,
+                    )
+                        ? result.data.available_purchased_medicines
+                        : Array.isArray(result.data.purchased_medicines)
+                          ? result.data.purchased_medicines
+                          : [];
 
-                    if (
-                        result.data.purchased_medicines &&
-                        result.data.purchased_medicines.length > 0
-                    ) {
-                        result.data.purchased_medicines.forEach(
-                            function (item) {
-                                // Format remaining days with color coding
-                                let remainingDaysHtml = "N/A";
-                                let rowClass = "";
-                                let expiryDateDisplay =
-                                    item.expiry_date || "N/A";
+                    const expiredRows = Array.isArray(
+                        result.data.expired_purchased_medicines,
+                    )
+                        ? result.data.expired_purchased_medicines
+                        : [];
 
-                                if (
-                                    item.remaining_days !== null &&
-                                    item.remaining_days !== undefined
-                                ) {
-                                    if (item.remaining_days < 0) {
-                                        // Expired
-                                        remainingDaysHtml = `<span class="badge bg-danger">Expired (${Math.abs(
-                                            item.remaining_days,
-                                        )} days ago)</span>`;
-                                        rowClass = "table-danger";
-                                    } else if (item.remaining_days === 0) {
-                                        // Expires today
-                                        remainingDaysHtml = `<span class="badge bg-danger">Expires Today</span>`;
-                                        rowClass = "table-danger";
-                                    } else if (item.remaining_days <= 30) {
-                                        // Critical: 30 days or less
-                                        remainingDaysHtml = `<span class="badge bg-warning text-dark">${item.remaining_days} days</span>`;
-                                        rowClass = "table-warning";
-                                    } else if (item.remaining_days <= 90) {
-                                        // Warning: 90 days or less
-                                        remainingDaysHtml = `<span class="badge bg-info">${item.remaining_days} days</span>`;
-                                    } else {
-                                        // Good: more than 90 days
-                                        remainingDaysHtml = `<span class="badge bg-success">${item.remaining_days} days</span>`;
-                                    }
-                                }
-
-                                let row = `<tr class="${rowClass}">
-                                <td>${item.dosage}</td>
-                                <td>${addCommas(item.quantity)}</td>
-                                <td>${expiryDateDisplay}</td>
-                                <td>${remainingDaysHtml}</td>
-                            </tr>`;
-                                dosageTableBody.append(row);
-                            },
-                        );
-                    } else {
-                        console.warn("No purchased medicines data found"); // Debug log
-                        dosageTableBody.html(
-                            '<tr><td colspan="4" class="text-center text-muted">No data available</td></tr>',
-                        );
-                    }
+                    renderDosageTable(
+                        $("#showMedicineDosageTable"),
+                        availableRows,
+                        "available",
+                    );
+                    renderDosageTable(
+                        $("#showMedicineExpiredDosageTable"),
+                        expiredRows,
+                        "expired",
+                    );
 
                     setValueOfEmptySpan();
                     $("#showMedicine").appendTo("body").modal("show");
@@ -117,6 +83,60 @@ function loadMedicineCreateData() {
             error: function (result) {
                 displayErrorMessage(result.responseJSON.message);
             },
+        });
+    }
+
+    function renderDosageTable(tableBody, rows, stockType) {
+        tableBody.empty();
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+            const emptyText =
+                stockType === "expired"
+                    ? "No expired stock"
+                    : "No data available";
+
+            tableBody.html(
+                `<tr><td colspan="4" class="text-center text-muted">${emptyText}</td></tr>`,
+            );
+
+            return;
+        }
+
+        rows.forEach(function (item) {
+            let remainingDaysHtml = "N/A";
+            let rowClass = "";
+            const expiryDateDisplay = item.expiry_date || "N/A";
+
+            if (
+                item.remaining_days !== null &&
+                item.remaining_days !== undefined
+            ) {
+                if (stockType === "expired" || item.remaining_days < 0) {
+                    remainingDaysHtml = `<span class="badge bg-danger">Expired (${Math.abs(
+                        item.remaining_days,
+                    )} days ago)</span>`;
+                    rowClass = "table-danger";
+                } else if (item.remaining_days === 0) {
+                    remainingDaysHtml = `<span class="badge bg-danger">Expires Today</span>`;
+                    rowClass = "table-danger";
+                } else if (item.remaining_days <= 30) {
+                    remainingDaysHtml = `<span class="badge bg-warning text-dark">${item.remaining_days} days</span>`;
+                    rowClass = "table-warning";
+                } else if (item.remaining_days <= 90) {
+                    remainingDaysHtml = `<span class="badge bg-info">${item.remaining_days} days</span>`;
+                } else {
+                    remainingDaysHtml = `<span class="badge bg-success">${item.remaining_days} days</span>`;
+                }
+            }
+
+            const row = `<tr class="${rowClass}">
+                <td>${item.dosage}</td>
+                <td>${addCommas(item.quantity)}</td>
+                <td>${expiryDateDisplay}</td>
+                <td>${remainingDaysHtml}</td>
+            </tr>`;
+
+            tableBody.append(row);
         });
     }
 }

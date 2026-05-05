@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->string('dosage')->nullable()->after('medicine_id');
-        });
+        if (Schema::hasTable('purchased_medicines') && ! Schema::hasColumn('purchased_medicines', 'dosage')) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $table->string('dosage')->nullable()->after('medicine_id');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->dropColumn('dosage');
-        });
+        if (Schema::hasTable('purchased_medicines') && Schema::hasColumn('purchased_medicines', 'dosage')) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $table->dropColumn('dosage');
+            });
+        }
     }
 };

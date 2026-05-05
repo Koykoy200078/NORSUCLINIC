@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * Renamed from SaleMedicine → DispenseRecordItem.
  * Table stays `sale_medicines` (old workspace — DB not yet migrated).
- * No sale/payment semantics in the recode.
+ * Legacy pricing semantics are removed in the recode.
  */
 class DispenseRecordItem extends Model
 {
@@ -21,18 +21,13 @@ class DispenseRecordItem extends Model
         // Generalized app-layer keys
         'dispense_id',
         'quantity',
-        'unit_price',
-        'charge_amount',
         'expires_at',
-        'line_total',
+        'dosage',
         // Legacy DB columns kept for backward compatibility
         'medicine_bill_id',
         'medicine_id',
         'sale_quantity',
-        'sale_price',
-        'tax',
         'expiry_date',
-        'amount',
     ];
 
     public function setDispenseIdAttribute($value): void
@@ -59,30 +54,6 @@ class DispenseRecordItem extends Model
             : null;
     }
 
-    public function setUnitPriceAttribute($value): void
-    {
-        $this->attributes['sale_price'] = $value;
-    }
-
-    public function getUnitPriceAttribute(): ?float
-    {
-        return isset($this->attributes['sale_price'])
-            ? (float) $this->attributes['sale_price']
-            : null;
-    }
-
-    public function setChargeAmountAttribute($value): void
-    {
-        $this->attributes['tax'] = $value;
-    }
-
-    public function getChargeAmountAttribute(): ?float
-    {
-        return isset($this->attributes['tax'])
-            ? (float) $this->attributes['tax']
-            : null;
-    }
-
     public function setExpiresAtAttribute($value): void
     {
         $this->attributes['expiry_date'] = $value;
@@ -91,24 +62,6 @@ class DispenseRecordItem extends Model
     public function getExpiresAtAttribute(): ?string
     {
         return $this->attributes['expiry_date'] ?? null;
-    }
-
-    public function setLineTotalAttribute($value): void
-    {
-        $this->attributes['amount'] = $value;
-    }
-
-    public function getLineTotalAttribute(): float
-    {
-        if (isset($this->attributes['amount'])) {
-            return (float) $this->attributes['amount'];
-        }
-
-        $quantity = (float) ($this->attributes['sale_quantity'] ?? 0);
-        $unitPrice = (float) ($this->attributes['sale_price'] ?? 0);
-        $chargeAmount = (float) ($this->attributes['tax'] ?? 0);
-
-        return ($quantity * $unitPrice) + $chargeAmount;
     }
 
     public function medicine(): BelongsTo

@@ -1,0 +1,474 @@
+[
+    {
+        "designation": "clinic_head",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "clinic_head",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "prescriptions",
+            "lab_requests",
+            "certificates",
+            "inventory",
+            "dispensing",
+            "reports",
+            "notifications",
+            "doctors",
+            "specializations"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "consultations",
+            "lab_requests",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "nurse",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "prescriptions",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "inventory",
+            "dispensing",
+            "prescriptions",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "pharmacist",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "reports",
+            "notifications"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "triage_officer",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "clinic_staff",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "queue",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "front_desk",
+        "modules": [
+            "dashboard",
+            "patients",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "triage_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "medical_consultation",
+        "modules": [
+            "dashboard",
+            "consultations",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "pharmacy",
+        "modules": [
+            "dashboard",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "records_area",
+        "modules": [
+            "dashboard",
+            "patients",
+            "certificates",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "observation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "reports"
+        ]
+    },
+    {
+        "designation": "records_officer",
+        "station": "isolation_room",
+        "modules": [
+            "dashboard",
+            "patients",
+            "consultations",
+            "reports"
+        ]
+    }
+]

@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\Medicine;
+use App\Models\MedicineBatch;
 use App\Repositories\DispenseRecordRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PatientRepository;
@@ -16,6 +17,7 @@ use App\Repositories\PrescriptionRepository;
 use App\Services\MedicineInventoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -108,32 +110,20 @@ class DispenseRecordController extends AppBaseController
             return redirect($this->getCreateRoute());
         }
 
-        $arr          = collect($input['medicine']);
-        $duplicateIds = $arr->duplicates();
+        $lineIdentifiers = collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
+            $dosage = trim((string) ($input['dosage'][$key] ?? ''));
+            $expiry = trim((string) ($input['expiry_date'][$key] ?? ''));
 
-        foreach ($input['medicine'] as $key => $value) {
-            $medicine = Medicine::find($input['medicine'][$key]);
-            if (! empty($duplicateIds)) {
-                foreach ($duplicateIds as $k => $v) {
-                    if ($request->ajax()) {
-                        return $this->sendError(__('messages.medicine_bills.duplicate_medicine'));
-                    }
-                    Flash::error(__('messages.medicine_bills.duplicate_medicine'));
-                    return redirect($this->getCreateRoute());
-                }
+            return $medicineId . '|' . $dosage . '|' . $expiry;
+        });
+
+        if ($lineIdentifiers->duplicates()->isNotEmpty()) {
+            if ($request->ajax()) {
+                return $this->sendError(__('messages.medicine_bills.duplicate_medicine'));
             }
-            $qty = $input['quantity'][$key];
-            if ($medicine->available_quantity < $qty) {
-                $available = $medicine->available_quantity ?? 0;
-                $msg = __('messages.medicine_bills.available_quantity') . ' ' .
-                    $medicine->name . ' ' .
-                    __('messages.medicine_bills.is') . ' ' . $available . '.';
-                if ($request->ajax()) {
-                    return $this->sendError($msg);
-                }
-                Flash::error($msg);
-                return redirect($this->getCreateRoute());
-            }
+            Flash::error(__('messages.medicine_bills.duplicate_medicine'));
+
+            return redirect($this->getCreateRoute());
         }
 
         DB::beginTransaction();
@@ -146,10 +136,7 @@ class DispenseRecordController extends AppBaseController
                 'bill_date'      => $input['bill_date'],
             ];
 
-            $dispenseRecord = DispenseRecord::create(array_merge(
-                $dispenseRecordData,
-                DispenseRecord::legacyFinancialDefaults()
-            ));
+            $dispenseRecord = DispenseRecord::create($dispenseRecordData);
             $dispenseRecord->update(['model_id' => $dispenseRecord->id]);
 
             if (empty($input['category_id'])) {
@@ -158,24 +145,30 @@ class DispenseRecordController extends AppBaseController
 
             foreach ($input['category_id'] as $key => $value) {
                 $medicine = Medicine::find($input['medicine'][$key]);
+                if (! $medicine) {
+                    throw new \RuntimeException(__('messages.medicine_bills.medicine_not_selected'));
+                }
+
                 $quantity = (int) ($input['quantity'][$key] ?? 0);
+                $dosage = trim((string) ($input['dosage'][$key] ?? ''));
 
-                DispenseRecordItem::create([
-                    'dispense_id'   => $dispenseRecord->id,
-                    'medicine_id'   => $medicine->id,
-                    'unit_price'    => 0,
-                    'expires_at'    => $input['expiry_date'][$key] ?? null,
-                    'quantity'      => $quantity,
-                    'charge_amount' => 0,
-                    'line_total'    => 0,
-                ]);
-
-                $this->medicineInventoryService->deductStockFefo(
+                $allocations = $this->medicineInventoryService->deductStockFefo(
                     $medicine->id,
                     $quantity,
                     getLogInUserId(),
                     $dispenseRecord,
-                    'Dispense record #' . $dispenseRecord->history_number . ' deduction'
+                    'Dispense record #' . $dispenseRecord->history_number . ' deduction',
+                    \App\Models\MedicineTransaction::TYPE_DISPENSE,
+                    $dosage
+                );
+
+                $this->storeDispenseItemsFromAllocations(
+                    $dispenseRecord->id,
+                    $medicine->id,
+                    $dosage,
+                    $input['expiry_date'][$key] ?? null,
+                    $quantity,
+                    $allocations
                 );
             }
 
@@ -295,7 +288,7 @@ class DispenseRecordController extends AppBaseController
             'patient_id',
             'doctor_id'
         )->with([
-            'dispenseItems' => fn($q) => $q->select('id', 'medicine_bill_id', 'medicine_id', 'sale_price', 'expiry_date', 'sale_quantity'),
+            'dispenseItems' => fn($q) => $q->select('id', 'medicine_bill_id', 'medicine_id', 'dosage', 'expiry_date', 'sale_quantity'),
             'dispenseItems.medicine' => fn($q) => $q->select('id', 'name'),
             'patient.user:id,first_name,last_name,email,contact,gender,dob',
             'doctor.user:id,first_name,last_name',
@@ -305,12 +298,160 @@ class DispenseRecordController extends AppBaseController
         return view('medicine-history.medicine_bill_pdf', compact('medicineBill', 'data'));
     }
 
+    /**
+     * Persist one or more dispense lines based on FEFO allocations.
+     * Falls back to the requested quantity/expiry when no allocation payload is returned.
+     */
+    private function storeDispenseItemsFromAllocations(
+        int $dispenseRecordId,
+        int $medicineId,
+        string $requestedDosage,
+        ?string $requestedExpiry,
+        int $requestedQuantity,
+        array $allocations
+    ): void {
+        if (empty($allocations)) {
+            DispenseRecordItem::create([
+                'dispense_id' => $dispenseRecordId,
+                'medicine_id' => $medicineId,
+                'dosage' => $requestedDosage,
+                'expires_at' => $requestedExpiry,
+                'quantity' => $requestedQuantity,
+            ]);
+
+            return;
+        }
+
+        $groupedAllocations = collect($allocations)
+            ->filter(function (array $allocation) {
+                return (int) ($allocation['deducted'] ?? 0) > 0;
+            })
+            ->groupBy(function (array $allocation) use ($requestedDosage) {
+                $allocationDosage = trim((string) ($allocation['dosage'] ?? $requestedDosage));
+                $allocationExpiry = $allocation['expiration_date'] ?? '';
+
+                return $allocationDosage . '|' . (string) $allocationExpiry;
+            });
+
+        foreach ($groupedAllocations as $rows) {
+            $firstRow = $rows->first();
+            $allocationDosage = trim((string) ($firstRow['dosage'] ?? $requestedDosage));
+            $allocationExpiry = $firstRow['expiration_date'] ?? $requestedExpiry;
+            $deductedQuantity = (int) collect($rows)->sum(function (array $allocation) {
+                return (int) ($allocation['deducted'] ?? 0);
+            });
+
+            if ($deductedQuantity <= 0) {
+                continue;
+            }
+
+            DispenseRecordItem::create([
+                'dispense_id' => $dispenseRecordId,
+                'medicine_id' => $medicineId,
+                'dosage' => $allocationDosage !== '' ? $allocationDosage : $requestedDosage,
+                'expires_at' => $allocationExpiry,
+                'quantity' => $deductedQuantity,
+            ]);
+        }
+    }
+
     public function getMedicineCategory(Category $category): JsonResponse
     {
         $data             = [];
         $data['category'] = $category;
-        $data['medicine'] = Medicine::whereCategoryId($category->id)->pluck('name', 'id')->toArray();
+
+        $dispensableMedicineIds = MedicineBatch::query()
+            ->where('quantity', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('expiration_date')
+                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
+            })
+            ->distinct()
+            ->pluck('medicine_id')
+            ->all();
+
+        $fallbackWithoutBatches = function ($query) {
+            $query->where('available_quantity', '>', 0)
+                ->whereDoesntHave('batches', function ($batchQuery) {
+                    $batchQuery->where('quantity', '>', 0);
+                });
+        };
+
+        $medicinesQuery = Medicine::whereCategoryId($category->id)->orderBy('name');
+
+        if (! empty($dispensableMedicineIds)) {
+            $medicinesQuery->where(function ($query) use ($dispensableMedicineIds, $fallbackWithoutBatches) {
+                $query->whereIn('id', $dispensableMedicineIds)
+                    ->orWhere($fallbackWithoutBatches);
+            });
+        } else {
+            $medicinesQuery->where($fallbackWithoutBatches);
+        }
+
+        $medicines = $medicinesQuery->get(['id', 'name', 'dosage', 'available_quantity']);
+
+        $data['medicine'] = $medicines->pluck('name', 'id')->toArray();
+        $data['medicine_details'] = $medicines->map(function (Medicine $medicine) {
+            return [
+                'id' => $medicine->id,
+                'name' => $medicine->name,
+                'available_quantity' => (int) $medicine->available_quantity,
+                'dosages' => $this->resolveDosageAvailability($medicine),
+            ];
+        })->values();
 
         return $this->sendResponse($data, 'retrieved');
+    }
+
+    private function resolveDosageAvailability(Medicine $medicine): array
+    {
+        $dosages = MedicineBatch::where('medicine_id', $medicine->id)
+            ->where('quantity', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('expiration_date')
+                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
+            })
+            ->get(['dosage', 'quantity', 'expiration_date'])
+            ->groupBy(function (MedicineBatch $batch) use ($medicine) {
+                $batchDosage = trim((string) ($batch->dosage ?? ''));
+                if ($batchDosage !== '') {
+                    return $batchDosage;
+                }
+
+                $medicineDosage = trim((string) ($medicine->dosage ?? ''));
+
+                return $medicineDosage !== '' ? $medicineDosage : 'N/A';
+            })
+            ->map(function ($rows, $dosage) {
+                $expiryDate = collect($rows)
+                    ->pluck('expiration_date')
+                    ->filter()
+                    ->map(fn($date) => Carbon::parse($date)->toDateString())
+                    ->sort()
+                    ->first();
+
+                return [
+                    'dosage' => $dosage,
+                    'available_quantity' => (int) collect($rows)->sum('quantity'),
+                    'expiry_date' => $expiryDate,
+                ];
+            })
+            ->values()
+            ->all();
+
+        $hasPositiveBatch = MedicineBatch::where('medicine_id', $medicine->id)
+            ->where('quantity', '>', 0)
+            ->exists();
+
+        if (empty($dosages) && ! $hasPositiveBatch && (int) $medicine->available_quantity > 0) {
+            $fallbackDosage = trim((string) ($medicine->dosage ?? ''));
+            $dosages[] = [
+                'dosage' => $fallbackDosage !== '' ? $fallbackDosage : 'N/A',
+                'available_quantity' => (int) $medicine->available_quantity,
+                'expiry_date' => null,
+            ];
+        }
+
+        return $dosages;
     }
 }

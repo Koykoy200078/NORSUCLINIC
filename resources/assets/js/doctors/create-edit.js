@@ -28,7 +28,8 @@ function loadDoctorDate() {
 
     $(doctorDob).flatpickr({
         locale: lang,
-        maxDate: new Date(),
+        // Use flatpickr's "today" keyword to consistently block tomorrow/future dates.
+        maxDate: "today",
         disableMobile: true,
     });
 

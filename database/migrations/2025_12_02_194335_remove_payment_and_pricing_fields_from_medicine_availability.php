@@ -15,30 +15,34 @@ return new class extends Migration
     public function up(): void
     {
         // Remove payment-related columns from medicine_availabilities table
-        Schema::table('medicine_availabilities', function (Blueprint $table) {
-            $columnsToDrop = [];
-            foreach (['tax', 'total', 'net_amount', 'payment_type', 'discount', 'payment_note', 'note'] as $column) {
-                if (Schema::hasColumn('medicine_availabilities', $column)) {
-                    $columnsToDrop[] = $column;
+        if (Schema::hasTable('medicine_availabilities')) {
+            Schema::table('medicine_availabilities', function (Blueprint $table) {
+                $columnsToDrop = [];
+                foreach (['tax', 'total', 'net_amount', 'payment_type', 'discount', 'payment_note', 'note'] as $column) {
+                    if (Schema::hasColumn('medicine_availabilities', $column)) {
+                        $columnsToDrop[] = $column;
+                    }
                 }
-            }
-            if (! empty($columnsToDrop)) {
-                $table->dropColumn($columnsToDrop);
-            }
-        });
+                if (! empty($columnsToDrop)) {
+                    $table->dropColumn($columnsToDrop);
+                }
+            });
+        }
 
         // Remove pricing columns from purchased_medicines table
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $columnsToDrop = [];
-            foreach (['tax', 'amount'] as $column) {
-                if (Schema::hasColumn('purchased_medicines', $column)) {
-                    $columnsToDrop[] = $column;
+        if (Schema::hasTable('purchased_medicines')) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $columnsToDrop = [];
+                foreach (['tax', 'amount'] as $column) {
+                    if (Schema::hasColumn('purchased_medicines', $column)) {
+                        $columnsToDrop[] = $column;
+                    }
                 }
-            }
-            if (! empty($columnsToDrop)) {
-                $table->dropColumn($columnsToDrop);
-            }
-        });
+                if (! empty($columnsToDrop)) {
+                    $table->dropColumn($columnsToDrop);
+                }
+            });
+        }
     }
 
     /**
@@ -47,20 +51,42 @@ return new class extends Migration
     public function down(): void
     {
         // Restore columns to medicine_availabilities table
-        Schema::table('medicine_availabilities', function (Blueprint $table) {
-            $table->float('tax')->default(0);
-            $table->float('total')->default(0);
-            $table->float('net_amount')->default(0);
-            $table->integer('payment_type')->default(2);
-            $table->float('discount')->default(0);
-            $table->string('payment_note')->nullable();
-            $table->string('note')->nullable();
-        });
+        if (Schema::hasTable('medicine_availabilities')) {
+            Schema::table('medicine_availabilities', function (Blueprint $table) {
+                if (! Schema::hasColumn('medicine_availabilities', 'tax')) {
+                    $table->float('tax')->default(0);
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'total')) {
+                    $table->float('total')->default(0);
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'net_amount')) {
+                    $table->float('net_amount')->default(0);
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'payment_type')) {
+                    $table->integer('payment_type')->default(2);
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'discount')) {
+                    $table->float('discount')->default(0);
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'payment_note')) {
+                    $table->string('payment_note')->nullable();
+                }
+                if (! Schema::hasColumn('medicine_availabilities', 'note')) {
+                    $table->string('note')->nullable();
+                }
+            });
+        }
 
         // Restore columns to purchased_medicines table
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->float('tax')->default(0);
-            $table->float('amount')->default(0);
-        });
+        if (Schema::hasTable('purchased_medicines')) {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                if (! Schema::hasColumn('purchased_medicines', 'tax')) {
+                    $table->float('tax')->default(0);
+                }
+                if (! Schema::hasColumn('purchased_medicines', 'amount')) {
+                    $table->float('amount')->default(0);
+                }
+            });
+        }
     }
 };

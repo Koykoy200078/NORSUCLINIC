@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
             'email' => 'required|email|regex:/(.*)@(.*)\.(.*)/|unique:users,email,' . $this->route('doctor')->user_id,
             'employee_id' => 'required|string|max:100|unique:users,employee_id,' . $this->route('doctor')->user_id,
             'contact' => 'nullable|unique:users,contact,' . $this->route('doctor')->user_id,
-            'dob' => 'nullable|date',
+            'dob' => 'nullable|date|before_or_equal:today',
             'experience' => 'nullable|numeric',
             'prc_license_number' => 'required|string|max:100|unique:doctors,prc_license_number,' . $this->route('doctor')->id,
             'ptr_number' => 'required|string|max:100',

@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('medicine_availabilities', function (Blueprint $table) {
-            $table->renameColumn('purchase_no', 'availability_no');
-        });
+        if (
+            Schema::hasTable('medicine_availabilities') &&
+            Schema::hasColumn('medicine_availabilities', 'purchase_no') &&
+            ! Schema::hasColumn('medicine_availabilities', 'availability_no')
+        ) {
+            Schema::table('medicine_availabilities', function (Blueprint $table) {
+                $table->renameColumn('purchase_no', 'availability_no');
+            });
+        }
     }
 
     /**
@@ -21,8 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('medicine_availabilities', function (Blueprint $table) {
-            $table->renameColumn('availability_no', 'purchase_no');
-        });
+        if (
+            Schema::hasTable('medicine_availabilities') &&
+            Schema::hasColumn('medicine_availabilities', 'availability_no') &&
+            ! Schema::hasColumn('medicine_availabilities', 'purchase_no')
+        ) {
+            Schema::table('medicine_availabilities', function (Blueprint $table) {
+                $table->renameColumn('availability_no', 'purchase_no');
+            });
+        }
     }
 };

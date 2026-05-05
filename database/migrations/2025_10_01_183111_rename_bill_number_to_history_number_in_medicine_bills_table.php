@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('medicine_bills', function (Blueprint $table) {
-            $table->renameColumn('bill_number', 'history_number');
-        });
+        if (
+            Schema::hasTable('medicine_bills') &&
+            Schema::hasColumn('medicine_bills', 'bill_number') &&
+            ! Schema::hasColumn('medicine_bills', 'history_number')
+        ) {
+            Schema::table('medicine_bills', function (Blueprint $table) {
+                $table->renameColumn('bill_number', 'history_number');
+            });
+        }
     }
 
     /**
@@ -21,8 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('medicine_bills', function (Blueprint $table) {
-            $table->renameColumn('history_number', 'bill_number');
-        });
+        if (
+            Schema::hasTable('medicine_bills') &&
+            Schema::hasColumn('medicine_bills', 'history_number') &&
+            ! Schema::hasColumn('medicine_bills', 'bill_number')
+        ) {
+            Schema::table('medicine_bills', function (Blueprint $table) {
+                $table->renameColumn('history_number', 'bill_number');
+            });
+        }
     }
 };

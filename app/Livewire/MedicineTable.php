@@ -10,6 +10,8 @@ class MedicineTable extends LivewireTableComponent
 {
     protected $model = Medicine::class;
 
+    protected string $tableName = 'medicine-table';
+
     public bool $showButtonOnHeader = true;
 
     public string $buttonComponent = 'medicines.add-button';

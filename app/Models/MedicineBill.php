@@ -16,12 +16,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int|null $doctor_id
  * @property string $model_type
  * @property string $model_id
- * @property float $discount
- * @property float $net_amount
- * @property float $total
- * @property float $tax_amount
- * @property int $payment_status
- * @property int $payment_type
  * @property string|null $note
  * @property string $bill_date
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -36,18 +30,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereBillDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereHistoryNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDiscount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereDoctorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereModelType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereNetAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePaymentStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill wherePaymentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereTaxAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MedicineBill whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -65,13 +53,7 @@ class MedicineBill extends Model
         'model_id',
         'case_id',
         'admission_id',
-        'discount',
-        'net_amount',
-        'payment_status',
-        'payment_type',
         'note',
-        'tax_amount',
-        'total',
         'bill_date',
     ];
 

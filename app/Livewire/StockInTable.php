@@ -14,6 +14,8 @@ class StockInTable extends LivewireTableComponent
 {
     protected $model = StockIn::class;
 
+    protected string $tableName = 'stock-in-table';
+
     public bool $showButtonOnHeader = true;
 
     public bool $showFilterOnHeader = false;
@@ -22,7 +24,7 @@ class StockInTable extends LivewireTableComponent
 
     public string $buttonComponent = 'medicine-availabilities.action';
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'clearSearch', 'resetPage'];
 
     public function configure(): void
     {

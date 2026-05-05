@@ -39,6 +39,7 @@ class StockOutTable extends LivewireTableComponent
         return [
             Column::make('Id', 'id')->sortable()->hideIf(1),
             Column::make(__('messages.medicines'), 'medicine_name')->sortable()->searchable(),
+            Column::make(__('messages.medicine_availability.dosage'), 'dosage')->sortable()->searchable(),
             Column::make(__('messages.used_medicine.used_quantity'), 'quantity')->sortable()->searchable(),
             Column::make(__('messages.used_medicine.used_at'), 'source')->sortable(),
             Column::make('Patient', 'patient_name')->sortable()->searchable(),

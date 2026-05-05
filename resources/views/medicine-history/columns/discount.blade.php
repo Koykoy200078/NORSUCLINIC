@@ -1,1 +1,1 @@
-{{ $row->discount }}
+{{ __('messages.common.n/a') }}

@@ -208,59 +208,75 @@ class MedicineController extends AppBaseController
     {
         $medicine->load(['generic', 'category']);
 
-        // Build dosage stock table from batch-ledger so initial-stock entries are included.
-        $purchasedMedicines = MedicineBatch::where('medicine_id', $medicine->id)
-            ->where('quantity', '>', 0)
-            ->orderBy('expiration_date')
-            ->get(['dosage', 'quantity', 'expiration_date'])
-            ->groupBy(function (MedicineBatch $batch) use ($medicine) {
-                $dosage = trim((string) ($batch->dosage ?? ''));
-                if ($dosage !== '') {
-                    return $dosage;
-                }
+        $buildDosageStockSummary = function ($query) use ($medicine) {
+            return $query
+                ->orderBy('expiration_date')
+                ->get(['dosage', 'quantity', 'expiration_date'])
+                ->groupBy(function (MedicineBatch $batch) use ($medicine) {
+                    $dosage = trim((string) ($batch->dosage ?? ''));
+                    if ($dosage !== '') {
+                        return $dosage;
+                    }
 
-                $fallbackDosage = trim((string) ($medicine->dosage ?? ''));
+                    $fallbackDosage = trim((string) ($medicine->dosage ?? ''));
 
-                return $fallbackDosage !== '' ? $fallbackDosage : 'N/A';
-            })
-            ->map(function ($rows, $dosage) {
-                $expiryCandidates = collect($rows)
-                    ->pluck('expiration_date')
-                    ->filter()
-                    ->map(function ($date) {
-                        try {
-                            return \Carbon\Carbon::parse($date)->startOfDay();
-                        } catch (\Throwable $e) {
-                            return null;
-                        }
-                    })
-                    ->filter()
-                    ->sortBy(fn(\Carbon\Carbon $date) => $date->getTimestamp());
+                    return $fallbackDosage !== '' ? $fallbackDosage : 'N/A';
+                })
+                ->map(function ($rows, $dosage) {
+                    $expiryCandidates = collect($rows)
+                        ->pluck('expiration_date')
+                        ->filter()
+                        ->map(function ($date) {
+                            try {
+                                return \Carbon\Carbon::parse($date)->startOfDay();
+                            } catch (\Throwable $e) {
+                                return null;
+                            }
+                        })
+                        ->filter()
+                        ->sortBy(fn(\Carbon\Carbon $date) => $date->getTimestamp());
 
-                $earliestExpiry = $expiryCandidates->first();
-                $remainingDays = null;
-                $expiryFormatted = 'N/A';
+                    $earliestExpiry = $expiryCandidates->first();
+                    $remainingDays = null;
+                    $expiryFormatted = 'N/A';
 
-                if ($earliestExpiry) {
-                    $remainingDays = (int) \Carbon\Carbon::now()->startOfDay()->diffInDays($earliestExpiry, false);
-                    $expiryFormatted = $earliestExpiry->format('M d, Y');
-                }
+                    if ($earliestExpiry) {
+                        $remainingDays = (int) \Carbon\Carbon::now()->startOfDay()->diffInDays($earliestExpiry, false);
+                        $expiryFormatted = $earliestExpiry->format('M d, Y');
+                    }
 
-                return [
-                    'dosage' => $dosage,
-                    'quantity' => (int) collect($rows)->sum('quantity'),
-                    'expiry_date' => $expiryFormatted,
-                    'remaining_days' => $remainingDays,
-                ];
-            })
-            ->values();
+                    return [
+                        'dosage' => $dosage,
+                        'quantity' => (int) collect($rows)->sum('quantity'),
+                        'expiry_date' => $expiryFormatted,
+                        'remaining_days' => $remainingDays,
+                    ];
+                })
+                ->values();
+        };
+
+        $availablePurchasedMedicines = $buildDosageStockSummary(
+            MedicineBatch::where('medicine_id', $medicine->id)
+                ->where('quantity', '>', 0)
+                ->where(function ($query) {
+                    $query->whereNull('expiration_date')
+                        ->orWhereDate('expiration_date', '>=', \Carbon\Carbon::today()->toDateString());
+                })
+        );
+
+        $expiredPurchasedMedicines = $buildDosageStockSummary(
+            MedicineBatch::where('medicine_id', $medicine->id)
+                ->where('quantity', '>', 0)
+                ->whereNotNull('expiration_date')
+                ->whereDate('expiration_date', '<', \Carbon\Carbon::today()->toDateString())
+        );
 
         $currency = strtoupper(getCurrentCurrency());
         $genericName = $medicine->generic_name ?: optional($medicine->generic)->name;
         $categoryName = $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name;
         $defaultDosage = trim((string) ($medicine->dosage ?? ''));
 
-        $dosageSummaryParts = $purchasedMedicines
+        $dosageSummaryParts = $availablePurchasedMedicines
             ->pluck('dosage')
             ->map(fn($value) => trim((string) $value))
             ->filter(fn($value) => $value !== '' && strcasecmp($value, 'N/A') !== 0)
@@ -295,7 +311,10 @@ class MedicineController extends AppBaseController
             'available_quantity' => $medicine->available_quantity,
             'minimum_stock_alert' => $medicine->minimum_stock_alert,
             'stock_alert_percentage' => $medicine->stock_alert_percentage,
-            'purchased_medicines' => $purchasedMedicines,
+            // Keep legacy key for backward compatibility.
+            'purchased_medicines' => $availablePurchasedMedicines,
+            'available_purchased_medicines' => $availablePurchasedMedicines,
+            'expired_purchased_medicines' => $expiredPurchasedMedicines,
         ];
 
         return $this->sendResponse($medicineData, __('messages.medicine.medicine_retrieved_successfully'));
@@ -339,6 +358,10 @@ class MedicineController extends AppBaseController
                     // Dosage availability from batch-ledger to include all stock-in paths.
                     $dosages = MedicineBatch::where('medicine_id', $medicine->id)
                         ->where('quantity', '>', 0)
+                        ->where(function ($query) {
+                            $query->whereNull('expiration_date')
+                                ->orWhereDate('expiration_date', '>=', \Carbon\Carbon::today()->toDateString());
+                        })
                         ->get()
                         ->groupBy(function (MedicineBatch $batch) use ($medicine) {
                             $dosage = trim((string) ($batch->dosage ?? ''));
@@ -358,7 +381,11 @@ class MedicineController extends AppBaseController
                         })
                         ->values();
 
-                    if ($dosages->isEmpty() && (int) $medicine->available_quantity > 0) {
+                    $hasPositiveBatch = MedicineBatch::where('medicine_id', $medicine->id)
+                        ->where('quantity', '>', 0)
+                        ->exists();
+
+                    if ($dosages->isEmpty() && ! $hasPositiveBatch && (int) $medicine->available_quantity > 0) {
                         $dosages = collect([[
                             'dosage' => $medicine->dosage ?: 'N/A',
                             'available_quantity' => (int) $medicine->available_quantity,

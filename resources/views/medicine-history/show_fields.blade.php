@@ -56,6 +56,8 @@ $patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUs
         <thead>
             <tr class="border-bottom fs-6 fw-bolder text-muted">
                 <th class="min-w-175px pb-2">{{ __('messages.medicine_bills.item_name') }}</th>
+                <th class="min-w-120px pb-2">{{ __('messages.medicine.dosage') }}</th>
+                <th class="min-w-120px pb-2">{{ __('Expiry Date') }}</th>
                 <th class="min-w-70px text-end pb-2">{{ __('messages.medicine.quantity') }}</th>
             </tr>
         </thead>
@@ -63,6 +65,21 @@ $patientUser = $medicineBill->patient->user ?? $medicineBill->patient->patientUs
             @foreach($medicineBill->saleMedicine as $index => $saleMedicine)
             <tr class="text-gray-700 fs-5 text-end">
                 <td class="d-flex align-items-center pt-6 text-gray-700">{{ $saleMedicine->medicine->name }}</td>
+                <td class="pt-6 text-gray-700 text-start">{{ !empty($saleMedicine->dosage) ? $saleMedicine->dosage : __('messages.common.n/a') }}</td>
+                <td class="pt-6 text-gray-700 text-start">
+                    @if (!empty($saleMedicine->expires_at))
+                    @php
+                    $expiryDate = (string) $saleMedicine->expires_at;
+                    @endphp
+                    @if (strlen($expiryDate) === 7 && substr_count($expiryDate, '-') === 1)
+                    {{ \Carbon\Carbon::parse($expiryDate . '-01')->format('F Y') }}
+                    @else
+                    {{ \Carbon\Carbon::parse($expiryDate)->format('Y-m-d') }}
+                    @endif
+                    @else
+                    {{ __('messages.common.n/a') }}
+                    @endif
+                </td>
                 <td class="pt-6 text-gray-700">{{ $saleMedicine->sale_quantity }}</td>
             </tr>
             @endforeach

@@ -7,7 +7,7 @@ $modalMedicineList[] = ['key' => $id, 'value' => $name];
 }
 @endphp
 <div class="modal fade" id="add_stock_in_modal" tabindex="-1" role="dialog" aria-labelledby="addStockInModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 96vw; width: 96vw;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addStockInModalLabel">{{ __('messages.medicine_availability.new_stock_in') }}</h5>

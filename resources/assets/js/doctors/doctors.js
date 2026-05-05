@@ -9,7 +9,6 @@ listenClick("#doctorResetFilter", function () {
     $("#doctorPanelAppointmentDate")
         .val(firstDate + " - " + lastDate)
         .trigger("change");
-    $("#doctorPanelPaymentType").val(0).trigger("change");
     $("#doctorPanelAppointmentStatus").val(3).trigger("change");
     $("#doctorStatus").val(2).trigger("change");
     hideDropdownManually($("#doctorFilterBtn"), $(".dropdown-menu"));

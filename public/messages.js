@@ -418,8 +418,6 @@
             amount: "\u0627\u0644\u0645\u0628\u0644\u063a",
             apply: "\u062a\u0637\u0628\u064a\u0642",
             appointment: "\u0645\u0648\u0639\u062f",
-            appointment_created_payment_not_complete:
-                "\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0645\u0648\u0639\u062f \u0628\u0646\u062c\u0627\u062d \u0648\u0644\u0645 \u064a\u0643\u062a\u0645\u0644 \u0627\u0644\u062f\u0641\u0639.",
             appointment_date_required:
                 "\u062d\u0642\u0644 \u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u0648\u0639\u062f \u0645\u0637\u0644\u0648\u0628.",
             apr: "\u0625\u0628\u0631\u064a\u0644",
@@ -468,8 +466,6 @@
             enquiry: "\u0627\u0633\u062a\u0641\u0633\u0627\u0631",
             enter_lot_number:
                 "\u0623\u062f\u062e\u0644 \u0631\u0642\u0645 \u0627\u0644\u062f\u064f\u0641\u0639\u0629.",
-            enter_sale_price:
-                "\u0623\u062f\u062e\u0644 \u0633\u0639\u0631 \u0627\u0644\u0628\u064a\u0639.",
             error: "\u062e\u0637\u0623",
             experience_required:
                 "\u062d\u0642\u0644 \u0627\u0644\u062e\u0628\u0631\u0629 \u0645\u0637\u0644\u0648\u0628.",
@@ -514,10 +510,6 @@
                 "\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0628\u0646\u062c\u0627\u062d",
             mon: "\u0627\u0644\u0627\u062b\u0646\u064a\u0646",
             month: "\u0634\u0647\u0631",
-            net_amount_not_empty:
-                "\u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0645\u0628\u0644\u063a \u0627\u0644\u0635\u0627\u0641\u064a \u0641\u0627\u0631\u063a\u064b\u0627.",
-            net_amount_not_zero:
-                "\u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0645\u0628\u0644\u063a \u0627\u0644\u0635\u0627\u0641\u064a \u0635\u0641\u0631\u064b\u0627.",
             no: "\u0644\u0627\u060c \u0625\u0644\u063a\u0627\u0621",
             note_white_space:
                 "\u062d\u0642\u0644 \u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0627 \u064a\u062d\u062a\u0648\u064a \u0639\u0644\u0649 \u0645\u0633\u0627\u0641\u0627\u062a \u0641\u0627\u0631\u063a\u0629 \u0641\u0642\u0637.",
@@ -531,8 +523,6 @@
             patient: "\u0645\u0631\u064a\u0636",
             patient_smart_card_deleted:
                 "\u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u0645\u0631\u064a\u0636 \u0627\u0644\u0630\u0643\u064a\u0629",
-            payment_type_required:
-                "\u062d\u0642\u0644 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639 \u0645\u0637\u0644\u0648\u0628.",
             please_select_patient:
                 "\u064a\u0631\u062c\u0649 \u0627\u062e\u062a\u064a\u0627\u0631 \u0627\u0644\u0645\u0631\u064a\u0636",
             please_wait:
@@ -567,8 +557,6 @@
                 "\u0627\u062e\u062a\u0631 \u062f\u0648\u0627\u0621",
             select_patient:
                 "\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u0631\u064a\u0636",
-            select_payment:
-                "\u064a\u0631\u062c\u0649 \u062a\u062d\u062f\u064a\u062f \u0623\u064a \u0637\u0631\u064a\u0642\u0629 \u062f\u0641\u0639 \u0648\u0627\u062d\u062f\u0629",
             select_service:
                 "\u0627\u062e\u062a\u0631 \u0627\u0644\u062e\u062f\u0645\u0629",
             select_state:
@@ -639,8 +627,6 @@
             amount: "Betrag",
             apply: "Anwenden",
             appointment: "Termin",
-            appointment_created_payment_not_complete:
-                "Termin erfolgreich erstellt und Zahlung nicht abgeschlossen.",
             appointment_date_required: "Termin Datum ist erforderlich.",
             apr: "Apr",
             are_you_sure:
@@ -677,7 +663,6 @@
             email_required: "Die E-Mail-Adresse ist erforderlich.",
             enquiry: "Anfrage",
             enter_lot_number: "Lot-Nummer eingeben.",
-            enter_sale_price: "Verkaufspreis eingeben.",
             error: "Fehler",
             experience_required: "Erfahrung ist erforderlich.",
             faqs: "FAQs",
@@ -708,8 +693,6 @@
             messages_sent: "Nachricht erfolgreich gesendet",
             mon: "MO",
             month: "Monat",
-            net_amount_not_empty: "Der Netto-Betrag darf nicht leer sein.",
-            net_amount_not_zero: "Der Netto-Betrag darf nicht null sein.",
             no: "Nein, Abbrechen",
             note_white_space: "Das Notizfeld darf keine Leerzeichen enthalten.",
             notification_read: "Benachrichtigung erfolgreich gelesen.",
@@ -720,7 +703,6 @@
             ok: "OK",
             patient: "Patient",
             patient_smart_card_deleted: "Patienten-Smartcard",
-            payment_type_required: "Zahlungsmethode ist erforderlich.",
             please_select_patient: "Bitte Patienten ausw\u00e4hlen",
             please_wait: "Bitte warten...",
             prescription: "Rezept",
@@ -743,7 +725,6 @@
             select_duration: "Dauer ausw\u00e4hlen",
             select_medicine: "Medizin ausw\u00e4hlen",
             select_patient: "Patient ausw\u00e4hlen",
-            select_payment: "Bitte w\u00e4hlen Sie eine Zahlungsmethode",
             select_service: "Dienst ausw\u00e4hlen",
             select_state: "Bundesland ausw\u00e4hlen",
             sep: "Sep",
@@ -797,8 +778,6 @@
             amount: "Amount",
             apply: "Apply",
             appointment: "Appointment",
-            appointment_created_payment_not_complete:
-                "Appointment created successfully and Payment is not completed.",
             appointment_date_required: "Appointment date field is required.",
             apr: "Apr",
             are_you_sure: "Are you sure you want to delete this",
@@ -833,7 +812,6 @@
             email_required: "Email field is required.",
             enquiry: "Enquiry",
             enter_lot_number: "Enter lot number.",
-            enter_sale_price: "Enter sale price.",
             error: "Error",
             experience_required: "About Experience field is required.",
             faqs: "FAQs",
@@ -865,8 +843,6 @@
             messages_sent: "Message Send Successfully",
             mon: "MON",
             month: "Month",
-            net_amount_not_empty: "Net amount can not be empty.",
-            net_amount_not_zero: "Net amount can not be zero.",
             no: "No, Cancel",
             note_white_space: "Note field is not contain only white space.",
             notification_read: "Notification read successfully.",
@@ -877,7 +853,6 @@
             ok: "Ok",
             patient: "Patient",
             patient_smart_card_deleted: "Patient Smart Card",
-            payment_type_required: "Payment Method field is required.",
             please_select_patient: "Please Select Patient",
             please_wait: "Please wait...",
             prescription: "Prescription",
@@ -899,7 +874,6 @@
             select_duration: "Select Duration",
             select_medicine: "Select Medicine",
             select_patient: "Select Patient",
-            select_payment: "Please select any one Payment Method",
             select_service: "Select Service",
             select_state: "Select Province",
             sep: "Sep",
@@ -954,8 +928,6 @@
             amount: "Monto",
             apply: "Aplicar",
             appointment: "Cita",
-            appointment_created_payment_not_complete:
-                "La cita se cre\u00f3 con \u00e9xito y el pago no se complet\u00f3.",
             appointment_date_required:
                 "El campo de fecha de cita es obligatorio.",
             apr: "Abr",
@@ -994,7 +966,6 @@
                 "El campo de correo electr\u00f3nico es obligatorio.",
             enquiry: "Consulta",
             enter_lot_number: "Ingrese el n\u00famero de lote.",
-            enter_sale_price: "Ingrese el precio de venta.",
             error: "Error",
             experience_required: "El campo de Experiencia es obligatorio.",
             faqs: "Preguntas Frecuentes",
@@ -1026,8 +997,6 @@
             messages_sent: "Mensaje enviado exitosamente",
             mon: "LUN",
             month: "Mes",
-            net_amount_not_empty: "El monto neto no puede estar vac\u00edo.",
-            net_amount_not_zero: "El monto neto no puede ser cero.",
             no: "No, Cancelar",
             note_white_space:
                 "El campo de nota no debe contener solo espacios en blanco.",
@@ -1039,8 +1008,6 @@
             ok: "Aceptar",
             patient: "Paciente",
             patient_smart_card_deleted: "Tarjeta inteligente del paciente",
-            payment_type_required:
-                "El campo de M\u00e9todo de Pago es obligatorio.",
             please_select_patient: "Por favor, seleccione paciente",
             please_wait: "Por favor, espera...",
             prescription: "Receta",
@@ -1063,7 +1030,6 @@
             select_duration: "Seleccionar Duraci\u00f3n",
             select_medicine: "Seleccionar Medicamento",
             select_patient: "Seleccionar paciente",
-            select_payment: "Por favor, selecciona un M\u00e9todo de Pago",
             select_service: "Seleccionar Servicio",
             select_state: "Seleccionar Estado",
             sep: "Sep",
@@ -1121,8 +1087,6 @@
             amount: "Montant",
             apply: "Appliquer",
             appointment: "Rendez-vous",
-            appointment_created_payment_not_complete:
-                "Le rendez-vous a \u00e9t\u00e9 cr\u00e9\u00e9 avec succ\u00e8s et le paiement n'est pas termin\u00e9.",
             appointment_date_required:
                 "Le champ de la date du rendez-vous est obligatoire.",
             apr: "Avr",
@@ -1159,7 +1123,6 @@
             email_required: "Le champ de l'e-mail est obligatoire.",
             enquiry: "Enqu\u00eate",
             enter_lot_number: "Entrez le num\u00e9ro de lot.",
-            enter_sale_price: "Entrez le prix de vente.",
             error: "Erreur",
             experience_required:
                 "Le champ de l'exp\u00e9rience est obligatoire.",
@@ -1192,9 +1155,6 @@
             messages_sent: "Message envoy\u00e9 avec succ\u00e8s",
             mon: "LUN",
             month: "Mois",
-            net_amount_not_empty: "Le montant net ne peut pas \u00eatre vide.",
-            net_amount_not_zero:
-                "Le montant net ne peut pas \u00eatre z\u00e9ro.",
             no: "Non, Annuler",
             note_white_space:
                 "Le champ de note ne doit pas contenir uniquement des espaces blancs.",
@@ -1206,8 +1166,6 @@
             ok: "Ok",
             patient: "Patient",
             patient_smart_card_deleted: "Carte de patient",
-            payment_type_required:
-                "Le champ de la m\u00e9thode de paiement est obligatoire.",
             please_select_patient: "Veuillez s\u00e9lectionner un patient",
             please_wait: "Veuillez patienter...",
             prescription: "Ordonnance",
@@ -1231,8 +1189,6 @@
             select_duration: "S\u00e9lectionner la dur\u00e9e",
             select_medicine: "S\u00e9lectionner un m\u00e9dicament",
             select_patient: "S\u00e9lectionnez le patient",
-            select_payment:
-                "Veuillez s\u00e9lectionner une m\u00e9thode de paiement",
             select_service: "S\u00e9lectionner un service",
             select_state: "S\u00e9lectionner un \u00e9tat",
             sep: "Sep",
@@ -1287,8 +1243,6 @@
             amount: "Importo",
             apply: "Applica",
             appointment: "Appuntamento",
-            appointment_created_payment_not_complete:
-                "Appuntamento creato con successo e pagamento non completato.",
             appointment_date_required:
                 "Il campo della data dell'appuntamento \u00e8 obbligatorio.",
             apr: "Apr",
@@ -1324,7 +1278,6 @@
             email_required: "Il campo dell'email \u00e8 obbligatorio.",
             enquiry: "Richiesta",
             enter_lot_number: "Inserisci il numero di lotto.",
-            enter_sale_price: "Inserisci il prezzo di vendita.",
             error: "Errore",
             experience_required: "Il campo Esperienza \u00e8 obbligatorio.",
             faqs: "Domande frequenti",
@@ -1356,8 +1309,6 @@
             messages_sent: "Messaggio inviato correttamente",
             mon: "LUN",
             month: "Mese",
-            net_amount_not_empty: "L'importo netto non pu\u00f2 essere vuoto.",
-            net_amount_not_zero: "L'importo netto non pu\u00f2 essere zero.",
             no: "No, Annulla",
             note_white_space:
                 "Il campo Nota non deve contenere solo spazi bianchi.",
@@ -1369,8 +1320,6 @@
             ok: "Ok",
             patient: "Paziente",
             patient_smart_card_deleted: "Carta Smart del Paziente",
-            payment_type_required:
-                "Il campo del Metodo di Pagamento \u00e8 obbligatorio.",
             please_select_patient: "Seleziona Paziente",
             please_wait: "Attendere prego...",
             prescription: "Prescrizione",
@@ -1393,7 +1342,6 @@
             select_duration: "Seleziona Durata",
             select_medicine: "Seleziona Medicina",
             select_patient: "Seleziona Paziente",
-            select_payment: "Seleziona un Metodo di Pagamento",
             select_service: "Seleziona Servizio",
             select_state: "Seleziona Stato",
             sep: "Set",
@@ -1448,8 +1396,6 @@
             amount: "Valor",
             apply: "Aplicar",
             appointment: "Consulta",
-            appointment_created_payment_not_complete:
-                "Atendimento criado com sucesso e pagamento n\u00e3o conclu\u00eddo.",
             appointment_date_required:
                 "O campo de data da consulta \u00e9 obrigat\u00f3rio.",
             apr: "Abr",
@@ -1486,7 +1432,6 @@
             email_required: "O campo de e-mail \u00e9 obrigat\u00f3rio.",
             enquiry: "Consulta",
             enter_lot_number: "Inserir n\u00famero do lote.",
-            enter_sale_price: "Inserir pre\u00e7o de venda.",
             error: "Erro",
             experience_required:
                 "O campo de experi\u00eancia \u00e9 obrigat\u00f3rio.",
@@ -1518,9 +1463,6 @@
             messages_sent: "Mensagem enviada com sucesso",
             mon: "SEG",
             month: "M\u00eas",
-            net_amount_not_empty:
-                "O valor l\u00edquido n\u00e3o pode estar vazio.",
-            net_amount_not_zero: "O valor l\u00edquido n\u00e3o pode ser zero.",
             no: "N\u00e3o, Cancelar",
             note_white_space:
                 "O campo Nota n\u00e3o deve conter apenas espa\u00e7os em branco.",
@@ -1532,8 +1474,6 @@
             ok: "Ok",
             patient: "Paciente",
             patient_smart_card_deleted: "Cart\u00e3o Inteligente do Paciente",
-            payment_type_required:
-                "O campo de m\u00e9todo de pagamento \u00e9 obrigat\u00f3rio.",
             please_select_patient: "Por favor, selecione um paciente",
             please_wait: "Por favor, aguarde...",
             prescription: "Receita M\u00e9dica",
@@ -1556,7 +1496,6 @@
             select_duration: "Selecionar Dura\u00e7\u00e3o",
             select_medicine: "Selecionar Medicamento",
             select_patient: "Selecionar Paciente",
-            select_payment: "Por favor, selecione um m\u00e9todo de pagamento",
             select_service: "Selecionar Servi\u00e7o",
             select_state: "Selecionar Estado",
             sep: "Set",
@@ -1613,8 +1552,6 @@
             apply: "\u041f\u0440\u0438\u043c\u0435\u043d\u0438\u0442\u044c",
             appointment:
                 "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u043f\u0440\u0438\u0435\u043c",
-            appointment_created_payment_not_complete:
-                "\u041d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435 \u0443\u0441\u043f\u0435\u0448\u043d\u043e \u0441\u043e\u0437\u0434\u0430\u043d\u043e, \u0438 \u043e\u043f\u043b\u0430\u0442\u0430 \u043d\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0430.",
             appointment_date_required:
                 "\u041e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u043f\u043e\u043b\u0435 \u0434\u0430\u0442\u044b \u0437\u0430\u043f\u0438\u0441\u0438.",
             apr: "\u0410\u043f\u0440",
@@ -1662,8 +1599,6 @@
             enquiry: "\u0417\u0430\u043f\u0440\u043e\u0441",
             enter_lot_number:
                 "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043d\u043e\u043c\u0435\u0440 \u043f\u0430\u0440\u0442\u0438\u0438.",
-            enter_sale_price:
-                "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0446\u0435\u043d\u0443 \u043f\u0440\u043e\u0434\u0430\u0436\u0438.",
             error: "\u041e\u0448\u0438\u0431\u043a\u0430",
             experience_required:
                 "\u041e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u043e \u043f\u043e\u043b\u0435 \u043e\u043f\u044b\u0442\u0430.",
@@ -1711,10 +1646,6 @@
                 "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u0443\u0441\u043f\u0435\u0448\u043d\u043e \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e",
             mon: "\u041f\u041d",
             month: "\u041c\u0435\u0441\u044f\u0446",
-            net_amount_not_empty:
-                "\u0421\u0443\u043c\u043c\u0430 \u043a \u0432\u044b\u0447\u0435\u0442\u0443 \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043f\u0443\u0441\u0442\u043e\u0439.",
-            net_amount_not_zero:
-                "\u0421\u0443\u043c\u043c\u0430 \u043a \u0432\u044b\u0447\u0435\u0442\u0443 \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043d\u0443\u043b\u0435\u0432\u043e\u0439.",
             no: "\u041d\u0435\u0442, \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c",
             note_white_space:
                 "\u041f\u043e\u043b\u0435 \u041f\u0440\u0438\u043c\u0435\u0447\u0430\u043d\u0438\u044f \u043d\u0435 \u0441\u043e\u0434\u0435\u0440\u0436\u0438\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u0440\u043e\u0431\u0435\u043b\u044b.",
@@ -1728,8 +1659,6 @@
             patient: "\u041f\u0430\u0446\u0438\u0435\u043d\u0442",
             patient_smart_card_deleted:
                 "\u0423\u0434\u0430\u043b\u0435\u043d\u0430 \u043a\u0430\u0440\u0442\u0430 \u0443\u043c\u043d\u043e\u0433\u043e \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u0430",
-            payment_type_required:
-                "\u041e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u043f\u043e\u043b\u0435 \u043c\u0435\u0442\u043e\u0434\u0430 \u043e\u043f\u043b\u0430\u0442\u044b.",
             please_select_patient:
                 "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u0430",
             please_wait:
@@ -1766,8 +1695,6 @@
                 "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043c\u0435\u0434\u0438\u0446\u0438\u043d\u0443",
             select_patient:
                 "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u0430",
-            select_payment:
-                "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043e\u0434\u0438\u043d \u0438\u0437 \u043c\u0435\u0442\u043e\u0434\u043e\u0432 \u043e\u043f\u043b\u0430\u0442\u044b",
             select_service:
                 "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0441\u043b\u0443\u0433\u0443",
             select_state:
@@ -1843,8 +1770,6 @@
             amount: "Miktar",
             apply: "Uygula",
             appointment: "Randevu",
-            appointment_created_payment_not_complete:
-                "Randevu ba\u015far\u0131yla olu\u015fturuldu ve \u00d6deme tamamlanmad\u0131.",
             appointment_date_required: "Randevu tarihi alan\u0131 zorunludur.",
             apr: "Nis",
             are_you_sure: "Bunu silmek istedi\u011finizden emin misiniz",
@@ -1880,7 +1805,6 @@
             email_required: "E-posta alan\u0131 zorunludur.",
             enquiry: "Soru\u015fturma",
             enter_lot_number: "Lot numaras\u0131n\u0131 girin.",
-            enter_sale_price: "Sat\u0131\u015f fiyat\u0131n\u0131 girin.",
             error: "Hata",
             experience_required: "Deneyim alan\u0131 zorunludur.",
             faqs: "SSS",
@@ -1913,8 +1837,6 @@
             messages_sent: "Mesaj ba\u015far\u0131yla g\u00f6nderildi",
             mon: "PTS",
             month: "Ay",
-            net_amount_not_empty: "Net tutar bo\u015f olamaz.",
-            net_amount_not_zero: "Net tutar s\u0131f\u0131r olamaz.",
             no: "Hay\u0131r, \u0130ptal Et",
             note_white_space:
                 "Not alan\u0131 yaln\u0131zca bo\u015fluk i\u00e7eremez.",
@@ -1926,8 +1848,6 @@
             ok: "Tamam",
             patient: "Hasta",
             patient_smart_card_deleted: "Hasta Ak\u0131ll\u0131 Kart",
-            payment_type_required:
-                "\u00d6deme Y\u00f6ntemi alan\u0131 zorunludur.",
             please_select_patient: "L\u00fctfen hasta se\u00e7in",
             please_wait: "L\u00fctfen bekleyin...",
             prescription: "Re\u00e7ete",
@@ -1950,8 +1870,6 @@
             select_duration: "S\u00fcre Se\u00e7",
             select_medicine: "\u0130la\u00e7 Se\u00e7",
             select_patient: "Hasta Se\u00e7",
-            select_payment:
-                "L\u00fctfen bir \u00f6deme y\u00f6ntemi se\u00e7in",
             select_service: "Hizmet Se\u00e7",
             select_state: "Eyalet Se\u00e7",
             sep: "Eyl",
@@ -2008,8 +1926,6 @@
             amount: "\u91d1\u989d",
             apply: "\u5e94\u7528",
             appointment: "\u9884\u7ea6",
-            appointment_created_payment_not_complete:
-                "\u7ea6\u4f1a\u521b\u5efa\u6210\u529f\uff0c\u4ed8\u6b3e\u672a\u5b8c\u6210\u3002",
             appointment_date_required:
                 "\u9884\u7ea6\u65e5\u671f\u5b57\u6bb5\u662f\u5fc5\u9700\u7684\u3002",
             apr: "\u56db\u6708",
@@ -2048,7 +1964,6 @@
                 "\u7535\u5b50\u90ae\u4ef6\u5b57\u6bb5\u662f\u5fc5\u9700\u7684\u3002",
             enquiry: "\u67e5\u8be2",
             enter_lot_number: "\u8f93\u5165\u6279\u53f7\u3002",
-            enter_sale_price: "\u8f93\u5165\u9500\u552e\u4ef7\u683c\u3002",
             error: "\u9519\u8bef",
             experience_required:
                 "\u5173\u4e8e\u7ecf\u9a8c\u5b57\u6bb5\u662f\u5fc5\u9700\u7684\u3002",
@@ -2083,10 +1998,6 @@
             messages_sent: "\u8a0a\u606f\u767c\u9001\u6210\u529f",
             mon: "\u661f\u671f\u4e00",
             month: "\u6708",
-            net_amount_not_empty:
-                "\u51c0\u91d1\u989d\u4e0d\u80fd\u4e3a\u7a7a\u3002",
-            net_amount_not_zero:
-                "\u51c0\u91d1\u989d\u4e0d\u80fd\u4e3a\u96f6\u3002",
             no: "\u4e0d\uff0c\u53d6\u6d88",
             note_white_space:
                 "\u5907\u6ce8\u5b57\u6bb5\u4e0d\u4ec5\u5305\u542b\u7a7a\u683c\u3002",
@@ -2100,8 +2011,6 @@
             patient: "\u60a3\u8005",
             patient_smart_card_deleted:
                 "\u60a3\u8005\u667a\u80fd\u5361\u5df2\u5220\u9664",
-            payment_type_required:
-                "\u9700\u8981\u4ed8\u6b3e\u65b9\u5f0f\u5b57\u6bb5\u3002",
             please_select_patient: "\u8bf7\u9009\u62e9\u60a3\u8005",
             please_wait: "\u8bf7\u7a0d\u5019...",
             prescription: "\u5904\u65b9",
@@ -2125,8 +2034,6 @@
             select_duration: "\u9009\u62e9\u65f6\u957f",
             select_medicine: "\u9009\u62e9\u836f\u7269",
             select_patient: "\u9009\u62e9\u60a3\u8005",
-            select_payment:
-                "\u8bf7\u9009\u62e9\u4efb\u4e00\u4ed8\u6b3e\u65b9\u5f0f",
             select_service: "\u9009\u62e9\u670d\u52a1",
             select_state: "\u9009\u62e9\u5dde",
             sep: "\u4e5d\u6708",

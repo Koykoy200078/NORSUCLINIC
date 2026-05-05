@@ -107,14 +107,38 @@
     return $text;
     };
 
+    $documentUser = $requestDocument->user_id
+    ? \App\Models\User::with(['department:id,department_name', 'office:id,office_name'])->find($requestDocument->user_id)
+    : null;
+
     $pdfCampus = $cleanValue($requestDocument->campus);
     $pdfCollege = $cleanValue($requestDocument->college);
     $pdfCourse = $cleanValue($requestDocument->course);
     $pdfYearLevel = $cleanValue($requestDocument->year_level);
     $pdfInformant = $cleanValue($requestDocument->informant);
-    $pdfYearOrRole = $pdfYearLevel !== '' ? $pdfYearLevel : $pdfInformant;
-    $hasEducationalInfo = $pdfCampus !== '' || $pdfCollege !== '' || $pdfCourse !== '' || $pdfYearOrRole !== '';
+    $pdfDepartment = $cleanValue($documentUser?->department?->department_name);
+    $pdfOffice = $cleanValue($documentUser?->office?->office_name);
+
+    $patientTypeSource = strtolower(trim((string) ($pdfInformant !== '' ? $pdfInformant : $pdfYearLevel)));
+    $isFacultyType = $patientTypeSource === 'faculty';
+    $isStaffType = $patientTypeSource === 'staff';
+    $isGuestType = $patientTypeSource === 'guest';
+    $isStudentType = ! $isFacultyType && ! $isStaffType && ! $isGuestType;
+
+    $showCampus = $isStudentType && $pdfCampus !== '';
+    $showCollege = ($isStudentType || $isFacultyType) && $pdfCollege !== '';
+    $showCourseYear = $isStudentType && ($pdfCourse !== '' || $pdfYearLevel !== '');
+    $showDepartment = $isFacultyType && $pdfDepartment !== '';
+    $showOffice = $isStaffType && $pdfOffice !== '';
+    $hasInstitutionalInfo = $showCampus || $showCollege || $showCourseYear || $showDepartment || $showOffice;
+
     $pdfEmergencyContact = $cleanValue($requestDocument->emergency_contact);
+
+    $nursingInChargeUser = $requestDocument->nursing_incharged_id
+    ? \App\Models\User::find($requestDocument->nursing_incharged_id)
+    : null;
+    $nursingInCharge = trim((string) (($nursingInChargeUser?->first_name ?? '') . ' ' . ($nursingInChargeUser?->last_name ?? '')));
+    $nursingInCharge = $nursingInCharge !== '' ? $nursingInCharge : 'N/A';
     @endphp
 
     <div class="header">
@@ -152,23 +176,35 @@
         </tr>
     </table>
 
-    @if($hasEducationalInfo)
-    <div class="section-title">Educational Information</div>
+    @if($hasInstitutionalInfo)
+    <div class="section-title">Institutional Information</div>
     <table class="info-table">
-        @if($pdfCampus !== '' || $pdfCollege !== '')
+        @if($showCampus || $showCollege)
         <tr>
             <th>Campus</th>
-            <td>{{ $pdfCampus }}</td>
+            <td>{{ $showCampus ? $pdfCampus : '' }}</td>
             <th>College</th>
-            <td>{{ $pdfCollege }}</td>
+            <td>{{ $showCollege ? $pdfCollege : '' }}</td>
         </tr>
         @endif
-        @if($pdfCourse !== '' || $pdfYearOrRole !== '')
+        @if($showCourseYear)
         <tr>
             <th>Course</th>
             <td>{{ $pdfCourse }}</td>
             <th>Year Level</th>
-            <td>{{ $pdfYearOrRole }}</td>
+            <td>{{ $pdfYearLevel }}</td>
+        </tr>
+        @endif
+        @if($showDepartment)
+        <tr>
+            <th>Department</th>
+            <td colspan="3">{{ $pdfDepartment }}</td>
+        </tr>
+        @endif
+        @if($showOffice)
+        <tr>
+            <th>Office</th>
+            <td colspan="3">{{ $pdfOffice }}</td>
         </tr>
         @endif
     </table>
@@ -270,11 +306,7 @@
             <th>Consult Mode</th>
             <td>{{ ucwords(strtolower($requestDocument->consult_mode)) }}</td>
             <th>Nursing In-Charge</th>
-            <td>{{
-        \App\Models\User::find($requestDocument->nursing_incharged_id)?->first_name
-        . ' ' .
-        \App\Models\User::find($requestDocument->nursing_incharged_id)?->last_name
-    }}</td>
+            <td>{{ $nursingInCharge }}</td>
         </tr>
         <tr>
 

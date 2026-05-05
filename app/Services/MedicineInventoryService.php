@@ -152,20 +152,44 @@ class MedicineInventoryService
         ?int $userId = null,
         ?Model $reference = null,
         ?string $remarks = null,
-        string $transactionType = MedicineTransaction::TYPE_DISPENSE
+        string $transactionType = MedicineTransaction::TYPE_DISPENSE,
+        ?string $dosage = null
     ): array {
         if ($quantity <= 0) {
             return [];
         }
 
-        return DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $transactionType) {
+        return DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $transactionType, $dosage) {
             $this->ensureLegacyOpeningBatch($medicineId);
 
             $remaining = $quantity;
             $allocations = [];
 
-            $batches = MedicineBatch::where('medicine_id', $medicineId)
-                ->where('quantity', '>', 0)
+            $normalizedDosage = trim((string) $dosage);
+
+            $batchesQuery = MedicineBatch::where('medicine_id', $medicineId)
+                ->where('quantity', '>', 0);
+
+            if ($transactionType === MedicineTransaction::TYPE_DISPENSE) {
+                $batchesQuery->where(function ($query) {
+                    $query->whereNull('expiration_date')
+                        ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
+                });
+            }
+
+            if ($normalizedDosage !== '') {
+                if (strcasecmp($normalizedDosage, 'N/A') === 0) {
+                    $batchesQuery->where(function ($query) {
+                        $query->whereNull('dosage')
+                            ->orWhere('dosage', '')
+                            ->orWhere('dosage', 'N/A');
+                    });
+                } else {
+                    $batchesQuery->where('dosage', $normalizedDosage);
+                }
+            }
+
+            $batches = $batchesQuery
                 ->orderByRaw('expiration_date IS NULL')
                 ->orderBy('expiration_date')
                 ->orderBy('id')
@@ -198,6 +222,7 @@ class MedicineInventoryService
                 $allocations[] = [
                     'batch_id' => $batch->id,
                     'batch_number' => $batch->batch_number,
+                    'dosage' => $batch->dosage,
                     'deducted' => $deducted,
                     'balance_after' => (int) $batch->quantity,
                     'expiration_date' => optional($batch->expiration_date)->toDateString(),
@@ -209,7 +234,8 @@ class MedicineInventoryService
             if ($remaining > 0) {
                 $medicine = Medicine::find($medicineId);
                 $name = $medicine ? $medicine->display_name : 'Unknown medicine';
-                throw new RuntimeException('Insufficient stock for ' . $name . '. Remaining quantity: ' . $remaining . '.');
+                $dosageSuffix = $normalizedDosage !== '' ? ' (' . $normalizedDosage . ')' : '';
+                throw new RuntimeException('Insufficient stock for ' . $name . $dosageSuffix . '. Remaining quantity: ' . $remaining . '.');
             }
 
             $this->syncMedicineTotals($medicineId);
@@ -224,6 +250,14 @@ class MedicineInventoryService
     public function syncMedicineTotals(int $medicineId): void
     {
         $total = (int) MedicineBatch::where('medicine_id', $medicineId)->sum('quantity');
+
+        $available = (int) MedicineBatch::where('medicine_id', $medicineId)
+            ->where('quantity', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('expiration_date')
+                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
+            })
+            ->sum('quantity');
 
         $medicine = Medicine::find($medicineId);
         if (! $medicine) {
@@ -240,7 +274,7 @@ class MedicineInventoryService
 
         $medicine->update([
             'quantity' => $total,
-            'available_quantity' => $total,
+            'available_quantity' => $available,
             'baseline_quantity' => $newBaseline,
         ]);
     }

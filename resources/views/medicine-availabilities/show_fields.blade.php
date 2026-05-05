@@ -7,12 +7,12 @@
                         <div class="row mb-7">
                             <div class="col-lg-6 d-flex flex-column">
                                 <label class="fw-bold text-muted py-3">{{ __('messages.medicine_availability.availability_number')  }}</label>
-                                <span class="fw-bold fs-6 text-gray-800"><span class="badge bg-light-primary ">#{{$medicineAvailability->availability_no}}</span></span>
-                            </div>
-                            <div class="col-lg-6 d-flex flex-column">
-                                <label class="fw-bold text-muted py-3">{{ __('messages.common.created_on')  }}</label>
-                                <span class="fw-bold fs-6 text-gray-800" data-toggle="tooltip" data-placement="right" title="{{ \Carbon\Carbon::parse($medicineAvailability->created_at)->translatedFormat('jS M, Y') }}">{{ \Carbon\Carbon::parse($medicineAvailability->created_at)->diffForHumans() }}</span>
-                            </div>
+<span class="fw-bold fs-6 text-gray-800"><span class="badge bg-light-primary ">#{{$medicineAvailability->availability_no}}</span></span>
+</div>
+<div class="col-lg-6 d-flex flex-column">
+    <label class="fw-bold text-muted py-3">{{ __('messages.common.created_on')  }}</label>
+    <span class="fw-bold fs-6 text-gray-800" data-toggle="tooltip" data-placement="right" title="{{ \Carbon\Carbon::parse($medicineAvailability->created_at)->translatedFormat('jS M, Y') }}">{{ \Carbon\Carbon::parse($medicineAvailability->created_at)->diffForHumans() }}</span>
+</div>
 </div>
 </div>
 </div>
@@ -78,11 +78,11 @@
                                                             // Check if expiry date is in Y-m format (7 chars) or Y-m-d format (10 chars)
                                                             $expiryDate = $purchasedMedcine->expiry_date;
                                                             if (strlen($expiryDate) === 7 && substr_count($expiryDate, '-') === 1) {
-                                                            // Month-only format (Y-m): Display as "MMM, Y"
-                                                            echo \Carbon\Carbon::parse($expiryDate . '-01')->isoFormat('MMM, Y');
+                                                            // Month-only format (Y-m): Display as "May 2026"
+                                                            echo \Carbon\Carbon::parse($expiryDate . '-01')->format('F Y');
                                                             } else {
-                                                            // Full date format (Y-m-d): Display as "Do MMM, Y"
-                                                            echo \Carbon\Carbon::parse($expiryDate)->isoFormat('Do MMM, Y');
+                                                            // Full date format (Y-m-d): Display as "2026-05-06"
+                                                            echo \Carbon\Carbon::parse($expiryDate)->format('Y-m-d');
                                                             }
                                                             @endphp
                                                             @endif

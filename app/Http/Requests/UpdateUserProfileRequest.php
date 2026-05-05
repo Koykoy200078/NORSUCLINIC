@@ -34,7 +34,7 @@ class UpdateUserProfileRequest extends FormRequest
             'emergency_contact_no' => 'nullable|string|max:255',
             'time_zone' => 'required|string',
             'gender' => 'nullable|integer|in:1,2',
-            'dob' => 'nullable|date',
+            'dob' => 'nullable|date|before_or_equal:today',
             'blood_type' => 'nullable|string',
             'vaccination_id' => 'nullable|integer|exists:vaccinations,id',
             'address1' => 'nullable|string|max:255',

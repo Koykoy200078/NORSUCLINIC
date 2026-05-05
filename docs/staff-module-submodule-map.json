@@ -1,0 +1,293 @@
+[
+  {
+    "Module": "activity_logs",
+    "Submodules": "activity-logs",
+    "Routes": 3,
+    "RouteNames": [
+      "staff.activity-logs.export",
+      "staff.activity-logs.index",
+      "staff.activity-logs.show"
+    ]
+  },
+  {
+    "Module": "certificates",
+    "Submodules": "document-issuances",
+    "Routes": 2,
+    "RouteNames": [
+      "staff.document-issuances.get-last-medical-certificate",
+      "staff.document-issuances.search-users"
+    ]
+  },
+  {
+    "Module": "cms",
+    "Submodules": [
+      "banner",
+      "cms"
+    ],
+    "Routes": 5,
+    "RouteNames": [
+      "staff.banner.edit",
+      "staff.banner.index",
+      "staff.banner.update",
+      "staff.cms.index",
+      "staff.cms.update"
+    ]
+  },
+  {
+    "Module": "consultations",
+    "Submodules": "document-issuances",
+    "Routes": 2,
+    "RouteNames": [
+      "staff.document-issuances.get-last-consultation",
+      "staff.document-issuances.search-users"
+    ]
+  },
+  {
+    "Module": "countries",
+    "Submodules": "countries",
+    "Routes": 2,
+    "RouteNames": [
+      "staff.countries.index",
+      "staff.countries.show"
+    ]
+  },
+  {
+    "Module": "dashboard",
+    "Submodules": "dashboard",
+    "Routes": 1,
+    "RouteNames": "staff.dashboard"
+  },
+  {
+    "Module": "dispensing",
+    "Submodules": [
+      "dispense-records",
+      "dispense-records-pdf",
+      "medicine-dispensing-management",
+      "medicine-history",
+      "used-medicine"
+    ],
+    "Routes": 14,
+    "RouteNames": [
+      "staff.",
+      "staff.dispense-records.by-category",
+      "staff.dispense-records.create",
+      "staff.dispense-records.destroy",
+      "staff.dispense-records.edit",
+      "staff.dispense-records.index",
+      "staff.dispense-records.pdf",
+      "staff.dispense-records.show",
+      "staff.dispense-records.store",
+      "staff.dispense-records.store-patient",
+      "staff.dispense-records.update",
+      "staff.medicine-dispensing.index",
+      "staff.used-medicine.index"
+    ]
+  },
+  {
+    "Module": "doctors",
+    "Submodules": [
+      "add-qualification",
+      "doctor-status",
+      "doctors"
+    ],
+    "Routes": 10,
+    "RouteNames": [
+      "staff.add.qualification",
+      "staff.doctor.status",
+      "staff.doctors.create",
+      "staff.doctors.destroy",
+      "staff.doctors.edit",
+      "staff.doctors.index",
+      "staff.doctors.reset.password",
+      "staff.doctors.show",
+      "staff.doctors.store",
+      "staff.doctors.update"
+    ]
+  },
+  {
+    "Module": "document_issuances",
+    "Submodules": "document-issuances",
+    "Routes": 8,
+    "RouteNames": [
+      "staff.document-issuances.create",
+      "staff.document-issuances.destroy",
+      "staff.document-issuances.edit",
+      "staff.document-issuances.export-pdf",
+      "staff.document-issuances.index",
+      "staff.document-issuances.show",
+      "staff.document-issuances.store",
+      "staff.document-issuances.update"
+    ]
+  },
+  {
+    "Module": "inventory",
+    "Submodules": [
+      "categories",
+      "export-stock-in",
+      "generics",
+      "get-medicine",
+      "medicine-inventory-tracking",
+      "medicines",
+      "medicines-by-category",
+      "medicines-show-modal",
+      "medicines-uses-check",
+      "stock-in"
+    ],
+    "Routes": 35,
+    "RouteNames": [
+      "staff.active.deactive",
+      "staff.categories.create",
+      "staff.categories.destroy",
+      "staff.categories.edit",
+      "staff.categories.index",
+      "staff.categories.show",
+      "staff.categories.store",
+      "staff.categories.update",
+      "staff.check.use.medicine",
+      "staff.generics.create",
+      "staff.generics.destroy",
+      "staff.generics.edit",
+      "staff.generics.index",
+      "staff.generics.show",
+      "staff.generics.store",
+      "staff.generics.update",
+      "staff.get-medicine",
+      "staff.medicine-inventory.index",
+      "staff.medicines.by.category",
+      "staff.medicines.create",
+      "staff.medicines.destroy",
+      "staff.medicines.edit",
+      "staff.medicines.index",
+      "staff.medicines.show",
+      "staff.medicines.show.modal",
+      "staff.medicines.store",
+      "staff.medicines.update",
+      "staff.stock-in.create",
+      "staff.stock-in.destroy",
+      "staff.stock-in.edit",
+      "staff.stock-in.excel",
+      "staff.stock-in.index",
+      "staff.stock-in.show",
+      "staff.stock-in.store",
+      "staff.stock-in.update"
+    ]
+  },
+  {
+    "Module": "lab_requests",
+    "Submodules": "lab-requests",
+    "Routes": 10,
+    "RouteNames": [
+      "staff.lab-requests.create",
+      "staff.lab-requests.destroy",
+      "staff.lab-requests.edit",
+      "staff.lab-requests.index",
+      "staff.lab-requests.pdf",
+      "staff.lab-requests.search-users",
+      "staff.lab-requests.show",
+      "staff.lab-requests.store",
+      "staff.lab-requests.update",
+      "staff.lab-requests.update-status"
+    ]
+  },
+  {
+    "Module": "patients",
+    "Submodules": [
+      "email",
+      "email-verified",
+      "patients"
+    ],
+    "Routes": 11,
+    "RouteNames": [
+      "staff.emailVerified",
+      "staff.patients.create",
+      "staff.patients.destroy",
+      "staff.patients.edit",
+      "staff.patients.index",
+      "staff.patients.restore",
+      "staff.patients.show",
+      "staff.patients.showMyHistory",
+      "staff.patients.store",
+      "staff.patients.update",
+      "staff.resend.email.verification"
+    ]
+  },
+  {
+    "Module": "prescriptions",
+    "Submodules": [
+      "patients",
+      "prescription-medicine",
+      "prescription-medicine-show",
+      "prescription-pdf",
+      "prescriptions"
+    ],
+    "Routes": 12,
+    "RouteNames": [
+      "staff.prescription.medicine.show",
+      "staff.prescription.medicine.store",
+      "staff.prescription.status",
+      "staff.prescriptions.create",
+      "staff.prescriptions.destroy",
+      "staff.prescriptions.dispense",
+      "staff.prescriptions.edit",
+      "staff.prescriptions.index",
+      "staff.prescriptions.pdf",
+      "staff.prescriptions.show",
+      "staff.prescriptions.store",
+      "staff.prescriptions.update"
+    ]
+  },
+  {
+    "Module": "queue",
+    "Submodules": "patient-queue",
+    "Routes": 10,
+    "RouteNames": [
+      "staff.patient-queue.call-next",
+      "staff.patient-queue.complete",
+      "staff.patient-queue.create",
+      "staff.patient-queue.destroy",
+      "staff.patient-queue.edit",
+      "staff.patient-queue.index",
+      "staff.patient-queue.refresh",
+      "staff.patient-queue.show",
+      "staff.patient-queue.store",
+      "staff.patient-queue.update"
+    ]
+  },
+  {
+    "Module": "roles",
+    "Submodules": "roles",
+    "Routes": 2,
+    "RouteNames": [
+      "staff.roles.index",
+      "staff.roles.show"
+    ]
+  },
+  {
+    "Module": "settings",
+    "Submodules": [
+      "cities-list",
+      "settings",
+      "states-list"
+    ],
+    "Routes": 3,
+    "RouteNames": [
+      "staff.cities-list",
+      "staff.setting.index",
+      "staff.states-list"
+    ]
+  },
+  {
+    "Module": "specializations",
+    "Submodules": "specializations",
+    "Routes": 7,
+    "RouteNames": [
+      "staff.specializations.create",
+      "staff.specializations.destroy",
+      "staff.specializations.edit",
+      "staff.specializations.index",
+      "staff.specializations.show",
+      "staff.specializations.store",
+      "staff.specializations.update"
+    ]
+  }
+]

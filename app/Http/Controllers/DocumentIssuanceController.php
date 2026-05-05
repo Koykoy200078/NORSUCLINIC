@@ -16,15 +16,25 @@ use App\Models\User;
 use App\Models\Vaccination;
 use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
+use App\Services\MedicineInventoryService;
 use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DocumentIssuanceController extends Controller
 {
     use LogsActivity;
+
+    private MedicineInventoryService $medicineInventoryService;
+
+    public function __construct(MedicineInventoryService $medicineInventoryService)
+    {
+        $this->medicineInventoryService = $medicineInventoryService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -72,9 +82,17 @@ class DocumentIssuanceController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'dob' => 'nullable|date|before_or_equal:today',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
+        ], [
+            'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
+            'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
+        ]);
+
         $data = $request->except('_token');
         $documentType = $request->input('document_type');
-        
+
         try {
             if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->storeMedicalCertificate($data);
@@ -141,11 +159,11 @@ class DocumentIssuanceController extends Controller
 
         // Retrieve the user and related IDs (allow null for manual entries)
         $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
-        
+
         // Use request data for campus/college/course/year_level if provided (allows manual override)
         $data['campus'] = $data['campus'] ?? ($user ? ($user->campus->campus_name ?? 'Unknown Campus') : 'N/A');
         $data['college'] = $data['college'] ?? ($user ? ($user->college->college_name ?? 'Unknown College') : 'N/A');
-        
+
         // Calculate age from DOB if not provided in request
         if (!isset($data['age']) || $data['age'] === '') {
             if ($user && $user->dob) {
@@ -160,15 +178,15 @@ class DocumentIssuanceController extends Controller
         }
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
-        
+
         // Improve address fetching
         if (!isset($data['address']) || $data['address'] === '' || $data['address'] === 'N/A') {
             if ($user) {
-                $data['address'] = $user->patient?->address?->full_address 
-                                ?? $user->patient?->address?->address1 
-                                ?? $user->address?->full_address 
-                                ?? $user->address?->address1 
-                                ?? 'N/A';
+                $data['address'] = $user->patient?->address?->full_address
+                    ?? $user->patient?->address?->address1
+                    ?? $user->address?->full_address
+                    ?? $user->address?->address1
+                    ?? 'N/A';
             } else {
                 $data['address'] = 'N/A';
             }
@@ -242,15 +260,15 @@ class DocumentIssuanceController extends Controller
         }
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
-        
+
         // Improve address fetching
         if (!isset($data['address']) || $data['address'] === '' || $data['address'] === 'N/A') {
             if ($user) {
-                $data['address'] = $user->patient?->address?->full_address 
-                                ?? $user->patient?->address?->address1 
-                                ?? $user->address?->full_address 
-                                ?? $user->address?->address1 
-                                ?? 'N/A';
+                $data['address'] = $user->patient?->address?->full_address
+                    ?? $user->patient?->address?->address1
+                    ?? $user->address?->full_address
+                    ?? $user->address?->address1
+                    ?? 'N/A';
             } else {
                 $data['address'] = 'N/A';
             }
@@ -422,9 +440,18 @@ class DocumentIssuanceController extends Controller
     public function update(Request $request, DocumentIssuance $document_issuance)
     {
         $requestDocument = $document_issuance;
+
+        $request->validate([
+            'dob' => 'nullable|date|before_or_equal:today',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
+        ], [
+            'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
+            'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
+        ]);
+
         $data = $request->except(['_token', '_method']);
         $documentType = $request->input('document_type', $requestDocument->document_type);
-        
+
         try {
             if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->updateMedicalCertificate($requestDocument, $data);
@@ -486,7 +513,7 @@ class DocumentIssuanceController extends Controller
                 $data['course'] = $user->course->course_name ?? $requestDocument->course;
                 $data['year_level'] = $user->yearLevel->year_level_name ?? $requestDocument->year_level;
                 $data['date_of_birth'] = $user->dob ?? $requestDocument->date_of_birth;
-                
+
                 if ((!isset($data['age']) || $data['age'] === '') && $user->dob) {
                     try {
                         $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
@@ -494,17 +521,17 @@ class DocumentIssuanceController extends Controller
                         $data['age'] = $requestDocument->age;
                     }
                 }
-                
+
                 if (!isset($data['gender']) || empty($data['gender'])) {
                     $data['gender'] = ($user->gender == 1 ? 'Male' : 'Female');
                 }
 
                 if (!isset($data['address']) || empty($data['address']) || $data['address'] === 'N/A') {
-                    $data['address'] = $user->patient?->address?->full_address 
-                                    ?? $user->patient?->address?->address1 
-                                    ?? $user->address?->full_address 
-                                    ?? $user->address?->address1 
-                                    ?? $requestDocument->address;
+                    $data['address'] = $user->patient?->address?->full_address
+                        ?? $user->patient?->address?->address1
+                        ?? $user->address?->full_address
+                        ?? $user->address?->address1
+                        ?? $requestDocument->address;
                 }
             } else {
                 $data['campus'] = $requestDocument->campus;
@@ -582,11 +609,11 @@ class DocumentIssuanceController extends Controller
 
         if (!isset($data['address']) || empty($data['address']) || $data['address'] === 'N/A') {
             if ($user) {
-                $data['address'] = $user->patient?->address?->full_address 
-                                ?? $user->patient?->address?->address1 
-                                ?? $user->address?->full_address 
-                                ?? $user->address?->address1 
-                                ?? $requestDocument->address;
+                $data['address'] = $user->patient?->address?->full_address
+                    ?? $user->patient?->address?->address1
+                    ?? $user->address?->full_address
+                    ?? $user->address?->address1
+                    ?? $requestDocument->address;
             }
         }
 
@@ -768,7 +795,7 @@ class DocumentIssuanceController extends Controller
         foreach ($existingMedicinesMap as $key => $existingMedicine) {
             if (!isset($newMedicinesMap[$key])) {
                 // This medicine was removed, restore its stock
-                $this->restoreMedicineStock($existingMedicine);
+                $this->restoreMedicineStock($existingMedicine, $requestDocument);
 
                 // Delete the consultation medicine record
                 $existingMedicine->delete();
@@ -805,7 +832,8 @@ class DocumentIssuanceController extends Controller
                         $this->restoreMedicineStockAmount(
                             $existingMedicine->medicine_id,
                             $existingMedicine->dosage,
-                            abs($quantityDiff)
+                            abs($quantityDiff),
+                            $requestDocument
                         );
                     }
 
@@ -861,69 +889,94 @@ class DocumentIssuanceController extends Controller
     /**
      * Restore medicine stock when medicine is removed from consultation
      */
-    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine)
+    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine, ?DocumentIssuance $requestDocument = null)
     {
-        $medicine = \App\Models\Medicine::find($consultationMedicine->medicine_id);
-
-        if (!$medicine) {
-            return;
-        }
-
-        // Restore to medicine's total available quantity
-        $medicine->available_quantity += $consultationMedicine->quantity;
-        $medicine->save();
-
-        // Restore to the most recent batch of the same dosage (LIFO - Last In, First Out for restoration)
-        $remainingToRestore = $consultationMedicine->quantity;
-        $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $consultationMedicine->medicine_id)
-            ->where('dosage', $consultationMedicine->dosage)
-            ->orderBy('manufacturing_date', 'desc') // LIFO: newest first for restoration
-            ->get();
-
-        foreach ($purchasedMedicines as $purchasedMedicine) {
-            if ($remainingToRestore <= 0) {
-                break;
-            }
-
-            // Add the quantity back to this batch
-            $purchasedMedicine->quantity += $remainingToRestore;
-            $purchasedMedicine->save();
-            $remainingToRestore = 0;
-        }
-
-        // Clear medicine cache
-        cache()->forget('medicine_' . $consultationMedicine->medicine_id);
-        cache()->forget('medicines_list');
+        $this->restoreMedicineStockAmount(
+            (int) $consultationMedicine->medicine_id,
+            $consultationMedicine->dosage,
+            (int) $consultationMedicine->quantity,
+            $requestDocument
+        );
     }
 
     /**
      * Restore a specific amount of medicine stock
      */
-    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity)
+    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity, ?DocumentIssuance $requestDocument = null)
     {
-        $medicine = \App\Models\Medicine::find($medicineId);
-
-        if (!$medicine) {
+        $quantity = (int) $quantity;
+        if ($quantity <= 0) {
             return;
         }
 
-        // Restore to medicine's total available quantity
-        $medicine->available_quantity += $quantity;
-        $medicine->save();
+        DB::transaction(function () use ($medicineId, $dosage, $quantity, $requestDocument) {
+            $medicine = \App\Models\Medicine::find((int) $medicineId);
+            if (! $medicine) {
+                return;
+            }
 
-        // Restore to the most recent batch of the same dosage
-        $purchasedMedicine = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
-            ->where('dosage', $dosage)
-            ->orderBy('manufacturing_date', 'desc')
-            ->first();
+            $normalizedDosage = trim((string) ($dosage ?? ''));
+            $resolvedDosage = $normalizedDosage !== ''
+                ? $normalizedDosage
+                : trim((string) ($medicine->dosage ?? ''));
 
-        if ($purchasedMedicine) {
-            $purchasedMedicine->quantity += $quantity;
-            $purchasedMedicine->save();
-        }
+            $batchQuery = \App\Models\MedicineBatch::query()
+                ->where('medicine_id', (int) $medicineId);
 
-        // Clear medicine cache
-        cache()->forget('medicine_' . $medicineId);
+            $batchQuery->where(function ($query) {
+                $query->whereNull('expiration_date')
+                    ->orWhereDate('expiration_date', '>=', now()->toDateString());
+            });
+
+            if ($resolvedDosage !== '') {
+                if (strcasecmp($resolvedDosage, 'N/A') === 0) {
+                    $batchQuery->where(function ($query) {
+                        $query->whereNull('dosage')
+                            ->orWhere('dosage', '')
+                            ->orWhere('dosage', 'N/A');
+                    });
+                } else {
+                    $batchQuery->where('dosage', $resolvedDosage);
+                }
+            }
+
+            $targetBatch = $batchQuery
+                ->orderByRaw('expiration_date IS NULL')
+                ->orderBy('expiration_date')
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $targetBatch) {
+                $targetBatch = \App\Models\MedicineBatch::create([
+                    'medicine_id' => (int) $medicineId,
+                    'batch_number' => 'RETURN-' . (int) $medicineId . '-' . now()->format('YmdHis'),
+                    'dosage' => $resolvedDosage !== '' ? $resolvedDosage : null,
+                    'quantity' => 0,
+                    'expiration_date' => now()->toDateString(),
+                    'date_received' => now()->toDateString(),
+                    'supplier_name' => 'Consultation stock restoration',
+                ]);
+            }
+
+            $targetBatch->quantity = (int) $targetBatch->quantity + $quantity;
+            $targetBatch->save();
+
+            \App\Models\MedicineTransaction::create([
+                'batch_id' => $targetBatch->id,
+                'user_id' => auth()->id(),
+                'transaction_type' => \App\Models\MedicineTransaction::TYPE_ADJUSTMENT,
+                'quantity' => $quantity,
+                'balance_after' => (int) $targetBatch->quantity,
+                'reference_type' => $requestDocument ? get_class($requestDocument) : null,
+                'reference_id' => $requestDocument ? $requestDocument->getKey() : null,
+                'remarks' => 'Consultation medicine restoration',
+            ]);
+
+            $this->medicineInventoryService->syncMedicineTotals((int) $medicineId);
+        });
+
+        cache()->forget('medicine_' . (int) $medicineId);
         cache()->forget('medicines_list');
     }
 
@@ -934,51 +987,25 @@ class DocumentIssuanceController extends Controller
     {
         $medicine = \App\Models\Medicine::find($medicineId);
 
-        if (!$medicine) {
+        if (! $medicine) {
             throw new \Exception("Medicine not found (ID: {$medicineId})");
         }
 
-        // Check if enough stock is available in the specific dosage
-        $availableDosageQty = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
-            ->where('dosage', $dosage)
-            ->sum('quantity');
+        $normalizedDosage = trim((string) ($dosage ?? ''));
+        $dosageFilter = $normalizedDosage !== '' ? $normalizedDosage : null;
 
-        if ($availableDosageQty < $quantity) {
-            throw new \Exception("Insufficient stock for {$medicine->name} ({$dosage}). Available: {$availableDosageQty}, Requested: {$quantity}");
-        }
-
-        // Deduct from specific dosage quantities (FIFO - First In, First Out)
-        $remainingToDeduct = $quantity;
-        $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
-            ->where('dosage', $dosage)
-            ->where('quantity', '>', 0)
-            ->orderBy('manufacturing_date', 'asc') // FIFO: oldest first
-            ->get();
-
-        foreach ($purchasedMedicines as $purchasedMedicine) {
-            if ($remainingToDeduct <= 0) {
-                break;
-            }
-
-            if ($purchasedMedicine->quantity >= $remainingToDeduct) {
-                // This batch has enough quantity
-                $purchasedMedicine->quantity -= $remainingToDeduct;
-                $purchasedMedicine->save();
-                $remainingToDeduct = 0;
-            } else {
-                // Use all from this batch and continue
-                $remainingToDeduct -= $purchasedMedicine->quantity;
-                $purchasedMedicine->quantity = 0;
-                $purchasedMedicine->save();
-            }
-        }
-
-        // Deduct from medicine's total available quantity
-        $medicine->available_quantity -= $quantity;
-        $medicine->save();
+        $this->medicineInventoryService->deductStockFefo(
+            (int) $medicineId,
+            (int) $quantity,
+            auth()->id(),
+            $requestDocument,
+            'Consultation #' . $requestDocument->id . ' medicine deduction',
+            \App\Models\MedicineTransaction::TYPE_DISPENSE,
+            $dosageFilter
+        );
 
         // Clear medicine cache
-        cache()->forget('medicine_' . $medicineId);
+        cache()->forget('medicine_' . (int) $medicineId);
         cache()->forget('medicines_list');
 
         // Log medicine usage activity
@@ -1010,55 +1037,12 @@ class DocumentIssuanceController extends Controller
                 $dosage = $medicineData['dosage'] ?? null;
                 $dosageInstructions = $medicineData['dosage_instructions'] ?? null;
 
-                // Find the medicine
-                $medicine = \App\Models\Medicine::find($medicineId);
-
-                if (!$medicine) {
+                if ($quantity <= 0) {
                     continue;
                 }
 
-                // Check if enough stock is available in the specific dosage
-                $availableDosageQty = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
-                    ->where('dosage', $dosage)
-                    ->sum('quantity');
-
-                if ($availableDosageQty < $quantity) {
-                    throw new \Exception("Insufficient stock for {$medicine->name} ({$dosage}). Available: {$availableDosageQty}, Requested: {$quantity}");
-                }
-
-                // Deduct from specific dosage quantities (FIFO - First In, First Out)
-                $remainingToDeduct = $quantity;
-                $purchasedMedicines = \App\Models\PurchasedMedicine::where('medicine_id', $medicineId)
-                    ->where('dosage', $dosage)
-                    ->where('quantity', '>', 0)
-                    ->orderBy('manufacturing_date', 'asc') // FIFO: oldest first
-                    ->get();
-
-                foreach ($purchasedMedicines as $purchasedMedicine) {
-                    if ($remainingToDeduct <= 0) {
-                        break;
-                    }
-
-                    if ($purchasedMedicine->quantity >= $remainingToDeduct) {
-                        // This batch has enough quantity
-                        $purchasedMedicine->quantity -= $remainingToDeduct;
-                        $purchasedMedicine->save();
-                        $remainingToDeduct = 0;
-                    } else {
-                        // Use all from this batch and continue
-                        $remainingToDeduct -= $purchasedMedicine->quantity;
-                        $purchasedMedicine->quantity = 0;
-                        $purchasedMedicine->save();
-                    }
-                }
-
-                // Deduct from medicine's total available quantity
-                $medicine->available_quantity -= $quantity;
-                $medicine->save();
-
-                // Clear medicine cache to ensure UI updates immediately
-                cache()->forget('medicine_' . $medicineId);
-                cache()->forget('medicines_list');
+                // Deduct stock via the current FEFO batch inventory service.
+                $this->deductMedicineStock($medicineId, $dosage, $quantity, $requestDocument);
 
                 // Record the medicine usage in consultation_medicines table
                 \App\Models\ConsultationMedicine::create([
@@ -1070,17 +1054,16 @@ class DocumentIssuanceController extends Controller
                     'dosage_instructions' => $dosageInstructions,
                 ]);
 
-                // Log medicine usage activity
-                self::logMedicineUsage($medicine, $quantity, $requestDocument->name, $requestDocument);
+                $medicine = \App\Models\Medicine::find($medicineId);
 
                 // Log the medicine deduction
                 Log::info('Medicine deducted from inventory', [
                     'consultation_id' => $requestDocument->id,
                     'medicine_id' => $medicineId,
-                    'medicine_name' => $medicine->name,
+                    'medicine_name' => $medicine?->name,
                     'dosage' => $dosage,
                     'quantity_used' => $quantity,
-                    'remaining_stock' => $medicine->available_quantity,
+                    'remaining_stock' => $medicine?->available_quantity,
                     'used_for' => $usedFor,
                 ]);
             }
@@ -1165,8 +1148,27 @@ class DocumentIssuanceController extends Controller
                 ->select('id', 'patient_unique_id', 'user_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
                 ->with([
                     'user' => function ($query) {
-                        $query->select('id', 'first_name', 'last_name', 'dob', 'gender', 'contact', 'campus_id', 'college_id', 'course_id', 'year_level_id', 'university_id_number', 'employee_id')
-                            ->with(['campus', 'college', 'course', 'yearLevel']);
+                        $query->select(
+                            'id',
+                            'first_name',
+                            'last_name',
+                            'dob',
+                            'gender',
+                            'contact',
+                            'campus_id',
+                            'college_id',
+                            'course_id',
+                            'year_level_id',
+                            'department_id',
+                            'office_id',
+                            'vaccination_id',
+                            'emergency_contact_name',
+                            'emergency_contact_no',
+                            'emergency_relationship',
+                            'university_id_number',
+                            'employee_id'
+                        )
+                            ->with(['campus', 'college', 'course', 'yearLevel', 'department', 'office', 'vaccination:id,vaccination_status']);
                     },
                     'address' => function ($query) {
                         $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
@@ -1227,7 +1229,7 @@ class DocumentIssuanceController extends Controller
                     ->setWarnings(false);
             } elseif ($requestDocument->document_type === 'excuse_slip') {
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
-                
+
                 // Direct HTML Print optimization for Excuse Slip (No PDF generation, very fast)
                 if (request()->has('action') && request()->get('action') === 'print') {
                     return view('document_issuances.print_excuse_slip', compact('requestDocument', 'medicalCertificateDoctorName'));

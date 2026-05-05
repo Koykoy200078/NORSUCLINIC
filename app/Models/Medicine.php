@@ -223,7 +223,9 @@ class Medicine extends Model
     public function getEarliestExpiryDateAttribute()
     {
         return MedicineBatch::where('medicine_id', $this->id)
+            ->where('quantity', '>', 0)
             ->whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '>=', now()->toDateString())
             ->min('expiration_date');
     }
 }
