@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/poppins.css') }}">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('css/fontawesome.all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/front/vendor/font-awesome/css/all.min.css') }}">
 
     <!-- Third-Party and Custom Styles -->
     <link href="{{ mix('css/front-third-party.css') }}" rel="stylesheet" type="text/css">

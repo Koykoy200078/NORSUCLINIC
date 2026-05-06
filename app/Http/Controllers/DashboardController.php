@@ -33,11 +33,12 @@ class DashboardController extends AppBaseController
     {
         $data = $this->dashboardRepository->getData();
         $clinic_name = getSettingValue('clinic_name');
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('dashboard.index', compact('data', 'clinic_name'));
+        return view('dashboard.index', compact('data', 'clinic_name', 'hasDefaultPassword'));
     }
 
     /**

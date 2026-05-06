@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
@@ -31,6 +32,15 @@ class AuthenticatedSessionController extends Controller
 
         // Allow all user types including patients to log in
         $request->session()->regenerate();
+
+        $user = Auth::user();
+        $hasDefaultPassword = $user && Hash::check('123456', $user->password);
+        $isClinicAdmin = $user && (int) $user->type === User::ADMIN;
+
+        // Force clinic admin to land on dashboard if still using the seeded default password.
+        if ($hasDefaultPassword && $isClinicAdmin) {
+            return redirect()->route('admin.dashboard');
+        }
 
         return redirect()->intended(getDashboardURL());
     }

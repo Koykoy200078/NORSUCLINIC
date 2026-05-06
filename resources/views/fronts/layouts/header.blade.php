@@ -3,7 +3,7 @@
         <div class="row align-items-center">
             <div class="col-lg-1 col-4">
                 <a href="#!" class="header-logo">
-                    <img src="{{ asset(getAppLogo()) }}" alt="NORSU LOGO" class="object-cover front-app-logo" loading="lazy" />
+                    <img src="{{ asset(getAppLogo()) }}" alt="NORSU LOGO" class="object-cover front-app-logo" loading="eager" fetchpriority="high" />
                 </a>
             </div>
             <div class="col-lg-11 col-8">
@@ -15,9 +15,9 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav align-items-center py-2 py-lg-0">
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link {{ Request::is('/*') ? 'active' : '' }}" aria-current="page" href="{{ url('/') }}">{{ __('messages.web.home') }}</a>
-                            </li>
+                            </li> -->
                             <!-- <li class="nav-item">
                                 <a class="nav-link {{ Request::is('medical-doctors*') ? 'active' : '' }}"
                                     href="{{ route('medicalDoctors') }}">{{ __('messages.web.our_team') }}</a>

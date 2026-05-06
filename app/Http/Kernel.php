@@ -7,6 +7,7 @@ use App\Http\Middleware\checkImpersonateUser;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\EnsureStaffModuleAccess;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\ForceAdminDefaultPasswordChange;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SetLanguage;
@@ -66,7 +67,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             SubstituteBindings::class,
         ],
     ];
@@ -96,5 +97,6 @@ class Kernel extends HttpKernel
         'xss' => XSS::class,
         'checkImpersonateUser' => checkImpersonateUser::class,
         'setLanguage' => SetLanguage::class,
+        'forceAdminPasswordChange' => ForceAdminDefaultPasswordChange::class,
     ];
 }

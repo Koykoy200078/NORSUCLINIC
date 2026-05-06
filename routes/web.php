@@ -100,7 +100,7 @@ Route::get('get-barangays', [UserController::class, 'getBarangays'])
 // ============================================================================
 // ADMIN ROUTES
 // ============================================================================
-Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin')->group(function () {
+Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin', 'forceAdminPasswordChange')->group(function () {
 
     // Admin Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permission:manage_admin_dashboard')->name('admin.dashboard');

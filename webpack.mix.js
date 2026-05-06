@@ -21,6 +21,7 @@ const directoriesToDelete = [
     "public/fonts",
     "public/js",
     "public/vendor",
+    "public/webfonts",
     "public/web",
     "public/messages.js",
     "public/mix-manifest.json",
@@ -34,6 +35,10 @@ mix.copyDirectory("resources/assets/images", "public/assets/image")
     .copyDirectory(
         "resources/assets/front/vendor/font-awesome/webfonts",
         "public/assets/webfonts",
+    )
+    .copyDirectory(
+        "resources/assets/front/vendor/font-awesome/webfonts",
+        "public/webfonts",
     )
     .copyDirectory(
         "resources/assets/web/plugins/global/fonts",
