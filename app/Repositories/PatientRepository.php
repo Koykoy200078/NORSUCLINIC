@@ -119,6 +119,102 @@ class PatientRepository extends BaseRepository
         return null;
     }
 
+    private function normalizeNullableString($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
+    }
+
+    private function resolveCovidVaccinationStatus(array $input): ?string
+    {
+        $vaccinationId = $input['vaccination_id'] ?? null;
+
+        if ($vaccinationId !== null && $vaccinationId !== '' && is_numeric($vaccinationId)) {
+            $status = Vaccination::query()->whereKey((int) $vaccinationId)->value('vaccination_status');
+
+            return $this->normalizeNullableString($status);
+        }
+
+        return $this->normalizeNullableString($input['covid_vaccination'] ?? null);
+    }
+
+    private function buildSyncedImmunizationRecord(?string $currentRecord, ?string $covidVaccination): ?string
+    {
+        $normalizedRecord = $this->normalizeNullableString($currentRecord);
+        $normalizedVaccination = $this->normalizeNullableString($covidVaccination);
+
+        if ($normalizedVaccination === null) {
+            return $normalizedRecord;
+        }
+
+        if (in_array(strtolower($normalizedVaccination), ['unknown vaccination', 'unknown', 'n/a', 'na'], true)) {
+            return $normalizedRecord;
+        }
+
+        $covidLine = 'COVID-19 Vaccination Status: ' . $normalizedVaccination;
+
+        $existingLines = preg_split('/\R+/', (string) ($normalizedRecord ?? '')) ?: [];
+        $existingLines = array_values(array_filter(array_map(function ($line) {
+            return trim((string) $line);
+        }, $existingLines), function ($line) {
+            return $line !== '';
+        }));
+
+        $updatedLines = [];
+        $hasCovidLine = false;
+
+        foreach ($existingLines as $line) {
+            if (preg_match('/^covid(?:-19)?\s+vaccination\s+status\s*:/i', $line)) {
+                if (! $hasCovidLine) {
+                    $updatedLines[] = $covidLine;
+                    $hasCovidLine = true;
+                }
+
+                continue;
+            }
+
+            $updatedLines[] = $line;
+        }
+
+        if (! $hasCovidLine) {
+            $updatedLines[] = $covidLine;
+        }
+
+        return implode(PHP_EOL, $updatedLines);
+    }
+
+    private function syncImmunizationFromCovid(array &$input, $patient = null): void
+    {
+        $patientModel = $patient instanceof Patient ? $patient : null;
+
+        $resolvedCovidVaccination = $this->resolveCovidVaccinationStatus($input);
+
+        if ($resolvedCovidVaccination !== null) {
+            $input['covid_vaccination'] = $resolvedCovidVaccination;
+        } elseif ($patientModel) {
+            $resolvedCovidVaccination = $this->normalizeNullableString($patientModel->covid_vaccination);
+        }
+
+        $currentImmunizationRecord = $this->normalizeNullableString($input['immunization_record'] ?? null);
+        if ($currentImmunizationRecord === null && $patientModel) {
+            $currentImmunizationRecord = $this->normalizeNullableString($patientModel->immunization_record);
+        }
+
+        $syncedImmunizationRecord = $this->buildSyncedImmunizationRecord(
+            $currentImmunizationRecord,
+            $resolvedCovidVaccination
+        );
+
+        if ($syncedImmunizationRecord !== null) {
+            $input['immunization_record'] = $syncedImmunizationRecord;
+        }
+    }
+
     public function store($input): bool
     {
 
@@ -134,6 +230,7 @@ class PatientRepository extends BaseRepository
             $input['patient_unique_id'] = $input['university_id_number'] ?: Patient::generatePatientUniqueId();
             $input['email'] = !empty($input['email']) ? setEmailLowerCase($input['email']) : null;
             $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
+            $this->syncImmunizationFromCovid($input);
             $patientArray = Arr::only($input, [
                 'patient_unique_id',
                 'patient_type_id',
@@ -245,6 +342,7 @@ class PatientRepository extends BaseRepository
             $input['patient_unique_id'] = $input['university_id_number']
                 ?: ($existingPatientUniqueId !== '' ? $existingPatientUniqueId : Patient::generatePatientUniqueId());
             $input['comorbidities'] = $this->normalizeComorbiditiesInput($input['comorbidities'] ?? null);
+            $this->syncImmunizationFromCovid($input, $patient);
             $patientInput = Arr::only($input, [
                 'patient_unique_id',
                 'patient_type_id',

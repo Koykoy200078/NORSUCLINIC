@@ -4,6 +4,7 @@
         <label class="block text-xs" for="user_search">Search User</label>
         <input type="text" id="user_search" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="Search by name" autocomplete="off">
         <div id="user_search_results" class="absolute bg-white border border-gray-300 w-full hidden z-10"></div>
+        <small class="text-muted d-block mt-2">If no patient is found, continue filling out this form and submit. The system will automatically create a patient record and save this consultation.</small>
     </div>
     @endif
     <form action="{{ getRouteByRole('document-issuances.store') }}" method="POST" enctype="multipart/form-data">
@@ -22,7 +23,7 @@
             <div class="col-span-1 d-none">
                 <label class="block text-xs" for="name">ID<span class="text-red-500">*</span></label>
                 <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ auth()->user()->id }}" readonly required>
-                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly required>
+                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME<span class="text-red-500">*</span></label>
@@ -30,7 +31,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE<span class="text-red-500">*</span></label>
-                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="gender">GENDER<span class="text-red-500">*</span></label>
@@ -692,6 +693,8 @@
         const courseYearField = document.getElementById('course_year_field');
         const departmentField = document.getElementById('department_field');
         const officeField = document.getElementById('office_field');
+        const ageField = document.getElementById('age');
+        const dateOfBirthField = document.getElementById('date_of_birth');
 
         function normalizeTextValue(value) {
             if (value === null || value === undefined) {
@@ -771,6 +774,14 @@
             }
         }
 
+        function syncAgeFromDateOfBirth() {
+            if (!ageField || !dateOfBirthField) {
+                return;
+            }
+
+            ageField.value = calculateAge(dateOfBirthField.value);
+        }
+
         // Run on page load if year level is already selected
         if (yearLevelSelect) {
             updateFieldsVisibility();
@@ -780,6 +791,13 @@
                 updateInformantField(yearLevelSelect.value);
             });
         }
+
+        if (dateOfBirthField) {
+            dateOfBirthField.addEventListener('input', syncAgeFromDateOfBirth);
+            dateOfBirthField.addEventListener('change', syncAgeFromDateOfBirth);
+        }
+
+        syncAgeFromDateOfBirth();
 
         // Auto-fill PERTINENT EXAM when Complaint/s is filled
         // const complaintsField = document.getElementById('complaints');
@@ -1235,9 +1253,9 @@
 
                                     document.getElementById('user_id').value = patientData.user.id;
                                     document.getElementById('name').value = `${patientData.user.first_name} ${patientData.user.last_name}`;
-                                    document.getElementById('age').value = calculateAge(patientData.user.dob);
                                     document.getElementById('gender').value = patientData.user.gender === 1 ? 'Male' : 'Female';
                                     document.getElementById('date_of_birth').value = patientData.user.dob || '';
+                                    syncAgeFromDateOfBirth();
                                     setSelectValue('vaccination_id', patientData.user.vaccination_id || patientData.user.vaccination?.id || '');
                                     document.getElementById('patient_contact').value = normalizeTextValue(patientData.user.contact);
                                     document.getElementById('emergency_contact').value = buildEmergencyContact(patientData.user || {});

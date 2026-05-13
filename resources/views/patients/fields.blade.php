@@ -139,7 +139,7 @@
         </div>
     </div>
 
-    <!-- Patient Information -->  
+    <!-- Patient Information -->
     <div id="patientInformationHeadingContainer">
         <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Information') }}</div>
     </div>
@@ -236,6 +236,8 @@
             const departmentSelect = document.getElementById('departmentSelect');
             const officeSelect = document.getElementById('officeSelect');
             const yearLevelSelect = document.getElementById('yearLevelSelect');
+            const vaccinationStatusSelect = document.querySelector('select[name="vaccination_id"]');
+            const immunizationRecordTextarea = document.querySelector('textarea[name="immunization_record"]');
 
             const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value || '{}');
             const patientTypeLookup = JSON.parse(document.getElementById('patientTypeLookup').value || '{}');
@@ -377,6 +379,58 @@
             updateFieldsDisplay();
             $(patientTypeSelect).off('change.patientType').on('change.patientType', updateFieldsDisplay);
 
+            function syncVaccinationStatusToImmunizationRecord() {
+                if (!vaccinationStatusSelect || !immunizationRecordTextarea) {
+                    return;
+                }
+
+                const selectedValue = String(vaccinationStatusSelect.value || '').trim();
+                if (selectedValue === '') {
+                    return;
+                }
+
+                const selectedText = vaccinationStatusSelect.options[vaccinationStatusSelect.selectedIndex]?.text?.trim() || '';
+                if (selectedText === '') {
+                    return;
+                }
+
+                const covidLine = `COVID-19 Vaccination Status: ${selectedText}`;
+                const existingLines = (immunizationRecordTextarea.value || '')
+                    .split(/\r?\n/)
+                    .map((line) => line.trim())
+                    .filter((line) => line !== '');
+
+                let hasCovidLine = false;
+                const updatedLines = [];
+
+                existingLines.forEach((line) => {
+                    if (/^covid(?:-19)?\s+vaccination\s+status\s*:/i.test(line)) {
+                        if (!hasCovidLine) {
+                            updatedLines.push(covidLine);
+                            hasCovidLine = true;
+                        }
+
+                        return;
+                    }
+
+                    updatedLines.push(line);
+                });
+
+                if (!hasCovidLine) {
+                    updatedLines.push(covidLine);
+                }
+
+                immunizationRecordTextarea.value = updatedLines.join('\n');
+            }
+
+            if (vaccinationStatusSelect && immunizationRecordTextarea) {
+                vaccinationStatusSelect.addEventListener('change', syncVaccinationStatusToImmunizationRecord);
+
+                if (String(vaccinationStatusSelect.value || '').trim() !== '') {
+                    syncVaccinationStatusToImmunizationRecord();
+                }
+            }
+
             const $comorbiditySelect = $('#patientComorbidities');
             if ($comorbiditySelect.length && $.fn.select2) {
                 if ($comorbiditySelect.hasClass('select2-hidden-accessible')) {
@@ -444,95 +498,95 @@
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>
 
-@push('scripts')
-<script>
-    (function() {
-        'use strict';
+    @push('scripts')
+    <script>
+        (function() {
+            'use strict';
 
-        function initPatientTypeToggle() {
-            var $patientTypeSelect = $('#patientTypeSelect');
-            var $universityIdWrapper = $('#universityIdWrapper');
-            var $universityIdInput = $('#universityIdInput');
-            var $emailWrapper = $('#emailWrapper');
+            function initPatientTypeToggle() {
+                var $patientTypeSelect = $('#patientTypeSelect');
+                var $universityIdWrapper = $('#universityIdWrapper');
+                var $universityIdInput = $('#universityIdInput');
+                var $emailWrapper = $('#emailWrapper');
 
-            if (!$patientTypeSelect.length) {
-                console.warn('[PatientForm] patientTypeSelect not found in DOM');
-                return false;
-            }
-            if (!$universityIdWrapper.length) {
-                console.warn('[PatientForm] universityIdWrapper not found in DOM');
-            }
-            if (!$emailWrapper.length) {
-                console.warn('[PatientForm] emailWrapper not found in DOM');
-            }
-
-            // Patient type IDs from seeder: 1=student, 2=staff, 3=faculty, 4=guest
-            var GUEST_TYPE_ID = '4';
-
-            function toggleConditionalFields() {
-                var rawVal = $patientTypeSelect.val();
-                var selectedType = (rawVal !== null && rawVal !== undefined) ? String(rawVal) : '';
-
-                var isGuest = selectedType === GUEST_TYPE_ID;
-                var hasSelection = selectedType !== '';
-
-                if (!hasSelection) {
-                    $universityIdWrapper.addClass('d-none');
-                    $emailWrapper.addClass('d-none');
-                    $universityIdInput.removeAttr('required');
-                    
-                    return;
+                if (!$patientTypeSelect.length) {
+                    console.warn('[PatientForm] patientTypeSelect not found in DOM');
+                    return false;
+                }
+                if (!$universityIdWrapper.length) {
+                    console.warn('[PatientForm] universityIdWrapper not found in DOM');
+                }
+                if (!$emailWrapper.length) {
+                    console.warn('[PatientForm] emailWrapper not found in DOM');
                 }
 
-                if (isGuest) {
-                    $universityIdWrapper.addClass('d-none');
-                    $emailWrapper.removeClass('d-none');
-                    $universityIdInput.removeAttr('required');
-                    
-                } else {
-                    $universityIdWrapper.removeClass('d-none');
-                    $emailWrapper.removeClass('d-none');
-                    $universityIdInput.attr('required', 'required');
-                    
+                // Patient type IDs from seeder: 1=student, 2=staff, 3=faculty, 4=guest
+                var GUEST_TYPE_ID = '4';
+
+                function toggleConditionalFields() {
+                    var rawVal = $patientTypeSelect.val();
+                    var selectedType = (rawVal !== null && rawVal !== undefined) ? String(rawVal) : '';
+
+                    var isGuest = selectedType === GUEST_TYPE_ID;
+                    var hasSelection = selectedType !== '';
+
+                    if (!hasSelection) {
+                        $universityIdWrapper.addClass('d-none');
+                        $emailWrapper.addClass('d-none');
+                        $universityIdInput.removeAttr('required');
+
+                        return;
+                    }
+
+                    if (isGuest) {
+                        $universityIdWrapper.addClass('d-none');
+                        $emailWrapper.removeClass('d-none');
+                        $universityIdInput.removeAttr('required');
+
+                    } else {
+                        $universityIdWrapper.removeClass('d-none');
+                        $emailWrapper.removeClass('d-none');
+                        $universityIdInput.attr('required', 'required');
+
+                    }
                 }
+
+                // Bind to Select2 events
+                $patientTypeSelect.on('change.select2', function(e) {
+
+                    toggleConditionalFields();
+                });
+                $patientTypeSelect.on('select2:select', function(e) {
+
+                    toggleConditionalFields();
+                });
+                $patientTypeSelect.on('change', function(e) {
+
+                    toggleConditionalFields();
+                });
+
+                // Run immediately and delayed for Select2 initialization
+                toggleConditionalFields();
+                setTimeout(function() {
+
+                    toggleConditionalFields();
+                }, 300);
+
+                return true;
             }
 
-            // Bind to Select2 events
-            $patientTypeSelect.on('change.select2', function(e) {
-                
-                toggleConditionalFields();
-            });
-            $patientTypeSelect.on('select2:select', function(e) {
-                
-                toggleConditionalFields();
-            });
-            $patientTypeSelect.on('change', function(e) {
-                
-                toggleConditionalFields();
-            });
-
-            // Run immediately and delayed for Select2 initialization
-            toggleConditionalFields();
-            setTimeout(function() {
-                
-                toggleConditionalFields();
-            }, 300);
-
-            return true;
-        }
-
-        if (typeof jQuery !== 'undefined') {
-            jQuery(function($) {
-                var ok = initPatientTypeToggle();
-                if (!ok) {
-                    setTimeout(function() {
-                        initPatientTypeToggle();
-                    }, 500);
-                }
-            });
-        } else {
-            console.error('[PatientForm] jQuery is not loaded');
-        }
-    })();
-</script>
-@endpush
+            if (typeof jQuery !== 'undefined') {
+                jQuery(function($) {
+                    var ok = initPatientTypeToggle();
+                    if (!ok) {
+                        setTimeout(function() {
+                            initPatientTypeToggle();
+                        }, 500);
+                    }
+                });
+            } else {
+                console.error('[PatientForm] jQuery is not loaded');
+            }
+        })();
+    </script>
+    @endpush

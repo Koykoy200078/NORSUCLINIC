@@ -35,6 +35,21 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
         if (blank($selectedVaccinationId) && ! empty($requestDocument->covid_vaccination)) {
         $selectedVaccinationId = optional($vaccinations->firstWhere('vaccination_status', $requestDocument->covid_vaccination))->id;
         }
+        $canDirectAssessmentPlanEdit = isRole('doctor') || isRole('clinic_admin');
+        $canStaffOverrideAssessmentPlan = isRole('staff') || isRole('nurse');
+        $staffOverrideToggleChecked = old('staff_doctor_override') === '1';
+        $latestOverrideProperties = $latestStaffOverrideLog->properties ?? [];
+        $latestOverrideStaffName = $latestOverrideProperties['staff_name'] ?? ($latestStaffOverrideLog->user_name ?? null);
+        $latestOverrideChangedAtRaw = $latestOverrideProperties['changed_at'] ?? ($latestStaffOverrideLog?->updated_at?->toDateTimeString());
+        $latestOverrideChangedAt = $latestOverrideChangedAtRaw
+        ? \Carbon\Carbon::parse($latestOverrideChangedAtRaw)->format('M d, Y h:i A')
+        : null;
+        $latestOverrideChangedFields = collect($latestOverrideProperties['changed_fields'] ?? [])
+        ->filter()
+        ->map(function ($field) {
+        return ucfirst((string) $field);
+        })
+        ->implode(', ');
         @endphp
         <form class="consultation-edit-form" action="{{ getRouteByRole('document-issuances.update', ['document_issuance' => $requestDocument]) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -45,6 +60,9 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <input type="hidden" name="redirect_patient_id" value="{{ request('patient_id') }}">
             @endif
             <input type="hidden" name="redirect_module" value="{{ $documentModule }}">
+            @if($canStaffOverrideAssessmentPlan)
+            <input type="hidden" name="staff_doctor_override" id="staff_doctor_override" value="{{ $staffOverrideToggleChecked ? '1' : '0' }}">
+            @endif
 
             <div class="grid grid-cols-4 gap-2 pb-2">
                 <div class="col-span-1">
@@ -53,7 +71,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 </div>
                 <div class="col-span-1">
                     <label class="block text-xs" for="age">AGE</label>
-                    <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('age', $requestDocument->age) }}">
+                    <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('age', $requestDocument->age) }}" readonly>
                 </div>
                 <div class="col-span-1">
                     <label class="block text-xs" for="gender">GENDER</label>
@@ -296,9 +314,19 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     <label class="block text-xs">(Assessment)</label>
                 </div>
                 <div class="col-span-3">
-                    <textarea id="assessment" name="assessment" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'readonly' : '' }}>{{ old('assessment', $requestDocument->assessment) }}</textarea>
-                    @if(!isRole('doctor') && !isRole('clinic_admin'))
+                    <textarea id="assessment" name="assessment" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ !$canDirectAssessmentPlanEdit ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ !$canDirectAssessmentPlanEdit ? 'readonly' : '' }}>{{ old('assessment', $requestDocument->assessment) }}</textarea>
+                    @if(!$canDirectAssessmentPlanEdit && !$canStaffOverrideAssessmentPlan)
                     <small class="text-gray-500"><i class="fa-solid fa-lock text-xs"></i> Only doctors can edit the assessment.</small>
+                    @endif
+
+                    @if($canStaffOverrideAssessmentPlan && !$canDirectAssessmentPlanEdit)
+                    <div class="mt-2">
+                        <label class="inline-flex items-center gap-2 text-xs font-semibold text-amber-700 cursor-pointer">
+                            <input type="checkbox" id="staff_doctor_override_toggle" class="form-check-input" {{ $staffOverrideToggleChecked ? 'checked' : '' }}>
+                            <span><i class="fa-solid fa-user-shield text-xs"></i> Override with doctor permissions to edit Assessment and Plan.</span>
+                        </label>
+                    </div>
+                    <small class="text-amber-600 d-block mt-1">When override is enabled, your Assessment/Plan edits are logged under your staff name with date/time.</small>
                     @endif
                 </div>
             </div>
@@ -309,9 +337,16 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     <label class="block text-xs">(Plan)</label>
                 </div>
                 <div class="col-span-3">
-                    <textarea id="plan" name="plan" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ (!isRole('doctor') && !isRole('clinic_admin')) ? 'readonly' : '' }}>{{ old('plan', $requestDocument->plan) }}</textarea>
-                    @if(!isRole('doctor') && !isRole('clinic_admin'))
+                    <textarea id="plan" name="plan" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea {{ !$canDirectAssessmentPlanEdit ? 'bg-gray-100 cursor-not-allowed' : '' }}" rows="5" {{ !$canDirectAssessmentPlanEdit ? 'readonly' : '' }}>{{ old('plan', $requestDocument->plan) }}</textarea>
+                    @if(!$canDirectAssessmentPlanEdit && !$canStaffOverrideAssessmentPlan)
                     <small class="text-gray-500"><i class="fa-solid fa-lock text-xs"></i> Only doctors can edit the plan.</small>
+                    @endif
+
+                    @if($latestOverrideStaffName && $latestOverrideChangedAt)
+                    <small class="text-indigo-600 d-block mt-1">
+                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                        Last override update by {{ $latestOverrideStaffName }} on {{ $latestOverrideChangedAt }}{{ $latestOverrideChangedFields ? ' (' . $latestOverrideChangedFields . ')' : '' }}.
+                    </small>
                     @endif
 
                     <!-- Medicine Selection for Plan -->
@@ -856,7 +891,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
     // Track removed existing images
     let removedImages = [];
     // prettier-ignore
-    const initialYearLevelId = @json((int) old('year_level_id', $user -> year_level_id ?? 0));
+    const initialYearLevelId = @json((int) old('year_level_id', $user->year_level_id ?? 0));
 
     function removeExistingImage(index) {
         if (confirm('Are you sure you want to remove this image?')) {
@@ -909,6 +944,69 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        const dateOfBirthField = document.getElementById('date_of_birth');
+        const ageField = document.getElementById('age');
+        const staffDoctorOverrideToggle = document.getElementById('staff_doctor_override_toggle');
+        const staffDoctorOverrideInput = document.getElementById('staff_doctor_override');
+        const assessmentTextarea = document.getElementById('assessment');
+        const planTextarea = document.getElementById('plan');
+
+        function calculateAgeFromDateOfBirth(dateOfBirth) {
+            if (!dateOfBirth) {
+                return '';
+            }
+
+            const birthDate = new Date(dateOfBirth);
+            if (Number.isNaN(birthDate.getTime())) {
+                return '';
+            }
+
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age -= 1;
+            }
+
+            return age >= 0 ? String(age) : '';
+        }
+
+        function syncAgeFromDateOfBirth() {
+            if (!dateOfBirthField || !ageField) {
+                return;
+            }
+
+            ageField.value = calculateAgeFromDateOfBirth(dateOfBirthField.value);
+        }
+
+        if (dateOfBirthField) {
+            dateOfBirthField.addEventListener('input', syncAgeFromDateOfBirth);
+            dateOfBirthField.addEventListener('change', syncAgeFromDateOfBirth);
+        }
+
+        syncAgeFromDateOfBirth();
+
+        function applyStaffDoctorOverrideState() {
+            if (!staffDoctorOverrideToggle || !staffDoctorOverrideInput || !assessmentTextarea || !planTextarea) {
+                return;
+            }
+
+            const overrideEnabled = staffDoctorOverrideToggle.checked;
+            staffDoctorOverrideInput.value = overrideEnabled ? '1' : '0';
+
+            [assessmentTextarea, planTextarea].forEach((textarea) => {
+                textarea.readOnly = !overrideEnabled;
+                textarea.classList.toggle('bg-gray-100', !overrideEnabled);
+                textarea.classList.toggle('cursor-not-allowed', !overrideEnabled);
+            });
+        }
+
+        if (staffDoctorOverrideToggle) {
+            staffDoctorOverrideToggle.addEventListener('change', applyStaffDoctorOverrideState);
+            applyStaffDoctorOverrideState();
+        }
+
         // Add event listener for year_level_id changes
         const yearLevelSelect = document.getElementById('year_level_id');
         if (yearLevelSelect) {

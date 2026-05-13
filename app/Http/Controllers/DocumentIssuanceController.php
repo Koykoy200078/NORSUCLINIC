@@ -8,9 +8,11 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
+use App\Models\ActivityLog;
 use App\Models\Office;
 use App\Models\Patient;
 use App\Models\DocumentIssuance;
+use App\Models\PatientType;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Vaccination;
@@ -22,6 +24,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DocumentIssuanceController extends Controller
 {
@@ -96,6 +99,8 @@ class DocumentIssuanceController extends Controller
             if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->storeMedicalCertificate($data);
             } elseif ($documentType === 'consultation_form') {
+                // If no patient is selected, create one from the consultation form input.
+                $this->prepareConsultationPatient($data);
                 $this->storeConsultationForm($data);
             }
 
@@ -163,18 +168,10 @@ class DocumentIssuanceController extends Controller
         $data['campus'] = $data['campus'] ?? ($user ? ($user->campus->campus_name ?? 'Unknown Campus') : 'N/A');
         $data['college'] = $data['college'] ?? ($user ? ($user->college->college_name ?? 'Unknown College') : 'N/A');
 
-        // Calculate age from DOB if not provided in request
-        if (!isset($data['age']) || $data['age'] === '') {
-            if ($user && $user->dob) {
-                try {
-                    $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
-                } catch (\Exception $e) {
-                    $data['age'] = 0;
-                }
-            } else {
-                $data['age'] = 0;
-            }
-        }
+        $data['dob'] = $this->normalizeNullableString(
+            $data['date_of_birth'] ?? ($data['dob'] ?? ($user?->dob ?? null))
+        );
+        $data['age'] = $this->resolveAgeFromDateOfBirth($data['dob']);
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
 
@@ -190,8 +187,6 @@ class DocumentIssuanceController extends Controller
                 $data['address'] = 'N/A';
             }
         }
-
-        $data['dob'] = $user ? $user->dob : null;
 
         // Insert the data into the database
         $requestDocument = DocumentIssuance::create([
@@ -245,18 +240,10 @@ class DocumentIssuanceController extends Controller
         // Handle comorbidities - accept custom input or predefined values
         $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';
 
-        // Calculate age from DOB if not provided in request
-        if (!isset($data['age']) || $data['age'] === '') {
-            if ($user && $user->dob) {
-                try {
-                    $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
-                } catch (\Exception $e) {
-                    $data['age'] = 0;
-                }
-            } else {
-                $data['age'] = 0;
-            }
-        }
+        $data['date_of_birth'] = $this->normalizeNullableString(
+            $data['date_of_birth'] ?? ($user?->dob ?? null)
+        );
+        $data['age'] = $this->resolveAgeFromDateOfBirth($data['date_of_birth']);
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
 
@@ -381,6 +368,421 @@ class DocumentIssuanceController extends Controller
     }
 
     /**
+     * Ensure consultation submissions are linked to a patient user.
+     * If no user is selected, create a new patient profile from form input.
+     */
+    private function prepareConsultationPatient(array &$data): void
+    {
+        $userId = $this->normalizeNullableInt($data['user_id'] ?? null);
+
+        if ($userId !== null) {
+            $user = User::query()
+                ->where('id', $userId)
+                ->where('type', User::PATIENT)
+                ->first();
+
+            if (! $user) {
+                throw new \RuntimeException('Selected patient is invalid. Please choose a valid patient from search.');
+            }
+
+            $this->syncPatientProfileFromConsultationData($user, $data);
+            $data['user_id'] = $user->id;
+
+            return;
+        }
+
+        $createdUser = $this->createPatientFromConsultationData($data);
+        $data['user_id'] = $createdUser->id;
+    }
+
+    /**
+     * Create a patient account/profile from consultation form data.
+     */
+    private function createPatientFromConsultationData(array $data): User
+    {
+        [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
+
+        if ($firstName === '' || $lastName === '') {
+            throw new \RuntimeException('Patient name is required to create a patient account.');
+        }
+
+        $dateOfBirth = $this->normalizeNullableString($data['date_of_birth'] ?? null);
+        if ($dateOfBirth === null) {
+            throw new \RuntimeException('Date of birth is required to create a patient account.');
+        }
+
+        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
+        if ($gender === null) {
+            throw new \RuntimeException('Gender is required to create a patient account.');
+        }
+
+        [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
+
+        $user = User::create([
+            'first_name' => $firstName,
+            'middle_name' => $middleName,
+            'last_name' => $lastName,
+            'contact' => $this->normalizeNullableString($data['patient_contact'] ?? null),
+            'emergency_contact_name' => $emergencyName,
+            'emergency_contact_no' => $emergencyNumber,
+            'emergency_relationship' => $emergencyRelationship,
+            'dob' => $dateOfBirth,
+            'gender' => $gender,
+            'status' => true,
+            'language' => 'en',
+            'type' => User::PATIENT,
+            'password' => Hash::make('123456'),
+            'email_verified_at' => now()->setTimezone('Asia/Manila')->toDateTimeString(),
+            'campus_id' => $this->normalizeNullableInt($data['campus_id'] ?? null),
+            'college_id' => $this->normalizeNullableInt($data['college_id'] ?? null),
+            'course_id' => $this->normalizeNullableInt($data['course_id'] ?? null),
+            'year_level_id' => $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            'department_id' => $this->normalizeNullableInt($data['department_id'] ?? null),
+            'office_id' => $this->normalizeNullableInt($data['office_id'] ?? null),
+            'vaccination_id' => $this->normalizeNullableInt($data['vaccination_id'] ?? null),
+        ]);
+
+        if (! $user->hasRole('patient')) {
+            $user->assignRole('patient');
+        }
+
+        $this->syncPatientProfileFromConsultationData($user, $data);
+
+        return $user;
+    }
+
+    /**
+     * Sync consultation form fields into the linked patient profile.
+     */
+    private function syncPatientProfileFromConsultationData(User $user, array $data): void
+    {
+        [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
+        [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
+
+        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
+
+        $userUpdates = [];
+
+        if ($firstName !== '') {
+            $userUpdates['first_name'] = $firstName;
+        }
+
+        if ($middleName !== null) {
+            $userUpdates['middle_name'] = $middleName;
+        }
+
+        if ($lastName !== '') {
+            $userUpdates['last_name'] = $lastName;
+        }
+
+        if (($contact = $this->normalizeNullableString($data['patient_contact'] ?? null)) !== null) {
+            $userUpdates['contact'] = $contact;
+        }
+
+        if (($dob = $this->normalizeNullableString($data['date_of_birth'] ?? null)) !== null) {
+            $userUpdates['dob'] = $dob;
+        }
+
+        if ($gender !== null) {
+            $userUpdates['gender'] = $gender;
+        }
+
+        if ($emergencyName !== null) {
+            $userUpdates['emergency_contact_name'] = $emergencyName;
+        }
+
+        if ($emergencyNumber !== null) {
+            $userUpdates['emergency_contact_no'] = $emergencyNumber;
+        }
+
+        if ($emergencyRelationship !== null) {
+            $userUpdates['emergency_relationship'] = $emergencyRelationship;
+        }
+
+        if (($campusId = $this->normalizeNullableInt($data['campus_id'] ?? null)) !== null) {
+            $userUpdates['campus_id'] = $campusId;
+        }
+
+        if (($collegeId = $this->normalizeNullableInt($data['college_id'] ?? null)) !== null) {
+            $userUpdates['college_id'] = $collegeId;
+        }
+
+        if (($courseId = $this->normalizeNullableInt($data['course_id'] ?? null)) !== null) {
+            $userUpdates['course_id'] = $courseId;
+        }
+
+        if (($yearLevelId = $this->normalizeNullableInt($data['year_level_id'] ?? null)) !== null) {
+            $userUpdates['year_level_id'] = $yearLevelId;
+        }
+
+        if (($departmentId = $this->normalizeNullableInt($data['department_id'] ?? null)) !== null) {
+            $userUpdates['department_id'] = $departmentId;
+        }
+
+        if (($officeId = $this->normalizeNullableInt($data['office_id'] ?? null)) !== null) {
+            $userUpdates['office_id'] = $officeId;
+        }
+
+        if (($vaccinationId = $this->normalizeNullableInt($data['vaccination_id'] ?? null)) !== null) {
+            $userUpdates['vaccination_id'] = $vaccinationId;
+        }
+
+        if (! empty($userUpdates)) {
+            $userUpdates['type'] = User::PATIENT;
+            $user->update($userUpdates);
+        }
+
+        $patient = $user->patient;
+        $patientTypeId = $this->resolvePatientTypeId(
+            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            $patient === null
+        );
+
+        $covidVaccination = null;
+        if (isset($vaccinationId) && $vaccinationId !== null) {
+            $covidVaccination = Vaccination::query()->whereKey($vaccinationId)->value('vaccination_status');
+        }
+
+        $patientPayload = [
+            'allergies' => $this->normalizeNullableString($data['allergies'] ?? null),
+            'comorbidities' => $this->normalizeComorbiditiesValue($data),
+            'admissions_surgeries' => $this->normalizeNullableString($data['admissions_surgeries'] ?? null),
+            'maintenance' => $this->normalizeNullableString($data['maintenance'] ?? null),
+        ];
+
+        if ($patientTypeId !== null) {
+            $patientPayload['patient_type_id'] = $patientTypeId;
+        }
+
+        $resolvedCovidVaccination = $covidVaccination ?? $this->normalizeNullableString($data['covid_vaccination'] ?? null);
+        if ($resolvedCovidVaccination !== null) {
+            $patientPayload['covid_vaccination'] = $resolvedCovidVaccination;
+        }
+
+        $syncedImmunizationRecord = $this->buildSyncedImmunizationRecord(
+            $patient?->immunization_record,
+            $resolvedCovidVaccination
+        );
+
+        if ($syncedImmunizationRecord !== null) {
+            $patientPayload['immunization_record'] = $syncedImmunizationRecord;
+        }
+
+        if (! $patient) {
+            $patientUniqueId = $this->normalizeNullableString($data['university_id_number'] ?? null);
+            if ($patientUniqueId !== null) {
+                $patientUniqueId = strtoupper($patientUniqueId);
+            }
+
+            $patient = $user->patient()->create(array_merge($patientPayload, [
+                'patient_unique_id' => $patientUniqueId ?: Patient::generatePatientUniqueId(),
+            ]));
+        } else {
+            $patient->update($patientPayload);
+        }
+
+        if (($addressText = $this->normalizeNullableString($data['address'] ?? null)) !== null) {
+            if ($patient->address) {
+                $patient->address->update(['address1' => $addressText]);
+            } else {
+                $patient->address()->create(['address1' => $addressText]);
+            }
+        }
+
+        if (! $user->hasRole('patient')) {
+            $user->assignRole('patient');
+        }
+    }
+
+    private function resolvePatientTypeId(?int $yearLevelId, bool $defaultToStudent = false): ?int
+    {
+        if ($yearLevelId === null && ! $defaultToStudent) {
+            return null;
+        }
+
+        $patientTypeCode = 'student';
+
+        if ($yearLevelId === 7) {
+            $patientTypeCode = 'faculty';
+        } elseif ($yearLevelId === 8) {
+            $patientTypeCode = 'staff';
+        } elseif ($yearLevelId === 9) {
+            $patientTypeCode = 'guest';
+        }
+
+        return PatientType::query()->where('code', $patientTypeCode)->value('id');
+    }
+
+    private function splitFullName($fullName): array
+    {
+        $normalized = preg_replace('/\s+/', ' ', trim((string) $fullName));
+
+        if ($normalized === '') {
+            return ['', null, ''];
+        }
+
+        $parts = explode(' ', $normalized);
+
+        if (count($parts) === 1) {
+            return [$parts[0], null, $parts[0]];
+        }
+
+        $firstName = array_shift($parts);
+        $lastName = array_pop($parts);
+        $middleName = ! empty($parts) ? implode(' ', $parts) : null;
+
+        return [$firstName, $middleName, $lastName];
+    }
+
+    private function extractEmergencyContactParts($value): array
+    {
+        $normalized = $this->normalizeNullableString($value);
+
+        if ($normalized === null) {
+            return [null, null, null];
+        }
+
+        $name = null;
+        $number = null;
+        $relationship = null;
+
+        if (preg_match('/^(.+?)(?:\s*\/\s*([^\(]+))?(?:\s*\(([^\)]+)\))?$/', $normalized, $matches)) {
+            $name = $this->normalizeNullableString($matches[1] ?? null);
+            $number = $this->normalizeNullableString($matches[2] ?? null);
+            $relationship = $this->normalizeNullableString($matches[3] ?? null);
+        }
+
+        return [$name, $number, $relationship];
+    }
+
+    private function normalizeGenderForUser($gender): ?int
+    {
+        if ($gender === null || $gender === '') {
+            return null;
+        }
+
+        if (is_numeric($gender)) {
+            $normalized = (int) $gender;
+
+            return in_array($normalized, [User::MALE, User::FEMALE], true) ? $normalized : null;
+        }
+
+        $normalized = strtolower(trim((string) $gender));
+
+        if (in_array($normalized, ['male', 'm'], true)) {
+            return User::MALE;
+        }
+
+        if (in_array($normalized, ['female', 'f'], true)) {
+            return User::FEMALE;
+        }
+
+        return null;
+    }
+
+    private function normalizeComorbiditiesValue(array $data): ?string
+    {
+        $value = $data['comorbidities_custom'] ?? ($data['comorbidities'] ?? null);
+
+        if (is_array($value)) {
+            $value = implode(', ', array_filter(array_map(function ($item) {
+                return trim((string) $item);
+            }, $value)));
+        }
+
+        return $this->normalizeNullableString($value);
+    }
+
+    private function buildSyncedImmunizationRecord(?string $currentRecord, ?string $covidVaccination): ?string
+    {
+        $normalizedRecord = $this->normalizeNullableString($currentRecord);
+        $normalizedVaccination = $this->normalizeNullableString($covidVaccination);
+
+        if ($normalizedVaccination === null) {
+            return $normalizedRecord;
+        }
+
+        if (in_array(strtolower($normalizedVaccination), ['unknown vaccination', 'unknown', 'n/a', 'na'], true)) {
+            return $normalizedRecord;
+        }
+
+        $covidLine = 'COVID-19 Vaccination Status: ' . $normalizedVaccination;
+
+        $existingLines = preg_split('/\R+/', (string) ($normalizedRecord ?? '')) ?: [];
+        $existingLines = array_values(array_filter(array_map(function ($line) {
+            return trim((string) $line);
+        }, $existingLines), function ($line) {
+            return $line !== '';
+        }));
+
+        $updatedLines = [];
+        $hasCovidLine = false;
+
+        foreach ($existingLines as $line) {
+            if (preg_match('/^covid(?:-19)?\s+vaccination\s+status\s*:/i', $line)) {
+                if (! $hasCovidLine) {
+                    $updatedLines[] = $covidLine;
+                    $hasCovidLine = true;
+                }
+
+                continue;
+            }
+
+            $updatedLines[] = $line;
+        }
+
+        if (! $hasCovidLine) {
+            $updatedLines[] = $covidLine;
+        }
+
+        return implode(PHP_EOL, $updatedLines);
+    }
+
+    private function normalizeNullableInt($value): ?int
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+
+        if ($value === '') {
+            return null;
+        }
+
+        return is_numeric($value) ? (int) $value : null;
+    }
+
+    private function normalizeNullableString($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
+    }
+
+    private function resolveAgeFromDateOfBirth(?string $dateOfBirth, int $fallbackAge = 0): int
+    {
+        $normalizedDate = $this->normalizeNullableString($dateOfBirth);
+        $resolvedFallbackAge = max(0, $fallbackAge);
+
+        if ($normalizedDate === null) {
+            return $resolvedFallbackAge;
+        }
+
+        try {
+            return \Carbon\Carbon::parse($normalizedDate)->age;
+        } catch (\Exception $e) {
+            return $resolvedFallbackAge;
+        }
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(DocumentIssuance $document_issuance)
@@ -416,6 +818,13 @@ class DocumentIssuanceController extends Controller
         // Load existing consultation medicines with medicine details
         $existingMedicines = $requestDocument->consultationMedicines()->with('medicine')->get();
 
+        $latestStaffOverrideLog = ActivityLog::query()
+            ->where('action', 'consultation_assessment_plan_override')
+            ->where('subject_type', 'RequestDocuments')
+            ->where('subject_id', $requestDocument->id)
+            ->latest('updated_at')
+            ->first();
+
         return view('document_issuances.edit', compact(
             'requestDocument',
             'campuses',
@@ -429,7 +838,8 @@ class DocumentIssuanceController extends Controller
             'nursingStaff',
             'availableDoctors',
             'user',
-            'existingMedicines'
+            'existingMedicines',
+            'latestStaffOverrideLog'
         ));
     }
 
@@ -511,15 +921,9 @@ class DocumentIssuanceController extends Controller
                 $data['college'] = $user->college->college_name ?? $requestDocument->college;
                 $data['course'] = $user->course->course_name ?? $requestDocument->course;
                 $data['year_level'] = $user->yearLevel->year_level_name ?? $requestDocument->year_level;
-                $data['date_of_birth'] = $user->dob ?? $requestDocument->date_of_birth;
-
-                if ((!isset($data['age']) || $data['age'] === '') && $user->dob) {
-                    try {
-                        $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
-                    } catch (\Exception $e) {
-                        $data['age'] = $requestDocument->age;
-                    }
-                }
+                $data['date_of_birth'] = $this->normalizeNullableString(
+                    $data['date_of_birth'] ?? ($user->dob ?? $requestDocument->date_of_birth)
+                );
 
                 if (!isset($data['gender']) || empty($data['gender'])) {
                     $data['gender'] = ($user->gender == 1 ? 'Male' : 'Female');
@@ -537,15 +941,24 @@ class DocumentIssuanceController extends Controller
                 $data['college'] = $requestDocument->college;
                 $data['course'] = $requestDocument->course;
                 $data['year_level'] = $requestDocument->year_level;
-                $data['date_of_birth'] = $requestDocument->date_of_birth;
+                $data['date_of_birth'] = $this->normalizeNullableString(
+                    $data['date_of_birth'] ?? $requestDocument->date_of_birth
+                );
             }
         } else {
             $data['campus'] = $requestDocument->campus;
             $data['college'] = $requestDocument->college;
             $data['course'] = $requestDocument->course;
             $data['year_level'] = $requestDocument->year_level;
-            $data['date_of_birth'] = $requestDocument->date_of_birth;
+            $data['date_of_birth'] = $this->normalizeNullableString(
+                $data['date_of_birth'] ?? $requestDocument->date_of_birth
+            );
         }
+
+        $data['age'] = $this->resolveAgeFromDateOfBirth(
+            $data['date_of_birth'] ?? null,
+            (int) $requestDocument->age
+        );
 
         $requestDocument->update([
             'name' => $data['name'] ?? $requestDocument->name,
@@ -591,14 +1004,33 @@ class DocumentIssuanceController extends Controller
         $data['year_level'] = isset($data['year_level_id']) ? (YearLevel::find($data['year_level_id'])->year_level_name ?? $requestDocument->year_level) : $requestDocument->year_level;
         $data['covid_vaccination'] = isset($data['vaccination_id']) ? (Vaccination::find($data['vaccination_id'])->vaccination_status ?? $requestDocument->covid_vaccination) : $requestDocument->covid_vaccination;
 
-        // Calculate age from DOB if not provided in request
-        if ((!isset($data['age']) || $data['age'] === '') && $user && $user->dob) {
-            try {
-                $data['age'] = \Carbon\Carbon::parse($user->dob)->age;
-            } catch (\Exception $e) {
-                $data['age'] = $requestDocument->age;
-            }
-        }
+        $data['date_of_birth'] = $this->normalizeNullableString(
+            $data['date_of_birth'] ?? ($user?->dob ?? $requestDocument->date_of_birth)
+        );
+        $data['age'] = $this->resolveAgeFromDateOfBirth(
+            $data['date_of_birth'],
+            (int) $requestDocument->age
+        );
+
+        $canEditAssessmentPlanDirectly = $this->canCurrentUserEditAssessmentPlanDirectly();
+        $staffOverrideActive = $this->shouldAllowStaffAssessmentPlanOverride($data);
+
+        $originalAssessment = $requestDocument->assessment;
+        $originalPlan = $requestDocument->plan;
+
+        $incomingAssessment = array_key_exists('assessment', $data)
+            ? $this->normalizeNullableString($data['assessment'])
+            : $requestDocument->assessment;
+        $incomingPlan = array_key_exists('plan', $data)
+            ? $this->normalizeNullableString($data['plan'])
+            : $requestDocument->plan;
+
+        $resolvedAssessment = ($canEditAssessmentPlanDirectly || $staffOverrideActive)
+            ? $incomingAssessment
+            : $requestDocument->assessment;
+        $resolvedPlan = ($canEditAssessmentPlanDirectly || $staffOverrideActive)
+            ? $incomingPlan
+            : $requestDocument->plan;
 
         if (!isset($data['gender']) || empty($data['gender'])) {
             if ($user) {
@@ -654,8 +1086,8 @@ class DocumentIssuanceController extends Controller
             'vital_signs_height' => $data['vital_signs_height'] ?? $requestDocument->vital_signs_height,
             'vital_signs_weight' => $data['vital_signs_weight'] ?? $requestDocument->vital_signs_weight,
             'pertinent_exam' => $data['pertinent_exam'] ?? $requestDocument->pertinent_exam,
-            'assessment' => $data['assessment'] ?? $requestDocument->assessment,
-            'plan' => $data['plan'] ?? $requestDocument->plan,
+            'assessment' => $resolvedAssessment,
+            'plan' => $resolvedPlan,
             'consult_mode' => $data['consult_mode'] ?? $requestDocument->consult_mode,
             'nursing_intervention' => $data['nursing_intervention'] ?? $requestDocument->nursing_intervention,
             'nursing_incharged_id' => $data['nursing_incharge_id'],
@@ -667,8 +1099,118 @@ class DocumentIssuanceController extends Controller
         // Handle medicine updates (restore removed, deduct newly added)
         $this->handleMedicineUpdates($requestDocument, $data);
 
+        $freshRequestDocument = $requestDocument->fresh();
+
+        if ($staffOverrideActive) {
+            $this->logStaffAssessmentPlanOverride(
+                $freshRequestDocument,
+                $originalAssessment,
+                $resolvedAssessment,
+                $originalPlan,
+                $resolvedPlan
+            );
+        }
+
         // Log consultation form update (will update existing log instead of creating new)
-        self::logConsultationCreation($requestDocument->fresh());
+        self::logConsultationCreation($freshRequestDocument);
+    }
+
+    private function canCurrentUserEditAssessmentPlanDirectly(): bool
+    {
+        return isRole('doctor') || isRole('clinic_admin');
+    }
+
+    private function canCurrentUserRequestAssessmentPlanOverride(): bool
+    {
+        return isRole('staff') || isRole('nurse');
+    }
+
+    private function shouldAllowStaffAssessmentPlanOverride(array $data): bool
+    {
+        if (! $this->canCurrentUserRequestAssessmentPlanOverride()) {
+            return false;
+        }
+
+        return $this->normalizeBooleanInput($data['staff_doctor_override'] ?? null);
+    }
+
+    private function normalizeBooleanInput($value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if ($value === null) {
+            return false;
+        }
+
+        $normalized = strtolower(trim((string) $value));
+
+        return in_array($normalized, ['1', 'true', 'yes', 'on'], true);
+    }
+
+    private function logStaffAssessmentPlanOverride(
+        DocumentIssuance $requestDocument,
+        $previousAssessment,
+        $updatedAssessment,
+        $previousPlan,
+        $updatedPlan
+    ): void {
+        if (! $this->canCurrentUserRequestAssessmentPlanOverride()) {
+            return;
+        }
+
+        $user = auth()->user();
+        if (! $user) {
+            return;
+        }
+
+        $normalize = function ($value): ?string {
+            return $this->normalizeNullableString($value);
+        };
+
+        $changedFields = [];
+
+        if ($normalize($previousAssessment) !== $normalize($updatedAssessment)) {
+            $changedFields[] = 'assessment';
+        }
+
+        if ($normalize($previousPlan) !== $normalize($updatedPlan)) {
+            $changedFields[] = 'plan';
+        }
+
+        if (empty($changedFields)) {
+            return;
+        }
+
+        $now = now()->setTimezone('Asia/Manila');
+
+        self::logActivity(
+            'consultation_assessment_plan_override',
+            'Staff override updated ' . implode(' and ', $changedFields) . " for consultation: {$requestDocument->name}",
+            [
+                'patient_name' => $requestDocument->name,
+                'patient_age' => $requestDocument->age,
+                'patient_gender' => $requestDocument->gender,
+                'college' => $requestDocument->college,
+                'address' => $requestDocument->address,
+                'contact_number' => $requestDocument->patient_contact,
+                'complaints' => $requestDocument->complaints,
+                'diagnosis' => $requestDocument->assessment,
+                'informant' => $requestDocument->informant,
+                'consult_mode' => $requestDocument->consult_mode,
+                'course' => $requestDocument->course,
+                'year_level' => $requestDocument->year_level,
+                'subject_type' => 'RequestDocuments',
+                'subject_id' => $requestDocument->id,
+                'date' => $requestDocument->requested_at ?? $now->toDateString(),
+                'properties' => [
+                    'staff_name' => $user->full_name ?? $user->name ?? 'Staff',
+                    'changed_at' => $now->toDateTimeString(),
+                    'changed_fields' => $changedFields,
+                ],
+            ]
+        );
     }
 
     /**

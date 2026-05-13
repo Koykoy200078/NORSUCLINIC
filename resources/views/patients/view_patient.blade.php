@@ -140,23 +140,23 @@ Patient Data
             @php
             // Define normal ranges for vital signs
             $normalRanges = [
-                'vital_signs_bp' => ['min' => 90, 'max' => 120], // Systolic BP range
-                'vital_signs_pr' => ['min' => 60, 'max' => 100], // Heart rate range
-                'vital_signs_temp' => ['min' => 36.1, 'max' => 37.2], // Temperature range in °C
-                'vital_signs_rr' => ['min' => 12, 'max' => 20], // Respiratory rate range
-                'vital_signs_o2_sat' => ['min' => 95, 'max' => 100], // Oxygen saturation range
+            'vital_signs_bp' => ['min' => 90, 'max' => 120], // Systolic BP range
+            'vital_signs_pr' => ['min' => 60, 'max' => 100], // Heart rate range
+            'vital_signs_temp' => ['min' => 36.1, 'max' => 37.2], // Temperature range in °C
+            'vital_signs_rr' => ['min' => 12, 'max' => 20], // Respiratory rate range
+            'vital_signs_o2_sat' => ['min' => 95, 'max' => 100], // Oxygen saturation range
             ];
 
             // Helper function to determine the status of a vital sign
             if (!function_exists('getVitalSignStatus')) {
-                function getVitalSignStatus($value, $range) {
-                    if (is_null($value)) return '';
-                    if ($value < $range['min']) return 'below-normal';
-                    if ($value > $range['max']) return 'above-normal';
-                    return 'normal';
+            function getVitalSignStatus($value, $range) {
+            if (is_null($value)) return '';
+            if ($value < $range['min']) return 'below-normal' ;
+                if ($value> $range['max']) return 'above-normal';
+                return 'normal';
                 }
-            }
-            @endphp
+                }
+                @endphp
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -214,7 +214,7 @@ Patient Data
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
-                                        <a href="{{ getRouteByRole('document-issuances.export-pdf', ['id' => $consultation->id]) }}" class="btn btn-sm btn-success" title="PDF" target="_blank">
+                                        <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $consultation->id]) }}" class="btn btn-sm btn-success" title="PDF" target="_blank">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
                                     </div>
@@ -264,7 +264,7 @@ Patient Data
                                 </a>
 
                                 <!-- Export PDF Button -->
-                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['id' => $certificate->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
+                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $certificate->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
 
@@ -807,227 +807,227 @@ Patient Data
     </div>
     @endif
 
-{{-- ========================================================= --}}
-{{-- Prescription History Section                               --}}
-{{-- ========================================================= --}}
-<div class="card mb-4 shadow-sm">
-    <div class="card-header d-flex align-items-center justify-content-between py-3"
-         style="background: linear-gradient(135deg,#1a3c5e,#2563a8); color:#fff; border-radius:8px 8px 0 0;">
-        <div class="d-flex align-items-center gap-2">
-            <i class="fa-solid fa-file-prescription fa-lg"></i>
-            <h5 class="mb-0 fw-semibold">Prescription History</h5>
+    {{-- ========================================================= --}}
+    {{-- Prescription History Section                               --}}
+    {{-- ========================================================= --}}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex align-items-center justify-content-between py-3"
+            style="background: linear-gradient(135deg,#1a3c5e,#2563a8); color:#fff; border-radius:8px 8px 0 0;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-file-prescription fa-lg"></i>
+                <h5 class="mb-0 fw-semibold">Prescription History</h5>
+            </div>
+            @if(isset($prescriptions))
+            <span class="badge bg-white text-primary fw-semibold">{{ $prescriptions->count() }} record(s)</span>
+            @endif
         </div>
-        @if(isset($prescriptions))
-        <span class="badge bg-white text-primary fw-semibold">{{ $prescriptions->count() }} record(s)</span>
-        @endif
-    </div>
-    <div class="card-body p-0">
-        @if(isset($prescriptions) && $prescriptions->isNotEmpty())
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead style="background:#f0f4fb;">
-                    <tr>
-                        <th class="ps-3" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DATE</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">STATUS</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">PRESCRIBED BY</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DISPENSED BY</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">MEDICINES</th>
-                        <th class="pe-3 text-end" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($prescriptions as $prescription)
-                    @php
+        <div class="card-body p-0">
+            @if(isset($prescriptions) && $prescriptions->isNotEmpty())
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background:#f0f4fb;">
+                        <tr>
+                            <th class="ps-3" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DATE</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">STATUS</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">PRESCRIBED BY</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DISPENSED BY</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">MEDICINES</th>
+                            <th class="pe-3 text-end" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($prescriptions as $prescription)
+                        @php
                         $statusMap = [
-                            'dispensed' => ['bg' => '#d1fae5', 'text' => '#065f46', 'icon' => 'fa-check-circle', 'label' => 'Dispensed'],
-                            'cancelled' => ['bg' => '#fee2e2', 'text' => '#991b1b', 'icon' => 'fa-times-circle', 'label' => 'Cancelled'],
-                            'pending'   => ['bg' => '#fef3c7', 'text' => '#92400e', 'icon' => 'fa-clock', 'label' => 'Pending'],
+                        'dispensed' => ['bg' => '#d1fae5', 'text' => '#065f46', 'icon' => 'fa-check-circle', 'label' => 'Dispensed'],
+                        'cancelled' => ['bg' => '#fee2e2', 'text' => '#991b1b', 'icon' => 'fa-times-circle', 'label' => 'Cancelled'],
+                        'pending' => ['bg' => '#fef3c7', 'text' => '#92400e', 'icon' => 'fa-clock', 'label' => 'Pending'],
                         ];
                         $status = $statusMap[$prescription->status] ?? $statusMap['pending'];
 
                         $prescRoute = isRole('clinic_admin')
-                            ? route('prescriptions.show', $prescription->id)
-                            : (isRole('staff') ? route('staff.prescriptions.show', $prescription->id)
-                            : route('doctors.prescriptions.show', $prescription->id));
-                    @endphp
-                    <tr>
-                        <td class="ps-3" style="white-space:nowrap;">
-                            <div class="fw-semibold" style="font-size:.9rem;">
-                                {{ \Carbon\Carbon::parse($prescription->created_at)->format('M j, Y') }}
-                            </div>
-                            <small class="text-muted">{{ \Carbon\Carbon::parse($prescription->created_at)->format('g:i A') }}</small>
-                        </td>
-                        <td>
-                            <span class="badge d-inline-flex align-items-center gap-1 px-2 py-1"
-                                  style="background:{{ $status['bg'] }};color:{{ $status['text'] }};font-size:.8rem;border-radius:20px;">
-                                <i class="fa-solid {{ $status['icon'] }} fa-xs"></i>
-                                {{ $status['label'] }}
-                            </span>
-                        </td>
-                        <td>
-                            @if($prescription->doctor?->user)
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                     style="width:30px;height:30px;background:#dbeafe;color:#1d4ed8;font-size:.7rem;font-weight:700;">
-                                    {{ strtoupper(substr($prescription->doctor->user->first_name, 0, 1)) }}{{ strtoupper(substr($prescription->doctor->user->last_name, 0, 1)) }}
+                        ? route('prescriptions.show', $prescription->id)
+                        : (isRole('staff') ? route('staff.prescriptions.show', $prescription->id)
+                        : route('doctors.prescriptions.show', $prescription->id));
+                        @endphp
+                        <tr>
+                            <td class="ps-3" style="white-space:nowrap;">
+                                <div class="fw-semibold" style="font-size:.9rem;">
+                                    {{ \Carbon\Carbon::parse($prescription->created_at)->format('M j, Y') }}
                                 </div>
-                                <span style="font-size:.88rem;">
-                                    Dr. {{ $prescription->doctor->user->first_name }} {{ $prescription->doctor->user->last_name }}
+                                <small class="text-muted">{{ \Carbon\Carbon::parse($prescription->created_at)->format('g:i A') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge d-inline-flex align-items-center gap-1 px-2 py-1"
+                                    style="background:{{ $status['bg'] }};color:{{ $status['text'] }};font-size:.8rem;border-radius:20px;">
+                                    <i class="fa-solid {{ $status['icon'] }} fa-xs"></i>
+                                    {{ $status['label'] }}
                                 </span>
-                            </div>
-                            @else
-                            <span class="text-muted">—</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($prescription->dispensedBy)
-                            <span style="font-size:.88rem;">
-                                {{ $prescription->dispensedBy->first_name }} {{ $prescription->dispensedBy->last_name }}
-                            </span>
-                            @else
-                            <span class="text-muted fst-italic" style="font-size:.82rem;">Not dispensed yet</span>
-                            @endif
-                        </td>
-                        <td style="max-width:300px;">
-                            @if($prescription->getMedicine->isNotEmpty())
-                            <div class="d-flex flex-column gap-1">
-                                @foreach($prescription->getMedicine as $pm)
-                                @php
+                            </td>
+                            <td>
+                                @if($prescription->doctor?->user)
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                        style="width:30px;height:30px;background:#dbeafe;color:#1d4ed8;font-size:.7rem;font-weight:700;">
+                                        {{ strtoupper(substr($prescription->doctor->user->first_name, 0, 1)) }}{{ strtoupper(substr($prescription->doctor->user->last_name, 0, 1)) }}
+                                    </div>
+                                    <span style="font-size:.88rem;">
+                                        Dr. {{ $prescription->doctor->user->first_name }} {{ $prescription->doctor->user->last_name }}
+                                    </span>
+                                </div>
+                                @else
+                                <span class="text-muted">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($prescription->dispensedBy)
+                                <span style="font-size:.88rem;">
+                                    {{ $prescription->dispensedBy->first_name }} {{ $prescription->dispensedBy->last_name }}
+                                </span>
+                                @else
+                                <span class="text-muted fst-italic" style="font-size:.82rem;">Not dispensed yet</span>
+                                @endif
+                            </td>
+                            <td style="max-width:300px;">
+                                @if($prescription->getMedicine->isNotEmpty())
+                                <div class="d-flex flex-column gap-1">
+                                    @foreach($prescription->getMedicine as $pm)
+                                    @php
                                     $freqLabel = $pm->frequency ? $pm->frequency . 'x/day' : null;
                                     $durLabel = ($pm->duration_value && $pm->duration_unit)
-                                        ? $pm->duration_value . ' ' . $pm->duration_unit
-                                        : ($pm->day ? $pm->day . ' day(s)' : null);
-                                @endphp
-                                <div class="d-flex align-items-start gap-1 flex-wrap">
-                                    <span class="badge" style="background:#eff6ff;color:#1e40af;font-size:.78rem;font-weight:600;border-radius:6px;padding:3px 8px;">
-                                        {{ $pm->medicines?->name ?? 'Unknown Medicine' }}
-                                    </span>
-                                    @if($pm->dosage)
-                                    <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $pm->dosage }}</span>
+                                    ? $pm->duration_value . ' ' . $pm->duration_unit
+                                    : ($pm->day ? $pm->day . ' day(s)' : null);
+                                    @endphp
+                                    <div class="d-flex align-items-start gap-1 flex-wrap">
+                                        <span class="badge" style="background:#eff6ff;color:#1e40af;font-size:.78rem;font-weight:600;border-radius:6px;padding:3px 8px;">
+                                            {{ $pm->medicines?->name ?? 'Unknown Medicine' }}
+                                        </span>
+                                        @if($pm->dosage)
+                                        <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $pm->dosage }}</span>
+                                        @endif
+                                        @if($freqLabel)
+                                        <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $freqLabel }}</span>
+                                        @endif
+                                        @if($durLabel)
+                                        <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $durLabel }}</span>
+                                        @endif
+                                        @if($pm->total_quantity)
+                                        <span class="badge bg-light text-secondary" style="font-size:.72rem;">Qty: {{ $pm->total_quantity }}</span>
+                                        @endif
+                                    </div>
+                                    @if($pm->instructions)
+                                    <small class="text-muted d-block" style="font-size:.72rem;padding-left:2px;">
+                                        <i class="fa-solid fa-circle-info fa-xs me-1"></i>{{ $pm->instructions }}
+                                    </small>
                                     @endif
-                                    @if($freqLabel)
-                                    <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $freqLabel }}</span>
-                                    @endif
-                                    @if($durLabel)
-                                    <span class="badge bg-light text-secondary" style="font-size:.72rem;">{{ $durLabel }}</span>
-                                    @endif
-                                    @if($pm->total_quantity)
-                                    <span class="badge bg-light text-secondary" style="font-size:.72rem;">Qty: {{ $pm->total_quantity }}</span>
-                                    @endif
+                                    @endforeach
                                 </div>
-                                @if($pm->instructions)
-                                <small class="text-muted d-block" style="font-size:.72rem;padding-left:2px;">
-                                    <i class="fa-solid fa-circle-info fa-xs me-1"></i>{{ $pm->instructions }}
-                                </small>
+                                @else
+                                <span class="text-muted fst-italic" style="font-size:.82rem;">No medicines</span>
                                 @endif
-                                @endforeach
-                            </div>
-                            @else
-                            <span class="text-muted fst-italic" style="font-size:.82rem;">No medicines</span>
-                            @endif
-                        </td>
-                        <td class="pe-3 text-end">
-                            <div class="d-flex gap-1 justify-content-end flex-wrap">
-                                <a href="{{ $prescRoute }}"
-                                   class="btn btn-sm"
-                                   style="background:#eff6ff;color:#1d4ed8;border:none;font-size:.78rem;"
-                                   title="View Prescription">
-                                    <i class="fas fa-eye me-1"></i>View
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                            </td>
+                            <td class="pe-3 text-end">
+                                <div class="d-flex gap-1 justify-content-end flex-wrap">
+                                    <a href="{{ $prescRoute }}"
+                                        class="btn btn-sm"
+                                        style="background:#eff6ff;color:#1d4ed8;border:none;font-size:.78rem;"
+                                        title="View Prescription">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+            <div class="text-center py-5" style="color:#94a3b8;">
+                <i class="fa-solid fa-file-prescription fa-3x mb-3" style="opacity:.3;"></i>
+                <p class="mb-0">No prescription records found.</p>
+            </div>
+            @endif
         </div>
-        @else
-        <div class="text-center py-5" style="color:#94a3b8;">
-            <i class="fa-solid fa-file-prescription fa-3x mb-3" style="opacity:.3;"></i>
-            <p class="mb-0">No prescription records found.</p>
-        </div>
-        @endif
     </div>
-</div>
 
-{{-- ========================================================= --}}
-{{-- Medicine Dispense History Section                         --}}
-{{-- ========================================================= --}}
-<div class="card mb-4 shadow-sm">
-    <div class="card-header d-flex align-items-center justify-content-between py-3"
-         style="background: linear-gradient(135deg,#064e3b,#059669); color:#fff; border-radius:8px 8px 0 0;">
-        <div class="d-flex align-items-center gap-2">
-            <i class="fa-solid fa-capsules fa-lg"></i>
-            <h5 class="mb-0 fw-semibold">Medicine Dispense History</h5>
+    {{-- ========================================================= --}}
+    {{-- Medicine Dispense History Section                         --}}
+    {{-- ========================================================= --}}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex align-items-center justify-content-between py-3"
+            style="background: linear-gradient(135deg,#064e3b,#059669); color:#fff; border-radius:8px 8px 0 0;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-capsules fa-lg"></i>
+                <h5 class="mb-0 fw-semibold">Medicine Dispense History</h5>
+            </div>
+            @if(isset($dispenseRecords))
+            <span class="badge bg-white text-success fw-semibold">{{ $dispenseRecords->count() }} record(s)</span>
+            @endif
         </div>
-        @if(isset($dispenseRecords))
-        <span class="badge bg-white text-success fw-semibold">{{ $dispenseRecords->count() }} record(s)</span>
-        @endif
-    </div>
-    <div class="card-body p-0">
-        @if(isset($dispenseRecords) && $dispenseRecords->isNotEmpty())
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead style="background:#f0fdf4;">
-                    <tr>
-                        <th class="ps-3" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DATE DISPENSED</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DISPENSED BY</th>
-                        <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">MEDICINES DISPENSED</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($dispenseRecords as $dispense)
-                    <tr>
-                        <td class="ps-3" style="white-space:nowrap;">
-                            <div class="fw-semibold" style="font-size:.9rem;">
-                                {{ \Carbon\Carbon::parse($dispense->created_at)->format('M j, Y') }}
-                            </div>
-                            <small class="text-muted">{{ \Carbon\Carbon::parse($dispense->created_at)->format('g:i A') }}</small>
-                        </td>
-                        <td>
-                            @if($dispense->doctor?->user)
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                     style="width:30px;height:30px;background:#d1fae5;color:#065f46;font-size:.7rem;font-weight:700;">
-                                    {{ strtoupper(substr($dispense->doctor->user->first_name, 0, 1)) }}{{ strtoupper(substr($dispense->doctor->user->last_name, 0, 1)) }}
+        <div class="card-body p-0">
+            @if(isset($dispenseRecords) && $dispenseRecords->isNotEmpty())
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background:#f0fdf4;">
+                        <tr>
+                            <th class="ps-3" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DATE DISPENSED</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DISPENSED BY</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">MEDICINES DISPENSED</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($dispenseRecords as $dispense)
+                        <tr>
+                            <td class="ps-3" style="white-space:nowrap;">
+                                <div class="fw-semibold" style="font-size:.9rem;">
+                                    {{ \Carbon\Carbon::parse($dispense->created_at)->format('M j, Y') }}
                                 </div>
-                                <span style="font-size:.88rem;">
-                                    Dr. {{ $dispense->doctor->user->first_name }} {{ $dispense->doctor->user->last_name }}
-                                </span>
-                            </div>
-                            @else
-                            <span class="text-muted">—</span>
-                            @endif
-                        </td>
-                        <td style="max-width:400px;">
-                            @if($dispense->dispenseItems && $dispense->dispenseItems->isNotEmpty())
-                            <div class="d-flex flex-wrap gap-2">
-                                @foreach($dispense->dispenseItems as $item)
-                                <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded"
-                                     style="background:#f0fdf4;border:1px solid #bbf7d0;font-size:.8rem;">
-                                    <i class="fa-solid fa-pills text-success fa-xs"></i>
-                                    <span class="fw-semibold">{{ $item->medicine?->name ?? 'N/A' }}</span>
-                                    <span class="text-muted">×{{ $item->quantity }}</span>
+                                <small class="text-muted">{{ \Carbon\Carbon::parse($dispense->created_at)->format('g:i A') }}</small>
+                            </td>
+                            <td>
+                                @if($dispense->doctor?->user)
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                        style="width:30px;height:30px;background:#d1fae5;color:#065f46;font-size:.7rem;font-weight:700;">
+                                        {{ strtoupper(substr($dispense->doctor->user->first_name, 0, 1)) }}{{ strtoupper(substr($dispense->doctor->user->last_name, 0, 1)) }}
+                                    </div>
+                                    <span style="font-size:.88rem;">
+                                        Dr. {{ $dispense->doctor->user->first_name }} {{ $dispense->doctor->user->last_name }}
+                                    </span>
                                 </div>
-                                @endforeach
-                            </div>
-                            @else
-                            <span class="text-muted fst-italic" style="font-size:.82rem;">No items recorded</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                @else
+                                <span class="text-muted">—</span>
+                                @endif
+                            </td>
+                            <td style="max-width:400px;">
+                                @if($dispense->dispenseItems && $dispense->dispenseItems->isNotEmpty())
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach($dispense->dispenseItems as $item)
+                                    <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded"
+                                        style="background:#f0fdf4;border:1px solid #bbf7d0;font-size:.8rem;">
+                                        <i class="fa-solid fa-pills text-success fa-xs"></i>
+                                        <span class="fw-semibold">{{ $item->medicine?->name ?? 'N/A' }}</span>
+                                        <span class="text-muted">×{{ $item->quantity }}</span>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @else
+                                <span class="text-muted fst-italic" style="font-size:.82rem;">No items recorded</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+            <div class="text-center py-5" style="color:#94a3b8;">
+                <i class="fa-solid fa-capsules fa-3x mb-3" style="opacity:.3;"></i>
+                <p class="mb-0">No dispense records found.</p>
+            </div>
+            @endif
         </div>
-        @else
-        <div class="text-center py-5" style="color:#94a3b8;">
-            <i class="fa-solid fa-capsules fa-3x mb-3" style="opacity:.3;"></i>
-            <p class="mb-0">No dispense records found.</p>
-        </div>
-        @endif
     </div>
-</div>
 
 </div> <!-- End of container -->
 
