@@ -5,7 +5,7 @@ npm-debug.log
 yarn-error.log
 
 # Lock files
-package-lock.json
+# Keep package-lock.json tracked to ensure deterministic installs across machines.
 yarn.lock
 pnpm-lock.yaml
 
