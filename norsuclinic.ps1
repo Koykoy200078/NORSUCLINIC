@@ -103,19 +103,8 @@ function Invoke-Start {
         if ($LASTEXITCODE -eq 0) { Write-Ok "$cmd" } else { Write-Warn "$cmd returned non-zero" }
     }
 
-    # -- Backup in background --
-    Write-Host "[4/4] Starting auto-backup daemon..." -ForegroundColor Yellow
-    $backupScript = Join-Path $ProjectPath "auto-backup-database.ps1"
-    if (Test-Path $backupScript) {
-        Start-Process powershell.exe -ArgumentList @(
-            "-NoProfile", "-ExecutionPolicy", "Bypass",
-            "-WindowStyle", "Minimized",
-            "-File", "`"$backupScript`""
-        ) -WindowStyle Minimized
-        Write-Ok "Auto-backup daemon started (minimized)"
-    } else {
-        Write-Warn "auto-backup-database.ps1 not found — skipping"
-    }
+    # -- Start dev server --
+    Write-Host "[4/4] Starting Laravel development server..." -ForegroundColor Yellow
 
     Write-Host ""
     Write-Host "  Server: http://$ServerHost`:$ServerPort" -ForegroundColor White

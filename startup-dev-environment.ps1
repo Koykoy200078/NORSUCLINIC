@@ -2,15 +2,14 @@
 # NORSUCLINIC Development Environment Startup Script (PowerShell)
 # This script automatically:
 # 1. Starts WAMP Server
-# 2. Waits for services to be ready
+# 2. Navigates to project directory
 # 3. Clears all Laravel caches
-# 4. Starts Auto Database Backup System
-# 5. Starts Laravel development server
+# 4. Starts Laravel development server
 # ============================================================
 
 # Configuration
 $WampPath = "C:\wamp64\wampmanager.exe"
-$ProjectPath = "D:\Projects\NORSUCLINIC"
+$ProjectPath = $PSScriptRoot
 $ServerHost = "192.168.180.100"
 $ServerPort = "8000"
 
@@ -79,6 +78,11 @@ Write-Step "`n2/4" "Navigating to project directory..."
 
 if (Test-Path $ProjectPath) {
     Set-Location $ProjectPath
+    if (-not (Test-Path (Join-Path $ProjectPath "artisan"))) {
+        Write-Error-Message "artisan file not found in: $ProjectPath"
+        Read-Host "`nPress Enter to exit"
+        exit 1
+    }
     Write-Success "Current directory: $ProjectPath"
 } else {
     Write-Error-Message "Project directory not found: $ProjectPath"
@@ -126,44 +130,9 @@ Write-Host ""
 Write-Success "All Laravel caches cleared successfully!"
 
 # ============================================================
-# Step 4: Start Auto Database Backup System
+# Step 4: Start Laravel development server
 # ============================================================
-Write-Step "`n4/5" "Starting Auto Database Backup System..."
-Write-Host ""
-
-$backupScriptPath = Join-Path $PSScriptRoot "auto-backup-database.ps1"
-
-if (Test-Path $backupScriptPath) {
-    # Start backup system in new minimized PowerShell window
-    $startProcessArgs = @{
-        FilePath = "powershell.exe"
-        ArgumentList = @(
-            "-NoProfile",
-            "-ExecutionPolicy", "Bypass",
-            "-WindowStyle", "Minimized",
-            "-File", "`"$backupScriptPath`""
-        )
-        WindowStyle = "Minimized"
-    }
-    
-    Start-Process @startProcessArgs
-    
-    Write-Success "Auto Backup System started successfully!"
-    Write-Host "  - Checking for database changes every hour" -ForegroundColor Gray
-    Write-Host "  - Backups saved to: database_backups\" -ForegroundColor Gray
-    Write-Host "  - Running in background (minimized window)" -ForegroundColor Gray
-}
-else {
-    Write-Host "  WARNING: Auto backup script not found!" -ForegroundColor $WarningColor
-    Write-Host "  Expected location: $backupScriptPath" -ForegroundColor Gray
-}
-
-Write-Host ""
-
-# ============================================================
-# Step 5: Start Laravel development server
-# ============================================================
-Write-Step "`n5/5" "Starting Laravel development server..."
+Write-Step "`n4/4" "Starting Laravel development server..."
 Write-Host ""
 
 Write-Host "  Server will be accessible at:" -ForegroundColor $InfoColor
