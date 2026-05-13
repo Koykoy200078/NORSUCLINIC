@@ -2,10 +2,10 @@
     "private": true,
     "scripts": {
         "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run development",
-        "development": "mix",
-        "watch": "set NODE_OPTIONS=--openssl-legacy-provider && mix watch",
+        "development": "mix --no-progress",
+        "watch": "set NODE_OPTIONS=--openssl-legacy-provider && mix watch --no-progress",
         "prod": "set NODE_OPTIONS=--openssl-legacy-provider && npm run production",
-        "production": "mix --production"
+        "production": "mix --production --no-progress"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.21",
