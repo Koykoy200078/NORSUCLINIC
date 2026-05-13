@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableExtensions
 REM ============================================================
 REM NORSUCLINIC Development Environment Startup Script
 REM This script automatically:
@@ -21,12 +22,14 @@ set "SERVER_HOST=192.168.180.100"
 set "SERVER_PORT=8000"
 
 REM Fallback if the configured LAN IP is not assigned on this machine.
-if /I not "%SERVER_HOST%"=="127.0.0.1" if /I not "%SERVER_HOST%"=="0.0.0.0" (
-    ipconfig | findstr /C:"%SERVER_HOST%" >nul
-    if errorlevel 1 (
-        echo WARNING: %SERVER_HOST% is not assigned on this PC.
-        echo          Falling back to 0.0.0.0 (all interfaces).
-        set "SERVER_HOST=0.0.0.0"
+if /I not "%SERVER_HOST%"=="127.0.0.1" (
+    if /I not "%SERVER_HOST%"=="0.0.0.0" (
+        ipconfig | findstr /C:"%SERVER_HOST%" >nul
+        if errorlevel 1 (
+            echo WARNING: %SERVER_HOST% is not assigned on this PC.
+            echo          Falling back to 0.0.0.0 (all interfaces).
+            set "SERVER_HOST=0.0.0.0"
+        )
     )
 )
 
@@ -38,9 +41,7 @@ echo.
 
 REM Check if WAMP is already running
 tasklist /FI "IMAGENAME eq wampmanager.exe" 2>NUL | find /I /N "wampmanager.exe">NUL
-if "%ERRORLEVEL%"=="0" (
-    echo WAMP Server is already running!
-) else (
+if errorlevel 1 (
     REM Start WAMP Server (adjust path if your WAMP is installed elsewhere)
     if exist "C:\wamp64\wampmanager.exe" (
         start "" "C:\wamp64\wampmanager.exe"
@@ -51,6 +52,8 @@ if "%ERRORLEVEL%"=="0" (
         pause
         exit /b 1
     )
+) else (
+    echo WAMP Server is already running!
 )
 
 REM Wait for WAMP services to initialize
@@ -65,7 +68,7 @@ echo [2/4] Navigating to project directory...
 echo.
 
 cd /d "%~dp0"
-if %ERRORLEVEL% NEQ 0 (
+if errorlevel 1 (
     echo ERROR: Failed to navigate to project directory!
     pause
     exit /b 1
@@ -125,10 +128,10 @@ echo [4/4] Starting Laravel development server...
 echo.
 echo Server will be accessible at:
 echo   - http://127.0.0.1:%SERVER_PORT%
-if /I not "%SERVER_HOST%"=="0.0.0.0" (
-    echo   - http://%SERVER_HOST%:%SERVER_PORT%
-) else (
+if /I "%SERVER_HOST%"=="0.0.0.0" (
     echo   - http://YOUR_LAN_IP:%SERVER_PORT% ^(from other devices on your network^)
+) else (
+    echo   - http://%SERVER_HOST%:%SERVER_PORT%
 )
 echo.
 echo Press Ctrl+C to stop the server
