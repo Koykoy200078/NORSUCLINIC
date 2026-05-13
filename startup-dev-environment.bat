@@ -15,6 +15,22 @@ echo ============================================================
 echo.
 
 REM ============================================================
+REM Server binding configuration
+REM ============================================================
+set "SERVER_HOST=192.168.180.100"
+set "SERVER_PORT=8000"
+
+REM Fallback if the configured LAN IP is not assigned on this machine.
+if /I not "%SERVER_HOST%"=="127.0.0.1" if /I not "%SERVER_HOST%"=="0.0.0.0" (
+    ipconfig | findstr /C:"%SERVER_HOST%" >nul
+    if errorlevel 1 (
+        echo WARNING: %SERVER_HOST% is not assigned on this PC.
+        echo          Falling back to 0.0.0.0 (all interfaces).
+        set "SERVER_HOST=0.0.0.0"
+    )
+)
+
+REM ============================================================
 REM Step 1: Start WAMP Server
 REM ============================================================
 echo [1/4] Starting WAMP Server...
@@ -108,8 +124,12 @@ REM ============================================================
 echo [4/4] Starting Laravel development server...
 echo.
 echo Server will be accessible at:
-echo   - http://192.168.180.100:8000
-echo   - http://127.0.0.1:8000
+echo   - http://127.0.0.1:%SERVER_PORT%
+if /I not "%SERVER_HOST%"=="0.0.0.0" (
+    echo   - http://%SERVER_HOST%:%SERVER_PORT%
+) else (
+    echo   - http://YOUR_LAN_IP:%SERVER_PORT% ^(from other devices on your network^)
+)
 echo.
 echo Press Ctrl+C to stop the server
 echo.
@@ -119,7 +139,7 @@ echo.
 REM Start Laravel server with OPcache timestamp revalidation disabled.
 REM This prevents PHP from stat()-checking 12,000 vendor files every 2s (was causing ~12s page loads).
 REM Restart the server after making PHP file changes to pick up new code.
-php -d opcache.revalidate_freq=0 -d opcache.validate_timestamps=0 artisan serve --host=192.168.180.100
+php -d opcache.revalidate_freq=0 -d opcache.validate_timestamps=0 artisan serve --host=%SERVER_HOST% --port=%SERVER_PORT%
 
 REM This line will only execute if the server is stopped
 echo.

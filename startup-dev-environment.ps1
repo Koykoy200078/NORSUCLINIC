@@ -19,6 +19,26 @@ $SuccessColor = "Green"
 $InfoColor = "Cyan"
 $WarningColor = "Yellow"
 
+function Resolve-ServerHost {
+    param([string]$PreferredHost)
+
+    if ($PreferredHost -in @("127.0.0.1", "0.0.0.0")) {
+        return $PreferredHost
+    }
+
+    $localIPv4 = [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
+        Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } |
+        ForEach-Object { $_.IPAddressToString }
+
+    if ($localIPv4 -contains $PreferredHost) {
+        return $PreferredHost
+    }
+
+    Write-Host "  WARNING: $PreferredHost is not assigned on this PC." -ForegroundColor $WarningColor
+    Write-Host "  Falling back to 0.0.0.0 (all interfaces)." -ForegroundColor $WarningColor
+    return "0.0.0.0"
+}
+
 function Write-Header {
     param([string]$Message)
     Write-Host "`n============================================================" -ForegroundColor $InfoColor
@@ -44,6 +64,7 @@ function Write-Error-Message {
 
 # Start script
 Clear-Host
+$ServerHost = Resolve-ServerHost -PreferredHost $ServerHost
 Write-Header "NORSUCLINIC - Starting Development Environment"
 
 # ============================================================
@@ -136,8 +157,13 @@ Write-Step "`n4/4" "Starting Laravel development server..."
 Write-Host ""
 
 Write-Host "  Server will be accessible at:" -ForegroundColor $InfoColor
-Write-Host "    - http://$ServerHost`:$ServerPort" -ForegroundColor White
 Write-Host "    - http://127.0.0.1:$ServerPort" -ForegroundColor White
+if ($ServerHost -ne "0.0.0.0") {
+    Write-Host "    - http://$ServerHost`:$ServerPort" -ForegroundColor White
+}
+else {
+    Write-Host "    - http://YOUR_LAN_IP:$ServerPort (from other devices on your network)" -ForegroundColor White
+}
 Write-Host ""
 Write-Host "  Press Ctrl+C to stop the server" -ForegroundColor $WarningColor
 Write-Host ""

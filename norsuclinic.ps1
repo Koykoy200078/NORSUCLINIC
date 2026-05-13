@@ -21,7 +21,7 @@ param(
 # ============================================================
 # SHARED CONFIGURATION
 # ============================================================
-$ProjectPath   = "C:\Projects\NORSUCLINIC"
+$ProjectPath   = "C:\Users\User\Desktop\Clinic\NORSUCLINIC"
 $WampPath      = "C:\wamp64\wampmanager.exe"
 $MySQLPath     = "C:\wamp64\bin\mysql\mysql8.0.39\bin"
 $ServerHost    = "192.168.1.20"
@@ -54,6 +54,25 @@ function Write-Warn { param([string]$M) Write-Host "  ! $M" -ForegroundColor Yel
 function Write-Err  { param([string]$M) Write-Host "  x $M" -ForegroundColor Red }
 function Write-Info { param([string]$M) Write-Host "  > $M" -ForegroundColor Cyan }
 
+function Resolve-ServerHost {
+    param([string]$PreferredHost)
+
+    if ($PreferredHost -in @("127.0.0.1", "0.0.0.0")) {
+        return $PreferredHost
+    }
+
+    $localIPv4 = [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
+        Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } |
+        ForEach-Object { $_.IPAddressToString }
+
+    if ($localIPv4 -contains $PreferredHost) {
+        return $PreferredHost
+    }
+
+    Write-Warn "$PreferredHost is not assigned on this PC. Falling back to 0.0.0.0."
+    return "0.0.0.0"
+}
+
 function Ensure-ProjectDir {
     if (-not (Test-Path $ProjectPath)) {
         Write-Err "Project directory not found: $ProjectPath"
@@ -76,6 +95,7 @@ function Write-Log {
 function Invoke-Start {
     Clear-Host
     Write-Header "NORSUCLINIC - Starting Development Environment"
+    $bindHost = Resolve-ServerHost -PreferredHost $ServerHost
 
     # -- WAMP --
     Write-Host "[1/4] Starting WAMP Server..." -ForegroundColor Yellow
@@ -107,12 +127,17 @@ function Invoke-Start {
     Write-Host "[4/4] Starting Laravel development server..." -ForegroundColor Yellow
 
     Write-Host ""
-    Write-Host "  Server: http://$ServerHost`:$ServerPort" -ForegroundColor White
     Write-Host "  Local:  http://127.0.0.1:$ServerPort"   -ForegroundColor White
+    if ($bindHost -ne "0.0.0.0") {
+        Write-Host "  Server: http://$bindHost`:$ServerPort" -ForegroundColor White
+    }
+    else {
+        Write-Host "  Server: http://YOUR_LAN_IP:$ServerPort" -ForegroundColor White
+    }
     Write-Host "  Press Ctrl+C to stop" -ForegroundColor Yellow
     Write-Host ""
 
-    php -d opcache.revalidate_freq=0 -d opcache.validate_timestamps=0 artisan serve --host=$ServerHost --port=$ServerPort
+    php -d opcache.revalidate_freq=0 -d opcache.validate_timestamps=0 artisan serve --host=$bindHost --port=$ServerPort
 
     Write-Warn "Development server stopped."
     Read-Host "Press Enter to exit"
