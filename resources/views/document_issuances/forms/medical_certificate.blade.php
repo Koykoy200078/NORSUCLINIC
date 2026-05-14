@@ -20,21 +20,21 @@
     })->values();
 
     $singleDoctor = $doctorOptions->count() === 1 ? $doctorOptions->first() : null;
-    
+
     // Logic to match existing doctor if editing
     $selectedDoctorId = old('doctor_user_id', '');
     if (isset($requestDocument) && !$selectedDoctorId) {
-        $currentLicNo = (string) $requestDocument->doc_lic_no;
-        $currentPtrNo = (string) $requestDocument->doc_prt_no;
-        $matchedDoctor = $doctorOptions->first(function ($doctorOption) use ($currentLicNo, $currentPtrNo) {
-            return ($currentLicNo !== '' && (string) $doctorOption['lic_no'] === $currentLicNo)
-                || ($currentPtrNo !== '' && (string) $doctorOption['ptr_no'] === $currentPtrNo);
-        });
-        $selectedDoctorId = $matchedDoctor['id'] ?? '';
+    $currentLicNo = (string) $requestDocument->doc_lic_no;
+    $currentPtrNo = (string) $requestDocument->doc_prt_no;
+    $matchedDoctor = $doctorOptions->first(function ($doctorOption) use ($currentLicNo, $currentPtrNo) {
+    return ($currentLicNo !== '' && (string) $doctorOption['lic_no'] === $currentLicNo)
+    || ($currentPtrNo !== '' && (string) $doctorOption['ptr_no'] === $currentPtrNo);
+    });
+    $selectedDoctorId = $matchedDoctor['id'] ?? '';
     }
-    
+
     if (!$selectedDoctorId && $singleDoctor) {
-        $selectedDoctorId = $singleDoctor['id'];
+    $selectedDoctorId = $singleDoctor['id'];
     }
     @endphp
 
@@ -68,7 +68,7 @@
         }}" method="POST">
             @csrf
             @if(isset($requestDocument))
-                @method('PUT')
+            @method('PUT')
             @endif
 
             <div class="form-group mb-5 d-none">
@@ -84,7 +84,7 @@
                     <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border-b border-black d-none" value="{{ isset($requestDocument) ? $requestDocument->user_id : (request('user_id') ?? ($user->type == 4 ? $user->id : '')) }}" readonly required>
                     <!-- Hidden field to indicate redirect to patient history -->
                     <input type="hidden" name="redirect_to_patient" value="{{ request('user_id') ? '1' : '0' }}">
-                    
+
                     <input type="text" id="name_2" name="name" style="width: 400px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->name : ($user->type == 4 ? $user->first_name . ' ' . $user->last_name : '') }}" readonly required>,
                     <input type="text" id="age_2" name="age" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->age : ($user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '') }}" readonly required> yrs old,
                     <input type="text" id="gender_2" name="gender" style="width: 70px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->gender : ($user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '') }}" readonly required> a resident of
@@ -93,22 +93,22 @@
                     <input type="text" id="address_2" name="address" style="width: 470px; text-align: center;" class="border-b border-black" value="{{ isset($requestDocument) ? $requestDocument->address : ($user->type == 4 && $patient->address ? $patient->address->full_address : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
                     , was seen and examined at my clinic on
                     @php
-                        $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
-                        if ($examinedOnRaw) {
-                            if (str_ends_with($examinedOnRaw, '|range')) {
-                                $parts = explode('|', $examinedOnRaw);
-                                $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
-                            } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
-                                $datesStr = explode('|', $examinedOnRaw)[0];
-                                $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
-                            } elseif (str_contains($examinedOnRaw, ',')) {
-                                $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
-                            } else {
-                                $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
-                            }
-                        } else {
-                            $examinedOnDisplay = '';
-                        }
+                    $examinedOnRaw = old('examined_on', $requestDocument->examined_on ?? '');
+                    if ($examinedOnRaw) {
+                    if (str_ends_with($examinedOnRaw, '|range')) {
+                    $parts = explode('|', $examinedOnRaw);
+                    $examinedOnDisplay = \Carbon\Carbon::parse($parts[0])->format('m/d/Y') . ' - ' . \Carbon\Carbon::parse($parts[1])->format('m/d/Y');
+                    } elseif (str_ends_with($examinedOnRaw, '|multiple')) {
+                    $datesStr = explode('|', $examinedOnRaw)[0];
+                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $datesStr)));
+                    } elseif (str_contains($examinedOnRaw, ',')) {
+                    $examinedOnDisplay = implode(', ', array_map(fn($d) => \Carbon\Carbon::parse(trim($d))->format('m/d/Y'), explode(',', $examinedOnRaw)));
+                    } else {
+                    $examinedOnDisplay = \Carbon\Carbon::parse($examinedOnRaw)->format('m/d/Y');
+                    }
+                    } else {
+                    $examinedOnDisplay = '';
+                    }
                     @endphp
                     <input type="text" id="examined_on_display" name="examined_on_display" style="width: 300px; text-align: center;" class="border-b border-black" placeholder="Click to select date(s)" value="{{ $examinedOnDisplay }}" readonly required>
                     <input type="hidden" id="examined_on" name="examined_on" value="{{ $examinedOnRaw }}">
@@ -127,7 +127,7 @@
 
             <div class="grid grid-cols-6 grid-rows-1 gap-7 mb-2">
                 @php
-                    $bp = isset($requestDocument) ? explode('/', $requestDocument->vital_signs_bp) : ['', ''];
+                $bp = isset($requestDocument) ? explode('/', $requestDocument->vital_signs_bp) : ['', ''];
                 @endphp
                 <div>
                     <p class="font-semibold">BP<span class="text-red-500">*</span>: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_2', $bp[0] ?? '') }}" required> / <input type="text" id="vital_signs_bp_22" name="vital_signs_bp_22" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_22', $bp[1] ?? '') }}" required></p>
@@ -306,23 +306,23 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Shared logic with Excuse Slip
         @if(!isset($requestDocument))
-            // Initialize with today's date if creating
-            const todayStr = new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-            const examinedOnDisplay = document.getElementById('examined_on_display');
-            if (examinedOnDisplay && !examinedOnDisplay.value) {
-                examinedOnDisplay.value = todayStr;
-                document.getElementById('examined_on').value = '{{ date("Y-m-d") }}';
-            }
+        // Initialize with today's date if creating
+        const todayStr = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        const examinedOnDisplay = document.getElementById('examined_on_display');
+        if (examinedOnDisplay && !examinedOnDisplay.value) {
+            examinedOnDisplay.value = todayStr;
+            document.getElementById('examined_on').value = '{{ date("Y-m-d") }}';
+        }
         @endif
 
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
-        const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
-        const getLastMedicalCertificateRoute = '{{ getRouteByRole("document-issuances.get-last-medical-certificate") }}';
+        const searchRoute = @json(parse_url(getRouteByRole("document-issuances.search-users"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.search-users"));
+        const getLastMedicalCertificateRoute = @json(parse_url(getRouteByRole("document-issuances.get-last-medical-certificate"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.get-last-medical-certificate"));
 
         const setFieldValue = (fieldId, value) => {
             const field = document.getElementById(fieldId);
@@ -419,7 +419,9 @@
 
         const syncDoctorDetails = () => {
             if (!doctorSelector) return;
-            let name = '', lic = '', ptr = '';
+            let name = '',
+                lic = '',
+                ptr = '';
             if (doctorSelector.tagName === 'SELECT') {
                 const opt = doctorSelector.options[doctorSelector.selectedIndex];
                 if (!opt || !opt.value) return;
@@ -480,7 +482,11 @@
 
             const formatDateDisplay = (ds) => {
                 const d = new Date(ds + 'T00:00:00');
-                return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+                return d.toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                });
             };
 
             document.getElementById('add_date_btn')?.addEventListener('click', () => {
@@ -506,19 +512,23 @@
             };
 
             applyBtn.addEventListener('click', () => {
-                let disp = '', stor = '';
+                let disp = '',
+                    stor = '';
                 if (currentDateType === 'single') {
                     const d = document.getElementById('single_date_input').value;
                     if (!d) return alert('Select date');
-                    disp = formatDateDisplay(d); stor = d;
+                    disp = formatDateDisplay(d);
+                    stor = d;
                 } else if (currentDateType === 'range') {
                     const s = document.getElementById('start_date_input').value;
                     const e = document.getElementById('end_date_input').value;
                     if (!s || !e) return alert('Select range');
-                    disp = `${formatDateDisplay(s)} - ${formatDateDisplay(e)}`; stor = `${s}|${e}|range`;
+                    disp = `${formatDateDisplay(s)} - ${formatDateDisplay(e)}`;
+                    stor = `${s}|${e}|range`;
                 } else {
                     if (!selectedDatesArray.length) return alert('Add dates');
-                    disp = selectedDatesArray.map(formatDateDisplay).join(', '); stor = selectedDatesArray.join(',') + '|multiple';
+                    disp = selectedDatesArray.map(formatDateDisplay).join(', ');
+                    stor = selectedDatesArray.join(',') + '|multiple';
                 }
                 document.getElementById('examined_on_display').value = disp;
                 document.getElementById('examined_on').value = stor;

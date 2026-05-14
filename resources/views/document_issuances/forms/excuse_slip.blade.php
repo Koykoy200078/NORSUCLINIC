@@ -298,8 +298,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const userSearchInput = document.getElementById('user_search');
         const userSearchResults = document.getElementById('user_search_results');
-        const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
-        const getLastMedicalCertificateRoute = '{{ getRouteByRole("document-issuances.get-last-medical-certificate") }}';
+        const searchRoute = @json(parse_url(getRouteByRole("document-issuances.search-users"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.search-users"));
+        const getLastMedicalCertificateRoute = @json(parse_url(getRouteByRole("document-issuances.get-last-medical-certificate"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.get-last-medical-certificate"));
 
         if (userSearchInput) {
             userSearchInput.addEventListener('input', function() {

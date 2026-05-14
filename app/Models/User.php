@@ -346,7 +346,11 @@ class User extends Authenticatable implements HasMedia
 
     public function getFullNameAttribute(): string
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return trim(implode(' ', array_filter([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name,
+        ])));
     }
 
     public function address(): MorphOne

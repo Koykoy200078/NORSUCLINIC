@@ -61,7 +61,7 @@ class DocumentIssuanceController extends Controller
         // If user_id is provided (from patient history), get that patient's data
         if ($request->has('user_id')) {
             $userId = $request->get('user_id');
-            $user = \App\Models\User::with('patient.address')->find($userId);
+            $user = \App\Models\User::with(['patient.address', 'patient.patientType'])->find($userId);
 
             if (!$user) {
                 return redirect()->back()->with('error', 'Patient not found.');
@@ -162,7 +162,7 @@ class DocumentIssuanceController extends Controller
         Log::info('Attempting to create medical certificate for user_id: ' . ($data['user_id'] ?? 'NULL'));
 
         // Retrieve the user and related IDs (allow null for manual entries)
-        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel', 'patient.patientType'])->find($data['user_id']) : null;
 
         // Use request data for campus/college/course/year_level if provided (allows manual override)
         $data['campus'] = $data['campus'] ?? ($user ? ($user->campus->campus_name ?? 'Unknown Campus') : 'N/A');
@@ -228,7 +228,7 @@ class DocumentIssuanceController extends Controller
     private function storeConsultationForm(array $data)
     {
         // Retrieve the user and related IDs (allow null for manual entries)
-        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel', 'patient.patientType'])->find($data['user_id']) : null;
 
         // Map related names for numeric fields using their IDs
         $data['campus'] = $data['campus'] ?? (Campus::find($data['campus_id'] ?? null)?->campus_name ?? ($user?->campus?->campus_name ?? 'Unknown Campus'));
@@ -260,6 +260,12 @@ class DocumentIssuanceController extends Controller
             }
         }
 
+        $data['informant'] = $this->resolveConsultationInformantLabel(
+            $data['informant'] ?? null,
+            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            $user
+        );
+
         $requestDocument = DocumentIssuance::create([
             'document_type' => $data['document_type'] ?? 'consultation_form',
             'document_creator_id' => $data['document_creator_id'] ?? auth()->id(),
@@ -276,7 +282,7 @@ class DocumentIssuanceController extends Controller
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
-            'informant' => $data['informant'] ?? null,
+            'informant' => $data['informant'],
             'emergency_contact' => $data['emergency_contact'] ?? null,
             'requested_at' => $data['requested_at'] ?? now()->format('Y-m-d'),
             'complaints' => $data['complaints'] ?? null,
@@ -373,10 +379,16 @@ class DocumentIssuanceController extends Controller
      */
     private function prepareConsultationPatient(array &$data): void
     {
+        $data['informant'] = $this->resolveConsultationInformantLabel(
+            $data['informant'] ?? null,
+            $this->normalizeNullableInt($data['year_level_id'] ?? null)
+        );
+
         $userId = $this->normalizeNullableInt($data['user_id'] ?? null);
 
         if ($userId !== null) {
             $user = User::query()
+                ->with('patient.patientType')
                 ->where('id', $userId)
                 ->where('type', User::PATIENT)
                 ->first();
@@ -385,14 +397,212 @@ class DocumentIssuanceController extends Controller
                 throw new \RuntimeException('Selected patient is invalid. Please choose a valid patient from search.');
             }
 
+            $data['informant'] = $this->resolveConsultationInformantLabel(
+                $data['informant'] ?? null,
+                $this->normalizeNullableInt($data['year_level_id'] ?? null),
+                $user
+            );
+
             $this->syncPatientProfileFromConsultationData($user, $data);
             $data['user_id'] = $user->id;
 
             return;
         }
 
+        $matchedUser = $this->findMatchingPatientForConsultationData($data);
+        if ($matchedUser) {
+            $this->syncPatientProfileFromConsultationData($matchedUser, $data);
+            $data['user_id'] = $matchedUser->id;
+
+            return;
+        }
+
         $createdUser = $this->createPatientFromConsultationData($data);
         $data['user_id'] = $createdUser->id;
+    }
+
+    /**
+     * Try to find an existing patient using consultation identity fields
+     * so repeated walk-in entries don't create duplicate patient accounts.
+     */
+    private function findMatchingPatientForConsultationData(array $data): ?User
+    {
+        $incomingName = $this->normalizeNullableString($data['name'] ?? null);
+        $dateOfBirth = $this->normalizeNullableString($data['date_of_birth'] ?? null);
+        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
+
+        if ($dateOfBirth === null || $gender === null) {
+            return null;
+        }
+
+        $incomingAge = $this->normalizeNullableInt($data['age'] ?? null);
+        if ($incomingAge === null) {
+            try {
+                $incomingAge = \Carbon\Carbon::parse($dateOfBirth)->age;
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        if ($incomingAge === null) {
+            return null;
+        }
+
+        $candidates = User::query()
+            ->where('type', User::PATIENT)
+            ->whereDate('dob', $dateOfBirth)
+            ->where('gender', $gender)
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->get();
+
+        $candidates = $candidates
+            ->filter(function (User $candidate) use ($incomingAge) {
+                if ($candidate->dob === null) {
+                    return false;
+                }
+
+                try {
+                    return \Carbon\Carbon::parse($candidate->dob)->age === $incomingAge;
+                } catch (\Exception $e) {
+                    return false;
+                }
+            })
+            ->values();
+
+        if ($candidates->isEmpty()) {
+            return null;
+        }
+
+        $nameTokens = $this->tokenizeNameForMatching($incomingName);
+        if (! $this->passesNameTokenSafetyThreshold($nameTokens)) {
+            return null;
+        }
+
+        $candidates = $candidates
+            ->filter(function (User $candidate) use ($nameTokens) {
+                return $this->doesWildcardNameMatch(
+                    $nameTokens,
+                    $this->buildFullNameForMatching($candidate)
+                );
+            })
+            ->values();
+
+        if ($candidates->isEmpty()) {
+            return null;
+        }
+
+        return $candidates->first();
+    }
+
+    private function tokenizeNameForMatching(?string $name): array
+    {
+        $normalizedName = $this->normalizeNullableString($name);
+
+        if ($normalizedName === null) {
+            return [];
+        }
+
+        $normalizedName = strtolower(preg_replace('/\s+/', ' ', $normalizedName));
+
+        $tokens = preg_split('/[\s,]+/', $normalizedName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return array_values(array_unique(array_map(function ($token) {
+            return trim((string) $token);
+        }, $tokens)));
+    }
+
+    private function passesNameTokenSafetyThreshold(array $nameTokens): bool
+    {
+        return count($this->filterMeaningfulNameTokens($nameTokens)) >= 2;
+    }
+
+    private function buildFullNameForMatching(User $user): string
+    {
+        $fullName = trim(implode(' ', array_filter([
+            $this->normalizeNullableString($user->first_name),
+            $this->normalizeNullableString($user->middle_name),
+            $this->normalizeNullableString($user->last_name),
+        ])));
+
+        return strtolower(preg_replace('/\s+/', ' ', $fullName));
+    }
+
+    private function doesWildcardNameMatch(array $nameTokens, string $candidateFullName): bool
+    {
+        $incomingTokens = $this->filterMeaningfulNameTokens($nameTokens);
+        $candidateTokens = $this->filterMeaningfulNameTokens(
+            $this->tokenizeNameForMatching($candidateFullName)
+        );
+
+        if (count($incomingTokens) < 2 || empty($candidateTokens)) {
+            return false;
+        }
+
+        return $this->countWildcardTokenMatches($incomingTokens, $candidateTokens) >= 2;
+    }
+
+    private function filterMeaningfulNameTokens(array $nameTokens): array
+    {
+        $noiseTokens = ['de', 'del', 'dela', 'la', 'jr', 'sr', 'ii', 'iii', 'iv'];
+
+        $tokens = array_values(array_filter(array_map(function ($token) {
+            return strtolower(trim((string) $token));
+        }, $nameTokens), function ($token) use ($noiseTokens) {
+            if ($token === '') {
+                return false;
+            }
+
+            if (in_array($token, $noiseTokens, true)) {
+                return false;
+            }
+
+            return strlen($token) >= 2;
+        }));
+
+        return array_values(array_unique($tokens));
+    }
+
+    private function countWildcardTokenMatches(array $incomingTokens, array $candidateTokens): int
+    {
+        $matchedCount = 0;
+
+        foreach ($incomingTokens as $incomingToken) {
+            foreach ($candidateTokens as $candidateToken) {
+                if ($this->isWildcardTokenMatch($incomingToken, $candidateToken)) {
+                    $matchedCount++;
+                    break;
+                }
+            }
+        }
+
+        return $matchedCount;
+    }
+
+    private function isWildcardTokenMatch(string $incomingToken, string $candidateToken): bool
+    {
+        if ($incomingToken === '' || $candidateToken === '') {
+            return false;
+        }
+
+        if ($incomingToken === $candidateToken) {
+            return true;
+        }
+
+        if (strlen($incomingToken) >= 3 && strpos($candidateToken, $incomingToken) !== false) {
+            return true;
+        }
+
+        if (strlen($candidateToken) >= 3 && strpos($incomingToken, $candidateToken) !== false) {
+            return true;
+        }
+
+        $maxTokenLength = max(strlen($incomingToken), strlen($candidateToken));
+        if ($maxTokenLength >= 5 && levenshtein($incomingToken, $candidateToken) <= 1) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -458,6 +668,7 @@ class DocumentIssuanceController extends Controller
     {
         [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
         [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
+        $hasIncomingName = $this->normalizeNullableString($data['name'] ?? null) !== null;
 
         $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
 
@@ -467,7 +678,7 @@ class DocumentIssuanceController extends Controller
             $userUpdates['first_name'] = $firstName;
         }
 
-        if ($middleName !== null) {
+        if ($hasIncomingName) {
             $userUpdates['middle_name'] = $middleName;
         }
 
@@ -532,9 +743,16 @@ class DocumentIssuanceController extends Controller
             $user->update($userUpdates);
         }
 
+        $data['informant'] = $this->resolveConsultationInformantLabel(
+            $data['informant'] ?? null,
+            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            $user
+        );
+
         $patient = $user->patient;
         $patientTypeId = $this->resolvePatientTypeId(
             $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            $data['informant'] ?? null,
             $patient === null
         );
 
@@ -594,23 +812,111 @@ class DocumentIssuanceController extends Controller
         }
     }
 
-    private function resolvePatientTypeId(?int $yearLevelId, bool $defaultToStudent = false): ?int
+    private function resolvePatientTypeId(?int $yearLevelId, ?string $informant = null, bool $defaultToStudent = false): ?int
     {
-        if ($yearLevelId === null && ! $defaultToStudent) {
+        $patientTypeCode = $this->resolvePatientTypeCode($yearLevelId, $informant, $defaultToStudent);
+
+        if ($patientTypeCode === null) {
             return null;
         }
 
-        $patientTypeCode = 'student';
+        return PatientType::query()->where('code', $patientTypeCode)->value('id');
+    }
 
-        if ($yearLevelId === 7) {
-            $patientTypeCode = 'faculty';
-        } elseif ($yearLevelId === 8) {
-            $patientTypeCode = 'staff';
-        } elseif ($yearLevelId === 9) {
-            $patientTypeCode = 'guest';
+    private function resolvePatientTypeCode(?int $yearLevelId, ?string $informant = null, bool $defaultToStudent = false): ?string
+    {
+        $normalizedInformant = $this->normalizeInformantLabel($informant);
+
+        if ($normalizedInformant !== null) {
+            return strtolower($normalizedInformant);
         }
 
-        return PatientType::query()->where('code', $patientTypeCode)->value('id');
+        if ($yearLevelId !== null) {
+            if ($yearLevelId === 7) {
+                return 'faculty';
+            }
+
+            if ($yearLevelId === 8) {
+                return 'staff';
+            }
+
+            if ($yearLevelId === 9) {
+                return 'guest';
+            }
+
+            return 'student';
+        }
+
+        return $defaultToStudent ? 'student' : null;
+    }
+
+    private function resolveConsultationInformantLabel(?string $informant, ?int $yearLevelId = null, ?User $user = null): string
+    {
+        $normalizedInformant = $this->normalizeInformantLabel($informant);
+        $resolvedYearLevelId = $yearLevelId ?? $this->normalizeNullableInt($user?->year_level_id ?? null);
+
+        $patientTypeCodeFromProfile = $this->resolvePatientTypeCodeFromUser($user);
+        $informantFromProfile = $this->resolveInformantLabelFromPatientTypeCode($patientTypeCodeFromProfile);
+
+        if ($informantFromProfile !== null) {
+            if ($normalizedInformant === null) {
+                return $informantFromProfile;
+            }
+
+            if (
+                strtolower($normalizedInformant) === 'student'
+                && strtolower($informantFromProfile) !== 'student'
+            ) {
+                return $informantFromProfile;
+            }
+        }
+
+        if ($normalizedInformant !== null) {
+            return $normalizedInformant;
+        }
+
+        $resolvedPatientTypeCode = $this->resolvePatientTypeCode($resolvedYearLevelId, null, true);
+
+        return $this->resolveInformantLabelFromPatientTypeCode($resolvedPatientTypeCode) ?? 'Student';
+    }
+
+    private function resolvePatientTypeCodeFromUser(?User $user): ?string
+    {
+        if (! $user) {
+            return null;
+        }
+
+        $user->loadMissing('patient.patientType');
+
+        $patientTypeCode = $this->normalizeNullableString($user->patient?->patientType?->code);
+        return $patientTypeCode !== null ? strtolower($patientTypeCode) : null;
+    }
+
+    private function resolveInformantLabelFromPatientTypeCode(?string $patientTypeCode): ?string
+    {
+        return $this->normalizeInformantLabel($patientTypeCode);
+    }
+
+    private function normalizeInformantLabel(?string $informant): ?string
+    {
+        $normalizedInformant = $this->normalizeNullableString($informant);
+
+        if ($normalizedInformant === null) {
+            return null;
+        }
+
+        $informantKey = strtolower(trim(preg_replace('/\s+/', ' ', $normalizedInformant)));
+
+        $informantMap = [
+            'student' => 'Student',
+            'staff' => 'Staff',
+            'employee' => 'Staff',
+            'faculty' => 'Faculty',
+            'guest' => 'Guest',
+            'visitor' => 'Guest',
+        ];
+
+        return $informantMap[$informantKey] ?? null;
     }
 
     private function splitFullName($fullName): array
@@ -995,7 +1301,7 @@ class DocumentIssuanceController extends Controller
     private function updateConsultationForm(DocumentIssuance $requestDocument, array $data)
     {
         // Retrieve the user and related IDs (allow null for manual entries)
-        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel'])->find($data['user_id']) : null;
+        $user = !empty($data['user_id']) ? User::with(['campus', 'college', 'course', 'yearLevel', 'patient.patientType'])->find($data['user_id']) : null;
 
         // Map related names for numeric fields using their IDs
         $data['campus'] = isset($data['campus_id']) ? (Campus::find($data['campus_id'])->campus_name ?? $requestDocument->campus) : $requestDocument->campus;
@@ -1010,6 +1316,11 @@ class DocumentIssuanceController extends Controller
         $data['age'] = $this->resolveAgeFromDateOfBirth(
             $data['date_of_birth'],
             (int) $requestDocument->age
+        );
+        $data['informant'] = $this->resolveConsultationInformantLabel(
+            $data['informant'] ?? $requestDocument->informant,
+            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            $user
         );
 
         $canEditAssessmentPlanDirectly = $this->canCurrentUserEditAssessmentPlanDirectly();
@@ -1066,7 +1377,7 @@ class DocumentIssuanceController extends Controller
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
-            'informant' => $data['informant'] ?? $requestDocument->informant,
+            'informant' => $data['informant'],
             'emergency_contact' => $data['emergency_contact'] ?? $requestDocument->emergency_contact,
             'requested_at' => $data['requested_at'] ?? $requestDocument->requested_at,
             'complaints' => $data['complaints'] ?? $requestDocument->complaints,
@@ -1718,12 +2029,29 @@ class DocumentIssuanceController extends Controller
                         ->orWhere('university_id_number', 'LIKE', "%{$search}%")
                         ->orWhere('employee_id', 'LIKE', "%{$search}%");
                 })
-                ->select('id', 'patient_unique_id', 'user_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
+                ->select('id', 'patient_unique_id', 'user_id', 'patient_type_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
+                ->addSelect([
+                    'latest_consultation_status' => DocumentIssuance::query()
+                        ->select('status')
+                        ->whereColumn('user_id', 'patients.user_id')
+                        ->where('document_type', 'consultation_form')
+                        ->orderByDesc('requested_at')
+                        ->orderByDesc('id')
+                        ->limit(1),
+                    'latest_consultation_religion' => DocumentIssuance::query()
+                        ->select('religion')
+                        ->whereColumn('user_id', 'patients.user_id')
+                        ->where('document_type', 'consultation_form')
+                        ->orderByDesc('requested_at')
+                        ->orderByDesc('id')
+                        ->limit(1),
+                ])
                 ->with([
                     'user' => function ($query) {
                         $query->select(
                             'id',
                             'first_name',
+                            'middle_name',
                             'last_name',
                             'dob',
                             'gender',
@@ -1746,7 +2074,8 @@ class DocumentIssuanceController extends Controller
                     'address' => function ($query) {
                         $query->select('id', 'owner_id', 'owner_type', 'address1', 'country_id', 'state_id', 'city_id', 'barangay_id', 'postal_code')
                             ->with(['barangay:id,name,city_id', 'city:id,name,state_id', 'state:id,name']);
-                    }
+                    },
+                    'patientType:id,code,name',
                 ])
                 ->get();
 
@@ -1849,12 +2178,40 @@ class DocumentIssuanceController extends Controller
                 return response()->json(['error' => 'User ID is required'], 400);
             }
 
-            // Get the latest consultation for this user
-            $lastConsultation = DocumentIssuance::where('user_id', $userId)
+            $userContext = User::query()
+                ->select('id', 'year_level_id')
+                ->with('patient.patientType')
+                ->find($userId);
+
+            $historyFields = [
+                'informant',
+                'status',
+                'religion',
+                'comorbidities',
+                'allergies',
+                'admissions_surgeries',
+                'maintenance',
+                'pregnancy_status',
+                'lmp_aog',
+                'vital_signs_bp',
+                'vital_signs_pr',
+                'vital_signs_temp',
+                'vital_signs_rr',
+                'vital_signs_o2_sat',
+                'vital_signs_weight',
+                'vital_signs_height',
+            ];
+
+            // Get recent consultation history for this user and resolve each field from
+            // the most recent non-empty value to avoid losing data when latest row has blanks.
+            $recentConsultations = DocumentIssuance::where('user_id', $userId)
                 ->where('document_type', 'consultation_form')
                 ->orderBy('requested_at', 'desc')
                 ->orderBy('id', 'desc')
-                ->first();
+                ->limit(50)
+                ->get(array_merge(['id'], $historyFields));
+
+            $lastConsultation = $recentConsultations->first();
 
             if (!$lastConsultation) {
                 $patientProfile = Patient::query()
@@ -1867,6 +2224,11 @@ class DocumentIssuanceController extends Controller
                     'fallback' => true,
                     'message' => 'No previous consultation found. Loaded patient profile values.',
                     'data' => [
+                        'informant' => $this->resolveConsultationInformantLabel(
+                            null,
+                            $this->normalizeNullableInt($userContext?->year_level_id ?? null),
+                            $userContext
+                        ),
                         'status' => null,
                         'religion' => null,
                         'comorbidities' => $patientProfile->comorbidities ?? null,
@@ -1886,31 +2248,74 @@ class DocumentIssuanceController extends Controller
                 ]);
             }
 
+            $resolvedHistoryData = [];
+            foreach ($historyFields as $field) {
+                $resolvedHistoryData[$field] = $this->getMostRecentNonEmptyConsultationValue(
+                    $recentConsultations,
+                    $field
+                );
+            }
+
             // Return the relevant fields
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'status' => $lastConsultation->status,
-                    'religion' => $lastConsultation->religion,
-                    'comorbidities' => $lastConsultation->comorbidities,
-                    'allergies' => $lastConsultation->allergies,
-                    'admissions_surgeries' => $lastConsultation->admissions_surgeries,
-                    'maintenance' => $lastConsultation->maintenance,
-                    'pregnancy_status' => $lastConsultation->pregnancy_status,
-                    'lmp_aog' => $lastConsultation->lmp_aog,
-                    'vital_signs_bp' => $lastConsultation->vital_signs_bp,
-                    'vital_signs_pr' => $lastConsultation->vital_signs_pr,
-                    'vital_signs_temp' => $lastConsultation->vital_signs_temp,
-                    'vital_signs_rr' => $lastConsultation->vital_signs_rr,
-                    'vital_signs_o2_sat' => $lastConsultation->vital_signs_o2_sat,
-                    'vital_signs_weight' => $lastConsultation->vital_signs_weight,
-                    'vital_signs_height' => $lastConsultation->vital_signs_height,
+                    'informant' => $this->resolveConsultationInformantLabel(
+                        $resolvedHistoryData['informant'] ?? null,
+                        $this->normalizeNullableInt($userContext?->year_level_id ?? null),
+                        $userContext
+                    ),
+                    'status' => $resolvedHistoryData['status'],
+                    'religion' => $resolvedHistoryData['religion'],
+                    'comorbidities' => $resolvedHistoryData['comorbidities'],
+                    'allergies' => $resolvedHistoryData['allergies'],
+                    'admissions_surgeries' => $resolvedHistoryData['admissions_surgeries'],
+                    'maintenance' => $resolvedHistoryData['maintenance'],
+                    'pregnancy_status' => $resolvedHistoryData['pregnancy_status'],
+                    'lmp_aog' => $resolvedHistoryData['lmp_aog'],
+                    'vital_signs_bp' => $resolvedHistoryData['vital_signs_bp'],
+                    'vital_signs_pr' => $resolvedHistoryData['vital_signs_pr'],
+                    'vital_signs_temp' => $resolvedHistoryData['vital_signs_temp'],
+                    'vital_signs_rr' => $resolvedHistoryData['vital_signs_rr'],
+                    'vital_signs_o2_sat' => $resolvedHistoryData['vital_signs_o2_sat'],
+                    'vital_signs_weight' => $resolvedHistoryData['vital_signs_weight'],
+                    'vital_signs_height' => $resolvedHistoryData['vital_signs_height'],
                 ]
             ]);
         } catch (\Exception $e) {
             Log::error('Error in getLastConsultation: ' . $e->getMessage());
             return response()->json(['error' => 'An error occurred while fetching consultation data'], 500);
         }
+    }
+
+    private function getMostRecentNonEmptyConsultationValue($consultations, string $field)
+    {
+        foreach ($consultations as $consultation) {
+            if (!isset($consultation->{$field})) {
+                continue;
+            }
+
+            $value = $consultation->{$field};
+
+            if ($this->hasMeaningfulConsultationValue($value)) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    private function hasMeaningfulConsultationValue($value): bool
+    {
+        if ($value === null) {
+            return false;
+        }
+
+        if (is_string($value)) {
+            return trim($value) !== '';
+        }
+
+        return true;
     }
 
     public function getLastMedicalCertificate(Request $request)

@@ -48,9 +48,10 @@ class StaffController extends AppBaseController
         $defaultRoleId = Role::whereName('staff')->value('id');
 
         $staffDesignations = StaffDesignation::pluck('name', 'id');
+        $staffDesignationCodes = StaffDesignation::pluck('code', 'id')->toArray();
         $clinicStations = ClinicStation::pluck('name', 'id');
 
-        return view('staffs.create', compact('roles', 'defaultRoleId', 'staffDesignations', 'clinicStations'));
+        return view('staffs.create', compact('roles', 'defaultRoleId', 'staffDesignations', 'staffDesignationCodes', 'clinicStations'));
     }
 
     /**
@@ -91,9 +92,10 @@ class StaffController extends AppBaseController
         $defaultRoleId = Role::whereName('staff')->value('id');
 
         $staffDesignations = StaffDesignation::pluck('name', 'id');
+        $staffDesignationCodes = StaffDesignation::pluck('code', 'id')->toArray();
         $clinicStations = ClinicStation::pluck('name', 'id');
 
-        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId', 'staffDesignations', 'clinicStations'));
+        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId', 'staffDesignations', 'staffDesignationCodes', 'clinicStations'));
     }
 
     /**

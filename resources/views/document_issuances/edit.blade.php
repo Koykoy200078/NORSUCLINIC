@@ -27,10 +27,12 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
     @if ($requestDocument->document_type == 'consultation_form')
     @php
-    $effectiveYearLevelId = (int) old('year_level_id', $user->year_level_id ?? 0);
+    $initialYearLevelId = (int) old('year_level_id', $user->year_level_id ?? 0);
+    $effectiveYearLevelId = $initialYearLevelId;
     $isStudentType = $effectiveYearLevelId >= 1 && $effectiveYearLevelId <= 6;
         $isFacultyType=$effectiveYearLevelId===7;
         $isStaffType=$effectiveYearLevelId===8;
+        $medicinesByCategoryUrl=parse_url(getRouteByRole('medicines.by.category'), PHP_URL_PATH) ?: getRouteByRole('medicines.by.category');
         $selectedVaccinationId=old('vaccination_id');
         if (blank($selectedVaccinationId) && ! empty($requestDocument->covid_vaccination)) {
         $selectedVaccinationId = optional($vaccinations->firstWhere('vaccination_status', $requestDocument->covid_vaccination))->id;
@@ -890,8 +892,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 <script>
     // Track removed existing images
     let removedImages = [];
-    // prettier-ignore
-    const initialYearLevelId = @json((int) old('year_level_id', $user->year_level_id ?? 0));
+    const initialYearLevelId = @json($initialYearLevelId);
 
     function removeExistingImage(index) {
         if (confirm('Are you sure you want to remove this image?')) {
@@ -1468,7 +1469,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
-        const medicinesByCategoryUrl = '{{ getRouteByRole("medicines.by.category") }}';
+        const medicinesByCategoryUrl = @json($medicinesByCategoryUrl);
         const canManagePlanMedicines = @json(isRole('doctor'));
         let medicinesData = [];
 

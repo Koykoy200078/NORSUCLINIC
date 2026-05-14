@@ -207,6 +207,11 @@ New Laboratory / Medical Request
                     <i class="fas fa-exclamation-triangle me-1"></i> {{ $message }}
                 </div>
                 @enderror
+                @error('custom_tests')
+                <div class="alert alert-danger py-2">
+                    <i class="fas fa-exclamation-triangle me-1"></i> {{ $message }}
+                </div>
+                @enderror
 
                 @foreach($labTestsGrouped as $category => $tests)
                 <div class="mb-4">
@@ -244,6 +249,52 @@ New Laboratory / Medical Request
                 @if(!$loop->last)
                 <hr>@endif
                 @endforeach
+
+                @php
+                $oldCustomTests = old('custom_tests', ['']);
+                if (!is_array($oldCustomTests)) {
+                $oldCustomTests = [$oldCustomTests];
+                }
+
+                $hasNonEmptyCustomTest = collect($oldCustomTests)
+                ->contains(function ($value) {
+                return trim((string) $value) !== '';
+                });
+
+                if (!$hasNonEmptyCustomTest) {
+                $oldCustomTests = [''];
+                }
+                @endphp
+
+                <div class="border-top pt-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <h6 class="mb-0 fw-bold text-primary">
+                            <i class="fas fa-plus-circle me-1"></i> Others (Custom Tests)
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="add-custom-test-btn">
+                            <i class="fas fa-plus me-1"></i> Add Row
+                        </button>
+                    </div>
+                    <p class="text-muted small mb-2">Add laboratory/medical tests not found in the list above.</p>
+
+                    <div id="custom-tests-container">
+                        @foreach($oldCustomTests as $customTest)
+                        <div class="input-group mb-2 custom-test-row">
+                            <input type="text"
+                                name="custom_tests[]"
+                                class="form-control custom-test-input @error('custom_tests.*') is-invalid @enderror"
+                                value="{{ $customTest }}"
+                                placeholder="Enter custom test name">
+                            <button type="button" class="btn btn-outline-danger remove-custom-test-btn" title="Remove this custom test">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        @endforeach
+                    </div>
+                    @error('custom_tests.*')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
         </div>
 
@@ -280,6 +331,7 @@ New Laboratory / Medical Request
         const searchInput = document.getElementById('user_search');
         const searchResults = document.getElementById('user_search_results');
         const patientSection = document.getElementById('user_search_info');
+        const searchUsersRoute = @json(parse_url(getRouteByRole('lab-requests.search-users'), PHP_URL_PATH) ? : getRouteByRole('lab-requests.search-users'));
 
         if (searchInput) {
             let debounceTimer;
@@ -299,7 +351,7 @@ New Laboratory / Medical Request
 
                 if (q.length > 1) {
                     debounceTimer = setTimeout(() => {
-                        fetch(`{{ getRouteByRole('lab-requests.search-users') }}?query=${encodeURIComponent(q)}`)
+                        fetch(`${searchUsersRoute}?query=${encodeURIComponent(q)}`)
                             .then(r => {
                                 if (!r.ok) throw new Error('Network response was not ok');
                                 return r.json();
@@ -442,9 +494,59 @@ New Laboratory / Medical Request
         // Selected tests counter
         // -------------------------------------------------------------------------
         const badge = document.getElementById('selected-count-badge');
+        const customTestsContainer = document.getElementById('custom-tests-container');
+        const addCustomTestBtn = document.getElementById('add-custom-test-btn');
+
+        function getCustomTestCount() {
+            if (!customTestsContainer) {
+                return 0;
+            }
+
+            return Array.from(customTestsContainer.querySelectorAll('.custom-test-input'))
+                .filter((input) => input.value.trim() !== '')
+                .length;
+        }
+
+        function bindCustomTestRowEvents(row) {
+            const input = row.querySelector('.custom-test-input');
+            const removeButton = row.querySelector('.remove-custom-test-btn');
+
+            if (input) {
+                input.addEventListener('input', updateBadge);
+            }
+
+            if (removeButton) {
+                removeButton.addEventListener('click', function() {
+                    row.remove();
+                    updateBadge();
+                });
+            }
+        }
+
+        function appendCustomTestRow(value = '') {
+            if (!customTestsContainer) {
+                return;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'input-group mb-2 custom-test-row';
+            row.innerHTML = `
+                <input type="text" name="custom_tests[]" class="form-control custom-test-input" placeholder="Enter custom test name" value="${value.replace(/"/g, '&quot;')}">
+                <button type="button" class="btn btn-outline-danger remove-custom-test-btn" title="Remove this custom test">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            customTestsContainer.appendChild(row);
+            bindCustomTestRowEvents(row);
+            updateBadge();
+        }
 
         function updateBadge() {
-            const count = document.querySelectorAll('.test-checkbox:checked').length;
+            const selectedCheckboxCount = document.querySelectorAll('.test-checkbox:checked').length;
+            const customTestCount = getCustomTestCount();
+            const count = selectedCheckboxCount + customTestCount;
+
             badge.textContent = count + ' selected';
             badge.classList.toggle('bg-white', count === 0);
             badge.classList.toggle('text-primary', count === 0);
@@ -455,6 +557,18 @@ New Laboratory / Medical Request
         document.querySelectorAll('.test-checkbox').forEach(cb => {
             cb.addEventListener('change', updateBadge);
         });
+
+        if (customTestsContainer) {
+            customTestsContainer.querySelectorAll('.custom-test-row').forEach((row) => {
+                bindCustomTestRowEvents(row);
+            });
+        }
+
+        if (addCustomTestBtn) {
+            addCustomTestBtn.addEventListener('click', function() {
+                appendCustomTestRow('');
+            });
+        }
 
         // Select All / Clear per category
         document.querySelectorAll('.select-all-category').forEach(btn => {
@@ -488,6 +602,7 @@ New Laboratory / Medical Request
         document.getElementById('lab-request-form').addEventListener('submit', function(e) {
             const pid = document.getElementById('patient_user_id').value;
             const selected = document.querySelectorAll('.test-checkbox:checked').length;
+            const customTests = getCustomTestCount();
 
             if (!pid) {
                 e.preventDefault();
@@ -495,9 +610,9 @@ New Laboratory / Medical Request
                 return;
             }
 
-            if (selected === 0) {
+            if (selected === 0 && customTests === 0) {
                 e.preventDefault();
-                alert('Please select at least one laboratory test.');
+                alert('Please select at least one laboratory/medical test or add one custom test in Others.');
                 return;
             }
         });

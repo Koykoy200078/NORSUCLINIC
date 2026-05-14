@@ -27,7 +27,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME<span class="text-red-500">*</span></label>
-                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? $user->first_name . ' ' . $user->last_name : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? trim(implode(' ', array_filter([$user->first_name, $user->middle_name, $user->last_name]))) : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE<span class="text-red-500">*</span></label>
@@ -94,13 +94,48 @@
 
             <div class="col-span-1">
                 <label class="block text-xs" for="informant">INFORMANT</label>
-                <input type="text" id="informant" name="informant" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ 
-                    $user->type == 4 ? (
-                        $user->year_level_id == 7 ? 'Faculty' : 
-                        ($user->year_level_id == 8 ? 'Staff' : 
-                        ($user->year_level_id == 9 ? 'Guest' : 'Student'))
-                    ) : 'Student' 
-                }}">
+                @php
+                $defaultInformant = null;
+                $patientTypeCode = strtolower(trim((string) data_get($patient ?? null, 'patientType.code', '')));
+                $patientTypeInformantMap = [
+                'student' => 'Student',
+                'staff' => 'Staff',
+                'employee' => 'Staff',
+                'faculty' => 'Faculty',
+                'guest' => 'Guest',
+                'visitor' => 'Guest',
+                ];
+
+                if (isset($patientTypeInformantMap[$patientTypeCode])) {
+                $defaultInformant = $patientTypeInformantMap[$patientTypeCode];
+                }
+
+                if ($defaultInformant === null && $user->type == 4) {
+                if ((int) ($user->year_level_id ?? 0) === 7) {
+                $defaultInformant = 'Faculty';
+                } elseif ((int) ($user->year_level_id ?? 0) === 8) {
+                $defaultInformant = 'Staff';
+                } elseif ((int) ($user->year_level_id ?? 0) === 9) {
+                $defaultInformant = 'Guest';
+                }
+                }
+
+                $defaultInformant = $defaultInformant ?? 'Student';
+                @endphp
+                <input type="text"
+                    id="informant"
+                    name="informant"
+                    list="informant_options"
+                    autocomplete="off"
+                    class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                    value="{{ old('informant', $defaultInformant) }}"
+                    placeholder="Student, Staff, Faculty, or Guest">
+                <datalist id="informant_options">
+                    <option value="Student"></option>
+                    <option value="Staff"></option>
+                    <option value="Faculty"></option>
+                    <option value="Guest"></option>
+                </datalist>
             </div>
             <div class="col-span-4">
                 <label class="block text-xs" for="emergency_contact">CONTACT PERSON & NUMBER IN EMERGENCY</label>
@@ -695,6 +730,8 @@
         const officeField = document.getElementById('office_field');
         const ageField = document.getElementById('age');
         const dateOfBirthField = document.getElementById('date_of_birth');
+        const informantField = document.getElementById('informant');
+        const consultationForm = informantField ? informantField.closest('form') : null;
 
         function normalizeTextValue(value) {
             if (value === null || value === undefined) {
@@ -720,8 +757,24 @@
             return `${emergencyLabel}${emergencyRelation ? ' (' + emergencyRelation + ')' : ''}`;
         }
 
-        function resolveInformantByYearLevel(yearLevelId) {
+        function normalizeInformantValue(value) {
+            const normalized = normalizeTextValue(value).toLowerCase();
+
+            const allowedInformantMap = {
+                student: 'Student',
+                staff: 'Staff',
+                employee: 'Staff',
+                faculty: 'Faculty',
+                guest: 'Guest',
+                visitor: 'Guest',
+            };
+
+            return allowedInformantMap[normalized] || null;
+        }
+
+        function resolveInformantByYearLevel(yearLevelId, fallbackInformant = null) {
             const normalizedYearLevel = Number(yearLevelId);
+            const normalizedFallbackInformant = normalizeInformantValue(fallbackInformant);
 
             if (normalizedYearLevel === 7) {
                 return 'Faculty';
@@ -735,16 +788,66 @@
                 return 'Guest';
             }
 
+            // Preserve an explicit informant selection from profile/manual input
+            // for non-mapped year levels (e.g. year level remains 1-6 but patient type is Staff/Guest).
+            if (normalizedFallbackInformant !== null) {
+                return normalizedFallbackInformant;
+            }
+
+            if (normalizedYearLevel >= 1 && normalizedYearLevel <= 6) {
+                return 'Student';
+            }
+
             return 'Student';
         }
 
-        function updateInformantField(yearLevelId) {
-            const informantField = document.getElementById('informant');
+        function updateInformantField(yearLevelId, fallbackInformant = null) {
             if (!informantField) {
                 return;
             }
 
-            informantField.value = resolveInformantByYearLevel(yearLevelId);
+            const resolvedInformant = resolveInformantByYearLevel(
+                yearLevelId,
+                fallbackInformant !== null ? fallbackInformant : informantField.value
+            );
+
+            informantField.value = resolvedInformant || 'Student';
+            informantField.setCustomValidity('');
+        }
+
+        function resolveInformantFromPatientData(patientData) {
+            const explicitInformant = normalizeInformantValue(patientData?.informant);
+            if (explicitInformant) {
+                return explicitInformant;
+            }
+
+            const patientTypeCode = normalizeTextValue(
+                patientData?.patient_type?.code || patientData?.patientType?.code
+            );
+            const patientTypeInformant = normalizeInformantValue(patientTypeCode);
+
+            if (patientTypeInformant) {
+                return patientTypeInformant;
+            }
+
+            return resolveInformantByYearLevel(patientData?.user?.year_level_id, null);
+        }
+
+        function validateAndNormalizeInformantField() {
+            if (!informantField) {
+                return true;
+            }
+
+            const normalized = normalizeInformantValue(informantField.value);
+            if (normalized === null) {
+                informantField.setCustomValidity('Informant must be Student, Staff, Faculty, or Guest.');
+                return false;
+            }
+
+            informantField.value = normalized;
+            informantField.setCustomValidity('');
+
+            return true;
         }
 
         function updateFieldsVisibility() {
@@ -789,6 +892,31 @@
             yearLevelSelect.addEventListener('change', function() {
                 updateFieldsVisibility();
                 updateInformantField(yearLevelSelect.value);
+            });
+        }
+
+        if (informantField) {
+            informantField.addEventListener('input', function() {
+                informantField.setCustomValidity('');
+            });
+
+            informantField.addEventListener('blur', function() {
+                validateAndNormalizeInformantField();
+            });
+
+            informantField.addEventListener('change', function() {
+                validateAndNormalizeInformantField();
+            });
+
+            validateAndNormalizeInformantField();
+        }
+
+        if (consultationForm && informantField) {
+            consultationForm.addEventListener('submit', function(event) {
+                if (!validateAndNormalizeInformantField()) {
+                    event.preventDefault();
+                    informantField.reportValidity();
+                }
             });
         }
 
@@ -1209,7 +1337,7 @@
         const userSearchResults = document.getElementById('user_search_results');
 
         // Set the search route based on user role
-        const searchRoute = '{{ getRouteByRole("document-issuances.search-users") }}';
+        const searchRoute = @json(parse_url(getRouteByRole("document-issuances.search-users"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.search-users"));
 
         function setSelectValue(fieldId, value) {
             const field = document.getElementById(fieldId);
@@ -1218,6 +1346,24 @@
             }
 
             field.value = value || '';
+        }
+
+        function setInputValueIfPresent(fieldId, value) {
+            const field = document.getElementById(fieldId);
+            if (!field) {
+                return;
+            }
+
+            if (value === null || value === undefined) {
+                return;
+            }
+
+            const normalizedValue = String(value).trim();
+            if (normalizedValue === '') {
+                return;
+            }
+
+            field.value = normalizedValue;
         }
 
         if (userSearchInput) {
@@ -1242,7 +1388,11 @@
                             data.forEach(patient => {
                                 const option = document.createElement('div');
                                 option.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
-                                option.textContent = `${patient.user.first_name} ${patient.user.last_name}`;
+                                option.textContent = [
+                                    normalizeTextValue(patient.user.first_name),
+                                    normalizeTextValue(patient.user.middle_name),
+                                    normalizeTextValue(patient.user.last_name),
+                                ].filter(Boolean).join(' ');
                                 option.dataset.patient = JSON.stringify(patient);
 
                                 option.addEventListener('click', function() {
@@ -1252,13 +1402,21 @@
                                     }
 
                                     document.getElementById('user_id').value = patientData.user.id;
-                                    document.getElementById('name').value = `${patientData.user.first_name} ${patientData.user.last_name}`;
+                                    document.getElementById('name').value = [
+                                        normalizeTextValue(patientData.user.first_name),
+                                        normalizeTextValue(patientData.user.middle_name),
+                                        normalizeTextValue(patientData.user.last_name),
+                                    ].filter(Boolean).join(' ');
                                     document.getElementById('gender').value = patientData.user.gender === 1 ? 'Male' : 'Female';
                                     document.getElementById('date_of_birth').value = patientData.user.dob || '';
                                     syncAgeFromDateOfBirth();
                                     setSelectValue('vaccination_id', patientData.user.vaccination_id || patientData.user.vaccination?.id || '');
                                     document.getElementById('patient_contact').value = normalizeTextValue(patientData.user.contact);
                                     document.getElementById('emergency_contact').value = buildEmergencyContact(patientData.user || {});
+
+                                    // Populate commonly-missed fields immediately from latest consultation snapshot.
+                                    setInputValueIfPresent('status', patientData.latest_consultation_status);
+                                    setInputValueIfPresent('religion', patientData.latest_consultation_religion);
 
                                     // Load saved medical history from patient profile
                                     setComorbidities(patientData.comorbidities || '');
@@ -1290,8 +1448,8 @@
                                     setSelectValue('department_id', departmentId);
                                     setSelectValue('office_id', officeId);
 
-                                    // Update informant field based on year_level_id
-                                    updateInformantField(patientData.user.year_level_id);
+                                    const resolvedPatientInformant = resolveInformantFromPatientData(patientData);
+                                    updateInformantField(patientData.user.year_level_id, resolvedPatientInformant);
 
                                     if (patientData.address) {
                                         // Use full_address if available, otherwise fall back to building it from parts
@@ -1355,7 +1513,7 @@
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
         // Fetch medicines from API (grouped by category with dosages)
-        const medicinesByCategoryUrl = '{{ getRouteByRole("medicines.by.category") }}';
+        const medicinesByCategoryUrl = @json(parse_url(getRouteByRole("medicines.by.category"), PHP_URL_PATH) ? : getRouteByRole("medicines.by.category"));
         const canManagePlanMedicines = @json(isRole('doctor'));
         let medicinesData = [];
 
@@ -1679,7 +1837,7 @@
 
                 try {
                     // Set the search route based on user role
-                    let getLastConsultationRoute = '{{ getRouteByRole("document-issuances.get-last-consultation") }}';
+                    let getLastConsultationRoute = @json(parse_url(getRouteByRole("document-issuances.get-last-consultation"), PHP_URL_PATH) ? : getRouteByRole("document-issuances.get-last-consultation"));
 
                     const response = await fetch(`${getLastConsultationRoute}?user_id=${userId}`);
                     const result = await response.json();
@@ -1703,6 +1861,11 @@
                         setFieldValue('vital_signs_o2_sat', data.vital_signs_o2_sat);
                         setFieldValue('vital_signs_weight', data.vital_signs_weight);
                         setFieldValue('vital_signs_height', data.vital_signs_height);
+
+                        updateInformantField(
+                            yearLevelSelect ? yearLevelSelect.value : null,
+                            data.informant || (informantField ? informantField.value : null)
+                        );
 
                         if (result.fallback) {
                             showLoadPastDataNotice(result.message || 'No previous consultation found. Loaded patient profile values.', 'info');

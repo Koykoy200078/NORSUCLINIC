@@ -81,12 +81,24 @@ class LabRequestController extends Controller
             'patient_user_id' => isRole('patient') ? 'nullable' : 'required|exists:users,id',
             'patient_name'    => 'required|string|max:255',
             'requested_at'    => 'required|date',
-            'test_ids'        => 'required|array|min:1',
-            'test_ids.*'      => 'exists:lab_tests,id',
+            'test_ids'        => 'nullable|array',
+            'test_ids.*'      => 'integer|exists:lab_tests,id',
+            'custom_tests'    => 'nullable|array',
+            'custom_tests.*'  => 'nullable|string|max:255',
         ]);
 
         try {
             $patientUserId = isRole('patient') ? Auth::id() : $request->patient_user_id;
+            $selectedTestIds = array_values(array_unique(array_map('intval', $request->input('test_ids', []))));
+            $customTests = $this->extractCustomTests($request->input('custom_tests', []));
+
+            if (empty($selectedTestIds) && empty($customTests)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors([
+                        'test_ids' => 'Please select at least one laboratory/medical test or add at least one custom test in Others.',
+                    ]);
+            }
 
             // Resolve patient demographics from user record
             $patientUser = User::with(['campus', 'college', 'course', 'yearLevel', 'department', 'office', 'patient.address', 'address.barangay', 'address.city', 'address.state'])
@@ -120,7 +132,7 @@ class LabRequestController extends Controller
             ]);
 
             // Attach selected tests as items (snapshot key data)
-            $tests = LabTest::whereIn('id', $request->test_ids)->get();
+            $tests = LabTest::whereIn('id', $selectedTestIds)->get();
             foreach ($tests as $test) {
                 LabRequestItem::create([
                     'lab_request_id' => $labRequest->id,
@@ -129,6 +141,19 @@ class LabRequestController extends Controller
                     'test_category'  => $test->category,
                     'unit'           => $test->unit,
                     'normal_range'   => $test->normal_range,
+                    'result_status'  => LabRequestItem::RESULT_PENDING,
+                ]);
+            }
+
+            // Attach custom/ad-hoc tests from Others input
+            foreach ($customTests as $customTestName) {
+                LabRequestItem::create([
+                    'lab_request_id' => $labRequest->id,
+                    'lab_test_id'    => null,
+                    'test_name'      => $customTestName,
+                    'test_category'  => 'Other',
+                    'unit'           => null,
+                    'normal_range'   => null,
                     'result_status'  => LabRequestItem::RESULT_PENDING,
                 ]);
             }
@@ -182,6 +207,7 @@ class LabRequestController extends Controller
         $lab_request->load(['items.labTest', 'creator', 'patient']);
         $labTestsGrouped = LabTest::groupedByCategory();
         $selectedTestIds = $lab_request->items->pluck('lab_test_id')->filter()->toArray();
+        $customTestItems = $lab_request->items->whereNull('lab_test_id')->values();
 
         $physicians = User::whereIn('type', [User::DOCTOR, User::ADMIN])->orderBy('first_name')->get();
 
@@ -191,6 +217,7 @@ class LabRequestController extends Controller
             'lab_request',
             'labTestsGrouped',
             'selectedTestIds',
+            'customTestItems',
             'physicians',
             'allowedStatuses'
         ));
@@ -209,11 +236,24 @@ class LabRequestController extends Controller
         $request->validate([
             'patient_name'   => 'required|string|max:255',
             'requested_at'   => 'required|date',
-            'test_ids'       => 'required|array|min:1',
-            'test_ids.*'     => 'exists:lab_tests,id',
+            'test_ids'       => 'nullable|array',
+            'test_ids.*'     => 'integer|exists:lab_tests,id',
+            'custom_tests'   => 'nullable|array',
+            'custom_tests.*' => 'nullable|string|max:255',
         ]);
 
         try {
+            $newIds = array_values(array_unique(array_map('intval', $request->input('test_ids', []))));
+            $incomingCustomTests = $this->extractCustomTests($request->input('custom_tests', []));
+
+            if (empty($newIds) && empty($incomingCustomTests)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors([
+                        'test_ids' => 'Please keep at least one laboratory/medical test or add at least one custom test in Others.',
+                    ]);
+            }
+
             // Update main record
             $lab_request->update([
                 'patient_name'         => $request->patient_name,
@@ -231,7 +271,6 @@ class LabRequestController extends Controller
 
             // Sync test items — delete removed, add new
             $existingIds  = $lab_request->items->pluck('lab_test_id')->filter()->toArray();
-            $newIds       = array_map('intval', $request->test_ids ?? []);
 
             // Delete removed
             $removedIds = array_diff($existingIds, $newIds);
@@ -256,6 +295,49 @@ class LabRequestController extends Controller
                         'result_status'  => LabRequestItem::RESULT_PENDING,
                     ]);
                 }
+            }
+
+            // Sync custom/ad-hoc tests (lab_test_id = null)
+            $existingCustomItems = $lab_request->items()
+                ->whereNull('lab_test_id')
+                ->get();
+
+            $existingCustomByKey = [];
+            foreach ($existingCustomItems as $item) {
+                $existingCustomByKey[$this->normalizeCustomTestName($item->test_name)] = $item;
+            }
+
+            $incomingCustomByKey = [];
+            foreach ($incomingCustomTests as $customTestName) {
+                $incomingCustomByKey[$this->normalizeCustomTestName($customTestName)] = $customTestName;
+            }
+
+            $customKeysToDelete = array_diff(array_keys($existingCustomByKey), array_keys($incomingCustomByKey));
+            if (!empty($customKeysToDelete)) {
+                $deleteIds = collect($customKeysToDelete)
+                    ->map(function ($key) use ($existingCustomByKey) {
+                        return $existingCustomByKey[$key]->id;
+                    })
+                    ->all();
+
+                if (!empty($deleteIds)) {
+                    LabRequestItem::where('lab_request_id', $lab_request->id)
+                        ->whereIn('id', $deleteIds)
+                        ->delete();
+                }
+            }
+
+            $customKeysToAdd = array_diff(array_keys($incomingCustomByKey), array_keys($existingCustomByKey));
+            foreach ($customKeysToAdd as $key) {
+                LabRequestItem::create([
+                    'lab_request_id' => $lab_request->id,
+                    'lab_test_id'    => null,
+                    'test_name'      => $incomingCustomByKey[$key],
+                    'test_category'  => 'Other',
+                    'unit'           => null,
+                    'normal_range'   => null,
+                    'result_status'  => LabRequestItem::RESULT_PENDING,
+                ]);
             }
 
             // Update existing item results if provided
@@ -440,6 +522,38 @@ class LabRequestController extends Controller
     // =========================================================================
     // Private helpers
     // =========================================================================
+
+    /**
+     * Normalize custom test rows from request input and remove empty/duplicates.
+     */
+    private function extractCustomTests($rawCustomTests): array
+    {
+        $tests = is_array($rawCustomTests) ? $rawCustomTests : [$rawCustomTests];
+        $normalized = [];
+
+        foreach ($tests as $testName) {
+            $trimmedName = trim((string) $testName);
+            if ($trimmedName === '') {
+                continue;
+            }
+
+            $key = $this->normalizeCustomTestName($trimmedName);
+            if ($key === '') {
+                continue;
+            }
+
+            $normalized[$key] = preg_replace('/\s+/', ' ', $trimmedName);
+        }
+
+        return array_values($normalized);
+    }
+
+    private function normalizeCustomTestName(string $testName): string
+    {
+        $normalized = preg_replace('/\s+/', ' ', trim($testName));
+
+        return strtolower((string) $normalized);
+    }
 
     /**
      * Get the correct named route for the index page based on current role.
