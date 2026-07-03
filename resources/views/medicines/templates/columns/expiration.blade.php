@@ -53,6 +53,17 @@ if ($daysRemaining < 0) {
     $textClass='text-white' ;
     }
     }
+
+    // Build a per-batch expiry list so staff can see that one medicine can have several
+    // batches with different expiry dates (the badge above shows only the earliest one).
+    $batches = ($row->relationLoaded('batches') ? $row->batches : collect())
+        ->filter(fn($b) => (int) $b->quantity > 0);
+    $batchTooltip = $batches->map(function ($b) {
+    $exp = $b->expiration_date ? \Carbon\Carbon::parse($b->expiration_date) : null;
+    $expLabel = (!$exp || $exp->year >= 2099) ? 'No expiry' : $exp->format('M d, Y');
+    $dose = trim((string) $b->dosage);
+    return '• ' . (int) $b->quantity . ' pcs' . ($dose !== '' ? ' (' . $dose . ')' : '') . ' — exp ' . $expLabel;
+    })->implode("\n");
     @endphp
 
     <div class="d-flex align-items-center">
@@ -66,6 +77,11 @@ if ($daysRemaining < 0) {
     <i class="fas fa-exclamation-circle text-warning ms-2" title="Warning: {{ $daysRemaining }} day(s) until expiry" style="font-size: 1.1rem;"></i>
     @else
     <i class="fas fa-check-circle text-success ms-2" title="Fresh: {{ $daysRemaining }} day(s) remaining" style="font-size: 1.1rem;"></i>
+    @endif
+    @if($batches->count() > 1)
+    <span class="badge bg-light text-dark border ms-2" style="font-size: 0.7rem; white-space: pre-line; cursor: help;" title="{{ $batchTooltip }}">
+        <i class="fas fa-layer-group me-1"></i>{{ $batches->count() }} batches
+    </span>
     @endif
     @else
     <span class="text-muted" style="font-size: 0.85rem;">

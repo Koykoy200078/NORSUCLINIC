@@ -307,7 +307,9 @@ class UserController extends AppBaseController
 
     public function changeDoctorStatus(Request $request): JsonResponse
     {
-        $doctor = User::findOrFail($request->id);
+        // Scope to DOCTOR accounts only — otherwise staff (with manage_doctors) could pass
+        // the clinic_admin's id and deactivate the admin, locking everyone out. CRUD-AUTH-2.
+        $doctor = User::where('type', User::DOCTOR)->findOrFail($request->id);
         $doctor->update(['status' => !$doctor->status]);
 
         return $this->sendResponse($doctor, __('messages.flash.status_update'));
@@ -345,7 +347,8 @@ class UserController extends AppBaseController
 
     public function emailVerified(Request $request): JsonResponse
     {
-        $user = User::findOrFail($request->id);
+        // Only doctor/patient accounts (the ones these pages manage) — never admin/staff. CRUD-AUTH-3.
+        $user = User::whereIn('type', [User::DOCTOR, User::PATIENT])->findOrFail($request->id);
         if ($request->value) {
             $user->update([
                 'email_verified_at' => Carbon::now(),
@@ -396,6 +399,12 @@ class UserController extends AppBaseController
 
     public function resetPassword(User $user): JsonResponse
     {
+        // Only DOCTOR accounts may be reset via this endpoint (it is the doctor-management
+        // reset). All account types share the `users` table, so without this a staff/nurse
+        // holding manage_doctors could reset the clinic_admin's password to the default and
+        // take over the admin account. CRUD-AUTH-1.
+        abort_unless((int) $user->type === User::DOCTOR, 403);
+
         try {
             $user->update([
                 'password' => Hash::make('123456')

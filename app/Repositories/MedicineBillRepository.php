@@ -77,6 +77,22 @@ class MedicineBillRepository extends BaseRepository
                 'bill_date'      => $input['bill_date'],
             ]);
 
+            // Restore stock for the existing items BEFORE deleting/re-deducting, otherwise
+            // editing a dispense record double-deducts inventory (the old quantities were
+            // never returned to their batches). INV-1.
+            $inventoryService = app(MedicineInventoryService::class);
+            foreach ($dispenseRecord->dispenseItems()->get() as $existingItem) {
+                $inventoryService->restoreStock(
+                    (int) $existingItem->medicine_id,
+                    (int) $existingItem->quantity,
+                    getLogInUserId(),
+                    $dispenseRecord,
+                    'Reversed for dispense record #' . $dispenseRecord->id . ' edit',
+                    $existingItem->dosage,
+                    $existingItem->expires_at
+                );
+            }
+
             $dispenseRecord->dispenseItems()->delete();
 
             if (! empty($input['category_id'])) {
@@ -198,11 +214,9 @@ class MedicineBillRepository extends BaseRepository
 
     public function getSettingList(): array
     {
-        $settings = Cache::remember('app_settings', 3600, function () {
-            return Setting::pluck('value', 'key')->toArray();
-        });
-
-        return $settings;
+        // Single source of truth for settings (key 'application_settings') instead of a
+        // separate 'app_settings' copy that could serve stale values for up to an hour. CONFIG-3.
+        return \App\Services\SettingsService::get();
     }
 
     public function getDoctors(): Doctor

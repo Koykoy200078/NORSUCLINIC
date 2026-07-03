@@ -10,6 +10,10 @@ class NotificationController extends AppBaseController
 {
     public function readNotification(Notification $notification): JsonResponse
     {
+        // A user may only mark their OWN notification as read (route-model binding alone lets
+        // any authenticated user flip another user's notification by id). CRUD-IDOR.
+        abort_unless((int) $notification->user_id === (int) getLogInUserId(), 403);
+
         $notification->read_at = Carbon::now();
         $notification->save();
 

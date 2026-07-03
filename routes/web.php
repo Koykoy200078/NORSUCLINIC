@@ -50,6 +50,12 @@ Route::get('/login', function () {
     return (! Auth::check()) ? view('auth.login') : Redirect::to(getDashboardURL());
 })->name('login')->middleware('setLanguage');
 
+// Returns the current session's CSRF token so the frontend can recover from a stale
+// token (HTTP 419 "CSRF token mismatch") without losing the user's work.
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+})->name('csrf.token');
+
 Route::middleware('setLanguage')->group(function () {
     Route::get('/', [FrontController::class, 'medical'])->name('medical');
     Route::get('/medical-about-us', [FrontController::class, 'medicalAboutUs'])->name('medicalAboutUs');
@@ -106,8 +112,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permission:manage_admin_dashboard')->name('admin.dashboard');
     Route::get('/dashboard-patients', [DashboardController::class, 'getPatientList'])->name('patientData.dashboard');
 
-    // Logs
-    Route::get('logs', [LogViewerController::class, 'index']);
+    // Logs — gate behind a permission so it isn't reachable purely by role. AUTH-5.
+    Route::get('logs', [LogViewerController::class, 'index'])->middleware('permission:manage_admin_dashboard');
 
     // Impersonate
     Route::get('impersonate/{id}', [UserController::class, 'impersonate'])->name('impersonate');
@@ -245,6 +251,10 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // ============================================================================
     // ADMIN MEDICINE ROUTES
     // ============================================================================
+    // Require manage_medicines so revoking that permission from an admin role actually
+    // restricts inventory / stock-deduction access (mirrors doctor/staff route files). AUTH-5.
+    Route::middleware('permission:manage_medicines')->group(function () {
+
     // Medicine Categories
     Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
     Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
@@ -277,12 +287,17 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
     Route::redirect('medicine-history', '/dispense-records');
     Route::redirect('medicine-history/{id}', '/dispense-records/{id}');
+
+    }); // end permission:manage_medicines group
 });
 
 // Note: Doctor and Staff routes are defined in their respective route files
 // to avoid duplication and maintain role-based separation.
 
-Route::get('delete-old-patients', [PatientController::class, 'deleteOldPatient'])
+// POST (not GET) so CSRF protection applies — a GET bulk-delete is triggerable via a
+// simple <img> tag on any page the admin visits. CRUD-DL.
+Route::post('delete-old-patients', [PatientController::class, 'deleteOldPatient'])
+    ->name('patients.delete-old')
     ->middleware(['auth', 'checkUserStatus', 'role:clinic_admin', 'permission:manage_patients']);
 
 require __DIR__ . '/auth.php';

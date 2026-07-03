@@ -48,6 +48,42 @@ function refreshCsrfToken() {
     });
 }
 
+// Apply a fresh CSRF token everywhere it is used (ajax header, meta tag, hidden inputs).
+function applyFreshCsrfToken(freshToken) {
+    if (!freshToken) {
+        return;
+    }
+    csrfToken = freshToken;
+    $('meta[name="csrf-token"]').attr("content", freshToken);
+    $.ajaxSetup({ headers: { "X-CSRF-TOKEN": freshToken } });
+    $('input[name="_token"]').val(freshToken);
+}
+
+// Recover gracefully from a stale CSRF token (HTTP 419 "CSRF token mismatch").
+// We fetch a fresh token and refresh it on the page/forms, then ask the user to submit
+// again. We intentionally do NOT auto-resubmit, so an inventory/consultation save can
+// never be silently duplicated.
+let csrfRecoveryInProgress = false;
+$(document).ajaxError(function (event, jqXHR, ajaxSettings) {
+    if (jqXHR.status !== 419 || csrfRecoveryInProgress) {
+        return;
+    }
+    if (ajaxSettings && typeof ajaxSettings.url === "string" && ajaxSettings.url.indexOf("/csrf-token") !== -1) {
+        return;
+    }
+    csrfRecoveryInProgress = true;
+    $.get("/csrf-token")
+        .done(function (data) {
+            applyFreshCsrfToken(data && data.token ? data.token : null);
+            if (typeof displayErrorMessage === "function") {
+                displayErrorMessage("Your session was refreshed. Please click Save again.");
+            }
+        })
+        .always(function () {
+            csrfRecoveryInProgress = false;
+        });
+});
+
 function select2initialize() {
     $('[data-control="select2"]').each(function () {
         $(this).select2();

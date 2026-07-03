@@ -130,7 +130,30 @@ class StockInController extends AppBaseController
 
     public function destroy(StockIn $stockIn)
     {
-        $stockIn->delete();
+        // Reverse the stock this stock-in ADDED before deleting; otherwise the added quantity
+        // stays in inventory forever as phantom stock (mirrors the removed-line reversal in
+        // MedicineAvailabilityRepository::updatePurchaseMedicine). If the stock has already
+        // been dispensed, the FEFO deduction throws and the whole delete rolls back. CRUD-STK.
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($stockIn) {
+                $inventoryService = app(\App\Services\MedicineInventoryService::class);
+                foreach ($stockIn->purchasedMedcines as $line) {
+                    $inventoryService->deductStockFefo(
+                        (int) $line->medicine_id,
+                        (int) $line->quantity,
+                        getLogInUserId(),
+                        $stockIn,
+                        'Reversed: stock-in batch #' . $stockIn->id . ' deleted',
+                        \App\Models\MedicineTransaction::TYPE_ADJUSTMENT,
+                        $line->dosage
+                    );
+                }
+                $stockIn->delete();
+            });
+        } catch (\Throwable $e) {
+            return $this->sendError('Cannot delete this stock-in: its stock has already been dispensed/consumed, so removing it would create negative inventory. (' . $e->getMessage() . ')');
+        }
+
         return $this->sendSuccess(__('messages.flash.medicine_deleted'));
     }
 }

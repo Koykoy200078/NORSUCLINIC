@@ -255,8 +255,24 @@ class DispenseRecordController extends AppBaseController
 
     public function destroy(DispenseRecord $medicine_history)
     {
-        $medicine_history->dispenseItems()->delete();
-        $medicine_history->delete();
+        DB::transaction(function () use ($medicine_history) {
+            // Restore stock for each dispensed item before deleting so removing a dispense
+            // record returns the stock to inventory instead of losing it permanently. INV-2.
+            foreach ($medicine_history->dispenseItems()->get() as $item) {
+                $this->medicineInventoryService->restoreStock(
+                    (int) $item->medicine_id,
+                    (int) $item->quantity,
+                    getLogInUserId(),
+                    $medicine_history,
+                    'Reversed for deleted dispense record #' . $medicine_history->id,
+                    $item->dosage,
+                    $item->expires_at
+                );
+            }
+
+            $medicine_history->dispenseItems()->delete();
+            $medicine_history->delete();
+        });
 
         return $this->sendSuccess(
             __('messages.medicine_bills.medicine_bill') . ' ' . __('messages.common.deleted_successfully')

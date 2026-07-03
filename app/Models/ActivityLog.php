@@ -140,6 +140,15 @@ class ActivityLog extends Model
      */
     public function getFormattedActionAttribute(): string
     {
-        return ucwords(str_replace('_', ' ', $this->action));
+        // Friendlier labels for specific actions (keeps the stored action key stable so
+        // history and filters are unaffected). "procured_medicine" reads as "Stock In"
+        // because that is the operation staff actually perform (adding stock).
+        $labelMap = [
+            'procured_medicine' => 'Stock In',
+            'used_medicine' => 'Medicine Dispensed',
+            'medicine_quantity_updated' => 'Stock Adjusted',
+        ];
+
+        return $labelMap[$this->action] ?? ucwords(str_replace('_', ' ', $this->action));
     }
 }

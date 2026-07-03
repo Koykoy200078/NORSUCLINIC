@@ -122,6 +122,12 @@ class PrescriptionController extends AppBaseController
      */
     public function store(CreatePrescriptionRequest $request): RedirectResponse
     {
+        // Patients must not author prescriptions (patient_id comes from input, so an
+        // unguarded store lets a patient create a prescription for anyone). AUTH-1.
+        if (isRole('patient')) {
+            abort(403);
+        }
+
         $input = $request->validated();
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
         $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
@@ -225,6 +231,12 @@ class PrescriptionController extends AppBaseController
      */
     public function show(Prescription $prescription)
     {
+        // A patient may only access their OWN prescription (existence-only canAccessRecord
+        // is not enough to prevent cross-patient IDOR). AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $prescription->id)) {
+            abort(403);
+        }
+
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
             Flash::error(__('messages.flash.not_allow_access_record'));
 
@@ -246,6 +258,11 @@ class PrescriptionController extends AppBaseController
      */
     public function edit(Prescription $prescription)
     {
+        // A patient may only access their OWN prescription. AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $prescription->id)) {
+            abort(403);
+        }
+
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
             Flash::error(__('messages.flash.not_allow_access_record'));
 
@@ -329,6 +346,11 @@ class PrescriptionController extends AppBaseController
      */
     public function update(Prescription $prescription, UpdatePrescriptionRequest $request): RedirectResponse
     {
+        // A patient may only update their OWN prescription (update had no access check at all). AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $prescription->id)) {
+            abort(403);
+        }
+
         $prescription = $this->prescriptionRepository->find($prescription->id);
         if (empty($prescription)) {
             Flash::error(__('messages.flash.prescription_not_found'));
@@ -546,6 +568,11 @@ class PrescriptionController extends AppBaseController
      */
     public function destroy(Prescription $prescription)
     {
+        // A patient may only delete their OWN prescription (prevents cross-patient deletion). AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $prescription->id)) {
+            abort(403);
+        }
+
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
             return $this->sendError(__('messages.flash.prescription_not_found'));
         }
@@ -570,11 +597,29 @@ class PrescriptionController extends AppBaseController
 
     public function activeDeactiveStatus(int $id): JsonResponse
     {
+        // Patients must never change prescription status; restrict to clinical roles. AUTH-4.
+        if (! (isRole('clinic_admin') || isRole('staff') || isRole('doctor'))) {
+            return $this->sendError('You are not authorized to perform this action.');
+        }
+
         $prescription = Prescription::findOrFail($id);
         $isActive = ! (bool) $prescription->is_active;
         $prescription->update(['is_active' => $isActive]);
 
         return $this->sendSuccess(__('messages.flash.status_update'));
+    }
+
+    /**
+     * Whether the currently-authenticated patient owns the given prescription.
+     * Used to stop patients reading/printing other patients' prescriptions (IDOR). AUTH-1.
+     */
+    private function patientOwnsPrescription(int $id): bool
+    {
+        return Prescription::whereKey($id)
+            ->whereHas('patient', function ($query) {
+                $query->where('user_id', getLogInUserId());
+            })
+            ->exists();
     }
 
     public function dispense(Prescription $prescription): RedirectResponse|JsonResponse
@@ -644,6 +689,11 @@ class PrescriptionController extends AppBaseController
 
     public function prescreptionMedicineStore(CreateMedicineRequest $request): JsonResponse
     {
+        // Patients must not create catalog medicines or inject stock. Clinical roles only. AUTH-1.
+        if (! (isRole('clinic_admin') || isRole('staff') || isRole('doctor'))) {
+            return $this->sendError('You are not authorized to perform this action.');
+        }
+
         DB::beginTransaction();
         try {
             $input = $request->validated();
@@ -720,6 +770,11 @@ class PrescriptionController extends AppBaseController
             }
         }
 
+        // A patient may only view their OWN prescription. AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $id)) {
+            abort(403);
+        }
+
         $data = $this->prescriptionRepository->getSettingList();
 
         $prescription = $this->prescriptionRepository->getData($id);
@@ -731,6 +786,11 @@ class PrescriptionController extends AppBaseController
 
     public function convertToPDF($id): \Illuminate\Http\Response
     {
+        // A patient may only print their OWN prescription. AUTH-1.
+        if (isRole('patient') && ! $this->patientOwnsPrescription((int) $id)) {
+            abort(403);
+        }
+
         try {
             // Get settings
             $data = $this->prescriptionRepository->getSettingList();

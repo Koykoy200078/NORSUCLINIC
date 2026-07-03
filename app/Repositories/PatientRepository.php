@@ -247,6 +247,7 @@ class PatientRepository extends BaseRepository
                 'primary_care_physician_email',
             ]);
             $input['type'] = User::PATIENT;
+            $input['status'] = 1; // Force active; never accept `status` from raw request input. CRUD-MA.
             $input['language'] = 'en';
 
             // Set email as verified with Philippine time
@@ -394,6 +395,14 @@ class PatientRepository extends BaseRepository
                 'position_type',
                 'all_year_levels',
                 'patient_type_lookup',
+                // Privilege / non-form user fields — never mass-assign from the patient edit
+                // form (prevents a manage_patients user injecting status=0, type=1, etc.). CRUD-MA.
+                'status',
+                'type',
+                'email_verified_at',
+                'remember_token',
+                'dark_mode',
+                'email_notification',
             ]));
 
             $patient->update($patientInput);
@@ -404,15 +413,18 @@ class PatientRepository extends BaseRepository
                 $patient->address()->create($addressInputArray);
             }
 
-            if (isset($input['profile']) && ! empty($input['profile'])) {
-                $patient->clearMediaCollection(Patient::PROFILE);
-                $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
-            }
-
             // Log patient update activity
             self::logPatientUpdate($patient, $patient->user);
 
             DB::commit();
+
+            // Media filesystem ops AFTER commit — clearMediaCollection physically deletes the
+            // old file immediately, so doing it inside the transaction means a rollback would
+            // leave the DB referencing a file that is already gone. MEDIA.
+            if (isset($input['profile']) && ! empty($input['profile'])) {
+                $patient->clearMediaCollection(Patient::PROFILE);
+                $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
+            }
 
             return true;
         } catch (\Exception $e) {

@@ -15,6 +15,13 @@ use RuntimeException;
 class MedicineInventoryService
 {
     /**
+     * Sentinel expiry for stock with no known/real expiration date (legacy opening balance
+     * and reversed dispenses). medicine_batches.expiration_date is NOT NULL, so we cannot use
+     * NULL; a far-future date means "never expires" — it stays available and sorts LAST in FEFO.
+     */
+    private const NO_EXPIRY_SENTINEL = '2099-12-31';
+
+    /**
      * Record stock-in movement for a medicine batch.
      */
     public function recordStockIn(array $data): MedicineBatch
@@ -100,7 +107,13 @@ class MedicineInventoryService
     public function dispensePrescription(Prescription $prescription, ?int $userId = null): array
     {
         return DB::transaction(function () use ($prescription, $userId) {
-            $prescription->refresh();
+            // Lock the prescription row so two concurrent dispense requests (double-click or
+            // two staff) cannot both pass the pending check and deduct stock twice. DISP-3.
+            $locked = Prescription::whereKey($prescription->getKey())->lockForUpdate()->first();
+            if (! $locked) {
+                throw new RuntimeException('Prescription not found for dispensing.');
+            }
+            $prescription = $locked;
 
             $currentStatus = $prescription->status;
             if ($currentStatus === true || $currentStatus === 1 || $currentStatus === '1') {
@@ -118,9 +131,18 @@ class MedicineInventoryService
             foreach ($prescription->getMedicine as $line) {
                 $quantity = (int) ($line->total_quantity ?: 0);
                 if ($quantity <= 0) {
-                    $fallbackDuration = max(1, (int) ($line->duration_value ?: $line->day ?: 1));
+                    // Fallback must honor the duration unit (week/month), matching the write
+                    // path (PrescriptionController::resolveTotalQuantity); otherwise a
+                    // "2 week, 3x/day" script deducts 6 instead of 42. DISP-4.
+                    $durationValue = max(1, (int) ($line->duration_value ?: $line->day ?: 1));
+                    $unit = strtolower((string) ($line->duration_unit ?: 'day'));
+                    $days = match ($unit) {
+                        'week', 'weeks' => $durationValue * 7,
+                        'month', 'months' => $durationValue * 30,
+                        default => $durationValue,
+                    };
                     $fallbackFrequency = max(1, (int) ($line->frequency ?: $line->dose_interval ?: 1));
-                    $quantity = $fallbackDuration * $fallbackFrequency;
+                    $quantity = $days * $fallbackFrequency;
                 }
 
                 $allocationSummary[$line->medicine] = $this->deductStockFefo(
@@ -245,6 +267,86 @@ class MedicineInventoryService
     }
 
     /**
+     * Restore previously-deducted stock back into inventory (reversal of a dispense).
+     *
+     * Adds the quantity back to the batch that matches the given dosage + expiration date
+     * when one still exists, otherwise creates a dedicated restoration batch, and records a
+     * positive ADJUSTMENT transaction so the ledger and aggregate totals stay consistent.
+     * Used when a dispense record / consultation medicine is edited or deleted so the stock
+     * that was taken out is returned instead of being silently lost.
+     */
+    public function restoreStock(
+        int $medicineId,
+        int $quantity,
+        ?int $userId = null,
+        ?Model $reference = null,
+        ?string $remarks = null,
+        ?string $dosage = null,
+        ?string $expirationDate = null
+    ): void {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $dosage, $expirationDate) {
+            $medicine = Medicine::find($medicineId);
+            if (! $medicine) {
+                return;
+            }
+
+            $normalizedDosage = trim((string) $dosage);
+            // expiration_date is NOT NULL in the batch schema; when the reversed item has no
+            // recorded expiry, fall back to the "never expires" sentinel so the restore batch
+            // is valid and stays available (matches the legacy opening-balance behavior).
+            $normalizedExpiry = ! empty($expirationDate)
+                ? Carbon::parse($expirationDate)->toDateString()
+                : self::NO_EXPIRY_SENTINEL;
+
+            $batchQuery = MedicineBatch::where('medicine_id', $medicineId)
+                ->whereDate('expiration_date', $normalizedExpiry);
+
+            if ($normalizedDosage !== '' && strcasecmp($normalizedDosage, 'N/A') !== 0) {
+                $batchQuery->where('dosage', $normalizedDosage);
+            } else {
+                $batchQuery->where(function ($query) {
+                    $query->whereNull('dosage')
+                        ->orWhere('dosage', '')
+                        ->orWhere('dosage', 'N/A');
+                });
+            }
+
+            $batch = $batchQuery->orderBy('id')->lockForUpdate()->first();
+
+            if (! $batch) {
+                $batch = new MedicineBatch([
+                    'medicine_id' => $medicineId,
+                    'batch_number' => 'RESTORE-' . $medicineId . '-' . now()->format('YmdHis'),
+                    'dosage' => $normalizedDosage !== '' ? $normalizedDosage : $medicine->dosage,
+                    'quantity' => 0,
+                    'expiration_date' => $normalizedExpiry,
+                    'date_received' => Carbon::today()->toDateString(),
+                    'supplier_name' => 'Stock restoration',
+                ]);
+            }
+
+            $batch->quantity = (int) $batch->quantity + $quantity;
+            $batch->save();
+
+            $this->createTransaction(
+                $batch,
+                MedicineTransaction::TYPE_ADJUSTMENT,
+                $quantity,
+                (int) $batch->quantity,
+                $userId,
+                $reference,
+                $remarks ?? 'Stock restored from reversed dispense'
+            );
+
+            $this->syncMedicineTotals($medicineId);
+        });
+    }
+
+    /**
      * Keep legacy medicine totals in sync with batch-level quantities.
      */
     public function syncMedicineTotals(int $medicineId): void
@@ -308,7 +410,10 @@ class MedicineInventoryService
             'batch_number' => 'OPENING-' . $medicineId,
             'dosage' => $medicine->dosage,
             'quantity' => $openingQty,
-            'expiration_date' => Carbon::today()->toDateString(),
+            // Legacy opening stock has no known expiry. expiration_date is NOT NULL in the
+            // batch schema, so use the far-future "never expires" sentinel: it stays
+            // dispensable/available and sorts last in FEFO, instead of expiring next day.
+            'expiration_date' => self::NO_EXPIRY_SENTINEL,
             'date_received' => Carbon::today()->toDateString(),
             'supplier_name' => 'Legacy opening balance',
         ]);

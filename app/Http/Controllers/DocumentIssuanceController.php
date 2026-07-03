@@ -96,6 +96,11 @@ class DocumentIssuanceController extends Controller
         $documentType = $request->input('document_type');
 
         try {
+            // Wrap document creation + medicine deduction in ONE transaction so a mid-way
+            // failure (e.g. insufficient stock on a later medicine) rolls back the document
+            // and all prior deductions instead of leaving partial data. DISP-2.
+            DB::beginTransaction();
+
             if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->storeMedicalCertificate($data);
             } elseif ($documentType === 'consultation_form') {
@@ -103,6 +108,8 @@ class DocumentIssuanceController extends Controller
                 $this->prepareConsultationPatient($data);
                 $this->storeConsultationForm($data);
             }
+
+            DB::commit();
 
             // Check if we should redirect to patient history
             if ($request->has('redirect_to_patient') && $request->redirect_to_patient) {
@@ -136,6 +143,8 @@ class DocumentIssuanceController extends Controller
             return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document created successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
+
             // Log the error for debugging
             Log::error('Error in store method: ' . $e->getMessage());
 
@@ -1168,11 +1177,18 @@ class DocumentIssuanceController extends Controller
         $documentType = $request->input('document_type', $requestDocument->document_type);
 
         try {
+            // Wrap document update + medicine restore/re-deduct in ONE transaction so a
+            // mid-way failure rolls back everything instead of leaving partial stock
+            // adjustments and half-updated records. DISP-2.
+            DB::beginTransaction();
+
             if ($documentType === 'medical_certificate' || $documentType === 'excuse_slip') {
                 $this->updateMedicalCertificate($requestDocument, $data);
             } elseif ($documentType === 'consultation_form') {
                 $this->updateConsultationForm($requestDocument, $data);
             }
+
+            DB::commit();
 
             // Check if we have a redirect_patient_id (from patient history page)
             if ($request->has('redirect_patient_id')) {
@@ -1198,6 +1214,7 @@ class DocumentIssuanceController extends Controller
             return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document updated successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error in update method: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'An error occurred while updating the request document.');
@@ -1819,7 +1836,10 @@ class DocumentIssuanceController extends Controller
                     'batch_number' => 'RETURN-' . (int) $medicineId . '-' . now()->format('YmdHis'),
                     'dosage' => $resolvedDosage !== '' ? $resolvedDosage : null,
                     'quantity' => 0,
-                    'expiration_date' => now()->toDateString(),
+                    // Never-expires sentinel (original expiry unknown) so restored consultation
+                    // stock stays available instead of vanishing the next day. Matches
+                    // MedicineInventoryService::restoreStock. RE-1.
+                    'expiration_date' => '2099-12-31',
                     'date_received' => now()->toDateString(),
                     'supplier_name' => 'Consultation stock restoration',
                 ]);
@@ -1968,8 +1988,18 @@ class DocumentIssuanceController extends Controller
                 'request_all' => request()->all()
             ]);
 
-            // Delete the request document
-            $request_document->delete();
+            // Restore deducted medicine stock for consultation forms before deleting;
+            // otherwise the cascade-deleted consultation_medicines lose their stock
+            // permanently. Wrapped with the delete so a failure rolls back both. DISP-1.
+            DB::transaction(function () use ($request_document) {
+                if ($request_document->document_type === 'consultation_form') {
+                    foreach ($request_document->consultationMedicines()->get() as $consultationMedicine) {
+                        $this->restoreMedicineStock($consultationMedicine, $request_document);
+                    }
+                }
+
+                $request_document->delete();
+            });
 
             Log::info('Certificate deleted successfully', ['certificate_id' => $request_document->id]);
 

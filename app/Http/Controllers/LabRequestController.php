@@ -189,6 +189,11 @@ class LabRequestController extends Controller
 
     public function show(LabRequest $lab_request)
     {
+        // A patient may only view their OWN lab request. AUTH-2.
+        if (isRole('patient')) {
+            abort_unless((int) $lab_request->patient_user_id === (int) getLogInUserId(), 403);
+        }
+
         $lab_request->load(['items', 'creator', 'patient']);
         return view('lab_requests.show', compact('lab_request'));
     }
@@ -467,6 +472,11 @@ class LabRequestController extends Controller
     {
         $labRequest = LabRequest::with(['items.labTest', 'creator', 'patient'])->findOrFail($id);
 
+        // A patient may only download their OWN lab request. AUTH-2.
+        if (isRole('patient')) {
+            abort_unless((int) $labRequest->patient_user_id === (int) getLogInUserId(), 403);
+        }
+
         $pdf = Pdf::loadView('lab_requests.pdf', compact('labRequest'))
             ->setPaper('a4', 'portrait');
 
@@ -512,7 +522,7 @@ class LabRequestController extends Controller
                     'department' => $user->department?->department_name,
                     'office'     => $user->office?->office_name,
                     'address'    => $user->address?->full_address ?? ($user->patient?->address?->full_address ?? ''),
-                    'status_affiliation' => User::STATUS_AFFILIATION[$user->patient->patient_type_id] ?? 'guest',
+                    'status_affiliation' => User::STATUS_AFFILIATION[$user->patient?->patient_type_id] ?? 'guest',
                 ];
             });
 

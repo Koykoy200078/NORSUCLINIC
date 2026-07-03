@@ -31,7 +31,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE<span class="text-red-500">*</span></label>
-                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" readonly required>
+                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="gender">GENDER<span class="text-red-500">*</span></label>
@@ -160,7 +160,7 @@
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
-                <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" max="{{ date('Y-m-d') }}" required>
+                <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" required>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
@@ -309,7 +309,7 @@
             <div class="col-span-3">
                 <div class="flex gap-4">
                     <label class="flex-1 cursor-pointer custom-radio-card">
-                        <input type="radio" name="consult_mode" value="physical" class="sr-only-custom" required>
+                        <input type="radio" name="consult_mode" value="physical" class="sr-only-custom" required checked>
                         <div class="rounded-lg border-2 border-gray-200 p-3 hover:bg-gray-50 transition-all flex items-center gap-3 card-content physical-card">
                             <div class="bg-blue-100 text-blue-600 p-2 rounded-full flex-shrink-0">
                                 <i class="fa-solid fa-user-doctor text-lg"></i>
@@ -913,9 +913,13 @@
 
         if (consultationForm && informantField) {
             consultationForm.addEventListener('submit', function(event) {
+                // Do NOT block the save on an unrecognized informant value. Coerce a
+                // stray/empty value to a valid option ('Guest') so this field can never
+                // silently trap the user (previously event.preventDefault + reportValidity
+                // scrolled back to Informant and the form could not be saved).
                 if (!validateAndNormalizeInformantField()) {
-                    event.preventDefault();
-                    informantField.reportValidity();
+                    informantField.value = 'Guest';
+                    informantField.setCustomValidity('');
                 }
             });
         }

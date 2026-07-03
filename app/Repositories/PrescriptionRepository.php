@@ -249,12 +249,10 @@ class PrescriptionRepository extends BaseRepository
 
     public function getSettingList(): array
     {
-        // Cache settings for 1 hour since they rarely change
-        $settings = cache()->remember('clinic_settings', 3600, function () {
-            return Setting::pluck('value', 'key')->toArray();
-        });
-
-        return $settings;
+        // Single source of truth for settings (key 'application_settings') so a settings
+        // change is reflected everywhere immediately instead of this repo serving a stale
+        // 'clinic_settings' copy for up to an hour. CONFIG-3.
+        return \App\Services\SettingsService::get();
     }
 
     public function getDoctors()

@@ -15,7 +15,9 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    // Honor both the Laravel 11 key (BROADCAST_CONNECTION) and the legacy L10 key
+    // (BROADCAST_DRIVER) so the .env value is not silently ignored. CONFIG-4.
+    'default' => env('BROADCAST_CONNECTION', env('BROADCAST_DRIVER', 'null')),
 
     /*
     |--------------------------------------------------------------------------

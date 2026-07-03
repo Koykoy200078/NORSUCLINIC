@@ -194,9 +194,14 @@ class PatientController extends AppBaseController
 
     public function deleteOldPatient()
     {
-        $patients =  Patient::pluck('user_id')->toArray();
+        // Include archived (soft-deleted) patients in the keep-set — Patient::pluck applies
+        // the SoftDeletes scope, which would otherwise treat archived patients as "old" and
+        // wipe their user accounts too. CRUD-DL. (Route is POST-only so CSRF applies.)
+        $patients = Patient::withTrashed()->pluck('user_id')->toArray();
 
         User::whereType(User::PATIENT)->whereNotIn('id', $patients)->delete();
+
+        return $this->sendSuccess(__('messages.common.deleted_successfully'));
     }
 
     public function showMyHistory(Patient $patient)
@@ -237,6 +242,10 @@ class PatientController extends AppBaseController
 
     public function resetPassword(User $user): JsonResponse
     {
+        // Only PATIENT accounts may be reset here — otherwise a doctor/staff with
+        // manage_patients could reset the clinic_admin's password and take over. CRUD-AUTH-4.
+        abort_unless((int) $user->type === User::PATIENT, 403);
+
         try {
             $user->update([
                 'password' => Hash::make('123456')

@@ -15,7 +15,9 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    // Honor both the Laravel 11 key (CACHE_STORE) and the legacy L10 key (CACHE_DRIVER)
+    // so the .env value is never silently ignored. Defaults to the file store. CONFIG-1.
+    'default' => env('CACHE_STORE', env('CACHE_DRIVER', 'file')),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,12 +66,6 @@ return [
         'settings' => [
             'driver' => 'file',
             'path' => storage_path('framework/cache/settings'),
-        ],
-
-        'file' => [
-            'driver' => 'file',
-            'path' => storage_path('framework/cache/data'),
-            'lock_path' => storage_path('framework/cache/data'),
         ],
 
         'memcached' => [

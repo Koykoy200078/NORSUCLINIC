@@ -23,7 +23,7 @@ Edit Dispense Record
         </div>
         <div class="card">
             <div class="card-body">
-                {{Form::hidden('uniqueId',count($medicineBill->saleMedicine)+1,['id'=>'medicineUniqueId'])}}
+                {{Form::hidden('uniqueId',count($medicineBill->dispenseItems)+1,['id'=>'medicineUniqueId'])}}
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 

@@ -281,7 +281,10 @@ class User extends Authenticatable implements HasMedia
         'gender' => 'integer',
         'nationality_citizenship' => 'string',
         'status' => 'boolean',
-        'password' => 'string',
+        // 'hashed' hashes any assigned plaintext at the model layer (Laravel 10) and is
+        // idempotent for already-hashed values (Hash::isHashed), so existing Hash::make
+        // call sites are unaffected while raw ->update(['password'=>...]) paths are now safe. AUTH-6.
+        'password' => 'hashed',
         'language' => 'string',
         'blood_type' => 'string',
         'type' => 'integer',

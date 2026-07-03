@@ -20,7 +20,8 @@ trait LogsActivity
     public static function logActivity(
         string $action,
         string $description,
-        array $details = []
+        array $details = [],
+        bool $append = false
     ): ?ActivityLog {
         $user = Auth::user();
 
@@ -73,6 +74,16 @@ trait LogsActivity
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ];
+
+        // Append-only events (procurement, usage) must create a NEW row each time; otherwise
+        // they collapse onto one row keyed by action+subject and overwrite history. AUDIT-2.
+        if ($append) {
+            return ActivityLog::create(array_merge([
+                'action' => $action,
+                'subject_type' => $details['subject_type'] ?? null,
+                'subject_id' => $details['subject_id'] ?? null,
+            ], $logData));
+        }
 
         // Use updateOrCreate to update existing log or create new one
         return ActivityLog::updateOrCreate($uniqueIdentifier, $logData);
@@ -178,7 +189,7 @@ trait LogsActivity
     {
         return self::logActivity(
             'procured_medicine',
-            "Procured {$quantity} units of {$medicine->name}",
+            "Stocked in {$quantity} units of {$medicine->name}",
             array_merge([
                 'subject_type' => 'Medicine',
                 'subject_id' => $medicine->id,
@@ -188,7 +199,8 @@ trait LogsActivity
                     'batch_no' => $additionalDetails['batch_no'] ?? null,
                     'expiry_date' => $additionalDetails['expiry_date'] ?? null,
                 ],
-            ], $additionalDetails)
+            ], $additionalDetails),
+            true // append: keep every procurement as its own audit row. AUDIT-2.
         );
     }
 
@@ -217,7 +229,8 @@ trait LogsActivity
         return self::logActivity(
             'used_medicine',
             "Used {$quantity} units of {$medicine->name} for patient: {$patientName}",
-            $details
+            $details,
+            true // append: keep every dispensing event as its own audit row. AUDIT-2.
         );
     }
 

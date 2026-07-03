@@ -85,7 +85,9 @@ class SettingRepository extends BaseRepository
             }
         }
 
-        Cache::flush('settings');
+        // Invalidate only the settings cache. Cache::flush() ignores its argument and wipes
+        // the ENTIRE cache store (dashboards, medicine/doctor lists, etc.). CONFIG-3.
+        \App\Services\SettingsService::clearCache();
         Cache::put('settings', Setting::all()->keyBy('key'));
     }
 }

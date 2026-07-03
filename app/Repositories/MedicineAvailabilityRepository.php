@@ -126,11 +126,10 @@ class MedicineAvailabilityRepository extends BaseRepository
                 PurchasedMedicine::create($purchasedMedicineArray);
                 $medicine = Medicine::find($input['medicine'][$key]);
                 $previousAvailable = (int) ($medicine->available_quantity ?? 0);
-                $medicineQtyArray = [
-                    'quantity' => $input['quantity'][$key] + $medicine->quantity,
-                    'available_quantity' => $input['quantity'][$key] + $medicine->available_quantity,
-                ];
-                $medicine->update($medicineQtyArray);
+                // Do NOT manually bump quantity/available_quantity here — recordStockIn()'s
+                // syncMedicineTotals() recomputes them from the batch ledger and is the single
+                // source of truth. The manual bump fed an inflated value into the monotonic
+                // baseline_quantity and skewed low-stock alerts. INV-4.
 
                 app(MedicineInventoryService::class)->recordStockIn([
                     'medicine_id' => $medicine->id,
@@ -210,11 +209,8 @@ class MedicineAvailabilityRepository extends BaseRepository
                     $medicine = Medicine::find($medicineId);
                     if ($medicine) {
                         $previousAvailable = (int) ($medicine->available_quantity ?? 0);
-                        $medicineQtyArray = [
-                            'quantity' => $medicine->quantity + $quantityDifference,
-                            'available_quantity' => $medicine->available_quantity + $quantityDifference,
-                        ];
-                        $medicine->update($medicineQtyArray);
+                        // No manual quantity bump — the inventory service's syncMedicineTotals()
+                        // recomputes totals from the batch ledger authoritatively. INV-4.
 
                         if ($quantityDifference > 0) {
                             app(MedicineInventoryService::class)->recordStockIn([
@@ -346,16 +342,23 @@ class MedicineAvailabilityRepository extends BaseRepository
      */
     protected static function logMedicineUpdate($medicine, $quantityChange, $details = [])
     {
+        // logActivity(string $action, string $description, array $details) — the previous call
+        // passed the class as $action and the id as $description with no subject_type/subject_id,
+        // so every medicine-update log collapsed onto ONE overwriting row. Pass proper args so
+        // the unique key is action + Medicine + medicine_id. INV/AUDIT-1.
         self::logActivity(
-            Medicine::class,
-            $medicine->id,
+            'medicine_quantity_updated',
+            "Updated stock for {$medicine->name} by {$quantityChange}",
             [
-                'action' => 'medicine_quantity_updated',
-                'medicine_name' => $medicine->name,
-                'quantity_change' => $quantityChange,
-                'new_quantity' => $medicine->quantity,
-                'new_available_quantity' => $medicine->available_quantity,
-                'details' => $details,
+                'subject_type' => 'Medicine',
+                'subject_id' => $medicine->id,
+                'properties' => [
+                    'medicine_name' => $medicine->name,
+                    'quantity_change' => $quantityChange,
+                    'new_quantity' => $medicine->quantity,
+                    'new_available_quantity' => $medicine->available_quantity,
+                    'details' => $details,
+                ],
             ]
         );
     }
