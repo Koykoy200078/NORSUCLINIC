@@ -147,7 +147,6 @@
     <script data-turbo-eval="false">
         let usersRole = "{{ !empty(getLogInUser()->roles->first()) ? getLogInUser()->roles->first()->name : '' }}";
         window.currentPanel = '{{ isRole("clinic_admin") ? "admin" : ((isRole("staff") || isRole("nurse")) ? "staff" : (isRole("doctor") ? "doctors" : "patients")) }}';
-        let currencyIcon = '';
         let isSetFirstFocus = true;
         let womanAvatar = "{{ url(asset('web/media/avatars/female.png')) }}";
         let manAvatar = "{{ url(asset('web/media/avatars/male.png')) }}";

@@ -37,6 +37,22 @@ function Get-PreferredIPv4 {
     return "127.0.0.1"
 }
 
+# Returns $true if something is already LISTENING on the given TCP port.
+function Test-PortInUse {
+    param([int]$Port)
+    try {
+        if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) {
+            return $true
+        }
+    } catch { }
+    try {
+        foreach ($line in (netstat -ano -p tcp 2>$null | Select-String ":$Port\s")) {
+            if ($line -match 'LISTENING') { return $true }
+        }
+    } catch { }
+    return $false
+}
+
 $ServerHost = Get-PreferredIPv4
 
 # Colors
@@ -71,6 +87,18 @@ function Write-Error-Message {
 # Start script
 Clear-Host
 Write-Header "NORSUCLINIC - Starting Development Environment"
+
+# ============================================================
+# Guard: if the server is already running on the port, do NOT proceed
+# (a second `php artisan serve` would just fail with "address already in use").
+# ============================================================
+if (Test-PortInUse -Port ([int]$ServerPort)) {
+    Write-Host "[WARN] A server is already running on port $ServerPort. Not starting another instance." -ForegroundColor $WarningColor
+    Write-Host "  Access it at: http://${ServerHost}:${ServerPort}  (or http://127.0.0.1:${ServerPort})" -ForegroundColor White
+    Start-Process "http://127.0.0.1:${ServerPort}"
+    Read-Host "`nPress Enter to exit"
+    exit 0
+}
 
 # ============================================================
 # Step 1: Start WAMP Server

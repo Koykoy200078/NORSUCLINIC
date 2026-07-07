@@ -26,6 +26,19 @@ echo Detected server IP: %SERVER_HOST%
 echo.
 
 REM ============================================================
+REM Guard: if the server is already running on port 8000, do NOT proceed
+REM (a second "php artisan serve" would just fail with "address already in use").
+REM ============================================================
+netstat -ano 2>nul | findstr ":8000" | findstr "LISTENING" >nul 2>&1
+if "%ERRORLEVEL%"=="0" (
+    echo [WARN] A server is already running on port 8000. Not starting another instance.
+    echo   Access it at: http://%SERVER_HOST%:8000  ^(or http://127.0.0.1:8000^)
+    explorer http://127.0.0.1:8000
+    pause
+    exit /b 0
+)
+
+REM ============================================================
 REM Step 1: Start WAMP Server
 REM ============================================================
 echo [1/4] Starting WAMP Server...
