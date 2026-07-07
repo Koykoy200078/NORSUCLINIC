@@ -45,8 +45,11 @@ class CMSController extends AppBaseController
     {
         $data = [];
         $input = $request->all();
-        $data['terms_conditions'] = json_decode($input['terms_conditions']);
-        $data['privacy_policy'] = json_decode($input['privacy_policy']);
+        // Purify the rich-text HTML at write time — the 'xss' middleware deliberately skips
+        // cms.update, and these values are rendered raw ({!! !!}) on PUBLIC terms/privacy
+        // pages, so unsanitized input is a stored-XSS sink. E-SEC-4.
+        $data['terms_conditions'] = \Mews\Purifier\Facades\Purifier::clean((string) json_decode($input['terms_conditions']));
+        $data['privacy_policy'] = \Mews\Purifier\Facades\Purifier::clean((string) json_decode($input['privacy_policy']));
         $data['about_title'] = $input['about_title'];
         $data['about_short_description'] = $input['about_short_description'];
         $data['about_experience'] = $input['about_experience'];

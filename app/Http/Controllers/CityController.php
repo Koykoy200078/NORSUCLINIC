@@ -94,6 +94,11 @@ class CityController extends AppBaseController
         if ($checkRecord) {
             return $this->sendError(__('messages.flash.city_used'));
         }
+
+        // Block when child barangays exist — ON DELETE CASCADE would silently wipe them. E-DL-6.
+        if (\App\Models\Barangay::where('city_id', $city->id)->exists()) {
+            return $this->sendError(__('messages.flash.city_used'));
+        }
         $city->delete();
 
         return $this->sendSuccess(__('messages.flash.city_delete'));

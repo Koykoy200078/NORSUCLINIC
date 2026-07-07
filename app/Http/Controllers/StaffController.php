@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\StaffDesignation;
 use App\Models\User;
 use App\Repositories\StaffRepository;
+use Illuminate\Support\Facades\Hash;
 use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -125,5 +126,18 @@ class StaffController extends AppBaseController
         $this->staffRepository->delete($staff->id);
 
         return $this->sendSuccess(__('messages.flash.staff_delete'));
+    }
+
+    /**
+     * Reset a staff member's password to the default. Scoped to STAFF accounts only so an
+     * admin cannot reset an admin/doctor/patient account through this endpoint. E-CRIT-2.
+     */
+    public function resetPassword(User $staff): JsonResponse
+    {
+        abort_unless((int) $staff->type === User::STAFF, 403);
+
+        $staff->update(['password' => Hash::make('123456')]);
+
+        return $this->sendSuccess('Password has been reset to default (123456) successfully.');
     }
 }

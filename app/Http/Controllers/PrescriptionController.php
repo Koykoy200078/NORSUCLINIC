@@ -19,7 +19,6 @@ use App\Models\PrescriptionMedicine;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
 use App\Services\MedicineInventoryService;
-use App\Services\PrescriptionService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
@@ -43,19 +42,15 @@ class PrescriptionController extends AppBaseController
 
     private $medicineRepository;
 
-    private $prescriptionService;
-
     private MedicineInventoryService $medicineInventoryService;
 
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
         MedicineRepository $medicineRepository,
-        PrescriptionService $prescriptionService,
         MedicineInventoryService $medicineInventoryService
     ) {
         $this->prescriptionRepository = $prescriptionRepo;
         $this->medicineRepository = $medicineRepository;
-        $this->prescriptionService = $prescriptionService;
         $this->medicineInventoryService = $medicineInventoryService;
     }
 

@@ -60,7 +60,6 @@
                 </div>
                 {{ Form::hidden('quantity', 0, ['id' => 'createMedicineQuantity']) }}
                 {{ Form::hidden('available_quantity', 0, ['id' => 'createMedicineAvailableQuantity']) }}
-                {{ Form::hidden('currency_symbol', getCurrentCurrency(), ['class' => 'currencySymbol']) }}
             </div>
             <div class="modal-footer">
                 {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'medicineSaveModalBtn']) }}

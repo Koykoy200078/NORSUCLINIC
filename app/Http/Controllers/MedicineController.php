@@ -271,7 +271,6 @@ class MedicineController extends AppBaseController
                 ->whereDate('expiration_date', '<', \Carbon\Carbon::today()->toDateString())
         );
 
-        $currency = strtoupper(getCurrentCurrency());
         $genericName = $medicine->generic_name ?: optional($medicine->generic)->name;
         $categoryName = $medicine->category ?: $medicine->category_name ?: optional($medicine->medicineCategory)->name;
         $defaultDosage = trim((string) ($medicine->dosage ?? ''));

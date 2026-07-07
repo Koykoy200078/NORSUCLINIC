@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUserStatus', 'role:patient')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'patientDashboard'])->name('dashboard');
     Route::post('/change-default-password', [DashboardController::class, 'changeDefaultPassword'])->name('change-default-password');
-    Route::get(
-        '/dashboard-patients',
-        [DashboardController::class, 'getPatientList']
-    )->name('patientData.dashboard');
+    // (Removed patients/dashboard-patients -> getPatientList: it was an unscoped copy of the
+    //  admin patient-list endpoint that leaked EVERY patient's PII to any logged-in patient. E-IDOR-1.)
 
     // Route for Prescription
     Route::resource('prescriptions', PrescriptionController::class)->except('create', 'edit', 'index');

@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
  * @property int $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\Brand|null $brand
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Medicine> $medicines
  * @property-read int|null $medicines_count
  * @method static \Illuminate\Database\Eloquent\Builder|Category newModelQuery()
@@ -74,10 +73,5 @@ class Category extends Model
     public function medicines(): HasMany
     {
         return $this->hasMany(Medicine::class, 'category_id');
-    }
-
-    public function brand(): BelongsTo
-    {
-        return $this->belongsTo(Brand::class);
     }
 }

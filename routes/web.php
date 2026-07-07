@@ -5,7 +5,6 @@ require __DIR__ . '/debug-profile.php';
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BarangayController;
-use App\Http\Controllers\BrandController;
 use App\Http\Controllers\GenericController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
@@ -128,7 +127,9 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::resource('doctors', UserController::class);
         Route::post('/add-qualification', [UserController::class, 'addQualification'])->name('add.qualification');
         Route::put('doctor-status', [UserController::class, 'changeDoctorStatus'])->name('doctor.status');
-        Route::post('doctors/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('doctors.reset.password');
+        // Use the DOCTOR-scoped UserController::resetPassword (PatientController::resetPassword
+        // only accepts PATIENT accounts, so it always 403'd for doctors). E-CRIT-3.
+        Route::post('doctors/{user}/reset-password', [UserController::class, 'resetPassword'])->name('doctors.reset.password');
     });
 
     // Countries routes

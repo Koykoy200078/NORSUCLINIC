@@ -133,19 +133,7 @@
                     ->paginate(5, ['*'], 'medicine_page')
                     ->appends(['medicine_month' => request('medicine_month')]);
 
-                    // Debug: Check if data exists
-                    // dd($usedMedicines->toArray());
                     @endphp
-
-                    {{-- Debug Info --}}
-                    @if(config('app.debug'))
-                    <div class="alert alert-info mb-3">
-                        <strong>Debug Info:</strong><br>
-                        Patient Name: {{ $patientName }}<br>
-                        Total Records: {{ $usedMedicines->total() }}<br>
-                        Current Page Items: {{ $usedMedicines->count() }}
-                    </div>
-                    @endif
 
                     @if($usedMedicines->count() > 0)
                     <div class="table-responsive">
@@ -174,11 +162,8 @@
                                     </td>
                                     <td>
                                         <span class="text-dark fw-bold">
-                                            {!! $medicine->medicine_name ?: '<em>N/A</em>' !!}
+                                            {!! $medicine->medicine_name ? e($medicine->medicine_name) : '<em>N/A</em>' !!}
                                         </span>
-                                        @if(config('app.debug'))
-                                        <br><small class="text-muted">ID: {{ $medicine->medicine_id }}</small>
-                                        @endif
                                     </td>
                                     <td>
                                         @if($medicine->expiry_date)
@@ -207,11 +192,11 @@
                                             @endif
                                     </td>
                                     <td>
-                                        <span class="text-dark fw-bold">{!! $medicine->quantity ?: '<em>0</em>' !!}</span>
+                                        <span class="text-dark fw-bold">{!! $medicine->quantity ? e($medicine->quantity) : '<em>0</em>' !!}</span>
                                     </td>
                                     <td>
                                         <span class="text-dark fw-bold">
-                                            {!! $medicine->source ?: '<em>N/A</em>' !!}
+                                            {!! $medicine->source ? e($medicine->source) : '<em>N/A</em>' !!}
                                         </span>
                                     </td>
                                     <td>

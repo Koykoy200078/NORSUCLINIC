@@ -1,5 +1,3 @@
-{{ Form::hidden('currency_symbol', getCurrentCurrency(), ['class' => 'currencySymbol']) }}
-
 @php
 $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
 @endphp

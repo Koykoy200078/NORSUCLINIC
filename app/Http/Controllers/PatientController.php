@@ -15,7 +15,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use App\Repositories\PatientRepository;
-use App\Services\PatientService;
 use App\Services\SettingsService;
 use App\Http\Requests\CreatePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
@@ -27,13 +26,9 @@ class PatientController extends AppBaseController
     /** @var PatientRepository */
     private $patientRepository;
 
-    /** @var PatientService */
-    private $patientService;
-
-    public function __construct(PatientRepository $patientRepo, PatientService $patientService)
+    public function __construct(PatientRepository $patientRepo)
     {
         $this->patientRepository = $patientRepo;
-        $this->patientService = $patientService;
     }
 
     /**

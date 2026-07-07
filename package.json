@@ -31,8 +31,6 @@
         "datatables": "^1.10.18",
         "intl-tel-input": "^17.0.13",
         "jquery": "^3.7.1",
-        "laravel-echo": "^2.2.4",
-        "pusher-js": "^8.4.0",
         "quill": "^2.0.3",
         "tailwindcss": "^4.1.3"
     },

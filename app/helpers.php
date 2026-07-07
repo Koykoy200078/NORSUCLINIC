@@ -400,41 +400,6 @@ if (! function_exists('getNotification')) {
     }
 }
 
-if (! function_exists('getCurrencyCode')) {
-    /**
-     * Returns hardcoded Philippine Peso currency code
-     * @return string
-     */
-    function getCurrencyCode(): string
-    {
-        return 'PHP';
-    }
-}
-
-if (! function_exists('getCurrencyFormat')) {
-    /**
-     * Format amount with Philippine Peso currency
-     * @param string $currency
-     * @param float $amount
-     * @return string
-     */
-    function getCurrencyFormat($currency, $amount): string
-    {
-        return '₱' . number_format($amount, 2);
-    }
-}
-
-if (! function_exists('getCurrentCurrency')) {
-    /**
-     * Returns hardcoded Philippine Peso symbol
-     * @return string
-     */
-    function getCurrentCurrency(): string
-    {
-        return '₱';
-    }
-}
-
 if (! function_exists('getNotificationIcon')) {
 
     function getNotificationIcon($notificationFor)
@@ -613,78 +578,6 @@ if (! function_exists('generateUniqueHistoryNumber')) {
     }
 }
 
-if (! function_exists('generateUniqueBillNumber')) {
-    /**
-     * @deprecated Use generateUniqueHistoryNumber() instead
-     * @return int
-     */
-    function generateUniqueBillNumber()
-    {
-        return generateUniqueHistoryNumber();
-    }
-}
-
-if (! function_exists('getAmountToWord')) {
-
-    function getAmountToWord(float $amount): string
-    {
-        $amount_after_decimal = round($amount - ($num = floor($amount)), 2);
-        $count_length = strlen($num);
-        $x = 0;
-        $string = [];
-        $change_words = [
-            0 => '',
-            1 => 'One',
-            2 => 'Two',
-            3 => 'Three',
-            4 => 'Four',
-            5 => 'Five',
-            6 => 'Six',
-            7 => 'Seven',
-            8 => 'Eight',
-            9 => 'Nine',
-            10 => 'Ten',
-            11 => 'Eleven',
-            12 => 'Twelve',
-            13 => 'Thirteen',
-            14 => 'Fourteen',
-            15 => 'Fifteen',
-            16 => 'Sixteen',
-            17 => 'Seventeen',
-            18 => 'Eighteen',
-            19 => 'Nineteen',
-            20 => 'Twenty',
-            30 => 'Thirty',
-            40 => 'Forty',
-            50 => 'Fifty',
-            60 => 'Sixty',
-            70 => 'Seventy',
-            80 => 'Eighty',
-            90 => 'Ninety',
-        ];
-        $here_digits = ['', 'Hundred', 'Thousand', 'Lakh', 'Crore'];
-        while ($x < $count_length) {
-            $get_divider = ($x == 2) ? 10 : 100;
-            $amount = floor($num % $get_divider);
-            $num = floor($num / $get_divider);
-            $x += $get_divider == 10 ? 1 : 2;
-            if ($amount) {
-                $add_plural = (($counter = count($string)) && $amount > 9) ? 's' : null;
-                $amt_hundred = ($counter == 1 && $string[0]) ? ' and ' : null;
-                $string[] = ($amount < 21) ? $change_words[$amount] . ' ' . $here_digits[$counter] . $add_plural . '
-       ' . $amt_hundred : $change_words[floor($amount / 10)] . ' ' . $change_words[$amount % 10] . '
-       ' . $here_digits[$counter] . $add_plural . ' ' . $amt_hundred;
-            } else {
-                $string[] = null;
-            }
-        }
-        $implode_to_Rupees = implode('', array_reverse($string));
-        $get_paise = ($amount_after_decimal > 0) ? 'And ' . ($change_words[$amount_after_decimal / 10] . '
-   ' . $change_words[$amount_after_decimal % 10]) . ' Paise' : '';
-
-        return ($implode_to_Rupees ? $implode_to_Rupees . 'PHP' : '') . $get_paise;
-    }
-}
 
 if (! function_exists('canAccessRecord')) {
 
@@ -1146,17 +1039,6 @@ if (!function_exists('getExpiringMedicinesCount')) {
     }
 }
 
-if (! function_exists('getCurrencyIcon')) {
-    /**
-     * Get the currency icon (hardcoded to Philippine Peso)
-     *
-     * @return string
-     */
-    function getCurrencyIcon(): string
-    {
-        return '₱';
-    }
-}
 
 if (! function_exists('generateUniqueLabRequestNumber')) {
     /**

@@ -73,6 +73,12 @@ class ProvinceController extends AppBaseController
             return $this->sendError(__('messages.flash.state_use'));
         }
 
+        // Block when child cities exist — ON DELETE CASCADE would silently wipe the
+        // cities/barangays beneath this province. E-DL-6.
+        if (\App\Models\City::where('state_id', $state->id)->exists()) {
+            return $this->sendError(__('messages.flash.state_use'));
+        }
+
         $state->delete();
 
         return $this->sendSuccess(__('messages.flash.state_delete'));

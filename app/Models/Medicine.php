@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Generic|null $generic
  * @property-read \App\Models\Category|null $category
- * @property-read \App\Models\PrescriptionMedicineModal|null $prescriptionMedicines
+ * @property-read \App\Models\PrescriptionMedicine|null $prescriptionMedicines
  * @property-read \App\Models\PurchasedMedicine|null $purchasedMedicine
  * @property-read \App\Models\UsedMedicine|null $usedMedicines
  * @method static \Illuminate\Database\Eloquent\Builder|Medicine newModelQuery()

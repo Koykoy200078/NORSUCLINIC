@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\checkImpersonateUser;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\EnsureStaffModuleAccess;
 use App\Http\Middleware\EncryptCookies;
@@ -95,7 +94,6 @@ class Kernel extends HttpKernel
         'staff.module' => EnsureStaffModuleAccess::class,
         'checkUserStatus' => CheckUserStatus::class,
         'xss' => XSS::class,
-        'checkImpersonateUser' => checkImpersonateUser::class,
         'setLanguage' => SetLanguage::class,
         'forceAdminPasswordChange' => ForceAdminDefaultPasswordChange::class,
     ];

@@ -79,6 +79,12 @@ class CountryController extends AppBaseController
             return $this->sendError(__('messages.flash.country_used'));
         }
 
+        // Block when child provinces exist — the FK chain is ON DELETE CASCADE, so deleting a
+        // country would silently wipe every state/city/barangay beneath it. E-DL-6.
+        if (\App\Models\Province::where('country_id', $country->id)->exists()) {
+            return $this->sendError(__('messages.flash.country_used'));
+        }
+
         $country->delete();
 
         return $this->sendSuccess(__('messages.flash.country_delete'));

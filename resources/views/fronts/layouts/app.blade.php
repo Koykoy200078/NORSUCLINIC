@@ -37,7 +37,7 @@
 
     <!-- JavaScript Variables -->
     <script data-turbo-eval="false">
-        let currencyIcon = '{{ getCurrencyIcon() }}';
+        let currencyIcon = '';
         let isSetFirstFocus = false;
         let csrfToken = "{{ csrf_token() }}";
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";

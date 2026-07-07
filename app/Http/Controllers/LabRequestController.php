@@ -36,6 +36,9 @@ class LabRequestController extends Controller
 
     public function create(Request $request)
     {
+        // Patients are view-only — they may not create lab requests. VIEW-ONLY.
+        abort_if(isRole('patient'), 403);
+
         $labTestsGrouped = LabTest::groupedByCategory();
 
         // Pre-populate patient if user is a patient OR user_id is passed
@@ -77,6 +80,9 @@ class LabRequestController extends Controller
 
     public function store(Request $request)
     {
+        // Patients are view-only — they may not create lab requests. VIEW-ONLY.
+        abort_if(isRole('patient'), 403);
+
         $request->validate([
             'patient_user_id' => isRole('patient') ? 'nullable' : 'required|exists:users,id',
             'patient_name'    => 'required|string|max:255',

@@ -775,10 +775,6 @@ return [
         'country_update' => 'Country updated successfully.',
         'country_used' => 'Country used somewhere else.',
         'country_delete' => 'Country deleted successfully.',
-        'currency_create' => 'Currency created successfully.',
-        'currency_update' => 'Currency updated successfully.',
-        'currency_used' => 'Currency used somewhere else.',
-        'currency_delete' => 'Currency deleted successfully.',
         'state_create' => 'State created successfully.',
         'state_update' => 'State updated successfully.',
         'state_delete' => 'State deleted successfully.',
@@ -842,19 +838,8 @@ return [
         'user_zoom_credential_saved' => 'User Zoom Credential saved successfully.',
         'select_calendar.' => 'Please select a calendar.',
         'appointment_book' => 'An appointment already exists on the selected date.',
-        'currency_not_supported' => 'this currency is not supported'
     ],
 
-    'payment_method' => [
-        'stripe' => 'Stripe',
-        'paypal' => 'Paypal',
-        'authorize' => 'Authorize',
-        'paytm' => 'Paytm',
-        'mobile_required' => 'Mobile number field is required',
-        'name' => 'Enter name',
-        'email' => 'Enter email',
-        'mobile_no' => 'Mobile No',
-    ],
     'medicine' => [
         'medicine' => 'Medicine',
         'medicine_category' => 'Medicine Category',
