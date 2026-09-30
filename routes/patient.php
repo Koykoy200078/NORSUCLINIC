@@ -1,5 +1,21 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Patient self-service routes — DISABLED
+|--------------------------------------------------------------------------
+| Patients are record-only: they do not log in (patient login is rejected in
+| AuthenticatedSessionController) and this file is NOT loaded — the
+| `require __DIR__ . '/patient.php';` line in routes/web.php is commented out.
+|
+| Patient RECORDS (create/edit/view/history by admin, staff and doctor) live
+| under the admin/staff/doctor route groups and are unaffected.
+|
+| The self-service routes below are preserved for reference / easy re-enable.
+| To restore the patient portal: re-enable the require in routes/web.php and
+| remove the patient-login block in AuthenticatedSessionController.
+*/
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\PrescriptionController;

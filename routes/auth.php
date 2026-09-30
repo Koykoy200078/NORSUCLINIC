@@ -10,12 +10,15 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/register', [RegisteredUserController::class, 'create'])
-    ->middleware('guest')
-    ->name('register')->middleware('setLanguage');
+// Public self-registration is DISABLED — patients are record-only and are created by
+// clinic staff, not through a public sign-up. Re-enable these two routes (and patient
+// login) to bring self-registration back.
+// Route::get('/register', [RegisteredUserController::class, 'create'])
+//     ->middleware('guest')
+//     ->name('register')->middleware('setLanguage');
 
-Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->middleware('guest')->middleware('setLanguage');
+// Route::post('/register', [RegisteredUserController::class, 'store'])
+//     ->middleware('guest')->middleware('setLanguage');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('guest')->middleware('setLanguage');

@@ -328,11 +328,18 @@ class UserController extends AppBaseController
     public function impersonate(int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
+
+        // Patients are record-only and have no portal to impersonate into. Block it so
+        // impersonation can't dead-end on the retired patient dashboard route.
+        if ((int) $user->type === User::PATIENT || $user->hasRole('patient')) {
+            Flash::error('Patient accounts are record-only and cannot be impersonated.');
+
+            return redirect()->back();
+        }
+
         getLogInUser()->impersonate($user);
         if ($user->hasRole('doctor')) {
             return redirect()->route('doctors.dashboard');
-        } elseif ($user->hasRole('patient')) {
-            return redirect()->route('patients.dashboard');
         }
 
         return redirect()->route('admin.dashboard');

@@ -30,10 +30,24 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        // Allow all user types including patients to log in
+        $user = Auth::user();
+
+        // Patient accounts are record-only: the patient self-service portal (dashboard,
+        // own prescriptions / lab requests) is retired and patients are managed as records
+        // by clinic staff. Reject a patient login and drop the freshly created session so a
+        // patient credential can never reach a role-gated page (which would only 403 anyway).
+        if ($user && (int) $user->type === User::PATIENT) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Patient accounts cannot sign in here. Please contact the clinic staff.',
+            ])->onlyInput('email');
+        }
+
         $request->session()->regenerate();
 
-        $user = Auth::user();
         $hasDefaultPassword = $user && Hash::check('123456', $user->password);
         $isClinicAdmin = $user && (int) $user->type === User::ADMIN;
 

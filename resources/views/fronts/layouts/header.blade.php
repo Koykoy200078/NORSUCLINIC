@@ -43,9 +43,7 @@
                             @elseif(isRole('staff'))
                             <a href="{{ route('staff.dashboard') }}"
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
-                            @elseif(isRole('patient'))
-                            <a href="{{ route('patients.dashboard') }}"
-                                class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
+                            {{-- Patient self-service portal retired: patients are record-only and do not log in. --}}
                             @else
                             <a href="{{ route('admin.dashboard') }}"
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>

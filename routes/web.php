@@ -302,7 +302,11 @@ Route::post('delete-old-patients', [PatientController::class, 'deleteOldPatient'
     ->middleware(['auth', 'checkUserStatus', 'role:clinic_admin', 'permission:manage_patients']);
 
 require __DIR__ . '/auth.php';
-require __DIR__ . '/patient.php';
+
+// Patient self-service portal is retired — patients are record-only and no longer log in
+// (see AuthenticatedSessionController). The routes are kept in routes/patient.php, disabled.
+// To bring the patient portal back, uncomment the line below (and re-enable patient login).
+// require __DIR__ . '/patient.php';
 require __DIR__ . '/staff.php';
 require __DIR__ . '/doctor.php';
 require __DIR__ . '/upgrade.php';
