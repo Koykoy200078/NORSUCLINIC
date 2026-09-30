@@ -4,11 +4,14 @@ namespace App\Http\Requests;
 
 use App\Models\StaffDesignation;
 use App\Rules\ValidStaffDesignationStationPair;
+use App\Http\Requests\Concerns\ChecksArchivedAccounts;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateStaffRequest extends FormRequest
 {
+    use ChecksArchivedAccounts;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,12 +31,14 @@ class CreateStaffRequest extends FormRequest
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email' => 'required|email:filter|unique:users,email',
-            'employee_id' => 'required|string|max:100|unique:users,employee_id',
-            'contact' => 'nullable|unique:users,contact',
+            'email' => ['required', 'email:filter', $this->uniqueAmongActiveUsers('email')],
+            'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')],
+            'contact' => ['nullable', $this->uniqueAmongActiveUsers('contact')],
             'password' => 'required|same:password_confirmation|min:6',
             'gender' => 'required',
-            'role' => 'sometimes|integer|exists:roles,id', // Default value 3 will be set, validate only if provided
+            // Staff accounts may only be given the staff or nurse role (default: staff). Assigning
+            // clinic_admin / doctor / patient here produced accounts that crash their own pages. H-15.
+            'role' => ['sometimes', 'nullable', 'integer', Rule::exists('roles', 'id')->whereIn('name', ['staff', 'nurse'])],
             'role_designation_id' => 'required|exists:staff_designations,id',
             'assigned_station_id' => [
                 Rule::requiredIf(! $isClinicHead),
@@ -44,6 +49,15 @@ class CreateStaffRequest extends FormRequest
             'shift_schedule' => 'required|string',
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $this->validateArchivedAccountConflicts($validator, [
+            'email' => 'email',
+            'employee_id' => 'employee_id',
+            'contact' => 'contact',
+        ]);
     }
 
     private function isClinicHeadDesignation($designationId): bool

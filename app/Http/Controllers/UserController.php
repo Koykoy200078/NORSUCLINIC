@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\Country;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\Prescription;
 use App\Models\Specialization;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -160,16 +161,25 @@ class UserController extends AppBaseController
      */
     public function destroy(Doctor $doctor): JsonResponse
     {
+        // A doctor who has written prescriptions must never be deleted: prescriptions.doctor_id
+        // used to cascade, so removing a resigned doctor erased every prescription they wrote
+        // for every patient. Deactivate the account instead (status = Deactivate). H-08.
+        $prescriptionCount = Prescription::where('doctor_id', $doctor->id)->count();
+        if ($prescriptionCount > 0) {
+            return $this->sendError(
+                "This doctor has {$prescriptionCount} prescription(s) on record and cannot be deleted. "
+                . 'Deactivate the account instead so the prescription history is kept.'
+            );
+        }
+
         try {
             DB::beginTransaction();
 
             // Store user reference
             $user = $doctor->user;
 
-            // Delete related records first
-            if ($user->media) {
-                $user->media()->delete();
-            }
+            // Files + rows of the profile picture (deleting only the rows left the files behind)
+            $user->clearMediaCollection(User::PROFILE);
 
             if ($user->address) {
                 $user->address()->delete();
@@ -178,7 +188,7 @@ class UserController extends AppBaseController
             // Delete doctor record
             $doctor->delete();
 
-            // Finally delete user
+            // Finally archive the user
             $user->delete();
 
             DB::commit();
@@ -265,8 +275,9 @@ class UserController extends AppBaseController
             if (!Hash::check($input['current_password'], $user->password)) {
                 return $this->sendError(__('messages.flash.current_invalid'));
             }
-            $input['password'] = Hash::make($input['new_password']);
-            $user->update($input);
+            // Only the password may change here. The whole request used to be mass-assigned, so
+            // an extra "type" / "status" field in the request rewrote the account. H-01.
+            $user->update(['password' => Hash::make($input['new_password'])]);
 
             return $this->sendSuccess(__('messages.flash.password_update'));
         } catch (Exception $e) {

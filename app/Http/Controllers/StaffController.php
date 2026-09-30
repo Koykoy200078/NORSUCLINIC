@@ -79,6 +79,8 @@ class StaffController extends AppBaseController
      */
     public function show(User $staff): \Illuminate\View\View
     {
+        $this->assertStaffAccount($staff);
+
         return view('staffs.show', compact('staff'));
     }
 
@@ -89,6 +91,8 @@ class StaffController extends AppBaseController
      */
     public function edit(User $staff): \Illuminate\View\View
     {
+        $this->assertStaffAccount($staff);
+
         $roles = $this->staffRepository->getRole();
         $defaultRoleId = Role::whereName('staff')->value('id');
 
@@ -106,6 +110,8 @@ class StaffController extends AppBaseController
      */
     public function update(UpdateStaffRequest $request, User $staff): RedirectResponse
     {
+        $this->assertStaffAccount($staff);
+
         $input = $request->all();
         // Ensure role defaults to staff if not provided
         if (!isset($input['role']) || empty($input['role'])) {
@@ -123,6 +129,9 @@ class StaffController extends AppBaseController
      */
     public function destroy(User $staff)
     {
+        $this->assertStaffAccount($staff);
+        abort_if((int) $staff->id === (int) auth()->id(), 403, 'You cannot delete your own account.');
+
         $this->staffRepository->delete($staff->id);
 
         return $this->sendSuccess(__('messages.flash.staff_delete'));
@@ -132,12 +141,26 @@ class StaffController extends AppBaseController
      * Reset a staff member's password to the default. Scoped to STAFF accounts only so an
      * admin cannot reset an admin/doctor/patient account through this endpoint. E-CRIT-2.
      */
-    public function resetPassword(User $staff): JsonResponse
+    public function resetPassword(User $user): JsonResponse
     {
+        // The route is staffs/{user}/reset-password: the parameter must be named $user, otherwise
+        // implicit binding hands over an empty model and every reset failed (500).
+        $staff = $user;
         abort_unless((int) $staff->type === User::STAFF, 403);
 
         $staff->update(['password' => Hash::make('123456')]);
 
         return $this->sendSuccess('Password has been reset to default (123456) successfully.');
+    }
+
+    /**
+     * This controller manages STAFF accounts only. Route model binding resolves any row of the
+     * shared users table, so without this an admin could open/edit/delete a doctor, patient or
+     * admin account through /admin/staffs/{id} (the update forced type=STAFF and replaced the
+     * roles). H-15.
+     */
+    private function assertStaffAccount(User $staff): void
+    {
+        abort_unless((int) $staff->type === User::STAFF, 404);
     }
 }

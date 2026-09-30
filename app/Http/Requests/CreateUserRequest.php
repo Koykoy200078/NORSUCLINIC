@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ChecksArchivedAccounts;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUserRequest extends FormRequest
 {
+    use ChecksArchivedAccounts;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,7 +25,9 @@ class CreateUserRequest extends FormRequest
     {
         $rules = User::$rules;
 
-        $rules['employee_id'] = 'required|string|max:100|unique:users,employee_id';
+        $rules['email'] = ['nullable', 'email', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
+        $rules['contact'] = ['nullable', $this->uniqueAmongActiveUsers('contact')];
+        $rules['employee_id'] = ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')];
         $rules['prc_license_number'] = 'required|string|max:100|unique:doctors,prc_license_number';
         $rules['ptr_number'] = 'required|string|max:100';
         $rules['s2_license_number'] = 'nullable|string|max:100';
@@ -39,5 +44,14 @@ class CreateUserRequest extends FormRequest
         return [
             'profile.max' => __('messages.profile_size'),
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $this->validateArchivedAccountConflicts($validator, [
+            'email' => 'email',
+            'employee_id' => 'employee_id',
+            'contact' => 'contact',
+        ]);
     }
 }

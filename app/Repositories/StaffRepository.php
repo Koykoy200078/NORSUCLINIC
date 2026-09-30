@@ -51,7 +51,9 @@ class StaffRepository extends BaseRepository
      */
     public function getRole()
     {
-        return Role::pluck('display_name', 'id');
+        // Staff accounts are either "staff" or "nurse"; the other roles belong to other account
+        // types and must not be assignable here. H-15.
+        return Role::whereIn('name', ['staff', 'nurse'])->pluck('display_name', 'id');
     }
 
     public function store($input): bool
@@ -111,7 +113,6 @@ class StaffRepository extends BaseRepository
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $staff->clearMediaCollection(User::PROFILE);
-                $staff->media()->delete();
                 $staff->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
 
@@ -131,12 +132,9 @@ class StaffRepository extends BaseRepository
 
             $staff = User::findOrFail($id);
 
-            // Clean up associated staff profile
-            $staff->staffProfile()->delete();
-
-            // Clean up media collection
-            $staff->clearMediaCollection(User::PROFILE);
-
+            // Archive only. The staff profile (designation / station) and the profile picture
+            // are kept so an archived account can be restored intact; deleting them here meant
+            // a restored user came back without any module access. M-13.
             $staff->delete();
 
             DB::commit();

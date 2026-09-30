@@ -160,6 +160,32 @@ class User extends Authenticatable implements HasMedia
         'department_id',
     ];
 
+    /**
+     * Columns a clinic user may edit on a patient RECORD (staff/doctor/admin editing a patient).
+     * Never contains password, type, status, email_verified_at or archived_at. H-14.
+     */
+    public const RECORD_FIELDS = [
+        'first_name', 'middle_name', 'last_name', 'email', 'contact',
+        'emergency_contact_name', 'emergency_contact_no', 'emergency_relationship',
+        'dob', 'gender', 'nationality_citizenship', 'blood_type', 'country_code',
+        'university_id_number', 'employee_id', 'language', 'time_zone',
+        'campus_id', 'college_id', 'course_id', 'year_level_id', 'vaccination_id',
+        'office_id', 'department_id',
+    ];
+
+    /**
+     * Columns a signed-in user may change on their OWN profile form. Deliberately excludes
+     * status, type, university_id_number, employee_id and password (changed on its own screen).
+     */
+    public const SELF_PROFILE_FIELDS = [
+        'first_name', 'middle_name', 'last_name', 'email', 'contact',
+        'emergency_contact_name', 'emergency_contact_no', 'emergency_relationship',
+        'dob', 'gender', 'nationality_citizenship', 'blood_type', 'country_code',
+        'language', 'time_zone', 'dark_mode', 'email_notification',
+        'campus_id', 'college_id', 'course_id', 'year_level_id', 'vaccination_id',
+        'office_id', 'department_id',
+    ];
+
     const LANGUAGES = [
         'en' => 'English',
     ];

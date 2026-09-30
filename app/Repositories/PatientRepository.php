@@ -359,51 +359,11 @@ class PatientRepository extends BaseRepository
                 'primary_care_physician_contact',
                 'primary_care_physician_email',
             ]);
+            // Explicit allow-list + model save(). The old query-builder update wrote EVERY request
+            // key that was not excluded straight into users (bypassing $fillable and the hashed
+            // password cast; an unexpected key caused an "Unknown column" SQL error). H-14.
             /** @var Patient $patient */
-            $patient->user()->update(Arr::except($input, [
-                'address1',
-                'address2',
-                'city_id',
-                'barangay_id',
-                'state_id',
-                'country_id',
-                'postal_code',
-                'patient_unique_id',
-                'avatar_remove',
-                'profile',
-                'patient_type_id',
-                'allergies',
-                'comorbidities',
-                'admissions_surgeries',
-                'maintenance',
-                'covid_vaccination',
-                'immunization_record',
-                'insurance_provider_id',
-                'insurance_policy_number',
-                'primary_care_physician_name',
-                'primary_care_physician_contact',
-                'primary_care_physician_email',
-                'is_edit',
-                'edit_patient_country_id',
-                'edit_patient_state_id',
-                'edit_patient_city_id',
-                'edit_patient_barangay_id',
-                'backgroundImg',
-                // Form-only fields that don't exist in users table
-                'is_employee',
-                'is_guest',
-                'position_type',
-                'all_year_levels',
-                'patient_type_lookup',
-                // Privilege / non-form user fields — never mass-assign from the patient edit
-                // form (prevents a manage_patients user injecting status=0, type=1, etc.). CRUD-MA.
-                'status',
-                'type',
-                'email_verified_at',
-                'remember_token',
-                'dark_mode',
-                'email_notification',
-            ]));
+            $patient->user->fill(Arr::only($input, User::RECORD_FIELDS))->save();
 
             $patient->update($patientInput);
 

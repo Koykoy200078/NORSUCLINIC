@@ -137,7 +137,7 @@ class UserRepository extends BaseRepository
             $doctor->address()->create($addressInputArray);
             $createDoctor = $doctor->doctor()->create($doctorArray);
             $createDoctor->specializations()->sync($specialization);
-            if (isset($input['profile']) && ! empty('profile')) {
+            if (! empty($input['profile'])) {
                 $doctor->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
             // $doctor->sendEmailVerificationNotification();
@@ -146,6 +146,7 @@ class UserRepository extends BaseRepository
 
             return $doctor;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
@@ -193,15 +194,16 @@ class UserRepository extends BaseRepository
                 }
             }
 
-            if (isset($input['profile']) && ! empty('profile')) {
+            if (! empty($input['profile'])) {
+                // clearMediaCollection removes the files AND rows of this collection only.
                 $doctor->user->clearMediaCollection(User::PROFILE);
-                $doctor->user->media()->delete();
                 $doctor->user->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
             DB::commit();
 
             return $doctor;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
@@ -218,11 +220,10 @@ class UserRepository extends BaseRepository
             );
 
             if ($user->hasRole('clinic_admin')) {
-                $user->update($userInput);
+                $user->fill(Arr::only($userInput, User::SELF_PROFILE_FIELDS))->save();
 
                 if ((! empty($userInput['image']))) {
                     $user->clearMediaCollection(User::PROFILE);
-                    $user->media()->delete();
                     $user->addMedia($userInput['image'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
                 }
 
@@ -268,28 +269,8 @@ class UserRepository extends BaseRepository
                 $userInput['type'] = User::PATIENT;
                 $userInput['email'] = setEmailLowerCase($userInput['email']);
 
-                /** @var Patient $patient */
-                $patient->user()->update(Arr::except($userInput, [
-                    'address1',
-                    'address2',
-                    'city_id',
-                    'barangay_id',
-                    'state_id',
-                    'country_id',
-                    'postal_code',
-                    'avatar_remove',
-                    'profile',
-                    'patient_type_id',
-                    'is_edit',
-                    'edit_patient_country_id',
-                    'edit_patient_state_id',
-                    'edit_patient_city_id',
-                    'edit_patient_barangay_id',
-                    'backgroundImg',
-                    'image',
-                    'all_year_levels',
-                    'patient_type_lookup'
-                ]));
+                // Allow-list + save(): see H-14 (the query-builder update bypassed $fillable / casts).
+                $user->fill(Arr::only($userInput, User::SELF_PROFILE_FIELDS))->save();
 
                 $patient->update([
                     'patient_type_id' => $selectedPatientTypeId,
@@ -302,8 +283,7 @@ class UserRepository extends BaseRepository
                 }
 
                 if (! empty($userInput['image'])) {
-                    $user->clearMediaCollection(Patient::PROFILE);
-                    $user->patient->media()->delete();
+                    $user->patient->clearMediaCollection(Patient::PROFILE);
                     $user->patient->addMedia($userInput['image'])->toMediaCollection(
                         Patient::PROFILE,
                         config('app.media_disc')
@@ -314,23 +294,7 @@ class UserRepository extends BaseRepository
                 $userInput['type'] = User::DOCTOR;
                 $userInput['email'] = setEmailLowerCase($userInput['email']);
 
-                /** @var Patient $patient */
-                $doctor->user()->update(Arr::except($userInput, [
-                    'address1',
-                    'address2',
-                    'city_id',
-                    'state_id',
-                    'country_id',
-                    'postal_code',
-                    'avatar_remove',
-                    'profile',
-                    'is_edit',
-                    'edit_patient_country_id',
-                    'edit_patient_state_id',
-                    'edit_patient_city_id',
-                    'backgroundImg',
-                    'image'
-                ]));
+                $user->fill(Arr::only($userInput, User::SELF_PROFILE_FIELDS))->save();
 
                 if (isset($doctor->address)) {
                     $doctor->address()->update($addressInputArray);
@@ -340,7 +304,6 @@ class UserRepository extends BaseRepository
 
                 if (! empty($userInput['image'])) {
                     $user->clearMediaCollection(User::PROFILE);
-                    $user->media()->delete();
                     $user->addMedia($userInput['image'])->toMediaCollection(
                         User::PROFILE,
                         config('app.media_disc')
