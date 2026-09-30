@@ -59,6 +59,19 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Force HTTPS URLs
+    |--------------------------------------------------------------------------
+    |
+    | The clinic system is deployed on a private LAN over plain HTTP, so this is OFF by default and
+    | must be turned on explicitly (FORCE_HTTPS=true) only for a deployment that really terminates
+    | TLS. It is read here, not with env() in application code, so it survives config:cache.
+    |
+    */
+
+    'force_https' => (bool) env('FORCE_HTTPS', false),
     'media_disc' => env('MEDIA_DISK', 'public'),
     'local_media_hosts' => array_values(array_filter(array_map(
         static fn (string $host): string => strtolower(trim($host)),

@@ -70,16 +70,21 @@ class RoleRepository extends BaseRepository
 
     public function update($input, $id): Role
     {
-        $displayName = strtolower($input['display_name']);
-        $str = str_replace(' ', '_', $displayName);
-
         $role = Role::findById($id);
         /** @var Role $role */
+
+        // Only the human-readable label is editable. The internal `name` is an identifier the code
+        // authorises against (role:clinic_admin, hasRole('doctor'), hasRole('nurse') ...). It used to
+        // be re-derived from the label on every save, so renaming "Clinic Admin" to "Clinic
+        // Administrator" changed the name to clinic_administrator and locked every admin out with
+        // 403, including from the Roles screen needed to undo it. P2-H1.
         $role->update([
-            'name' => $str,
             'display_name' => $input['display_name'],
         ]);
-        if (isset($input['permission_id']) && ! empty($input['permission_id'])) {
+
+        // The clinic_admin role always keeps every permission, so a bad edit cannot lock the
+        // administrators out of the screens needed to repair it.
+        if ($role->name !== 'clinic_admin' && isset($input['permission_id']) && ! empty($input['permission_id'])) {
             $role->permissions()->sync($input['permission_id']);
         }
 

@@ -65,19 +65,9 @@ class SettingController extends AppBaseController
             Setting::where('key', 'language')->update([
                 'value' => $language,
             ]);
-            $appointment = user::whereNot('type', User::ADMIN)->get();
-            foreach ($appointment as $appointment) {
-                if ($language == null) {
-                    $appointment->update([
-                        'language' => 'en',
-                    ]);
-                } else {
-                    $appointment->update([
-                        'language' => $language,
-                    ]);
-                }
-                session()->forget('languageName');
-            }
+            // One UPDATE instead of loading and saving every non-admin user one by one.
+            User::whereNot('type', User::ADMIN)->update(['language' => $language]);
+            session()->forget('languageName');
         }
 
         $id = Auth::id();

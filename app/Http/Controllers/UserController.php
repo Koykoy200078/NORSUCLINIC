@@ -348,19 +348,30 @@ class UserController extends AppBaseController
             return redirect()->back();
         }
 
-        getLogInUser()->impersonate($user);
-        if ($user->hasRole('doctor')) {
-            return redirect()->route('doctors.dashboard');
+        // Another administrator (or yourself) is never a valid target, and a disabled account
+        // cannot be used. M-08.
+        if (! getLogInUser()->canImpersonate() || ! $user->canBeImpersonated() || (int) $user->id === (int) getLogInUser()->id) {
+            Flash::error('This account cannot be impersonated.');
+
+            return redirect()->back();
         }
 
-        return redirect()->route('admin.dashboard');
+        getLogInUser()->impersonate($user);
+
+        // Land on the dashboard that belongs to the account we just became (doctor, staff or nurse).
+        return redirect(getDashboardURL());
     }
 
     public function impersonateLeave(): RedirectResponse
     {
+        // Only meaningful (and only reachable) while impersonating; anyone else is sent home.
+        if (! session()->has('impersonated_by')) {
+            return redirect(getDashboardURL());
+        }
+
         getLogInUser()->leaveImpersonation();
 
-        return redirect()->route('admin.dashboard');
+        return redirect(getDashboardURL());
     }
 
     public function emailVerified(Request $request): JsonResponse

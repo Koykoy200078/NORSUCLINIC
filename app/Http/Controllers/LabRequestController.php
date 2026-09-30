@@ -511,7 +511,13 @@ class LabRequestController extends Controller
 
     public function searchUsers(Request $request)
     {
-        $query = $request->get('query', '');
+        $query = trim((string) $request->get('query', ''));
+
+        // Require two characters and cap the list (an empty query used to return every patient with
+        // many eager loads). M-11.
+        if (mb_strlen($query) < 2) {
+            return response()->json([]);
+        }
 
         $users = User::where('type', User::PATIENT)
             ->where(function ($q) use ($query) {
@@ -522,6 +528,8 @@ class LabRequestController extends Controller
                     ->orWhere('employee_id', 'LIKE', "%{$query}%");
             })
             ->with(['patient.address.barangay', 'patient.address.city', 'patient.address.state', 'campus', 'college', 'course', 'yearLevel', 'department', 'office', 'address.barangay', 'address.city', 'address.state'])
+            ->orderBy('id')
+            ->limit(25)
             ->get()
             ->map(function ($user) {
 

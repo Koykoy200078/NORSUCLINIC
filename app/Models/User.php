@@ -186,6 +186,25 @@ class User extends Authenticatable implements HasMedia
         'office_id', 'department_id',
     ];
 
+    /**
+     * Impersonation ("log in as") is an administrator tool.
+     */
+    public function canImpersonate(): bool
+    {
+        return $this->hasRole('clinic_admin');
+    }
+
+    /**
+     * Administrators cannot be impersonated (that would let one admin act as another under the
+     * other's name), and neither can an account that is switched off.
+     */
+    public function canBeImpersonated(): bool
+    {
+        return (int) $this->type !== self::ADMIN
+            && ! $this->hasRole('clinic_admin')
+            && (bool) $this->status;
+    }
+
     const LANGUAGES = [
         'en' => 'English',
     ];

@@ -65,8 +65,6 @@ class StockInController extends AppBaseController
     {
         $input = $request->all();
 
-        Log::info('Stock-In Input Data:', $input);
-
         if (empty($input['availability_no'])) {
             $input['availability_no'] = generateUniqueAvailabilityNumber();
         }

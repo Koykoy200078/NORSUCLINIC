@@ -2037,7 +2037,6 @@ class DocumentIssuanceController extends Controller
                 'certificate_id' => $request_document->id,
                 'has_redirect_patient_id' => request()->has('redirect_patient_id'),
                 'redirect_patient_id' => request()->input('redirect_patient_id'),
-                'request_all' => request()->all()
             ]);
 
             // Restore deducted medicine stock for consultation forms before deleting;
@@ -2101,6 +2100,12 @@ class DocumentIssuanceController extends Controller
                 return response()->json(['error' => 'Query parameter is required'], 400);
             }
 
+            // A one-letter search returned every patient with a dozen eager loads each. Require two
+            // characters and cap the result list. M-11.
+            if (mb_strlen(trim((string) $search)) < 2) {
+                return response()->json([]);
+            }
+
             // Search patients by first name, last name
             $patients = Patient::whereHas('user', function ($query) {
                 $query->where('type', User::PATIENT);
@@ -2159,6 +2164,8 @@ class DocumentIssuanceController extends Controller
                     },
                     'patientType:id,code,name',
                 ])
+                ->orderBy('patients.id')
+                ->limit(25)
                 ->get();
 
             // Add full_address and use university_id_number as the primary patient identifier.

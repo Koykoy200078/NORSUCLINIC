@@ -19,7 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // The API is only called by the application's own pages (same origin); no cross-origin client
+    // exists on the clinic LAN. Add origins explicitly through CORS_ALLOWED_ORIGINS if ever needed.
+    'allowed_origins' => array_values(array_filter(array_map('trim', explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))))),
 
     'allowed_origins_patterns' => [],
 

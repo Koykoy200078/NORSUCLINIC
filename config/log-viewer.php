@@ -69,6 +69,7 @@ return [
 
     'middleware' => [
         'web',
+        'auth',
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
 
@@ -81,8 +82,12 @@ return [
     |
     */
 
+    // 'web' (session + CSRF) instead of the package's Sanctum-style "stateful" shim: that shim only
+    // starts a session when the Referer/Origin host matches APP_URL / localhost, which breaks when
+    // the clinic PCs reach the server by another name or IP. Access needs a signed-in admin. C-05.
     'api_middleware' => [
-        \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        'web',
+        'auth',
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
 

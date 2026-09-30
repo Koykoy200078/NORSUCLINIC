@@ -119,7 +119,16 @@ class FrontController extends AppBaseController
      */
     public function changeLanguage(Request $request)
     {
-        Session::put('languageName', $request->input('languageName'));
+        // Only a language the application actually has may be stored. An arbitrary value put in the
+        // session made every __() fall back to raw keys for that user until the session was cleared.
+        // P2-M4.
+        $languageName = (string) $request->input('languageName');
+
+        if (! array_key_exists($languageName, \App\Models\User::LANGUAGES)) {
+            return $this->sendError('Unsupported language.');
+        }
+
+        Session::put('languageName', $languageName);
 
         return $this->sendSuccess(__('messages.flash.language_change'));
     }

@@ -26,7 +26,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-use Rap2hpoutre\LaravelLogViewer\LogViewerController;
+use App\Http\Controllers\AdminLogViewerController;
 use App\Http\Controllers\DocumentIssuanceController;
 use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\BackupController;
@@ -81,6 +81,8 @@ Route::post(
 )->middleware(['auth', 'checkUserStatus'])->name('notifications.read.all');
 
 Route::middleware('auth', 'checkUserStatus')->group(function () {
+    Route::get('impersonate-leave', [UserController::class, 'impersonateLeave'])->name('impersonate.leave');
+
     // Update profile
     Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.setting');
     Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('update.profile.setting');
@@ -109,11 +111,13 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::get('/dashboard-patients', [DashboardController::class, 'getPatientList'])->name('patientData.dashboard');
 
     // Logs — gate behind a permission so it isn't reachable purely by role. AUTH-5.
-    Route::get('logs', [LogViewerController::class, 'index'])->middleware('permission:manage_admin_dashboard');
+    Route::get('logs', [AdminLogViewerController::class, 'index'])->middleware('permission:manage_admin_dashboard');
 
-    // Impersonate
-    Route::get('impersonate/{id}', [UserController::class, 'impersonate'])->name('impersonate');
-    Route::get('impersonate-leave', [UserController::class, 'impersonateLeave'])->name('impersonate.leave');
+    // Impersonate. Starting is a POST (a GET link was CSRF-able: an admin clicking a crafted link
+    // silently became another user). Leaving lives OUTSIDE this admin-only group, because while
+    // impersonating the signed-in user is the target (a doctor/staff account) and the role check
+    // here answered 403, so "Return to admin" never worked. M-08.
+    Route::post('impersonate/{id}', [UserController::class, 'impersonate'])->name('impersonate');
 
     // Email Verified
     Route::post('email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
