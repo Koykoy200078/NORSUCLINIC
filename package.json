@@ -1,10 +1,10 @@
 {
     "private": true,
     "scripts": {
-        "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run development",
+        "dev": "npm run development",
         "development": "mix --no-progress",
-        "watch": "set NODE_OPTIONS=--openssl-legacy-provider && mix watch --no-progress",
-        "prod": "set NODE_OPTIONS=--openssl-legacy-provider && npm run production",
+        "watch": "mix watch --no-progress",
+        "prod": "npm run production",
         "production": "mix --production --no-progress"
     },
     "devDependencies": {

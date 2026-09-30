@@ -83,6 +83,9 @@ return [
     'all_columns' => 'All Columns',
 
     'web' => [
+        'dashboard' => 'Dashboard',
+        'welcome_to_norsu_clinic' => 'Welcome to NORSU Clinic',
+        'your_health_our_priority' => 'Your health is our priority',
         'enter_your_email' => 'Enter Your Email',
         'emergency_help' => 'Emergency Help',
         'qualified_doctors' => 'Qualified Doctors',
@@ -193,6 +196,15 @@ return [
         'filter_options' => 'Filter Options',
     ],
     'common' => [
+        'actions' => 'Actions',
+        'email' => 'Email',
+        'created_on' => 'Created On',
+        'last_updated' => 'Last Updated',
+        'export_to_excel' => 'Export to Excel',
+        'confirm_delete' => 'Are you sure you want to delete this?',
+        'delete_confirmation' => 'Delete Confirmation',
+        'delete_warning' => 'This action cannot be undone.',
+        'deleted_successfully' => 'Deleted successfully.',
         'save' => 'Save',
         'submit' => 'Submit',
         'status' => 'Status',
@@ -726,6 +738,14 @@ return [
     ],
 
     'flash' => [
+        'Country_retrieved' => 'Country retrieved successfully.',
+        'Patient_saved' => 'Patient saved successfully.',
+        'medicine_deleted' => 'Medicine deleted successfully.',
+        'medicine_not_found' => 'Medicine not found.',
+        'not_allow_access_record' => 'You are not allowed to access this record.',
+        'prescription_deleted' => 'Prescription deleted successfully.',
+        'prescription_not_found' => 'Prescription not found.',
+        'specialization_used_some_where' => 'This specialization is in use and cannot be deleted.',
         'patients_retrieve' => 'Patients retrieved successfully.',
         'data_retrieve' => 'Data Retrieved Successfully.',
         'retrieve' => 'Retrieved successfully.',
@@ -842,6 +862,7 @@ return [
     ],
 
     'medicine' => [
+        'brand' => 'Brand',
         'medicine' => 'Medicine',
         'medicine_category' => 'Medicine Category',
         'medicine_category_details' => 'Medicine Category Details',
@@ -887,6 +908,7 @@ return [
     ],
 
     'medicine_availability' => [
+        'purchased_medicine_updated' => 'Purchased medicine updated successfully.',
         'availability_number' => 'Medicine Availability Number',
         'purchase_number' => 'Medicine Availability Number',
         'total_medicines' => 'Total Medicines',
@@ -927,6 +949,7 @@ return [
     ],
 
     'medicine_bills' => [
+        'something_went_wrong' => 'Something went wrong. Please try again.',
         'medicine_bills' => 'History',
         'medicine_bill' => 'Medicine History',
         'saved_created' => 'Medicine History created successfully.',
@@ -1046,4 +1069,8 @@ return [
         'credentials_not_set' => 'API credentials not set. Please set API_KEY and API_SECRET as environment variables.',
     ],
 
+    'state_required' => 'The state field is required.',
+    'delete' => ['medicine' => 'Medicine', 'bill' => 'Bill'],
+    'document' => ['select_patient' => 'Select Patient'],
+    'state' => ['edit_state' => 'Edit State'],
 ];
