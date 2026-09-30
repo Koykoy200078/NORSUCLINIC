@@ -8,6 +8,7 @@ use App\Models\Patient;
 use App\Models\PatientQueue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PatientQueueController extends Controller
 {
@@ -69,35 +70,47 @@ class PatientQueueController extends Controller
     {
         $validated = $request->validated();
 
-        // Check if patient is already in queue
-        $existingQueue = PatientQueue::where('patient_id', $validated['patient_id'])
-            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-            ->first();
-
-        if ($existingQueue) {
-            return redirect()->back()->with('error', 'This patient is already in the queue.');
-        }
-
         $validated['added_by'] = Auth::id();
         $validated['is_priority'] = $request->has('is_priority') ? true : false;
 
-        // Get patient's latest consultation form if it exists
-        $latestConsultation = \App\Models\RequestDocuments::where('user_id', function ($query) use ($validated) {
-            $query->select('user_id')
-                ->from('patients')
-                ->where('id', $validated['patient_id'])
-                ->limit(1);
-        })
-            ->where('document_type', 'consultation_form')
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $latestConsultation = null;
+        $alreadyQueued = false;
 
-        if ($latestConsultation) {
-            $validated['latest_consultation_id'] = $latestConsultation->id;
-            $validated['has_consultation_attachment'] = true;
+        // The "already in the queue" check and the insert run under a lock on the patient row, so
+        // a double click / two front-desk users cannot queue the same patient twice. L-12.
+        DB::transaction(function () use (&$validated, &$latestConsultation, &$alreadyQueued) {
+            Patient::whereKey($validated['patient_id'])->lockForUpdate()->first();
+
+            $alreadyQueued = PatientQueue::where('patient_id', $validated['patient_id'])
+                ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+                ->exists();
+
+            if ($alreadyQueued) {
+                return;
+            }
+
+            // Get patient's latest consultation form if it exists
+            $latestConsultation = \App\Models\RequestDocuments::where('user_id', function ($query) use ($validated) {
+                $query->select('user_id')
+                    ->from('patients')
+                    ->where('id', $validated['patient_id'])
+                    ->limit(1);
+            })
+                ->where('document_type', 'consultation_form')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($latestConsultation) {
+                $validated['latest_consultation_id'] = $latestConsultation->id;
+                $validated['has_consultation_attachment'] = true;
+            }
+
+            PatientQueue::create($validated);
+        });
+
+        if ($alreadyQueued) {
+            return redirect()->back()->with('error', 'This patient is already in the queue.');
         }
-
-        PatientQueue::create($validated);
 
         $message = 'Patient added to queue successfully.';
         if ($latestConsultation) {
@@ -202,6 +215,13 @@ class PatientQueueController extends Controller
      */
     public function callNext(PatientQueue $patientQueue)
     {
+        // Only a waiting patient can be called; a double click or a stale page must not
+        // re-open a completed/cancelled entry or reset the called-at time. L-12.
+        if ($patientQueue->status !== PatientQueue::STATUS_WAITING) {
+            return redirect()->back()
+                ->with('error', 'This patient is no longer waiting in the queue.');
+        }
+
         $patientQueue->update([
             'status' => PatientQueue::STATUS_IN_PROGRESS,
             'called_at' => now(),
@@ -216,6 +236,15 @@ class PatientQueueController extends Controller
      */
     public function complete(Request $request, PatientQueue $patientQueue)
     {
+        if (! in_array($patientQueue->status, [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS], true)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'This queue entry is already closed.'], 422);
+            }
+
+            return redirect()->back()
+                ->with('error', 'This queue entry is already closed.');
+        }
+
         $patientQueue->update([
             'status' => PatientQueue::STATUS_COMPLETED,
             'completed_at' => now(),

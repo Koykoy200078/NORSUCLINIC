@@ -188,20 +188,6 @@ class DocumentIssuanceController extends Controller
     }
 
     /**
-     * Only plain RuntimeExceptions carry messages written for clinic users (validation-style
-     * problems raised in this controller and by MedicineInventoryService, e.g. insufficient
-     * stock). Anything else (SQL errors, file-system errors, ...) is logged, not shown.
-     */
-    private function userFacingErrorMessage(\Throwable $e, string $fallback): string
-    {
-        if (get_class($e) === \RuntimeException::class && $e->getMessage() !== '') {
-            return $e->getMessage();
-        }
-
-        return $fallback;
-    }
-
-    /**
      * A staff/nurse account can only record itself as the nurse in charge (the form shows
      * their own name read-only); admins and doctors pick from the list.
      */

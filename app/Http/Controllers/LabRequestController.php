@@ -15,7 +15,9 @@ use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class LabRequestController extends Controller
 {
@@ -84,7 +86,9 @@ class LabRequestController extends Controller
         abort_if(isRole('patient'), 403);
 
         $request->validate([
-            'patient_user_id' => isRole('patient') ? 'nullable' : 'required|exists:users,id',
+            'patient_user_id' => isRole('patient')
+                ? 'nullable'
+                : ['required', Rule::exists('users', 'id')->where('type', User::PATIENT)],
             'patient_name'    => 'required|string|max:255',
             'requested_at'    => 'required|date',
             'test_ids'        => 'nullable|array',
@@ -107,62 +111,66 @@ class LabRequestController extends Controller
             }
 
             // Resolve patient demographics from user record
-            $patientUser = User::with(['campus', 'college', 'course', 'yearLevel', 'department', 'office', 'patient.address', 'address.barangay', 'address.city', 'address.state'])
-                ->findOrFail($patientUserId);
+            $labRequest = DB::transaction(function () use ($patientUserId, $request, $selectedTestIds, $customTests) {
+                $patientUser = User::with(['campus', 'college', 'course', 'yearLevel', 'department', 'office', 'patient.address', 'address.barangay', 'address.city', 'address.state'])
+                    ->findOrFail($patientUserId);
 
-            $patient = $patientUser->patient;
+                $patient = $patientUser->patient;
 
-            $labRequest = LabRequest::create([
-                'request_number'       => generateUniqueLabRequestNumber(),
-                'document_creator_id'  => Auth::id(),
-                'patient_user_id'      => $patientUser->id,
-                'patient_name'         => $request->patient_name,
-                'patient_age'          => $request->patient_age,
-                'patient_gender'       => $request->patient_gender,
-                'patient_dob'          => $patientUser->dob ?? $request->patient_dob,
-                'patient_contact'      => $request->patient_contact,
-                'address'              => $request->address,
-                'campus'               => $patientUser->campus?->campus_name ?? $request->campus,
-                'college'              => $patientUser->college?->college_name ?? $request->college,
-                'course'               => $patientUser->course?->course_name ?? $request->course,
-                'year_level'           => $patientUser->yearLevel?->year_level_name ?? $request->year_level,
-                'department'           => $patientUser->department?->department_name ?? $request->department,
-                'office'               => $patientUser->office?->office_name ?? $request->office,
-                'status_affiliation'   => $request->status_affiliation,
-                'requested_at'         => $request->requested_at,
-                'clinical_indication'  => $request->clinical_indication,
-                'remarks'              => $request->remarks,
-                'requesting_physician' => $request->requesting_physician,
-                'physician_license_no' => $request->physician_license_no,
-                'status'               => LabRequest::STATUS_PENDING,
-            ]);
-
-            // Attach selected tests as items (snapshot key data)
-            $tests = LabTest::whereIn('id', $selectedTestIds)->get();
-            foreach ($tests as $test) {
-                LabRequestItem::create([
-                    'lab_request_id' => $labRequest->id,
-                    'lab_test_id'    => $test->id,
-                    'test_name'      => $test->name,
-                    'test_category'  => $test->category,
-                    'unit'           => $test->unit,
-                    'normal_range'   => $test->normal_range,
-                    'result_status'  => LabRequestItem::RESULT_PENDING,
+                $labRequest = LabRequest::create([
+                    'request_number'       => generateUniqueLabRequestNumber(),
+                    'document_creator_id'  => Auth::id(),
+                    'patient_user_id'      => $patientUser->id,
+                    'patient_name'         => $request->patient_name,
+                    'patient_age'          => $request->patient_age,
+                    'patient_gender'       => $request->patient_gender,
+                    'patient_dob'          => $patientUser->dob ?? $request->patient_dob,
+                    'patient_contact'      => $request->patient_contact,
+                    'address'              => $request->address,
+                    'campus'               => $patientUser->campus?->campus_name ?? $request->campus,
+                    'college'              => $patientUser->college?->college_name ?? $request->college,
+                    'course'               => $patientUser->course?->course_name ?? $request->course,
+                    'year_level'           => $patientUser->yearLevel?->year_level_name ?? $request->year_level,
+                    'department'           => $patientUser->department?->department_name ?? $request->department,
+                    'office'               => $patientUser->office?->office_name ?? $request->office,
+                    'status_affiliation'   => $request->status_affiliation,
+                    'requested_at'         => $request->requested_at,
+                    'clinical_indication'  => $request->clinical_indication,
+                    'remarks'              => $request->remarks,
+                    'requesting_physician' => $request->requesting_physician,
+                    'physician_license_no' => $request->physician_license_no,
+                    'status'               => LabRequest::STATUS_PENDING,
                 ]);
-            }
 
-            // Attach custom/ad-hoc tests from Others input
-            foreach ($customTests as $customTestName) {
-                LabRequestItem::create([
-                    'lab_request_id' => $labRequest->id,
-                    'lab_test_id'    => null,
-                    'test_name'      => $customTestName,
-                    'test_category'  => 'Other',
-                    'unit'           => null,
-                    'normal_range'   => null,
-                    'result_status'  => LabRequestItem::RESULT_PENDING,
-                ]);
-            }
+                // Attach selected tests as items (snapshot key data)
+                $tests = LabTest::whereIn('id', $selectedTestIds)->get();
+                foreach ($tests as $test) {
+                    LabRequestItem::create([
+                        'lab_request_id' => $labRequest->id,
+                        'lab_test_id'    => $test->id,
+                        'test_name'      => $test->name,
+                        'test_category'  => $test->category,
+                        'unit'           => $test->unit,
+                        'normal_range'   => $test->normal_range,
+                        'result_status'  => LabRequestItem::RESULT_PENDING,
+                    ]);
+                }
+
+                // Attach custom/ad-hoc tests from Others input
+                foreach ($customTests as $customTestName) {
+                    LabRequestItem::create([
+                        'lab_request_id' => $labRequest->id,
+                        'lab_test_id'    => null,
+                        'test_name'      => $customTestName,
+                        'test_category'  => 'Other',
+                        'unit'           => null,
+                        'normal_range'   => null,
+                        'result_status'  => LabRequestItem::RESULT_PENDING,
+                    ]);
+                }
+
+                return $labRequest;
+            });
 
             // Activity log
             self::logActivity(
@@ -181,11 +189,11 @@ class LabRequestController extends Controller
             $indexRoute = $this->getIndexRoute();
             return redirect()->route($indexRoute)
                 ->with('success', "Lab request #{$labRequest->request_number} created successfully.");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('LabRequest store error: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'An error occurred while creating the lab request: ' . $e->getMessage());
+                ->with('error', $this->userFacingErrorMessage($e, 'An error occurred while creating the lab request.'));
         }
     }
 
@@ -265,104 +273,107 @@ class LabRequestController extends Controller
                     ]);
             }
 
-            // Update main record
-            $lab_request->update([
-                'patient_name'         => $request->patient_name,
-                'patient_age'          => $request->patient_age,
-                'patient_gender'       => $request->patient_gender,
-                'patient_contact'      => $request->patient_contact,
-                'address'              => $request->address,
-                'status_affiliation'   => $request->status_affiliation,
-                'requested_at'         => $request->requested_at,
-                'clinical_indication'  => $request->clinical_indication,
-                'remarks'              => $request->remarks,
-                'requesting_physician' => $request->requesting_physician,
-                'physician_license_no' => $request->physician_license_no,
-            ]);
+            // Header, test items and results change together or not at all.
+            DB::transaction(function () use ($lab_request, $request, $newIds, $incomingCustomTests) {
+                // Update main record
+                $lab_request->update([
+                    'patient_name'         => $request->patient_name,
+                    'patient_age'          => $request->patient_age,
+                    'patient_gender'       => $request->patient_gender,
+                    'patient_contact'      => $request->patient_contact,
+                    'address'              => $request->address,
+                    'status_affiliation'   => $request->status_affiliation,
+                    'requested_at'         => $request->requested_at,
+                    'clinical_indication'  => $request->clinical_indication,
+                    'remarks'              => $request->remarks,
+                    'requesting_physician' => $request->requesting_physician,
+                    'physician_license_no' => $request->physician_license_no,
+                ]);
 
-            // Sync test items — delete removed, add new
-            $existingIds  = $lab_request->items->pluck('lab_test_id')->filter()->toArray();
+                // Sync test items — delete removed, add new
+                $existingIds  = $lab_request->items->pluck('lab_test_id')->filter()->toArray();
 
-            // Delete removed
-            $removedIds = array_diff($existingIds, $newIds);
-            if (!empty($removedIds)) {
-                LabRequestItem::where('lab_request_id', $lab_request->id)
-                    ->whereIn('lab_test_id', $removedIds)
-                    ->delete();
-            }
+                // Delete removed
+                $removedIds = array_diff($existingIds, $newIds);
+                if (!empty($removedIds)) {
+                    LabRequestItem::where('lab_request_id', $lab_request->id)
+                        ->whereIn('lab_test_id', $removedIds)
+                        ->delete();
+                }
 
-            // Add newly selected
-            $addedIds = array_diff($newIds, $existingIds);
-            if (!empty($addedIds)) {
-                $newTests = LabTest::whereIn('id', $addedIds)->get();
-                foreach ($newTests as $test) {
+                // Add newly selected
+                $addedIds = array_diff($newIds, $existingIds);
+                if (!empty($addedIds)) {
+                    $newTests = LabTest::whereIn('id', $addedIds)->get();
+                    foreach ($newTests as $test) {
+                        LabRequestItem::create([
+                            'lab_request_id' => $lab_request->id,
+                            'lab_test_id'    => $test->id,
+                            'test_name'      => $test->name,
+                            'test_category'  => $test->category,
+                            'unit'           => $test->unit,
+                            'normal_range'   => $test->normal_range,
+                            'result_status'  => LabRequestItem::RESULT_PENDING,
+                        ]);
+                    }
+                }
+
+                // Sync custom/ad-hoc tests (lab_test_id = null)
+                $existingCustomItems = $lab_request->items()
+                    ->whereNull('lab_test_id')
+                    ->get();
+
+                $existingCustomByKey = [];
+                foreach ($existingCustomItems as $item) {
+                    $existingCustomByKey[$this->normalizeCustomTestName($item->test_name)] = $item;
+                }
+
+                $incomingCustomByKey = [];
+                foreach ($incomingCustomTests as $customTestName) {
+                    $incomingCustomByKey[$this->normalizeCustomTestName($customTestName)] = $customTestName;
+                }
+
+                $customKeysToDelete = array_diff(array_keys($existingCustomByKey), array_keys($incomingCustomByKey));
+                if (!empty($customKeysToDelete)) {
+                    $deleteIds = collect($customKeysToDelete)
+                        ->map(function ($key) use ($existingCustomByKey) {
+                            return $existingCustomByKey[$key]->id;
+                        })
+                        ->all();
+
+                    if (!empty($deleteIds)) {
+                        LabRequestItem::where('lab_request_id', $lab_request->id)
+                            ->whereIn('id', $deleteIds)
+                            ->delete();
+                    }
+                }
+
+                $customKeysToAdd = array_diff(array_keys($incomingCustomByKey), array_keys($existingCustomByKey));
+                foreach ($customKeysToAdd as $key) {
                     LabRequestItem::create([
                         'lab_request_id' => $lab_request->id,
-                        'lab_test_id'    => $test->id,
-                        'test_name'      => $test->name,
-                        'test_category'  => $test->category,
-                        'unit'           => $test->unit,
-                        'normal_range'   => $test->normal_range,
+                        'lab_test_id'    => null,
+                        'test_name'      => $incomingCustomByKey[$key],
+                        'test_category'  => 'Other',
+                        'unit'           => null,
+                        'normal_range'   => null,
                         'result_status'  => LabRequestItem::RESULT_PENDING,
                     ]);
                 }
-            }
 
-            // Sync custom/ad-hoc tests (lab_test_id = null)
-            $existingCustomItems = $lab_request->items()
-                ->whereNull('lab_test_id')
-                ->get();
-
-            $existingCustomByKey = [];
-            foreach ($existingCustomItems as $item) {
-                $existingCustomByKey[$this->normalizeCustomTestName($item->test_name)] = $item;
-            }
-
-            $incomingCustomByKey = [];
-            foreach ($incomingCustomTests as $customTestName) {
-                $incomingCustomByKey[$this->normalizeCustomTestName($customTestName)] = $customTestName;
-            }
-
-            $customKeysToDelete = array_diff(array_keys($existingCustomByKey), array_keys($incomingCustomByKey));
-            if (!empty($customKeysToDelete)) {
-                $deleteIds = collect($customKeysToDelete)
-                    ->map(function ($key) use ($existingCustomByKey) {
-                        return $existingCustomByKey[$key]->id;
-                    })
-                    ->all();
-
-                if (!empty($deleteIds)) {
-                    LabRequestItem::where('lab_request_id', $lab_request->id)
-                        ->whereIn('id', $deleteIds)
-                        ->delete();
+                // Update existing item results if provided
+                if ($request->has('results')) {
+                    foreach ($request->results as $itemId => $resultData) {
+                        LabRequestItem::where('id', $itemId)
+                            ->where('lab_request_id', $lab_request->id)
+                            ->update([
+                                'result_value'  => $resultData['result_value'] ?? null,
+                                'result_status' => $resultData['result_status'] ?? LabRequestItem::RESULT_PENDING,
+                                'notes'         => $resultData['notes'] ?? null,
+                            ]);
+                    }
                 }
-            }
-
-            $customKeysToAdd = array_diff(array_keys($incomingCustomByKey), array_keys($existingCustomByKey));
-            foreach ($customKeysToAdd as $key) {
-                LabRequestItem::create([
-                    'lab_request_id' => $lab_request->id,
-                    'lab_test_id'    => null,
-                    'test_name'      => $incomingCustomByKey[$key],
-                    'test_category'  => 'Other',
-                    'unit'           => null,
-                    'normal_range'   => null,
-                    'result_status'  => LabRequestItem::RESULT_PENDING,
-                ]);
-            }
-
-            // Update existing item results if provided
-            if ($request->has('results')) {
-                foreach ($request->results as $itemId => $resultData) {
-                    LabRequestItem::where('id', $itemId)
-                        ->where('lab_request_id', $lab_request->id)
-                        ->update([
-                            'result_value'  => $resultData['result_value'] ?? null,
-                            'result_status' => $resultData['result_status'] ?? LabRequestItem::RESULT_PENDING,
-                            'notes'         => $resultData['notes'] ?? null,
-                        ]);
-                }
-            }
+            });
 
             // Activity log
             self::logActivity(
@@ -378,9 +389,11 @@ class LabRequestController extends Controller
             $indexRoute = $this->getIndexRoute();
             return redirect()->route($indexRoute)
                 ->with('success', "Lab request #{$lab_request->request_number} updated successfully.");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('LabRequest update error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $this->userFacingErrorMessage($e, 'An error occurred while updating the lab request.'));
         }
     }
 

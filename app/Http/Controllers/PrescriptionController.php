@@ -215,7 +215,7 @@ class PrescriptionController extends AppBaseController
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return Redirect::back()->withInput();
         }
@@ -270,6 +270,12 @@ class PrescriptionController extends AppBaseController
             if (! $patientPrescriptionHasDoctor) {
                 return Redirect::back();
             }
+        }
+
+        if ($this->isDispensed($prescription)) {
+            Flash::error('This prescription was already dispensed and can no longer be edited.');
+
+            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
         }
 
         $prescription->load([
@@ -351,6 +357,15 @@ class PrescriptionController extends AppBaseController
             Flash::error(__('messages.flash.prescription_not_found'));
 
             return Redirect::back();
+        }
+
+        // A dispensed prescription is a closed record: its stock was already deducted, so
+        // rewriting the medicines/quantities would leave the dispense history and the
+        // inventory ledger disagreeing with the prescription. H-07.
+        if ($this->isDispensed($prescription)) {
+            Flash::error('This prescription was already dispensed and can no longer be edited.');
+
+            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
         }
 
         $input = $request->validated();
@@ -455,7 +470,7 @@ class PrescriptionController extends AppBaseController
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return Redirect::back()->withInput();
         }
@@ -545,7 +560,7 @@ class PrescriptionController extends AppBaseController
             return 'patients.prescription.medicine.show';
         }
 
-        if ($user && $user->hasRole('staff')) {
+        if ($user && ($user->hasRole('staff') || $user->hasRole('nurse'))) {
             return 'staff.prescription.medicine.show';
         }
 
@@ -585,9 +600,34 @@ class PrescriptionController extends AppBaseController
 
             return Redirect::back();
         }
-        $prescription->delete();
+
+        // Deleting a dispensed prescription would orphan its dispense record and erase the
+        // reason for the stock that left the pharmacy. H-07.
+        if ($this->isDispensed($prescription)) {
+            return $this->sendError('A dispensed prescription cannot be deleted. It is kept as part of the dispensing history.');
+        }
+
+        DB::transaction(function () use ($prescription) {
+            // A pending prescription never deducted stock; drop the dispense record that was
+            // created alongside it so it does not linger as an orphan in the history.
+            $dispenseRecord = DispenseRecord::whereModelType(Prescription::class)
+                ->whereModelId($prescription->id)
+                ->first();
+
+            if ($dispenseRecord) {
+                $dispenseRecord->dispenseItems()->delete();
+                $dispenseRecord->delete();
+            }
+
+            $prescription->delete();
+        });
 
         return $this->sendSuccess(__('messages.flash.prescription_deleted'));
+    }
+
+    private function isDispensed(Prescription $prescription): bool
+    {
+        return $prescription->status === Prescription::DISPENSE_STATUS_DISPENSED;
     }
 
     public function activeDeactiveStatus(int $id): JsonResponse
@@ -655,10 +695,10 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         } catch (\Throwable $e) {
             if (request()->ajax()) {
-                return $this->sendError($e->getMessage());
+                return $this->sendError($this->userFacingErrorMessage($e));
             }
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return Redirect::back();
         }
@@ -749,7 +789,7 @@ class PrescriptionController extends AppBaseController
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            return $this->sendError($e->getMessage());
+            return $this->sendError($this->userFacingErrorMessage($e));
         }
     }
 
@@ -784,6 +824,12 @@ class PrescriptionController extends AppBaseController
         // A patient may only print their OWN prescription. AUTH-1.
         if (isRole('patient') && ! $this->patientOwnsPrescription((int) $id)) {
             abort(403);
+        }
+
+        // Same ownership rule the show/edit pages apply: a doctor prints only their own. L-11.
+        if (getLogInUser()->hasRole('doctor')) {
+            $isOwnPrescription = Prescription::whereId($id)->whereDoctorId(getLogInUser()->doctor->id)->exists();
+            abort_unless($isOwnPrescription, 403);
         }
 
         try {
@@ -897,7 +943,7 @@ class PrescriptionController extends AppBaseController
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response('PDF generation failed: ' . $e->getMessage(), 500)
+            return response('The prescription PDF could not be generated. Please try again or contact the administrator.', 500)
                 ->header('Content-Type', 'text/plain');
         }
     }

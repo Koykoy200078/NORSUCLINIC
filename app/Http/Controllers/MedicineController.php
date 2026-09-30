@@ -101,10 +101,10 @@ class MedicineController extends AppBaseController
             ]);
 
             if ($request->ajax()) {
-                return $this->sendError($e->getMessage());
+                return $this->sendError($this->userFacingErrorMessage($e));
             }
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return redirect()->back()->withInput();
         }
@@ -154,7 +154,7 @@ class MedicineController extends AppBaseController
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return redirect()->back()->withInput();
         }

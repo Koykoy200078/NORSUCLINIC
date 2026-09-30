@@ -31,6 +31,10 @@ return new class extends Migration
         'prescriptions_medicines' => [
             'dose_interval' => 'INT NOT NULL DEFAULT 0',
         ],
+        // A manual dispense record is created first and then points model_id at itself.
+        'medicine_bills' => [
+            'model_id' => 'VARCHAR(191) NULL',
+        ],
     ];
 
     public function up(): void

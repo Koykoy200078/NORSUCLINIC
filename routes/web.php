@@ -1,8 +1,5 @@
 <?php
 
-// Debug route
-require __DIR__ . '/debug-profile.php';
-
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\GenericController;

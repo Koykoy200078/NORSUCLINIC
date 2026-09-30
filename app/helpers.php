@@ -568,11 +568,18 @@ if (! function_exists('generateUniqueAvailabilityNumber')) {
 
 if (! function_exists('generateUniqueHistoryNumber')) {
 
+    /**
+     * Numeric part of a dispense history number; callers store it as 'HIS' . $code.
+     *
+     * The uniqueness check has to look for the value as it is STORED ('HIS123456'). It used to
+     * compare the bare number, which never matched, so collisions were never detected (and the
+     * 4-digit space made them likely after a few hundred records). A unique index now backs it up.
+     */
     function generateUniqueHistoryNumber()
     {
         do {
-            $code = random_int(1000, 9999);
-        } while (\App\Models\DispenseRecord::where('history_number', '=', $code)->first());
+            $code = random_int(100000, 999999);
+        } while (\App\Models\DispenseRecord::where('history_number', 'HIS' . $code)->exists());
 
         return $code;
     }
@@ -612,11 +619,18 @@ if (! function_exists('isRole')) {
     function isRole(string $role)
     {
         $user = getLogInUser();
-        if ($user && $user->hasRole($role)) {
-            return true;
+        if (! $user) {
+            return false;
         }
 
-        return false;
+        // "nurse" accounts use the same staff panel (routes are role:staff|nurse). Code that asks
+        // isRole('staff') to choose staff routes / buttons must therefore also match them,
+        // otherwise a nurse-role user was sent to admin routes (403) and lost action buttons.
+        if ($role === 'staff') {
+            return $user->hasRole('staff') || $user->hasRole('nurse');
+        }
+
+        return $user->hasRole($role);
     }
 }
 
@@ -1007,7 +1021,7 @@ if (! function_exists('getPrescriptionRoute')) {
             return route('admin.prescriptions.' . $action, $parameters);
         } elseif ($user->hasRole('doctor')) {
             return route('doctors.prescriptions.' . $action, $parameters);
-        } elseif ($user->hasRole('staff')) {
+        } elseif ($user->hasRole('staff') || $user->hasRole('nurse')) {
             return route('staff.prescriptions.' . $action, $parameters);
         } else {
             return route('prescriptions.' . $action, $parameters);

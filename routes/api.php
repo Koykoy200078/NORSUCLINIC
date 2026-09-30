@@ -22,7 +22,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Medicines API for consultation form - grouped by category with dosage
-Route::middleware(['web', 'auth'])->get('/medicines', function () {
+// Staff / doctor / admin only (it is only used by the consultation form). Patients cannot see stock.
+Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|staff|nurse'])->get('/medicines', function () {
     $medicines = Medicine::with(['medicineCategory', 'generic'])
         ->select('id', 'name', 'available_quantity', 'salt_composition', 'category_id', 'generic_id')
         ->where('available_quantity', '>', 0)
@@ -64,7 +65,10 @@ Route::middleware(['web', 'auth'])->get('/medicines', function () {
 });
 
 // Patient Queue Related API Routes
-Route::middleware(['auth:web'])->group(function () {
+// These live in the stateless "api" group, where `auth:web` never sees the login session, so the
+// queue-creation preview always got "Unauthenticated". Run them through the session ("web")
+// middleware with the same role / staff-module checks as the queue pages. M-06.
+Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|staff|nurse', 'staff.module:queue,consultations'])->group(function () {
     // Get latest consultation form for a patient (for queue management)
     Route::get('/patient/{patient}/latest-consultation', function (Patient $patient) {
         try {

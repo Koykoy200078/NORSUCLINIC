@@ -189,10 +189,10 @@ class DispenseRecordController extends AppBaseController
             ]);
 
             if ($request->ajax()) {
-                return $this->sendError($e->getMessage());
+                return $this->sendError($this->userFacingErrorMessage($e));
             }
 
-            Flash::error($e->getMessage());
+            Flash::error($this->userFacingErrorMessage($e));
 
             return redirect($this->getCreateRoute());
         }
@@ -213,8 +213,31 @@ class DispenseRecordController extends AppBaseController
         return view('medicine-history.show', compact('medicineBill'));
     }
 
-    public function edit(DispenseRecord $medicine_history): View
+    /**
+     * A dispense record created alongside a prescription is owned by that prescription: its
+     * stock only moves when the prescription is dispensed, and it must be changed from the
+     * prescription itself. Editing or deleting it here would "restore" stock that was never
+     * deducted (pending) or unbalance the ledger (dispensed). M-01.
+     */
+    private function isPrescriptionOwned(DispenseRecord $dispenseRecord): bool
     {
+        return $dispenseRecord->model_type === \App\Models\Prescription::class;
+    }
+
+    private function prescriptionOwnedMessage(): string
+    {
+        return 'This dispense record belongs to a prescription and cannot be changed here. '
+            . 'Manage it from the prescription instead.';
+    }
+
+    public function edit(DispenseRecord $medicine_history): View|RedirectResponse
+    {
+        if ($this->isPrescriptionOwned($medicine_history)) {
+            Flash::error($this->prescriptionOwnedMessage());
+
+            return redirect($this->getIndexRoute());
+        }
+
         $dispenseRecord = $medicine_history;
         $dispenseRecord->load([
             'dispenseItems.medicine.category',
@@ -243,6 +266,10 @@ class DispenseRecordController extends AppBaseController
 
     public function update(DispenseRecord $medicine_history, UpdateDispenseRecordRequest $request)
     {
+        if ($this->isPrescriptionOwned($medicine_history)) {
+            return $this->sendError($this->prescriptionOwnedMessage());
+        }
+
         $dispenseRecord = $medicine_history;
         $input        = $request->all();
         if (empty($input['medicine'])) {
@@ -255,6 +282,10 @@ class DispenseRecordController extends AppBaseController
 
     public function destroy(DispenseRecord $medicine_history)
     {
+        if ($this->isPrescriptionOwned($medicine_history)) {
+            return $this->sendError($this->prescriptionOwnedMessage());
+        }
+
         DB::transaction(function () use ($medicine_history) {
             // Restore stock for each dispensed item before deleting so removing a dispense
             // record returns the stock to inventory instead of losing it permanently. INV-2.

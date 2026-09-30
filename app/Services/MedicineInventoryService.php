@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\DispenseRecord;
+use App\Models\DispenseRecordItem;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
 use App\Models\MedicineTransaction;
@@ -145,15 +147,20 @@ class MedicineInventoryService
                     $quantity = $days * $fallbackFrequency;
                 }
 
+                // Deduct from batches of the PRESCRIBED strength only; without the dosage FEFO
+                // could hand out a 250 mg batch for a 500 mg order. M-02.
                 $allocationSummary[$line->medicine] = $this->deductStockFefo(
                     (int) $line->medicine,
                     $quantity,
                     $userId,
                     $prescription,
                     'Prescription #' . $prescription->id . ' dispensed',
-                    MedicineTransaction::TYPE_DISPENSE
+                    MedicineTransaction::TYPE_DISPENSE,
+                    $line->dosage !== null ? (string) $line->dosage : null
                 );
             }
+
+            $this->recordDispensedItems($prescription, $allocationSummary);
 
             $prescription->update([
                 'status' => Prescription::DISPENSE_STATUS_DISPENSED,
@@ -163,6 +170,52 @@ class MedicineInventoryService
 
             return $allocationSummary;
         });
+    }
+
+    /**
+     * Replace the placeholder items of the prescription's dispense record with what was actually
+     * handed out (one row per dosage/expiry batch), so the dispense history shows the real
+     * batches and a later reversal returns stock to the right batch. M-01.
+     *
+     * @param  array<int, array<int, array<string, mixed>>>  $allocationSummary  medicine id => FEFO allocations
+     */
+    private function recordDispensedItems(Prescription $prescription, array $allocationSummary): void
+    {
+        $dispenseRecord = DispenseRecord::whereModelType(Prescription::class)
+            ->whereModelId($prescription->id)
+            ->first();
+
+        if (! $dispenseRecord) {
+            $dispenseRecord = DispenseRecord::create([
+                'history_number' => 'HIS' . generateUniqueHistoryNumber(),
+                'patient_id' => $prescription->patient_id,
+                'doctor_id' => $prescription->doctor_id,
+                'model_type' => Prescription::class,
+                'model_id' => $prescription->id,
+                'bill_date' => now(),
+            ]);
+        }
+
+        $dispenseRecord->dispenseItems()->delete();
+
+        foreach ($allocationSummary as $medicineId => $allocations) {
+            $grouped = collect($allocations)
+                ->filter(fn (array $allocation) => (int) ($allocation['deducted'] ?? 0) > 0)
+                ->groupBy(fn (array $allocation) => trim((string) ($allocation['dosage'] ?? '')) . '|' . ($allocation['expiration_date'] ?? ''));
+
+            foreach ($grouped as $rows) {
+                $first = $rows->first();
+                $dosage = trim((string) ($first['dosage'] ?? ''));
+
+                DispenseRecordItem::create([
+                    'dispense_id' => $dispenseRecord->id,
+                    'medicine_id' => (int) $medicineId,
+                    'dosage' => $dosage !== '' ? $dosage : null,
+                    'expires_at' => $first['expiration_date'] ?? null,
+                    'quantity' => (int) $rows->sum(fn (array $allocation) => (int) $allocation['deducted']),
+                ]);
+            }
+        }
     }
 
     /**
