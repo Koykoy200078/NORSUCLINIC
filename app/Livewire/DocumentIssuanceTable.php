@@ -29,9 +29,9 @@ class DocumentIssuanceTable extends DataTableComponent
         $this->setAdditionalSelects(['document_issuances.assessment', 'document_issuances.plan']);
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.loading_skeleton');
+        return view('livewire.loading_skeleton')->render();
     }
 
     public function builder(): \Illuminate\Database\Eloquent\Builder

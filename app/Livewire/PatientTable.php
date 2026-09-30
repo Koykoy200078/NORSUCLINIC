@@ -96,9 +96,9 @@ class PatientTable extends LivewireTableComponent
     /**
      * Define the placeholder view for the table.
      */
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.staff_skeleton');
+        return view('livewire.staff_skeleton')->render();
     }
 
     /**

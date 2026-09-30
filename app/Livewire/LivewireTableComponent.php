@@ -60,9 +60,9 @@ class LivewireTableComponent extends DataTableComponent
         $this->dispatch('refresh');
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.loading_skeleton');
+        return view('livewire.loading_skeleton')->render();
     }
 
     public function updatedPerPage($value): void

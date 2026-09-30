@@ -51,9 +51,9 @@ class MedicineCategoryTable extends LivewireTableComponent
         });
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.medicine_category_skeleton');
+        return view('livewire.medicine_category_skeleton')->render();
     }
 
     public function changeFilter($value)

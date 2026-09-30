@@ -29,9 +29,9 @@ class StockOutTable extends LivewireTableComponent
             ->setQueryStringStatus(false);
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.used_medicine_skeleton');
+        return view('livewire.used_medicine_skeleton')->render();
     }
 
     public function columns(): array

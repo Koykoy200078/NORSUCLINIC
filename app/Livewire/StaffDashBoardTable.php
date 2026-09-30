@@ -32,9 +32,9 @@ class StaffDashBoardTable extends Component
             ->toArray();
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.dashboard_listing_table_skeleton');
+        return view('livewire.dashboard_listing_table_skeleton')->render();
     }
 
     public function render()

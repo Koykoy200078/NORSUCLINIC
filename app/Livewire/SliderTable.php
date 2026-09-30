@@ -39,9 +39,9 @@ class SliderTable extends LivewireTableComponent
         return Slider::with('media')->latest();
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-          return view('livewire.slider_skeleton');
+          return view('livewire.slider_skeleton')->render();
     }
 
     public function columns(): array

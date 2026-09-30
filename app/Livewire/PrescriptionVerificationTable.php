@@ -24,9 +24,9 @@ class PrescriptionVerificationTable extends LivewireTableComponent
             ->setQueryStringStatus(false);
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.loading_skeleton');
+        return view('livewire.loading_skeleton')->render();
     }
 
     public function columns(): array

@@ -10,9 +10,9 @@ use Livewire\Attributes\Lazy;
 class DoctorDashboardSidebarTable extends Component
 {
 
-   public function placeholder()
+   public function placeholder(): string
    {
-      return view('livewire.doctor_dashboard_sidebar_skeleton');
+      return view('livewire.doctor_dashboard_sidebar_skeleton')->render();
    }
    public function render()
    {

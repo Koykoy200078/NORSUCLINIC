@@ -8,9 +8,9 @@ use Livewire\Attributes\Lazy;
 #[Lazy]
 class PatientDashboardTable extends Component
 {
-   public function placeholder()
+   public function placeholder(): string
    {
-      return view('livewire.patient_dashboard_skeleton');
+      return view('livewire.patient_dashboard_skeleton')->render();
    }
    public function render()
    {

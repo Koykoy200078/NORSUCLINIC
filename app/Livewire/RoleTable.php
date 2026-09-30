@@ -37,9 +37,9 @@ class RoleTable extends LivewireTableComponent
             ->select('roles.*');
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-         return view('livewire.staff_skeleton');
+         return view('livewire.staff_skeleton')->render();
     }
 
     public function columns(): array

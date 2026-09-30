@@ -38,9 +38,9 @@ class LabRequestTable extends DataTableComponent
         ]);
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.loading_skeleton');
+        return view('livewire.loading_skeleton')->render();
     }
 
     public function builder(): \Illuminate\Database\Eloquent\Builder

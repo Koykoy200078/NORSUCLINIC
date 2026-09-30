@@ -86,9 +86,9 @@ class DoctorTable extends LivewireTableComponent
         ];
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
-        return view('livewire.listing_skeleton');
+        return view('livewire.listing_skeleton')->render();
     }
 
     public function changeStatusFilter($value): void
