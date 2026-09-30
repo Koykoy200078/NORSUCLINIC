@@ -154,6 +154,9 @@ class CourseSeeder extends Seeder
             ]
         ];
 
-        Course::insert($course);
+        // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.
+        foreach ($course as $row) {
+            Course::firstOrCreate(['course_name' => $row['course_name']], $row);
+        }
     }
 }

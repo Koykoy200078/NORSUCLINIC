@@ -13,9 +13,9 @@ class AddFieldsSettingTableSeeder extends Seeder
     public function run(): void
     {
         $termsAndConditions = view('fronts.cms.terms_conditions')->render();
-        Setting::create(['key' => 'terms_conditions', 'value' => $termsAndConditions]);
+        Setting::firstOrCreate(['key' => 'terms_conditions'], ['value' => $termsAndConditions]);
 
         $privacyPolicy = view('fronts.cms.privacy_policy')->render();
-        Setting::create(['key' => 'privacy_policy', 'value' => $privacyPolicy]);
+        Setting::firstOrCreate(['key' => 'privacy_policy'], ['value' => $privacyPolicy]);
     }
 }

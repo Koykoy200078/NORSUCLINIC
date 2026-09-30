@@ -24,7 +24,7 @@ class DefaultSliderSeeder extends Seeder
         foreach ($inputs as $input) {
             $image = $input['image'];
             unset($input['image']);
-            $slider = Slider::create($input);
+            $slider = Slider::firstOrCreate(['title' => $input['title']], $input);
             //            $slider->addMediaFromUrl($image)->toMediaCollection(Slider::SLIDER_IMAGE, config('app.media_disc'));
         }
     }

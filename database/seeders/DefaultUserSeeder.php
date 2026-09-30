@@ -34,6 +34,14 @@ class DefaultUserSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
+            // Create the default administrator only when it does not exist yet. An existing account (with
+            // whatever password the clinic has since set) must be left alone: re-running the seeders used to
+            // crash with a duplicate-e-mail error and would otherwise have reset the password to 123456.
+            $existing = User::where('email', $user['email'])->first();
+            if ($existing) {
+                continue;
+            }
+
             $user = User::create($user);
             if ($user->type == User::DOCTOR) {
                 $doctor = Doctor::create(['user_id' => $user->id]);

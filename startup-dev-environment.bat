@@ -133,6 +133,10 @@ echo.
 echo ============================================================
 echo.
 
+REM Run the Laravel scheduler in its own minimized window: it runs the hourly database backup
+REM (`php artisan db:backup`). Without it NO scheduled backup ever runs. Keep the window open.
+start "NORSU Scheduler" /min cmd /c "cd /d %~dp0 && php artisan schedule:work"
+
 REM Open the default browser to the server once it is up (delayed, minimized helper)
 start "" /min cmd /c "timeout /t 4 /nobreak >nul & explorer http://%SERVER_HOST%:8000"
 

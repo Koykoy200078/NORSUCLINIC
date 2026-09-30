@@ -28,7 +28,7 @@ class AddFrontSliderSettingTableSeeder extends Seeder
         ];
 
         foreach ($inputs as $input) {
-            Setting::create($input);
+            Setting::firstOrCreate(['key' => $input['key']], ['value' => $input['value']]);
         }
     }
 }

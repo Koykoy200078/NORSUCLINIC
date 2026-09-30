@@ -13,6 +13,6 @@ class DefaultLanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        Setting::create(['key' => 'language', 'value' => 'en']);
+        Setting::firstOrCreate(['key' => 'language'], ['value' => 'en']);
     }
 }

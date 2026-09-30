@@ -31,6 +31,9 @@ class VaccinationSeeder extends Seeder
             ]
         ];
 
-        Vaccination::insert($vaccination);
+        // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.
+        foreach ($vaccination as $row) {
+            Vaccination::firstOrCreate(['vaccination_status' => $row['vaccination_status']], $row);
+        }
     }
 }

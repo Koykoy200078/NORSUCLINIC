@@ -21,10 +21,14 @@
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
-        <!-- Force an in-memory SQLite DB for tests so RefreshDatabase can NEVER
-             migrate:fresh / wipe the real norsu_clinic MySQL database. -->
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <!-- The suite runs on a DEDICATED MySQL/MariaDB schema. Several migrations use MySQL-only SQL
+             (CREATE OR REPLACE VIEW, ALTER ... MODIFY), so SQLite cannot build the schema. Create it once:
+                 CREATE DATABASE norsu_clinic_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+             It uses the host / user / password from .env. tests/CreatesApplication.php aborts unless the
+             database name ends in "_test", so RefreshDatabase can never wipe the real clinic database. -->
+        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_DATABASE" value="norsu_clinic_test"/>
+        <env name="DB_STRICT" value="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

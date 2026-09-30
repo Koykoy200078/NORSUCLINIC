@@ -139,7 +139,8 @@ if (! function_exists('getLogInUserId')) {
      */
     function getLogInUserId()
     {
-        return Auth::user()->id;
+        // Null-safe: this is also called from console commands / seeders where nobody is signed in.
+        return Auth::id();
     }
 }
 

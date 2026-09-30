@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\DatabaseBackupService;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Carbon;
-use Exception;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use RuntimeException;
 
 class BackupController extends Controller
 {
     protected $backupPath;
 
-    public function __construct()
+    /** Folder written by the scheduled `db:backup` command (listed alongside manual backups). */
+    protected $scheduledPath;
+
+    public function __construct(private DatabaseBackupService $backups)
     {
         $this->backupPath = storage_path('app/backups');
+        $this->scheduledPath = $this->backupPath . DIRECTORY_SEPARATOR . 'scheduled';
+
         if (!File::exists($this->backupPath)) {
             File::makeDirectory($this->backupPath, 0755, true);
         }
@@ -28,15 +32,27 @@ class BackupController extends Controller
     public function index()
     {
         $backups = [];
-        $files = File::files($this->backupPath);
 
-        foreach ($files as $file) {
-            $backups[] = [
-                'name' => $file->getFilename(),
-                'size' => $this->formatBytes($file->getSize()),
-                'created_at' => Carbon::createFromTimestamp($file->getMTime())->toDayDateTimeString(),
-                'raw_date' => $file->getMTime()
-            ];
+        // Manual backups (and the automatic "pre-restore" safety copies) and the scheduled ones. Only
+        // finished .sql files are listed: an interrupted dump is a ".partial" file that never shows up.
+        foreach ([false => $this->backupPath, true => $this->scheduledPath] as $scheduled => $directory) {
+            if (! File::isDirectory($directory)) {
+                continue;
+            }
+
+            foreach (File::files($directory) as $file) {
+                if ($file->getExtension() !== 'sql') {
+                    continue;
+                }
+
+                $backups[] = [
+                    'name' => $file->getFilename(),
+                    'scheduled' => (bool) $scheduled,
+                    'size' => $this->formatBytes($file->getSize()),
+                    'created_at' => Carbon::createFromTimestamp($file->getMTime())->toDayDateTimeString(),
+                    'raw_date' => $file->getMTime()
+                ];
+            }
         }
 
         // Sort by date descending
@@ -50,46 +66,20 @@ class BackupController extends Controller
     public function create()
     {
         try {
-            $connection = config('database.connections.mysql');
-            $database = $connection['database'];
-            $username = $connection['username'];
-            $password = $connection['password'];
-            $host = $connection['host'];
-            $port = $connection['port'];
+            $path = $this->backups->createDump($this->backupPath, 'backup');
 
-            $fileName = 'backup-' . Carbon::now()->format('Y-m-d-H-i-s') . '.sql';
-            $filePath = $this->backupPath . DIRECTORY_SEPARATOR . $fileName;
-
-            // mysqldump command
-            // Note: We use --column-statistics=0, --set-gtid-purged=OFF, and --skip-lock-tables for compatibility and reliability
-            $command = sprintf(
-                'mysqldump --user=%s --password=%s --host=%s --port=%s --column-statistics=0 --set-gtid-purged=OFF --skip-lock-tables --result-file=%s %s',
-                escapeshellarg($username),
-                escapeshellarg($password),
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($filePath),
-                escapeshellarg($database)
-            );
-
-            // Execute the command
-            exec($command, $output, $returnVar);
-
-            if ($returnVar !== 0) {
-                throw new Exception("Error creating backup. Exit code: " . $returnVar);
-            }
-
-            Flash::success('Backup created successfully: ' . $fileName);
-            return redirect()->back();
-        } catch (Exception $e) {
+            Flash::success('Backup created successfully: ' . basename($path));
+        } catch (RuntimeException $e) {
+            Log::error('Manual backup failed: ' . $e->getMessage());
             Flash::error('Failed to create backup: ' . $e->getMessage());
-            return redirect()->back();
         }
+
+        return redirect()->back();
     }
 
-    public function download($fileName)
+    public function download(Request $request, $fileName)
     {
-        $filePath = $this->resolveBackupPath($fileName);
+        $filePath = $this->resolveBackupPath($fileName, $request->boolean('scheduled'));
 
         if ($filePath && File::exists($filePath)) {
             return Response::download($filePath);
@@ -99,9 +89,9 @@ class BackupController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($fileName)
+    public function destroy(Request $request, $fileName)
     {
-        $filePath = $this->resolveBackupPath($fileName);
+        $filePath = $this->resolveBackupPath($fileName, $request->boolean('scheduled'));
 
         if (! $filePath || ! File::exists($filePath)) {
             Flash::error('File not found.');
@@ -122,44 +112,35 @@ class BackupController extends Controller
     {
         $request->validate([
             'backup_file' => 'required|file|mimes:sql,txt',
+            'confirm_restore' => 'accepted',
+        ], [
+            'confirm_restore.accepted' => 'Please confirm that you want to overwrite the current database.',
         ]);
 
         try {
             $file = $request->file('backup_file');
             $filePath = $file->getRealPath();
 
-            $connection = config('database.connections.mysql');
-            $database = $connection['database'];
-            $username = $connection['username'];
-            $password = $connection['password'];
-            $host = $connection['host'];
-            $port = $connection['port'];
-
-            // mysql command to import
-            $command = sprintf(
-                'mysql --user=%s --password=%s --host=%s --port=%s %s < %s',
-                escapeshellarg($username),
-                escapeshellarg($password),
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($database),
-                escapeshellarg($filePath)
-            );
-
-            // Execute the command
-            exec($command, $output, $returnVar);
-
-            if ($returnVar !== 0) {
-                throw new Exception("Error importing backup. Exit code: " . $returnVar);
+            // Only genuine mysqldump / MariaDB dumps: an arbitrary SQL script must not be replayed
+            // into the live database from this screen.
+            if (! $this->backups->looksLikeDump($filePath)) {
+                throw new RuntimeException('This file is not a database backup created by this system (it does not start with a mysqldump header).');
             }
+
+            // Safety net: take a full backup of the CURRENT data first. If that fails nothing is restored.
+            $safetyCopy = $this->backups->createDump($this->backupPath, 'pre-restore');
+
+            $this->backups->restore($filePath);
 
             // Clear cache after restore
             Artisan::call('cache:clear');
             Artisan::call('view:clear');
 
-            Flash::success('Database restored successfully from ' . $file->getClientOriginalName());
+            Flash::success('Database restored successfully from ' . $file->getClientOriginalName()
+                . '. A copy of the previous data was saved as ' . basename($safetyCopy) . '.');
             return redirect()->back();
-        } catch (Exception $e) {
+        } catch (RuntimeException $e) {
+            Log::error('Database restore failed: ' . $e->getMessage());
             Flash::error('Failed to restore database: ' . $e->getMessage());
             return redirect()->back();
         }
@@ -178,14 +159,14 @@ class BackupController extends Controller
         return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
-    protected function resolveBackupPath(string $fileName): ?string
+    protected function resolveBackupPath(string $fileName, bool $scheduled = false): ?string
     {
         $safeFileName = basename($fileName);
 
-        if ($safeFileName !== $fileName) {
+        if ($safeFileName !== $fileName || pathinfo($safeFileName, PATHINFO_EXTENSION) !== 'sql') {
             return null;
         }
 
-        return $this->backupPath . DIRECTORY_SEPARATOR . $safeFileName;
+        return ($scheduled ? $this->scheduledPath : $this->backupPath) . DIRECTORY_SEPARATOR . $safeFileName;
     }
 }

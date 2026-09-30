@@ -12,9 +12,8 @@ class AddTwoFieldsSettingSeeder extends Seeder
      */
     public function run(): void
     {
-        Setting::create(['key' => 'about_title', 'value' => 'What We do Actually']);
-        Setting::create([
-            'key' => 'about_short_description',
+        Setting::firstOrCreate(['key' => 'about_title'], ['value' => 'What We do Actually']);
+        Setting::firstOrCreate(['key' => 'about_short_description'], [
             'value' => '',
         ]);
     }

@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DatabaseBackupService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Process\Process;
+use RuntimeException;
 
 class DatabaseBackup extends Command
 {
@@ -13,149 +14,115 @@ class DatabaseBackup extends Command
      *
      * @var string
      */
-    protected $signature = 'db:backup {--prune-days=30 : Delete backup files older than this number of days}';
+    protected $signature = 'db:backup
+        {--keep-all-days=2 : Keep every backup made in the last N days}
+        {--keep-daily-days=30 : After that keep only the newest backup of each day, for N days in total}
+        {--force : Save the backup even when nothing changed since the previous one}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a MySQL backup file in storage/app/backups/scheduled';
+    protected $description = 'Create a consistent MySQL/MariaDB backup in storage/app/backups/scheduled (skipped when nothing changed)';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle(): int
+    public function handle(DatabaseBackupService $backups): int
     {
-        $connection = config('database.connections.mysql');
+        $directory = storage_path('app/backups/scheduled');
 
-        if (! is_array($connection)) {
-            $this->error('MySQL connection is not configured.');
-
-            return self::FAILURE;
-        }
-
-        $database = $connection['database'] ?? null;
-        $username = $connection['username'] ?? null;
-        $password = (string) ($connection['password'] ?? '');
-        $host = (string) ($connection['host'] ?? '127.0.0.1');
-        $port = (string) ($connection['port'] ?? '3306');
-
-        if (empty($database) || empty($username)) {
-            $this->error('DB_DATABASE and DB_USERNAME must be configured.');
+        try {
+            $path = $backups->createDump($directory, 'norsuclinic_backup');
+        } catch (RuntimeException $e) {
+            $this->error($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $mysqldump = $this->resolveMySqlDumpBinary();
-        if (! $mysqldump) {
-            $this->error('mysqldump was not found in PATH or expected WAMP locations.');
+        // "Only if changes detected": compare this dump with the previous scheduled one, ignoring the
+        // "-- Dump completed on ..." style comment lines that always differ. An unchanged database
+        // would otherwise pile up identical copies (24 a day).
+        if (! $this->option('force')) {
+            $previous = $this->previousBackup($directory, $path);
 
-            return self::FAILURE;
-        }
+            if ($previous !== null && $this->fingerprint($previous) === $this->fingerprint($path)) {
+                File::delete($path);
+                $this->info('No changes since ' . basename($previous) . '; nothing saved.');
 
-        $backupDir = storage_path('app/backups/scheduled');
-        if (! File::isDirectory($backupDir)) {
-            File::makeDirectory($backupDir, 0755, true);
-        }
-
-        $timestamp = now()->format('Y-m-d_H-i-s');
-        $sqlFile = $backupDir . DIRECTORY_SEPARATOR . "norsuclinic_backup_{$timestamp}.sql";
-
-        $args = [
-            $mysqldump,
-            "--host={$host}",
-            "--port={$port}",
-            "--user={$username}",
-            '--single-transaction',
-            '--routines',
-            '--triggers',
-            '--events',
-            $database,
-        ];
-
-        if ($password !== '') {
-            $args[] = "--password={$password}";
-        }
-
-        $errorOutput = '';
-        $dumpHandle = fopen($sqlFile, 'wb');
-
-        if (! $dumpHandle) {
-            $this->error("Could not create backup file at {$sqlFile}.");
-
-            return self::FAILURE;
-        }
-
-        $process = new Process($args);
-        $process->setTimeout(600);
-
-        $process->run(function (string $type, string $buffer) use (&$errorOutput, $dumpHandle): void {
-            if ($type === Process::ERR) {
-                $errorOutput .= $buffer;
-
-                return;
+                return self::SUCCESS;
             }
-
-            fwrite($dumpHandle, $buffer);
-        });
-
-        fclose($dumpHandle);
-
-        if (! $process->isSuccessful()) {
-            File::delete($sqlFile);
-            $message = trim($errorOutput);
-            $this->error($message !== '' ? $message : 'mysqldump failed.');
-
-            return self::FAILURE;
         }
 
-        $sizeKb = round(filesize($sqlFile) / 1024, 1);
-        $this->info('Backup created: ' . basename($sqlFile) . " ({$sizeKb} KB)");
+        $this->info('Backup created: ' . basename($path) . ' (' . round(filesize($path) / 1024, 1) . ' KB)');
 
-        $this->pruneOldBackups($backupDir, (int) $this->option('prune-days'));
+        $this->applyRetention($directory, max(1, (int) $this->option('keep-all-days')), max(1, (int) $this->option('keep-daily-days')));
 
         return self::SUCCESS;
     }
 
-    private function resolveMySqlDumpBinary(): ?string
+    private function previousBackup(string $directory, string $current): ?string
     {
-        $command = PHP_OS_FAMILY === 'Windows' ? 'where mysqldump' : 'which mysqldump';
-        $locator = Process::fromShellCommandline($command);
-        $locator->run();
+        $files = collect(File::files($directory))
+            ->filter(fn ($file) => $file->getExtension() === 'sql' && $file->getPathname() !== $current)
+            ->sortByDesc(fn ($file) => $file->getMTime());
 
-        if ($locator->isSuccessful()) {
-            $lines = preg_split('/\r\n|\r|\n/', trim($locator->getOutput()));
-            if (! empty($lines[0])) {
-                return trim($lines[0]);
-            }
-        }
-
-        $wampCandidates = glob('C:\\wamp64\\bin\\mysql\\*\\bin\\mysqldump.exe');
-        if (is_array($wampCandidates) && count($wampCandidates) > 0) {
-            rsort($wampCandidates);
-
-            return $wampCandidates[0];
-        }
-
-        return null;
+        return $files->first()?->getPathname();
     }
 
-    private function pruneOldBackups(string $backupDir, int $days): void
+    private function fingerprint(string $path): string
     {
-        $days = max(1, $days);
-        $cutoffTimestamp = now()->subDays($days)->getTimestamp();
+        $context = hash_init('sha1');
+        $handle = fopen($path, 'rb');
+
+        while (($line = fgets($handle)) !== false) {
+            if (str_starts_with($line, '--')) {
+                continue;
+            }
+
+            hash_update($context, $line);
+        }
+
+        fclose($handle);
+
+        return hash_final($context);
+    }
+
+    /**
+     * Keep every backup of the last $keepAllDays days, then only the newest backup of each day up to
+     * $keepDailyDays days old; delete the rest. (It used to keep everything for 30 days: 720 full dumps.)
+     */
+    private function applyRetention(string $directory, int $keepAllDays, int $keepDailyDays): void
+    {
+        $allCutoff = now()->subDays($keepAllDays)->getTimestamp();
+        $dailyCutoff = now()->subDays(max($keepDailyDays, $keepAllDays))->getTimestamp();
+
+        $files = collect(File::files($directory))
+            ->filter(fn ($file) => $file->getExtension() === 'sql')
+            ->sortByDesc(fn ($file) => $file->getMTime());
+
+        $seenDays = [];
         $removed = 0;
 
-        foreach (File::files($backupDir) as $file) {
-            if ($file->getMTime() < $cutoffTimestamp) {
+        foreach ($files as $file) {
+            $mtime = $file->getMTime();
+
+            if ($mtime >= $allCutoff) {
+                continue;
+            }
+
+            $day = date('Y-m-d', $mtime);
+
+            if ($mtime < $dailyCutoff || isset($seenDays[$day])) {
                 File::delete($file->getPathname());
                 $removed++;
+
+                continue;
             }
+
+            $seenDays[$day] = true;
         }
 
         if ($removed > 0) {
-            $this->info("Pruned {$removed} backup file(s) older than {$days} day(s).");
+            $this->info("Removed {$removed} old backup file(s).");
         }
     }
 }

@@ -156,6 +156,9 @@ class ReportGenerationTest extends TestCase
             'document_type' => 'consultation_form',
             'document_creator_id' => $this->admin->id,
             'user_id' => $this->admin->id, // Just link to existing user
+            'age' => 20,
+            'gender' => 'Male',
+            'address' => 'N/A',
         ]);
 
         DocumentIssuance::create([
@@ -163,6 +166,9 @@ class ReportGenerationTest extends TestCase
             'document_type' => 'consultation_form',
             'document_creator_id' => $this->admin->id,
             'user_id' => $this->admin->id,
+            'age' => 20,
+            'gender' => 'Male',
+            'address' => 'N/A',
         ]);
 
         Livewire::test(ReportGeneration::class)
@@ -182,6 +188,7 @@ class ReportGenerationTest extends TestCase
 
         Medicine::create([
             'name' => 'Low Stock Pill',
+            'category' => 'General',
             'available_quantity' => 5,
             'minimum_stock_alert' => 10,
             'category_id' => $cat->id,
@@ -191,6 +198,7 @@ class ReportGenerationTest extends TestCase
 
         Medicine::create([
             'name' => 'Healthy Pill',
+            'category' => 'General',
             'available_quantity' => 50,
             'minimum_stock_alert' => 10,
             'category_id' => $cat->id,
@@ -223,14 +231,14 @@ class ReportGenerationTest extends TestCase
             'patient_id' => $p->id,
             'scheduled_at' => '2026-05-01 10:00:00',
             'added_by' => $this->admin->id,
-            'status' => 'pending',
+            'status' => PatientQueue::STATUS_WAITING,
         ]);
 
         PatientQueue::create([
             'patient_id' => $p->id,
             'scheduled_at' => '2026-06-01 10:00:00',
             'added_by' => $this->admin->id,
-            'status' => 'pending',
+            'status' => PatientQueue::STATUS_WAITING,
         ]);
 
         Livewire::test(ReportGeneration::class)

@@ -32,6 +32,7 @@ Backup & Restore
                                     </p>
                                     <form action="{{ route('backups.import') }}" method="POST" enctype="multipart/form-data" id="importForm">
                                         @csrf
+                                        <input type="hidden" name="confirm_restore" id="confirm_restore" value="">
                                         <div class="mb-3">
                                             <label for="backup_file" class="form-label">Select SQL File</label>
                                             <input class="form-control" type="file" id="backup_file" name="backup_file" accept=".sql,.txt" required>
@@ -68,19 +69,22 @@ Backup & Restore
                                             <div class="d-flex align-items-center">
                                                 <i class="far fa-file-alt fs-2 text-primary me-3"></i>
                                                 <span class="text-gray-800">{{ $backup['name'] }}</span>
+                                                @if($backup['scheduled'])
+                                                    <span class="badge badge-light-info ms-2">Scheduled</span>
+                                                @endif
                                             </div>
                                         </td>
                                         <td>{{ $backup['size'] }}</td>
                                         <td>{{ $backup['created_at'] }}</td>
                                         <td class="text-end">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <a href="{{ route('backups.download', $backup['name']) }}"
+                                                <a href="{{ route('backups.download', ['fileName' => $backup['name'], 'scheduled' => $backup['scheduled'] ? 1 : 0]) }}"
                                                     class="btn btn-sm btn-primary"
                                                     title="Download"
                                                     onclick="return handleDownload(this);">
                                                     <i class="fas fa-download me-1"></i>Download
                                                 </a>
-                                                <form action="{{ route('backups.destroy', $backup['name']) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('backups.destroy', ['fileName' => $backup['name'], 'scheduled' => $backup['scheduled'] ? 1 : 0]) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -192,6 +196,7 @@ Backup & Restore
             const btn = event.currentTarget;
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Restoring...';
+            document.getElementById('confirm_restore').value = '1';
             document.getElementById('importForm').submit();
         }
     }

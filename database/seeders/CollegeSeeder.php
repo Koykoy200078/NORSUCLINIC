@@ -46,6 +46,9 @@ class CollegeSeeder extends Seeder
             ],
         ];
 
-        College::insert($college);
+        // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.
+        foreach ($college as $row) {
+            College::firstOrCreate(['college_name' => $row['college_name']], $row);
+        }
     }
 }

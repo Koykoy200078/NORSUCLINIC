@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Database client programs (backup / restore)
+    |--------------------------------------------------------------------------
+    |
+    | Full path to mysqldump / mysql. Leave empty to auto-detect (system PATH, then the usual WAMP,
+    | XAMPP and Linux folders). Set it if the Backups screen reports that mysqldump was not found.
+    |
+    */
+
+    'mysqldump_path' => env('MYSQLDUMP_PATH'),
+    'mysql_path' => env('MYSQL_CLIENT_PATH'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |

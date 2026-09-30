@@ -199,7 +199,7 @@ class DepartmentSeeder extends Seeder
         ];
 
         foreach ($departments as $department) {
-            Department::create($department);
+            Department::firstOrCreate(['department_name' => $department['department_name']], $department);
         }
     }
 }

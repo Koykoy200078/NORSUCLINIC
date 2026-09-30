@@ -32,14 +32,18 @@ return new class extends Migration
         ];
 
         foreach ($permissionsNeeded as $permName) {
+            // display_name is NOT NULL without a default, so it must be supplied (strict SQL mode
+            // rejects the insert otherwise and a fresh install stops here).
             Permission::firstOrCreate(
-                ['name' => $permName, 'guard_name' => 'web']
+                ['name' => $permName, 'guard_name' => 'web'],
+                ['display_name' => ucwords(str_replace('_', ' ', $permName))]
             );
         }
 
         // Create the nurse role (guard_name 'web' matches the rest of the system)
         $nurseRole = Role::firstOrCreate(
-            ['name' => 'nurse', 'guard_name' => 'web']
+            ['name' => 'nurse', 'guard_name' => 'web'],
+            ['display_name' => 'Nurse']
         );
 
         // Assign permissions

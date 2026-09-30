@@ -15,26 +15,24 @@ class SettingTableSeeder extends Seeder
         $logoUrl = ('assets/image/norsu_logo.png');
         $favicon = ('assets/image/norsu_favicon.ico');
 
-        Setting::create(['key' => 'clinic_name', 'value' => 'Norsu Clinic']);
-        Setting::create(['key' => 'landline_no', 'value' => '522-5050 then local 1149']);
-        Setting::create(['key' => 'contact_no', 'value' => '9123456789']);
-        Setting::create(['key' => 'email', 'value' => 'norsumedicalclinic@gmail.com']);
-        Setting::create(['key' => 'specialties', 'value' => '1']);
-        Setting::create(['key' => 'currency', 'value' => '1']);
-        Setting::create([
-            'key' => 'address_one',
+        Setting::firstOrCreate(['key' => 'clinic_name'], ['value' => 'Norsu Clinic']);
+        Setting::firstOrCreate(['key' => 'landline_no'], ['value' => '522-5050 then local 1149']);
+        Setting::firstOrCreate(['key' => 'contact_no'], ['value' => '9123456789']);
+        Setting::firstOrCreate(['key' => 'email'], ['value' => 'norsumedicalclinic@gmail.com']);
+        Setting::firstOrCreate(['key' => 'specialties'], ['value' => '1']);
+        Setting::firstOrCreate(['key' => 'currency'], ['value' => '1']);
+        Setting::firstOrCreate(['key' => 'address_one'], [
             'value' => 'Kagawasan Avenue, Capitol Area, Dumaguete City, Negros Oriental, Philippines 6200',
         ]);
-        Setting::create([
-            'key' => 'address_two',
+        Setting::firstOrCreate(['key' => 'address_two'], [
             'value' => '',
         ]);
-        Setting::create(['key' => 'country_id', 'value' => '1']);
-        Setting::create(['key' => 'state_id', 'value' => '54']);
-        Setting::create(['key' => 'city_id', 'value' => '66']);
-        Setting::create(['key' => 'postal_code', 'value' => '6200']);
-        Setting::create(['key' => 'logo', 'value' => $logoUrl]);
-        Setting::create(['key' => 'favicon', 'value' => $favicon]);
-        Setting::create(['key' => 'country_code', 'value' => '63']);
+        Setting::firstOrCreate(['key' => 'country_id'], ['value' => '1']);
+        Setting::firstOrCreate(['key' => 'state_id'], ['value' => '54']);
+        Setting::firstOrCreate(['key' => 'city_id'], ['value' => '66']);
+        Setting::firstOrCreate(['key' => 'postal_code'], ['value' => '6200']);
+        Setting::firstOrCreate(['key' => 'logo'], ['value' => $logoUrl]);
+        Setting::firstOrCreate(['key' => 'favicon'], ['value' => $favicon]);
+        Setting::firstOrCreate(['key' => 'country_code'], ['value' => '63']);
     }
 }

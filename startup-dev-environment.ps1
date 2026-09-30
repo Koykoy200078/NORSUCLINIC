@@ -199,6 +199,10 @@ Write-Host "  Press Ctrl+C to stop the server" -ForegroundColor $WarningColor
 Write-Host ""
 Write-Header "Laravel Development Server Starting..."
 
+# Run the Laravel scheduler in its own minimized window: it runs the hourly database backup
+# (`php artisan db:backup`). Without it NO scheduled backup ever runs. Keep that window open.
+Start-Process -FilePath 'php' -ArgumentList 'artisan','schedule:work' -WorkingDirectory $ProjectPath -WindowStyle Minimized | Out-Null
+
 # Open the default browser to the server URL automatically once it is up. php artisan serve
 # is blocking, so schedule the open in a background job that waits a few seconds first.
 Start-Job -ArgumentList $ServerUrl -ScriptBlock {

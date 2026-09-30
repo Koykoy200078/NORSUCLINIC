@@ -47,6 +47,9 @@ class YearLevelSeeder extends Seeder
             ],
         ];
 
-        YearLevel::insert($year_level);
+        // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.
+        foreach ($year_level as $row) {
+            YearLevel::firstOrCreate(['year_level_name' => $row['year_level_name']], $row);
+        }
     }
 }

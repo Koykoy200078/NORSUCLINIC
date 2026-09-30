@@ -22,7 +22,10 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            // Plain text on purpose: the User model's "hashed" cast hashes it with the CONFIGURED rounds.
+            // A pre-hashed cost-10 string made every factory create fail whenever BCRYPT_ROUNDS differed
+            // (phpunit.xml uses 4), with "Could not verify the hashed value's configuration".
+            'password' => 'password',
             'remember_token' => Str::random(10),
         ];
     }

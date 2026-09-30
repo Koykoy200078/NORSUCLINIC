@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Auth;
 trait LogsActivity
 {
     /**
-     * Log an activity with patient/document details
-     * Uses updateOrCreate to update existing logs instead of creating duplicates
+     * Log an activity with patient/document details (append-only: every call adds a row)
      *
      * @param string $action The action performed (e.g., 'created_patient', 'created_consultation', 'used_medicine')
      * @param string $description Human-readable description
@@ -21,7 +20,7 @@ trait LogsActivity
         string $action,
         string $description,
         array $details = [],
-        bool $append = false
+        bool $append = true // kept for backward compatibility; logging is always append-only now
     ): ?ActivityLog {
         $user = Auth::user();
 
@@ -42,18 +41,26 @@ trait LogsActivity
             $details['course_section'] = $details['course'] . ' - ' . $details['year_level'];
         }
 
-        // Build unique identifier for finding existing logs
-        // Use action + subject_type + subject_id as unique key
-        $uniqueIdentifier = [
+        // The trail is APPEND-ONLY. It used to updateOrCreate() on action + subject, so every edit of a
+        // consultation, certificate, patient or lab request REPLACED the previous log row and who
+        // changed what, and when, was lost. Each call now writes a new row; a record log that follows an
+        // earlier one for the same record is labelled as an update so the history reads correctly. M-05.
+        $subjectType = $details['subject_type'] ?? null;
+        $subjectId = $details['subject_id'] ?? null;
+
+        if (str_ends_with($action, '_record') && $subjectType !== null && $subjectId !== null) {
+            $alreadyLogged = ActivityLog::where('action', $action)
+                ->where('subject_type', $subjectType)
+                ->where('subject_id', $subjectId)
+                ->exists();
+
+            $description = ($alreadyLogged ? 'Updated - ' : 'Created - ') . $description;
+        }
+
+        return ActivityLog::create([
             'action' => $action,
-            'subject_type' => $details['subject_type'] ?? null,
-            'subject_id' => $details['subject_id'] ?? null,
-        ];
-
-        // Remove null values from unique identifier
-        $uniqueIdentifier = array_filter($uniqueIdentifier, fn($value) => $value !== null);
-
-        $logData = [
+            'subject_type' => $subjectType,
+            'subject_id' => $subjectId,
             'user_id' => $user->id,
             'user_type' => $userType,
             'user_name' => $user->full_name,
@@ -73,20 +80,7 @@ trait LogsActivity
             'properties' => $details['properties'] ?? null,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-        ];
-
-        // Append-only events (procurement, usage) must create a NEW row each time; otherwise
-        // they collapse onto one row keyed by action+subject and overwrite history. AUDIT-2.
-        if ($append) {
-            return ActivityLog::create(array_merge([
-                'action' => $action,
-                'subject_type' => $details['subject_type'] ?? null,
-                'subject_id' => $details['subject_id'] ?? null,
-            ], $logData));
-        }
-
-        // Use updateOrCreate to update existing log or create new one
-        return ActivityLog::updateOrCreate($uniqueIdentifier, $logData);
+        ]);
     }
 
     /**

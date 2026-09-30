@@ -12,7 +12,8 @@ use App\Models\PatientQueue;
 use App\Models\Prescription;
 use App\Models\PatientCase;
 use App\Models\DocumentIssuance;
-use App\Models\UsedMedicine;
+use App\Models\MedicineBatch;
+use App\Models\MedicineTransaction;
 use App\Livewire\ReportGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -72,9 +73,12 @@ class ReportCrudIntegrationTest extends TestCase
         // 2. Create Consultation (Visit) - ReportGeneration uses DocumentIssuance
         $visit = DocumentIssuance::create([
             'document_type' => 'consultation_form',
-            'patient_id' => $patient->id,
+            'user_id' => $user->id,
             'document_creator_id' => $this->doctor->id,
             'name' => 'John Doe',
+            'age' => 21,
+            'gender' => 'Male',
+            'address' => 'N/A',
             'complaints' => 'Fever and chills',
             'assessment' => 'Viral Infection',
         ]);
@@ -98,12 +102,10 @@ class ReportCrudIntegrationTest extends TestCase
         // 2. Create Medicine (Inventory CRUD)
         $medicine = Medicine::create([
             'name' => 'Biogesic',
+            'category' => 'Analgesic',
             'category_id' => $category->id,
             'generic_id' => $generic->id,
             'quantity' => 100,
-            'buying_price' => 5,
-            'selling_price' => 7,
-            'is_active' => 1,
             'reorder_level' => 10,
         ]);
 
@@ -124,22 +126,35 @@ class ReportCrudIntegrationTest extends TestCase
         $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'STU-002']);
         $medicine = Medicine::create([
             'name' => 'Amoxicillin',
+            'category' => 'Antibiotics',
             'quantity' => 50,
-            'is_active' => 1
         ]);
 
-        // 2. Create Dispensing Record via UsedMedicine
-        UsedMedicine::create([
+        // 2. Record a dispense in the stock LEDGER. The Dispensing report reads medicine_transactions
+        //    (the legacy used_medicines table is no longer written to by the application).
+        $batch = MedicineBatch::create([
             'medicine_id' => $medicine->id,
+            'batch_number' => 'TEST-BATCH-1',
+            'dosage' => '500mg',
+            'quantity' => 40,
+            'expiration_date' => '2030-01-01',
+            'date_received' => '2026-01-01',
+        ]);
+        MedicineTransaction::create([
+            'batch_id' => $batch->id,
+            'user_id' => $this->admin->id,
+            'transaction_type' => MedicineTransaction::TYPE_DISPENSE,
             'quantity' => 10,
-            'model_type' => 'App\Models\PatientCase',
-            'model_id' => 1,
+            'balance_after' => 40,
+            'reference_type' => \App\Models\Prescription::class,
+            'reference_id' => 1,
         ]);
 
         // 3. Verify in Report
         Livewire::test(ReportGeneration::class)
             ->set('tab', 'dispensing')
-            ->assertSee('Amoxicillin');
+            ->assertSee('Amoxicillin')
+            ->assertSee('TEST-BATCH-1');
     }
 
     /** @test */
@@ -154,9 +169,8 @@ class ReportCrudIntegrationTest extends TestCase
         // 2. Create Appointment/Queue
         $queue = PatientQueue::create([
             'patient_id' => $patient->id,
-            'user_id' => $this->doctor->id,
             'added_by' => $this->admin->id,
-            'status' => 0,
+            'status' => PatientQueue::STATUS_WAITING,
             'scheduled_at' => Carbon::tomorrow(),
         ]);
 

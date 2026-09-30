@@ -19,7 +19,7 @@ class DefaultSpecializationSeeder extends Seeder
         ];
 
         foreach ($input as $data) {
-            Specialization::create($data);
+            Specialization::firstOrCreate(['name' => $data['name']], $data);
         }
     }
 }

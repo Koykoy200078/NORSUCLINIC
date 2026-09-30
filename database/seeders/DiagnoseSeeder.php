@@ -142,6 +142,9 @@ class DiagnoseSeeder extends Seeder
             ],
         ];
 
-        Diagnose::insert($diagnose);
+        // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.
+        foreach ($diagnose as $row) {
+            Diagnose::firstOrCreate(['diagnoses' => $row['diagnoses']], $row);
+        }
     }
 }

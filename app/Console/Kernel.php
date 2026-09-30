@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Hourly database backup (only if changes detected)
+        // Hourly database backup; the command skips saving when nothing changed since the previous
+        // backup and thins old files out (every backup for 2 days, then one per day for 30 days).
+        // Nothing runs this by itself: `php artisan schedule:work` (started by the startup scripts) or a
+        // Task Scheduler / cron entry running `php artisan schedule:run` every minute must be active.
         $schedule->command('db:backup')
             ->hourly()
             ->withoutOverlapping()
