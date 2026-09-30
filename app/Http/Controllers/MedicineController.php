@@ -119,19 +119,6 @@ class MedicineController extends AppBaseController
     }
 
     /**
-     * Display the specified Medicine.
-     *
-     * @return Factory|View
-     */
-    public function show(Medicine $medicine): View
-    {
-        $medicine->generic;
-        $medicine->medicineCategory;
-
-        return view('medicines.show')->with('medicine', $medicine);
-    }
-
-    /**
      * Show the form for editing the specified Medicine.
      *
      * @return Factory|View

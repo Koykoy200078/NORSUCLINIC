@@ -36,7 +36,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Patient Queue Management (Nurse/Staff can manage queue)
     Route::middleware(['permission:manage_patients', 'staff.module:queue'])->group(function () {
         Route::get('patient-queue/refresh', [PatientQueueController::class, 'indexPartial'])->name('patient-queue.refresh');
-        Route::resource('patient-queue', PatientQueueController::class);
+        Route::resource('patient-queue', PatientQueueController::class)->except(['show']);
         Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
         Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
     });
@@ -57,7 +57,7 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
 
     // Specializations (Staff can manage specializations)
     Route::middleware(['permission:manage_specialties', 'staff.module:specializations'])->group(function () {
-        Route::resource('specializations', SpecializationController::class);
+        Route::resource('specializations', SpecializationController::class)->except(['create', 'show']);
     });
 
     // Search users route (moved outside middleware for testing)
@@ -102,14 +102,14 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Inventory Management
     Route::middleware(['permission:manage_medicines', 'staff.module:inventory'])->group(function () {
         // Medicine Categories
-        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
+        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->except(['create']);
         Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
 
         // Medicine Generics
         Route::resource('generics', GenericController::class);
 
         // Medicines
-        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
+        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->except(['show']);
         Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');

@@ -59,7 +59,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
 
     // Specializations (Doctors can manage specializations)
     Route::middleware('permission:manage_specialties')->group(function () {
-        Route::resource('specializations', SpecializationController::class);
+        Route::resource('specializations', SpecializationController::class)->except(['create', 'show']);
     });
 
     // Search users route (moved outside middleware for testing)
@@ -82,14 +82,14 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUser
     // Medicine Management (Doctors can manage medicines, categories, generics)
     Route::middleware('permission:manage_medicines')->group(function () {
         // Medicine Categories
-        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
+        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->except(['create']);
         Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
 
         // Medicine Generics
         Route::resource('generics', GenericController::class);
 
         // Medicines
-        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
+        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->except(['show']);
         Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');

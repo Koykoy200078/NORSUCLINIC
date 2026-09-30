@@ -134,29 +134,29 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Countries routes
     Route::middleware('permission:manage_countries')->group(function () {
-        Route::resource('countries', CountryController::class);
+        Route::resource('countries', CountryController::class)->except(['create', 'show']);
         Route::post('countries/{country}', [CountryController::class, 'update']);
     });
 
     // States routes
     Route::middleware('permission:manage_states')->group(function () {
-        Route::resource('states', ProvinceController::class);
+        Route::resource('states', ProvinceController::class)->except(['create', 'show']);
         Route::post('states/{state}', [ProvinceController::class, 'update']);
     });
 
     // Cities Routes
     Route::middleware('permission:manage_cities')->group(function () {
-        Route::resource('cities', CityController::class);
+        Route::resource('cities', CityController::class)->except(['create', 'show']);
     });
 
     // Barangays Routes
     Route::middleware('permission:manage_cities')->group(function () {
-        Route::resource('barangays', BarangayController::class);
+        Route::resource('barangays', BarangayController::class)->except(['create', 'show']);
     });
 
     // Role route
     Route::middleware('permission:manage_roles')->group(function () {
-        Route::resource('roles', RoleController::class);
+        Route::resource('roles', RoleController::class)->except(['show']);
     });
 
     // Settings routes
@@ -208,7 +208,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 
     // Specialization routes
     Route::middleware('permission:manage_specialties')->group(function () {
-        Route::resource('specializations', SpecializationController::class);
+        Route::resource('specializations', SpecializationController::class)->except(['create', 'show']);
     });
 
     // Staff route
@@ -257,14 +257,14 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::middleware('permission:manage_medicines')->group(function () {
 
     // Medicine Categories
-    Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
+    Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->except(['create']);
     Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
 
     // Medicine Generics
     Route::resource('generics', GenericController::class);
 
     // Medicines
-    Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine']);
+    Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->except(['show']);
     Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
     Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
     Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
@@ -286,8 +286,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
 
     // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
-    Route::redirect('medicine-history', '/dispense-records');
-    Route::redirect('medicine-history/{id}', '/dispense-records/{id}');
+    Route::redirect('medicine-history', '/admin/dispense-records');
+    Route::redirect('medicine-history/{id}', '/admin/dispense-records/{id}');
 
     }); // end permission:manage_medicines group
 });

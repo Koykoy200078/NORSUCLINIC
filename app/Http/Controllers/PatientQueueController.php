@@ -109,15 +109,6 @@ class PatientQueueController extends Controller
     }
 
     /**
-     * Display the specified resource (For Doctors).
-     */
-    public function show(PatientQueue $patientQueue)
-    {
-        $patientQueue->load(['patient.user', 'addedBy']);
-        return view('patient_queue.show', compact('patientQueue'));
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(PatientQueue $patientQueue)
