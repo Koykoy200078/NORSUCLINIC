@@ -44,6 +44,7 @@ class PurchasedMedicine extends Model
         'medicine_availabilities_id',
         'purchase_medicines_id', // Keep for backward compatibility during migration
         'medicine_id',
+        'batch_id',
         'dosage',
         'manufacturing_date',
         'expiry_date',

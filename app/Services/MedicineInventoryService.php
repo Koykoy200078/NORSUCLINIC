@@ -12,6 +12,7 @@ use App\Models\PrescriptionMedicine;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class MedicineInventoryService
@@ -48,7 +49,7 @@ class MedicineInventoryService
 
             $batchNumber = trim((string) ($data['batch_number'] ?? ''));
             if ($batchNumber === '') {
-                $batchNumber = 'BATCH-' . $medicineId . '-' . now()->format('YmdHis');
+                $batchNumber = $this->generateBatchNumber('BATCH', $medicineId);
             }
 
             $batch = MedicineBatch::lockForUpdate()
@@ -72,6 +73,18 @@ class MedicineInventoryService
             $resolvedExpirationDate = $data['expiration_date'] ?? $batch->expiration_date;
             if (empty($resolvedExpirationDate)) {
                 throw new RuntimeException('Expiration date is required for stock-in.');
+            }
+
+            // Adding to an existing batch number must not silently move the expiry of the units
+            // already on the shelf. A different expiry means a different batch. M-03.
+            if ($batch->exists
+                && ! empty($data['expiration_date'])
+                && $batch->expiration_date
+                && Carbon::parse($data['expiration_date'])->toDateString() !== $batch->expiration_date->toDateString()) {
+                throw new RuntimeException(
+                    'Batch number ' . $batchNumber . ' already exists for this medicine with expiry '
+                    . $batch->expiration_date->toDateString() . '. Use the same expiry date or a different batch number.'
+                );
             }
 
             $resolvedDateReceived = $data['date_received'] ?? $batch->date_received ?? Carbon::today()->toDateString();
@@ -376,7 +389,7 @@ class MedicineInventoryService
             if (! $batch) {
                 $batch = new MedicineBatch([
                     'medicine_id' => $medicineId,
-                    'batch_number' => 'RESTORE-' . $medicineId . '-' . now()->format('YmdHis'),
+                    'batch_number' => $this->generateBatchNumber('RESTORE', $medicineId),
                     'dosage' => $normalizedDosage !== '' ? $normalizedDosage : $medicine->dosage,
                     'quantity' => 0,
                     'expiration_date' => $normalizedExpiry,
@@ -400,6 +413,143 @@ class MedicineInventoryService
 
             $this->syncMedicineTotals($medicineId);
         });
+    }
+
+    /**
+     * Take back stock that a stock-in ADDED (deleting a stock-in, lowering a line, removing a
+     * line, or changing its medicine / dosage / expiry).
+     *
+     * The stock is removed from the batch that entry created (preferably by $batchId; otherwise
+     * the batch with the same medicine + dosage + expiry), NOT by FEFO across all batches: FEFO
+     * emptied the earliest-expiring batch instead, so expired stock looked valid and valid stock
+     * looked expired. If that batch no longer holds enough units (they were dispensed), nothing
+     * is changed and a RuntimeException explains why. H-04 / H-05.
+     *
+     * Legacy lines with no identifiable batch fall back to FEFO for the same dosage.
+     */
+    public function reverseStockIn(
+        int $medicineId,
+        int $quantity,
+        ?int $batchId = null,
+        ?string $dosage = null,
+        ?string $expirationDate = null,
+        ?int $userId = null,
+        ?Model $reference = null,
+        ?string $remarks = null
+    ): void {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        DB::transaction(function () use ($medicineId, $quantity, $batchId, $dosage, $expirationDate, $userId, $reference, $remarks) {
+            $batch = null;
+
+            if ($batchId) {
+                $batch = MedicineBatch::lockForUpdate()->where('medicine_id', $medicineId)->find($batchId);
+            }
+
+            if (! $batch && $expirationDate) {
+                $query = MedicineBatch::lockForUpdate()
+                    ->where('medicine_id', $medicineId)
+                    ->whereDate('expiration_date', Carbon::parse($expirationDate)->toDateString());
+
+                $normalizedDosage = trim((string) $dosage);
+                if ($normalizedDosage !== '' && strcasecmp($normalizedDosage, 'N/A') !== 0) {
+                    $query->where('dosage', $normalizedDosage);
+                }
+
+                $batch = $query->orderBy('id')->first();
+            }
+
+            if (! $batch) {
+                // Nothing identifies the batch (very old data): keep the previous behaviour.
+                $this->deductStockFefo(
+                    $medicineId,
+                    $quantity,
+                    $userId,
+                    $reference,
+                    $remarks ?? 'Stock-in reversed',
+                    MedicineTransaction::TYPE_ADJUSTMENT,
+                    $dosage
+                );
+
+                return;
+            }
+
+            if ((int) $batch->quantity < $quantity) {
+                $medicine = Medicine::find($medicineId);
+                throw new RuntimeException(
+                    'Cannot reverse ' . $quantity . ' unit(s) of ' . ($medicine ? $medicine->display_name : 'this medicine')
+                    . ' from batch ' . $batch->batch_number . ': only ' . (int) $batch->quantity
+                    . ' remain, the rest were already dispensed.'
+                );
+            }
+
+            $batch->quantity = (int) $batch->quantity - $quantity;
+            $batch->save();
+
+            $this->createTransaction(
+                $batch,
+                MedicineTransaction::TYPE_ADJUSTMENT,
+                $quantity,
+                (int) $batch->quantity,
+                $userId,
+                $reference,
+                $remarks ?? 'Stock-in reversed'
+            );
+
+            $this->syncMedicineTotals($medicineId);
+        });
+    }
+
+    /**
+     * Add units to a specific existing batch (raising the quantity of a stock-in line).
+     */
+    public function increaseBatch(
+        int $batchId,
+        int $quantity,
+        ?int $userId = null,
+        ?Model $reference = null,
+        ?string $remarks = null
+    ): MedicineBatch {
+        if ($quantity <= 0) {
+            throw new RuntimeException('A positive quantity is required.');
+        }
+
+        return DB::transaction(function () use ($batchId, $quantity, $userId, $reference, $remarks) {
+            $batch = MedicineBatch::lockForUpdate()->findOrFail($batchId);
+
+            $batch->quantity = (int) $batch->quantity + $quantity;
+            $batch->save();
+
+            $this->createTransaction(
+                $batch,
+                MedicineTransaction::TYPE_STOCK_IN,
+                $quantity,
+                (int) $batch->quantity,
+                $userId,
+                $reference,
+                $remarks ?? 'Stock-in quantity increased'
+            );
+
+            $this->syncMedicineTotals((int) $batch->medicine_id);
+
+            return $batch->fresh();
+        });
+    }
+
+    /**
+     * Batch numbers generated by the system carry a random suffix: a timestamp alone collided when
+     * two entries were saved within the same second (silent merge, or a unique-key failure that
+     * rolled back a whole edit). M-03.
+     */
+    private function generateBatchNumber(string $prefix, int $medicineId): string
+    {
+        do {
+            $candidate = $prefix . '-' . $medicineId . '-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(4));
+        } while (MedicineBatch::where('medicine_id', $medicineId)->where('batch_number', $candidate)->exists());
+
+        return $candidate;
     }
 
     /**

@@ -71,7 +71,18 @@ class StockInController extends AppBaseController
             $input['availability_no'] = generateUniqueAvailabilityNumber();
         }
 
-        $this->medicineAvailabilityRepository->store($input);
+        try {
+            $this->medicineAvailabilityRepository->store($input);
+        } catch (\Throwable $e) {
+            Log::error('Stock-in store failed: ' . $e->getMessage());
+            $message = $this->stockInErrorMessage($e, 'The stock-in could not be saved.');
+
+            if ($request->ajax()) {
+                return $this->sendError($message);
+            }
+
+            return redirect()->back()->withInput()->with('error', $message);
+        }
 
         if ($request->ajax()) {
             return $this->sendSuccess(__('messages.medicine_availability.medicine_availability_success'));
@@ -105,10 +116,35 @@ class StockInController extends AppBaseController
     {
         $input = $request->all();
 
-        $this->medicineAvailabilityRepository->updatePurchaseMedicine($input, $stockIn->id);
+        try {
+            $this->medicineAvailabilityRepository->updatePurchaseMedicine($input, $stockIn->id);
+        } catch (\Throwable $e) {
+            // The repository rolls everything back, so a refused edit leaves inventory untouched.
+            Log::error('Stock-in update failed: ' . $e->getMessage());
+
+            return redirect()->back()->withInput()
+                ->with('error', $this->stockInErrorMessage($e, 'The stock-in could not be updated.'));
+        }
+
         Flash::success(__('messages.medicine_availability.purchased_medicine_updated'));
 
         return redirect($this->getIndexRoute());
+    }
+
+    /**
+     * The repository wraps failures in an HTTP exception carrying the original message. Inventory
+     * rule violations (RuntimeException text such as "only 3 remain, the rest were already
+     * dispensed") are meant for the user; database errors are not.
+     */
+    private function stockInErrorMessage(\Throwable $e, string $fallback): string
+    {
+        $message = $e->getMessage();
+
+        $isDatabaseError = $e instanceof \Illuminate\Database\QueryException
+            || str_contains($message, 'SQLSTATE')
+            || str_contains($message, 'Integrity constraint');
+
+        return ($message !== '' && ! $isDatabaseError) ? $message : $fallback;
     }
 
     public function getMedicine(Medicine $medicine): JsonResponse
@@ -130,28 +166,37 @@ class StockInController extends AppBaseController
 
     public function destroy(StockIn $stockIn)
     {
-        // Reverse the stock this stock-in ADDED before deleting; otherwise the added quantity
-        // stays in inventory forever as phantom stock (mirrors the removed-line reversal in
-        // MedicineAvailabilityRepository::updatePurchaseMedicine). If the stock has already
-        // been dispensed, the FEFO deduction throws and the whole delete rolls back. CRUD-STK.
+        // Reverse exactly the stock this stock-in ADDED (from the batch each line created) before
+        // deleting; otherwise the added quantity stays in inventory as phantom stock, and with FEFO
+        // the wrong batch used to be emptied (expired stock looked valid). If some of it has
+        // already been dispensed the reversal throws and the whole delete rolls back. H-05.
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($stockIn) {
                 $inventoryService = app(\App\Services\MedicineInventoryService::class);
                 foreach ($stockIn->purchasedMedcines as $line) {
-                    $inventoryService->deductStockFefo(
+                    if (! $line->medicine_id) {
+                        continue;
+                    }
+
+                    $inventoryService->reverseStockIn(
                         (int) $line->medicine_id,
                         (int) $line->quantity,
+                        $line->batch_id ? (int) $line->batch_id : null,
+                        $line->dosage,
+                        $line->expiry_date,
                         getLogInUserId(),
                         $stockIn,
-                        'Reversed: stock-in batch #' . $stockIn->id . ' deleted',
-                        \App\Models\MedicineTransaction::TYPE_ADJUSTMENT,
-                        $line->dosage
+                        'Reversed: stock-in #' . $stockIn->id . ' deleted'
                     );
                 }
                 $stockIn->delete();
             });
         } catch (\Throwable $e) {
-            return $this->sendError('Cannot delete this stock-in: its stock has already been dispensed/consumed, so removing it would create negative inventory. (' . $e->getMessage() . ')');
+            Log::error('Stock-in delete refused/failed: ' . $e->getMessage());
+
+            return $this->sendError(
+                'Cannot delete this stock-in: ' . $this->stockInErrorMessage($e, 'its stock has already been dispensed/consumed, so removing it would create negative inventory.')
+            );
         }
 
         return $this->sendSuccess(__('messages.flash.medicine_deleted'));

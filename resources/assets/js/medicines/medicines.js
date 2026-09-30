@@ -157,10 +157,21 @@ window.medicineDeleteItem = function (url, header) {
         type: "GET",
         success: function (result) {
             if (result.success) {
+                // A medicine that already has stock / dispensing / prescription history cannot be
+                // deleted (the server refuses too); tell the user instead of offering "Yes".
+                if (result.data.result == true) {
+                    swal({
+                        title: Lang.get("js.deleted"),
+                        text: Lang.get("js.the_medicine_already_in_use"),
+                        icon: "warning",
+                        button: Lang.get("js.ok") || "OK",
+                    });
+
+                    return;
+                }
+
                 let popUpText =
-                    result.data.result == true
-                        ? Lang.get("js.the_medicine_already_in_use")
-                        : Lang.get("js.are_you_sure") + ' "' + header + '"?';
+                    Lang.get("js.are_you_sure") + ' "' + header + '"?';
                 swal({
                     title: Lang.get("js.deleted"),
                     text: popUpText,

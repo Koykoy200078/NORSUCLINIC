@@ -106,7 +106,14 @@ class MedicineCategoryTable extends LivewireTableComponent
 
     public function changeStatus($id)
     {
-        $category = Category::where('id', $id)->first();
+        // Livewire only re-checks "logged in" on an update request, not the role / staff-module
+        // middleware that guarded the page, so authorize inside the action. P2-M6 / P2-H3.
+        abort_unless(
+            auth()->check() && (auth()->user()->can('manage_medicines') || auth()->user()->hasRole('clinic_admin')),
+            403
+        );
+
+        $category = Category::findOrFail($id);
         if ($category->is_active == Category::ACTIVE) {
             $category->is_active = Category::INACTIVE;
         } else {

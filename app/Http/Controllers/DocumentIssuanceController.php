@@ -1883,7 +1883,9 @@ class DocumentIssuanceController extends Controller
             if (! $targetBatch) {
                 $targetBatch = \App\Models\MedicineBatch::create([
                     'medicine_id' => (int) $medicineId,
-                    'batch_number' => 'RETURN-' . (int) $medicineId . '-' . now()->format('YmdHis'),
+                    // Random suffix: a timestamp alone collided when two restores ran in the same
+                    // second (unique-key failure rolled back the whole edit). M-03.
+                    'batch_number' => 'RETURN-' . (int) $medicineId . '-' . now()->format('YmdHis') . '-' . strtoupper(\Illuminate\Support\Str::random(4)),
                     'dosage' => $resolvedDosage !== '' ? $resolvedDosage : null,
                     'quantity' => 0,
                     // Never-expires sentinel (original expiry unknown) so restored consultation

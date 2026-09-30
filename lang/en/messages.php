@@ -968,7 +968,7 @@ return [
         'tax_should_be' => 'Taxes should be less than 100%.',
         'tax_cannot_be_zero_empty' => 'The tax amount can not be zero or empty.',
         'the_discount_shoul' => 'The discount should be less than the total amount',
-        'the_medicine_already_in_use' => 'This medicine is already used in medicine bills, are you sure want to delete it?',
+        'the_medicine_already_in_use' => 'This medicine has stock, dispensing or prescription history and cannot be deleted. Its records are kept for the inventory ledger and patient history.',
         'avl_qty' => 'Avl Qty'
 
     ],

@@ -112,31 +112,18 @@ class MedicineAvailabilityRepository extends BaseRepository
             $medicineAvailability = MedicineAvailability::create($purchaseMedicineArray);
 
             foreach ($input['medicine'] as $key => $value) {
-                $purchasedMedicineArray = [
-                    'medicine_availabilities_id' => $medicineAvailability->id,
-                    'medicine_id' => $input['medicine'][$key],
-                    'dosage' => $input['dosage'][$key] ?? null,
-                    'manufacturing_date' => $input['manufacturing_date'][$key],
-                    'expiry_date' => $input['expiry_date'][$key] ?? null,
-                    'quantity' => $input['quantity'][$key],
-                ];
-
-                \Illuminate\Support\Facades\Log::info('Creating PurchasedMedicine with data:', $purchasedMedicineArray);
-
-                PurchasedMedicine::create($purchasedMedicineArray);
-                $medicine = Medicine::find($input['medicine'][$key]);
+                $medicine = Medicine::findOrFail($input['medicine'][$key]);
                 $previousAvailable = (int) ($medicine->available_quantity ?? 0);
                 // Do NOT manually bump quantity/available_quantity here — recordStockIn()'s
                 // syncMedicineTotals() recomputes them from the batch ledger and is the single
                 // source of truth. The manual bump fed an inflated value into the monotonic
                 // baseline_quantity and skewed low-stock alerts. INV-4.
 
-                app(MedicineInventoryService::class)->recordStockIn([
+                $batch = app(MedicineInventoryService::class)->recordStockIn([
                     'medicine_id' => $medicine->id,
                     'quantity' => (int) $input['quantity'][$key],
                     'dosage' => $input['dosage'][$key] ?? null,
-                    'batch_number' => ($input['batch_number'][$key] ?? null)
-                        ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
+                    'batch_number' => ($input['batch_number'][$key] ?? null) ?: null,
                     'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
                     'expiration_date' => $input['expiry_date'][$key] ?? null,
                     'supplier_name' => $input['supplier_name'] ?? null,
@@ -145,6 +132,18 @@ class MedicineAvailabilityRepository extends BaseRepository
                     'user_id' => getLogInUserId(),
                     'reference' => $medicineAvailability,
                     'remarks' => 'Stock-in from procurement form',
+                ]);
+
+                // The line remembers the batch it created, so a later edit / delete reverses
+                // exactly that batch. H-04 / H-05.
+                PurchasedMedicine::create([
+                    'medicine_availabilities_id' => $medicineAvailability->id,
+                    'medicine_id' => $medicine->id,
+                    'batch_id' => $batch->id,
+                    'dosage' => $input['dosage'][$key] ?? null,
+                    'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
+                    'expiry_date' => $input['expiry_date'][$key] ?? null,
+                    'quantity' => $input['quantity'][$key],
                 ]);
 
                 // Log medicine procurement activity
@@ -181,151 +180,161 @@ class MedicineAvailabilityRepository extends BaseRepository
             $purchaseMedicineArray = Arr::only($input, $medicineAvailability->getFillable());
             $medicineAvailability->update($purchaseMedicineArray);
 
+            $inventory = app(MedicineInventoryService::class);
+
             // Get existing purchased medicines
             $existingPurchasedMedicines = PurchasedMedicine::where('medicine_availabilities_id', $id)->get()->keyBy('id');
 
-            foreach ($input['medicine'] as $key => $value) {
-                $purchasedMedicineId = $input['purchased_medicine_id'][$key] ?? null;
-                $newQuantity = $input['quantity'][$key];
-                $medicineId = $input['medicine'][$key];
+            // Pass 1 - take back whatever a removed or re-identified line had added, BEFORE
+            // anything new is recorded, so a batch that can no longer give the stock back stops
+            // the whole edit (nothing is committed) instead of leaving inventory half-changed.
+            $incomingIds = collect($input['purchased_medicine_id'] ?? [])->filter()->map(fn ($v) => (int) $v)->all();
 
-                if ($purchasedMedicineId && isset($existingPurchasedMedicines[$purchasedMedicineId])) {
-                    // Update existing purchased medicine
-                    $existingPurchasedMedicine = $existingPurchasedMedicines[$purchasedMedicineId];
-                    $oldQuantity = $existingPurchasedMedicine->quantity;
-                    $quantityDifference = $newQuantity - $oldQuantity;
-
-                    $purchasedMedicineArray = [
-                        'medicine_id' => $medicineId,
-                        'dosage' => $input['dosage'][$key] ?? null,
-                        'manufacturing_date' => $input['manufacturing_date'][$key],
-                        'expiry_date' => $input['expiry_date'][$key],
-                        'quantity' => $newQuantity,
-                    ];
-
-                    $existingPurchasedMedicine->update($purchasedMedicineArray);
-
-                    // Update medicine quantities
-                    $medicine = Medicine::find($medicineId);
-                    if ($medicine) {
-                        $previousAvailable = (int) ($medicine->available_quantity ?? 0);
-                        // No manual quantity bump — the inventory service's syncMedicineTotals()
-                        // recomputes totals from the batch ledger authoritatively. INV-4.
-
-                        if ($quantityDifference > 0) {
-                            app(MedicineInventoryService::class)->recordStockIn([
-                                'medicine_id' => $medicine->id,
-                                'quantity' => (int) $quantityDifference,
-                                'dosage' => $input['dosage'][$key] ?? null,
-                                'batch_number' => ($input['batch_number'][$key] ?? null)
-                                    ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
-                                'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
-                                'expiration_date' => $input['expiry_date'][$key] ?? null,
-                                'supplier_name' => $input['supplier_name'] ?? null,
-                                'date_received' => now()->toDateString(),
-                                'opening_balance_before' => $previousAvailable,
-                                'user_id' => getLogInUserId(),
-                                'reference' => $medicineAvailability,
-                                'remarks' => 'Stock-in adjustment from updated procurement',
-                            ]);
-                        } elseif ($quantityDifference < 0) {
-                            app(MedicineInventoryService::class)->deductStockFefo(
-                                $medicine->id,
-                                abs((int) $quantityDifference),
-                                getLogInUserId(),
-                                $medicineAvailability,
-                                'Stock-out adjustment from updated procurement',
-                                \App\Models\MedicineTransaction::TYPE_ADJUSTMENT
-                            );
-                        }
-
-                        // Log the update
-                        if ($quantityDifference != 0) {
-                            self::logMedicineUpdate(
-                                $medicine,
-                                $quantityDifference,
-                                [
-                                    'batch_no' => $input['manufacturing_date'][$key],
-                                    'expiry_date' => $input['expiry_date'][$key],
-                                    'action' => $quantityDifference > 0 ? 'increased' : 'decreased',
-                                ]
-                            );
-                        }
-                    }
-
-                    unset($existingPurchasedMedicines[$purchasedMedicineId]);
-                } else {
-                    // Create new purchased medicine entry
-                    $purchasedMedicineArray = [
-                        'medicine_availabilities_id' => $medicineAvailability->id,
-                        'medicine_id' => $medicineId,
-                        'dosage' => $input['dosage'][$key] ?? null,
-                        'manufacturing_date' => $input['manufacturing_date'][$key],
-                        'expiry_date' => $input['expiry_date'][$key],
-                        'quantity' => $newQuantity,
-                    ];
-
-                    PurchasedMedicine::create($purchasedMedicineArray);
-
-                    // Add to medicine quantity
-                    $medicine = Medicine::find($medicineId);
-                    if ($medicine) {
-                        $previousAvailable = (int) ($medicine->available_quantity ?? 0);
-                        $medicineQtyArray = [
-                            'quantity' => $medicine->quantity + $newQuantity,
-                            'available_quantity' => $medicine->available_quantity + $newQuantity,
-                        ];
-                        $medicine->update($medicineQtyArray);
-
-                        app(MedicineInventoryService::class)->recordStockIn([
-                            'medicine_id' => $medicine->id,
-                            'quantity' => (int) $newQuantity,
-                            'dosage' => $input['dosage'][$key] ?? null,
-                            'batch_number' => ($input['batch_number'][$key] ?? null)
-                                ?: ($medicineAvailability->availability_no . '-' . $medicine->id . '-' . ($key + 1)),
-                            'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
-                            'expiration_date' => $input['expiry_date'][$key] ?? null,
-                            'supplier_name' => $input['supplier_name'] ?? null,
-                            'date_received' => now()->toDateString(),
-                            'opening_balance_before' => $previousAvailable,
-                            'user_id' => getLogInUserId(),
-                            'reference' => $medicineAvailability,
-                            'remarks' => 'New batch from updated procurement',
-                        ]);
-
-                        // Log medicine procurement
-                        self::logMedicineProcurement(
-                            $medicine,
-                            $newQuantity,
-                            [
-                                'batch_no' => $input['manufacturing_date'][$key],
-                                'expiry_date' => $input['expiry_date'][$key],
-                            ]
-                        );
-                    }
+            foreach ($existingPurchasedMedicines as $existingId => $line) {
+                if (! in_array((int) $existingId, $incomingIds, true)) {
+                    $this->reverseLine($inventory, $line, (int) $line->quantity, $medicineAvailability, 'Removed line from procurement update');
+                    $line->delete();
+                    unset($existingPurchasedMedicines[$existingId]);
                 }
             }
 
-            // Remove deleted medicines (subtract their quantities)
-            foreach ($existingPurchasedMedicines as $deletedMedicine) {
-                $medicine = Medicine::find($deletedMedicine->medicine_id);
-                if ($medicine) {
-                    $medicineQtyArray = [
-                        'quantity' => max(0, $medicine->quantity - $deletedMedicine->quantity),
-                        'available_quantity' => max(0, $medicine->available_quantity - $deletedMedicine->quantity),
-                    ];
-                    $medicine->update($medicineQtyArray);
+            foreach ($input['medicine'] as $key => $value) {
+                $purchasedMedicineId = $input['purchased_medicine_id'][$key] ?? null;
+                $newQuantity = (int) $input['quantity'][$key];
+                $medicineId = (int) $input['medicine'][$key];
+                $dosage = $input['dosage'][$key] ?? null;
+                $manufacturingDate = $input['manufacturing_date'][$key] ?? null;
+                $expiryDate = $input['expiry_date'][$key] ?? null;
+                $medicine = Medicine::findOrFail($medicineId);
 
-                    app(MedicineInventoryService::class)->deductStockFefo(
-                        $medicine->id,
-                        (int) $deletedMedicine->quantity,
-                        getLogInUserId(),
-                        $medicineAvailability,
-                        'Deleted batch adjustment from procurement update',
-                        \App\Models\MedicineTransaction::TYPE_ADJUSTMENT
-                    );
+                $existing = $purchasedMedicineId ? ($existingPurchasedMedicines[$purchasedMedicineId] ?? null) : null;
+
+                if (! $existing) {
+                    // New line on an existing procurement.
+                    $batch = $inventory->recordStockIn([
+                        'medicine_id' => $medicine->id,
+                        'quantity' => $newQuantity,
+                        'dosage' => $dosage,
+                        'batch_number' => ($input['batch_number'][$key] ?? null) ?: null,
+                        'manufacturing_date' => $manufacturingDate,
+                        'expiration_date' => $expiryDate,
+                        'supplier_name' => $input['supplier_name'] ?? null,
+                        'date_received' => now()->toDateString(),
+                        'opening_balance_before' => (int) ($medicine->available_quantity ?? 0),
+                        'user_id' => getLogInUserId(),
+                        'reference' => $medicineAvailability,
+                        'remarks' => 'New batch from updated procurement',
+                    ]);
+
+                    PurchasedMedicine::create([
+                        'medicine_availabilities_id' => $medicineAvailability->id,
+                        'medicine_id' => $medicine->id,
+                        'batch_id' => $batch->id,
+                        'dosage' => $dosage,
+                        'manufacturing_date' => $manufacturingDate,
+                        'expiry_date' => $expiryDate,
+                        'quantity' => $newQuantity,
+                    ]);
+
+                    self::logMedicineProcurement($medicine, $newQuantity, [
+                        'batch_no' => $manufacturingDate,
+                        'expiry_date' => $expiryDate,
+                    ]);
+
+                    continue;
                 }
-                $deletedMedicine->delete();
+
+                $oldQuantity = (int) $existing->quantity;
+                $identityChanged = (int) $existing->medicine_id !== $medicineId
+                    || trim((string) $existing->dosage) !== trim((string) $dosage)
+                    || ! $this->sameDate($existing->expiry_date, $expiryDate);
+
+                if ($identityChanged) {
+                    // A different medicine / dosage / expiry is a different batch: take back the
+                    // ENTIRE old quantity from the old batch, then record the new line as a fresh
+                    // stock-in. Previously only the quantity difference was applied, so the old
+                    // medicine kept its stock and the ledger disagreed with the document.
+                    $this->reverseLine($inventory, $existing, $oldQuantity, $medicineAvailability, 'Line changed in procurement update');
+
+                    $batch = $inventory->recordStockIn([
+                        'medicine_id' => $medicine->id,
+                        'quantity' => $newQuantity,
+                        'dosage' => $dosage,
+                        'batch_number' => ($input['batch_number'][$key] ?? null) ?: null,
+                        'manufacturing_date' => $manufacturingDate,
+                        'expiration_date' => $expiryDate,
+                        'supplier_name' => $input['supplier_name'] ?? null,
+                        'date_received' => now()->toDateString(),
+                        'opening_balance_before' => (int) ($medicine->available_quantity ?? 0),
+                        'user_id' => getLogInUserId(),
+                        'reference' => $medicineAvailability,
+                        'remarks' => 'Stock-in line changed in updated procurement',
+                    ]);
+
+                    $existing->update([
+                        'medicine_id' => $medicine->id,
+                        'batch_id' => $batch->id,
+                        'dosage' => $dosage,
+                        'manufacturing_date' => $manufacturingDate,
+                        'expiry_date' => $expiryDate,
+                        'quantity' => $newQuantity,
+                    ]);
+
+                    self::logMedicineUpdate($medicine, $newQuantity - $oldQuantity, [
+                        'batch_no' => $manufacturingDate,
+                        'expiry_date' => $expiryDate,
+                        'action' => 'line changed',
+                    ]);
+
+                    continue;
+                }
+
+                // Same medicine / dosage / expiry: only the quantity difference moves, in the
+                // batch this line created.
+                $quantityDifference = $newQuantity - $oldQuantity;
+
+                if ($quantityDifference > 0) {
+                    if ($existing->batch_id && \App\Models\MedicineBatch::whereKey($existing->batch_id)->exists()) {
+                        $inventory->increaseBatch(
+                            (int) $existing->batch_id,
+                            $quantityDifference,
+                            getLogInUserId(),
+                            $medicineAvailability,
+                            'Stock-in adjustment from updated procurement'
+                        );
+                    } else {
+                        $batch = $inventory->recordStockIn([
+                            'medicine_id' => $medicine->id,
+                            'quantity' => $quantityDifference,
+                            'dosage' => $dosage,
+                            'batch_number' => ($input['batch_number'][$key] ?? null) ?: null,
+                            'manufacturing_date' => $manufacturingDate,
+                            'expiration_date' => $expiryDate,
+                            'supplier_name' => $input['supplier_name'] ?? null,
+                            'date_received' => now()->toDateString(),
+                            'opening_balance_before' => (int) ($medicine->available_quantity ?? 0),
+                            'user_id' => getLogInUserId(),
+                            'reference' => $medicineAvailability,
+                            'remarks' => 'Stock-in adjustment from updated procurement',
+                        ]);
+                        $existing->batch_id = $batch->id;
+                    }
+                } elseif ($quantityDifference < 0) {
+                    $this->reverseLine($inventory, $existing, abs($quantityDifference), $medicineAvailability, 'Stock-in quantity reduced in procurement update');
+                }
+
+                $existing->update([
+                    'manufacturing_date' => $manufacturingDate,
+                    'quantity' => $newQuantity,
+                ]);
+
+                if ($quantityDifference !== 0) {
+                    self::logMedicineUpdate($medicine->fresh(), $quantityDifference, [
+                        'batch_no' => $manufacturingDate,
+                        'expiry_date' => $expiryDate,
+                        'action' => $quantityDifference > 0 ? 'increased' : 'decreased',
+                    ]);
+                }
             }
 
             DB::commit();
@@ -334,6 +343,43 @@ class MedicineAvailabilityRepository extends BaseRepository
         } catch (Exception $e) {
             DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * Take $quantity units of a stock-in line back out of the batch that line created.
+     */
+    private function reverseLine(MedicineInventoryService $inventory, PurchasedMedicine $line, int $quantity, MedicineAvailability $reference, string $remarks): void
+    {
+        if (! $line->medicine_id) {
+            return;
+        }
+
+        $inventory->reverseStockIn(
+            (int) $line->medicine_id,
+            $quantity,
+            $line->batch_id ? (int) $line->batch_id : null,
+            $line->dosage,
+            $line->expiry_date,
+            getLogInUserId(),
+            $reference,
+            $remarks
+        );
+    }
+
+    private function sameDate($a, $b): bool
+    {
+        $left = trim((string) $a);
+        $right = trim((string) $b);
+
+        if ($left === $right) {
+            return true;
+        }
+
+        try {
+            return \Carbon\Carbon::parse($left)->toDateString() === \Carbon\Carbon::parse($right)->toDateString();
+        } catch (\Throwable $e) {
+            return false;
         }
     }
 

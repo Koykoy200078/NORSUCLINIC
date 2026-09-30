@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\Patient;
 use App\Models\DocumentIssuance;
 use App\Models\Medicine;
+use App\Models\MedicineTransaction;
 use App\Models\Prescription;
 use App\Models\PatientQueue;
 use App\Models\UsedMedicine;
@@ -124,12 +125,17 @@ class ReportGeneration extends Component
                 break;
 
             case 'dispensing':
-                $query = UsedMedicine::query()->with(['medicine'])
-                    ->orderBy('created_at', 'desc');
+                // Read the stock LEDGER (medicine_transactions). This tab used to read used_medicines,
+                // a legacy table nothing writes to any more, so it was always empty/incomplete. M-04.
+                $query = MedicineTransaction::query()
+                    ->with(['batch.medicine', 'user'])
+                    ->where('transaction_type', MedicineTransaction::TYPE_DISPENSE)
+                    ->orderBy('created_at', 'desc')
+                    ->orderBy('id', 'desc');
                 if ($this->date_from) $query->whereDate('created_at', '>=', $this->date_from);
                 if ($this->date_to) $query->whereDate('created_at', '<=', $this->date_to);
                 if ($this->search) {
-                    $query->whereHas('medicine', fn($q) => $q->where('name', 'like', "%{$this->search}%"));
+                    $query->whereHas('batch.medicine', fn($q) => $q->where('name', 'like', "%{$this->search}%"));
                 }
                 $data['reports'] = $query->paginate(20);
                 break;

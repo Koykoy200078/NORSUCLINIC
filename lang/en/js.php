@@ -76,7 +76,7 @@ return [
     'medicine_bill' => 'Medicine Bill',
     'quantity_should' => 'Quantity should be greater than 0.',
     'medicine' => 'Medicine',
-    'the_medicine_already_in_use' => 'This medicine is already used in medicine bills, are you sure want to delete it?',
+    'the_medicine_already_in_use' => 'This medicine has stock, dispensing or prescription history and cannot be deleted. Its records are kept for the inventory ledger and patient history.',
     'prescription' => 'Prescription',
     'enter_manufacturing_date' => 'Enter manufacturing date.',
     'enter_sale_price' => 'Enter sale price.',

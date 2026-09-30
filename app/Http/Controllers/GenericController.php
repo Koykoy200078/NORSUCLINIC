@@ -125,8 +125,14 @@ class GenericController extends AppBaseController
      */
     public function destroy(Generic $generic): JsonResponse
     {
-        // Null out generic_id on any medicines using this generic before deleting
-        Medicine::where('generic_id', $generic->id)->update(['generic_id' => null]);
+        // Deleting a generic used to silently null generic_id on every medicine that used it.
+        // Refuse instead, like categories and specializations do. P2-M5.
+        $usedBy = Medicine::where('generic_id', $generic->id)->count();
+        if ($usedBy > 0) {
+            return $this->sendError(
+                "This generic is used by {$usedBy} medicine(s) and cannot be deleted. Change those medicines first."
+            );
+        }
 
         $generic->delete();
 

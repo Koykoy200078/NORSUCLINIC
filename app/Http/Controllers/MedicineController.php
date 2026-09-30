@@ -175,14 +175,18 @@ class MedicineController extends AppBaseController
         if (! canAccessRecord(Medicine::class, $medicine->id)) {
             return $this->sendError(__('messages.flash.medicine_not_found'));
         }
-        $purchaseMedicine = PurchasedMedicine::whereMedicineId($medicine->id)->first();
-        $saleMedicine = DispenseRecordItem::whereMedicineId($medicine->id)->first();
-        if (isset($purchaseMedicine) && ! empty($purchaseMedicine)) {
-            $purchaseMedicine->delete();
+
+        // A medicine with any stock/dispensing/prescribing history is part of the clinical and
+        // inventory record and is never deleted. Deleting it used to cascade through the database
+        // and erase its stock batches, the whole stock ledger, prescription lines and consultation
+        // medicine rows (and the "already in use" warning still let the user go ahead). C-04.
+        if ($this->medicineHasHistory($medicine)) {
+            return $this->sendError(
+                'This medicine has stock, dispensing or prescription history and cannot be deleted. '
+                . 'Its records are kept for the inventory ledger and patient history.'
+            );
         }
-        if (isset($saleMedicine) && ! empty($saleMedicine)) {
-            $saleMedicine->delete();
-        }
+
         $this->medicineRepository->delete($medicine->id);
 
         return $this->sendSuccess(__('messages.medicine.medicine') . ' ' . __('messages.medicine.deleted_successfully'));
@@ -309,15 +313,12 @@ class MedicineController extends AppBaseController
     public function checkUseOfMedicine(Medicine $medicine)
     {
 
-        $SaleModel = [
-            DispenseRecordItem::class,
-            PurchasedMedicine::class,
-        ];
-        $result['result'] = canDelete($SaleModel, 'medicine_id', $medicine->id);
+        $result['result'] = $this->medicineHasHistory($medicine);
         $result['id'] = $medicine->id;
 
-        if ($result) {
-
+        // (This used to test the array itself, which is always truthy, so it always answered
+        // "already in use".)
+        if ($result['result']) {
             return $this->sendResponse($result, __('messages.medicine_bills.the_medicine_already_in_use'));
         }
 
@@ -466,5 +467,17 @@ class MedicineController extends AppBaseController
             'reference' => $medicine,
             'remarks' => 'Initial stock from medicine form',
         ]);
+    }
+
+    /**
+     * Whether any inventory, dispensing, prescribing or consultation record refers to the medicine.
+     */
+    private function medicineHasHistory(Medicine $medicine): bool
+    {
+        return MedicineBatch::where('medicine_id', $medicine->id)->exists()
+            || PurchasedMedicine::where('medicine_id', $medicine->id)->exists()
+            || DispenseRecordItem::where('medicine_id', $medicine->id)->exists()
+            || \App\Models\PrescriptionMedicine::where('medicine', $medicine->id)->exists()
+            || \App\Models\ConsultationMedicine::where('medicine_id', $medicine->id)->exists();
     }
 }
