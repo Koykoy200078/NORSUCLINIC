@@ -35,7 +35,7 @@
     </section>
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="content-card">{!! $termConditions['terms_conditions'] !!}</div>
+            <div class="content-card">{!! ($termConditions['terms_conditions'] ?? '') !!}</div>
         </div>
     </section>
 @endsection

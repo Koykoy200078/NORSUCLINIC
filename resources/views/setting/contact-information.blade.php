@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-{{$setting['clinic_name']}}
+{{($setting['clinic_name'] ?? null)}}
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -20,13 +20,13 @@
                     <div class="row mb-6">
                         {{ Form::label('address_one',__('messages.setting.address').' 1:',['class'=>'col-lg-4 required form-label']) }}
                         <div class="col-lg-8">
-                            {{ Form::text('address_one', $setting['address_one'], ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 1','required']) }}
+                            {{ Form::text('address_one', ($setting['address_one'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 1','required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
                         {{ Form::label('address_two',__('messages.setting.address').' 2:',['class'=>'col-lg-4 required form-label']) }}
                         <div class="col-lg-8">
-                            {{ Form::text('address_two', $setting['address_two'], ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 2','required']) }}
+                            {{ Form::text('address_two', ($setting['address_two'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 2','required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
@@ -34,7 +34,7 @@
                             {{ Form::label('country_id',__('messages.country.country').':',['class'=>'col-lg-4 form-label required']) }}
                         </label>
                         <div class="col-lg-8">
-                            {{ Form::select('country_id', $countries, $setting['country_id'], ['id' => 'settingCountryId',
+                            {{ Form::select('country_id', $countries, ($setting['country_id'] ?? null), ['id' => 'settingCountryId',
                                         'class' => 'form-select', 'aria-label'=>"Select a Country",
                                         'data-control'=>'select2','placeholder' => __('messages.country.country'),'required']) }}
                         </div>
@@ -45,7 +45,7 @@
                         </label>
                         <div class="col-lg-8">
                             {{ Form::select('state_id', (isset($states) && $states!=null ? $states : []),
-            isset($setting['state_id']) ? $setting['state_id'] : null,
+            isset($setting['state_id']) ? ($setting['state_id'] ?? null) : null,
             ['id' => 'settingStateId','class' => 'form-select','data-control'=>'select2','required', 'placeholder' => __('messages.common.province')]) }}
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                     <div class="row mb-6">
                         {{ Form::label('postal_code',__('messages.setting.postal_code').':',['class'=>'col-lg-4 required form-label']) }}
                         <div class="col-lg-8">
-                            {{ Form::text('postal_code', $setting['postal_code'], ['class' => 'form-control','placeholder'=>__('messages.setting.postal_code'),'required']) }}
+                            {{ Form::text('postal_code', ($setting['postal_code'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.postal_code'),'required']) }}
                         </div>
                     </div>
                 </div>

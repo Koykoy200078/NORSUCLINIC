@@ -35,7 +35,7 @@
     </section>
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="content-card">{!! $privacyPolicy['privacy_policy'] !!}</div>
+            <div class="content-card">{!! ($privacyPolicy['privacy_policy'] ?? '') !!}</div>
         </div>
     </section>
 @endsection
