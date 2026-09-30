@@ -77,6 +77,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStat
     // Request Documents - Consultations / Certificates
     Route::middleware(['permission:manage_request_documents', 'staff.module:document_issuances'])->group(function () {
         Route::get('document-issuances/{document_issuance}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+        Route::get('document-issuances/{document_issuance}/images/{index}', [DocumentIssuanceController::class, 'showImage'])
+            ->whereNumber('index')->name('document-issuances.image');
         Route::resource('document-issuances', DocumentIssuanceController::class);
     });
 

@@ -65,26 +65,35 @@ class EnsureStaffModuleAccess
 
     private function resolveDocumentIssuanceModule(Request $request): string
     {
-        $queryModule = normalizeStaffModuleKey((string) $request->query('module'));
-        if ($queryModule === 'consultations' || $queryModule === 'certificates') {
-            return $queryModule;
+        // A request about an existing document (show / edit / update / destroy / export-pdf /
+        // images) is authorised ONLY against the document's stored type. The ?module= query
+        // and the document_type input are ignored here, otherwise e.g. a front-desk account
+        // could open or edit a consultation by adding ?module=certificates.
+        $routeDocument = $request->route('document_issuance');
+
+        if ($routeDocument !== null) {
+            if (! $routeDocument instanceof DocumentIssuance) {
+                $routeDocument = is_numeric($routeDocument)
+                    ? DocumentIssuance::query()->select(['id', 'document_type'])->find((int) $routeDocument)
+                    : null;
+            }
+
+            // Unknown id: fall back to the most restrictive module; route model binding
+            // answers 404 afterwards for users who are allowed that far.
+            return $routeDocument
+                ? $this->documentTypeToModule((string) $routeDocument->document_type)
+                : 'consultations';
         }
 
+        // Index / create / store / search: the module being opened or the type being created.
         $documentType = (string) ($request->input('document_type') ?: $request->query('document_type'));
         if ($documentType !== '') {
             return $this->documentTypeToModule($documentType);
         }
 
-        $routeDocument = $request->route('document_issuance');
-        if ($routeDocument instanceof DocumentIssuance) {
-            return $this->documentTypeToModule((string) $routeDocument->document_type);
-        }
-
-        if (is_numeric($routeDocument)) {
-            $document = DocumentIssuance::query()->select(['id', 'document_type'])->find((int) $routeDocument);
-            if ($document) {
-                return $this->documentTypeToModule((string) $document->document_type);
-            }
+        $queryModule = normalizeStaffModuleKey((string) $request->query('module'));
+        if ($queryModule === 'consultations' || $queryModule === 'certificates') {
+            return $queryModule;
         }
 
         return 'consultations';

@@ -25,12 +25,36 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class DocumentIssuanceController extends Controller
 {
     use LogsActivity;
 
+    private const DOCUMENT_TYPES = ['consultation_form', 'medical_certificate', 'excuse_slip'];
+
+    private const CONSULTATION_IMAGE_RULES = [
+        'consultation_images' => 'nullable|array|max:20',
+        // "mimes" checks the real file content, and Laravel additionally refuses any
+        // .php/.phtml/.phar upload, so only genuine pictures are accepted.
+        'consultation_images.*' => 'file|mimes:jpeg,jpg,png,gif,webp|max:5120',
+    ];
+
+    private const CONSULTATION_IMAGE_MESSAGES = [
+        'consultation_images.max' => 'You can attach at most 20 images at a time.',
+        'consultation_images.*.mimes' => 'Consultation images must be JPEG, PNG, GIF or WEBP pictures.',
+        'consultation_images.*.max' => 'Each consultation image must be 5MB or smaller.',
+        'consultation_images.*.file' => 'A consultation image failed to upload. Please try again.',
+    ];
+
     private MedicineInventoryService $medicineInventoryService;
+
+    /**
+     * Files written to the private consultation_images disk during this request, so they
+     * can be removed again if the surrounding DB transaction is rolled back.
+     */
+    private array $imagesStoredThisRequest = [];
 
     public function __construct(MedicineInventoryService $medicineInventoryService)
     {
@@ -84,15 +108,22 @@ class DocumentIssuanceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate(array_merge([
+            'document_type' => 'required|in:' . implode(',', self::DOCUMENT_TYPES),
+            'user_id' => 'nullable|integer',
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
-        ], [
+            'nursing_incharged' => 'nullable|integer|exists:users,id',
+        ], self::CONSULTATION_IMAGE_RULES), array_merge([
+            'document_type.required' => 'Please choose the type of document to create.',
+            'document_type.in' => 'Unknown document type.',
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
-        ]);
+        ], self::CONSULTATION_IMAGE_MESSAGES));
 
-        $data = $request->except('_token');
+        // document_creator_id is always the signed-in user; never trust it from the form.
+        $data = $request->except(['_token', 'document_creator_id', 'consultation_images']);
+        $data = $this->forceOwnNursingInCharge($data);
         $documentType = $request->input('document_type');
 
         try {
@@ -142,16 +173,45 @@ class DocumentIssuanceController extends Controller
 
             return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document created successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
+            $this->discardImagesStoredThisRequest();
 
             // Log the error for debugging
             Log::error('Error in store method: ' . $e->getMessage());
 
-            // Return an error response
+            // Keep what the user typed so a rejected consultation does not have to be re-entered.
             return redirect()->back()
-                ->with('error', 'An error occurred while creating the request document: ' . $e->getMessage());
+                ->withInput($request->except(['_token', 'consultation_images']))
+                ->with('error', $this->userFacingErrorMessage($e, 'An error occurred while creating the request document.'));
         }
+    }
+
+    /**
+     * Only plain RuntimeExceptions carry messages written for clinic users (validation-style
+     * problems raised in this controller and by MedicineInventoryService, e.g. insufficient
+     * stock). Anything else (SQL errors, file-system errors, ...) is logged, not shown.
+     */
+    private function userFacingErrorMessage(\Throwable $e, string $fallback): string
+    {
+        if (get_class($e) === \RuntimeException::class && $e->getMessage() !== '') {
+            return $e->getMessage();
+        }
+
+        return $fallback;
+    }
+
+    /**
+     * A staff/nurse account can only record itself as the nurse in charge (the form shows
+     * their own name read-only); admins and doctors pick from the list.
+     */
+    private function forceOwnNursingInCharge(array $data): array
+    {
+        if (array_key_exists('nursing_incharged', $data) && (isRole('staff') || isRole('nurse'))) {
+            $data['nursing_incharged'] = auth()->id();
+        }
+
+        return $data;
     }
 
     /**
@@ -200,7 +260,7 @@ class DocumentIssuanceController extends Controller
         // Insert the data into the database
         $requestDocument = DocumentIssuance::create([
             'document_type' => $data['document_type'],
-            'document_creator_id' => $data['document_creator_id'] ?? auth()->id(),
+            'document_creator_id' => auth()->id(),
             'user_id' => $data['user_id'] ?? null,
             'name' => $data['name'] ?? 'N/A',
             'age' => $data['age'],
@@ -276,8 +336,8 @@ class DocumentIssuanceController extends Controller
         );
 
         $requestDocument = DocumentIssuance::create([
-            'document_type' => $data['document_type'] ?? 'consultation_form',
-            'document_creator_id' => $data['document_creator_id'] ?? auth()->id(),
+            'document_type' => 'consultation_form',
+            'document_creator_id' => auth()->id(),
             'user_id' => $data['user_id'] ?? null,
             'name' => $data['name'] ?? 'N/A',
             'age' => $data['age'],
@@ -318,59 +378,11 @@ class DocumentIssuanceController extends Controller
             'nursing_incharged_id' => $data['nursing_incharged'] ?? null,
         ]);
 
-        // Handle image uploads with custom path (Patient Name/Timestamp)
-        if (request()->hasFile('consultation_images')) {
-            try {
-                // Create folder name from patient full name and timestamp
-                $patientName = str_replace(' ', '_', $data['name']); // Replace spaces with underscores
-                $timestamp = now()->format('Y-m-d_H-i-s'); // e.g., 2025-10-09_14-30-45
-                $folderPath = "consultation_images/{$patientName}/{$timestamp}";
-
-                $uploadedImages = [];
-
-                foreach (request()->file('consultation_images') as $image) {
-                    try {
-                        // Get file size before moving (important: must be done before move())
-                        $fileSize = $image->getSize();
-
-                        // Validate file size (5MB max)
-                        if ($fileSize <= 5 * 1024 * 1024) {
-                            $fileName = $image->getClientOriginalName();
-
-                            // Store image directly to public/uploads/consultation_images/[PatientName]/[Timestamp]/
-                            $destinationPath = public_path('uploads/' . $folderPath);
-
-                            // Create directory if it doesn't exist
-                            if (!file_exists($destinationPath)) {
-                                mkdir($destinationPath, 0777, true);
-                            }
-
-                            // Move the file
-                            $image->move($destinationPath, $fileName);
-
-                            // Add to array for database storage (use stored size, not getSize() after move)
-                            $uploadedImages[] = [
-                                'path' => $folderPath . '/' . $fileName,
-                                'name' => $fileName,
-                                'size' => $fileSize,
-                                'uploaded_at' => now()->toDateTimeString(),
-                            ];
-                        }
-                    } catch (\Exception $e) {
-                        // Log individual file upload error but continue with other files
-                        Log::error('Error uploading consultation image: ' . $e->getMessage());
-                    }
-                }
-
-                // Save image paths to database as JSON
-                if (!empty($uploadedImages)) {
-                    $requestDocument->consultation_images = json_encode($uploadedImages);
-                    $requestDocument->save();
-                }
-            } catch (\Exception $e) {
-                // Log error but don't fail the entire consultation form submission
-                Log::error('Error handling consultation images: ' . $e->getMessage());
-            }
+        // Consultation photos go to the private consultation_images disk (see storeConsultationImages()).
+        $uploadedImages = $this->storeConsultationImages($requestDocument);
+        if (! empty($uploadedImages)) {
+            $requestDocument->consultation_images = $uploadedImages;
+            $requestDocument->save();
         }
 
         // Handle medicine deduction
@@ -420,7 +432,9 @@ class DocumentIssuanceController extends Controller
 
         $matchedUser = $this->findMatchingPatientForConsultationData($data);
         if ($matchedUser) {
-            $this->syncPatientProfileFromConsultationData($matchedUser, $data);
+            // Auto-linked (not picked by the user): never rewrite the existing patient's
+            // identity (name, date of birth, sex) from a walk-in form.
+            $this->syncPatientProfileFromConsultationData($matchedUser, $data, false);
             $data['user_id'] = $matchedUser->id;
 
             return;
@@ -488,12 +502,13 @@ class DocumentIssuanceController extends Controller
             return null;
         }
 
+        // Automatic linking requires the SAME name, not a similar one: every name word typed
+        // on the form must be one of the patient's name words, and the patient's first and
+        // last name must both be present (only the middle name may be omitted). Fuzzy /
+        // substring matching used to merge different people ("Ana Cruz" -> "Juliana Cruzado").
         $candidates = $candidates
             ->filter(function (User $candidate) use ($nameTokens) {
-                return $this->doesWildcardNameMatch(
-                    $nameTokens,
-                    $this->buildFullNameForMatching($candidate)
-                );
+                return $this->isExactNameMatchForAutoLink($nameTokens, $candidate);
             })
             ->values();
 
@@ -501,7 +516,33 @@ class DocumentIssuanceController extends Controller
             return null;
         }
 
+        if ($candidates->count() > 1) {
+            throw new \RuntimeException(
+                'More than one existing patient has this name, date of birth and sex. '
+                . 'Please select the correct patient with the patient search box before saving.'
+            );
+        }
+
         return $candidates->first();
+    }
+
+    private function isExactNameMatchForAutoLink(array $nameTokens, User $candidate): bool
+    {
+        $incomingTokens = $this->filterMeaningfulNameTokens($nameTokens);
+        $candidateTokens = $this->filterMeaningfulNameTokens(
+            $this->tokenizeNameForMatching($this->buildFullNameForMatching($candidate))
+        );
+        $requiredTokens = $this->filterMeaningfulNameTokens(array_merge(
+            $this->tokenizeNameForMatching($candidate->first_name),
+            $this->tokenizeNameForMatching($candidate->last_name)
+        ));
+
+        if (count($incomingTokens) < 2 || empty($requiredTokens)) {
+            return false;
+        }
+
+        return empty(array_diff($incomingTokens, $candidateTokens))
+            && empty(array_diff($requiredTokens, $incomingTokens));
     }
 
     private function tokenizeNameForMatching(?string $name): array
@@ -512,9 +553,11 @@ class DocumentIssuanceController extends Controller
             return [];
         }
 
-        $normalizedName = strtolower(preg_replace('/\s+/', ' ', $normalizedName));
+        $normalizedName = mb_strtolower(preg_replace('/\s+/u', ' ', $normalizedName));
 
-        $tokens = preg_split('/[\s,]+/', $normalizedName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        // Dots are separators so a middle initial ("M.") becomes a one-letter token, which
+        // filterMeaningfulNameTokens() ignores.
+        $tokens = preg_split('/[\s,.]+/u', $normalizedName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         return array_values(array_unique(array_map(function ($token) {
             return trim((string) $token);
@@ -534,21 +577,7 @@ class DocumentIssuanceController extends Controller
             $this->normalizeNullableString($user->last_name),
         ])));
 
-        return strtolower(preg_replace('/\s+/', ' ', $fullName));
-    }
-
-    private function doesWildcardNameMatch(array $nameTokens, string $candidateFullName): bool
-    {
-        $incomingTokens = $this->filterMeaningfulNameTokens($nameTokens);
-        $candidateTokens = $this->filterMeaningfulNameTokens(
-            $this->tokenizeNameForMatching($candidateFullName)
-        );
-
-        if (count($incomingTokens) < 2 || empty($candidateTokens)) {
-            return false;
-        }
-
-        return $this->countWildcardTokenMatches($incomingTokens, $candidateTokens) >= 2;
+        return mb_strtolower(preg_replace('/\s+/u', ' ', $fullName));
     }
 
     private function filterMeaningfulNameTokens(array $nameTokens): array
@@ -556,7 +585,7 @@ class DocumentIssuanceController extends Controller
         $noiseTokens = ['de', 'del', 'dela', 'la', 'jr', 'sr', 'ii', 'iii', 'iv'];
 
         $tokens = array_values(array_filter(array_map(function ($token) {
-            return strtolower(trim((string) $token));
+            return mb_strtolower(trim((string) $token));
         }, $nameTokens), function ($token) use ($noiseTokens) {
             if ($token === '') {
                 return false;
@@ -566,52 +595,10 @@ class DocumentIssuanceController extends Controller
                 return false;
             }
 
-            return strlen($token) >= 2;
+            return mb_strlen($token) >= 2;
         }));
 
         return array_values(array_unique($tokens));
-    }
-
-    private function countWildcardTokenMatches(array $incomingTokens, array $candidateTokens): int
-    {
-        $matchedCount = 0;
-
-        foreach ($incomingTokens as $incomingToken) {
-            foreach ($candidateTokens as $candidateToken) {
-                if ($this->isWildcardTokenMatch($incomingToken, $candidateToken)) {
-                    $matchedCount++;
-                    break;
-                }
-            }
-        }
-
-        return $matchedCount;
-    }
-
-    private function isWildcardTokenMatch(string $incomingToken, string $candidateToken): bool
-    {
-        if ($incomingToken === '' || $candidateToken === '') {
-            return false;
-        }
-
-        if ($incomingToken === $candidateToken) {
-            return true;
-        }
-
-        if (strlen($incomingToken) >= 3 && strpos($candidateToken, $incomingToken) !== false) {
-            return true;
-        }
-
-        if (strlen($candidateToken) >= 3 && strpos($incomingToken, $candidateToken) !== false) {
-            return true;
-        }
-
-        $maxTokenLength = max(strlen($incomingToken), strlen($candidateToken));
-        if ($maxTokenLength >= 5 && levenshtein($incomingToken, $candidateToken) <= 1) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -673,7 +660,7 @@ class DocumentIssuanceController extends Controller
     /**
      * Sync consultation form fields into the linked patient profile.
      */
-    private function syncPatientProfileFromConsultationData(User $user, array $data): void
+    private function syncPatientProfileFromConsultationData(User $user, array $data, bool $overwriteIdentity = true): void
     {
         [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
         [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
@@ -683,15 +670,15 @@ class DocumentIssuanceController extends Controller
 
         $userUpdates = [];
 
-        if ($firstName !== '') {
+        if ($overwriteIdentity && $firstName !== '') {
             $userUpdates['first_name'] = $firstName;
         }
 
-        if ($hasIncomingName) {
+        if ($overwriteIdentity && $hasIncomingName) {
             $userUpdates['middle_name'] = $middleName;
         }
 
-        if ($lastName !== '') {
+        if ($overwriteIdentity && $lastName !== '') {
             $userUpdates['last_name'] = $lastName;
         }
 
@@ -699,11 +686,11 @@ class DocumentIssuanceController extends Controller
             $userUpdates['contact'] = $contact;
         }
 
-        if (($dob = $this->normalizeNullableString($data['date_of_birth'] ?? null)) !== null) {
+        if ($overwriteIdentity && ($dob = $this->normalizeNullableString($data['date_of_birth'] ?? null)) !== null) {
             $userUpdates['dob'] = $dob;
         }
 
-        if ($gender !== null) {
+        if ($overwriteIdentity && $gender !== null) {
             $userUpdates['gender'] = $gender;
         }
 
@@ -770,12 +757,19 @@ class DocumentIssuanceController extends Controller
             $covidVaccination = Vaccination::query()->whereKey($vaccinationId)->value('vaccination_status');
         }
 
-        $patientPayload = [
+        // Clinical history on the patient master record (allergies, comorbidities, past
+        // admissions, maintenance medication) is only ever ADDED/CHANGED from a consultation,
+        // never cleared: a blank field on the form means "not re-entered this visit", not
+        // "the patient no longer has this allergy". Clearing it silently removed drug-allergy
+        // information that later prescribers rely on.
+        $patientPayload = array_filter([
             'allergies' => $this->normalizeNullableString($data['allergies'] ?? null),
             'comorbidities' => $this->normalizeComorbiditiesValue($data),
             'admissions_surgeries' => $this->normalizeNullableString($data['admissions_surgeries'] ?? null),
             'maintenance' => $this->normalizeNullableString($data['maintenance'] ?? null),
-        ];
+        ], function ($value) {
+            return $value !== null;
+        });
 
         if ($patientTypeId !== null) {
             $patientPayload['patient_type_id'] = $patientTypeId;
@@ -1124,7 +1118,7 @@ class DocumentIssuanceController extends Controller
         $offices = Office::all();
         $vaccinations = Vaccination::all();
         $diagnoses = Diagnose::all();
-        $nursingStaff = User::where('type', 'staff')->get(); // adjust as needed
+        $nursingStaff = User::where('type', User::STAFF)->orderBy('first_name')->orderBy('last_name')->get();
         $availableDoctors = $this->getAvailableCertificateDoctors();
 
         // Get the user data associated with this request document
@@ -1165,16 +1159,22 @@ class DocumentIssuanceController extends Controller
     {
         $requestDocument = $document_issuance;
 
-        $request->validate([
+        $request->validate(array_merge([
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
-        ], [
+            'nursing_incharged' => 'nullable|integer|exists:users,id',
+        ], self::CONSULTATION_IMAGE_RULES), array_merge([
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
-        ]);
+        ], self::CONSULTATION_IMAGE_MESSAGES));
 
-        $data = $request->except(['_token', '_method']);
-        $documentType = $request->input('document_type', $requestDocument->document_type);
+        $data = $request->except(['_token', '_method', 'document_type', 'document_creator_id', 'consultation_images']);
+        $data = $this->forceOwnNursingInCharge($data);
+
+        // The document type is fixed at creation. Never take it from the request: the staff
+        // module check (EnsureStaffModuleAccess) authorises against the stored type, so a
+        // submitted type must not be able to route the update to a different handler.
+        $documentType = $requestDocument->document_type;
 
         try {
             // Wrap document update + medicine restore/re-deduct in ONE transaction so a
@@ -1213,11 +1213,13 @@ class DocumentIssuanceController extends Controller
 
             return redirect()->route($redirectRoute, ['module' => $documentModule])
                 ->with('success', 'Request document updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
+            $this->discardImagesStoredThisRequest();
             Log::error('Error in update method: ' . $e->getMessage());
             return redirect()->back()
-                ->with('error', 'An error occurred while updating the request document.');
+                ->withInput($request->except(['_token', '_method', 'consultation_images']))
+                ->with('error', $this->userFacingErrorMessage($e, 'An error occurred while updating the request document.'));
         }
     }
 
@@ -1546,71 +1548,133 @@ class DocumentIssuanceController extends Controller
      */
     private function handleImageUpdates(DocumentIssuance $requestDocument, array $data)
     {
-        // Get existing images
-        $existingImages = $requestDocument->consultation_images
-            ? (is_string($requestDocument->consultation_images)
-                ? json_decode($requestDocument->consultation_images, true)
-                : $requestDocument->consultation_images)
-            : [];
+        $existingImages = $requestDocument->consultationImageList();
+        $removedImages = [];
 
-        // Handle removed images
-        if (isset($data['removed_images']) && !empty($data['removed_images'])) {
-            $removedIndices = json_decode($data['removed_images'], true);
+        // Handle removed images (indices refer to the list rendered on the edit page)
+        if (! empty($data['removed_images'])) {
+            $removedIndices = json_decode((string) $data['removed_images'], true);
 
             if (is_array($removedIndices)) {
                 foreach ($removedIndices as $index) {
-                    if (isset($existingImages[$index])) {
-                        // Delete the physical file from public/uploads/
-                        $filePath = public_path('uploads/' . $existingImages[$index]['path']);
-                        if (file_exists($filePath)) {
-                            unlink($filePath);
-                        }
-                        // Remove from array
-                        unset($existingImages[$index]);
+                    if (is_numeric($index) && isset($existingImages[(int) $index])) {
+                        $removedImages[] = $existingImages[(int) $index];
+                        unset($existingImages[(int) $index]);
                     }
                 }
-                // Re-index array
+
                 $existingImages = array_values($existingImages);
             }
         }
 
-        // Handle new image uploads
-        if (request()->hasFile('consultation_images')) {
-            $patientName = str_replace(' ', '_', $requestDocument->name);
-            $timestamp = now()->format('Y-m-d_H-i-s');
-            $folderPath = "consultation_images/{$patientName}/{$timestamp}";
-            $destinationPath = public_path('uploads/' . $folderPath);
-
-            // Create directory if it doesn't exist
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-
-            foreach (request()->file('consultation_images') as $image) {
-                // Get file size BEFORE moving (important: must be done before move())
-                $fileSize = $image->getSize();
-
-                // Validate file size (5MB max)
-                if ($fileSize <= 5 * 1024 * 1024) {
-                    $fileName = $image->getClientOriginalName();
-
-                    // Move image to public/uploads/
-                    $image->move($destinationPath, $fileName);
-
-                    // Add to existing images array (use stored size, not getSize() after move)
-                    $existingImages[] = [
-                        'path' => $folderPath . '/' . $fileName,
-                        'name' => $fileName,
-                        'size' => $fileSize,
-                        'uploaded_at' => now()->toDateTimeString(),
-                    ];
-                }
-            }
+        foreach ($this->storeConsultationImages($requestDocument) as $uploadedImage) {
+            $existingImages[] = $uploadedImage;
         }
 
-        // Update database with modified images array
-        $requestDocument->consultation_images = !empty($existingImages) ? json_encode($existingImages) : null;
+        // Assign the array directly: the model's "array" cast does the JSON encoding.
+        $requestDocument->consultation_images = ! empty($existingImages) ? $existingImages : null;
         $requestDocument->save();
+
+        // Only delete removed files once the update is committed, so a rollback never leaves
+        // the record pointing at files that no longer exist.
+        if (! empty($removedImages)) {
+            DB::afterCommit(function () use ($requestDocument, $removedImages) {
+                foreach ($removedImages as $removedImage) {
+                    $requestDocument->deleteConsultationImageFile($removedImage);
+                }
+            });
+        }
+    }
+
+    /**
+     * Store the uploaded consultation_images[] files (already validated as real pictures of
+     * at most 5MB) on the private consultation_images disk under a random file name.
+     *
+     * @return array<int, array{disk: string, path: string, name: string, size: int, uploaded_at: string}>
+     */
+    private function storeConsultationImages(DocumentIssuance $requestDocument): array
+    {
+        $files = request()->file('consultation_images');
+        if (empty($files)) {
+            return [];
+        }
+
+        $files = is_array($files) ? $files : [$files];
+        $storedImages = [];
+
+        foreach ($files as $image) {
+            if (! $image instanceof UploadedFile || ! $image->isValid()) {
+                continue;
+            }
+
+            $fileSize = (int) $image->getSize();
+            $storedPath = $image->store((string) $requestDocument->id, 'consultation_images');
+
+            if ($storedPath === false) {
+                throw new \RuntimeException('A consultation image could not be saved. Please try again.');
+            }
+
+            $this->imagesStoredThisRequest[] = $storedPath;
+
+            $storedImages[] = [
+                'disk' => 'consultation_images',
+                'path' => $storedPath,
+                'name' => $this->sanitizeImageDisplayName($image->getClientOriginalName()),
+                'size' => $fileSize,
+                'uploaded_at' => now()->toDateTimeString(),
+            ];
+        }
+
+        return $storedImages;
+    }
+
+    /**
+     * The original file name is only kept as a label; it is never used as a path.
+     */
+    private function sanitizeImageDisplayName(?string $clientName): string
+    {
+        $name = basename(str_replace('\\', '/', (string) $clientName));
+        $name = preg_replace('/[\x00-\x1F\x7F]+/u', '', $name) ?? '';
+        $name = trim($name);
+
+        return $name === '' ? 'image' : mb_substr($name, 0, 150);
+    }
+
+    /**
+     * Remove files stored during a request whose transaction was rolled back.
+     */
+    private function discardImagesStoredThisRequest(): void
+    {
+        foreach ($this->imagesStoredThisRequest as $storedPath) {
+            Storage::disk('consultation_images')->delete($storedPath);
+        }
+
+        $this->imagesStoredThisRequest = [];
+    }
+
+    /**
+     * Stream one consultation image. Images are clinical records, so they are only served
+     * through this authenticated route (same role / staff-module checks as viewing the
+     * consultation itself), never directly from the web root.
+     */
+    public function showImage(DocumentIssuance $document_issuance, int $index)
+    {
+        abort_unless($document_issuance->document_type === 'consultation_form', 404);
+
+        $images = $document_issuance->consultationImageList();
+        abort_unless(isset($images[$index]), 404);
+
+        $absolutePath = $document_issuance->consultationImageAbsolutePath($images[$index]);
+        abort_if($absolutePath === null, 404);
+
+        $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->file($absolutePath) ?: '';
+        abort_unless(in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], true), 404);
+
+        return response()->file($absolutePath, [
+            'Content-Type' => $mimeType,
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 
     /**

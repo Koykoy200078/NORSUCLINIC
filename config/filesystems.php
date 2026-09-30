@@ -30,10 +30,19 @@ return [
 
     'disks' => [
 
+        // Private application storage (never web-served). Previously this pointed at
+        // public/uploads, so anything written to the "local" disk was downloadable.
         'local' => [
             'driver' => 'local',
-            'root' => public_path('uploads'),
-            'url' => env('APP_URL').'/uploads',
+            'root' => storage_path('app'),
+            'throw' => false,
+        ],
+
+        // Consultation photos are clinical records: kept outside the web root and
+        // streamed only through the authenticated document-issuance image route.
+        'consultation_images' => [
+            'driver' => 'local',
+            'root' => storage_path('app/consultation_images'),
             'throw' => false,
         ],
 

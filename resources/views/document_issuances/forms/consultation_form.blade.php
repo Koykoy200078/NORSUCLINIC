@@ -23,39 +23,39 @@
             <div class="col-span-1 d-none">
                 <label class="block text-xs" for="name">ID<span class="text-red-500">*</span></label>
                 <input type="text" id="document_creator_id" name="document_creator_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ auth()->user()->id }}" readonly required>
-                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ request('user_id') ?? ($user->type == 4 ? $user->id : '') }}" readonly>
+                <input type="text" id="user_id" name="user_id" style="width: 400px; text-align: center;" class="border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('user_id', request('user_id') ?? ($user->type == 4 ? $user->id : '')) }}" readonly>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="name">NAME<span class="text-red-500">*</span></label>
-                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? trim(implode(' ', array_filter([$user->first_name, $user->middle_name, $user->last_name]))) : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('name', $user->type == 4 ? trim(implode(' ', array_filter([$user->first_name, $user->middle_name, $user->last_name]))) : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="age">AGE<span class="text-red-500">*</span></label>
-                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="age" name="age" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('age', $user->type == 4 ? \Carbon\Carbon::parse($user->dob)->age : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="gender">GENDER<span class="text-red-500">*</span></label>
-                <input type="text" id="gender" name="gender" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="gender" name="gender" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('gender', $user->type == 4 ? ($user->gender == 1 ? 'Male' : 'Female') : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="status">STATUS<span class="text-red-500">*</span></label>
-                <input type="text" id="status" name="status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
+                <input type="text" id="status" name="status" value="{{ old('status') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="date_of_birth">DATE OF BIRTH<span class="text-red-500">*</span></label>
-                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? $user->dob : '' }}" max="{{ now()->format('Y-m-d') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('date_of_birth', $user->type == 4 ? $user->dob : '') }}" max="{{ now()->format('Y-m-d') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="address">ADDRESS<span class="text-red-500">*</span></label>
-                <input type="text" id="address" name="address" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 && $patient->address ? $patient->address->full_address : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="address" name="address" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('address', $user->type == 4 && $patient->address ? $patient->address->full_address : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="religion">RELIGION<span class="text-red-500">*</span></label>
-                <input type="text" id="religion" name="religion" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
+                <input type="text" id="religion" name="religion" value="{{ old('religion') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #<span class="text-red-500">*</span></label>
-                <input type="text" id="patient_contact" name="patient_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 ? $user->contact : '' }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="patient_contact" name="patient_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('patient_contact', $user->type == 4 ? $user->contact : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
 
             <!-- Campus Field (for Students only) - Auto-filled if available -->
@@ -154,21 +154,21 @@
                 $initialEmergencyContact = $initialEmergencyParts->implode(' / ')
                 . ($hasEmergencyRelationship ? ' (' . $initialEmergencyRelationship . ')' : '');
                 @endphp
-                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $initialEmergencyContact }}" required>
+                <input type="text" id="emergency_contact" name="emergency_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('emergency_contact', $initialEmergencyContact) }}" required>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
-                <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" required>
+                <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('requested_at', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" required>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
-                <textarea id="complaints" name="complaints" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="2"></textarea>
+                <textarea id="complaints" name="complaints" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="2">{{ old('complaints') }}</textarea>
             </div>
             <div class="col-span-1"></div>
             <div class="col-span-3">
-                <textarea id="note" name="note" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="3"></textarea>
+                <textarea id="note" name="note" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="3">{{ old('note') }}</textarea>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -188,7 +188,7 @@
                             <input type="hidden"
                                 name="comorbidities_custom"
                                 id="comorbidities_custom"
-                                value="{{ $user->type == 4 && isset($patient) ? ($patient->comorbidities ?? '') : '' }}">
+                                value="{{ old('comorbidities_custom', $user->type == 4 && isset($patient) ? ($patient->comorbidities ?? '') : '') }}">
                             <div id="comorbidities_selected_list" class="comorbidities-selected-list"></div>
                             <div class="flex gap-2 mt-1">
                                 <input type="text"
@@ -209,23 +209,23 @@
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
-                        <input type="text" id="allergies" name="allergies" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 && isset($patient) ? ($patient->allergies ?? '') : '' }}">
+                        <input type="text" id="allergies" name="allergies" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('allergies', $user->type == 4 && isset($patient) ? ($patient->allergies ?? '') : '') }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
-                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 && isset($patient) ? ($patient->admissions_surgeries ?? '') : '' }}">
+                        <input type="text" id="admissions_surgeries" name="admissions_surgeries" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('admissions_surgeries', $user->type == 4 && isset($patient) ? ($patient->admissions_surgeries ?? '') : '') }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="maintenance">Maintenance<span class="text-red-500">*</span></label>
-                        <input type="text" id="maintenance" name="maintenance" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ $user->type == 4 && isset($patient) ? ($patient->maintenance ?? '') : '' }}">
+                        <input type="text" id="maintenance" name="maintenance" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('maintenance', $user->type == 4 && isset($patient) ? ($patient->maintenance ?? '') : '') }}">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
-                        <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                        <input type="text" id="pregnancy_status" name="pregnancy_status" value="{{ old('pregnancy_status') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="lmp_aog">If YES, LMP/AOG</label>
-                        <input type="text" id="lmp_aog" name="lmp_aog" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                        <input type="text" id="lmp_aog" name="lmp_aog" value="{{ old('lmp_aog') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                     </div>
                 </div>
             </div>
@@ -239,36 +239,36 @@
                 <div class="grid grid-cols-6 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_bp">BP</label>
-                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="mmHg">
+                        <input type="text" id="vital_signs_bp" name="vital_signs_bp" value="{{ old('vital_signs_bp') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="mmHg">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_pr">PR</label>
-                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="bpm">
+                        <input type="text" id="vital_signs_pr" name="vital_signs_pr" value="{{ old('vital_signs_pr') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="bpm">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_temp">Temp</label>
-                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="°C">
+                        <input type="text" id="vital_signs_temp" name="vital_signs_temp" value="{{ old('vital_signs_temp') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="°C">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_rr">RR</label>
-                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cycles/min">
+                        <input type="text" id="vital_signs_rr" name="vital_signs_rr" value="{{ old('vital_signs_rr') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cycles/min">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_o2_sat">O2 Sat</label>
-                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="%">
+                        <input type="text" id="vital_signs_o2_sat" name="vital_signs_o2_sat" value="{{ old('vital_signs_o2_sat') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="%">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_weight">Weight (kg)</label>
-                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="kg">
+                        <input type="text" id="vital_signs_weight" name="vital_signs_weight" value="{{ old('vital_signs_weight') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="kg">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="vital_signs_height">Height (cm)</label>
-                        <input type="text" id="vital_signs_height" name="vital_signs_height" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cm">
+                        <input type="text" id="vital_signs_height" name="vital_signs_height" value="{{ old('vital_signs_height') }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" placeholder="cm">
                     </div>
                 </div>
                 <div class="col-span-5">
                     <label class="block text-xs" for="pertinent_exam">PERTINENT EXAM</label>
-                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5"></textarea>
+                    <textarea id="pertinent_exam" name="pertinent_exam" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('pertinent_exam') }}</textarea>
                 </div>
             </div>
         </div>
@@ -279,7 +279,7 @@
                 <label class="block text-xs">(Assessment)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="assessment" name="assessment" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5"></textarea>
+                <textarea id="assessment" name="assessment" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('assessment') }}</textarea>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2 py-2">
@@ -288,7 +288,7 @@
                 <label class="block text-xs">(Plan)</label>
             </div>
             <div class="col-span-3">
-                <textarea id="plan" name="plan" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5"></textarea>
+                <textarea id="plan" name="plan" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('plan') }}</textarea>
 
                 <!-- Medicine Selection for Plan -->
                 <div class="mt-3">
@@ -341,7 +341,7 @@
                 <label class="block">Nursing Intervention</label>
             </div>
             <div class="col-span-3">
-                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5"></textarea>
+                <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('nursing_intervention') }}</textarea>
 
                 <!-- Medicine Selection for Nursing Intervention -->
                 <div class="mt-3">

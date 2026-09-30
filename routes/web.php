@@ -191,6 +191,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Request Documents
     Route::middleware('permission:manage_request_documents')->group(function () {
         Route::get('document-issuances/{document_issuance}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
+        Route::get('document-issuances/{document_issuance}/images/{index}', [DocumentIssuanceController::class, 'showImage'])
+            ->whereNumber('index')->name('document-issuances.image');
         Route::resource('document-issuances', DocumentIssuanceController::class);
 
         // Lab Requests

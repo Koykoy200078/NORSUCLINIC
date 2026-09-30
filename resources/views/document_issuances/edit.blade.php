@@ -188,7 +188,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             <div class="grid grid-cols-4 gap-2 py-2">
                 <div class="col-span-1">
                     <label class="block text-xs" for="requested_at">CONSULTATION DATE<span class="text-red-500">*</span></label>
-                    <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" max="{{ date('Y-m-d') }}" value="{{ old('requested_at', $requestDocument->requested_at->format('Y-m-d')) }}" required>
+                    <input type="date" id="requested_at" name="requested_at" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" max="{{ date('Y-m-d') }}" value="{{ old('requested_at', $requestDocument->requested_at?->format('Y-m-d')) }}" required>
                 </div>
                 <div class="col-span-3">
                     <label class="block text-xs" for="complaints">Complaint/s:</label>
@@ -425,7 +425,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     <!-- Admin and Doctor can select the nursing in-charged -->
                     <select id="nursing_incharged" name="nursing_incharged" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
                         <option value="" disabled {{ empty(old('nursing_incharged', $requestDocument->nursing_incharged_id ?? '')) ? 'selected' : '' }}>Select Nursing In-charged</option>
-                        @foreach(\App\Models\User::where('type', \App\Models\User::STAFF)->get() as $staff)
+                        @foreach($nursingStaff as $staff)
                         <option value="{{ $staff->id }}"
                             {{ old('nursing_incharged', $requestDocument->nursing_incharged_id ?? '') == $staff->id ? 'selected' : '' }}>
                             {{ $staff->first_name }} {{ $staff->last_name }}
@@ -448,11 +448,8 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                 </div>
                 <div class="col-span-3">
                     <!-- Display existing images -->
-                    @if($requestDocument->consultation_images)
                     @php
-                    $existingImages = is_string($requestDocument->consultation_images)
-                    ? json_decode($requestDocument->consultation_images, true)
-                    : $requestDocument->consultation_images;
+                    $existingImages = $requestDocument->consultationImageList();
                     @endphp
 
                     @if(is_array($existingImages) && count($existingImages) > 0)
@@ -461,8 +458,8 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                         <div class="grid grid-cols-3 gap-4" id="existing_images_container">
                             @foreach($existingImages as $index => $image)
                             <div class="image-preview-wrapper" data-image-index="{{ $index }}">
-                                <img src="{{ asset('uploads/' . $image['path']) }}"
-                                    alt="{{ $image['name'] }}"
+                                <img src="{{ getRouteByRole('document-issuances.image', [$requestDocument->id, $index]) }}"
+                                    alt="{{ $image['name'] ?? 'Consultation image' }}"
                                     class="image-preview">
                                 <button type="button" class="remove-existing-image-btn"
                                     data-image-index="{{ $index }}"
@@ -470,7 +467,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                                     ×
                                 </button>
                                 <small class="text-gray-600 block mt-1">
-                                    {{ $image['name'] }} ({{ number_format($image['size'] / 1024 / 1024, 2) }}MB)
+                                    {{ $image['name'] ?? 'Image' }} ({{ number_format(((int) ($image['size'] ?? 0)) / 1024 / 1024, 2) }}MB)
                                 </small>
                             </div>
                             @endforeach
@@ -479,7 +476,6 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
                     <!-- Hidden field to track removed images -->
                     <input type="hidden" name="removed_images" id="removed_images" value="">
-                    @endif
                     @endif
 
                     <!-- Upload new images -->

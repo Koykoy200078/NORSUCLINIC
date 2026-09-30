@@ -43,9 +43,7 @@ $exportPdfUrl = $documentId
     @php
     $planMedicines = $requestDocument->consultationMedicines()->where('used_for', 'plan')->with('medicine')->get();
     $nursingMedicines = $requestDocument->consultationMedicines()->where('used_for', 'nursing')->with('medicine')->get();
-    $consultationImages = $requestDocument->consultation_images
-    ? (is_string($requestDocument->consultation_images) ? json_decode($requestDocument->consultation_images, true) : $requestDocument->consultation_images)
-    : [];
+    $consultationImages = $requestDocument->consultationImageList();
 
     $documentUser = $requestDocument->user_id
     ? \App\Models\User::with(['department:id,department_name', 'office:id,office_name'])->find($requestDocument->user_id)
@@ -172,7 +170,7 @@ $exportPdfUrl = $documentId
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">
                 <label class="block text-xs" for="requested_at">CONSULTATION DATE</label>
-                <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" value="{{ $requestDocument->requested_at->format('Y-m-d') }}" readonly>
+                <input type="date" id="requested_at" name="requested_at" class="w-full border-b border-black" value="{{ $requestDocument->requested_at?->format('Y-m-d') }}" readonly>
             </div>
             <div class="col-span-3">
                 <label class="block text-xs" for="complaints">Complaint/s:</label>
@@ -358,13 +356,13 @@ $exportPdfUrl = $documentId
             </div>
             <div class="col-span-3">
                 <div class="grid grid-cols-3 gap-4">
-                    @foreach($consultationImages as $image)
+                    @foreach($consultationImages as $imageIndex => $image)
                     <div>
-                        <img src="{{ asset('uploads/' . $image['path']) }}"
-                            alt="{{ $image['name'] }}"
+                        <img src="{{ getRouteByRole('document-issuances.image', [$requestDocument->id, $imageIndex]) }}"
+                            alt="{{ $image['name'] ?? 'Consultation image' }}"
                             class="w-full h-40 object-cover rounded-lg border-2 border-gray-200">
                         <small class="text-gray-600 block mt-1">
-                            {{ $image['name'] }} ({{ number_format($image['size'] / 1024 / 1024, 2) }}MB)
+                            {{ $image['name'] ?? 'Image' }} ({{ number_format(((int) ($image['size'] ?? 0)) / 1024 / 1024, 2) }}MB)
                         </small>
                     </div>
                     @endforeach

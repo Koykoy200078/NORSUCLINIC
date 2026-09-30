@@ -5,6 +5,14 @@
 
     RewriteEngine On
 
+    # Uploaded files are data, never code: refuse any script under /uploads.
+    RewriteRule ^uploads/.*\.(php[0-9]?|phtml|phar|pht|phps|shtml|cgi|pl|py|asp|aspx|jsp)$ - [F,NC,L]
+
+    # Consultation photos are clinical records. They are streamed only through the
+    # authenticated /document-issuances/{id}/images/{n} route; legacy copies still under
+    # public/uploads/consultation_images must never be served directly.
+    RewriteRule ^uploads/consultation_images(/|$) - [F,NC,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

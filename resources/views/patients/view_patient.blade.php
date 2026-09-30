@@ -755,28 +755,18 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @php
-                                $images = $consultation->consultation_images;
-                                // Decode if it's a JSON string
-                                if (is_string($images)) {
-                                $images = json_decode($images, true);
-                                }
+                                $images = $consultation->consultationImageList();
                                 @endphp
 
-                                @if($images && is_array($images) && count($images) > 0)
+                                @if(count($images) > 0)
                                 <div class="d-flex flex-wrap gap-2">
                                     @foreach($images as $index => $image)
-
-                                    @if(isset($image['path']))
                                     @php
-                                    // Images are stored in public/uploads/consultation_images/
-                                    // Path in DB: consultation_images/PatientName/Timestamp/filename.jpg
-                                    // Physical path: public/uploads/consultation_images/PatientName/Timestamp/filename.jpg
-                                    // Public URL: http://domain/uploads/consultation_images/PatientName/Timestamp/filename.jpg
-                                    $imagePath = public_path('uploads/' . $image['path']);
-                                    $imageUrl = asset('uploads/' . $image['path']);
+                                    // Served through the authenticated image route (files are no longer web-public).
+                                    $imageUrl = getRouteByRole('document-issuances.image', [$consultation->id, $index]);
                                     @endphp
 
-                                    @if(file_exists($imagePath))
+                                    @if($consultation->consultationImageAbsolutePath($image) !== null)
                                     <a href="{{ $imageUrl }}"
                                         target="_blank"
                                         class="image-thumbnail"
@@ -788,8 +778,7 @@ Patient Data
                                             onerror="this.parentElement.style.display='none'">
                                     </a>
                                     @else
-                                    <span class="text-danger" style="font-size: 10px;">Missing: {{ $image['name'] }}</span>
-                                    @endif
+                                    <span class="text-danger" style="font-size: 10px;">Missing: {{ $image['name'] ?? 'Image' }}</span>
                                     @endif
                                     @endforeach
                                 </div>

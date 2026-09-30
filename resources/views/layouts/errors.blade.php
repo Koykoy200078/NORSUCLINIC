@@ -1,3 +1,4 @@
+@php(app()->instance('inline_validation_errors_shown', true))
 @if ($errors->any())
     <div class="alert alert-danger">
         <div>

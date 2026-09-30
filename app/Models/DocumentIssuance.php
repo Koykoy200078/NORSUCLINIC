@@ -195,51 +195,11 @@ class DocumentIssuance extends Model implements HasMedia
     {
         parent::boot();
 
-        // When a request document is being deleted, delete all associated media files
+        // When a request document is being deleted, delete all associated image files
+        // (private consultation_images disk for new uploads, public/uploads for legacy ones).
         static::deleting(function ($requestDocument) {
-            // Delete all uploaded images from storage
-            // This will delete files from: storage/app/public/consultation_images/[PatientName]/[Timestamp]/
-
-            // Get consultation images and ensure it's an array
-            $consultationImages = $requestDocument->consultation_images;
-
-            // If it's a string (JSON), decode it
-            if (is_string($consultationImages)) {
-                $consultationImages = json_decode($consultationImages, true);
-            }
-
-            // If it's null or empty, skip
-            if (!$consultationImages || !is_array($consultationImages)) {
-                return;
-            }
-
-            // Now safely iterate through images
-            foreach ($consultationImages as $imageData) {
-                // Delete the physical file
-                if (isset($imageData['path'])) {
-                    Storage::disk('public')->delete($imageData['path']);
-                }
-            }
-
-            // Try to delete the empty folders (optional)
-            // Extract folder path from first image
-            if (count($consultationImages) > 0) {
-                $firstImagePath = $consultationImages[0]['path'] ?? null;
-                if ($firstImagePath) {
-                    $folderPath = dirname($firstImagePath);
-                    // Delete folder if empty
-                    $files = Storage::disk('public')->files($folderPath);
-                    if (empty($files)) {
-                        Storage::disk('public')->deleteDirectory($folderPath);
-
-                        // Try to delete parent folder (PatientName) if empty
-                        $parentFolder = dirname($folderPath);
-                        $parentFiles = Storage::disk('public')->allFiles($parentFolder);
-                        if (empty($parentFiles)) {
-                            Storage::disk('public')->deleteDirectory($parentFolder);
-                        }
-                    }
-                }
+            foreach ($requestDocument->consultationImageList() as $imageData) {
+                $requestDocument->deleteConsultationImageFile($imageData);
             }
 
             // Also clear media library collection (if any media was added there)
@@ -282,5 +242,78 @@ class DocumentIssuance extends Model implements HasMedia
     public function consultationMedicines()
     {
         return $this->hasMany(ConsultationMedicine::class, 'request_document_id');
+    }
+
+    /**
+     * Consultation images as a plain list of entries
+     * (['disk' => ?string, 'path' => string, 'name' => string, 'size' => int, 'uploaded_at' => string]).
+     *
+     * Older rows were double JSON-encoded (json_encode() on top of the "array" cast), so the
+     * cast returns a string for them; decode that transparently.
+     */
+    public function consultationImageList(): array
+    {
+        $images = $this->consultation_images;
+
+        if (is_string($images)) {
+            $images = json_decode($images, true);
+        }
+
+        if (! is_array($images)) {
+            return [];
+        }
+
+        return array_values(array_filter($images, function ($image) {
+            return is_array($image) && isset($image['path']) && is_string($image['path']) && $image['path'] !== '';
+        }));
+    }
+
+    /**
+     * Absolute path of a stored consultation image, or null when it is missing or its
+     * recorded path escapes the storage folder.
+     *
+     * New uploads live on the private "consultation_images" disk; legacy entries (no "disk"
+     * key) are still under public/uploads/consultation_images until they are migrated with
+     * `php artisan consultation-images:secure`.
+     */
+    public function consultationImageAbsolutePath(array $image): ?string
+    {
+        $relativePath = (string) ($image['path'] ?? '');
+        if ($relativePath === '' || str_contains($relativePath, "\0")) {
+            return null;
+        }
+
+        if (($image['disk'] ?? null) === 'consultation_images') {
+            $baseDirectory = Storage::disk('consultation_images')->path('');
+            $candidate = Storage::disk('consultation_images')->path($relativePath);
+        } else {
+            $baseDirectory = public_path('uploads/consultation_images');
+            $candidate = public_path('uploads/' . $relativePath);
+        }
+
+        $realBase = realpath($baseDirectory);
+        $realCandidate = realpath($candidate);
+
+        if ($realBase === false || $realCandidate === false || ! is_file($realCandidate)) {
+            return null;
+        }
+
+        if (! str_starts_with($realCandidate, rtrim($realBase, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        return $realCandidate;
+    }
+
+    /**
+     * Delete the physical file behind a consultation image entry (if it still exists).
+     */
+    public function deleteConsultationImageFile(array $image): void
+    {
+        $absolutePath = $this->consultationImageAbsolutePath($image);
+
+        if ($absolutePath !== null) {
+            @unlink($absolutePath);
+        }
     }
 }

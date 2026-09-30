@@ -257,7 +257,10 @@ class MedicineInventoryService
                 $medicine = Medicine::find($medicineId);
                 $name = $medicine ? $medicine->display_name : 'Unknown medicine';
                 $dosageSuffix = $normalizedDosage !== '' ? ' (' . $normalizedDosage . ')' : '';
-                throw new RuntimeException('Insufficient stock for ' . $name . $dosageSuffix . '. Remaining quantity: ' . $remaining . '.');
+                // $remaining is the shortfall, not what is left on the shelf; say both clearly.
+                $available = $quantity - $remaining;
+                throw new RuntimeException('Insufficient stock for ' . $name . $dosageSuffix . ': requested ' . $quantity
+                    . ', only ' . $available . ' available' . ($transactionType === MedicineTransaction::TYPE_DISPENSE ? ' (unexpired)' : '') . '.');
             }
 
             $this->syncMedicineTotals($medicineId);

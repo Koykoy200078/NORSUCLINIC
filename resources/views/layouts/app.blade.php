@@ -170,6 +170,35 @@
 
     @yield('page_js')
     @stack('scripts')
+
+    {{-- Session flashes set with redirect()->with('error'|'success'|'warning'|'info', ...) were
+         never rendered anywhere, so e.g. "Insufficient stock" or "already in the queue" was
+         silently lost. Show them (and the first validation error, unless the page already
+         shows it inline via layouts.errors) as toasts. --}}
+    @php
+    $flashToasts = [];
+    foreach (['error', 'success', 'warning', 'info'] as $flashLevel) {
+        if (is_string(session($flashLevel)) && session($flashLevel) !== '') {
+            $flashToasts[] = ['level' => $flashLevel, 'message' => session($flashLevel)];
+        }
+    }
+    if ($errors->any() && ! app()->bound('inline_validation_errors_shown')) {
+        $flashToasts[] = ['level' => 'error', 'message' => $errors->first()];
+    }
+    @endphp
+    @if(! empty($flashToasts))
+    <script>
+        (function (toasts) {
+            toasts.forEach(function (toast) {
+                if (window.toastr && typeof window.toastr[toast.level] === 'function') {
+                    window.toastr[toast.level](toast.message);
+                } else if (toast.level === 'error') {
+                    window.alert(toast.message);
+                }
+            });
+        })(@json($flashToasts));
+    </script>
+    @endif
 </body>
 
 </html>
