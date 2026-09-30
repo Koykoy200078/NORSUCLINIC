@@ -2,18 +2,27 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class UpdateUserProfileRequest extends FormRequest
 {
+    use NormalizesPhilippinePhone;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national', 'emergency_contact_no' => 'e164']);
     }
 
     /**
@@ -28,10 +37,10 @@ class UpdateUserProfileRequest extends FormRequest
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id . '|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i',
-            'contact' => 'nullable|string',
+            'contact' => ['nullable', 'string', new PhilippinePhoneNumber()],
             'country_code' => 'nullable|string',
             'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_no' => 'nullable|string|max:255',
+            'emergency_contact_no' => ['nullable', 'string', 'max:255', new PhilippinePhoneNumber()],
             'time_zone' => 'required|string',
             'gender' => 'nullable|integer|in:1,2',
             'dob' => 'nullable|date|before_or_equal:today',

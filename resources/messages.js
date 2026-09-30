@@ -828,6 +828,8 @@
                 "The image must be a file of type: jpeg, jpg, png.",
             invalid_country_code: "Invalid country code",
             invalid_number: "Invalid Number",
+            invalid_ph_number:
+                "Enter a valid Philippine number: a mobile number such as +63 917 123 4567 (or 0917 123 4567), or a landline with its area code.",
             jan: "Jan",
             jul: "Jul",
             jun: "Jun",

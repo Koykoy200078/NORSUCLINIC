@@ -23,7 +23,7 @@
                     {{ Form::label('clinic_name',__('messages.setting.clinic_name').':',
                                      ['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('clinic_name', $setting['clinic_name'], ['class' => 'form-control','placeholder'=>__('messages.setting.clinic_name'),'required']) }}
+                        {{ Form::text('clinic_name', $setting['clinic_name'] ?? null, ['class' => 'form-control','placeholder'=>__('messages.setting.clinic_name'),'required']) }}
                     </div>
                 </div>
                 <!-- Landline Number -->
@@ -37,29 +37,26 @@
                 <div class="row mb-6">
                     {{ Form::label('contact_no', __('messages.patient.contact_no').':', ['class' => 'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::tel('contact_no','+'.$setting['country_code'].$setting['contact_no'] ?? null, ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
-                        {{ Form::hidden('country_code',$setting['country_code'] ?? null ,['id'=>'prefix_code']) }}
-                        <span id="valid-msg" class="text-success d-block fw-400 fs-small mt-2 hide">✓ {{ __('messages.valid_number') }}</span>
-                        <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 hide"> {{ __('messages.invalid_number') }}</span>
+                        {{ Form::text('contact_no', $setting['contact_no'] ?? null, ['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no'), 'id'=>'phoneNumber']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('default_country_code', __('messages.setting.default_country_code').':', ['class' => 'col-lg-4 form-label required']) }}
+                    {{ Form::label('default_country_code', __('messages.setting.default_country_code').':', ['class' => 'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('default_country_data', null, ['class' => 'form-control','placeholder'=>__('messages.setting.default_country_code'), 'id'=>'defaultCountryData']) }}
-                        {{ Form::hidden('default_country_code',$setting['default_country_code'] ,['id'=>'defaultCountryCode',]) }}
+                        {{-- The clinic works with Philippine numbers only, so the country is fixed. --}}
+                        <input type="text" class="form-control" value="{{ __('Philippines') }} (+63)" readonly disabled>
                     </div>
                 </div>
                 <div class="row mb-6">
                     {{ Form::label('email',__('messages.user.email').':',['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::email('email', $setting['email'], ['class' => 'form-control ','placeholder'=>__('messages.user.email'),'required']) }}
+                        {{ Form::email('email', $setting['email'] ?? null, ['class' => 'form-control ','placeholder'=>__('messages.user.email'),'required']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
                     {{ Form::label('specialties',__('messages.setting.specialties').':', ['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties']), ['multiple', 'class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2','required']) }}
+                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties'] ?? '[]'), ['multiple', 'class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2','required']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
@@ -69,7 +66,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="appLogoPreview"
-                                        style="background-image: url('{{($setting['logo'])?asset($setting['logo']):asset('assets/image/norsu_favicon.ico')}}')">
+                                        style="background-image: url('{{(!empty($setting['logo']))?asset($setting['logo']):asset('assets/image/norsu_favicon.ico')}}')">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small"
                                         data-bs-toggle="tooltip"
@@ -92,7 +89,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="faviconPreview"
-                                        style="background-image: url('{{($setting['favicon'])?asset($setting['favicon']):asset('assets/image/norsu_logo.png')}}');">
+                                        style="background-image: url('{{(!empty($setting['favicon']))?asset($setting['favicon']):asset('assets/image/norsu_logo.png')}}');">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                                         data-placement="top" data-bs-original-title="{{ __('messages.setting.change_favicon') }}">
@@ -116,7 +113,7 @@
                         </span>
                     </label>
                     <div class="col-lg-8">
-                        {{ Form::checkbox('email_verified', 1, $setting['email_verified'], ['class' => 'form-check-input m-0']) }}
+                        {{ Form::checkbox('email_verified', 1, $setting['email_verified'] ?? 1, ['class' => 'form-check-input m-0']) }}
                     </div>
                 </div>
 

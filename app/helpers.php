@@ -544,6 +544,21 @@ if (! function_exists('preparePhoneNumber')) {
     }
 }
 
+if (! function_exists('formatPhilippinePhone')) {
+
+    /**
+     * "+63 917 123 4567" for any readable Philippine number; anything else is returned as it was stored.
+     */
+    function formatPhilippinePhone(?string $value): ?string
+    {
+        if ($value === null || trim($value) === '') {
+            return $value;
+        }
+
+        return \App\Support\PhilippinePhone::format($value) ?? $value;
+    }
+}
+
 if (! function_exists('getCurrentLoginUserLanguageName')) {
 
     /**

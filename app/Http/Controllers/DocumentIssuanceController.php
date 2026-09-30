@@ -19,6 +19,7 @@ use App\Models\Vaccination;
 use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
 use App\Services\MedicineInventoryService;
+use App\Support\PhilippinePhone;
 use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
@@ -124,6 +125,7 @@ class DocumentIssuanceController extends Controller
         // document_creator_id is always the signed-in user; never trust it from the form.
         $data = $request->except(['_token', 'document_creator_id', 'consultation_images']);
         $data = $this->forceOwnNursingInCharge($data);
+        $data = $this->normalizePatientContact($data);
         $documentType = $request->input('document_type');
 
         try {
@@ -614,9 +616,9 @@ class DocumentIssuanceController extends Controller
             'first_name' => $firstName,
             'middle_name' => $middleName,
             'last_name' => $lastName,
-            'contact' => $this->normalizeNullableString($data['patient_contact'] ?? null),
+            ...$this->contactAttributes($this->normalizeNullableString($data['patient_contact'] ?? null)),
             'emergency_contact_name' => $emergencyName,
-            'emergency_contact_no' => $emergencyNumber,
+            'emergency_contact_no' => $this->emergencyNumberForUser($emergencyNumber),
             'emergency_relationship' => $emergencyRelationship,
             'dob' => $dateOfBirth,
             'gender' => $gender,
@@ -669,7 +671,7 @@ class DocumentIssuanceController extends Controller
         }
 
         if (($contact = $this->normalizeNullableString($data['patient_contact'] ?? null)) !== null) {
-            $userUpdates['contact'] = $contact;
+            $userUpdates = array_merge($userUpdates, $this->contactAttributes($contact));
         }
 
         if ($overwriteIdentity && ($dob = $this->normalizeNullableString($data['date_of_birth'] ?? null)) !== null) {
@@ -685,7 +687,7 @@ class DocumentIssuanceController extends Controller
         }
 
         if ($emergencyNumber !== null) {
-            $userUpdates['emergency_contact_no'] = $emergencyNumber;
+            $userUpdates['emergency_contact_no'] = $this->emergencyNumberForUser($emergencyNumber);
         }
 
         if ($emergencyRelationship !== null) {
@@ -929,6 +931,46 @@ class DocumentIssuanceController extends Controller
         return [$firstName, $middleName, $lastName];
     }
 
+    /**
+     * A Philippine number typed on the consultation form is tidied to "+63 917 123 4567". Anything else
+     * (a walk-in without a phone, "N/A") is kept exactly as written: this is a clinical record, not an
+     * account form, and the field is read-only for known patients so it could not be corrected there.
+     */
+    private function normalizePatientContact(array $data): array
+    {
+        $contact = $this->normalizeNullableString($data['patient_contact'] ?? null);
+
+        if ($contact !== null && ($formatted = PhilippinePhone::format($contact)) !== null) {
+            $data['patient_contact'] = $formatted;
+        }
+
+        return $data;
+    }
+
+    /**
+     * users.contact / users.country_code for a number entered on the consultation form: canonical digits
+     * with country code 63 when it is a Philippine number, otherwise the text as typed.
+     *
+     * @return array<string, string>
+     */
+    private function contactAttributes(?string $contact): array
+    {
+        if ($contact === null) {
+            return [];
+        }
+
+        $national = PhilippinePhone::national($contact);
+
+        return $national === null
+            ? ['contact' => $contact]
+            : ['contact' => $national, 'country_code' => PhilippinePhone::COUNTRY_CODE];
+    }
+
+    private function emergencyNumberForUser(?string $number): ?string
+    {
+        return $number === null ? null : (PhilippinePhone::e164($number) ?? $number);
+    }
+
     private function extractEmergencyContactParts($value): array
     {
         $normalized = $this->normalizeNullableString($value);
@@ -1156,6 +1198,7 @@ class DocumentIssuanceController extends Controller
 
         $data = $request->except(['_token', '_method', 'document_type', 'document_creator_id', 'consultation_images']);
         $data = $this->forceOwnNursingInCharge($data);
+        $data = $this->normalizePatientContact($data);
 
         // The document type is fixed at creation. Never take it from the request: the staff
         // module check (EnsureStaffModuleAccess) authorises against the stored type, so a

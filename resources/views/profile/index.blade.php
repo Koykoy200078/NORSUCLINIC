@@ -104,10 +104,7 @@
                     </div>
                     <div class="col-md-6 mb-5">
                         {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label fw-semibold']) }}
-                        {{ Form::tel('contact', $user->contact ? '+' . $user->country_code . $user->contact : null, ['id' => 'phoneNumber', 'class' => 'form-control form-control-lg', 'placeholder' => __('messages.user.contact_number'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-                        {{ Form::hidden('country_code', !empty($user->country_code) ? $user->country_code : null, ['id' => 'prefix_code']) }}
-                        <span id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{ __('messages.valid_number') }}</span>
-                        <span id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{ __('messages.invalid_number') }}</span>
+                        {{ Form::text('contact', $user->contact, ['id' => 'phoneNumber', 'class' => 'form-control form-control-lg', 'data-ph-phone' => 'true', 'placeholder' => __('messages.user.contact_number')]) }}
                     </div>
                     <div class="col-md-6 mb-5">
                         {{ Form::label('emergencyName',__('messages.patient.emergency_contact_name').':' ,['class' => 'form-label fw-semibold']) }}
@@ -115,7 +112,7 @@
                     </div>
                     <div class="col-md-6 mb-5">
                         {{ Form::label('emergencyNo',__('messages.patient.emergency_contact_no').':' ,['class' => 'form-label fw-semibold']) }}
-                        {{ Form::text('emergency_contact_no', $user->emergency_contact_no, ['class' => 'form-control form-control-lg','placeholder' => __('messages.patient.emergency_contact_no')]) }}
+                        {{ Form::text('emergency_contact_no', $user->emergency_contact_no, ['class' => 'form-control form-control-lg','data-ph-phone' => 'true','placeholder' => __('messages.patient.emergency_contact_no')]) }}
                     </div>
                 </div>
 

@@ -79,7 +79,7 @@ New Laboratory / Medical Request
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Contact No.</label>
                             <input type="text" name="patient_contact" id="patient_contact" class="form-control"
-                                value="{{ $user?->contact ?? old('patient_contact') }}" readonly>
+                                value="{{ formatPhilippinePhone($user?->contact) ?? old('patient_contact') }}" readonly>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Address</label>
@@ -425,7 +425,7 @@ New Laboratory / Medical Request
                 safeSet('patient_name', u.name);
                 safeSet('patient_age', u.age);
                 safeSet('patient_gender', u.gender);
-                safeSet('patient_contact', u.contact);
+                safeSet('patient_contact', window.PhPhone ? PhPhone.display(u.contact) : u.contact);
                 safeSet('address', u.address);
                 safeSet('campus', u.campus);
                 safeSet('college', u.college);

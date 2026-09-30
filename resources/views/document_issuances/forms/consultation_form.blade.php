@@ -55,7 +55,7 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-xs" for="patient_contact">PATIENT'S CONTACT #<span class="text-red-500">*</span></label>
-                <input type="text" id="patient_contact" name="patient_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('patient_contact', $user->type == 4 ? $user->contact : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
+                <input type="text" id="patient_contact" name="patient_contact" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('patient_contact', $user->type == 4 ? formatPhilippinePhone($user->contact) : '') }}" {{ $user->type == 4 ? 'readonly' : '' }} required>
             </div>
 
             <!-- Campus Field (for Students only) - Auto-filled if available -->
@@ -1415,7 +1415,7 @@
                                     document.getElementById('date_of_birth').value = patientData.user.dob || '';
                                     syncAgeFromDateOfBirth();
                                     setSelectValue('vaccination_id', patientData.user.vaccination_id || patientData.user.vaccination?.id || '');
-                                    document.getElementById('patient_contact').value = normalizeTextValue(patientData.user.contact);
+                                    document.getElementById('patient_contact').value = window.PhPhone ? PhPhone.display(normalizeTextValue(patientData.user.contact)) : normalizeTextValue(patientData.user.contact);
                                     document.getElementById('emergency_contact').value = buildEmergencyContact(patientData.user || {});
 
                                     // Populate commonly-missed fields immediately from latest consultation snapshot.

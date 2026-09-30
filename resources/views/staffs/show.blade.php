@@ -35,9 +35,9 @@
                                     class="text-gray-600 text-decoration-none fs-4">
                                     {{ $staff->email }}
                                 </a><br>
-                                <a href="tel:{{ $staff->country_code }} {{ $staff->contact }}"
+                                <a href="tel:{{ \App\Support\PhilippinePhone::e164($staff->contact) ?? $staff->contact }}"
                                     class="text-gray-600 text-decoration-none fs-4">
-                                    {{ !empty($staff->contact) ? '+'. $staff->country_code .' '. $staff->contact  : __('messages.common.n/a') }}
+                                    {{ !empty($staff->contact) ? formatPhilippinePhone($staff->contact) : __('messages.common.n/a') }}
                                 </a>
                             </div>
                         </div>

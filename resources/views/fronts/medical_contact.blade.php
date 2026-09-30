@@ -65,9 +65,9 @@
                                         class="text-decoration-none text-white d-block">
                                         {{ getSettingValue('email') }}
                                     </a>
-                                    <a href="  tel:+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}"
+                                    <a href="tel:{{ \App\Support\PhilippinePhone::e164(getSettingValue('contact_no')) ?? getSettingValue('contact_no') }}"
                                         class="text-decoration-none text-white d-block">
-                                        +{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}
+                                        {{ formatPhilippinePhone(getSettingValue('contact_no')) }}
                                     </a>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                             <ul class="list-unstyled">
                                 <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> {{ getSettingValue('address_one') }}</li>
                                 <li class="mb-2"><i class="fas fa-envelope me-2"></i> <a href="mailto:{{ getSettingValue('email') }}">{{ getSettingValue('email') }}</a></li>
-                                <li class="mb-2"><i class="fas fa-phone me-2"></i> <a href="tel:+{{ getSettingValue('country_code') }}{{ getSettingValue('contact_no') }}">+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}</a></li>
+                                <li class="mb-2"><i class="fas fa-phone me-2"></i> <a href="tel:{{ \App\Support\PhilippinePhone::e164(getSettingValue('contact_no')) ?? getSettingValue('contact_no') }}">{{ formatPhilippinePhone(getSettingValue('contact_no')) }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -101,9 +101,9 @@
                                 <i class="fa-solid fa-phone text-primary fs-3"></i>
                             </div>
                             <h4 class="mb-3 pt-2"> {{ __('messages.user.contact_number') }}</h4>
-                            <a href=" tel:+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}"
+                            <a href="tel:{{ \App\Support\PhilippinePhone::e164(getSettingValue('contact_no')) ?? getSettingValue('contact_no') }}"
                                 class="text-decoration-none text-gray-100 d-block fw-light">
-                                +{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}
+                                {{ formatPhilippinePhone(getSettingValue('contact_no')) }}
                             </a>
                         </div>
                     </div>

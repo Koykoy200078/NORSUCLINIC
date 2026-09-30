@@ -22,7 +22,7 @@ class DefaultUserSeeder extends Seeder
             [
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
-                'contact' => '1234567890',
+                'contact' => null,
                 'gender' => User::MALE,
                 'type' => User::ADMIN,
                 'email' => 'admin@norsuclinic.com',

@@ -5,12 +5,15 @@ namespace App\Http\Requests;
 use App\Models\StaffDesignation;
 use App\Rules\ValidStaffDesignationStationPair;
 use App\Http\Requests\Concerns\ChecksArchivedAccounts;
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateStaffRequest extends FormRequest
 {
     use ChecksArchivedAccounts;
+    use NormalizesPhilippinePhone;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -18,6 +21,11 @@ class UpdateStaffRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national']);
     }
 
     /**
@@ -33,7 +41,7 @@ class UpdateStaffRequest extends FormRequest
             'last_name' => 'required',
             'email' => ['required', 'email:filter', $this->uniqueAmongActiveUsers('email', (int) $this->route('staff')->id)],
             'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id', (int) $this->route('staff')->id)],
-            'contact' => ['nullable', $this->uniqueAmongActiveUsers('contact', (int) $this->route('staff')->id)],
+            'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact', (int) $this->route('staff')->id)],
             'password' => 'nullable|same:password_confirmation|min:6',
             'gender' => 'required',
             'role' => ['sometimes', 'nullable', 'integer', Rule::exists('roles', 'id')->whereIn('name', ['staff', 'nurse'])],

@@ -2,18 +2,27 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Models\Patient;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
 
 class UpdatePatientRequest extends FormRequest
 {
+    use NormalizesPhilippinePhone;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national', 'emergency_contact_no' => 'e164']);
     }
 
     /**
@@ -30,7 +39,6 @@ class UpdatePatientRequest extends FormRequest
         if ($patient instanceof Patient) {
             $rules['email'] = 'nullable|email:filter|unique:users,email,' . $patient->user_id;
             $rules['university_id_number'] = 'nullable|string|max:100|unique:users,university_id_number,' . $patient->user_id;
-            $rules['contact'] = 'nullable';
         } else {
             // Fallback - should not reach here if route model binding works
             Log::error('UpdatePatientRequest: Patient parameter is NULL or not instance of Patient', [
@@ -39,8 +47,10 @@ class UpdatePatientRequest extends FormRequest
             ]);
             $rules['email'] = 'nullable|email:filter';
             $rules['university_id_number'] = 'nullable|string|max:100';
-            $rules['contact'] = 'nullable';
         }
+
+        $rules['contact'] = ['nullable', new PhilippinePhoneNumber()];
+        $rules['emergency_contact_no'] = ['nullable', new PhilippinePhoneNumber()];
 
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';

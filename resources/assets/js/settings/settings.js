@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", loadSettingData);
 
 let form;
-let phone;
-let prefixCode;
 let loadData = false;
 
 function loadSettingData() {
@@ -28,48 +26,7 @@ function loadSettingData() {
     }
 
     form = document.getElementById("generalSettingForm");
-
-    phone = document.getElementById("phoneNumber").value;
-    prefixCode = document.getElementById("prefix_code").value;
-
-    let input = document.querySelector("#defaultCountryData");
-    let intl = window.intlTelInput(input, {
-        initialCountry: defaultCountryCodeValue,
-        separateDialCode: true,
-        geoIpLookup: function (success, failure) {
-            $.get("https://ipinfo.io", function () {}, "jsonp").always(
-                function (resp) {
-                    var countryCode = resp && resp.country ? resp.country : "";
-                    success(countryCode);
-                },
-            );
-        },
-        utilsScript: "../../public/assets/js/inttel/js/utils.min.js",
-    });
-    let getCode =
-        intl.selectedCountryData["name"] +
-        " +" +
-        intl.selectedCountryData["dialCode"];
-    $("#defaultCountryData").val(getCode);
 }
-
-listenKeyup("#defaultCountryData", function () {
-    let str2 = $(this).val().slice(0, -1) + "";
-    return $(this).val(str2);
-});
-
-listenClick(".iti__standard", function () {
-    let currentSelectedFlag = $(this).parent().parent().parent().next();
-    $(this).attr("data-country-code");
-    if (currentSelectedFlag.has("#defaultCountryCode")) {
-        $("#defaultCountryCode").val($(this).attr("data-country-code"));
-    }
-    let CountryDataVal =
-        $(this).children(".iti__country-name").text() +
-        " " +
-        $(this).children(".iti__dial-code").text();
-    $("#defaultCountryData").val(CountryDataVal);
-});
 
 listenChange("#settingCountryId", function () {
     $.ajax({
@@ -137,13 +94,12 @@ listenChange("#settingStateId", function () {
 });
 
 listenClick("#settingSubmitBtn", function () {
-    if ($("#error-msg").text() !== "") {
-        $("#phoneNumber").focus();
-        displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text(),
-        );
+    let settingForm = $("#generalSettingForm")[0];
+
+    // Philippine number check (+63) - shows the inline error and focuses the field.
+    if (!window.PhPhone.validateForm(settingForm)) {
         return false;
     }
 
-    $("#generalSettingForm")[0].submit();
+    settingForm.submit();
 });

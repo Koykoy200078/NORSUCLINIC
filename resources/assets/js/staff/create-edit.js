@@ -15,26 +15,6 @@ listenChange("input[type=radio][name=gender]", function () {
     }
 });
 
-listenSubmit("#createStaffForm", function () {
-    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
-        $("#phoneNumber").focus();
-        displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text(),
-        );
-        return false;
-    }
-});
-
-listenSubmit("#editStaffForm", function () {
-    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
-        $("#phoneNumber").focus();
-        displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text(),
-        );
-        return false;
-    }
-});
-
 listenClick(".removeAvatarIcon", function () {
     $("#bgImage").css("background-image", "");
     $("#bgImage").css("background-image", "url(" + backgroundImg + ")");

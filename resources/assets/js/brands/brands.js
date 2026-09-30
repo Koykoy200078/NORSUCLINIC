@@ -6,10 +6,3 @@ listenClick(".brand-delete-btn", function (event) {
     if (!deleteUrl) return;
     deleteItem(deleteUrl, Lang.get("js.brand"));
 });
-
-listenSubmit("#createBrandForm, #editBrandForm", function () {
-    if ($("#error-msg").text() !== "") {
-        $("#phoneNumber").focus();
-        return false;
-    }
-});

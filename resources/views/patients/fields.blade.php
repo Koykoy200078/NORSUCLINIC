@@ -51,13 +51,11 @@
         <div class="col-md-6 mb-5">
             {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
             @if (isset($patient))
-            {{ Form::text('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control',
+            {{ Form::text('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control', 'data-ph-phone' => 'true',
                 'placeholder' => __('messages.patient.contact_no')]) }}
-            {{ Form::hidden('country_code',!empty($patient->user) ? $patient->user->country_code : null,['id'=>'prefix_code']) }}
             @else
-            {{ Form::text('contact', old('contact'), ['class' => 'form-control',
+            {{ Form::text('contact', old('contact'), ['class' => 'form-control', 'data-ph-phone' => 'true',
                 'placeholder' => __('messages.patient.contact_no')]) }}
-            {{ Form::hidden('country_code', old('country_code', getSettingValue('country_code')), ['id'=>'prefix_code']) }}
             @endif
         </div>
         <div class="col-md-6 mb-5">
@@ -67,7 +65,7 @@
 
         <div class="col-md-6 mb-5">
             {{ Form::label('emergencyNo',__('messages.patient.emergency_contact_no').':' ,['class' => 'form-label']) }}
-            {{ Form::text('emergency_contact_no',!empty($patient->user) ? $patient->user->emergency_contact_no : null,['class' => 'form-control','placeholder' => __('messages.patient.emergency_contact_no'),'required']) }}
+            {{ Form::text('emergency_contact_no',!empty($patient->user) ? $patient->user->emergency_contact_no : null,['class' => 'form-control','data-ph-phone' => 'true','placeholder' => __('messages.patient.emergency_contact_no'),'required']) }}
         </div>
         <div class="col-md-6 mb-5">
             {{ Form::label('emergency_relationship', __('Emergency Contact Relationship').':', ['class' => 'form-label']) }}

@@ -48,7 +48,7 @@
         <div class="mb-5">
             {{ Form::label('contact', __('messages.staff.contact_no').':', ['class' => 'form-label']) }}
             <br>
-            {{ Form::text('contact', old('contact', isset($staff) ? $staff->contact : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.contact_no')]) }}
+            {{ Form::text('contact', old('contact', isset($staff) ? $staff->contact : null), ['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
         </div>
     </div>
 

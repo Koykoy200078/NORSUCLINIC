@@ -87,18 +87,6 @@ Theme Version:	1.0.0
 
             jQuery(".ajax-form").on("submit", function (event) {
                 event.preventDefault();
-                if ($("#error-msg").text() !== "") {
-                    $("#phoneNumber").focus();
-                    var response =
-                        '<div class="err alert alert-danger">Contact number is ' +
-                        $("#error-msg").text() +
-                        "</div>";
-                    $(".ajax-form .ajax-message")
-                        .html(response)
-                        .delay(5000)
-                        .hide("slow");
-                    return false;
-                }
                 var response =
                     '<div class="alert alert-warning alert-dismissable"> ' +
                     Lang.get("js.processing") +

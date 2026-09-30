@@ -37,9 +37,9 @@
                                     class="text-gray-600 text-decoration-none fs-4">
                                     {{ $doctorDetailData['data']->user->email }}
                                 </a><br>
-                                <a href="tel:{{ $doctorDetailData['data']->user->country_code }} {{ $doctorDetailData['data']->user->contact }}"
+                                <a href="tel:{{ \App\Support\PhilippinePhone::e164($doctorDetailData['data']->user->contact) ?? $doctorDetailData['data']->user->contact }}"
                                     class="text-gray-600 text-decoration-none fs-4">
-                                    {{ !empty($doctorDetailData['data']->user->contact) ? '+'. $doctorDetailData['data']->user->country_code .' '. $doctorDetailData['data']->user->contact  : __('messages.common.n/a') }}
+                                    {{ !empty($doctorDetailData['data']->user->contact) ? formatPhilippinePhone($doctorDetailData['data']->user->contact) : __('messages.common.n/a') }}
 
                                 </a>
                             </div>

@@ -26,7 +26,7 @@
     <div class="col-md-6">
         <div class="mb-5">
             {{ Form::label('Contact',__('messages.user.contact_number').':' ,['class' => 'form-label']) }}
-            {{ Form::text('contact', null,['class' => 'form-control','placeholder' => __('messages.user.contact_number')]) }}
+            {{ Form::text('contact', null,['class' => 'form-control','data-ph-phone' => 'true','placeholder' => __('messages.user.contact_number')]) }}
         </div>
     </div>
     <div class="col-md-6 mb-5">

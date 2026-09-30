@@ -3,12 +3,15 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Concerns\ChecksArchivedAccounts;
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUserRequest extends FormRequest
 {
     use ChecksArchivedAccounts;
+    use NormalizesPhilippinePhone;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -16,6 +19,11 @@ class CreateUserRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national']);
     }
 
     /**
@@ -26,7 +34,7 @@ class CreateUserRequest extends FormRequest
         $rules = User::$rules;
 
         $rules['email'] = ['nullable', 'email', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
-        $rules['contact'] = ['nullable', $this->uniqueAmongActiveUsers('contact')];
+        $rules['contact'] = ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')];
         $rules['employee_id'] = ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')];
         $rules['prc_license_number'] = 'required|string|max:100|unique:doctors,prc_license_number';
         $rules['ptr_number'] = 'required|string|max:100';

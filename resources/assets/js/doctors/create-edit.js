@@ -242,13 +242,6 @@ listenSubmit("#editDoctorForm", function (e) {
         return;
     }
 
-    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
-        $("#phoneNumber").focus();
-        displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text(),
-        );
-        return;
-    }
     let doctorFormData = new FormData($(this)[0]);
     let editDoctorId = $("#editDoctorId").val();
 
@@ -419,13 +412,6 @@ listenSubmit("#createDoctorForm", function () {
         return false;
     }
 
-    if ($("#error-msg").text() !== "" && !$("#error-msg").hasClass("d-none")) {
-        $("#phoneNumber").focus();
-        displayErrorMessage(
-            Lang.get("js.contact_number") + $("#error-msg").text(),
-        );
-        return false;
-    }
 });
 
 listenClick(".removeAvatarIcon", function () {

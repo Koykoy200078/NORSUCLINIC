@@ -30,7 +30,7 @@
                     </div>
                     <div class="form-group col-sm-6 mb-5">
                         {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}<br>
-                        {{ Form::text('contact', null, ['class' => 'form-control', 'tabindex' => '5', 'placeholder' => __('messages.patient.contact_no')]) }}
+                        {{ Form::text('contact', null, ['class' => 'form-control', 'tabindex' => '5', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
                     </div>
                 </div>
                 <div class="row">

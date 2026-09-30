@@ -5,12 +5,15 @@ namespace App\Http\Requests;
 use App\Models\StaffDesignation;
 use App\Rules\ValidStaffDesignationStationPair;
 use App\Http\Requests\Concerns\ChecksArchivedAccounts;
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateStaffRequest extends FormRequest
 {
     use ChecksArchivedAccounts;
+    use NormalizesPhilippinePhone;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -18,6 +21,11 @@ class CreateStaffRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national']);
     }
 
     /**
@@ -33,7 +41,7 @@ class CreateStaffRequest extends FormRequest
             'last_name' => 'required',
             'email' => ['required', 'email:filter', $this->uniqueAmongActiveUsers('email')],
             'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')],
-            'contact' => ['nullable', $this->uniqueAmongActiveUsers('contact')],
+            'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')],
             'password' => 'required|same:password_confirmation|min:6',
             'gender' => 'required',
             // Staff accounts may only be given the staff or nurse role (default: staff). Assigning

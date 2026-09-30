@@ -22,9 +22,9 @@
                         <div class="footer-info__footer-icon fs-5 d-flex align-items-center justify-content-center">
                             <i class="fa-solid fa-mobile text-primary"></i>
                         </div>
-                        <a href="tel:+{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}"
+                        <a href="tel:{{ \App\Support\PhilippinePhone::e164(getSettingValue('contact_no')) ?? getSettingValue('contact_no') }}"
                             class="text-decoration-none text-white footer-info__contact-label">
-                            +{{ getSettingValue('country_code') }} {{ getSettingValue('contact_no') }}
+                            {{ formatPhilippinePhone(getSettingValue('contact_no')) }}
                         </a>
                     </div>
                     @endif

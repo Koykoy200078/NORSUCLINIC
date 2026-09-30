@@ -3,11 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Concerns\ChecksArchivedAccounts;
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest
 {
     use ChecksArchivedAccounts;
+    use NormalizesPhilippinePhone;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -15,6 +18,11 @@ class UpdateUserRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national']);
     }
 
     /**
@@ -27,7 +35,7 @@ class UpdateUserRequest extends FormRequest
             'last_name' => 'required',
             'email' => ['required', 'email', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email', (int) $this->route('doctor')->user_id)],
             'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id', (int) $this->route('doctor')->user_id)],
-            'contact' => ['nullable', $this->uniqueAmongActiveUsers('contact', (int) $this->route('doctor')->user_id)],
+            'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact', (int) $this->route('doctor')->user_id)],
             'dob' => 'nullable|date|before_or_equal:today',
             'experience' => 'nullable|numeric',
             'prc_license_number' => 'required|string|max:100|unique:doctors,prc_license_number,' . $this->route('doctor')->id,

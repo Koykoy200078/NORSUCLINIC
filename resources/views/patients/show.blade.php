@@ -42,9 +42,9 @@
                                     {{ $patient->user->email }}
                                 </a><br>
                                 @if($patient->user->contact != null)
-                                <a href="tel:{{ $patient->user->country_code }} {{ $patient->user->contact }}"
+                                <a href="tel:{{ \App\Support\PhilippinePhone::e164($patient->user->contact) ?? $patient->user->contact }}"
                                     class="text-gray-600 text-decoration-none fs-4">
-                                    {{ !empty($patient->user->contact) ? '+'. $patient->user->country_code .' '. $patient->user->contact  : __('messages.common.n/a') }}
+                                    {{ !empty($patient->user->contact) ? formatPhilippinePhone($patient->user->contact) : __('messages.common.n/a') }}
                                 </a>
                                 @else
                                 <a class="text-gray-600 text-decoration-none fs-4">

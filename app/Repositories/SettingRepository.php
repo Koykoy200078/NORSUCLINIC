@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Setting;
+use App\Support\PhilippinePhone;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -49,9 +50,10 @@ class SettingRepository extends BaseRepository
             $inputArr['specialties'] = (empty($inputArr['specialties'])) ? '1' : json_encode($inputArr['specialties']);
             $inputArr['currency'] = (empty($inputArr['currency'])) ? '1' : $inputArr['currency'];
             $inputArr['prefix'] = (empty($inputArr['prefix'])) ? '' : $inputArr['prefix'];
-            $inputArr['country_code'] = (empty($inputArr['country_code'])) ? '' : $inputArr['country_code'];
+            // Philippine numbers only: the dial code and the default country are fixed.
+            $inputArr['country_code'] = PhilippinePhone::COUNTRY_CODE;
             $inputArr['email_verified'] = (empty($inputArr['email_verified'])) ? '0' : $inputArr['email_verified'];
-            $inputArr['default_country_code'] = (empty($inputArr['default_country_code'])) ? '' : $inputArr['default_country_code'];
+            $inputArr['default_country_code'] = PhilippinePhone::DEFAULT_COUNTRY_ISO;
         }
         if ($inputArr['sectionName'] == 'contact_information') {
             $inputArr['address_one'] = (empty($inputArr['address_one'])) ? '' : $inputArr['address_one'];

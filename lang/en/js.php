@@ -39,6 +39,7 @@ return [
     'all_notification_read' => 'All Notification read successfully.',
     'invalid_number' => 'Invalid Number',
     'invalid_country_code' => 'Invalid country code',
+    'invalid_ph_number' => 'Enter a valid Philippine number: a mobile number such as +63 917 123 4567 (or 0917 123 4567), or a landline with its area code.',
     'too_short' => 'Too short',
     'too_long' => 'Too long',
     'amount' => 'Amount',

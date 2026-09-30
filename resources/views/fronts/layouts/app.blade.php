@@ -26,7 +26,6 @@
     <link href="{{ mix('css/front-third-party.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ mix('css/front-pages.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datepicker/bootstrap-datepicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/intlTelInput.css') }}">
 
     <!-- Scripts -->
     <script src="{{ asset('messages.js') }}"></script>
@@ -39,7 +38,6 @@
     <script data-turbo-eval="false">
         let isSetFirstFocus = false;
         let csrfToken = "{{ csrf_token() }}";
-        let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
     </script>
 
     <!-- Language Configuration -->

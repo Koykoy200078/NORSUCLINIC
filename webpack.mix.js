@@ -44,7 +44,6 @@ mix.copyDirectory("resources/assets/images", "public/assets/image")
         "resources/assets/web/plugins/global/fonts",
         "public/assets/css/fonts",
     )
-    .copyDirectory("node_modules/intl-tel-input/build/img", "public/assets/img")
     .copyDirectory("resources/assets/backend", "public/backend")
     .copyDirectory("resources/assets/fonts", "public/fonts")
     .copyDirectory("resources/assets/web", "public/web")
@@ -93,16 +92,11 @@ mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
 mix.styles(
     [
         "resources/theme/css/third-party.css",
-        "node_modules/intl-tel-input/build/css/intlTelInput.css",
         "node_modules/quill/dist/quill.snow.css",
         "node_modules/quill/dist/quill.bubble.css",
     ],
     "public/assets/css/third-party.css",
 )
-    .styles(
-        "node_modules/intl-tel-input/build/css/intlTelInput.css",
-        "public/assets/css/intlTelInput.css",
-    )
     .styles("resources/theme/css/style.css", "public/assets/css/style.css")
     .styles("resources/theme/css/plugins.css", "public/css/plugins.css")
     .styles(
@@ -158,8 +152,6 @@ mix.scripts(
         "resources/theme/js/plugins.js",
         "resources/messages.js",
         "node_modules/apexcharts/dist/apexcharts.min.js",
-        "node_modules/intl-tel-input/build/js/utils.js",
-        "node_modules/intl-tel-input/build/js/intlTelInput.js",
         "node_modules/quill/dist/quill.js",
     ],
     "public/js/third-party.js",
@@ -178,8 +170,6 @@ mix.scripts(
             "public/assets/front/vendor/slick.min.js",
             "public/assets/front/js/contact.js",
             "resources/assets/js/custom/helper.js",
-            "node_modules/intl-tel-input/build/js/utils.js",
-            "node_modules/intl-tel-input/build/js/intlTelInput.js",
             "node_modules/quill/dist/quill.js",
         ],
         "public/js/front-third-party.js",
@@ -216,7 +206,7 @@ mix.js(
         "resources/assets/js/staff/staff.js",
         "resources/assets/js/staff/create-edit.js",
         "resources/assets/js/dashboard/dashboard.js",
-        "resources/assets/js/custom/phone-number-country-code.js",
+        "resources/assets/js/custom/ph-phone-input.js",
         "resources/assets/js/fronts/sliders/slider.js",
         "resources/assets/js/fronts/sliders/create-edit-slider.js",
         "resources/assets/js/fronts/cms/create.js",
@@ -244,7 +234,6 @@ mix.js(
         "resources/assets/js/fronts/sliders/slider.js",
         "resources/assets/front/js/front-custom.js",
         "resources/assets/js/fronts/sliders/create-edit-slider.js",
-        "resources/assets/js/custom/phone-number-country-code.js",
         "resources/assets/js/fronts/cms/create.js",
         "resources/assets/js/fronts/front_home/front-home.js",
         "resources/assets/front/js/front-language.js",

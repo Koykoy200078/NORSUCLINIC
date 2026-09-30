@@ -2,16 +2,28 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
+use App\Rules\PhilippinePhoneNumber;
+use App\Support\PhilippinePhone;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSettingRequest extends FormRequest
 {
+    use NormalizesPhilippinePhone;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        // The clinic works with Philippine numbers only: the country is fixed, not selectable.
+        $this->normalizePhilippinePhones(['contact_no' => 'national']);
+        $this->merge(['default_country_code' => PhilippinePhone::DEFAULT_COUNTRY_ISO]);
     }
 
     /**
@@ -43,7 +55,7 @@ class UpdateSettingRequest extends FormRequest
                 'email' => 'required|email:filter',
                 'specialties' => 'required',
                 'clinic_name' => 'required',
-                'contact_no' => 'required',
+                'contact_no' => ['required', new PhilippinePhoneNumber()],
                 'language' => 'required',
             ]);
         }

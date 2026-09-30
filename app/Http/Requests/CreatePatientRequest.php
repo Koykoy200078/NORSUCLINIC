@@ -2,17 +2,26 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Models\Patient;
+use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreatePatientRequest extends FormRequest
 {
+    use NormalizesPhilippinePhone;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizePhilippinePhones(['contact' => 'national', 'emergency_contact_no' => 'e164']);
     }
 
     /**
@@ -28,6 +37,8 @@ class CreatePatientRequest extends FormRequest
         $rules['nationality_citizenship'] = 'required|string|max:120';
         $rules['immunization_record'] = 'required|string';
         $rules['postal_code'] = 'nullable|numeric';
+        $rules['contact'] = ['nullable', new PhilippinePhoneNumber()];
+        $rules['emergency_contact_no'] = ['nullable', new PhilippinePhoneNumber()];
 
         return $rules;
     }

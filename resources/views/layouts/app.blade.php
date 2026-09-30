@@ -157,7 +157,6 @@
         let userRole = "{{ getLogInUser()->hasRole('patient') }}";
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         let noData = "{{ __('messages.common.no_data_available') }}";
-        let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
         let currentLoginUserId = "{{ getLogInUserId() }}";
         let bloodGroupArray = @json($bloodGroupArr);
         Lang.setLocale(checkLanguageSession);

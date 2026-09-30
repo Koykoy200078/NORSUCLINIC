@@ -3,7 +3,6 @@
 {{ __('messages.medicine.medicine_generics') }}
 @endsection
 @section('page_css')
-{{-- <link rel="stylesheet" href="{{ asset('assets/css/int-tel/css/intlTelInput.css') }}">--}}
 @endsection
 @section('header_toolbar')
 <div class="container-fluid">
@@ -27,7 +26,6 @@
             </div>
         </div>
         <div class="card">
-            {{Form::hidden('utilsScript',asset('assets/js/int-tel/js/utils.min.js'),['class'=>'utilsScript'])}}
             {{Form::hidden('isEdit',true,['class'=>'isEdit'])}}
             <div class="card-body">
                 {{ Form::model($generic, ['route' => ['generics.update', $generic->id], 'method' => 'patch', 'id' => 'editGenericForm']) }}
