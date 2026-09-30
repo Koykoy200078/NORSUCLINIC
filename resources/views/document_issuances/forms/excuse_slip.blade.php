@@ -314,6 +314,10 @@
                                 userSearchResults.innerHTML = '<div class="p-6 text-gray-400 text-center text-sm italic">No patients found matching your search.</div>';
                                 return;
                             }
+                            // Patient names/courses are user-entered text: escape before using innerHTML.
+                            const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+                                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                            }[ch]));
                             data.forEach(patient => {
                                 const option = document.createElement('div');
                                 option.className = 'px-6 py-4 hover:bg-blue-50 cursor-pointer flex items-center transition-all border-b border-gray-50 last:border-0 group/item';
@@ -322,10 +326,10 @@
                                         <i class="fas fa-user text-blue-500 text-[11px]"></i>
                                     </div>
                                     <div class="flex-1 flex items-center overflow-hidden">
-                                        <span class="font-medium text-sm text-gray-800 group-hover/item:text-blue-600 transition-colors whitespace-nowrap">${patient.user.first_name} ${patient.user.last_name}</span>
+                                        <span class="font-medium text-sm text-gray-800 group-hover/item:text-blue-600 transition-colors whitespace-nowrap">${escapeHtml(patient.user.first_name)} ${escapeHtml(patient.user.last_name)}</span>
                                         <span class="mx-3 text-gray-300">|</span>
                                         <div class="flex items-center text-[10px] text-gray-400 uppercase tracking-widest whitespace-nowrap overflow-hidden">
-                                            <span class="truncate max-w-[250px]">${patient.user.course ? patient.user.course.course_name : 'NO COURSE'}</span>
+                                            <span class="truncate max-w-[250px]">${patient.user.course ? escapeHtml(patient.user.course.course_name) : 'NO COURSE'}</span>
                                             <span class="mx-2 text-gray-200">•</span>
                                             <span>${patient.user.gender === 1 ? 'Male' : 'Female'}</span>
                                         </div>

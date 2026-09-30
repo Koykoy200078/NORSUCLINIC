@@ -17,7 +17,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\LabRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('doctors')->name('doctors.')->middleware('auth', 'xss', 'checkUserStatus', 'role:doctor')->group(function () {
+Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus', 'role:doctor')->group(function () {
 
     Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail');
 

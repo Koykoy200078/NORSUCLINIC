@@ -17,7 +17,7 @@ use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('staff')->name('staff.')->middleware('auth', 'xss', 'checkUserStatus', 'role:staff|nurse')->group(function () {
+Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'role:staff|nurse')->group(function () {
 
     // Staff Dashboard - accessible to all staff members
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('dashboard')->middleware('staff.module:dashboard');

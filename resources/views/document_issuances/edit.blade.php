@@ -1366,7 +1366,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     // Show success message
                     const successDiv = document.createElement('div');
                     successDiv.className = 'col-span-3 text-green-600 font-semibold';
-                    successDiv.innerHTML = `✓ Image downloaded successfully: ${filename}`;
+                    successDiv.textContent = `✓ Image downloaded successfully: ${filename}`;
                     previewContainer.appendChild(successDiv);
 
                     setTimeout(() => {

@@ -89,7 +89,8 @@
             const patientId = $(this).val();
             if (patientId) {
                 $('#patientInfoPreview').show();
-                const patientName = $(this).find('option:selected').text();
+                // Escaped: the option text is a user-entered name and is inserted with .html() below.
+                const patientName = $('<div>').text($(this).find('option:selected').text()).html();
                 
                 // Fetch patient consultation form info via AJAX
                 $.ajax({

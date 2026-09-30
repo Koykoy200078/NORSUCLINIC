@@ -83,7 +83,7 @@ Route::post(
     [NotificationController::class, 'readAllNotification']
 )->middleware(['auth', 'checkUserStatus'])->name('notifications.read.all');
 
-Route::middleware('auth', 'xss', 'checkUserStatus')->group(function () {
+Route::middleware('auth', 'checkUserStatus')->group(function () {
     // Update profile
     Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.setting');
     Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('update.profile.setting');

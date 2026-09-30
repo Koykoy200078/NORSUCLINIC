@@ -22,7 +22,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('patients')->name('patients.')->middleware('auth', 'xss', 'checkUserStatus', 'role:patient')->group(function () {
+Route::prefix('patients')->name('patients.')->middleware('auth', 'checkUserStatus', 'role:patient')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'patientDashboard'])->name('dashboard');
     Route::post('/change-default-password', [DashboardController::class, 'changeDefaultPassword'])->name('change-default-password');
     // (Removed patients/dashboard-patients -> getPatientList: it was an unscoped copy of the

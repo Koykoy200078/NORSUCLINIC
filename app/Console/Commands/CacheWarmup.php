@@ -72,11 +72,6 @@ class CacheWarmup extends Command
             return Category::where('is_active', '=', 1)->pluck('name', 'id');
         }, 'Active Medicine Categories');
 
-        // Warm up HTMLPurifier instance
-        $this->warmupCache('htmlpurifier_instance', function () {
-            return new \HTMLPurifier(\HTMLPurifier_Config::createDefault());
-        }, 'HTMLPurifier Instance', 3600);
-
         $this->info('✓ Cache warmup completed successfully!');
 
         return Command::SUCCESS;
