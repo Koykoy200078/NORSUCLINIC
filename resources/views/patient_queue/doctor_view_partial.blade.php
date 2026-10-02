@@ -81,7 +81,7 @@ return $q->created_at->diffInMinutes(now());
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">Added by: {{ $queue->addedBy->full_name }}</small>
+                            <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
                                 @if($queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
@@ -157,7 +157,7 @@ return $q->created_at->diffInMinutes(now());
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">Added by: {{ $queue->addedBy->full_name }}</small>
+                            <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
                                 @if($queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"

@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use App\Repositories\PatientRepository;
 use App\Services\SettingsService;
+use App\Traits\LogsActivity;
 use App\Http\Requests\CreatePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Contracts\Foundation\Application;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PatientController extends AppBaseController
 {
+    use LogsActivity;
+
     /** @var PatientRepository */
     private $patientRepository;
 
@@ -164,7 +167,11 @@ class PatientController extends AppBaseController
         try {
             DB::beginTransaction();
 
+            $patientName = $patient->user?->full_name ?? ('Patient #' . $patient->id);
+
             $patient->delete();
+
+            self::logPatientDeletion($patient, $patientName);
 
             DB::commit();
 
@@ -180,6 +187,8 @@ class PatientController extends AppBaseController
         try {
             $patient = Patient::withTrashed()->findOrFail($id);
             $patient->restore();
+
+            self::logPatientRestoration($patient, $patient->user?->full_name ?? ('Patient #' . $patient->id));
 
             return $this->sendSuccess('Patient restored successfully!');
         } catch (Exception $e) {
@@ -212,6 +221,9 @@ class PatientController extends AppBaseController
         // Fetch all medical certificates
         $medicalCertificates = $patient->documentIssuances->where('document_type', 'medical_certificate');
 
+        // Fetch all excuse slips (they were issued but never listed in the history)
+        $excuseSlips = $patient->documentIssuances->where('document_type', 'excuse_slip');
+
         // Load prescriptions with associated medicines and dispenser info
         $prescriptions = \App\Models\Prescription::with([
             'getMedicine.medicines',   // PrescriptionMedicine::medicines() → Medicine
@@ -230,6 +242,7 @@ class PatientController extends AppBaseController
             'patient',
             'consultations',
             'medicalCertificates',
+            'excuseSlips',
             'prescriptions',
             'dispenseRecords'
         ));

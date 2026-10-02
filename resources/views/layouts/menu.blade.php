@@ -6,12 +6,31 @@
 // -----------------------------------------------------------------------
 $_menuQueueBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_queue', 30, function () {
 return \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
+->whereDate('created_at', today())
 ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
 ->first();
 });
 
+// Once a day (also where the scheduler is not running) refresh each medicine's "available" figure for batches
+// that expired, so expired units stop being offered in forms and reports. R3-H5.
+\Illuminate\Support\Facades\Cache::remember('inventory_expiry_synced_' . today()->toDateString(), 86400, function () {
+try {
+app(\App\Services\MedicineInventoryService::class)->syncExpiredAvailability();
+} catch (\Throwable $e) {
+report($e);
+}
+
+return true;
+});
+
 $_menuMedicineBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_medicine', 300, function () {
 $today = \Carbon\Carbon::now();
+
+$expiredCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
+->whereNotNull('expiration_date')
+->whereDate('expiration_date', '<', $today->toDateString())
+->distinct('medicine_id')
+->count('medicine_id');
 $criticalUntil = $today->copy()->addDays(7)->toDateString();
 $warningFrom = $today->copy()->addDays(8)->toDateString();
 $warningUntil = $today->copy()->addDays(30)->toDateString();
@@ -37,12 +56,19 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         ? 'COALESCE(NULLIF(baseline_quantity, 0), NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)'
         : 'COALESCE(NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)';
 
-        $lowStockCount = \App\Models\Medicine::where('available_quantity', '>', 0)
+        // A medicine that ran out counts too (it used to be skipped because its quantity is 0); a catalogue entry that
+        // never had any stock does not.
+        $lowStockCount = \App\Models\Medicine::where(function ($q) use ($hasBaselineColumn) {
+        $q->where('available_quantity', '>', 0);
+        if ($hasBaselineColumn) {
+        $q->orWhere('baseline_quantity', '>', 0);
+        }
+        })
         ->where(function ($q) use ($stableDenominatorSql) {
         $q->whereRaw('minimum_stock_alert IS NOT NULL AND minimum_stock_alert > 0 AND available_quantity <= minimum_stock_alert')
             ->orWhereRaw("stock_alert_percentage IS NOT NULL AND stock_alert_percentage > 0 AND (available_quantity / NULLIF($stableDenominatorSql, 0) * 100) <= stock_alert_percentage");
                 })->count();
-                return compact('criticalCount', 'warningCount', 'lowStockCount');
+                return compact('criticalCount', 'warningCount', 'lowStockCount', 'expiredCount');
                 });
 
                 $_menuIncompleteDocsBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_incomplete_docs', 60, function () {
@@ -166,9 +192,16 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         $criticalCount = $_menuMedicineBadge['criticalCount'] ?? 0;
                         $warningCount = $_menuMedicineBadge['warningCount'] ?? 0;
                         $lowStockCount = $_menuMedicineBadge['lowStockCount'] ?? 0;
+                        $expiredCount = $_menuMedicineBadge['expiredCount'] ?? 0;
                         @endphp
 
                         <div class="d-flex align-items-center ms-auto gap-1">
+                            @if($expiredCount > 0)
+                            <span class="badge bg-dark rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Expired stock on the shelf: {{ $expiredCount }} medicine(s) - take it out of stock">
+                                <i class="fas fa-ban me-1" style="font-size: 0.6rem;"></i>{{ $expiredCount }}
+                            </span>
+                            @endif
+
                             @if($criticalCount > 0)
                             <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Critical: {{ $criticalCount }} medicine(s) expiring in 7 days or less">
                                 <i class="fas fa-calendar-times me-1" style="font-size: 0.6rem;"></i>{{ $criticalCount }}

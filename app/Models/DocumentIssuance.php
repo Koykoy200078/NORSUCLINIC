@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -123,7 +125,9 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class DocumentIssuance extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasRoles;
+    // Consultations, medical certificates and excuse slips are clinical records: "deleting" one takes it off every
+    // screen and report but keeps the row (deleted_at) and its photos, so it can still be recovered. R3-M6.
+    use HasFactory, InteractsWithMedia, HasRoles, SoftDeletes;
 
     protected $table = 'document_issuances';
 
@@ -145,6 +149,13 @@ class DocumentIssuance extends Model implements HasMedia
         'college',
         'course',
         'year_level',
+        'campus_id',
+        'college_id',
+        'course_id',
+        'year_level_id',
+        'department_id',
+        'office_id',
+        'patient_type_id',
         'informant',
         'emergency_contact',
         'requested_at',
@@ -198,13 +209,42 @@ class DocumentIssuance extends Model implements HasMedia
         // When a request document is being deleted, delete all associated image files
         // (private consultation_images disk for new uploads, public/uploads for legacy ones).
         static::deleting(function ($requestDocument) {
-            foreach ($requestDocument->consultationImageList() as $imageData) {
-                $requestDocument->deleteConsultationImageFile($imageData);
+            // A normal delete only hides the record: its photos stay with it. They are removed only if the row is
+            // ever removed for good (forceDelete).
+            if (! $requestDocument->isForceDeleting()) {
+                return;
             }
 
-            // Also clear media library collection (if any media was added there)
-            $requestDocument->clearMediaCollection('consultation_images');
+            // The files go only once the surrounding transaction has committed: when the delete (or the
+            // stock return that runs with it) is rolled back, the record must not lose its photos. R3-M6.
+            $images = $requestDocument->consultationImageList();
+
+            DB::afterCommit(function () use ($requestDocument, $images) {
+                foreach ($images as $imageData) {
+                    $requestDocument->deleteConsultationImageFile($imageData);
+                }
+
+                // Also clear media library collection (if any media was added there)
+                $requestDocument->clearMediaCollection('consultation_images');
+            });
         });
+    }
+
+    /**
+     * A consultation can be deleted only by the clinic admin or by the person who recorded it.
+     * Certificates and excuse slips are governed by the module access of the route, as before.
+     */
+    public function canBeDeletedBy(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if ($this->document_type !== 'consultation_form') {
+            return true;
+        }
+
+        return $user->hasRole('clinic_admin') || (int) $this->document_creator_id === (int) $user->id;
     }
 
     /**
@@ -237,11 +277,70 @@ class DocumentIssuance extends Model implements HasMedia
     }
 
     /**
+     * The nurse in charge of the visit (chosen on the consultation form).
+     */
+    public function nursingInCharge()
+    {
+        return $this->belongsTo(User::class, 'nursing_incharged_id');
+    }
+
+    /**
      * Get the medicines used in this consultation.
      */
     public function consultationMedicines()
     {
         return $this->hasMany(ConsultationMedicine::class, 'request_document_id');
+    }
+
+    /**
+     * The illnesses picked from the clinic list for this consultation (pivot: other_text for an "Others" line).
+     */
+    public function illnesses()
+    {
+        return $this->belongsToMany(Illness::class, 'consultation_illnesses', 'document_issuance_id', 'illness_id')
+            ->withPivot('other_text')
+            ->orderBy('illnesses.illness_system_id')
+            ->orderBy('illnesses.sort_order');
+    }
+
+    /**
+     * The services ticked for this consultation.
+     */
+    public function services()
+    {
+        return $this->belongsToMany(ServiceType::class, 'consultation_services', 'document_issuance_id', 'service_type_id')
+            ->orderBy('service_types.category')
+            ->orderBy('service_types.sort_order');
+    }
+
+    /**
+     * The picked illnesses as readable lines: "Cough/colds", and for an "Others" line "Skeletal System: Lump on right leg".
+     *
+     * @return array<int, string>
+     */
+    public function illnessLabels(): array
+    {
+        $this->loadMissing('illnesses.system');
+
+        return $this->illnesses->map(function (Illness $illness) {
+            if (! $illness->is_other) {
+                return $illness->name;
+            }
+
+            return ($illness->system?->name ?? 'Others') . ': ' . (filled($illness->pivot->other_text) ? $illness->pivot->other_text : 'Others');
+        })->values()->all();
+    }
+
+    /**
+     * The ticked services as readable lines.
+     *
+     * @return array<int, string>
+     */
+    public function serviceLabels(): array
+    {
+        $this->loadMissing('services');
+
+        return $this->services->pluck('name')->values()->all();
     }
 
     /**

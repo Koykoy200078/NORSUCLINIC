@@ -34,5 +34,8 @@ class SettingTableSeeder extends Seeder
         Setting::firstOrCreate(['key' => 'logo'], ['value' => $logoUrl]);
         Setting::firstOrCreate(['key' => 'favicon'], ['value' => $favicon]);
         Setting::firstOrCreate(['key' => 'country_code'], ['value' => '63']);
+        // Signs the ACCOMPLISHMENT REPORT ("Noted by"); filled in Settings > General.
+        Setting::firstOrCreate(['key' => 'university_physician_name'], ['value' => '']);
+        Setting::firstOrCreate(['key' => 'university_physician_title'], ['value' => 'University Physician']);
     }
 }

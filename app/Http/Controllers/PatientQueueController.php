@@ -13,19 +13,36 @@ use Illuminate\Support\Facades\DB;
 class PatientQueueController extends Controller
 {
     /**
+     * Today's open queue (waiting + in progress). Entries left over from earlier days are closed first,
+     * and entries whose patient was archived are left out - the screens cannot render a missing patient.
+     */
+    private function openQueues()
+    {
+        PatientQueue::closeStaleEntries();
+
+        return PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
+            ->withLivePatient()
+            ->whereIn('status', PatientQueue::OPEN_STATUSES)
+            ->orderByQueue()
+            ->get();
+    }
+
+    private function todayPatients()
+    {
+        return PatientQueue::with(['patient.user', 'addedBy'])
+            ->withLivePatient()
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    /**
      * Display a listing of the resource (For Staff/Nurse).
      */
     public function index()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
-            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-            ->orderByQueue()
-            ->get();
-
-        $todayPatients = PatientQueue::with(['patient.user', 'addedBy'])
-            ->whereDate('created_at', today())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $queues = $this->openQueues();
+        $todayPatients = $this->todayPatients();
 
         return view('patient_queue.index', compact('queues', 'todayPatients'));
     }
@@ -35,15 +52,8 @@ class PatientQueueController extends Controller
      */
     public function indexPartial()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
-            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-            ->orderByQueue()
-            ->get();
-
-        $todayPatients = PatientQueue::with(['patient.user', 'addedBy'])
-            ->whereDate('created_at', today())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $queues = $this->openQueues();
+        $todayPatients = $this->todayPatients();
 
         return view('patient_queue.index_partial', compact('queues', 'todayPatients'));
     }
@@ -76,13 +86,16 @@ class PatientQueueController extends Controller
         $latestConsultation = null;
         $alreadyQueued = false;
 
+        // Yesterday's forgotten place must not make "already in the queue" true today.
+        PatientQueue::closeStaleEntries();
+
         // The "already in the queue" check and the insert run under a lock on the patient row, so
         // a double click / two front-desk users cannot queue the same patient twice. L-12.
         DB::transaction(function () use (&$validated, &$latestConsultation, &$alreadyQueued) {
             Patient::whereKey($validated['patient_id'])->lockForUpdate()->first();
 
             $alreadyQueued = PatientQueue::where('patient_id', $validated['patient_id'])
-                ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+                ->whereIn('status', PatientQueue::OPEN_STATUSES)
                 ->exists();
 
             if ($alreadyQueued) {
@@ -142,16 +155,32 @@ class PatientQueueController extends Controller
     {
         $validated = $request->validated();
 
-        // Set timestamps based on status
-        if ($request->status === PatientQueue::STATUS_IN_PROGRESS && !$patientQueue->called_at) {
-            $validated['called_at'] = now();
-        }
+        $updated = DB::transaction(function () use ($validated, $request, $patientQueue) {
+            // Re-read under a lock: a completed or cancelled entry is history and must not be reopened
+            // by a stale edit page, and two simultaneous edits must not interleave.
+            $current = PatientQueue::whereKey($patientQueue->getKey())->lockForUpdate()->first();
+            if (! $current || ! in_array($current->status, PatientQueue::OPEN_STATUSES, true)) {
+                return false;
+            }
 
-        if (in_array($request->status, [PatientQueue::STATUS_COMPLETED, PatientQueue::STATUS_CANCELLED]) && !$patientQueue->completed_at) {
-            $validated['completed_at'] = now();
-        }
+            // Set timestamps based on status
+            if ($request->status === PatientQueue::STATUS_IN_PROGRESS && ! $current->called_at) {
+                $validated['called_at'] = now();
+            }
 
-        $patientQueue->update($validated);
+            if (in_array($request->status, [PatientQueue::STATUS_COMPLETED, PatientQueue::STATUS_CANCELLED]) && ! $current->completed_at) {
+                $validated['completed_at'] = now();
+            }
+
+            $current->update($validated);
+
+            return true;
+        });
+
+        if (! $updated) {
+            return redirect()->back()
+                ->with('error', 'This queue entry is already closed and can no longer be changed.');
+        }
 
         return redirect()->back()
             ->with('success', 'Queue updated successfully.');
@@ -189,10 +218,7 @@ class PatientQueueController extends Controller
      */
     public function doctorQueue()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
-            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-            ->orderByQueue()
-            ->get();
+        $queues = $this->openQueues();
 
         return view('patient_queue.doctor_view', compact('queues'));
     }
@@ -202,10 +228,7 @@ class PatientQueueController extends Controller
      */
     public function doctorQueuePartial()
     {
-        $queues = PatientQueue::with(['patient.user', 'addedBy', 'latestConsultation'])
-            ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-            ->orderByQueue()
-            ->get();
+        $queues = $this->openQueues();
 
         return view('patient_queue.doctor_view_partial', compact('queues'));
     }
@@ -215,17 +238,21 @@ class PatientQueueController extends Controller
      */
     public function callNext(PatientQueue $patientQueue)
     {
-        // Only a waiting patient can be called; a double click or a stale page must not
-        // re-open a completed/cancelled entry or reset the called-at time. L-12.
-        if ($patientQueue->status !== PatientQueue::STATUS_WAITING) {
+        // Only a waiting patient can be called. The status test is part of the UPDATE itself, so two
+        // doctors pressing "Call" on the same patient (or a double click / stale page) cannot both win,
+        // re-open a closed entry or reset the first call time. L-12 / R3-L18.
+        $called = PatientQueue::whereKey($patientQueue->getKey())
+            ->where('status', PatientQueue::STATUS_WAITING)
+            ->update([
+                'status' => PatientQueue::STATUS_IN_PROGRESS,
+                'called_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        if ($called === 0) {
             return redirect()->back()
                 ->with('error', 'This patient is no longer waiting in the queue.');
         }
-
-        $patientQueue->update([
-            'status' => PatientQueue::STATUS_IN_PROGRESS,
-            'called_at' => now(),
-        ]);
 
         return redirect()->back()
             ->with('success', 'Patient called successfully.');
@@ -236,7 +263,15 @@ class PatientQueueController extends Controller
      */
     public function complete(Request $request, PatientQueue $patientQueue)
     {
-        if (! in_array($patientQueue->status, [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS], true)) {
+        $completed = PatientQueue::whereKey($patientQueue->getKey())
+            ->whereIn('status', PatientQueue::OPEN_STATUSES)
+            ->update([
+                'status' => PatientQueue::STATUS_COMPLETED,
+                'completed_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        if ($completed === 0) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => 'This queue entry is already closed.'], 422);
             }
@@ -244,11 +279,6 @@ class PatientQueueController extends Controller
             return redirect()->back()
                 ->with('error', 'This queue entry is already closed.');
         }
-
-        $patientQueue->update([
-            'status' => PatientQueue::STATUS_COMPLETED,
-            'completed_at' => now(),
-        ]);
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['success' => true, 'message' => 'Patient consultation completed.']);

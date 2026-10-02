@@ -2,19 +2,31 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\SearchesByWords;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\DocumentIssuance;
 use App\Models\User;
+use App\Support\SearchTerm;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
 
 class DocumentIssuanceTable extends DataTableComponent
 {
+    use SearchesByWords;
+
     protected $model = DocumentIssuance::class;
     public bool $showFilterOnHeader = false;
     public bool $showButtonOnHeader = false;
     public string $buttonComponent = 'document_issuances.components.table-buttons';
+
+    // Fixed when the component is mounted. They used to be client-writable, so a front-desk account that
+    // may only open certificates could switch the table to "consultation" (or to another patient) from
+    // the browser. R3-H6.
+    #[Locked]
     public ?int $patientId = null;
+
+    #[Locked]
     public string $module = 'consultation';
 
     public function configure(): void
@@ -37,10 +49,18 @@ class DocumentIssuanceTable extends DataTableComponent
     public function builder(): \Illuminate\Database\Eloquent\Builder
     {
         $query = DocumentIssuance::query();
-        $isConsultationModule = $this->module !== 'certificate';
+        $isConsultationModule = ! in_array(strtolower($this->module), ['certificate', 'certificates'], true);
 
         // Check the user's role and filter data accordingly
         $user = Auth::user();
+
+        // Staff/nurse see a document list only if their designation + station has that module; the page
+        // route checks it too, but the list is also served by Livewire requests that skip route middleware.
+        abort_unless(
+            canStaffAccessModule($isConsultationModule ? 'consultations' : 'certificates', $user),
+            403,
+            'You are not allowed to access this request document module for your designation/station assignment.'
+        );
 
         if ($user->type === User::PATIENT) { // Patient sees only own documents
             $query->where('user_id', $user->id);
@@ -65,8 +85,14 @@ class DocumentIssuanceTable extends DataTableComponent
         $columns = [
             Column::make("ID", "id")
                 ->sortable(),
+            // The patient's name was not searchable at all, so typing a name in the search box showed nothing.
             Column::make("Patient Name", "name")
-                ->sortable(),
+                ->sortable()
+                ->searchable(function ($query, $word) {
+                    $query->where('document_issuances.name', 'like', SearchTerm::like($word))
+                        ->orWhere('document_issuances.request_of', 'like', SearchTerm::like($word))
+                        ->orWhere('document_issuances.complaints', 'like', SearchTerm::like($word));
+                }),
             Column::make("Document Type", "document_type")
                 ->sortable()
                 ->searchable()

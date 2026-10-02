@@ -49,8 +49,10 @@ class CreatePatientRequest extends FormRequest
             $patientTypeId = $this->input('patient_type_id');
             $universityId = $this->input('university_id_number');
 
-            // Guest (id=4) is exempt; all other types require university_id_number
-            if ($patientTypeId != '4' && (empty($universityId) || trim($universityId) === '')) {
+            // Guest is exempt; all other types require university_id_number. Looked up by code, not by the id the
+            // seeder happened to give it. R3-L14.
+            $guestTypeId = (string) \App\Models\PatientType::where('code', 'guest')->value('id');
+            if ((string) $patientTypeId !== $guestTypeId && (empty($universityId) || trim($universityId) === '')) {
                 $validator->errors()->add('university_id_number', 'The university id number field is required.');
             }
         });

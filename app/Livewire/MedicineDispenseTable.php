@@ -6,6 +6,7 @@ use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\Prescription;
 use App\Models\User;
+use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -60,7 +61,9 @@ class MedicineDispenseTable extends LivewireTableComponent
                         User::select('first_name')->whereColumn('id', 'patient.user_id'),
                         $direction
                     );
-                })->searchable()->view('medicine-history.columns.patient'),
+                })->searchable(function (Builder $query, $word) {
+                    $query->whereHas('patient.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                })->view('medicine-history.columns.patient'),
             Column::make(__('messages.doctor.doctor'), 'doctor_id')->hideIf(1),
             Column::make(__('messages.doctor.doctor'), 'doctor.user.first_name')
                 ->sortable(function (Builder $query, $direction) {
@@ -68,7 +71,9 @@ class MedicineDispenseTable extends LivewireTableComponent
                         User::select('first_name')->whereColumn('id', 'doctor.user_id'),
                         $direction
                     );
-                })->searchable()->view('medicine-history.columns.doctor'),
+                })->searchable(function (Builder $query, $word) {
+                    $query->whereHas('doctor.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                })->view('medicine-history.columns.doctor'),
             Column::make('Quantity Dispensed', 'id')
                 ->sortable(function (Builder $query, $direction) {
                     return $query->orderBy('dispensed_quantity', $direction);

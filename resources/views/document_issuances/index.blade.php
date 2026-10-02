@@ -2,6 +2,7 @@
 @section('title')
 @php
 $documentModule = request('module', request('document_type') === 'medical_certificate' ? 'certificate' : 'consultation');
+$documentModule = in_array(strtolower((string) $documentModule), ['certificate', 'certificates'], true) ? 'certificate' : $documentModule;
 $isConsultationModule = $documentModule !== 'certificate';
 @endphp
 @if($isConsultationModule)

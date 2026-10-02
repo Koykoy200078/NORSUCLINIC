@@ -53,6 +53,19 @@
                         {{ Form::email('email', $setting['email'] ?? null, ['class' => 'form-control ','placeholder'=>__('messages.user.email'),'required']) }}
                     </div>
                 </div>
+                {{-- Signs the ACCOMPLISHMENT REPORT as "Noted by". --}}
+                <div class="row mb-6">
+                    {{ Form::label('university_physician_name', __('University Physician').':', ['class' => 'col-lg-4 form-label']) }}
+                    <div class="col-lg-8">
+                        {{ Form::text('university_physician_name', $setting['university_physician_name'] ?? null, ['class' => 'form-control', 'maxlength' => 150, 'placeholder' => __('Full name, e.g. Dr. Juan Dela Cruz')]) }}
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    {{ Form::label('university_physician_title', __('University Physician title').':', ['class' => 'col-lg-4 form-label']) }}
+                    <div class="col-lg-8">
+                        {{ Form::text('university_physician_title', $setting['university_physician_title'] ?? 'University Physician', ['class' => 'form-control', 'maxlength' => 100, 'placeholder' => __('University Physician')]) }}
+                    </div>
+                </div>
                 <div class="row mb-6">
                     {{ Form::label('specialties',__('messages.setting.specialties').':', ['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
@@ -66,7 +79,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="appLogoPreview"
-                                        style="background-image: url('{{(!empty($setting['logo']))?asset($setting['logo']):asset('assets/image/norsu_favicon.ico')}}')">
+                                        style="background-image: url('{{(!empty($setting['logo']))?asset(normalizeLocalUrl($setting['logo'])):asset('assets/image/norsu_favicon.ico')}}')">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small"
                                         data-bs-toggle="tooltip"
@@ -89,7 +102,7 @@
                             <div class="d-block">
                                 <div class="image-picker">
                                     <div class="image previewImage" id="faviconPreview"
-                                        style="background-image: url('{{(!empty($setting['favicon']))?asset($setting['favicon']):asset('assets/image/norsu_logo.png')}}');">
+                                        style="background-image: url('{{(!empty($setting['favicon']))?asset(normalizeLocalUrl($setting['favicon'])):asset('assets/image/norsu_logo.png')}}');">
                                     </div>
                                     <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                                         data-placement="top" data-bs-original-title="{{ __('messages.setting.change_favicon') }}">

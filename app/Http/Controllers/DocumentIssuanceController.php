@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
+use App\Models\Illness;
 use App\Models\ActivityLog;
 use App\Models\Office;
 use App\Models\Patient;
@@ -20,6 +21,7 @@ use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
 use App\Services\MedicineInventoryService;
 use App\Support\PhilippinePhone;
+use App\Support\SearchTerm;
 use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
@@ -47,6 +49,16 @@ class DocumentIssuanceController extends Controller
         'consultation_images.*.mimes' => 'Consultation images must be JPEG, PNG, GIF or WEBP pictures.',
         'consultation_images.*.max' => 'Each consultation image must be 5MB or smaller.',
         'consultation_images.*.file' => 'A consultation image failed to upload. Please try again.',
+    ];
+
+    /** The illness / services picks of the ACCOMPLISHMENT REPORT (ids from the clinic's own lists). */
+    private const CLASSIFICATION_RULES = [
+        'illness_ids' => 'nullable|array|max:60',
+        'illness_ids.*' => 'integer|exists:illnesses,id',
+        'illness_other' => 'nullable|array',
+        'illness_other.*' => 'nullable|string|max:150',
+        'service_ids' => 'nullable|array|max:60',
+        'service_ids.*' => 'integer|exists:service_types,id',
     ];
 
     private MedicineInventoryService $medicineInventoryService;
@@ -115,7 +127,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES), array_merge([
             'document_type.required' => 'Please choose the type of document to create.',
             'document_type.in' => 'Unknown document type.',
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
@@ -339,6 +351,7 @@ class DocumentIssuanceController extends Controller
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
+            ...$this->snapshotIds($data, $user),
             'informant' => $data['informant'],
             'emergency_contact' => $data['emergency_contact'] ?? null,
             'requested_at' => $data['requested_at'] ?? now()->format('Y-m-d'),
@@ -366,6 +379,9 @@ class DocumentIssuanceController extends Controller
             'nursing_incharged_id' => $data['nursing_incharged'] ?? null,
         ]);
 
+        // Illness and services picked from the clinic list (ACCOMPLISHMENT REPORT).
+        $this->syncClassification($requestDocument, $data);
+
         // Consultation photos go to the private consultation_images disk (see storeConsultationImages()).
         $uploadedImages = $this->storeConsultationImages($requestDocument);
         if (! empty($uploadedImages)) {
@@ -376,10 +392,63 @@ class DocumentIssuanceController extends Controller
         // Handle medicine deduction
         $this->handleMedicineDeduction($requestDocument, $data);
 
+        // A patient already waiting in the queue gets this form attached, so the doctor can open it
+        // from the queue screen even when the form was filled in after the patient was queued.
+        \App\Models\PatientQueue::attachConsultation($requestDocument);
+
         // Log consultation form creation activity
         self::logConsultationCreation($requestDocument);
 
         return $requestDocument;
+    }
+
+    /**
+     * The patient's campus / college / course / year level / department / office / type as they were on the day of
+     * the visit, saved by id so the ACCOMPLISHMENT REPORT can group and filter them. A value the form did not send
+     * keeps what the consultation already had, and otherwise comes from the patient's record.
+     *
+     * @return array<string, int|null>
+     */
+    private function snapshotIds(array $data, ?User $user, ?DocumentIssuance $existing = null): array
+    {
+        $ids = [];
+
+        foreach (['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id'] as $column) {
+            $ids[$column] = $this->normalizeNullableInt($data[$column] ?? null)
+                ?? $this->normalizeNullableInt($existing?->{$column})
+                ?? $this->normalizeNullableInt($user?->{$column});
+        }
+
+        $ids['patient_type_id'] = $this->resolvePatientTypeId($ids['year_level_id'], $data['informant'] ?? null, true)
+            ?? $this->normalizeNullableInt($existing?->patient_type_id);
+
+        return $ids;
+    }
+
+    /**
+     * Saves the illnesses and services picked on the consultation form. Only done when the form sent its picks
+     * (a marker field, or the lists themselves), so an old form without them cannot wipe what was saved. The free
+     * text of an "Others" line is kept only for lines that take free text.
+     */
+    private function syncClassification(DocumentIssuance $document, array $data): void
+    {
+        if (! array_key_exists('classification_submitted', $data)
+            && ! array_key_exists('illness_ids', $data)
+            && ! array_key_exists('service_ids', $data)) {
+            return;
+        }
+
+        $illnessIds = collect($data['illness_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+        $otherLines = Illness::whereIn('id', $illnessIds)->where('is_other', true)->pluck('id')->all();
+        $texts = (array) ($data['illness_other'] ?? []);
+
+        $picks = [];
+        foreach ($illnessIds as $id) {
+            $picks[$id] = ['other_text' => in_array($id, $otherLines, true) ? $this->normalizeNullableString($texts[$id] ?? null) : null];
+        }
+
+        $document->illnesses()->sync($picks);
+        $document->services()->sync(collect($data['service_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values()->all());
     }
 
     /**
@@ -1191,7 +1260,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES), array_merge([
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));
@@ -1425,6 +1494,7 @@ class DocumentIssuanceController extends Controller
             'college' => $data['college'],
             'course' => $data['course'],
             'year_level' => $data['year_level'],
+            ...$this->snapshotIds($data, $user, $requestDocument),
             'informant' => $data['informant'],
             'emergency_contact' => $data['emergency_contact'] ?? $requestDocument->emergency_contact,
             'requested_at' => $data['requested_at'] ?? $requestDocument->requested_at,
@@ -1451,6 +1521,9 @@ class DocumentIssuanceController extends Controller
             'nursing_intervention' => $data['nursing_intervention'] ?? $requestDocument->nursing_intervention,
             'nursing_incharged_id' => $data['nursing_incharge_id'],
         ]);
+
+        // Illness and services picked from the clinic list (ACCOMPLISHMENT REPORT).
+        $this->syncClassification($requestDocument, $data);
 
         // Handle image updates
         $this->handleImageUpdates($requestDocument, $data);
@@ -1707,165 +1780,227 @@ class DocumentIssuanceController extends Controller
     }
 
     /**
-     * Handle medicine updates during consultation form edit
-     * This method compares existing medicines with new submission and:
-     * 1. Restores stock for removed medicines
-     * 2. Deducts stock only for newly added medicines
+     * The medicine rows submitted by the consultation form, validated and normalised.
+     *
+     * Empty rows are skipped, and Plan rows are ignored for anyone who may not manage them. The same
+     * medicine + strength twice in one section is refused: such rows used to collapse into one on the next
+     * edit, so the stock and the record drifted apart. R3-H2.
+     *
+     * @return array<int, array{id: ?int, medicine_id: int, dosage: ?string, quantity: int, used_for: string, dosage_instructions: ?string}>
+     */
+    private function submittedMedicineRows(array $data): array
+    {
+        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
+        $rows = [];
+        $seen = [];
+
+        foreach (($data['medicines'] ?? []) as $usedFor => $medicines) {
+            if (! in_array($usedFor, ['plan', 'nursing'], true)) {
+                continue;
+            }
+
+            if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
+                continue;
+            }
+
+            if (! is_array($medicines)) {
+                continue;
+            }
+
+            foreach ($medicines as $medicineData) {
+                if (! is_array($medicineData) || empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
+                    continue;
+                }
+
+                $quantity = (int) $medicineData['quantity'];
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                $medicineId = (int) $medicineData['medicine_id'];
+                $dosage = $this->normalizeNullableString($medicineData['dosage'] ?? null);
+                $key = $this->medicineRowKey($medicineId, $dosage, (string) $usedFor);
+
+                if (isset($seen[$key])) {
+                    $name = \App\Models\Medicine::find($medicineId)?->display_name ?? 'A medicine';
+
+                    throw new \RuntimeException(
+                        $name . ($dosage !== null ? ' (' . $dosage . ')' : '') . ' is listed more than once under '
+                        . ($usedFor === 'plan' ? 'Plan' : 'Nursing Intervention') . '. Combine the quantities into one row.'
+                    );
+                }
+                $seen[$key] = true;
+
+                $rows[] = [
+                    'id' => ! empty($medicineData['id']) ? (int) $medicineData['id'] : null,
+                    'medicine_id' => $medicineId,
+                    'dosage' => $dosage,
+                    'quantity' => $quantity,
+                    'used_for' => (string) $usedFor,
+                    'dosage_instructions' => $this->normalizeNullableString($medicineData['dosage_instructions'] ?? null),
+                ];
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Identity of a medicine row inside one consultation: medicine + strength + section.
+     */
+    private function medicineRowKey(int $medicineId, ?string $dosage, string $usedFor): string
+    {
+        return $medicineId . '|' . mb_strtolower(trim((string) $dosage)) . '|' . $usedFor;
+    }
+
+    /**
+     * Handle medicine updates during consultation form edit.
+     *
+     * The submitted list is compared with the saved rows (matched by row id, or by medicine + strength +
+     * section for forms that sent no ids):
+     *  - saved rows that are no longer submitted, or whose medicine / strength changed, give their stock back;
+     *  - rows with a lower quantity give the difference back;
+     *  - rows with a higher quantity, and new rows, take stock out.
+     * Stock is returned first, so replacing one medicine by another never fails for lack of stock.
      */
     private function handleMedicineUpdates(DocumentIssuance $requestDocument, array $data)
     {
         $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
 
-        // Get existing medicines from database
-        $existingMedicines = $requestDocument->consultationMedicines()->get();
+        // Validate the submitted list before anything is touched: a bad list changes nothing.
+        $rows = $this->submittedMedicineRows($data);
 
-        // Create a map of existing medicines for easy lookup
-        // Key format: "medicineId_dosage_usedFor"
-        $existingMedicinesMap = [];
-        foreach ($existingMedicines as $existingMedicine) {
-            if (! $canManagePlanMedicines && $existingMedicine->used_for === 'plan') {
+        // A nurse cannot see or change Plan medicines, so those saved rows are left exactly as they are.
+        $existing = $requestDocument->consultationMedicines()->get()
+            ->filter(fn ($saved) => $canManagePlanMedicines || $saved->used_for !== 'plan')
+            ->keyBy('id');
+
+        $paired = []; // submitted row index => saved row
+        $claimed = []; // saved row id => true
+
+        foreach ($rows as $index => $row) {
+            if ($row['id'] !== null && $existing->has($row['id']) && ! isset($claimed[$row['id']])) {
+                $paired[$index] = $existing[$row['id']];
+                $claimed[$row['id']] = true;
+            }
+        }
+
+        $unclaimedByKey = [];
+        foreach ($existing as $saved) {
+            if (! isset($claimed[$saved->id])) {
+                $unclaimedByKey[$this->medicineRowKey((int) $saved->medicine_id, $saved->dosage, (string) $saved->used_for)][] = $saved;
+            }
+        }
+
+        foreach ($rows as $index => $row) {
+            if (isset($paired[$index])) {
                 continue;
             }
 
-            $key = "{$existingMedicine->medicine_id}_{$existingMedicine->dosage}_{$existingMedicine->used_for}";
-            $existingMedicinesMap[$key] = $existingMedicine;
-        }
-
-        // Create a map of new medicines from form submission
-        $newMedicinesMap = [];
-        if (isset($data['medicines']) && is_array($data['medicines'])) {
-            foreach ($data['medicines'] as $usedFor => $medicines) {
-                if (! in_array($usedFor, ['plan', 'nursing'], true)) {
-                    continue;
-                }
-
-                if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
-                    continue;
-                }
-
-                if (!is_array($medicines)) {
-                    continue;
-                }
-
-                foreach ($medicines as $medicineData) {
-                    if (empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
-                        continue;
-                    }
-
-                    $medicineId = $medicineData['medicine_id'];
-                    $dosage = $medicineData['dosage'] ?? null;
-                    $key = "{$medicineId}_{$dosage}_{$usedFor}";
-
-                    $newMedicinesMap[$key] = [
-                        'medicine_id' => $medicineId,
-                        'dosage' => $dosage,
-                        'quantity' => (int) $medicineData['quantity'],
-                        'used_for' => $usedFor,
-                        'dosage_instructions' => $medicineData['dosage_instructions'] ?? null,
-                    ];
-                }
+            $key = $this->medicineRowKey($row['medicine_id'], $row['dosage'], $row['used_for']);
+            if (! empty($unclaimedByKey[$key])) {
+                $saved = array_shift($unclaimedByKey[$key]);
+                $paired[$index] = $saved;
+                $claimed[$saved->id] = true;
             }
         }
 
-        // STEP 1: Restore stock for removed medicines (exists in DB but not in new submission)
-        foreach ($existingMedicinesMap as $key => $existingMedicine) {
-            if (!isset($newMedicinesMap[$key])) {
-                // This medicine was removed, restore its stock
-                $this->restoreMedicineStock($existingMedicine, $requestDocument);
+        $toRemove = $existing->reject(fn ($saved) => isset($claimed[$saved->id]))->values();
+        $adjust = [];
+        $add = [];
 
-                // Delete the consultation medicine record
-                $existingMedicine->delete();
+        foreach ($rows as $index => $row) {
+            $saved = $paired[$index] ?? null;
 
-                Log::info('Medicine removed and stock restored during edit', [
-                    'consultation_id' => $requestDocument->id,
-                    'medicine_id' => $existingMedicine->medicine_id,
-                    'dosage' => $existingMedicine->dosage,
-                    'quantity_restored' => $existingMedicine->quantity,
-                    'used_for' => $existingMedicine->used_for,
-                ]);
+            if ($saved && $this->medicineRowKey((int) $saved->medicine_id, $saved->dosage, (string) $saved->used_for)
+                === $this->medicineRowKey($row['medicine_id'], $row['dosage'], $row['used_for'])) {
+                $adjust[] = [$saved, $row];
+
+                continue;
+            }
+
+            if ($saved) {
+                // The same row now holds a different medicine / strength / section: replace it.
+                $toRemove->push($saved);
+            }
+
+            $add[] = $row;
+        }
+
+        // STEP 1: stock goes back first - removed rows and lowered quantities.
+        foreach ($toRemove as $saved) {
+            $this->restoreMedicineStock($saved, $requestDocument);
+            $saved->delete();
+
+            Log::info('Medicine removed and stock restored during edit', [
+                'consultation_id' => $requestDocument->id,
+                'medicine_id' => $saved->medicine_id,
+                'dosage' => $saved->dosage,
+                'quantity_restored' => $saved->quantity,
+                'used_for' => $saved->used_for,
+            ]);
+        }
+
+        foreach ($adjust as [$saved, $row]) {
+            $difference = $row['quantity'] - (int) $saved->quantity;
+
+            if ($difference < 0) {
+                $this->restoreMedicineStockAmount($saved->medicine_id, $saved->dosage, abs($difference), $requestDocument);
             }
         }
 
-        // STEP 2: Handle quantity changes for medicines that still exist
-        foreach ($existingMedicinesMap as $key => $existingMedicine) {
-            if (isset($newMedicinesMap[$key])) {
-                $newQuantity = $newMedicinesMap[$key]['quantity'];
-                $oldQuantity = $existingMedicine->quantity;
+        // STEP 2: stock goes out - raised quantities, then new rows. Instruction-only edits are saved too.
+        foreach ($adjust as [$saved, $row]) {
+            $difference = $row['quantity'] - (int) $saved->quantity;
 
-                if ($newQuantity != $oldQuantity) {
-                    $quantityDiff = $newQuantity - $oldQuantity;
+            if ($difference > 0) {
+                $this->deductMedicineStock($saved->medicine_id, $saved->dosage, $difference, $requestDocument);
+            }
 
-                    if ($quantityDiff > 0) {
-                        // Quantity increased, deduct more stock
-                        $this->deductMedicineStock(
-                            $existingMedicine->medicine_id,
-                            $existingMedicine->dosage,
-                            $quantityDiff,
-                            $requestDocument
-                        );
-                    } else if ($quantityDiff < 0) {
-                        // Quantity decreased, restore some stock
-                        $this->restoreMedicineStockAmount(
-                            $existingMedicine->medicine_id,
-                            $existingMedicine->dosage,
-                            abs($quantityDiff),
-                            $requestDocument
-                        );
-                    }
+            if ($difference !== 0 || (string) $saved->dosage_instructions !== (string) $row['dosage_instructions']) {
+                $oldQuantity = (int) $saved->quantity;
+                $saved->quantity = $row['quantity'];
+                $saved->dosage_instructions = $row['dosage_instructions'];
+                $saved->save();
 
-                    // Update the consultation medicine record
-                    $existingMedicine->quantity = $newQuantity;
-                    $existingMedicine->dosage_instructions = $newMedicinesMap[$key]['dosage_instructions'];
-                    $existingMedicine->save();
-
+                if ($difference !== 0) {
                     Log::info('Medicine quantity updated during edit', [
                         'consultation_id' => $requestDocument->id,
-                        'medicine_id' => $existingMedicine->medicine_id,
-                        'dosage' => $existingMedicine->dosage,
+                        'medicine_id' => $saved->medicine_id,
+                        'dosage' => $saved->dosage,
                         'old_quantity' => $oldQuantity,
-                        'new_quantity' => $newQuantity,
-                        'quantity_diff' => $quantityDiff,
+                        'new_quantity' => $row['quantity'],
                     ]);
                 }
             }
         }
 
-        // STEP 3: Deduct stock for newly added medicines (exists in new submission but not in DB)
-        foreach ($newMedicinesMap as $key => $newMedicine) {
-            if (!isset($existingMedicinesMap[$key])) {
-                // This is a new medicine, deduct its stock
-                $this->deductMedicineStock(
-                    $newMedicine['medicine_id'],
-                    $newMedicine['dosage'],
-                    $newMedicine['quantity'],
-                    $requestDocument
-                );
+        foreach ($add as $row) {
+            $this->deductMedicineStock($row['medicine_id'], $row['dosage'], $row['quantity'], $requestDocument);
 
-                // Create new consultation medicine record
-                \App\Models\ConsultationMedicine::create([
-                    'request_document_id' => $requestDocument->id,
-                    'medicine_id' => $newMedicine['medicine_id'],
-                    'quantity' => $newMedicine['quantity'],
-                    'dosage' => $newMedicine['dosage'],
-                    'used_for' => $newMedicine['used_for'],
-                    'dosage_instructions' => $newMedicine['dosage_instructions'],
-                ]);
+            \App\Models\ConsultationMedicine::create([
+                'request_document_id' => $requestDocument->id,
+                'medicine_id' => $row['medicine_id'],
+                'quantity' => $row['quantity'],
+                'dosage' => $row['dosage'],
+                'used_for' => $row['used_for'],
+                'dosage_instructions' => $row['dosage_instructions'],
+            ]);
 
-                Log::info('New medicine added during edit', [
-                    'consultation_id' => $requestDocument->id,
-                    'medicine_id' => $newMedicine['medicine_id'],
-                    'dosage' => $newMedicine['dosage'],
-                    'quantity_deducted' => $newMedicine['quantity'],
-                    'used_for' => $newMedicine['used_for'],
-                ]);
-            }
+            Log::info('New medicine added during edit', [
+                'consultation_id' => $requestDocument->id,
+                'medicine_id' => $row['medicine_id'],
+                'dosage' => $row['dosage'],
+                'quantity_deducted' => $row['quantity'],
+                'used_for' => $row['used_for'],
+            ]);
         }
     }
 
     /**
      * Restore medicine stock when medicine is removed from consultation
      */
-    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine, ?DocumentIssuance $requestDocument = null)
+    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine, DocumentIssuance $requestDocument)
     {
         $this->restoreMedicineStockAmount(
             (int) $consultationMedicine->medicine_id,
@@ -1876,86 +2011,23 @@ class DocumentIssuanceController extends Controller
     }
 
     /**
-     * Restore a specific amount of medicine stock
+     * Give a specific amount of medicine back to the batches this consultation took it from. R3-H1.
      */
-    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity, ?DocumentIssuance $requestDocument = null)
+    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity, DocumentIssuance $requestDocument)
     {
         $quantity = (int) $quantity;
         if ($quantity <= 0) {
             return;
         }
 
-        DB::transaction(function () use ($medicineId, $dosage, $quantity, $requestDocument) {
-            $medicine = \App\Models\Medicine::find((int) $medicineId);
-            if (! $medicine) {
-                return;
-            }
-
-            $normalizedDosage = trim((string) ($dosage ?? ''));
-            $resolvedDosage = $normalizedDosage !== ''
-                ? $normalizedDosage
-                : trim((string) ($medicine->dosage ?? ''));
-
-            $batchQuery = \App\Models\MedicineBatch::query()
-                ->where('medicine_id', (int) $medicineId);
-
-            $batchQuery->where(function ($query) {
-                $query->whereNull('expiration_date')
-                    ->orWhereDate('expiration_date', '>=', now()->toDateString());
-            });
-
-            if ($resolvedDosage !== '') {
-                if (strcasecmp($resolvedDosage, 'N/A') === 0) {
-                    $batchQuery->where(function ($query) {
-                        $query->whereNull('dosage')
-                            ->orWhere('dosage', '')
-                            ->orWhere('dosage', 'N/A');
-                    });
-                } else {
-                    $batchQuery->where('dosage', $resolvedDosage);
-                }
-            }
-
-            $targetBatch = $batchQuery
-                ->orderByRaw('expiration_date IS NULL')
-                ->orderBy('expiration_date')
-                ->orderBy('id')
-                ->lockForUpdate()
-                ->first();
-
-            if (! $targetBatch) {
-                $targetBatch = \App\Models\MedicineBatch::create([
-                    'medicine_id' => (int) $medicineId,
-                    // Random suffix: a timestamp alone collided when two restores ran in the same
-                    // second (unique-key failure rolled back the whole edit). M-03.
-                    'batch_number' => 'RETURN-' . (int) $medicineId . '-' . now()->format('YmdHis') . '-' . strtoupper(\Illuminate\Support\Str::random(4)),
-                    'dosage' => $resolvedDosage !== '' ? $resolvedDosage : null,
-                    'quantity' => 0,
-                    // Never-expires sentinel (original expiry unknown) so restored consultation
-                    // stock stays available instead of vanishing the next day. Matches
-                    // MedicineInventoryService::restoreStock. RE-1.
-                    'expiration_date' => '2099-12-31',
-                    'date_received' => now()->toDateString(),
-                    'supplier_name' => 'Consultation stock restoration',
-                ]);
-            }
-
-            $targetBatch->quantity = (int) $targetBatch->quantity + $quantity;
-            $targetBatch->save();
-
-            \App\Models\MedicineTransaction::create([
-                'batch_id' => $targetBatch->id,
-                'user_id' => auth()->id(),
-                'transaction_type' => \App\Models\MedicineTransaction::TYPE_ADJUSTMENT,
-                'quantity' => $quantity,
-                'balance_after' => (int) $targetBatch->quantity,
-                'reference_type' => $requestDocument ? get_class($requestDocument) : null,
-                'reference_id' => $requestDocument ? $requestDocument->getKey() : null,
-                'remarks' => 'Consultation medicine restoration',
-            ]);
-
-            $this->medicineInventoryService->syncMedicineTotals((int) $medicineId);
-        });
+        $this->medicineInventoryService->restoreStockToReferencedBatches(
+            (int) $medicineId,
+            $quantity,
+            $requestDocument,
+            $this->normalizeNullableString($dosage),
+            auth()->id(),
+            'Consultation #' . $requestDocument->id . ' medicine returned'
+        );
 
         cache()->forget('medicine_' . (int) $medicineId);
         cache()->forget('medicines_list');
@@ -1998,66 +2070,33 @@ class DocumentIssuanceController extends Controller
      */
     private function handleMedicineDeduction(DocumentIssuance $requestDocument, array $data)
     {
-        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
+        // Process medicines from both Plan and Nursing Intervention. The list is validated as a whole
+        // (a duplicated row throws) before the first unit leaves stock.
+        foreach ($this->submittedMedicineRows($data) as $row) {
+            // Deduct stock via the current FEFO batch inventory service.
+            $this->deductMedicineStock($row['medicine_id'], $row['dosage'], $row['quantity'], $requestDocument);
 
-        if (!isset($data['medicines']) || !is_array($data['medicines'])) {
-            return;
-        }
+            // Record the medicine usage in consultation_medicines table
+            \App\Models\ConsultationMedicine::create([
+                'request_document_id' => $requestDocument->id,
+                'medicine_id' => $row['medicine_id'],
+                'quantity' => $row['quantity'],
+                'dosage' => $row['dosage'],
+                'used_for' => $row['used_for'], // 'plan' or 'nursing'
+                'dosage_instructions' => $row['dosage_instructions'],
+            ]);
 
-        // Process medicines from both Plan and Nursing Intervention
-        foreach ($data['medicines'] as $usedFor => $medicines) {
-            if (! in_array($usedFor, ['plan', 'nursing'], true)) {
-                continue;
-            }
+            $medicine = \App\Models\Medicine::find($row['medicine_id']);
 
-            if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
-                continue;
-            }
-
-            if (!is_array($medicines)) {
-                continue;
-            }
-
-            foreach ($medicines as $medicineData) {
-                if (empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
-                    continue;
-                }
-
-                $medicineId = $medicineData['medicine_id'];
-                $quantity = (int) $medicineData['quantity'];
-                $dosage = $medicineData['dosage'] ?? null;
-                $dosageInstructions = $medicineData['dosage_instructions'] ?? null;
-
-                if ($quantity <= 0) {
-                    continue;
-                }
-
-                // Deduct stock via the current FEFO batch inventory service.
-                $this->deductMedicineStock($medicineId, $dosage, $quantity, $requestDocument);
-
-                // Record the medicine usage in consultation_medicines table
-                \App\Models\ConsultationMedicine::create([
-                    'request_document_id' => $requestDocument->id,
-                    'medicine_id' => $medicineId,
-                    'quantity' => $quantity,
-                    'dosage' => $dosage,
-                    'used_for' => $usedFor, // 'plan' or 'nursing'
-                    'dosage_instructions' => $dosageInstructions,
-                ]);
-
-                $medicine = \App\Models\Medicine::find($medicineId);
-
-                // Log the medicine deduction
-                Log::info('Medicine deducted from inventory', [
-                    'consultation_id' => $requestDocument->id,
-                    'medicine_id' => $medicineId,
-                    'medicine_name' => $medicine?->name,
-                    'dosage' => $dosage,
-                    'quantity_used' => $quantity,
-                    'remaining_stock' => $medicine?->available_quantity,
-                    'used_for' => $usedFor,
-                ]);
-            }
+            Log::info('Medicine deducted from inventory', [
+                'consultation_id' => $requestDocument->id,
+                'medicine_id' => $row['medicine_id'],
+                'medicine_name' => $medicine?->name,
+                'dosage' => $row['dosage'],
+                'quantity_used' => $row['quantity'],
+                'remaining_stock' => $medicine?->available_quantity,
+                'used_for' => $row['used_for'],
+            ]);
         }
     }
 
@@ -2075,16 +2114,26 @@ class DocumentIssuanceController extends Controller
     public function destroy(DocumentIssuance $document_issuance)
     {
         $request_document = $document_issuance;
-        try {
-            Log::info('Destroy method called', [
-                'certificate_id' => $request_document->id,
-                'has_redirect_patient_id' => request()->has('redirect_patient_id'),
-                'redirect_patient_id' => request()->input('redirect_patient_id'),
-            ]);
 
-            // Restore deducted medicine stock for consultation forms before deleting;
-            // otherwise the cascade-deleted consultation_medicines lose their stock
-            // permanently. Wrapped with the delete so a failure rolls back both. DISP-1.
+        // A consultation can be deleted only by the clinic admin or the person who recorded it. This check
+        // runs before the try block below, which would otherwise turn the 403 into a generic error message.
+        abort_unless(
+            $request_document->canBeDeletedBy(auth()->user()),
+            403,
+            'Only the clinic admin or the person who recorded this consultation can delete it.'
+        );
+
+        $deletedLabel = match ($request_document->document_type) {
+            'consultation_form' => 'Consultation',
+            'excuse_slip' => 'Excuse slip',
+            'medical_certificate' => 'Medical certificate',
+            default => 'Document',
+        };
+
+        try {
+            // Give the deducted medicine stock back to the batches it came from before deleting;
+            // otherwise the cascade-deleted consultation_medicines lose their stock permanently. The audit
+            // row and the delete are in the same transaction, so a failure rolls back everything. DISP-1.
             DB::transaction(function () use ($request_document) {
                 if ($request_document->document_type === 'consultation_form') {
                     foreach ($request_document->consultationMedicines()->get() as $consultationMedicine) {
@@ -2092,31 +2141,30 @@ class DocumentIssuanceController extends Controller
                     }
                 }
 
+                // Snapshot first: once the record is gone nothing shows what was removed. R3-M5.
+                self::logDocumentDeletion($request_document);
+
                 $request_document->delete();
             });
 
-            Log::info('Certificate deleted successfully', ['certificate_id' => $request_document->id]);
+            Log::info('Document deleted successfully', ['document_id' => $request_document->id]);
 
             // Check if we have a redirect_patient_id (from patient history page)
             if (request()->has('redirect_patient_id')) {
                 $patientId = request()->input('redirect_patient_id');
 
-                Log::info('Redirecting to patient history', ['patient_id' => $patientId]);
-
                 // Redirect back to patient history
                 if (isRole('clinic_admin')) {
                     return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Medical certificate deleted successfully.');
+                        ->with('success', $deletedLabel . ' deleted successfully.');
                 } elseif (isRole('staff')) {
                     return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Medical certificate deleted successfully.');
+                        ->with('success', $deletedLabel . ' deleted successfully.');
                 } elseif (isRole('doctor')) {
                     return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Medical certificate deleted successfully.');
+                        ->with('success', $deletedLabel . ' deleted successfully.');
                 }
             }
-
-            Log::info('Redirecting to documents index');
 
             // Default: Redirect to request documents index
             $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' :
@@ -2124,7 +2172,7 @@ class DocumentIssuanceController extends Controller
             $documentModule = request()->input('redirect_module', $request_document->document_type === 'consultation_form' ? 'consultation' : 'certificate');
 
             return redirect()->route($redirectRoute, ['module' => $documentModule])
-                ->with('success', 'Request document deleted successfully.');
+                ->with('success', $deletedLabel . ' deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Error deleting request document: ' . $e->getMessage());
 
@@ -2149,15 +2197,13 @@ class DocumentIssuanceController extends Controller
                 return response()->json([]);
             }
 
-            // Search patients by first name, last name
+            // Search patients by any part of the name ("Ana Reyes", "Reyes, Ana", "ana*"), e-mail or ID number:
+            // every typed word must be found in the person's name / ID columns.
             $patients = Patient::whereHas('user', function ($query) {
                 $query->where('type', User::PATIENT);
             })
                 ->whereHas('user', function ($query) use ($search) {
-                    $query->where('first_name', 'LIKE', "%{$search}%")
-                        ->orWhere('last_name', 'LIKE', "%{$search}%")
-                        ->orWhere('university_id_number', 'LIKE', "%{$search}%")
-                        ->orWhere('employee_id', 'LIKE', "%{$search}%");
+                    SearchTerm::whereAllWords($query, $search, SearchTerm::PERSON_COLUMNS);
                 })
                 ->select('id', 'patient_unique_id', 'user_id', 'patient_type_id', 'allergies', 'comorbidities', 'admissions_surgeries', 'maintenance')
                 ->addSelect([

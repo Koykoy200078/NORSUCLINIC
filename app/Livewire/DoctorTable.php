@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Doctor;
 use App\Models\User;
+use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -69,10 +70,10 @@ class DoctorTable extends LivewireTableComponent
             Column::make(__('messages.doctor.doctor'), 'user.first_name')->view('doctors.components.doctor_name')
                 ->sortable()
                 ->searchable(
-                    function (Builder $query, $direction) {
-                        return $query->whereHas('user', function (Builder $q) use ($direction) {
-                            $q->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
-                        });
+                    function (Builder $query, $word) {
+                        $query->whereHas('user', function (Builder $q) use ($word) {
+                            $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS));
+                        })->orWhere('doctors.prc_license_number', 'like', SearchTerm::like($word));
                     }
                 ),
             Column::make(__('messages.visit.doctor'), 'user.email')

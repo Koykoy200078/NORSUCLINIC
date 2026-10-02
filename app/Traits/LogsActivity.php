@@ -57,6 +57,12 @@ trait LogsActivity
             $description = ($alreadyLogged ? 'Updated - ' : 'Created - ') . $description;
         }
 
+        $properties = $details['properties'] ?? null;
+        $impersonator = session()->get('impersonated_by');
+        if ($impersonator) {
+            $properties = array_merge((array) $properties, ['impersonated_by' => $impersonator]);
+        }
+
         return ActivityLog::create([
             'action' => $action,
             'subject_type' => $subjectType,
@@ -77,7 +83,7 @@ trait LogsActivity
             'informant' => $details['informant'] ?? null,
             'consult_mode' => $details['consult_mode'] ?? null,
             'course_section' => $details['course_section'] ?? null,
-            'properties' => $details['properties'] ?? null,
+            'properties' => $properties,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
@@ -91,19 +97,32 @@ trait LogsActivity
         return self::logActivity(
             'patient_record', // Changed from 'created_patient' to generic action
             "Patient record: {$user->full_name}",
-            [
-                'patient_name' => $user->full_name,
-                'date_of_birth' => $user->dob,
-                'patient_gender' => $user->gender == User::MALE ? 'Male' : 'Female',
-                'college' => $user->college->name ?? null,
-                'address' => $user->address->address ?? null,
-                'contact_number' => $user->contact,
-                'course' => $user->course->name ?? null,
-                'year_level' => $user->yearLevel->name ?? null,
-                'subject_type' => 'Patient',
-                'subject_id' => $patient->id,
-            ]
+            self::patientRecordDetails($patient, $user)
         );
+    }
+
+    /**
+     * Snapshot of the patient identity fields written to the audit row. The college / course / year
+     * level / address columns are college_name, course_name, year_level_name and the patient's own
+     * address (it is owned by the patient, not the user); the old code read non-existent properties so
+     * those fields were always blank.
+     */
+    private static function patientRecordDetails($patient, $user): array
+    {
+        $address = $patient->address;
+
+        return [
+            'patient_name' => $user->full_name,
+            'date_of_birth' => $user->dob,
+            'patient_gender' => $user->gender == User::MALE ? 'Male' : 'Female',
+            'college' => $user->college?->college_name,
+            'address' => ($address?->full_address ?: $address?->address1) ?: null,
+            'contact_number' => $user->contact,
+            'course' => $user->course?->course_name,
+            'year_level' => $user->yearLevel?->year_level_name,
+            'subject_type' => 'Patient',
+            'subject_id' => $patient->id,
+        ];
     }
 
     /**
@@ -130,6 +149,117 @@ trait LogsActivity
                 'subject_type' => 'RequestDocuments',
                 'subject_id' => $requestDocument->id,
                 'date' => $requestDocument->requested_at ?? now()->toDateString(),
+            ]
+        );
+    }
+
+    /**
+     * Audit row for a prescription event: 'saved' (created or edited), 'cancelled', 'reactivated',
+     * 'dispensed' or 'deleted'. A prescription entered by someone other than its doctor (staff on a verbal /
+     * phone order, or the admin) records who entered it. R3-H4 / R3-M5.
+     */
+    public static function logPrescriptionEvent($prescription, string $event)
+    {
+        $actor = Auth::user();
+        $patientName = $prescription->patient?->user?->full_name ?? ('Patient #' . $prescription->patient_id);
+        $doctorUser = $prescription->doctor?->user;
+        $doctorName = $doctorUser?->full_name;
+
+        $verbalOrder = $event === 'saved'
+            && $actor
+            && $doctorUser
+            && (int) $actor->id !== (int) $doctorUser->id
+            && $actor->hasAnyRole(['staff', 'nurse']);
+
+        $properties = [
+            'prescription_id' => $prescription->id,
+            'doctor_id' => $prescription->doctor_id,
+            'doctor_name' => $doctorName,
+            'entered_by' => $actor?->id,
+            'verbal_order' => $verbalOrder,
+        ];
+
+        if ($event === 'deleted') {
+            $properties['medicines'] = $prescription->getMedicine->map(fn ($row) => [
+                'medicine' => $row->medicines?->name,
+                'dosage' => $row->dosage,
+                'quantity' => (int) $row->total_quantity,
+            ])->all();
+        }
+
+        $label = [
+            'saved' => 'Prescription',
+            'cancelled' => 'Cancelled prescription',
+            'reactivated' => 'Reactivated prescription',
+            'dispensed' => 'Dispensed prescription',
+            'deleted' => 'Deleted prescription',
+        ][$event] ?? 'Prescription';
+
+        $description = "{$label} #{$prescription->id} for {$patientName}" . ($doctorName ? " (doctor {$doctorName})" : '');
+        if ($verbalOrder) {
+            $description .= " - entered by {$actor->full_name} on the verbal / phone order of the doctor";
+        }
+
+        return self::logActivity(
+            $event === 'saved' ? 'prescription_record' : 'prescription_' . $event,
+            $description,
+            [
+                'patient_name' => $patientName,
+                'subject_type' => 'Prescription',
+                'subject_id' => $prescription->id,
+                'date' => now()->toDateString(),
+                'properties' => $properties,
+            ]
+        );
+    }
+
+    /**
+     * Log that a consultation / certificate / excuse slip was deleted. The row keeps a snapshot of the
+     * record (who it was for, what it said, which medicines it had used) because the record itself is gone.
+     */
+    public static function logDocumentDeletion($requestDocument)
+    {
+        $label = match ($requestDocument->document_type) {
+            'consultation_form' => 'consultation form',
+            'medical_certificate' => 'medical certificate',
+            'excuse_slip' => 'excuse slip',
+            default => 'document',
+        };
+
+        $medicines = $requestDocument->consultationMedicines()->with('medicine:id,name')->get()
+            ->map(fn ($row) => [
+                'medicine' => $row->medicine?->name,
+                'dosage' => $row->dosage,
+                'quantity' => (int) $row->quantity,
+                'used_for' => $row->used_for,
+            ])->all();
+
+        return self::logActivity(
+            'document_deleted',
+            "Deleted {$label}: {$requestDocument->name}",
+            [
+                'patient_name' => $requestDocument->name,
+                'patient_age' => $requestDocument->age,
+                'patient_gender' => $requestDocument->gender,
+                'college' => $requestDocument->college,
+                'address' => $requestDocument->address,
+                'contact_number' => $requestDocument->patient_contact,
+                'complaints' => $requestDocument->complaints,
+                'diagnosis' => $requestDocument->assessment,
+                'informant' => $requestDocument->informant,
+                'consult_mode' => $requestDocument->consult_mode,
+                'course' => $requestDocument->course,
+                'year_level' => $requestDocument->year_level,
+                'subject_type' => 'RequestDocuments',
+                'subject_id' => $requestDocument->id,
+                'date' => $requestDocument->requested_at ?? now()->toDateString(),
+                'properties' => [
+                    'document_type' => $requestDocument->document_type,
+                    'created_by' => $requestDocument->document_creator_id,
+                    'created_at' => optional($requestDocument->created_at)->toDateTimeString(),
+                    'plan' => $requestDocument->plan,
+                    'medicines' => $medicines,
+                ],
             ]
         );
     }
@@ -236,18 +366,7 @@ trait LogsActivity
         return self::logActivity(
             'patient_record', // Use same action as creation - will update existing log
             "Patient record: {$user->full_name}",
-            [
-                'patient_name' => $user->full_name,
-                'date_of_birth' => $user->dob,
-                'patient_gender' => $user->gender == User::MALE ? 'Male' : 'Female',
-                'college' => $user->college->name ?? null,
-                'address' => $user->address->address ?? null,
-                'contact_number' => $user->contact,
-                'course' => $user->course->name ?? null,
-                'year_level' => $user->yearLevel->name ?? null,
-                'subject_type' => 'Patient',
-                'subject_id' => $patient->id,
-            ]
+            self::patientRecordDetails($patient, $user)
         );
     }
 
@@ -258,7 +377,23 @@ trait LogsActivity
     {
         return self::logActivity(
             'deleted_patient',
-            "Deleted patient: {$userName}",
+            "Archived patient: {$userName}",
+            [
+                'patient_name' => $userName,
+                'subject_type' => 'Patient',
+                'subject_id' => $patient->id,
+            ]
+        );
+    }
+
+    /**
+     * Log that an archived patient was restored
+     */
+    public static function logPatientRestoration($patient, $userName)
+    {
+        return self::logActivity(
+            'restored_patient',
+            "Restored patient: {$userName}",
             [
                 'patient_name' => $userName,
                 'subject_type' => 'Patient',

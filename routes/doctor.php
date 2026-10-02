@@ -17,7 +17,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\LabRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus', 'role:doctor')->group(function () {
+Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus', 'role:doctor', 'forcePasswordChange')->group(function () {
 
     Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail');
 
@@ -45,12 +45,11 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::post('prescriptions/{prescription}/dispense', [PrescriptionController::class, 'dispense'])->name('prescriptions.dispense');
     });
 
-    // Patient Management (Doctors can manage patients)
+    // Patient Management (Doctors view and edit existing patients). Registering, archiving, restoring
+    // and password resets belong to staff/nurse and the clinic admin, so those routes are not exposed here.
     Route::middleware('permission:manage_patients')->group(function () {
-        Route::post('patients/{patient}/restore', [PatientController::class, 'restore'])->name('patients.restore');
-        Route::resource('patients', PatientController::class);
+        Route::resource('patients', PatientController::class)->only(['index', 'show', 'edit', 'update']);
         Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
-        Route::post('patients/{user}/reset-password', [PatientController::class, 'resetPassword'])->name('patients.reset.password');
         // Email verification for patients
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
         // Toggle email_verified_at (doctor managing patients)
@@ -121,6 +120,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
     Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/accomplishment/{format}', [ActivityLogController::class, 'accomplishment'])
+            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('accomplishment');
         Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 });

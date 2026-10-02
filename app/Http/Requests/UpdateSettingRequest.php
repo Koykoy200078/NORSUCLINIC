@@ -35,6 +35,7 @@ class UpdateSettingRequest extends FormRequest
         // uploads regardless of the client-supplied `sectionName`, so gating these rules on
         // sectionName let an attacker upload an arbitrary file type to the public disk. E-SEC-5.
         $rules = [
+            'sectionName' => 'required|in:general,contact-information,contact_information',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg',
             'favicon' => 'nullable|image|mimes:png|dimensions:width=32,height=32',
         ];
@@ -56,7 +57,12 @@ class UpdateSettingRequest extends FormRequest
                 'specialties' => 'required',
                 'clinic_name' => 'required',
                 'contact_no' => ['required', new PhilippinePhoneNumber()],
-                'language' => 'required',
+                // The General form has no language picker any more (the controller only acts on a non-empty value),
+                // so requiring it made every save fail with "The language field is required".
+                'language' => 'nullable|string|max:10',
+                // Signs the ACCOMPLISHMENT REPORT ("Noted by").
+                'university_physician_name' => 'nullable|string|max:150',
+                'university_physician_title' => 'nullable|string|max:100',
             ]);
         }
 

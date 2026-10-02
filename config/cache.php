@@ -51,21 +51,25 @@ return [
             'lock_connection' => null,
         ],
 
+        // One cache folder PER DATABASE. The permission cache, the settings and the dashboards hold the ids and values of
+        // ONE schema; a command run against another schema (a test copy, a restored backup) used to overwrite them in
+        // the shared folder, and the administrator then got "403 user does not have the right permissions" because the
+        // cached permission ids no longer matched the real tables.
         'file' => [
             'driver' => 'file',
-            'path' => storage_path('framework/cache/data'),
+            'path' => storage_path('framework/cache/data/' . preg_replace('/[^A-Za-z0-9_-]/', '_', (string) env('DB_DATABASE', 'default'))),
             'lock_path' => storage_path('framework/cache/locks'),  // Added for better performance
         ],
 
         // Optimized cache stores for performance
         'dashboard' => [
             'driver' => 'file',
-            'path' => storage_path('framework/cache/dashboard'),
+            'path' => storage_path('framework/cache/dashboard/' . preg_replace('/[^A-Za-z0-9_-]/', '_', (string) env('DB_DATABASE', 'default'))),
         ],
 
         'settings' => [
             'driver' => 'file',
-            'path' => storage_path('framework/cache/settings'),
+            'path' => storage_path('framework/cache/settings/' . preg_replace('/[^A-Za-z0-9_-]/', '_', (string) env('DB_DATABASE', 'default'))),
         ],
 
         'memcached' => [

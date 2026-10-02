@@ -23,8 +23,8 @@
                 <!-- Patient Info (Read-only) -->
                 <div class="col-md-12 mb-3">
                     <div class="alert alert-info">
-                        <h5>Patient: {{ $patientQueue->patient->user->full_name }}</h5>
-                        <p class="mb-0">ID: {{ $patientQueue->patient->user->university_id_number ?? $patientQueue->patient->patient_unique_id }}</p>
+                        <h5>Patient: {{ $patientQueue->patient?->user?->full_name ?? "Archived patient" }}</h5>
+                        <p class="mb-0">ID: {{ $patientQueue->patient?->user?->university_id_number ?? $patientQueue->patient?->patient_unique_id ?? "N/A" }}</p>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     <div class="card bg-light">
                         <div class="card-body">
                             <h6>Queue Information:</h6>
-                            <p class="mb-1"><strong>Added By:</strong> {{ $patientQueue->addedBy->full_name }}</p>
+                            <p class="mb-1"><strong>Added By:</strong> {{ $patientQueue->addedBy?->full_name ?? 'N/A' }}</p>
                             <p class="mb-1"><strong>Added At:</strong> {{ $patientQueue->created_at->format('M d, Y h:i A') }}</p>
                             @if($patientQueue->called_at)
                             <p class="mb-1"><strong>Called At:</strong> {{ $patientQueue->called_at->format('M d, Y h:i A') }}</p>

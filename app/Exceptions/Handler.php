@@ -25,6 +25,8 @@ class Handler extends ExceptionHandler
         'current_password',
         'password',
         'password_confirmation',
+        'new_password',
+        'confirm_password',
     ];
 
     /**
@@ -70,7 +72,7 @@ class Handler extends ExceptionHandler
             $message = $exception->validator->errors()->first();
 
             if (! $wantsJson) {
-                return Redirect::back()->withInput()->withErrors($message);
+                return Redirect::back()->withInput($request->except($this->dontFlash))->withErrors($message);
             }
         } elseif ($exception instanceof TokenMismatchException) {
             $message = 'Your session expired. Please refresh the page and try again.';

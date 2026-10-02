@@ -21,6 +21,14 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground()
             ->appendOutputTo(storage_path('logs/backup.log'));
+
+        // Batches expire at midnight: refresh the "available" figure of medicines right after, so expired
+        // units stop being offered in forms and reports. (The sidebar also does this once a day when a page
+        // is opened, for clinics where the scheduler is not running.)
+        $schedule->command('inventory:sync-expiry')
+            ->dailyAt('00:05')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/inventory.log'));
     }
 
     /**

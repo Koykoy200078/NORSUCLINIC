@@ -206,6 +206,7 @@ Patient Data
                                         <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        @if($consultation->canBeDeletedBy(auth()->user()))
                                         <form action="{{ getRouteByRole('document-issuances.destroy', ['document_issuance' => $consultation->id]) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
@@ -214,6 +215,7 @@ Patient Data
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
+                                        @endif
                                         <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $consultation->id]) }}" class="btn btn-sm btn-success" title="PDF" target="_blank">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
@@ -285,6 +287,51 @@ Patient Data
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+        </div>
+    </div>
+
+    <!-- Excuse Slip History -->
+    <div class="card shadow-sm mb-6 border-0 rounded-xl overflow-hidden">
+        <div class="card-header bg-white py-4 px-6 border-bottom border-light">
+            <h3 class="card-title align-items-start flex-column mb-0">
+                <span class="card-label fw-bold text-dark fs-4"><i class="fas fa-file-signature text-info me-2"></i>Excuse Slip History</span>
+                <span class="text-muted mt-1 fw-semibold fs-7 d-block">History of issued excuse slips</span>
+            </h3>
+        </div>
+        <div class="card-body p-0">
+            @if($excuseSlips->isEmpty())
+            <p class="text-muted" style="margin-left: 25px;">No excuse slips found.</p>
+            @else
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date Issued</th>
+                        <th>Examined On</th>
+                        <th>Subjects / Remarks</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($excuseSlips as $excuseSlip)
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($excuseSlip->created_at)->format('F j, Y (g:i A)') }}</td>
+                        <td>{{ $excuseSlip->examined_on ? formatExaminedOnForPDF($excuseSlip->examined_on) : 'N/A' }}</td>
+                        <td>{{ $excuseSlip->subjects ?: ($excuseSlip->medical_cert_remarks ?: 'N/A') }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $excuseSlip->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Excuse Slip">
+                                    <i class="fa-solid fa-edit"></i>
+                                </a>
+                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $excuseSlip->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>

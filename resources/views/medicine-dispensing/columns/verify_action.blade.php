@@ -8,7 +8,8 @@ $dispenseRoute = isRole('doctor')
 : (isRole('staff') ? 'staff.prescriptions.dispense' : 'prescriptions.dispense');
 
 $canDispense = (isRole('clinic_admin') || isRole('staff'))
-&& $row->status === \App\Models\Prescription::DISPENSE_STATUS_PENDING;
+&& $row->status === \App\Models\Prescription::DISPENSE_STATUS_PENDING
+&& ($row->is_active ?? true);
 @endphp
 
 <div class="d-flex align-items-center gap-2">

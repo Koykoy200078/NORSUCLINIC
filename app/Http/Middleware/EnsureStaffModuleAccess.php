@@ -13,8 +13,13 @@ class EnsureStaffModuleAccess
      * Enforce module-level access for staff/nurse users based on
      * staff designation + assigned station.
      */
-    public function handle(Request $request, Closure $next, string $module): Response
+    public function handle(Request $request, Closure $next, string ...$moduleParameters): Response
     {
+        // "staff.module:consultations,certificates" reaches us as TWO parameters (Laravel splits middleware
+        // parameters at the comma). With a single `string $module` the second one was silently dropped, so only the
+        // first module was ever checked and staff who have just the second one were refused.
+        $module = implode(',', $moduleParameters);
+
         $user = $request->user();
         if (! $user) {
             abort(403, 'Unauthenticated.');
@@ -108,11 +113,24 @@ class EnsureStaffModuleAccess
     {
         $tab = (string) $request->query('tab');
         $status = (string) $request->query('status');
+        $routeName = (string) $request->route()?->getName();
 
-        if ($status === 'low_stock' || $tab === 'inventory' || $tab === 'logs') {
-            return 'notifications';
+        // A single activity-log entry is raw log content, whatever the query string says.
+        if (str_ends_with($routeName, 'activity-logs.show')) {
+            return activityLogModuleForTab('logs');
         }
 
-        return 'reports';
+        // The CSV export falls back to the raw log when no tab is given (see ActivityLogController::export).
+        if (str_ends_with($routeName, 'activity-logs.export') && $tab === '') {
+            $tab = 'logs';
+        }
+
+        if ($status === 'low_stock') {
+            return activityLogModuleForTab('inventory');
+        }
+
+        // The page itself (no tab) opens on a tab the user is allowed to see; ReportGeneration falls back
+        // to the first permitted tab, so "reports" is enough to open it.
+        return activityLogModuleForTab($tab);
     }
 }

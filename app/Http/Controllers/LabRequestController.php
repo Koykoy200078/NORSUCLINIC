@@ -11,6 +11,7 @@ use App\Models\LabTest;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\YearLevel;
+use App\Support\SearchTerm;
 use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -403,18 +404,52 @@ class LabRequestController extends Controller
 
     public function destroy(LabRequest $lab_request)
     {
+        // Only the clinic admin or the creator may delete a lab request. Checked before the try block, which
+        // would otherwise turn the 403 into a generic error message. R3-M6.
+        abort_unless(
+            $lab_request->canBeDeletedBy(auth()->user()),
+            403,
+            'Only the clinic admin or the person who created this lab request can delete it.'
+        );
+
+        if (! $lab_request->isDeletable()) {
+            $inProgress = in_array($lab_request->status, [LabRequest::STATUS_COLLECTED, LabRequest::STATUS_PROCESSING], true);
+
+            return redirect()->back()->with('error', $inProgress
+                ? "Lab request #{$lab_request->request_number} is in progress. Cancel it first; only a pending or cancelled request can be deleted."
+                : "Lab request #{$lab_request->request_number} is {$lab_request->status} and holds results or a referral, so it cannot be deleted.");
+        }
+
         try {
             $requestNumber = $lab_request->request_number;
-            $lab_request->delete(); // boot() cascades delete to items
 
-            self::logActivity(
-                'lab_request_deleted',
-                "Lab request #{$requestNumber} deleted",
-                [
-                    'subject_type' => 'LabRequest',
-                    'subject_id'   => $lab_request->id,
-                ]
-            );
+            DB::transaction(function () use ($lab_request, $requestNumber) {
+                // Snapshot first: once the request is gone nothing shows what was removed. R3-M5.
+                self::logActivity(
+                    'lab_request_deleted',
+                    "Lab request #{$requestNumber} deleted",
+                    [
+                        'patient_name'   => $lab_request->patient_name,
+                        'patient_age'    => $lab_request->patient_age,
+                        'patient_gender' => $lab_request->patient_gender,
+                        'college'        => $lab_request->college,
+                        'address'        => $lab_request->address,
+                        'contact_number' => $lab_request->patient_contact,
+                        'subject_type'   => 'LabRequest',
+                        'subject_id'     => $lab_request->id,
+                        'properties'     => [
+                            'request_number'       => $requestNumber,
+                            'status'               => $lab_request->status,
+                            'tests'                => $lab_request->items()->pluck('test_name')->all(),
+                            'requesting_physician' => $lab_request->requesting_physician,
+                            'created_by'           => $lab_request->document_creator_id,
+                            'requested_at'         => optional($lab_request->requested_at)->toDateString(),
+                        ],
+                    ]
+                );
+
+                $lab_request->delete(); // boot() cascades delete to items
+            });
 
             $indexRoute = $this->getIndexRoute();
             return redirect()->route($indexRoute)
@@ -500,7 +535,9 @@ class LabRequestController extends Controller
             ->setPaper('a4', 'portrait');
 
         $filename = 'LabRequest_' . $labRequest->request_number . '_' . $labRequest->patient_name . '.pdf';
-        $filename = str_replace(' ', '_', $filename);
+        // Free text from the patient's name: keep letters, digits, dot, dash and underscore only, or a "/" in a name
+        // makes the download header invalid and the page fails with a server error. R3-L8.
+        $filename = preg_replace('/[^A-Za-z0-9._-]+/', '_', $filename);
 
         return $pdf->download($filename);
     }
@@ -520,13 +557,8 @@ class LabRequestController extends Controller
         }
 
         $users = User::where('type', User::PATIENT)
-            ->where(function ($q) use ($query) {
-                $q->where('first_name', 'like', "%{$query}%")
-                    ->orWhere('last_name', 'like', "%{$query}%")
-                    ->orWhere('email', 'like', "%{$query}%")
-                    ->orWhere('university_id_number', 'LIKE', "%{$query}%")
-                    ->orWhere('employee_id', 'LIKE', "%{$query}%");
-            })
+            // Every typed word must be found in the name / e-mail / ID columns ("Ana Reyes", "Reyes, Ana", "ana*").
+            ->where(fn ($q) => SearchTerm::whereAllWords($q, $query, SearchTerm::PERSON_COLUMNS))
             ->with(['patient.address.barangay', 'patient.address.city', 'patient.address.state', 'campus', 'college', 'course', 'yearLevel', 'department', 'office', 'address.barangay', 'address.city', 'address.state'])
             ->orderBy('id')
             ->limit(25)

@@ -44,6 +44,9 @@ class CollegeSeeder extends Seeder
             [
                 'college_name' => 'College of Law (CL)',
             ],
+            [
+                'college_name' => 'Graduate School (GS)',
+            ],
         ];
 
         // Insert only the rows that are missing (matched by name) so the seeder can be re-run safely.

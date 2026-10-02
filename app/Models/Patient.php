@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use App\Models\DispenseRecord;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -216,16 +217,49 @@ class Patient extends Model implements HasMedia
     protected $appends = ['profile'];
 
     /**
+     * Patient / doctor pick-lists of the prescription and dispensing forms. The repositories cache them
+     * for 10 minutes, so they are dropped whenever a patient or user changes: a patient registered at
+     * the front desk must be selectable by the doctor straight away.
+     */
+    private const LOOKUP_CACHE_KEYS = [
+        'active_patients_prescription',
+        'active_patients_medicine_bill',
+        'active_doctors_prescription',
+        'active_doctors_medicine_bill',
+    ];
+
+    public static function flushLookupCaches(): void
+    {
+        foreach (self::LOOKUP_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
+    }
+
+    /**
      * Boot the model and set up event listeners for cascade delete
      */
     protected static function boot()
     {
         parent::boot();
 
+        static::saved(fn () => static::flushLookupCaches());
+        static::deleted(fn () => static::flushLookupCaches());
+        static::restored(fn () => static::flushLookupCaches());
+
         // When a patient is being deleted, delete all related data
         static::deleting(function ($patient) {
 
             if (!$patient->isForceDeleting()) {
+                // An archived patient can no longer be seen by a doctor, so any place still held in
+                // the queue is closed (the queue pages cannot show a patient that is not there).
+                $patient->queueEntries()
+                    ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+                    ->update([
+                        'status' => PatientQueue::STATUS_CANCELLED,
+                        'completed_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
                 // If soft deleting, we also soft delete the user
                 if ($patient->user) {
                     $patient->user->delete();

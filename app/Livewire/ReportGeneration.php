@@ -3,22 +3,36 @@
 namespace App\Livewire;
 
 use App\Models\ActivityLog;
-use App\Models\Patient;
+use App\Models\Campus;
+use App\Models\College;
+use App\Models\Course;
+use App\Models\Department;
 use App\Models\DocumentIssuance;
+use App\Models\IllnessSystem;
 use App\Models\Medicine;
-use App\Models\MedicineTransaction;
+use App\Models\Office;
+use App\Models\Patient;
+use App\Models\PatientType;
 use App\Models\Prescription;
-use App\Models\PatientQueue;
-use App\Models\UsedMedicine;
+use App\Models\ServiceType;
+use App\Models\User;
+use App\Models\YearLevel;
+use App\Services\Reports\AccomplishmentReportBuilder;
+use App\Services\Reports\ReportFilters;
+use App\Services\Reports\ReportQueries;
+use App\Support\SearchTerm;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class ReportGeneration extends Component
 {
     use WithPagination;
 
     protected $paginationTheme = 'bootstrap';
+
+    /** The tabs that describe the patient and the visit (they share the second group of filters). */
+    private const CONSULTATION_TABS = ['visits', 'accomplishment'];
 
     public $tab = 'logs';
     public $search = '';
@@ -28,6 +42,30 @@ class ReportGeneration extends Component
     public $date_from = '';
     public $date_to = '';
 
+    // Patient / visit filters (Patient Visits and Accomplishment Report). '' means "any".
+    public $month = '';
+    public $campus_id = '';
+    public $college_id = '';
+    public $course_id = '';
+    public $year_level_id = '';
+    public $department_id = '';
+    public $office_id = '';
+    public $patient_type_id = '';
+    public $gender = '';
+    public $consult_mode = 'all';
+    public $illness_system_id = '';
+    public $illness_id = '';
+    public $service_id = '';
+    public $medicine_id = '';
+    public $age_group = '';
+    public $staff_id = '';
+    public $pregnancy = 'all';
+    public $chronic = 'all';
+    public $chronic_text = '';
+
+    /** True while "Walk-in" is only the Accomplishment Report's own default (not something the user picked). */
+    public bool $consult_mode_auto = false;
+
     protected $queryString = [
         'tab' => ['except' => 'logs'],
         'search' => ['except' => ''],
@@ -36,30 +74,105 @@ class ReportGeneration extends Component
         'status' => ['except' => 'all'],
         'date_from' => ['except' => ''],
         'date_to' => ['except' => ''],
+        'campus_id' => ['except' => ''],
+        'college_id' => ['except' => ''],
+        'course_id' => ['except' => ''],
+        'year_level_id' => ['except' => ''],
+        'department_id' => ['except' => ''],
+        'office_id' => ['except' => ''],
+        'patient_type_id' => ['except' => ''],
+        'gender' => ['except' => ''],
+        'consult_mode' => ['except' => 'all'],
+        'illness_system_id' => ['except' => ''],
+        'illness_id' => ['except' => ''],
+        'service_id' => ['except' => ''],
+        'medicine_id' => ['except' => ''],
+        'age_group' => ['except' => ''],
+        'staff_id' => ['except' => ''],
+        'pregnancy' => ['except' => 'all'],
+        'chronic' => ['except' => 'all'],
+        'chronic_text' => ['except' => ''],
+    ];
+
+    /** The property names of the patient / visit filters. */
+    private const CONSULTATION_FILTERS = [
+        'campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id', 'gender',
+        'consult_mode', 'illness_system_id', 'illness_id', 'service_id', 'medicine_id', 'age_group', 'staff_id',
+        'pregnancy', 'chronic', 'chronic_text',
     ];
 
     public function mount()
     {
         // Use request values if present
-        $this->tab = request('tab', 'logs');
+        $this->tab = $this->permittedTab(request('tab', 'logs'));
         $this->search = request('search', '');
         $this->user_type = request('user_type', 'all');
         $this->action = request('action', 'all');
         $this->status = request('status', 'all');
         $this->date_from = request('date_from', '');
         $this->date_to = request('date_to', '');
+
+        foreach (self::CONSULTATION_FILTERS as $property) {
+            $this->{$property} = request($property, $this->{$property});
+        }
+
+        // The report counts walk-in consultations unless the filter is changed.
+        if ($this->tab === 'accomplishment' && ! request()->has('consult_mode')) {
+            $this->consult_mode = 'physical';
+            $this->consult_mode_auto = true;
+        }
     }
 
     public function setTab($tab)
     {
-        $this->tab = $tab;
+        $this->tab = $this->permittedTab((string) $tab);
+
+        if ($this->tab === 'accomplishment' && $this->consult_mode === 'all') {
+            $this->consult_mode = 'physical';
+            $this->consult_mode_auto = true;
+        } elseif ($this->tab !== 'accomplishment' && $this->consult_mode_auto) {
+            // Leaving the report: the other tabs show every consultation again unless Walk-in was picked on purpose.
+            $this->consult_mode = 'all';
+            $this->consult_mode_auto = false;
+        }
+
         $this->resetPage();
+    }
+
+    /**
+     * The tab to show. A tab is "public" to this component (it is a Livewire property and the page route
+     * only sees the URL), so the designation limits are applied here as well: staff without the
+     * notifications module never get the raw activity log - which holds patient names, contact numbers,
+     * complaints and diagnoses - or the low-stock view, whatever tab is requested. R3-H6.
+     */
+    private function permittedTab(?string $tab): string
+    {
+        $tab = $tab ?: 'logs';
+
+        if (canViewActivityLogTab($tab)) {
+            return $tab;
+        }
+
+        return canViewActivityLogTab('visits') ? 'visits' : 'global_search';
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to']);
+        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to', 'month', ...self::CONSULTATION_FILTERS]);
+
+        $this->consult_mode_auto = false;
+        if ($this->tab === 'accomplishment') {
+            $this->consult_mode = 'physical';
+            $this->consult_mode_auto = true;
+        }
+
         $this->resetPage();
+    }
+
+    /** A hand-picked consult mode is the user's own choice and stays when the tab changes. */
+    public function updatedConsultMode()
+    {
+        $this->consult_mode_auto = false;
     }
 
     public function updatedSearch()
@@ -67,105 +180,133 @@ class ReportGeneration extends Component
         $this->resetPage();
     }
 
+    /** Any filter change goes back to the first page of the list. */
+    public function updated($property)
+    {
+        if ($property !== 'search') {
+            $this->resetPage();
+        }
+    }
+
+    /** Quick date ranges: this / last month, this / last year. */
+    public function setPeriod(string $period)
+    {
+        $now = Carbon::now();
+
+        [$from, $to] = match ($period) {
+            'this_month' => [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()],
+            'last_month' => [$now->copy()->subMonthNoOverflow()->startOfMonth(), $now->copy()->subMonthNoOverflow()->endOfMonth()],
+            'this_year' => [$now->copy()->startOfYear(), $now->copy()->endOfYear()],
+            'last_year' => [$now->copy()->subYear()->startOfYear(), $now->copy()->subYear()->endOfYear()],
+            default => [null, null],
+        };
+
+        $this->month = '';
+        $this->date_from = $from?->toDateString() ?? '';
+        $this->date_to = $to?->toDateString() ?? '';
+        $this->resetPage();
+    }
+
+    /** The month picker ("2026-03") fills the date range with that whole month. */
+    public function updatedMonth($value)
+    {
+        if (is_string($value) && preg_match('/^(\d{4})-(\d{2})$/', $value, $match) && checkdate((int) $match[2], 1, (int) $match[1])) {
+            $start = Carbon::create((int) $match[1], (int) $match[2], 1);
+            $this->date_from = $start->toDateString();
+            $this->date_to = $start->copy()->endOfMonth()->toDateString();
+        }
+    }
+
+    /**
+     * The filters as one object, shared with the CSV / PDF / Excel exports so a file contains what the screen shows.
+     */
+    public function reportFilters(): ReportFilters
+    {
+        return ReportFilters::fromArray([
+            'search' => $this->search,
+            'date_from' => $this->date_from,
+            'date_to' => $this->date_to,
+            'user_type' => $this->user_type,
+            'action' => $this->action,
+            'status' => $this->status,
+        ] + collect(self::CONSULTATION_FILTERS)->mapWithKeys(fn ($property) => [$property => $this->{$property}])->all());
+    }
+
+    /** The lists behind the filter boxes of the Patient Visits / Accomplishment Report tabs. */
+    private function filterChoices(): array
+    {
+        $staffIds = fn (string $column) => DocumentIssuance::query()
+            ->where('document_type', 'consultation_form')->whereNotNull($column)->select($column);
+
+        return [
+            'campuses' => Campus::orderBy('campus_name')->pluck('campus_name', 'id'),
+            'colleges' => College::orderBy('college_name')->pluck('college_name', 'id'),
+            'courses' => Course::orderBy('course_name')->pluck('course_name', 'id'),
+            'yearLevels' => YearLevel::orderBy('id')->pluck('year_level_name', 'id'),
+            'departments' => Department::orderBy('department_name')->pluck('department_name', 'id'),
+            'offices' => Office::orderBy('office_name')->pluck('office_name', 'id'),
+            'patientTypes' => PatientType::orderBy('id')->pluck('name', 'id'),
+            'illnessSystems' => IllnessSystem::ordered()->with('illnesses')->get(),
+            'serviceGroups' => ServiceType::ordered()->get()->groupBy('category')
+                ->mapWithKeys(fn ($services, $category) => [ServiceType::CATEGORY_LABELS[$category] ?? $category => $services]),
+            'medicines' => Medicine::orderBy('name')->pluck('name', 'id'),
+            'staffMembers' => User::query()
+                ->whereIn('id', $staffIds('document_creator_id'))
+                ->orWhereIn('id', $staffIds('nursing_incharged_id'))
+                ->orderBy('first_name')->orderBy('last_name')
+                ->get(['id', 'first_name', 'middle_name', 'last_name'])
+                ->mapWithKeys(fn (User $user) => [$user->id => $user->full_name]),
+            'ageGroups' => ReportFilters::AGE_GROUPS,
+        ];
+    }
+
     public function render()
     {
         $data = [];
         $actions = ActivityLog::select('action')->distinct()->whereNotIn('action', ['created_patient'])->pluck('action')->toArray();
+        $filters = $this->reportFilters();
 
         switch ($this->tab) {
             case 'logs':
-                $query = ActivityLog::query()->with('user')->orderBy('created_at', 'desc');
-                if ($this->user_type !== 'all') {
-                    $query->where('user_type', $this->user_type);
-                }
-                if ($this->action !== 'all') {
-                    $query->where('action', $this->action);
-                }
-                if ($this->date_from) $query->where('date', '>=', $this->date_from);
-                if ($this->date_to) $query->where('date', '<=', $this->date_to);
-                if ($this->search) {
-                    $query->where(function ($q) {
-                        $q->where('patient_name', 'like', "%{$this->search}%")
-                            ->orWhere('description', 'like', "%{$this->search}%")
-                            ->orWhere('user_name', 'like', "%{$this->search}%");
-                    });
-                }
-                $data['activityLogs'] = $query->paginate(20);
+                $data['activityLogs'] = ReportQueries::logs($filters)->paginate(20);
                 break;
 
             case 'visits':
-                $query = DocumentIssuance::query()->with(['creator', 'consultationMedicines.medicine'])
-                    ->where('document_type', 'consultation_form')
-                    ->orderBy('created_at', 'desc');
-                if ($this->date_from) $query->whereDate('created_at', '>=', $this->date_from);
-                if ($this->date_to) $query->whereDate('created_at', '<=', $this->date_to);
-                if ($this->search) {
-                    $query->where(function ($q) {
-                        $q->where('name', 'like', "%{$this->search}%")
-                            ->orWhere('complaints', 'like', "%{$this->search}%")
-                            ->orWhere('assessment', 'like', "%{$this->search}%");
-                    });
-                }
-                $data['reports'] = $query->paginate(20);
-                break;
-
             case 'inventory':
-                $query = Medicine::query()->with(['category', 'generic', 'batches'])->orderBy('name', 'asc');
-                if ($this->search) {
-                    $query->where(function ($q) {
-                        $q->where('name', 'like', "%{$this->search}%")
-                            ->orWhereHas('category', fn($sq) => $sq->where('name', 'like', "%{$this->search}%"))
-                            ->orWhereHas('generic', fn($sq) => $sq->where('name', 'like', "%{$this->search}%"));
-                    });
-                }
-                if ($this->status === 'low_stock') {
-                    $query->whereRaw('available_quantity <= minimum_stock_alert');
-                }
-                $data['reports'] = $query->paginate(20);
-                break;
-
             case 'dispensing':
-                // Read the stock LEDGER (medicine_transactions). This tab used to read used_medicines,
-                // a legacy table nothing writes to any more, so it was always empty/incomplete. M-04.
-                $query = MedicineTransaction::query()
-                    ->with(['batch.medicine', 'user'])
-                    ->where('transaction_type', MedicineTransaction::TYPE_DISPENSE)
-                    ->orderBy('created_at', 'desc')
-                    ->orderBy('id', 'desc');
-                if ($this->date_from) $query->whereDate('created_at', '>=', $this->date_from);
-                if ($this->date_to) $query->whereDate('created_at', '<=', $this->date_to);
-                if ($this->search) {
-                    $query->whereHas('batch.medicine', fn($q) => $q->where('name', 'like', "%{$this->search}%"));
-                }
-                $data['reports'] = $query->paginate(20);
+            case 'appointments':
+                $data['reports'] = ReportQueries::forTab($this->tab, $filters)->paginate(20);
                 break;
 
-            case 'appointments':
-                $query = PatientQueue::query()->with(['patient.user', 'addedBy'])
-                    ->whereNotNull('scheduled_at')
-                    ->orderBy('scheduled_at', 'asc');
-                if ($this->date_from) $query->whereDate('scheduled_at', '>=', $this->date_from);
-                if ($this->date_to) $query->whereDate('scheduled_at', '<=', $this->date_to);
-                if ($this->search) {
-                    $query->whereHas('patient.user', fn($q) => $q->where('first_name', 'like', "%{$this->search}%")->orWhere('last_name', 'like', "%{$this->search}%"));
-                }
-                $data['reports'] = $query->paginate(20);
+            case 'accomplishment':
+                $data['accomplishment'] = app(AccomplishmentReportBuilder::class)->build($filters, auth()->user());
                 break;
 
             case 'global_search':
                 if ($this->search) {
-                    $data['patients'] = Patient::with('user')->whereHas('user', fn($q) => $q->where('first_name', 'like', "%{$this->search}%")->orWhere('last_name', 'like', "%{$this->search}%"))
-                        ->orWhere('patient_unique_id', 'like', "%{$this->search}%")
-                        ->limit(10)->get();
-                    $data['prescriptions'] = Prescription::with('patient.user')->whereHas('patient.user', fn($q) => $q->where('first_name', 'like', "%{$this->search}%")->orWhere('last_name', 'like', "%{$this->search}%"))->limit(10)->get();
-                    $data['inventory'] = Medicine::where('name', 'like', "%{$this->search}%")->limit(10)->get();
-                    $data['global_reports'] = ActivityLog::where('patient_name', 'like', "%{$this->search}%")->orWhere('description', 'like', "%{$this->search}%")->limit(10)->get();
+                    $person = fn ($inner, $word) => $inner->where(fn ($p) => SearchTerm::wordInColumns($p, $word, SearchTerm::PERSON_COLUMNS));
+
+                    $data['patients'] = SearchTerm::whereAllWords(Patient::with('user'), $this->search, [
+                        fn ($inner, $word) => $inner->whereHas('user', fn ($u) => $person($u, $word)),
+                        'patient_unique_id',
+                    ])->limit(10)->get();
+                    $data['prescriptions'] = SearchTerm::whereAllWords(Prescription::with('patient.user'), $this->search, [
+                        fn ($inner, $word) => $inner->whereHas('patient.user', fn ($u) => $person($u, $word)),
+                    ])->limit(10)->get();
+                    $data['inventory'] = SearchTerm::whereAllWords(Medicine::query(), $this->search, ['name'])->limit(10)->get();
+                    $data['global_reports'] = canViewActivityLogTab('logs')
+                        ? SearchTerm::whereAllWords(ActivityLog::query(), $this->search, ['patient_name', 'description'])->limit(10)->get()
+                        : collect();
                 }
                 break;
         }
 
         return view('livewire.report-generation', array_merge($data, [
-            'actions' => $actions
+            'actions' => $actions,
+            'choices' => in_array($this->tab, self::CONSULTATION_TABS, true) ? $this->filterChoices() : [],
+            'activeFilters' => $filters->activeConsultationFilters(),
+            // Query-string values of the Export CSV link: the same filters the table above is using.
+            'exportQuery' => $filters->toQuery() + ['tab' => $this->tab],
         ]));
     }
 }

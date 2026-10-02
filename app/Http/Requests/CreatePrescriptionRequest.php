@@ -23,6 +23,8 @@ class CreatePrescriptionRequest extends FormRequest
             'patient_id' => 'required|integer|exists:patients,id',
             'doctor_id' => 'required|integer|exists:doctors,id',
             'doctor_license_s2_number' => 'nullable|string|max:100',
+            // Staff write a prescription only on a doctor's verbal / phone order, and must say so.
+            'verbal_order' => isRole('staff') ? ['accepted'] : ['nullable', 'boolean'],
             'consultation_date' => 'required|date',
             'icd10_diagnosis_id' => 'nullable|integer|exists:diagnoses,id',
             'problem_description' => 'nullable|string|max:2000',
@@ -48,6 +50,7 @@ class CreatePrescriptionRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'verbal_order.accepted' => 'Tick the verbal / phone order box to confirm that the doctor ordered this prescription.',
             'medicines.required' => 'Add at least one medicine item.',
             'medicines.*.medicine_id.required' => 'Medicine selection is required for each row.',
             'medicines.*.dosage.required' => 'Dosage is required for each selected medicine.',

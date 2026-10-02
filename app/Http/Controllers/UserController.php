@@ -14,6 +14,7 @@ use App\Models\Prescription;
 use App\Models\Specialization;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Support\AuditLog;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -356,6 +357,12 @@ class UserController extends AppBaseController
             return redirect()->back();
         }
 
+        AuditLog::record('impersonation', 'Started acting as ' . $user->full_name . ' (#' . $user->id . ')', [
+            'subject_type' => User::class,
+            'subject_id' => $user->id,
+            'properties' => ['target_user_id' => $user->id, 'target_name' => $user->full_name],
+        ]);
+
         getLogInUser()->impersonate($user);
 
         // Land on the dashboard that belongs to the account we just became (doctor, staff or nurse).
@@ -369,7 +376,13 @@ class UserController extends AppBaseController
             return redirect(getDashboardURL());
         }
 
-        getLogInUser()->leaveImpersonation();
+        $actingAs = getLogInUser();
+        AuditLog::record('impersonation', 'Stopped acting as ' . $actingAs->full_name . ' (#' . $actingAs->id . ')', [
+            'subject_type' => User::class,
+            'subject_id' => $actingAs->id,
+        ]);
+
+        $actingAs->leaveImpersonation();
 
         return redirect(getDashboardURL());
     }

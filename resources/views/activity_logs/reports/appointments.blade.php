@@ -17,8 +17,8 @@
                     <div class="text-gray-600 fs-7">{{ $appointment->scheduled_at->format('h:i A') }}</div>
                 </td>
                 <td>
-                    <div class="fw-bold text-gray-800">{{ $appointment->patient->user->full_name ?? 'Unknown' }}</div>
-                    <div class="text-gray-600 fs-7">ID: {{ $appointment->patient->patient_unique_id ?? '-' }}</div>
+                    <div class="fw-bold text-gray-800">{{ $appointment->patient?->user?->full_name ?? 'Unknown' }}</div>
+                    <div class="text-gray-600 fs-7">ID: {{ $appointment->patient?->patient_unique_id ?? '-' }}</div>
                 </td>
                 <td>{{ $appointment->addedBy->full_name ?? 'System' }}</td>
                 <td>

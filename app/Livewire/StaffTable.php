@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -50,8 +51,8 @@ class StaffTable extends LivewireTableComponent
         return [
             Column::make(__('messages.user.full_name'), 'first_name')->view('staffs.components.staff_name')
                 ->sortable()->searchable(
-                    function (Builder $query, $direction) {
-                        return $query->whereRaw("TRIM(CONCAT(first_name, ?, last_name, ?)) LIKE ?", [' ', ' ', "%{$direction}%"]);
+                    function (Builder $query, $word) {
+                        SearchTerm::wordInColumns($query, $word, SearchTerm::PERSON_COLUMNS);
                     }
                 ),
             Column::make(__('messages.patient.name'), 'email')

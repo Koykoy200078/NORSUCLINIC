@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Doctor;
 use App\Models\Prescription;
+use App\Support\SearchTerm;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -43,12 +44,16 @@ class PrescriptionTable extends LivewireTableComponent
             Column::make(__('messages.patients'), 'patient.user.first_name')
                 ->view('prescriptions.columns.patient_name')
                 ->sortable()
-                ->searchable()->hideIf($this->patient),
+                ->searchable(function (Builder $query, $word) {
+                    $query->whereHas('patient.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                })->hideIf($this->patient),
             Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
             Column::make(__('messages.doctors'), 'doctor.user.first_name')
                 ->view('prescriptions.columns.doctor_name')
                 ->sortable()
-                ->searchable()->hideIf($this->doctor),
+                ->searchable(function (Builder $query, $word) {
+                    $query->whereHas('doctor.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                })->hideIf($this->doctor),
             Column::make(__('messages.doctor_opd_charge.doctor'), 'doctor_id')->hideIf(1),
             Column::make('Consultation Date', 'consultation_date')
                 ->format(fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : 'N/A')

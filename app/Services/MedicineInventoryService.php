@@ -139,6 +139,12 @@ class MedicineInventoryService
                 throw new RuntimeException('Only pending prescriptions can be dispensed.');
             }
 
+            // A doctor switches a prescription off to stop the pharmacy. The flag is checked on the locked
+            // row, so a deactivation that happens while someone is pressing "Dispense" still wins. R3-H3.
+            if ($prescription->is_active !== null && ! $prescription->is_active) {
+                throw new RuntimeException('This prescription has been deactivated by the doctor and cannot be dispensed.');
+            }
+
             $prescription->loadMissing('getMedicine');
 
             $allocationSummary = [];
@@ -416,6 +422,174 @@ class MedicineInventoryService
     }
 
     /**
+     * Give units back to the batches a document (a consultation) originally took them from.
+     *
+     * Every FEFO deduction is a ledger row that references the document, so the net number of units
+     * the document still holds out of each batch is known: dispensed minus already returned. Units go
+     * back to those batches, the one handed out last first, EVEN IF the batch has expired since - an
+     * expired batch stays expired and is never turned into stock that can be dispensed again.
+     *
+     * Units with no ledger trail (consultations recorded before stock was tracked per batch) go to the
+     * earliest unexpired batch of the same medicine and strength; with none, to a dedicated batch that is
+     * already expired, so the quantity is not lost but must be checked before it is used. R3-H1.
+     */
+    public function restoreStockToReferencedBatches(
+        int $medicineId,
+        int $quantity,
+        Model $reference,
+        ?string $dosage = null,
+        ?int $userId = null,
+        ?string $remarks = null
+    ): void {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        DB::transaction(function () use ($medicineId, $quantity, $reference, $dosage, $userId, $remarks) {
+            $medicine = Medicine::find($medicineId);
+            if (! $medicine) {
+                return;
+            }
+
+            $remaining = $quantity;
+
+            $ledger = MedicineTransaction::query()
+                ->where('reference_type', get_class($reference))
+                ->where('reference_id', $reference->getKey())
+                ->whereIn('transaction_type', [MedicineTransaction::TYPE_DISPENSE, MedicineTransaction::TYPE_ADJUSTMENT])
+                ->whereHas('batch', function ($query) use ($medicineId, $dosage) {
+                    $query->where('medicine_id', $medicineId);
+                    $this->applyDosageFilter($query, $dosage);
+                })
+                ->orderBy('id')
+                ->get(['id', 'batch_id', 'transaction_type', 'quantity']);
+
+            $netOut = [];
+            $lastHandedOut = [];
+            foreach ($ledger as $entry) {
+                $batchId = (int) $entry->batch_id;
+                if ($entry->transaction_type === MedicineTransaction::TYPE_DISPENSE) {
+                    $netOut[$batchId] = ($netOut[$batchId] ?? 0) + (int) $entry->quantity;
+                    $lastHandedOut[$batchId] = (int) $entry->id;
+                } else {
+                    $netOut[$batchId] = ($netOut[$batchId] ?? 0) - (int) $entry->quantity;
+                }
+            }
+
+            $netOut = array_filter($netOut, fn (int $units) => $units > 0);
+            uksort($netOut, fn (int $a, int $b) => ($lastHandedOut[$b] ?? 0) <=> ($lastHandedOut[$a] ?? 0));
+
+            foreach ($netOut as $batchId => $units) {
+                if ($remaining <= 0) {
+                    break;
+                }
+
+                $batch = MedicineBatch::lockForUpdate()->find($batchId);
+                if (! $batch) {
+                    continue;
+                }
+
+                $give = min($units, $remaining);
+                $batch->quantity = (int) $batch->quantity + $give;
+                $batch->save();
+
+                $this->createTransaction(
+                    $batch,
+                    MedicineTransaction::TYPE_ADJUSTMENT,
+                    $give,
+                    (int) $batch->quantity,
+                    $userId,
+                    $reference,
+                    $remarks ?? 'Stock returned to the batch it was taken from'
+                );
+
+                $remaining -= $give;
+            }
+
+            if ($remaining > 0) {
+                $this->restoreUntracedUnits($medicine, $remaining, $reference, $dosage, $userId, $remarks);
+            }
+
+            $this->syncMedicineTotals($medicineId);
+        });
+    }
+
+    /**
+     * Return units whose original batch is unknown (see restoreStockToReferencedBatches).
+     */
+    private function restoreUntracedUnits(
+        Medicine $medicine,
+        int $quantity,
+        Model $reference,
+        ?string $dosage,
+        ?int $userId,
+        ?string $remarks
+    ): void {
+        $query = MedicineBatch::where('medicine_id', $medicine->id)
+            ->where(function ($query) {
+                $query->whereNull('expiration_date')
+                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
+            });
+        $this->applyDosageFilter($query, $dosage);
+
+        $batch = $query->orderByRaw('expiration_date IS NULL')
+            ->orderBy('expiration_date')
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->first();
+
+        if (! $batch) {
+            $normalizedDosage = trim((string) $dosage);
+            $batch = new MedicineBatch([
+                'medicine_id' => $medicine->id,
+                'batch_number' => $this->generateBatchNumber('RESTORE', (int) $medicine->id),
+                'dosage' => $normalizedDosage !== '' ? $normalizedDosage : $medicine->dosage,
+                'quantity' => 0,
+                // Already expired on purpose: the original expiry is unknown, so these units must be
+                // checked by a person before they can be given to a patient.
+                'expiration_date' => Carbon::yesterday()->toDateString(),
+                'date_received' => Carbon::today()->toDateString(),
+                'supplier_name' => 'Stock restoration (original batch unknown)',
+            ]);
+        }
+
+        $batch->quantity = (int) $batch->quantity + $quantity;
+        $batch->save();
+
+        $this->createTransaction(
+            $batch,
+            MedicineTransaction::TYPE_ADJUSTMENT,
+            $quantity,
+            (int) $batch->quantity,
+            $userId,
+            $reference,
+            ($remarks ?? 'Stock returned') . ' (original batch unknown)'
+        );
+    }
+
+    /**
+     * Restrict a batch query to one strength. An empty strength means "any"; "N/A" means no strength.
+     */
+    private function applyDosageFilter($query, ?string $dosage): void
+    {
+        $normalizedDosage = trim((string) $dosage);
+
+        if ($normalizedDosage === '') {
+            return;
+        }
+
+        if (strcasecmp($normalizedDosage, 'N/A') === 0) {
+            $query->where(function ($inner) {
+                $inner->whereNull('dosage')->orWhere('dosage', '')->orWhere('dosage', 'N/A');
+            });
+
+            return;
+        }
+
+        $query->where('dosage', $normalizedDosage);
+    }
+
+    /**
      * Take back stock that a stock-in ADDED (deleting a stock-in, lowering a line, removing a
      * line, or changing its medicine / dosage / expiry).
      *
@@ -585,6 +759,51 @@ class MedicineInventoryService
             'available_quantity' => $available,
             'baseline_quantity' => $newBaseline,
         ]);
+    }
+
+    /**
+     * Refresh medicines.available_quantity for medicines whose stored figure is out of date because a batch
+     * expired (the column is otherwise recalculated only when stock moves, so it kept counting expired units
+     * for days). Returns one row per medicine that was, or with $dryRun would be, corrected. R3-H5.
+     *
+     * @return array<int, array{id: int, name: string, stored: int, actual: int}>
+     */
+    public function syncExpiredAvailability(bool $dryRun = false): array
+    {
+        $today = Carbon::today()->toDateString();
+
+        // Unexpired units per medicine, in one query.
+        $usable = MedicineBatch::query()
+            ->select('medicine_id', DB::raw('SUM(quantity) AS total'))
+            ->where('quantity', '>', 0)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('expiration_date')->orWhereDate('expiration_date', '>=', $today);
+            })
+            ->groupBy('medicine_id')
+            ->pluck('total', 'medicine_id');
+
+        $corrected = [];
+
+        // Only medicines that have batch rows are tracked by batch; the others keep their aggregate figure.
+        $batched = MedicineBatch::query()->select('medicine_id')->distinct()->pluck('medicine_id');
+
+        Medicine::query()->whereIn('id', $batched)->select('id', 'name', 'available_quantity')->chunkById(200, function ($medicines) use ($usable, $dryRun, &$corrected) {
+            foreach ($medicines as $medicine) {
+                $actual = (int) ($usable[$medicine->id] ?? 0);
+
+                if ((int) $medicine->available_quantity === $actual) {
+                    continue;
+                }
+
+                $corrected[] = ['id' => (int) $medicine->id, 'name' => (string) $medicine->name, 'stored' => (int) $medicine->available_quantity, 'actual' => $actual];
+
+                if (! $dryRun) {
+                    $this->syncMedicineTotals((int) $medicine->id);
+                }
+            }
+        });
+
+        return $corrected;
     }
 
     /**

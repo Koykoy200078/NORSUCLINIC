@@ -36,7 +36,7 @@ class UpdateUserProfileRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id . '|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i',
+            'email' => 'required|email|unique:users,email,' . $id . '|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
             'contact' => ['nullable', 'string', new PhilippinePhoneNumber()],
             'country_code' => 'nullable|string',
             'emergency_contact_name' => 'nullable|string|max:255',

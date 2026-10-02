@@ -20,9 +20,7 @@
     <div class="card">
         <div class="card-body">
             {{ Form::open(['route' => 
-                isRole('clinic_admin') ? 'patients.store' : 
-                (isRole('staff') ? 'staff.patients.store' : 
-                (isRole('doctor') ? 'doctors.patients.store' : 'patients.store')),
+                isRole('staff') ? 'staff.patients.store' : 'patients.store',
                 'files' => 'true','id' => 'createPatientForm']) }}
             {{ Form::hidden('is_edit', false,['id' => 'patientIsEdit']) }}
             {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'patientBackgroundImg']) }}

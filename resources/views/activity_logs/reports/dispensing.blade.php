@@ -7,6 +7,7 @@
                 <th>Dosage / Batch</th>
                 <th>Quantity</th>
                 <th>Associated Record</th>
+                <th>Patient</th>
                 <th>Dispensed By</th>
             </tr>
         </thead>
@@ -14,12 +15,6 @@
             @forelse($reports as $entry)
             @php
                 $batch = $entry->batch;
-                $referenceLabel = match ($entry->reference_type) {
-                    \App\Models\DocumentIssuance::class, \App\Models\RequestDocuments::class => 'Consultation',
-                    \App\Models\Prescription::class => 'Prescription',
-                    \App\Models\DispenseRecord::class => 'Dispense record',
-                    default => $entry->reference_type ? class_basename($entry->reference_type) : 'Manual entry',
-                };
             @endphp
             <tr>
                 <td>{{ $entry->created_at->format('M d, Y h:i A') }}</td>
@@ -31,12 +26,13 @@
                     @endif
                 </td>
                 <td><span class="badge bg-secondary text-white">{{ $entry->quantity }}</span></td>
-                <td><span class="text-gray-600">{{ $referenceLabel }}{{ $entry->reference_id ? ' #' . $entry->reference_id : '' }}</span></td>
+                <td><span class="text-gray-600">{{ \App\Services\Reports\ReportQueries::referenceLabel($entry) }}</span></td>
+                <td>{{ \App\Services\Reports\ReportQueries::referencePatientName($entry) ?? 'N/A' }}</td>
                 <td>{{ $entry->user?->full_name ?? 'N/A' }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center text-gray-600 py-5">No dispensing records found</td>
+                <td colspan="7" class="text-center text-gray-600 py-5">No dispensing records found</td>
             </tr>
             @endforelse
         </tbody>

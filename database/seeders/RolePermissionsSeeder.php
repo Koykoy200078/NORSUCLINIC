@@ -3,16 +3,21 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionsSeeder extends Seeder
 {
+    /** Setting that remembers which default role -> permission pairs this seeder has already applied. */
+    private const APPLIED_KEY = 'default_role_permissions_applied';
+
     /**
      * Run the database seeds.
      *
-     * CENTRAL AUTHORITY for role-permission assignments.
+     * CENTRAL AUTHORITY for the DEFAULT role-permission assignments.
      * When adding a new permission, create it in the relevant permission
      * seeder first, then add it here for the roles that need it.
      *
@@ -24,7 +29,13 @@ class RolePermissionsSeeder extends Seeder
      *                   CANNOT manage doctors or staff accounts
      *  - patient      : manage_request_documents only
      *
-     * Last Updated: 2026-04-03
+     * Re-running `php artisan db:seed` is SAFE for permissions the clinic administrator changed in the Roles
+     * screen: every default pair is applied ONCE (and remembered), so a permission the administrator took away
+     * from a role is not given back, and a new default permission is added to its roles the first time it appears.
+     * It used to wipe every role (`syncPermissions([])`) and give each user their own direct copy of the defaults,
+     * which undid the administrator's changes and made later revocations ineffective for those users.
+     *
+     * Last Updated: 2026-10-02
      */
     public function run(): void
     {
@@ -53,83 +64,81 @@ class RolePermissionsSeeder extends Seeder
             ],
         ];
 
+        $applied = $this->loadApplied();
+
         // Process each role
         foreach ($rolePermissions as $roleName => $permissionNames) {
-            $this->assignPermissionsToRole($roleName, $permissionNames);
+            $this->assignPermissionsToRole($roleName, $permissionNames, $applied);
         }
+
+        $this->saveApplied($applied);
 
         // Ensure clinic_admin has all permissions
         $this->assignAllPermissionsToAdmin();
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $this->command->info('Role permissions setup completed successfully!');
     }
 
     /**
-     * Assign specific permissions to a role
+     * Give a role the default permissions it has not been given before.
+     *
+     * @param  array<string, array<int, string>>  $applied  role => permissions already applied (updated here)
      */
-    private function assignPermissionsToRole(string $roleName, array $permissionNames): void
+    private function assignPermissionsToRole(string $roleName, array $permissionNames, array &$applied): void
     {
         $role = Role::where('name', $roleName)->first();
 
-        if (!$role) {
+        if (! $role) {
             $this->command->warn("Role '{$roleName}' not found. Skipping...");
+
             return;
         }
 
         $this->command->info("Processing {$roleName} role...");
 
-        // First, revoke all permissions from this role to ensure clean state
-        $role->syncPermissions([]);
+        $alreadyApplied = $applied[$roleName] ?? null;
 
-        // Then assign the specified permissions
+        // A clinic that was set up before this was remembered and already has people in this role: whatever the role
+        // has now IS its configuration. Record the defaults as applied without touching anything. (A brand new
+        // install has no staff / doctor accounts yet, and its roles may already hold a permission or two from the
+        // earlier seeders, so it still gets the full defaults below.)
+        if ($alreadyApplied === null && User::role($roleName)->exists()) {
+            $applied[$roleName] = $permissionNames;
+            $this->command->info("  = {$roleName} already has accounts; left as configured");
+
+            return;
+        }
+
         $assignedCount = 0;
         $skippedCount = 0;
 
         foreach ($permissionNames as $permissionName) {
+            if (in_array($permissionName, $alreadyApplied ?? [], true)) {
+                continue;
+            }
+
             $permission = Permission::where('name', $permissionName)->first();
 
-            if (!$permission) {
+            if (! $permission) {
                 $this->command->warn("  - Permission '{$permissionName}' not found. Skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
             $role->givePermissionTo($permission);
+            $applied[$roleName][] = $permissionName;
             $assignedCount++;
         }
 
-        $this->command->info("  ✓ Assigned {$assignedCount} permissions to {$roleName} role");
+        $applied[$roleName] = array_values(array_unique($applied[$roleName] ?? []));
+
+        $this->command->info("  ✓ Added {$assignedCount} new default permission(s) to {$roleName}");
         if ($skippedCount > 0) {
             $this->command->warn("  ! Skipped {$skippedCount} missing permissions");
         }
-
-        // Also update permissions for existing users with this role
-        $this->updateUserPermissions($role, $permissionNames);
-    }
-
-    /**
-     * Update permissions for all users with the specified role
-     */
-    private function updateUserPermissions(Role $role, array $permissionNames): void
-    {
-        $users = User::role($role->name)->get();
-
-        if ($users->isEmpty()) {
-            return;
-        }
-
-        foreach ($users as $user) {
-            // Sync user permissions to match role permissions
-            $permissions = Permission::whereIn('name', $permissionNames)->get();
-
-            foreach ($permissions as $permission) {
-                if (!$user->hasPermissionTo($permission)) {
-                    $user->givePermissionTo($permission);
-                }
-            }
-        }
-
-        $this->command->info("  ✓ Updated permissions for {$users->count()} user(s) with {$role->name} role");
     }
 
     /**
@@ -139,8 +148,9 @@ class RolePermissionsSeeder extends Seeder
     {
         $adminRole = Role::where('name', 'clinic_admin')->first();
 
-        if (!$adminRole) {
+        if (! $adminRole) {
             $this->command->warn('Clinic Admin role not found. Skipping admin permission assignment...');
+
             return;
         }
 
@@ -162,5 +172,20 @@ class RolePermissionsSeeder extends Seeder
             }
             $this->command->info("  ✓ Updated permissions for {$adminUsers->count()} admin user(s)");
         }
+    }
+
+    /** @return array<string, array<int, string>> */
+    private function loadApplied(): array
+    {
+        $raw = Setting::where('key', self::APPLIED_KEY)->value('value');
+        $decoded = $raw ? json_decode($raw, true) : null;
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /** @param  array<string, array<int, string>>  $applied */
+    private function saveApplied(array $applied): void
+    {
+        Setting::updateOrCreate(['key' => self::APPLIED_KEY], ['value' => json_encode($applied)]);
     }
 }

@@ -51,7 +51,9 @@ if (! function_exists('getAppLogo')) {
             $logoValue = getSettingValue('logo');
 
             if (!empty($logoValue)) {
-                return $logoValue;
+                // Stored as an absolute URL built from APP_URL when it was uploaded: show it through the address the
+                // visitor used, or it points at "localhost" on every other PC of the LAN. R3-M4.
+                return normalizeLocalUrl((string) $logoValue);
             }
 
             // Return default logo path if no logo setting found
@@ -69,7 +71,7 @@ if (! function_exists('getAppFavicon')) {
      */
     function getAppFavicon()
     {
-        return \App\Services\SettingsService::get('favicon') ?? '';
+        return normalizeLocalUrl((string) (\App\Services\SettingsService::get('favicon') ?? ''));
     }
 }
 
@@ -253,7 +255,7 @@ if (! function_exists('getBadgeColor')) {
         ];
 
         $index = $index % 6;
-        if (Auth::user()->dark_mode) {
+        if (Auth::user()?->dark_mode) {
             array_splice($colors, 5, 1);
             array_push($colors, 'bg-white');
         }
@@ -1084,5 +1086,28 @@ if (! function_exists('generateUniqueLabRequestNumber')) {
         } while (\App\Models\LabRequest::where('request_number', $code)->exists());
 
         return $code;
+    }
+}
+
+if (! function_exists('activityLogModuleForTab')) {
+    /**
+     * The staff module that unlocks a tab of the activity-log / reports screen: the raw activity log and
+     * the low-stock inventory view are "notifications"; the clinical and dispensing reports are "reports".
+     */
+    function activityLogModuleForTab(?string $tab): string
+    {
+        return in_array((string) $tab, ['logs', 'inventory'], true) ? 'notifications' : 'reports';
+    }
+}
+
+if (! function_exists('canViewActivityLogTab')) {
+    /**
+     * Whether the signed-in user may see a tab of the activity-log / reports screen. Staff/nurse follow
+     * their designation + station; every other role that reaches the screen is unrestricted, as before.
+     * The raw activity log carries patient names, contact numbers, complaints and diagnoses.
+     */
+    function canViewActivityLogTab(?string $tab, ?Authenticatable $user = null): bool
+    {
+        return canStaffAccessModule(activityLogModuleForTab($tab), $user);
     }
 }

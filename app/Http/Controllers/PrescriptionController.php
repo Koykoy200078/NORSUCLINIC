@@ -19,6 +19,7 @@ use App\Models\PrescriptionMedicine;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PrescriptionRepository;
 use App\Services\MedicineInventoryService;
+use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
@@ -35,6 +36,8 @@ use Illuminate\Support\Arr;
 
 class PrescriptionController extends AppBaseController
 {
+    use LogsActivity;
+
     /** @var  PrescriptionRepository
      * @var DoctorRepository
      */
@@ -124,6 +127,7 @@ class PrescriptionController extends AppBaseController
         }
 
         $input = $request->validated();
+        $input = $this->applyAuthorship($input);
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
         $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
@@ -203,6 +207,8 @@ class PrescriptionController extends AppBaseController
                     'quantity' => $totalQuantity,
                 ]);
             }
+
+            self::logPrescriptionEvent($prescription->fresh(['patient.user', 'doctor.user']), 'saved');
 
             DB::commit();
             Flash::success(__('messages.prescription.prescription_saved'));
@@ -352,6 +358,9 @@ class PrescriptionController extends AppBaseController
             abort(403);
         }
 
+        // A doctor may change only their own prescriptions (edit() had this check, update() did not). R3-H4.
+        $this->abortUnlessOwnedByLoggedInDoctor($prescription);
+
         $prescription = $this->prescriptionRepository->find($prescription->id);
         if (empty($prescription)) {
             Flash::error(__('messages.flash.prescription_not_found'));
@@ -369,6 +378,7 @@ class PrescriptionController extends AppBaseController
         }
 
         $input = $request->validated();
+        $input = $this->applyAuthorship($input);
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
         $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
@@ -457,6 +467,8 @@ class PrescriptionController extends AppBaseController
                     'quantity' => $totalQuantity,
                 ]);
             }
+
+            self::logPrescriptionEvent($prescription->fresh(['patient.user', 'doctor.user']), 'saved');
 
             DB::commit();
             Flash::success(__('messages.prescription.prescription_updated'));
@@ -583,6 +595,12 @@ class PrescriptionController extends AppBaseController
             abort(403);
         }
 
+        // Deleting a doctor's prescription is for that doctor or the clinic admin; staff cancel it with the
+        // status switch (which stops the pharmacy) and the record stays. R3-H4.
+        if (isRole('staff')) {
+            abort(403, 'Staff cannot delete a prescription. Deactivate it instead, or ask the doctor.');
+        }
+
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
             return $this->sendError(__('messages.flash.prescription_not_found'));
         }
@@ -619,6 +637,9 @@ class PrescriptionController extends AppBaseController
                 $dispenseRecord->delete();
             }
 
+            // Snapshot first: once the prescription is gone nothing shows what was removed. R3-M5.
+            self::logPrescriptionEvent($prescription->loadMissing(['patient.user', 'doctor.user', 'getMedicine.medicines']), 'deleted');
+
             $prescription->delete();
         });
 
@@ -630,18 +651,96 @@ class PrescriptionController extends AppBaseController
         return $prescription->status === Prescription::DISPENSE_STATUS_DISPENSED;
     }
 
-    public function activeDeactiveStatus(int $id): JsonResponse
+    /**
+     * The status switch of the prescription list. Switching a prescription OFF cancels it: it leaves the
+     * pharmacy queue and cannot be dispensed. Switching it back ON returns it to the queue. A prescription
+     * that was already dispensed is a closed record and cannot be switched. R3-H3.
+     */
+    public function activeDeactiveStatus(int $id): JsonResponse|RedirectResponse
     {
         // Patients must never change prescription status; restrict to clinical roles. AUTH-4.
         if (! (isRole('clinic_admin') || isRole('staff') || isRole('doctor'))) {
             return $this->sendError('You are not authorized to perform this action.');
         }
 
-        $prescription = Prescription::findOrFail($id);
-        $isActive = ! (bool) $prescription->is_active;
-        $prescription->update(['is_active' => $isActive]);
+        // The list's Cancel / Reactivate buttons are plain form posts; script callers get JSON as before.
+        $wantsJson = request()->ajax() || request()->wantsJson();
 
-        return $this->sendSuccess(__('messages.flash.status_update'));
+        $result = DB::transaction(function () use ($id) {
+            // Locked, so a dispense that is running at the same moment cannot slip through.
+            $prescription = Prescription::whereKey($id)->lockForUpdate()->firstOrFail();
+            $this->abortUnlessOwnedByLoggedInDoctor($prescription);
+
+            if ($this->isDispensed($prescription)) {
+                return [null, 'A dispensed prescription is a closed record and cannot be deactivated.'];
+            }
+
+            $deactivate = (bool) $prescription->is_active;
+
+            $prescription->update($deactivate
+                ? ['is_active' => false, 'status' => Prescription::DISPENSE_STATUS_CANCELLED]
+                : ['is_active' => true, 'status' => Prescription::DISPENSE_STATUS_PENDING]);
+
+            self::logPrescriptionEvent($prescription->fresh(['patient.user', 'doctor.user']), $deactivate ? 'cancelled' : 'reactivated');
+
+            return [$prescription, null];
+        });
+
+        if ($result[1] !== null) {
+            if ($wantsJson) {
+                return $this->sendError($result[1]);
+            }
+
+            Flash::error($result[1]);
+
+            return Redirect::back();
+        }
+
+        if ($wantsJson) {
+            return $this->sendSuccess(__('messages.flash.status_update'));
+        }
+
+        Flash::success(__('messages.flash.status_update'));
+
+        return Redirect::back();
+    }
+
+    /**
+     * A doctor works only with their own prescriptions; every other role is not restricted here.
+     */
+    private function abortUnlessOwnedByLoggedInDoctor(Prescription $prescription): void
+    {
+        $doctorId = $this->loggedInDoctorId();
+
+        if (isRole('doctor') && (! $doctorId || (int) $prescription->doctor_id !== $doctorId)) {
+            abort(403, 'This prescription belongs to another doctor.');
+        }
+    }
+
+    private function loggedInDoctorId(): ?int
+    {
+        $user = getLogInUser();
+
+        return $user && $user->hasRole('doctor') ? ($user->doctor?->id) : null;
+    }
+
+    /**
+     * A prescription carries a doctor's name and licence, so it is written in that doctor's name: a doctor's
+     * own id is forced whatever the form says; staff may write one only on a recorded verbal / phone order
+     * (the form requires the tick - see the request classes); the clinic admin may write for any doctor.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
+    private function applyAuthorship(array $input): array
+    {
+        if (isRole('doctor')) {
+            $doctorId = $this->loggedInDoctorId();
+            abort_unless($doctorId, 403, 'Your account has no doctor profile.');
+            $input['doctor_id'] = $doctorId;
+        }
+
+        return $input;
     }
 
     /**
@@ -671,7 +770,7 @@ class PrescriptionController extends AppBaseController
         }
 
         if (! canAccessRecord(Prescription::class, $prescription->id)) {
-            if (request()->ajax()) {
+            if (request()->ajax() || request()->wantsJson()) {
                 return $this->sendError(__('messages.flash.prescription_not_found'));
             }
 
@@ -680,13 +779,19 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        try {
-            $this->medicineInventoryService->dispensePrescription($prescription, getLogInUserId());
-            DispenseRecord::whereModelType(Prescription::class)
-                ->whereModelId($prescription->id)
-                ->update(['bill_date' => now()]);
+        $this->abortUnlessOwnedByLoggedInDoctor($prescription);
 
-            if (request()->ajax()) {
+        try {
+            DB::transaction(function () use ($prescription) {
+                $this->medicineInventoryService->dispensePrescription($prescription, getLogInUserId());
+                DispenseRecord::whereModelType(Prescription::class)
+                    ->whereModelId($prescription->id)
+                    ->update(['bill_date' => now()]);
+
+                self::logPrescriptionEvent($prescription->fresh(['patient.user', 'doctor.user']), 'dispensed');
+            });
+
+            if (request()->ajax() || request()->wantsJson()) {
                 return $this->sendSuccess('Prescription marked as dispensed and stock was deducted using FEFO.');
             }
 
@@ -694,7 +799,7 @@ class PrescriptionController extends AppBaseController
 
             return Redirect::back();
         } catch (\Throwable $e) {
-            if (request()->ajax()) {
+            if (request()->ajax() || request()->wantsJson()) {
                 return $this->sendError($this->userFacingErrorMessage($e));
             }
 

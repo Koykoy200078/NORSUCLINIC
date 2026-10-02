@@ -67,12 +67,63 @@ class PatientQueue extends Model
         return $this->belongsTo(RequestDocuments::class, 'latest_consultation_id');
     }
 
+    /** Statuses that still hold a place in today's queue. */
+    public const OPEN_STATUSES = [self::STATUS_WAITING, self::STATUS_IN_PROGRESS];
+
     /**
      * Scope a query to only include waiting patients
      */
     public function scopeWaiting($query)
     {
         return $query->where('status', self::STATUS_WAITING);
+    }
+
+    /**
+     * Only entries whose patient (and the patient's user) still exist. An archived patient makes the
+     * relation null, which the queue screens cannot render.
+     */
+    public function scopeWithLivePatient($query)
+    {
+        return $query->whereHas('patient.user');
+    }
+
+    /**
+     * Close every entry still open from a previous day. The clinic queue is a same-day list: a patient
+     * who left yesterday must not block being queued today, show up on the doctor's screen, or keep
+     * counting in the sidebar badge.
+     */
+    public static function closeStaleEntries(): int
+    {
+        return static::whereIn('status', self::OPEN_STATUSES)
+            ->where('created_at', '<', today())
+            ->update([
+                'status' => self::STATUS_CANCELLED,
+                'completed_at' => now(),
+                'updated_at' => now(),
+            ]);
+    }
+
+    /**
+     * Attach a consultation recorded after the patient was queued, so the doctor can open the form
+     * from the queue screen.
+     */
+    public static function attachConsultation(DocumentIssuance $consultation): void
+    {
+        if (! $consultation->user_id) {
+            return;
+        }
+
+        $patientId = Patient::where('user_id', $consultation->user_id)->value('id');
+        if (! $patientId) {
+            return;
+        }
+
+        static::where('patient_id', $patientId)
+            ->whereIn('status', self::OPEN_STATUSES)
+            ->update([
+                'latest_consultation_id' => $consultation->id,
+                'has_consultation_attachment' => true,
+            ]);
     }
 
     /**

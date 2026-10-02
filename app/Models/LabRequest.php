@@ -124,6 +124,31 @@ class LabRequest extends Model
     }
 
     // -------------------------------------------------------------------------
+    // Deleting
+    // -------------------------------------------------------------------------
+
+    /**
+     * Only a request that is still pending, or was cancelled, can be deleted. Every other status means a
+     * specimen was taken or the request holds results / a referral, which are part of the patient record.
+     */
+    public function isDeletable(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CANCELLED], true);
+    }
+
+    /**
+     * An unfinished request can be deleted by the clinic admin or by the person who created it.
+     */
+    public function canBeDeletedBy(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasRole('clinic_admin') || (int) $this->document_creator_id === (int) $user->id;
+    }
+
+    // -------------------------------------------------------------------------
     // Relationships
     // -------------------------------------------------------------------------
 

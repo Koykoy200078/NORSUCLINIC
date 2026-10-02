@@ -70,7 +70,11 @@ class PrescriptionVerificationTable extends LivewireTableComponent
                 'doctor:id,user_id',
                 'doctor.user:id,first_name,last_name,email,gender',
             ])
-            ->where('prescriptions.status', Prescription::DISPENSE_STATUS_PENDING);
+            ->where('prescriptions.status', Prescription::DISPENSE_STATUS_PENDING)
+            // A deactivated prescription is stopped by its doctor; it must not wait in the pharmacy queue. R3-H3.
+            ->where(function (Builder $active) {
+                $active->where('prescriptions.is_active', true)->orWhereNull('prescriptions.is_active');
+            });
 
         if (isRole('doctor')) {
             $doctor = Doctor::where('user_id', getLogInUserId())->first();

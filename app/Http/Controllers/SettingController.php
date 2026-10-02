@@ -42,6 +42,8 @@ class SettingController extends AppBaseController
     {
         $setting = SettingsService::get();
         $sectionName = ($request->get('section') === null) ? 'general' : $request->get('section');
+        // Only the real pages (the value goes into a view name). R3-L16.
+        abort_unless(in_array($sectionName, ['general', 'contact-information'], true), 404);
         $states = $cities = [];
         if (isset($setting['country_id'])) {
             $states = getStates($setting['country_id']);

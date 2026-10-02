@@ -17,7 +17,7 @@ use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'role:staff|nurse')->group(function () {
+Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'role:staff|nurse', 'forcePasswordChange')->group(function () {
 
     // Staff Dashboard - accessible to all staff members
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('dashboard')->middleware('staff.module:dashboard');
@@ -74,6 +74,12 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
         ->name('lab-requests.search-users')
         ->middleware('staff.module:lab_requests');
 
+    // Read-only medicine list the consultation form needs (nursing-intervention medicines). It used to sit
+    // inside the inventory group, so nurses / triage officers got a 403 and could not record medicines.
+    Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])
+        ->name('medicines.by.category')
+        ->middleware(['permission:manage_request_documents|manage_medicines', 'staff.module:consultations,inventory']);
+
     // Request Documents - Consultations / Certificates
     Route::middleware(['permission:manage_request_documents', 'staff.module:document_issuances'])->group(function () {
         Route::get('document-issuances/{document_issuance}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
@@ -115,7 +121,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
         Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
-        Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
 
         // Stock In (Medicine Purchasing)
         Route::resource('stock-in', StockInController::class);
@@ -145,6 +150,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
     Route::prefix('activity-logs')->name('activity-logs.')->middleware('staff.module:activity_logs')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/accomplishment/{format}', [ActivityLogController::class, 'accomplishment'])
+            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('accomplishment');
         Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 });

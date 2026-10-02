@@ -2,7 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\IllnessSystem;
+use App\Models\ServiceType;
+use App\Support\AuditLog;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Opcodes\LogViewer\Facades\LogViewer;
 use Illuminate\Support\Facades\Schema;
@@ -41,12 +48,29 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    private function recordSession(string $action, string $description, object $event): void
+    {
+        if (! $event->user) {
+            return;
+        }
+
+        try {
+            AuditLog::record($action, $description, ['subject_type' => get_class($event->user), 'subject_id' => $event->user->getAuthIdentifier()]);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
+
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        // Who signed in and out, and from where. (Failed attempts are rate limited and not stored.) R3-M5.
+        Event::listen(Login::class, fn (Login $event) => $this->recordSession('login', 'Signed in', $event));
+        Event::listen(Logout::class, fn (Logout $event) => $this->recordSession('logout', 'Signed out', $event));
 
         // The clinic runs on a private LAN over plain HTTP. The URL scheme is therefore decided by an
         // explicit switch (config('app.force_https') <- FORCE_HTTPS), never by APP_ENV: forcing
@@ -58,6 +82,15 @@ class AppServiceProvider extends ServiceProvider
             request()->server->set('HTTPS', 'on');
         }
 
+        // The illness / services lists of the ACCOMPLISHMENT REPORT, shown on every consultation form.
+        View::composer('document_issuances.components.classification_picker', function ($view) {
+            $view->with('illnessSystems', IllnessSystem::query()->ordered()->with('illnesses')->get());
+
+            $view->with('serviceGroups', ServiceType::query()->ordered()->get()
+                ->groupBy('category')
+                ->mapWithKeys(fn ($services, $category) => [ServiceType::CATEGORY_LABELS[$category] ?? $category => $services]));
+        });
+
         // Livewire re-runs only "authentication" style middleware on /livewire/update. Add the
         // account-status and role/permission checks that guarded the page, so a user who was
         // disabled - or whose role changed - after the page loaded cannot keep acting through a
@@ -66,8 +99,10 @@ class AppServiceProvider extends ServiceProvider
         // inside the component instead.) P2-H3.
         Livewire::addPersistentMiddleware([
             \App\Http\Middleware\CheckUserStatus::class,
-            \Spatie\Permission\Middleware\RoleMiddleware::class,
-            \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            // The installed spatie/laravel-permission (5.x) keeps these in "Middlewares" (plural); the
+            // singular namespace does not exist, so they were never matched and never re-applied. R3-H6.
+            \Spatie\Permission\Middlewares\RoleMiddleware::class,
+            \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         ]);
 
         // The Log Viewer package serves application logs (patient names, queries, errors) and can

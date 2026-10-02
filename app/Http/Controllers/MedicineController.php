@@ -330,11 +330,29 @@ class MedicineController extends AppBaseController
      */
     public function getMedicinesByCategory(): JsonResponse
     {
-        $categories = Category::with(['medicines' => function ($query) {
-            $query->where('available_quantity', '>', 0)
-                ->orderBy('name');
-        }])->whereHas('medicines', function ($query) {
-            $query->where('available_quantity', '>', 0);
+        // "Can be given today" comes from the batches (units that have not expired), not from
+        // medicines.available_quantity: that column is only refreshed when stock moves, so it keeps counting
+        // a batch for days after it expired. Medicines with no batch rows at all (old aggregate-only stock)
+        // fall back to the stored quantity. R3-H5.
+        $dispensableToday = function ($query) {
+            $query->where(function ($medicine) {
+                $medicine->whereHas('batches', function ($batch) {
+                    $batch->where('quantity', '>', 0)
+                        ->where(function ($expiry) {
+                            $expiry->whereNull('expiration_date')
+                                ->orWhereDate('expiration_date', '>=', \Carbon\Carbon::today()->toDateString());
+                        });
+                })->orWhere(function ($legacy) {
+                    $legacy->whereDoesntHave('batches')->where('available_quantity', '>', 0);
+                });
+            });
+        };
+
+        $categories = Category::with(['medicines' => function ($query) use ($dispensableToday) {
+            $dispensableToday($query);
+            $query->orderBy('name');
+        }])->whereHas('medicines', function ($query) use ($dispensableToday) {
+            $dispensableToday($query);
         })->orderBy('name')->get();
 
         $result = $categories->map(function ($category) {

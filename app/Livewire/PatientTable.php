@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Carbon\Carbon;
 use App\Models\Patient;
+use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
@@ -147,11 +148,12 @@ class PatientTable extends LivewireTableComponent
             Column::make(__('messages.patient.name'), 'user.first_name')
                 ->view('patients.components.name')
                 ->sortable()
-                ->searchable(function (Builder $query, $direction) {
-                    $query->whereHas('user', function (Builder $q) use ($direction) {
-                        $q->withTrashed()
-                            ->whereRaw("TRIM(CONCAT(first_name, ' ', last_name)) LIKE ?", ["%{$direction}%"]);
-                    });
+                // One typed word at a time (see SearchesByWords): name parts, e-mail and ID numbers of the patient's
+                // account (archived accounts too, for the Archived list) or the patient's own ID.
+                ->searchable(function (Builder $query, $word) {
+                    $query->whereHas('user', function (Builder $q) use ($word) {
+                        $q->withTrashed()->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS));
+                    })->orWhere('patients.patient_unique_id', 'like', SearchTerm::like($word));
                 }),
             Column::make(__('Patient Type'), 'patient_type_id')
                 ->view('patients.components.patient_type')

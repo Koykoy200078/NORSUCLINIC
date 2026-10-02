@@ -300,6 +300,32 @@ $exportPdfUrl = $documentId
             </div>
         </div>
 
+        <!-- Illness / services (ACCOMPLISHMENT REPORT) -->
+        <div class="grid grid-cols-4 gap-2 py-2">
+            <div class="col-span-1">
+                <label class="block">Illness / diagnosis</label>
+            </div>
+            <div class="col-span-3">
+                @forelse($requestDocument->illnessLabels() as $illnessLabel)
+                    <span class="inline-block border border-black rounded px-2 py-1 mr-1 mb-1 text-sm">{{ $illnessLabel }}</span>
+                @empty
+                    <span class="text-gray-500 text-sm">Not classified</span>
+                @endforelse
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2 py-2">
+            <div class="col-span-1">
+                <label class="block">Services rendered</label>
+            </div>
+            <div class="col-span-3">
+                @forelse($requestDocument->serviceLabels() as $serviceLabel)
+                    <span class="inline-block border border-black rounded px-2 py-1 mr-1 mb-1 text-sm">{{ $serviceLabel }}</span>
+                @empty
+                    <span class="text-gray-500 text-sm">None ticked</span>
+                @endforelse
+            </div>
+        </div>
+
         <!-- Consult Mode -->
         <div class="grid grid-cols-4 gap-2 py-2">
             <div class="col-span-1">

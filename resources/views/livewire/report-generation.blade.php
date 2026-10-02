@@ -7,15 +7,17 @@
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex align-items-center">
-                        @if($tab !== 'global_search')
+                        @if($tab !== 'global_search' && $tab !== 'accomplishment')
                         <a href="{{ 
-                            isRole('clinic_admin') ? route('activity-logs.export', ['tab' => $tab, 'search' => $search, 'date_from' => $date_from, 'date_to' => $date_to, 'user_type' => $user_type, 'action' => $action, 'status' => $status]) : 
-                            (isRole('staff') ? route('staff.activity-logs.export', ['tab' => $tab, 'search' => $search, 'date_from' => $date_from, 'date_to' => $date_to, 'user_type' => $user_type, 'action' => $action, 'status' => $status]) : 
-                            route('doctors.activity-logs.export', ['tab' => $tab, 'search' => $search, 'date_from' => $date_from, 'date_to' => $date_to, 'user_type' => $user_type, 'action' => $action, 'status' => $status]))
+                            isRole('clinic_admin') ? route('activity-logs.export', $exportQuery) : 
+                            (isRole('staff') ? route('staff.activity-logs.export', $exportQuery) : 
+                            route('doctors.activity-logs.export', $exportQuery))
                         }}"
                             class="btn btn-sm btn-outline-primary me-2">
                             <i class="fas fa-file-csv"></i> Export CSV
                         </a>
+                        @endif
+                        @if($tab !== 'global_search')
                         <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-print"></i> Print Report
                         </button>
@@ -39,6 +41,14 @@
                            <i class="fas fa-user-nurse me-2"></i>Patient Visits
                         </a>
                     </li>
+                    @if(canViewActivityLogTab('accomplishment'))
+                    <li class="nav-item">
+                        <a class="nav-link text-active-primary py-4 {{ $tab === 'accomplishment' ? 'active' : '' }}"
+                           href="javascript:void(0)" wire:click="setTab('accomplishment')">
+                           <i class="fas fa-clipboard-list me-2"></i>Accomplishment Report
+                        </a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'inventory' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('inventory')">
@@ -68,11 +78,13 @@
                 <!-- Filter Form -->
                 <div class="mb-8 p-5 bg-light rounded border">
                     <div class="row g-3">
+                        @if($tab !== 'accomplishment')
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Search Keywords</label>
                             <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm"
-                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : 'Name, Description, Keywords...' }}">
+                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : ($tab === 'visits' ? 'Patient name, complaint, illness...' : 'Name, Description, Keywords...') }}">
                         </div>
+                        @endif
 
                         @if($tab === 'logs')
                         <div class="col-md-2">
@@ -124,6 +136,132 @@
                                 <i class="fas fa-redo"></i> Reset
                             </button>
                         </div>
+
+                        @if(in_array($tab, ['visits', 'accomplishment'], true))
+                        @php
+                            $selects = [
+                                ['campus_id', 'Campus', $choices['campuses'], 'All campuses'],
+                                ['college_id', 'College', $choices['colleges'], 'All colleges'],
+                                ['course_id', 'Course', $choices['courses'], 'All courses'],
+                                ['year_level_id', 'Year level', $choices['yearLevels'], 'All year levels'],
+                                ['department_id', 'Department (faculty)', $choices['departments'], 'All departments'],
+                                ['office_id', 'Office (staff)', $choices['offices'], 'All offices'],
+                                ['patient_type_id', 'Patient type', $choices['patientTypes'], 'All types'],
+                                ['medicine_id', 'Medicine given', $choices['medicines'], 'Any medicine'],
+                                ['staff_id', 'Nurse in charge / encoder', $choices['staffMembers'], 'Anyone'],
+                            ];
+                        @endphp
+                        <div class="col-12" x-data="{ open: false }">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <span class="fw-bold me-1">Period:</span>
+                                <button type="button" wire:click="setPeriod('this_month')" class="btn btn-sm btn-light">This month</button>
+                                <button type="button" wire:click="setPeriod('last_month')" class="btn btn-sm btn-light">Last month</button>
+                                <button type="button" wire:click="setPeriod('this_year')" class="btn btn-sm btn-light">This year</button>
+                                <button type="button" wire:click="setPeriod('last_year')" class="btn btn-sm btn-light">Last year</button>
+                                <input type="month" wire:model.live="month" class="form-control form-control-sm w-auto" title="Pick a month" aria-label="Pick a month">
+                                <button type="button" class="btn btn-sm btn-light-primary ms-md-auto" @click="open = !open">
+                                    <i class="fas fa-filter"></i> Filters
+                                    @if($activeFilters > 0)<span class="badge bg-primary ms-1">{{ $activeFilters }}</span>@endif
+                                </button>
+                            </div>
+
+                            <div x-show="open" x-cloak class="row g-3 mt-1">
+                                @foreach($selects as [$model, $label, $options, $any])
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">{{ $label }}</label>
+                                    <select wire:model.live="{{ $model }}" class="form-select form-select-sm">
+                                        <option value="">{{ $any }}</option>
+                                        @foreach($options as $optionId => $optionName)
+                                        <option value="{{ $optionId }}">{{ $optionName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endforeach
+
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Gender</label>
+                                    <select wire:model.live="gender" class="form-select form-select-sm">
+                                        <option value="">Any gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Consult mode</label>
+                                    <select wire:model.live="consult_mode" class="form-select form-select-sm">
+                                        <option value="all">All</option>
+                                        <option value="physical">Walk-in</option>
+                                        <option value="virtual">Virtual</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Age group</label>
+                                    <select wire:model.live="age_group" class="form-select form-select-sm">
+                                        <option value="">Any age</option>
+                                        @foreach($choices['ageGroups'] as $ageKey => $ageGroup)
+                                        <option value="{{ $ageKey }}">{{ $ageGroup[0] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Body system</label>
+                                    <select wire:model.live="illness_system_id" class="form-select form-select-sm">
+                                        <option value="">All body systems</option>
+                                        @foreach($choices['illnessSystems'] as $system)
+                                        <option value="{{ $system->id }}">{{ $system->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Illness</label>
+                                    <select wire:model.live="illness_id" class="form-select form-select-sm">
+                                        <option value="">Any illness</option>
+                                        <option value="none">Not classified yet</option>
+                                        @foreach($choices['illnessSystems'] as $system)
+                                        <optgroup label="{{ $system->name }}">
+                                            @foreach($system->illnesses as $illness)
+                                            <option value="{{ $illness->id }}">{{ $illness->name }}{{ $illness->is_active ? '' : ' (off)' }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Service rendered</label>
+                                    <select wire:model.live="service_id" class="form-select form-select-sm">
+                                        <option value="">Any service</option>
+                                        @foreach($choices['serviceGroups'] as $groupLabel => $services)
+                                        <optgroup label="{{ $groupLabel }}">
+                                            @foreach($services as $service)
+                                            <option value="{{ $service->id }}">{{ $service->name }}{{ $service->is_active ? '' : ' (off)' }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Pregnancy</label>
+                                    <select wire:model.live="pregnancy" class="form-select form-select-sm">
+                                        <option value="all">Any</option>
+                                        <option value="pregnant">Pregnant</option>
+                                        <option value="not_pregnant">Not pregnant</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Chronic condition</label>
+                                    <select wire:model.live="chronic" class="form-select form-select-sm">
+                                        <option value="all">Any</option>
+                                        <option value="with">Has a chronic condition</option>
+                                        <option value="none">No chronic condition</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Chronic condition contains</label>
+                                    <input type="text" wire:model.live.debounce.400ms="chronic_text" class="form-control form-control-sm" placeholder="e.g. hypertension" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 

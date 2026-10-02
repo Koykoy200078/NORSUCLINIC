@@ -302,6 +302,8 @@
         </div>
         @endif
 
+        @include('document_issuances.components.classification_picker')
+
         <div class="grid grid-cols-4 gap-4 py-3 bg-blue-50/50 rounded p-3 mb-2 border border-blue-100">
             <div class="col-span-1 d-flex align-items-center">
                 <label class="block font-bold text-gray-700 text-sm">Consult Mode<span class="text-red-500">*</span></label>
@@ -1890,4 +1892,53 @@
             });
         }
     });
+    // Refuse a medicine listed twice in the same section before the form leaves the browser
+    // (the server refuses it too). The same medicine + strength twice used to corrupt stock on the next edit.
+    (function () {
+        function initDuplicateMedicineGuard() {
+            const anchor = document.getElementById('plan_medicines_container') || document.getElementById('nursing_medicines_container');
+            const form = anchor ? anchor.closest('form') : null;
+            if (!form) {
+                return;
+            }
+
+            form.addEventListener('submit', function (event) {
+                const duplicates = [];
+
+                ['plan_medicines_container', 'nursing_medicines_container'].forEach(function (containerId) {
+                    const container = document.getElementById(containerId);
+                    if (!container) {
+                        return;
+                    }
+
+                    const seen = new Set();
+                    container.querySelectorAll('.medicine-row').forEach(function (row) {
+                        const medicine = row.querySelector('.medicine-select');
+                        const dosage = row.querySelector('.dosage-select');
+                        if (!medicine || !medicine.value) {
+                            return;
+                        }
+
+                        const key = medicine.value + '|' + (dosage ? dosage.value : '');
+                        if (seen.has(key)) {
+                            const label = medicine.options[medicine.selectedIndex].textContent;
+                            duplicates.push(label + (dosage && dosage.value ? ' (' + dosage.value + ')' : ''));
+                        }
+                        seen.add(key);
+                    });
+                });
+
+                if (duplicates.length) {
+                    event.preventDefault();
+                    alert('The same medicine and strength is listed more than once: ' + duplicates.join(', ') + '. Combine the quantities into one row.');
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDuplicateMedicineGuard);
+        } else {
+            initDuplicateMedicineGuard();
+        }
+    })();
 </script>

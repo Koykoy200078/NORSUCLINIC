@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\SearchesByWords;
 use App\Models\LabRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,8 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
 
 class LabRequestTable extends DataTableComponent
 {
+    use SearchesByWords;
+
     protected $model = LabRequest::class;
 
     public bool $showFilterOnHeader = false;

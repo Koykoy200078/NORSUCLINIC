@@ -21,9 +21,9 @@ const directoriesToDelete = [
     "public/fonts",
     "public/js",
     "public/vendor",
-    "public/webfonts",
+    // "public/webfonts" and "public/messages.js" are tracked in git and the app needs them to show icons and
+    // translations: an interrupted build used to leave the site without them. The build overwrites them instead. R3-L9.
     "public/web",
-    "public/messages.js",
     "public/mix-manifest.json",
 ];
 

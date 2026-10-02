@@ -127,9 +127,13 @@ $formMethod = $isEdit ? 'patch' : 'post';
             <div class="row g-4">
                 <div class="col-md-4">
                     <label for="doctor_id" class="form-label required">Attending Doctor</label>
+                    {{-- A doctor writes prescriptions in their own name only (the server enforces it too). --}}
+                    @if (isRole('doctor') && $currentUserDoctorId)
+                    <input type="hidden" name="doctor_id" value="{{ $currentUserDoctorId }}">
+                    @endif
                     <select
                         id="doctor_id"
-                        name="doctor_id"
+                        @if (! (isRole('doctor') && $currentUserDoctorId)) name="doctor_id" @else disabled @endif
                         class="form-select @error('doctor_id') is-invalid @enderror"
                         x-model="selectedDoctorId"
                         @change="syncDoctorLicense"
@@ -171,6 +175,28 @@ $formMethod = $isEdit ? 'patch' : 'post';
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                @if (isRole('staff'))
+                <div class="col-12">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input @error('verbal_order') is-invalid @enderror"
+                            type="checkbox"
+                            id="verbal_order"
+                            name="verbal_order"
+                            value="1"
+                            {{ old('verbal_order') ? 'checked' : '' }}
+                            required>
+                        <label class="form-check-label" for="verbal_order">
+                            I am entering this prescription on the verbal / phone order of the doctor selected above.
+                            It will be recorded in the activity log under my name.
+                        </label>
+                        @error('verbal_order')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                @endif
 
                 <div class="col-md-6">
                     <label for="icd10_diagnosis_id" class="form-label">ICD-10 Diagnosis</label>

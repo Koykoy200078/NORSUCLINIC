@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\SearchesByWords;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Exceptions\DataTableConfigurationException;
 use Livewire\Attributes\Lazy;
@@ -12,6 +13,8 @@ use Livewire\Attributes\Lazy;
  */
 class LivewireTableComponent extends DataTableComponent
 {
+    use SearchesByWords;
+
     protected bool $columnSelectStatus = false;
 
     public bool $showFilterOnHeader = false;

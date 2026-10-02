@@ -309,8 +309,14 @@
             <td>{{ $nursingInCharge }}</td>
         </tr>
         <tr>
-
-
+            <th>Illness / diagnosis</th>
+            <td colspan="3">{{ implode('; ', $requestDocument->illnessLabels()) ?: 'Not classified' }}</td>
+        </tr>
+        <tr>
+            <th>Services rendered</th>
+            <td colspan="3">{{ implode('; ', $requestDocument->serviceLabels()) ?: 'None ticked' }}</td>
+        </tr>
+        <tr>
             <th>Nursing Intervention</th>
             <td colspan="3">{{ $requestDocument->nursing_intervention }}</td>
         </tr>

@@ -23,7 +23,8 @@
         <i class="fas fa-print"></i>
     </a>
 
-    {{-- Delete --}}
+    {{-- Delete: only a pending / cancelled request, by its creator or the clinic admin --}}
+    @if($row->isDeletable() && $row->canBeDeletedBy(auth()->user()))
     @can('manage_request_documents')
     <form method="POST" action="{{ $deleteRoute }}"
           onsubmit="return confirm('Delete Lab Request #{{ $row->request_number }}? This cannot be undone.');">
@@ -34,4 +35,5 @@
         </button>
     </form>
     @endcan
+    @endif
 </div>

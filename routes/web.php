@@ -164,6 +164,12 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::middleware('permission:manage_settings')->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('setting.update');
+        // Settings > Report lists: the illnesses / services behind the Accomplishment Report
+        Route::get('/settings/report-lists', [\App\Http\Controllers\ReportListController::class, 'index'])->name('report-lists.index');
+        Route::post('/settings/report-lists/illnesses', [\App\Http\Controllers\ReportListController::class, 'storeIllness'])->name('report-lists.illnesses.store');
+        Route::put('/settings/report-lists/illnesses/{illness}', [\App\Http\Controllers\ReportListController::class, 'updateIllness'])->name('report-lists.illnesses.update');
+        Route::post('/settings/report-lists/services', [\App\Http\Controllers\ReportListController::class, 'storeService'])->name('report-lists.services.store');
+        Route::put('/settings/report-lists/services/{service}', [\App\Http\Controllers\ReportListController::class, 'updateService'])->name('report-lists.services.update');
         Route::get('states-list', [SettingController::class, 'getStates'])->name('states-list');
         Route::get('cities-list', [SettingController::class, 'getCities'])->name('cities-list');
 
@@ -206,6 +212,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::prefix('activity-logs')->group(function () {
         Route::get('/', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('/export', [\App\Http\Controllers\ActivityLogController::class, 'export'])->name('activity-logs.export');
+        Route::get('/accomplishment/{format}', [\App\Http\Controllers\ActivityLogController::class, 'accomplishment'])
+            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('activity-logs.accomplishment');
         Route::get('/{id}', [\App\Http\Controllers\ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 

@@ -48,6 +48,8 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
         <i class="fa-solid fa-file-prescription"></i>
     </a>
     @endif
+    {{-- The reset-password route is admin-only (staff/doctor would get a 403), so only the admin sees the key. --}}
+    @if(isRole('clinic_admin'))
     <a href="javascript:void(0)"
         data-id="{{ $row->user->id }}"
         data-reset-url="{{ getRouteByRole('patients.reset.password', ['user' => $row->user->id]) }}"
@@ -58,7 +60,10 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
         <i class="fa-solid fa-key"></i>
     </a>
     @endif
+    @endif
 
+    {{-- Archive / restore belong to staff/nurse and the clinic admin; doctors only view and edit. --}}
+    @if(! isRole('doctor'))
     @if($row->trashed())
     <a href="javascript:void(0)"
         data-id="{{ $row->id }}"
@@ -81,6 +86,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
         class="btn px-2 text-danger fs-2 patient-delete-btn">
         <i class="fa-solid fa-box-archive"></i>
     </a>
+    @endif
     @endif
     @endif
 </div>

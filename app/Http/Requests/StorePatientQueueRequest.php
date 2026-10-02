@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Patient;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePatientQueueRequest extends FormRequest
@@ -22,7 +23,16 @@ class StorePatientQueueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_id' => 'required|exists:patients,id',
+            'patient_id' => ['required', 'integer', function (string $attribute, mixed $value, \Closure $fail) {
+                // Patient::find() skips archived patients, so only live, active patients can be queued.
+                $patient = Patient::with('user')->find($value);
+
+                if (! $patient) {
+                    $fail('The selected patient does not exist or has been archived.');
+                } elseif (! $patient->user || (int) $patient->user->status !== 1) {
+                    $fail('This patient account is not active and cannot be added to the queue.');
+                }
+            }],
             'room_number' => 'nullable|string|max:50',
             'is_priority' => 'boolean',
             'notes' => 'nullable|string|max:500',

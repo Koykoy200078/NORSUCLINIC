@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AuditAdministrativeActions;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\EnsureStaffModuleAccess;
@@ -62,6 +63,7 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
+            AuditAdministrativeActions::class,
         ],
 
         'api' => [
@@ -94,5 +96,6 @@ class Kernel extends HttpKernel
         'checkUserStatus' => CheckUserStatus::class,
         'setLanguage' => SetLanguage::class,
         'forceAdminPasswordChange' => ForceAdminDefaultPasswordChange::class,
+        'forcePasswordChange' => ForceAdminDefaultPasswordChange::class,
     ];
 }

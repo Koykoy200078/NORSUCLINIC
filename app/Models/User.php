@@ -122,6 +122,14 @@ class User extends Authenticatable implements HasMedia
 
     public const DELETED_AT = 'archived_at';
 
+    protected static function booted(): void
+    {
+        // A renamed / deactivated / archived patient or doctor must leave the cached pick-lists at once.
+        static::saved(fn () => Patient::flushLookupCaches());
+        static::deleted(fn () => Patient::flushLookupCaches());
+        static::restored(fn () => Patient::flushLookupCaches());
+    }
+
     /**
      * The attributes that are mass assignable.
      *

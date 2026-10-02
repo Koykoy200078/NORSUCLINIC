@@ -8,10 +8,10 @@ listenClick(".delete-prescription-btn", function (event) {
 
 listenChange(".prescriptionStatus", function (event) {
     let prescriptionId = $(event.currentTarget).attr("data-id");
-    prescriptionUpdateStatus(prescriptionId);
+    prescriptionUpdateStatus(prescriptionId, event.currentTarget);
 });
 
-function prescriptionUpdateStatus(id) {
+function prescriptionUpdateStatus(id, toggle) {
     let prescriptionStatusRoute =
         $("#prescriptionStatusRoute").val() || "prescription.status";
     $.ajax({
@@ -25,7 +25,21 @@ function prescriptionUpdateStatus(id) {
                     $("#prescriptionFilterBtn"),
                     $("#prescriptionFilter"),
                 );
+                // Switching a prescription off cancels it (and on returns it to the pharmacy queue), so the
+                // Dispense Status column has to be redrawn.
+                Livewire.dispatch("refresh");
             }
+        },
+        error: function (xhr) {
+            // The server refused (for example the prescription was already dispensed, or it belongs to
+            // another doctor): put the switch back and say why.
+            if (toggle) {
+                toggle.checked = !toggle.checked;
+            }
+            let message =
+                (xhr.responseJSON && xhr.responseJSON.message) ||
+                "The prescription status could not be changed.";
+            displayErrorMessage(message);
         },
     });
 }

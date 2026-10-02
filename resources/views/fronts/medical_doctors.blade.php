@@ -52,7 +52,7 @@
                             </div>
                             <h4 class="text-primary">{{ $doctor->user->full_name }}</h4>
                             <label class="designation-label pb-4 mb-3 d-block">
-                                {{ $doctor->specializations->first()->name }}
+                                {{ $doctor->specializations->first()?->name }}
                             </label>
                         </div>
                     </div>

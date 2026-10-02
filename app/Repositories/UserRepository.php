@@ -171,14 +171,19 @@ class UserRepository extends BaseRepository
             $input['email'] = setEmailLowerCase($input['email']);
             $input['status'] = (isset($input['status'])) ? 1 : 0;
             $input['type'] = User::DOCTOR;
-            $doctor->user->update($input);
+            // Only the columns the doctor form has. The whole request used to be mass-assigned, so a crafted request
+            // could also set password, email_verified_at, dark_mode ... R3-L1.
+            $doctor->user->update(Arr::only($input, array_merge(User::RECORD_FIELDS, ['status', 'type'])));
             $doctor->user->address()->updateOrCreate([], $addressInputArray);
             $doctor->update($doctorArray);
             $doctor->specializations()->sync($specialization);
 
             if (count($qualificationArray) >= 0) {
                 if (isset($input['deletedQualifications']) && !empty($input['deletedQualifications'])) {
-                    Qualification::whereIn('id', explode(',', $input['deletedQualifications']))->delete();
+                    // Only this doctor's own qualifications (any id used to be deletable). R3-L1.
+                    $doctor->user->qualifications()
+                        ->whereIn('id', array_filter(array_map('intval', explode(',', (string) $input['deletedQualifications']))))
+                        ->delete();
                 }
 
                 foreach ($qualificationArray as $qualifications) {
@@ -186,10 +191,10 @@ class UserRepository extends BaseRepository
                         continue;
                     }
                     if (isset($qualifications['id'])) {
-                        $doctor->user->qualifications()->where('id', $qualifications['id'])->update($qualifications);
+                        $doctor->user->qualifications()->where('id', $qualifications['id'])->update(Arr::only($qualifications, ['degree', 'university', 'year']));
                     } else {
                         unset($qualifications['id']);
-                        $doctor->user->qualifications()->create($qualifications);
+                        $doctor->user->qualifications()->create(Arr::only($qualifications, ['degree', 'university', 'year']));
                     }
                 }
             }
@@ -219,7 +224,9 @@ class UserRepository extends BaseRepository
                 ['address1', 'address2', 'city_id', 'barangay_id', 'state_id', 'country_id', 'postal_code']
             );
 
-            if ($user->hasRole('clinic_admin')) {
+            // Staff / nurse accounts had no branch here, so their profile form saved nothing while the
+            // controller still reported success. R3-M2.
+            if ($user->hasRole('clinic_admin') || $user->hasRole('staff') || $user->hasRole('nurse')) {
                 $user->fill(Arr::only($userInput, User::SELF_PROFILE_FIELDS))->save();
 
                 if ((! empty($userInput['image']))) {
@@ -309,6 +316,9 @@ class UserRepository extends BaseRepository
                         config('app.media_disc')
                     );
                 }
+            } else {
+                // Never report success for a save that did not happen.
+                throw new \RuntimeException('This account has no editable profile.');
             }
 
             DB::commit();
