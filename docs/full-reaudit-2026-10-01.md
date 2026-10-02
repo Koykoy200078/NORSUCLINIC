@@ -384,3 +384,7 @@ Closed in the follow-up pass (details, tests and the route x role audit in `docs
 **R3-M7** (re-seeding no longer resets roles), **R3-M11** (default password gate for doctors and staff), **R3-L1, L8, L9, L12, L13, L14, L16**.
 New defects found and fixed in that pass: `staff.module:a,b` middleware only checked the first module (certificates-only staff could not search patients, the pharmacist could not load the medicine list), the public doctors page crashed for a doctor without specialisation, `?module=certificates` showed the wrong list, auth pages redirected doctors / staff to the admin dashboard, settings save without a section returned a server error.
 Still open: R3-M9, R3-L5, L6, L7, L10, L11, L15, L17, L19.
+
+**Update (later on 2026-10-02):** R3-M6 is now complete for lab requests too (soft-deleted, restorable from Settings › Deleted records),
+R3-M5 also records failed and blocked sign-ins, R3-L14 is finished (patient-type codes everywhere), and pass-1 M-13 / L-05 are closed
+(archived-account message on patient create and edit; unique stock-in numbers with retry). See `docs/STATUS.md`.
