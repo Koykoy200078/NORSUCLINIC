@@ -1,0 +1,214 @@
+# NORSUCLINIC — Project status
+
+**Last updated:** 2026-10-02 · **Branch:** `changes_v2` (base `develop`, no PR) · **Kept by:** the developer + Claude Code sessions
+
+This is the single place to see what has been done, what is in progress, what is still open, and what needs a
+decision. The detail of each finding lives in the audit documents listed in [§9](#9-where-the-detail-is).
+
+Legend: ✅ done and verified · 🟡 partly done / unfinished · ⏳ pending (known, not started) · 🔒 needs your decision ·
+ℹ️ accepted / by design
+
+---
+
+## 1. At a glance
+
+| | |
+|---|---|
+| Committed on `changes_v2` (ahead of `develop`) | 2026-09-30 audits + remediation: 15 commits, last `1145357` |
+| **Not committed yet** | everything from 2026-10-01 and 2026-10-02 — 79 modified + 52 new files (see [§8](#8-what-is-not-committed-yet)) |
+| Test suite (`vendor/bin/phpunit`, schema `norsu_clinic_test`) | **274 tests, 3,497 assertions — all passing** (run on 2026-10-02 07:43) |
+| Route × role audit (3,975 requests, 19 kinds of user) | 0 server errors · 0 access leaks · 0 staff-policy mismatches |
+| Real database `norsu_clinic` | all migrations applied (last: `2026_10_02_130000_add_soft_deletes_to_document_issuances`); integrity sweep: no problems |
+| Last backup taken before a schema change | `norsuclinic_backup-2026-10-02_02-59-03.sql` (1.6 MB) |
+| Open findings | 0 Critical · 0 High · 1 Medium (R3-M9, deployment) · 8 Low not started + 1 Low partly done (ops / docs / dead code) |
+
+---
+
+## 2. Timeline (what happened)
+
+| Date | Work | Result |
+|---|---|---|
+| 2026-04 → 05 | Earlier audits: general (04-29), staff (05-05), module CRUD (05-05), automation (05-18) | findings folded into later passes |
+| 2026-09-30 | Full re-audit pass 1 + pass 2 (LAN/HTTP-only) and remediation phases B0–H | ✅ 14 commits; 106 tests; all 6 Criticals fixed ([remediation-status-2026-09-30.md](remediation-status-2026-09-30.md)) |
+| 2026-10-01 | Third-pass re-audit `R3-*` ([full-reaudit-2026-10-01.md](full-reaudit-2026-10-01.md)): 6 High, 11 Medium, 19 Low | report written |
+| 2026-10-01 | Staff/nurse + doctor workflow pass (Patients, Queue, Consultations, Prescriptions, Lab requests, Stock-out) — owner decisions taken | ✅ all 6 Highs + R3-M1/M2/M3/M8/M10 + L2/L4/L18; 183 tests |
+| 2026-10-01 | Name search fixed in every module; Export CSV carries names; **ACCOMPLISHMENT REPORT** (filters, illness/service picks on consultations, PDF/Excel/CSV) | ✅ [accomplishment-report-2026-10.md](accomplishment-report-2026-10.md); 234 tests |
+| 2026-10-02 | Admin got **403 on `/admin/dashboard`** → root cause found (shared file cache overwritten by test-schema commands) and prevented | ✅ |
+| 2026-10-02 | Route/access/data audit across every role + remaining re-audit items (M4, M5, M6, M7, M11, Lows) | ✅ [route-access-audit-2026-10-02.md](route-access-audit-2026-10-02.md); 274 tests |
+
+---
+
+## 3. Completed ✅
+
+### 3.1 Third-pass audit (`R3-*`)
+
+| ID | What it was | Fixed |
+|---|---|---|
+| R3-H1 | consultation edits/deletes returned medicines to the wrong batch (expired units came back as "2099") | 10-01 |
+| R3-H2 | duplicate medicine rows in a consultation over-deducted stock | 10-01 |
+| R3-H3 | deactivated prescriptions were still dispensed | 10-01 |
+| R3-H4 | prescriptions could be written / re-assigned in another doctor's name | 10-01 |
+| R3-H5 | expired stock kept counting as available; no expired-stock alert | 10-01 |
+| R3-H6 | staff designation limits did not apply inside Livewire; Spatie middleware namespace wrong | 10-01 |
+| R3-M1 | nurses got 403 on the consultation medicine list | 10-01 (completed 10-02, see 3.2 #1) |
+| R3-M2 | staff/nurse profile saves silently discarded | 10-01 |
+| R3-M3 | Stock-out tab counted pending prescriptions, patient always "N/A" | 10-01 |
+| R3-M4 | logo / favicon pointed at `localhost` on other LAN PCs | 10-02 |
+| R3-M5 | audit-trail gaps (deletes, prescriptions, accounts, roles, settings, backups, logins, impersonation) | 10-01 + 10-02 |
+| R3-M6 | clinical records hard-deleted — consultations / certificates / excuse slips now soft-deleted (row + photos kept); lab requests: only pending / cancelled deletable, with snapshot | 10-01 + 10-02 |
+| R3-M7 | `db:seed` reset the permissions set in the Roles screen | 10-02 |
+| R3-M8 | stale patient / doctor pick-lists | 10-01 |
+| R3-M10 | excuse slips missing from patient history | 10-01 |
+| R3-M11 | default password `123456` not enforced for doctors / staff | 10-02 |
+| R3-L1 | doctor update mass-assigned the request; any qualification deletable | 10-02 |
+| R3-L2 | profile e-mail rejected long TLDs | 10-01 |
+| R3-L4 | patient audit rows had empty college / course / address | 10-01 |
+| R3-L8 | lab-request PDF crashed on `/` in a patient name | 10-02 |
+| R3-L9 | `npm run prod` deleted tracked `public/webfonts`, `public/messages.js` first | 10-02 |
+| R3-L12 | failed validation flashed passwords into the session | 10-02 |
+| R3-L13 | `getBadgeColor()` crashed with nobody signed in (P2-L3) | 10-02 |
+| R3-L16 | unvalidated `?section=` on Settings | 10-02 |
+| R3-L18 | queue call-next race; stale queue entries never closed | 10-01 |
+| R3-L3 | a role cannot be saved with no permissions | ℹ️ by design (the form requires at least one) |
+
+### 3.2 Found and fixed outside the audit list
+
+| # | Defect | Date |
+|---|---|---|
+| 1 | `staff.module:a,b` only checked the first module (certificates-only staff could not search patients; pharmacist could not load the medicine list; consultations-only nurse could not read the latest consultation) | 10-02 |
+| 2 | **Admin 403 on the dashboard** — cached permission ids overwritten by commands run against the test schema; cache folder now separate per database | 10-02 |
+| 3 | Settings › General could never be saved (validator required a `language` field the form no longer has) | 10-01 |
+| 4 | Public `/medical-doctors` crashed when a doctor had no specialisation | 10-02 |
+| 5 | `?module=certificates` (plural) showed the consultation list / 403 for certificates-only staff | 10-02 |
+| 6 | Email-verification and password-confirmation pages sent doctors / staff to the admin dashboard (403) | 10-02 |
+| 7 | Settings save without a section → server error | 10-02 |
+| 8 | Name search: full names, "Last, First", wildcards and the Consultations list found nothing | 10-01 |
+| 9 | Export CSV had no patient names on some tabs; screen and file used different queries | 10-01 |
+| 10 | Queue screens 500 after a queued patient was archived; archived patients could be queued; stale edit page could reopen a finished entry | 10-01 |
+| 11 | Doctors had add / archive / restore / reset-password on patients (owner: view + edit only) | 10-01 |
+| 12 | Staff "Reset password" key on the patient list always answered 403 | 10-01 |
+| 13 | The test suite ran out of memory past ~230 tests (`memory_limit` 512M in `phpunit.xml`) | 10-01 |
+
+### 3.3 Features delivered
+
+| Feature | Where |
+|---|---|
+| Word-based search (`SearchTerm`) in every table, search box and picker | all modules |
+| Patient Visits filters: period buttons, month, date range, campus, college, course, year level, department, office, patient type, gender, consult mode, age group, body system, illness / not classified, service, medicine given, nurse / encoder, pregnancy, chronic condition | Report Generation |
+| **ACCOMPLISHMENT REPORT** tab — illness by body system × college / GS / F&S (+ Guests, Unspecified), Other Services, totals, unclassified count, Prepared by / Noted by; PDF (8.5×13), Excel, CSV from one builder | Report Generation |
+| Illness picker (searchable, by body system, "Others: ___") and services checklist on the consultation form; shown on view page and PDF | Consultations |
+| Settings › General: University Physician name / title | Settings |
+| Settings › **Report lists**: add, rename, regroup, switch off illnesses and services | Settings (admin) |
+| Graduate School (GS) college | seed + migration |
+| Default-password gate for every staff account type | all panels |
+| Administrative audit trail (field names only), sign-in / sign-out, impersonation | Activity Logs |
+| Soft delete of consultations / certificates / excuse slips | Consultations |
+
+### 3.4 Earlier passes still holding (re-verified 10-01)
+
+All six pass-1 Criticals (C-01 … C-06) and the High / Medium items of the 2026-09-30 passes are ✅ — see
+[full-reaudit-2026-10-01.md §3](full-reaudit-2026-10-01.md). The two that were only partly fixed then are now closed:
+H-02 (list-level bypass → R3-H6) and H-14 (doctor mass-assignment → R3-L1).
+
+---
+
+## 4. Unfinished / partly done 🟡
+
+| Item | What is done | What is left |
+|---|---|---|
+| R3-L14 hard-coded patient-type ids | patient create looks the guest type up by code | `LabRequestController::searchUsers` still maps `patient_type_id` to affiliation by numeric id |
+| R3-M6 records retention | consultations / certificates / excuse slips soft-deleted | no screen to view or restore deleted records (only possible in the database); lab requests (pending / cancelled) are still removed for good |
+| R3-M5 audit trail | administrative changes, sign-in / out, impersonation | failed sign-in attempts are not stored (rate limited only) |
+| Old consultations | snapshot ids back-filled from saved names / patient record | consultations saved before 10-01 have **no illness picked** and show as "Unclassified" in the report until re-classified (a bulk "classify old consultations" screen was offered, not built) |
+| Pass-1 M-13 | staff / doctors get a clear "archived account" message | patient create still uses a plain `unique` rule (generic message) |
+| Pass-1 L-05 | history numbers have a unique index | availability and lab-request numbers are still check-then-insert (tiny race) |
+
+---
+
+## 5. Pending — known, not started ⏳
+
+| ID | Item | Kind |
+|---|---|---|
+| **R3-M9** | Server runs on `php artisan serve` (single-threaded, ignores `public/.htaccess`); serve through WAMP Apache with document root `public/` | deployment |
+| R3-L5 | Stock added on the medicine form bypasses the Stock-In register | design |
+| R3-L6 | Prescription duplicate check is by medicine only (two strengths cannot be prescribed); no row lock on the "dispensed" check in `update()` | design |
+| R3-L7 | Dead / broken code: `/api/medicines`, `medicine-history` views, `storePatient()` → undefined `addNotification()`, `getPatientsList()`, `MedicineAvailabilityController`, `StateController`, `getPrescriptionRoute()`, empty `SyncRolePermissions.php`, two `cache:warmup` commands, `User::staff()` → missing `staff` table | cleanup |
+| R3-L10 | Stale docs: `guide.md` (`automation.ps1`), `RECODE_PROJECT_GUIDE.md` §13.7/§14 (`CACHE_STORE=database`), empty `CLAUDE.md` | docs |
+| R3-L11 | Startup script prints `127.0.0.1:8000` but binds the LAN IP; root `.htaccess` uses an absolute `/public/` (pass-1 L-09) | deployment |
+| R3-L15 | "Forgot password" is a dead end (mail goes to the log) and reveals whether an e-mail exists | UX / security |
+| R3-L17 | Sessions last 120 idle minutes and survive closing the browser on shared clinic PCs | config |
+| R3-L19 | Backups: 30-day retention only, dumps unencrypted, half-restore needs manual recovery | ops |
+| L-03 (pass 1) | Unnamed duplicate `POST countries/{country}`, `POST states/{state}` routes | cleanup |
+| M-16 (pass 1) | Lock file not re-tested on PHP 8.4 | check |
+| Test-suite speed | the last full run took 14 min 55 s; earlier runs the same day took about 3 min. Probably machine load (other PHP processes were running), not investigated | watch |
+| `errors/404.blade.php` | references a missing `assets/img/404-error-image.svg` | cosmetic |
+
+---
+
+## 6. Needs your decision 🔒
+
+| Item | Why it waits | Suggested |
+|---|---|---|
+| **Rotate the database password** | the old password is in git history (`auto-backup-database.bat`) | rotate now; purge history with `git filter-repo` if the repo is shared |
+| Laravel 10 advisories (debug-page XSS, signed-URL path, email-rule CRLF) | fixed only in Laravel 12 (PHP 8.2+) | plan a Laravel 11/12 + PHP 8.2 upgrade |
+| `spatie/laravel-medialibrary` 10.x advisories | fixed in 11.23 (PHP 8.2+) | upgrade with the above |
+| `rappasoft/laravel-livewire-tables` held at 3.2.x | 3.8 breaks the customised table views | port the views in a dedicated task |
+| `laravelcollective/html` abandoned | no CVE; used by ~90 forms | leave |
+| npm advisories (runtime 5: `nanoid`, `postcss`, `quill`; build tool-chain 68) | mostly build-time only | `npm audit fix` for the runtime set; plan a Vite migration |
+| Restore screen for deleted consultations | records are kept but only recoverable in the database | decide if the admin needs it |
+| Bulk "classify old consultations" screen | old visits show as Unclassified in the report | decide if needed |
+| PHI snapshot columns in `activity_logs` | needed by the log detail view | keep access to Activity Logs restricted |
+
+### Decisions already taken (do not re-ask)
+
+* Doctors may **view and edit** patients only; add / archive / restore / reset password = staff/nurse + admin.
+* **One shared queue.**
+* A consultation can be deleted only by the **admin or its creator**; every deletion leaves an audit snapshot.
+* Prescriptions: a doctor writes only in their own name; staff only on a recorded **verbal / phone order**; staff cancel, never delete.
+* Lab requests: completed / referred / rejected never deletable; collected / processing must be cancelled first.
+* Accomplishment report: illness = picker from the clinic list by body system; services = checklist + automatic counts; columns = every college + GS + F&S (+ Guests / Unspecified when used); visit date = consultation date; report defaults to **Walk-in**; Prepared by = signed-in user, Noted by = University Physician in Settings.
+* Work inline (no agent workflows), test-first, ask when unsure.
+
+---
+
+## 7. To do on the clinic copy (deployment checklist)
+
+1. Back up the database (`php artisan db:backup`).
+2. Pull `changes_v2`, then `composer install` (`--no-dev` in production).
+3. `php artisan migrate` — creates the illness / service tables, snapshot columns, GS college, physician settings, soft-delete column, and rebuilds the Stock-out view. *(Already applied on the development database `norsu_clinic`.)*
+4. `npm ci && npm run prod` (built assets are not in git).
+5. Restart through the startup script (it clears and rebuilds the caches).
+6. Settings › General → fill **University Physician** (otherwise "Noted by" is blank).
+7. Tell doctors and staff who still use `123456` that they will be kept on their dashboard until they change it.
+8. Once, after a backup: `php artisan inventory:reconcile` (look for `RETURN-*` / `2099-12-31` batches left by the old consultation code).
+9. From the 2026-09-30 checklist, if not done yet: `consultation-images:secure`, `text:repair-entities`, `phone:normalize` (dry run first), `vendor:publish --tag=log-viewer-assets --force`, rotate the DB password.
+
+---
+
+## 8. What is not committed yet
+
+Everything since `1145357` (2026-10-01 and 2026-10-02) is in the working tree only. Proposed commits:
+
+1. **Staff/doctor workflow fixes** (R3-H1…H6, M1–M3, M8, M10, L2, L4, L18) + their regression tests.
+2. **Search + CSV + Accomplishment Report** (SearchTerm, report services, consultation classification, report lists, migrations, views) + tests.
+3. **Route / access audit fixes** (cache isolation, `staff.module` variadic, password gate, seeder, audit trail, soft delete, Lows) + tests.
+4. **Docs**: `full-reaudit-2026-10-01.md`, `accomplishment-report-2026-10.md`, `route-access-audit-2026-10-02.md`, this file.
+
+Waiting for your go-ahead to commit.
+
+---
+
+## 9. Where the detail is
+
+| Document | Content |
+|---|---|
+| [full-reaudit-2026-09-30.md](full-reaudit-2026-09-30.md), [-pass2.md](full-reaudit-2026-09-30-pass2.md) | pass 1 / pass 2 findings (C-, H-, M-, L-, P2-) |
+| [remediation-status-2026-09-30.md](remediation-status-2026-09-30.md) | what the 2026-09-30 phases fixed; accepted items; deployment checklist |
+| [full-reaudit-2026-10-01.md](full-reaudit-2026-10-01.md) | third pass (R3-*), status of earlier audits (§3), remediation status (§11, §12) |
+| [accomplishment-report-2026-10.md](accomplishment-report-2026-10.md) | search, CSV, filters, Accomplishment Report: design and counting rules |
+| [route-access-audit-2026-10-02.md](route-access-audit-2026-10-02.md) | admin 403 root cause, route × role audit method and results, fixes |
+| `tests/Feature/Regression/*` | one regression test file per fixed area |
+
+### How to keep this file current
+
+Update §1 (counts), move rows between §3 / §4 / §5 / §6 as items change, and add a line to §2 for each work session.
