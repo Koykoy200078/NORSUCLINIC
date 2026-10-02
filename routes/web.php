@@ -165,6 +165,10 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('setting.update');
         // Settings > Report lists: the illnesses / services behind the Accomplishment Report
+        // Settings > Deleted records: see who deleted a consultation / certificate / lab request and bring it back
+        Route::get('/settings/deleted-records', [\App\Http\Controllers\DeletedRecordController::class, 'index'])->name('deleted-records.index');
+        Route::post('/settings/deleted-records/{type}/{id}/restore', [\App\Http\Controllers\DeletedRecordController::class, 'restore'])
+            ->whereIn('type', ['document', 'lab-request'])->whereNumber('id')->name('deleted-records.restore');
         Route::get('/settings/report-lists', [\App\Http\Controllers\ReportListController::class, 'index'])->name('report-lists.index');
         Route::post('/settings/report-lists/illnesses', [\App\Http\Controllers\ReportListController::class, 'storeIllness'])->name('report-lists.illnesses.store');
         Route::put('/settings/report-lists/illnesses/{illness}', [\App\Http\Controllers\ReportListController::class, 'updateIllness'])->name('report-lists.illnesses.update');

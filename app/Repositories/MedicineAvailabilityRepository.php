@@ -162,6 +162,12 @@ class MedicineAvailabilityRepository extends BaseRepository
             return true;
         } catch (Exception $e) {
             DB::rollBack();
+
+            // A taken stock-in number is not a failure of the stock-in: let the caller draw another number.
+            if ($e instanceof \Illuminate\Database\QueryException && (int) ($e->errorInfo[1] ?? 0) === 1062) {
+                throw $e;
+            }
+
             \Illuminate\Support\Facades\Log::error('Purchase Medicine Store Error: ' . $e->getMessage());
             \Illuminate\Support\Facades\Log::error('Stack Trace: ' . $e->getTraceAsString());
             throw new UnprocessableEntityHttpException($e->getMessage());

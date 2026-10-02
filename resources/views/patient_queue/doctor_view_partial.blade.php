@@ -62,9 +62,15 @@ return $q->created_at->diffInMinutes(now());
                             | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                             @endif
                             @if($queue->has_consultation_attachment && $queue->latestConsultation)
-                            | <span class="badge bg-success" title="Has consultation form">
-                                <i class="fas fa-file-medical"></i> Form Available
+                            | @if($queue->attached_form_is_new)
+                            <span class="badge bg-success" title="Consultation form recorded for this visit">
+                                <i class="fas fa-file-medical"></i> New form
                             </span>
+                            @else
+                            <span class="badge bg-secondary" title="Only a form from an earlier visit is on file; nothing has been recorded for today yet">
+                                <i class="fas fa-file-medical"></i> Previous form
+                            </span>
+                            @endif
                             @endif
                         </p>
                         @if($queue->notes)
@@ -72,7 +78,7 @@ return $q->created_at->diffInMinutes(now());
                         @endif
                         @if($queue->has_consultation_attachment && $queue->latestConsultation)
                         <p class="mb-2">
-                            <strong>Latest Consultation:</strong>
+                            <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
                             <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                 class="btn btn-sm btn-outline-primary ms-2">
@@ -83,6 +89,12 @@ return $q->created_at->diffInMinutes(now());
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
+                                @if(! $queue->attached_form_is_new)
+                                <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
+                                    class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
+                                    <i class="fas fa-file-circle-plus"></i> Record form
+                                </a>
+                                @endif
                                 @if($queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                     class="btn btn-sm btn-primary"
@@ -138,9 +150,15 @@ return $q->created_at->diffInMinutes(now());
                             | <strong>Room:</strong> <span class="badge bg-info">{{ $queue->room_number }}</span>
                             @endif
                             @if($queue->has_consultation_attachment && $queue->latestConsultation)
-                            | <span class="badge bg-success" title="Has consultation form">
-                                <i class="fas fa-file-medical"></i> Form Available
+                            | @if($queue->attached_form_is_new)
+                            <span class="badge bg-success" title="Consultation form recorded for this visit">
+                                <i class="fas fa-file-medical"></i> New form
                             </span>
+                            @else
+                            <span class="badge bg-secondary" title="Only a form from an earlier visit is on file; nothing has been recorded for today yet">
+                                <i class="fas fa-file-medical"></i> Previous form
+                            </span>
+                            @endif
                             @endif
                         </p>
                         @if($queue->notes)
@@ -148,7 +166,7 @@ return $q->created_at->diffInMinutes(now());
                         @endif
                         @if($queue->has_consultation_attachment && $queue->latestConsultation)
                         <p class="mb-2">
-                            <strong>Latest Consultation:</strong>
+                            <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
                             <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                 class="btn btn-sm btn-outline-primary ms-2">
@@ -159,6 +177,12 @@ return $q->created_at->diffInMinutes(now());
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
+                                @if(! $queue->attached_form_is_new)
+                                <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
+                                    class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
+                                    <i class="fas fa-file-circle-plus"></i> Record form
+                                </a>
+                                @endif
                                 @if($queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                     class="btn btn-sm btn-primary"

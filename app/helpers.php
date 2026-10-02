@@ -1083,9 +1083,34 @@ if (! function_exists('generateUniqueLabRequestNumber')) {
     {
         do {
             $code = random_int(100000, 999999);
-        } while (\App\Models\LabRequest::where('request_number', $code)->exists());
+        } while (\App\Models\LabRequest::withTrashed()->where('request_number', $code)->exists());
 
         return $code;
+    }
+}
+
+if (! function_exists('retryOnDuplicateKey')) {
+    /**
+     * Run $attempt; if the database refuses it because a unique number was taken a moment earlier by someone else
+     * (duplicate key), run it again so it can draw a new number. Any other error is thrown at once.
+     * The numbers are drawn at random and checked before saving, which leaves a tiny race between two simultaneous
+     * saves; the unique index catches it and this retries. pass-1 L-05.
+     *
+     * @param  callable(int): mixed  $attempt  receives the attempt number (1, 2, ...)
+     */
+    function retryOnDuplicateKey(callable $attempt, int $times = 5)
+    {
+        for ($try = 1; ; $try++) {
+            try {
+                return $attempt($try);
+            } catch (\Illuminate\Database\QueryException $e) {
+                $duplicate = (int) ($e->errorInfo[1] ?? 0) === 1062;
+
+                if (! $duplicate || $try >= $times) {
+                    throw $e;
+                }
+            }
+        }
     }
 }
 

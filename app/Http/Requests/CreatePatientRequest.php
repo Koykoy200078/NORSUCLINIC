@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ChecksArchivedAccounts;
 use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Models\Patient;
 use App\Rules\PhilippinePhoneNumber;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreatePatientRequest extends FormRequest
 {
+    use ChecksArchivedAccounts;
     use NormalizesPhilippinePhone;
 
     /**
@@ -32,7 +34,9 @@ class CreatePatientRequest extends FormRequest
         $rules = Patient::$rules;
 
         // Guest (id=4) does not require university_id_number; Student, Staff, Faculty do.
-        $rules['university_id_number'] = 'nullable|string|max:100|unique:users,university_id_number';
+        // Unique among ACTIVE accounts; a match with an archived one gets its own clear message (see withValidator). M-13.
+        $rules['email'] = ['nullable', 'email', $this->uniqueAmongActiveUsers('email')];
+        $rules['university_id_number'] = ['nullable', 'string', 'max:100', $this->uniqueAmongActiveUsers('university_id_number')];
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
         $rules['immunization_record'] = 'required|string';
@@ -45,6 +49,11 @@ class CreatePatientRequest extends FormRequest
 
     public function withValidator($validator)
     {
+        $this->validateArchivedAccountConflicts($validator, [
+            'email' => 'email',
+            'university_id_number' => 'university_id_number',
+        ]);
+
         $validator->after(function ($validator) {
             $patientTypeId = $this->input('patient_type_id');
             $universityId = $this->input('university_id_number');

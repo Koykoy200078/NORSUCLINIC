@@ -17,6 +17,10 @@
                     <a class="nav-link p-0 {{ (isset($sectionName) && $sectionName == 'report-lists') ? 'active' : ''}}"
                        href="{{ route('report-lists.index') }}">{{ __('Report lists') }}</a>
                 </li>
+                <li class="nav-item position-relative me-7 mb-3" role="presentation">
+                    <a class="nav-link p-0 {{ (isset($sectionName) && $sectionName == 'deleted-records') ? 'active' : ''}}"
+                       href="{{ route('deleted-records.index') }}">{{ __('Deleted records') }}</a>
+                </li>
             </ul>
         </div>
     </div>

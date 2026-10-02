@@ -25,8 +25,14 @@ $exportPdfUrl = $documentId
     <div class="flex justify-between items-center mb-4">
         <a href="{{ $indexUrlWithModule }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
 
-        @if($exportPdfUrl)
         <div class="flex gap-2">
+            {{-- The doctor opens the nurse's form from the queue; this is the way on to the assessment and plan. --}}
+            @if($requestDocument->document_type == 'consultation_form' && canStaffAccessModule('consultations'))
+            <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $requestDocument->id]) }}" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2">
+                <i class="fas fa-pen"></i> Edit / add assessment &amp; plan
+            </a>
+            @endif
+            @if($exportPdfUrl)
             @if($requestDocument->document_type == 'excuse_slip' || $requestDocument->document_type == 'medical_certificate')
             <a href="{{ $exportPdfUrl }}{{ str_contains($exportPdfUrl, '?') ? '&' : '?' }}action=print" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2" target="_blank">
                 <i class="fas fa-print"></i> Direct Print (Fast)
@@ -35,8 +41,8 @@ $exportPdfUrl = $documentId
             <a href="{{ $exportPdfUrl }}" class="bg-green-500 text-white px-4 py-2 rounded shadow-sm hover:bg-green-600 transition-colors flex items-center gap-2" target="_blank">
                 <i class="fas fa-file-pdf"></i> Export via PDF
             </a>
+            @endif
         </div>
-        @endif
     </div>
 
     @if ($requestDocument->document_type == 'consultation_form')

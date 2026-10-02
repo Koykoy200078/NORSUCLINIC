@@ -102,16 +102,8 @@ class PatientQueueController extends Controller
                 return;
             }
 
-            // Get patient's latest consultation form if it exists
-            $latestConsultation = \App\Models\RequestDocuments::where('user_id', function ($query) use ($validated) {
-                $query->select('user_id')
-                    ->from('patients')
-                    ->where('id', $validated['patient_id'])
-                    ->limit(1);
-            })
-                ->where('document_type', 'consultation_form')
-                ->orderBy('created_at', 'desc')
-                ->first();
+            // The patient's latest consultation form on file (today's, if the nurse has already recorded it).
+            $latestConsultation = PatientQueue::latestConsultationFor((int) $validated['patient_id']);
 
             if ($latestConsultation) {
                 $validated['latest_consultation_id'] = $latestConsultation->id;
@@ -126,8 +118,13 @@ class PatientQueueController extends Controller
         }
 
         $message = 'Patient added to queue successfully.';
-        if ($latestConsultation) {
-            $message .= ' Latest consultation form attached.';
+        if ($latestConsultation && $latestConsultation->created_at->isToday()) {
+            $message .= " Today's consultation form is attached.";
+        } elseif ($latestConsultation) {
+            $message .= ' The previous consultation form (' . $latestConsultation->created_at->format('M d, Y') . ') is attached. '
+                . "Record today's consultation and it will replace it on the doctor's screen.";
+        } else {
+            $message .= " No consultation form yet: record one and it will appear on the doctor's screen by itself.";
         }
 
         return redirect()->route($this->getIndexRoute())
@@ -301,14 +298,11 @@ class PatientQueueController extends Controller
             return redirect()->back()->with('error', 'No consultation form found for this patient.');
         }
 
-        // Redirect to patient history with consultation form
-        $patientId = $patientQueue->patient->id;
-        $consultationId = $patientQueue->latest_consultation_id;
-
-        // Route to patient history page with specific consultation highlighted
-        return redirect()->route('doctors.patients.showMyHistory', [
-            'patient' => $patientId,
-            'consultation_id' => $consultationId
-        ])->with('info', 'Viewing consultation form for queue patient: ' . $patientQueue->patient->user->full_name);
+        // Open the attached form itself (complaints, vital signs, ...), with the button to add the assessment and
+        // plan. It used to open the patient's whole history table and ignore which form was attached, so the doctor
+        // could not tell which row was the new one and never saw the complaint.
+        return redirect()->route('doctors.document-issuances.show', $patientQueue->latestConsultation)
+            ->with('info', ($patientQueue->attached_form_is_new ? 'This visit\'s' : 'Previous visit\'s')
+                . ' consultation form of queue patient: ' . $patientQueue->patient->user->full_name);
     }
 }

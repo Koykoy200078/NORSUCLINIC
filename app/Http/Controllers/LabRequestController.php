@@ -118,7 +118,7 @@ class LabRequestController extends Controller
 
                 $patient = $patientUser->patient;
 
-                $labRequest = LabRequest::create([
+                $labRequest = retryOnDuplicateKey(fn () => LabRequest::create([
                     'request_number'       => generateUniqueLabRequestNumber(),
                     'document_creator_id'  => Auth::id(),
                     'patient_user_id'      => $patientUser->id,
@@ -141,7 +141,7 @@ class LabRequestController extends Controller
                     'requesting_physician' => $request->requesting_physician,
                     'physician_license_no' => $request->physician_license_no,
                     'status'               => LabRequest::STATUS_PENDING,
-                ]);
+                ]));
 
                 // Attach selected tests as items (snapshot key data)
                 $tests = LabTest::whereIn('id', $selectedTestIds)->get();
@@ -559,7 +559,7 @@ class LabRequestController extends Controller
         $users = User::where('type', User::PATIENT)
             // Every typed word must be found in the name / e-mail / ID columns ("Ana Reyes", "Reyes, Ana", "ana*").
             ->where(fn ($q) => SearchTerm::whereAllWords($q, $query, SearchTerm::PERSON_COLUMNS))
-            ->with(['patient.address.barangay', 'patient.address.city', 'patient.address.state', 'campus', 'college', 'course', 'yearLevel', 'department', 'office', 'address.barangay', 'address.city', 'address.state'])
+            ->with(['patient.patientType', 'patient.address.barangay', 'patient.address.city', 'patient.address.state', 'campus', 'college', 'course', 'yearLevel', 'department', 'office', 'address.barangay', 'address.city', 'address.state'])
             ->orderBy('id')
             ->limit(25)
             ->get()
@@ -581,7 +581,8 @@ class LabRequestController extends Controller
                     'department' => $user->department?->department_name,
                     'office'     => $user->office?->office_name,
                     'address'    => $user->address?->full_address ?? ($user->patient?->address?->full_address ?? ''),
-                    'status_affiliation' => User::STATUS_AFFILIATION[$user->patient?->patient_type_id] ?? 'guest',
+                    // By the patient type's code (student / staff / faculty / guest), not by the id the seeder gave it. R3-L14.
+                    'status_affiliation' => $user->patient?->patientType?->code ?? 'guest',
                 ];
             });
 

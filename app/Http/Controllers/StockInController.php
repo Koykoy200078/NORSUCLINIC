@@ -65,12 +65,19 @@ class StockInController extends AppBaseController
     {
         $input = $request->all();
 
-        if (empty($input['availability_no'])) {
-            $input['availability_no'] = generateUniqueAvailabilityNumber();
-        }
+        $numberWasDrawn = empty($input['availability_no']);
 
         try {
-            $this->medicineAvailabilityRepository->store($input);
+            if ($numberWasDrawn) {
+                // Two stock-ins saved at the same moment can draw the same number; the unique index refuses the
+                // second one and it is saved again with a new number. pass-1 L-05.
+                retryOnDuplicateKey(function () use (&$input) {
+                    $input['availability_no'] = generateUniqueAvailabilityNumber();
+                    $this->medicineAvailabilityRepository->store($input);
+                });
+            } else {
+                $this->medicineAvailabilityRepository->store($input);
+            }
         } catch (\Throwable $e) {
             Log::error('Stock-in store failed: ' . $e->getMessage());
             $message = $this->stockInErrorMessage($e, 'The stock-in could not be saved.');

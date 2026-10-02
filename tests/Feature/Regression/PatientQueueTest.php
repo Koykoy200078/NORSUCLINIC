@@ -237,6 +237,6 @@ class PatientQueueTest extends TestCase
         // ... so the doctor can open the form from the queue.
         $doctor = $this->makeDoctor();
         $this->actingAs($doctor)->get(route('doctors.patient-queue.view-consultation', $entry))
-            ->assertRedirect(route('doctors.patients.showMyHistory', ['patient' => $patient->id, 'consultation_id' => $consultation->id]));
+            ->assertRedirect(route('doctors.document-issuances.show', $consultation));
     }
 }

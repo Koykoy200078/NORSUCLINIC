@@ -32,9 +32,10 @@ $regularQueues = $queues->where('is_priority', false);
                                 <td>
                                     <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                     <small class="text-muted">{{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}</small>
-                                    @if($queue->has_consultation_attachment)
-                                    <br><span class="badge badge-sm bg-success mt-1">
-                                        <i class="fas fa-file-medical"></i> Has Form
+                                    @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                    <br><span class="badge badge-sm {{ $queue->attached_form_is_new ? 'bg-success' : 'bg-secondary' }} mt-1"
+                                              title="{{ $queue->attached_form_is_new ? 'Form recorded for this visit' : 'Only a form from an earlier visit is on file' }}">
+                                        <i class="fas fa-file-medical"></i> {{ $queue->attached_form_is_new ? 'Has form (this visit)' : 'Earlier form only' }}
                                     </span>
                                     @endif
                                 </td>
@@ -73,6 +74,13 @@ $regularQueues = $queues->where('is_priority', false);
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         </form>
+                                        @endif
+
+                                        @if(! $queue->attached_form_is_new && canStaffAccessModule('consultations'))
+                                        <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
+                                           class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
+                                            <i class="fas fa-file-circle-plus"></i>
+                                        </a>
                                         @endif
 
                                         <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="btn btn-sm btn-warning" title="Edit">
@@ -127,9 +135,10 @@ $regularQueues = $queues->where('is_priority', false);
                                 <td>
                                     <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                     <small class="text-muted">{{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}</small>
-                                    @if($queue->has_consultation_attachment)
-                                    <br><span class="badge badge-sm bg-success mt-1">
-                                        <i class="fas fa-file-medical"></i> Has Form
+                                    @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                    <br><span class="badge badge-sm {{ $queue->attached_form_is_new ? 'bg-success' : 'bg-secondary' }} mt-1"
+                                              title="{{ $queue->attached_form_is_new ? 'Form recorded for this visit' : 'Only a form from an earlier visit is on file' }}">
+                                        <i class="fas fa-file-medical"></i> {{ $queue->attached_form_is_new ? 'Has form (this visit)' : 'Earlier form only' }}
                                     </span>
                                     @endif
                                 </td>
@@ -168,6 +177,13 @@ $regularQueues = $queues->where('is_priority', false);
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         </form>
+                                        @endif
+
+                                        @if(! $queue->attached_form_is_new && canStaffAccessModule('consultations'))
+                                        <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
+                                           class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
+                                            <i class="fas fa-file-circle-plus"></i>
+                                        </a>
                                         @endif
 
                                         <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="btn btn-sm btn-warning" title="Edit">

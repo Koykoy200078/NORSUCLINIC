@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\IllnessSystem;
 use App\Models\ServiceType;
 use App\Support\AuditLog;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
@@ -48,6 +50,15 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    private function recordAttempt(string $action, string $description, ?string $email, ?object $user): void
+    {
+        try {
+            AuditLog::recordAttempt($action, $description, $email, $user instanceof \App\Models\User ? $user : null);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
+
     private function recordSession(string $action, string $description, object $event): void
     {
         if (! $event->user) {
@@ -71,6 +82,12 @@ class AppServiceProvider extends ServiceProvider
         // Who signed in and out, and from where. (Failed attempts are rate limited and not stored.) R3-M5.
         Event::listen(Login::class, fn (Login $event) => $this->recordSession('login', 'Signed in', $event));
         Event::listen(Logout::class, fn (Logout $event) => $this->recordSession('logout', 'Signed out', $event));
+        Event::listen(Failed::class, function (Failed $event) {
+            $this->recordAttempt('login_failed', 'Failed sign-in attempt', $event->credentials['email'] ?? null, $event->user);
+        });
+        Event::listen(Lockout::class, function (Lockout $event) {
+            $this->recordAttempt('login_locked_out', 'Sign-in blocked: too many attempts', (string) $event->request->input('email'), null);
+        });
 
         // The clinic runs on a private LAN over plain HTTP. The URL scheme is therefore decided by an
         // explicit switch (config('app.force_https') <- FORCE_HTTPS), never by APP_ENV: forcing

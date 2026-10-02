@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ChecksArchivedAccounts;
 use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Models\Patient;
 use App\Rules\PhilippinePhoneNumber;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class UpdatePatientRequest extends FormRequest
 {
+    use ChecksArchivedAccounts;
     use NormalizesPhilippinePhone;
 
     /**
@@ -37,8 +39,8 @@ class UpdatePatientRequest extends FormRequest
         $rules = Patient::$editRules;
 
         if ($patient instanceof Patient) {
-            $rules['email'] = 'nullable|email:filter|unique:users,email,' . $patient->user_id;
-            $rules['university_id_number'] = 'nullable|string|max:100|unique:users,university_id_number,' . $patient->user_id;
+            $rules['email'] = ['nullable', 'email:filter', $this->uniqueAmongActiveUsers('email', (int) $patient->user_id)];
+            $rules['university_id_number'] = ['nullable', 'string', 'max:100', $this->uniqueAmongActiveUsers('university_id_number', (int) $patient->user_id)];
         } else {
             // Fallback - should not reach here if route model binding works
             Log::error('UpdatePatientRequest: Patient parameter is NULL or not instance of Patient', [
@@ -63,12 +65,20 @@ class UpdatePatientRequest extends FormRequest
 
     public function withValidator($validator)
     {
+        $patient = $this->route()->parameter('patient');
+        $this->validateArchivedAccountConflicts($validator, [
+            'email' => 'email',
+            'university_id_number' => 'university_id_number',
+        ], $patient instanceof Patient ? (int) $patient->user_id : null);
+
         $validator->after(function ($validator) {
             $patientTypeId = $this->input('patient_type_id');
             $universityId = $this->input('university_id_number');
 
-            // Guest (id=4) is exempt; all other types require university_id_number
-            if ($patientTypeId != '4' && (empty($universityId) || trim($universityId) === '')) {
+            // Guest is exempt; all other types require university_id_number. Looked up by code, not by the id the
+            // seeder happened to give it. R3-L14.
+            $guestTypeId = (string) \App\Models\PatientType::where('code', 'guest')->value('id');
+            if ((string) $patientTypeId !== $guestTypeId && (empty($universityId) || trim($universityId) === '')) {
                 $validator->errors()->add('university_id_number', 'The university id number field is required.');
             }
         });

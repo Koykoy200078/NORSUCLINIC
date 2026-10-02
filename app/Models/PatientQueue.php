@@ -104,26 +104,68 @@ class PatientQueue extends Model
     }
 
     /**
+     * The patient's most recent consultation form that is still on file (a deleted one is skipped).
+     */
+    public static function latestConsultationFor(int $patientId): ?DocumentIssuance
+    {
+        $userId = Patient::whereKey($patientId)->value('user_id');
+
+        if (! $userId) {
+            return null;
+        }
+
+        return DocumentIssuance::where('user_id', $userId)
+            ->where('document_type', 'consultation_form')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->first();
+    }
+
+    /**
      * Attach a consultation recorded after the patient was queued, so the doctor can open the form
      * from the queue screen.
      */
     public static function attachConsultation(DocumentIssuance $consultation): void
     {
-        if (! $consultation->user_id) {
-            return;
+        if ($consultation->user_id) {
+            static::syncAttachment((int) $consultation->user_id);
         }
+    }
 
-        $patientId = Patient::where('user_id', $consultation->user_id)->value('id');
+    /**
+     * Point the patient's open queue entry at their latest consultation that is still on file, or at nothing when
+     * there is none. Run after a consultation is saved, deleted or restored, so the doctor's screen never shows a
+     * form that no longer exists and always shows the newest one.
+     */
+    public static function syncAttachment(int $userId): void
+    {
+        $patientId = Patient::where('user_id', $userId)->value('id');
         if (! $patientId) {
             return;
         }
 
+        $latest = static::latestConsultationFor((int) $patientId);
+
         static::where('patient_id', $patientId)
             ->whereIn('status', self::OPEN_STATUSES)
             ->update([
-                'latest_consultation_id' => $consultation->id,
-                'has_consultation_attachment' => true,
+                'latest_consultation_id' => $latest?->id,
+                'has_consultation_attachment' => $latest !== null,
             ]);
+    }
+
+    /**
+     * True when the attached form was recorded on the same day as this queue entry, i.e. it belongs to today's
+     * visit. False when the attached form is an earlier visit's: the doctor can read it, but the nurse has not
+     * recorded today's yet.
+     */
+    public function getAttachedFormIsNewAttribute(): bool
+    {
+        $form = $this->latestConsultation;
+
+        return $form !== null
+            && $form->created_at !== null
+            && $form->created_at->isSameDay($this->created_at ?? now());
     }
 
     /**

@@ -2145,6 +2145,11 @@ class DocumentIssuanceController extends Controller
                 self::logDocumentDeletion($request_document);
 
                 $request_document->delete();
+
+                // The doctor's queue screen must not keep pointing at a form that is gone.
+                if ($request_document->document_type === 'consultation_form' && $request_document->user_id) {
+                    \App\Models\PatientQueue::syncAttachment((int) $request_document->user_id);
+                }
             });
 
             Log::info('Document deleted successfully', ['document_id' => $request_document->id]);

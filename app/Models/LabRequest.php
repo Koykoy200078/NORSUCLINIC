@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\LabRequest
@@ -14,7 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LabRequest extends Model
 {
-    use HasFactory;
+    // Deleting a (pending / cancelled) lab request only hides it: the row and its tests stay and the administrator
+    // can restore it (Settings > Deleted records). R3-M6.
+    use HasFactory, SoftDeletes;
 
     protected $table = 'lab_requests';
 
@@ -117,9 +120,11 @@ class LabRequest extends Model
     {
         parent::boot();
 
-        // Cascade-delete items when the request is hard-deleted
+        // The tests go only if the request is ever removed for good; a normal delete keeps them with it.
         static::deleting(function ($labRequest) {
-            $labRequest->items()->delete();
+            if ($labRequest->isForceDeleting()) {
+                $labRequest->items()->delete();
+            }
         });
     }
 

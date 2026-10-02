@@ -2,6 +2,12 @@
 @php
     $report = $accomplishment;
     $linkQuery = \Illuminate\Support\Arr::except($exportQuery, ['tab']);
+    // The consultations of this report that still have no illness picked, ready to be opened and classified.
+    $classifyLink = isRole('clinic_admin')
+        ? route('activity-logs.index', array_merge(\Illuminate\Support\Arr::except($linkQuery, ['illness_system_id']), ['tab' => 'visits', 'illness_id' => 'none']))
+        : (isRole('staff')
+            ? route('staff.activity-logs.index', array_merge(\Illuminate\Support\Arr::except($linkQuery, ['illness_system_id']), ['tab' => 'visits', 'illness_id' => 'none']))
+            : route('doctors.activity-logs.index', array_merge(\Illuminate\Support\Arr::except($linkQuery, ['illness_system_id']), ['tab' => 'visits', 'illness_id' => 'none'])));
     $accomplishmentLink = fn (string $format) => isRole('clinic_admin')
         ? route('activity-logs.accomplishment', ['format' => $format] + $linkQuery)
         : (isRole('staff')
@@ -42,6 +48,9 @@
         <span class="{{ $report['unclassified'] > 0 ? 'text-warning' : '' }}">
             Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.
         </span>
+        @if($report['unclassified'] > 0)
+            <a href="{{ $classifyLink }}" class="ms-1">Show them and classify</a>
+        @endif
     </span>
 </div>
 

@@ -22,6 +22,8 @@ class AuditAdministrativeActions
 {
     /** path (without the admin/ doctors/ staff/ prefix) => [action code, what it is] */
     private const AREAS = [
+        // restoring a deleted record writes its own, fuller line
+        '#^settings/deleted-records/#' => ['__skip', ''],
         '#^settings(/|$)#' => ['settings_changed', 'settings'],
         '#^roles(/|$)#' => ['roles_changed', 'role or permissions'],
         '#(^|/)reset-password$#' => ['password_reset', 'password reset'],
@@ -106,7 +108,7 @@ class AuditAdministrativeActions
     {
         foreach (self::AREAS + self::OWN_ACCOUNT as $pattern => $area) {
             if (preg_match($pattern, $path)) {
-                return $area;
+                return $area[0] === '__skip' ? null : $area;
             }
         }
 

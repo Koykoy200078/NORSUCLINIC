@@ -61,7 +61,14 @@
                     <div>{{ $report->nursingInCharge?->full_name ?? '-' }}</div>
                     <div class="text-gray-600 fs-7">{{ $report->creator->full_name ?? 'System' }}</div>
                 </td>
-                <td class="text-end">
+                <td class="text-end text-nowrap">
+                    @if(canStaffAccessModule('consultations'))
+                    <a href="{{ route(isRole('clinic_admin') ? 'document-issuances.edit' : (isRole('staff') ? 'staff.document-issuances.edit' : 'doctors.document-issuances.edit'), $report->id) }}"
+                       class="btn btn-sm {{ $report->illnesses->isEmpty() ? 'btn-light-warning' : 'btn-light' }}" target="_blank"
+                       title="Open the consultation to pick the illness and services">
+                        <i class="fas fa-pen"></i> {{ $report->illnesses->isEmpty() ? 'Classify' : 'Edit' }}
+                    </a>
+                    @endif
                     <a href="{{ route(isRole('clinic_admin') ? 'document-issuances.show' : (isRole('staff') ? 'staff.document-issuances.show' : 'doctors.document-issuances.show'), $report->id) }}"
                        class="btn btn-sm btn-light-primary" target="_blank">
                         <i class="fas fa-eye"></i> View
