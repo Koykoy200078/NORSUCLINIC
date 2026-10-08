@@ -30,14 +30,15 @@ class ConsultationSnapshotBackfill
     {
         $lookups = [];
         foreach (self::NAMED as $nameColumn => [$table, $column]) {
-            $lookups[$nameColumn] = DB::table($table)->pluck('id', $column)
+            $lookups[$nameColumn] = DB::table($table)->useWritePdo()->pluck('id', $column)
                 ->mapWithKeys(fn ($id, $name) => [$this->key($name) => (int) $id])->all();
         }
 
-        $types = DB::table('patient_types')->pluck('id', 'code')->mapWithKeys(fn ($id, $code) => [strtolower((string) $code) => (int) $id])->all();
+        $types = DB::table('patient_types')->useWritePdo()->pluck('id', 'code')->mapWithKeys(fn ($id, $code) => [strtolower((string) $code) => (int) $id])->all();
         $updated = 0;
 
         DB::table('document_issuances')
+            ->useWritePdo()
             ->where(function ($query) {
                 foreach (['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id'] as $column) {
                     $query->orWhereNull($column);
@@ -46,8 +47,8 @@ class ConsultationSnapshotBackfill
             ->orderBy('id')
             ->chunkById(200, function ($documents) use ($lookups, $types, &$updated) {
                 $userIds = $documents->pluck('user_id')->filter()->unique()->all();
-                $users = DB::table('users')->whereIn('id', $userIds)->get()->keyBy('id');
-                $patientTypes = DB::table('patients')->whereIn('user_id', $userIds)->pluck('patient_type_id', 'user_id');
+                $users = DB::table('users')->useWritePdo()->whereIn('id', $userIds)->get()->keyBy('id');
+                $patientTypes = DB::table('patients')->useWritePdo()->whereIn('user_id', $userIds)->pluck('patient_type_id', 'user_id');
 
                 foreach ($documents as $document) {
                     $user = $users->get($document->user_id);

@@ -32,13 +32,14 @@ return new class extends Migration
 
         if (Schema::hasTable('medicine_availabilities') && Schema::hasColumn('medicine_availabilities', 'availability_no')) {
             $duplicates = DB::table('medicine_availabilities')
+                ->useWritePdo()
                 ->select('availability_no')
                 ->whereNotNull('availability_no')
                 ->groupBy('availability_no')
                 ->havingRaw('COUNT(*) > 1')
                 ->count();
 
-            $hasIndex = collect(DB::select('SHOW INDEX FROM medicine_availabilities'))
+            $hasIndex = collect(DB::selectFromWriteConnection('SHOW INDEX FROM medicine_availabilities'))
                 ->contains(fn ($index) => $index->Column_name === 'availability_no' && (int) $index->Non_unique === 0);
 
             if ($duplicates === 0 && ! $hasIndex) {
@@ -54,7 +55,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasColumn('lab_requests', 'deleted_at')) {
-            $deleted = DB::table('lab_requests')->whereNotNull('deleted_at')->count();
+            $deleted = DB::table('lab_requests')->useWritePdo()->whereNotNull('deleted_at')->count();
             if ($deleted > 0) {
                 throw new RuntimeException("{$deleted} deleted lab request(s) would become visible again. Restore or purge them first.");
             }
@@ -67,7 +68,7 @@ return new class extends Migration
             });
         }
 
-        $hasIndex = collect(DB::select('SHOW INDEX FROM medicine_availabilities'))->contains(fn ($index) => $index->Key_name === self::INDEX);
+        $hasIndex = collect(DB::selectFromWriteConnection('SHOW INDEX FROM medicine_availabilities'))->contains(fn ($index) => $index->Key_name === self::INDEX);
         if ($hasIndex) {
             LegacyMysqlMigration::withoutZeroDateChecks(function () {
                 Schema::table('medicine_availabilities', function (Blueprint $table) {

@@ -56,7 +56,8 @@ return new class extends Migration
 
         return DB::selectOne(
             'SELECT COUNT(*) AS c FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND INDEX_NAME = ?',
-            [$table, $index]
+            [$table, $index],
+            false
         )->c > 0;
     }
 };

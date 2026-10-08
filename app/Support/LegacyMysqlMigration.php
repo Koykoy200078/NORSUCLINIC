@@ -19,7 +19,9 @@ final class LegacyMysqlMigration
         // Read the writer's mode; SELECT normally uses the read connection.
         // In migrate --pretend, SELECT has no result and statements are only logged.
         $sqlMode = $connection->selectOne('SELECT @@SESSION.sql_mode AS sql_mode', [], false)?->sql_mode ?? '';
-        $legacySqlMode = implode(',', array_diff(explode(',', $sqlMode), ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE']));
+        // The server retains TRADITIONAL alongside its expanded flags. Keeping
+        // that alias would enable the zero-date flags again on SET SESSION.
+        $legacySqlMode = implode(',', array_diff(explode(',', $sqlMode), ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL']));
 
         try {
             $connection->statement('SET SESSION sql_mode = ?', [$legacySqlMode]);

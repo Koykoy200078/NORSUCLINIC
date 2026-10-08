@@ -37,8 +37,9 @@ return new class extends Migration
             $exists = DB::selectOne(
                 'SELECT COUNT(*) AS c FROM information_schema.TABLE_CONSTRAINTS
                  WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = \'FOREIGN KEY\'',
-                [$fk['table'], $fk['name']]
-            )->c;
+                [$fk['table'], $fk['name']],
+                false
+            )?->c ?? 0;
 
             if (! $exists) {
                 continue;

@@ -20,13 +20,14 @@ return new class extends Migration
 
         LegacyMysqlMigration::withoutZeroDateChecks(function () {
             $duplicates = DB::table('medicine_bills')
+                ->useWritePdo()
                 ->select('history_number')
                 ->groupBy('history_number')
                 ->havingRaw('COUNT(*) > 1')
                 ->pluck('history_number');
 
             foreach ($duplicates as $historyNumber) {
-                $ids = DB::table('medicine_bills')->where('history_number', $historyNumber)->orderBy('id')->pluck('id');
+                $ids = DB::table('medicine_bills')->useWritePdo()->where('history_number', $historyNumber)->orderBy('id')->pluck('id');
 
                 foreach ($ids->slice(1) as $id) {
                     DB::table('medicine_bills')->where('id', $id)->update([

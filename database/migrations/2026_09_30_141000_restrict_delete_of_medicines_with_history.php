@@ -45,7 +45,8 @@ return new class extends Migration
                    ON r.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA AND r.CONSTRAINT_NAME = k.CONSTRAINT_NAME
                  WHERE k.TABLE_SCHEMA = DATABASE() AND k.TABLE_NAME = ? AND k.COLUMN_NAME = ?
                    AND k.REFERENCED_TABLE_NAME = ?',
-                [$fk['table'], $fk['column'], $fk['ref_table']]
+                [$fk['table'], $fk['column'], $fk['ref_table']],
+                false
             );
 
             if (! $existing) {

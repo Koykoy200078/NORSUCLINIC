@@ -35,7 +35,7 @@ return new class extends Migration
             return;
         }
 
-        $deleted = \Illuminate\Support\Facades\DB::table('document_issuances')->whereNotNull('deleted_at')->count();
+        $deleted = \Illuminate\Support\Facades\DB::table('document_issuances')->useWritePdo()->whereNotNull('deleted_at')->count();
         if ($deleted > 0) {
             throw new RuntimeException("{$deleted} deleted clinical record(s) would become visible again. Recover or purge them first.");
         }

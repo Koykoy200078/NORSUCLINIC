@@ -21,20 +21,22 @@ return new class extends Migration
         }
 
         $duplicateKeys = DB::table('settings')
+            ->useWritePdo()
             ->select('key')
             ->groupBy('key')
             ->havingRaw('COUNT(*) > 1')
             ->pluck('key');
 
         foreach ($duplicateKeys as $key) {
-            $keepId = DB::table('settings')->where('key', $key)->min('id');
+            $keepId = DB::table('settings')->useWritePdo()->where('key', $key)->min('id');
             DB::table('settings')->where('key', $key)->where('id', '!=', $keepId)->delete();
         }
 
         $hasIndex = in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)
             && DB::selectOne(
                 'SELECT COUNT(*) AS c FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND INDEX_NAME = ?',
-                ['settings', 'settings_key_unique']
+                ['settings', 'settings_key_unique'],
+                false
             )->c > 0;
 
         if (! $hasIndex) {

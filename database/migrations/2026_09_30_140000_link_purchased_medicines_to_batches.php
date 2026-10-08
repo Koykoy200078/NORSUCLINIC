@@ -35,10 +35,11 @@ return new class extends Migration
             return;
         }
 
-        $lines = DB::table('purchased_medicines')->whereNull('batch_id')->whereNotNull('medicine_id')->get();
+        $lines = DB::table('purchased_medicines')->useWritePdo()->whereNull('batch_id')->whereNotNull('medicine_id')->get();
 
         foreach ($lines as $line) {
             $candidates = DB::table('medicine_transactions as t')
+                ->useWritePdo()
                 ->join('medicine_batches as b', 'b.id', '=', 't.batch_id')
                 ->where('t.transaction_type', 'stock_in')
                 ->where('t.reference_id', $line->medicine_availabilities_id)

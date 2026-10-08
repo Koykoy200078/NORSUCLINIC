@@ -131,6 +131,26 @@ class LegacyColumnDefaultsMigrationTest extends TestCase
         $this->assertSame($originalMode, $this->sqlMode());
     }
 
+    public function test_traditional_mode_allows_the_defaults_and_index_upgrade_without_mode_leaks(): void
+    {
+        DB::statement("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'");
+        DB::statement('CREATE TABLE `sale_medicines` (
+            `id` INT PRIMARY KEY, `medicine_bill_id` INT NOT NULL, `medicine_id` INT NOT NULL,
+            `expiry_date` DATETIME NOT NULL
+        ) ENGINE=MyISAM');
+        DB::statement("INSERT INTO `sale_medicines` VALUES (1, 1, 1, '0000-00-00 00:00:00')");
+        DB::statement("SET SESSION sql_mode = 'TRADITIONAL'");
+        $originalMode = $this->sqlMode();
+
+        $this->migration()->up();
+        $this->assertSame($originalMode, $this->sqlMode());
+        $this->loadMigration('2026_09_30_150000_add_sale_medicines_indexes.php')->up();
+
+        $this->assertSame('0000-00-00 00:00:00', DB::table('sale_medicines')->value('expiry_date'));
+        $this->assertSame($originalMode, $this->sqlMode());
+        $this->assertSame('YES', $this->column('sale_medicines', 'expiry_date')->is_nullable);
+    }
+
     public function test_the_history_number_indexes_can_be_changed_with_legacy_zero_timestamps(): void
     {
         $originalMode = $this->allowFixtureZeroDates();

@@ -23,9 +23,15 @@ class BuiltInServerRouterTest extends TestCase
 
     private int $port = 0;
 
+    private ?string $fixtureRoot = null;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Unique roots avoid Windows file locks from the previous server process.
+        $this->fixtureRoot = storage_path('framework/testing/router_'.bin2hex(random_bytes(6)));
+        $this->app->usePublicPath($this->fixtureRoot.'/public');
 
         $probe = stream_socket_server('tcp://127.0.0.1:0', $errno, $error);
         if (! $probe) {
@@ -38,7 +44,10 @@ class BuiltInServerRouterTest extends TestCase
         $this->file('uploads/_probe_shell.PHTML', '<?php echo "EXECUTED";');
         $this->file('uploads/consultation_images/_probe_photo.jpg', 'private-photo');
         $this->file('uploads/_probe_ok.txt', 'plain upload');
+        $this->file('uploads/_probe+plus.txt', 'plus upload');
         $this->file('_probe_script.php', '<?php echo "EXECUTED";');
+        $this->file('index.php', '<?php http_response_code(404); echo "Not Found";');
+        $this->file('../.env', "APP_KEY=fixture-only\nDB_PASSWORD=fixture-only\n");
 
         $this->server = new Process([PHP_BINARY, '-S', '127.0.0.1:' . $this->port, base_path('server.php')], public_path());
         $this->server->start();
@@ -63,8 +72,13 @@ class BuiltInServerRouterTest extends TestCase
         foreach (array_reverse($this->created) as $path) {
             @unlink($path);
         }
-        @rmdir(public_path('uploads/consultation_images'));
-        @rmdir(public_path('uploads'));
+        if ($this->fixtureRoot !== null) {
+            @rmdir(public_path('uploads/consultation_images'));
+            @rmdir(public_path('uploads'));
+            @rmdir(public_path('consultation_images'));
+            @rmdir(public_path());
+            @rmdir($this->fixtureRoot);
+        }
 
         parent::tearDown();
     }
@@ -106,6 +120,43 @@ class BuiltInServerRouterTest extends TestCase
     public function test_the_legacy_consultation_photo_folder_is_not_served_directly(): void
     {
         [$status, $body] = $this->fetch('/uploads/consultation_images/_probe_photo.jpg');
+
+        $this->assertSame(403, $status);
+        $this->assertStringNotContainsString('private-photo', $body);
+    }
+
+    public function test_windows_short_folder_names_cannot_reach_the_private_photo_folder(): void
+    {
+        $path = '/uploads/CONSUL~1/_probe_photo.jpg';
+        if (PHP_OS_FAMILY !== 'Windows' || ! is_file(public_path(ltrim($path, '/')))) {
+            $this->markTestSkipped('This filesystem does not expose the NTFS short name for consultation_images.');
+        }
+
+        [$status, $body] = $this->fetch($path);
+
+        $this->assertSame(403, $status);
+        $this->assertStringNotContainsString('private-photo', $body);
+    }
+
+    public function test_a_leading_double_slash_cannot_change_which_path_is_checked(): void
+    {
+        // A mirror makes the incorrectly parsed path an ordinary existing file.
+        $this->file('consultation_images/_probe_photo.jpg', 'public-mirror');
+
+        [$status, $body] = $this->fetch('//uploads/consultation_images/_probe_photo.jpg');
+
+        $this->assertSame(403, $status);
+        $this->assertStringNotContainsString('private-photo', $body);
+    }
+
+    public function test_ntfs_directory_stream_names_cannot_reach_the_private_photo_folder(): void
+    {
+        $path = '/uploads/consultation_images:$I30:$INDEX_ALLOCATION/_probe_photo.jpg';
+        if (PHP_OS_FAMILY !== 'Windows' || ! is_file(public_path(ltrim($path, '/')))) {
+            $this->markTestSkipped('This filesystem does not expose the NTFS directory stream alias.');
+        }
+
+        [$status, $body] = $this->fetch($path);
 
         $this->assertSame(403, $status);
         $this->assertStringNotContainsString('private-photo', $body);
@@ -172,9 +223,11 @@ class BuiltInServerRouterTest extends TestCase
 
     public function test_ordinary_files_are_still_served(): void
     {
-        [$status, $body] = $this->fetch('/uploads/_probe_ok.txt');
+        foreach (['/uploads/_probe_ok.txt' => 'plain upload', '/uploads/_probe+plus.txt' => 'plus upload', '/uploads/_probe%2Bplus.txt' => 'plus upload'] as $path => $expected) {
+            [$status, $body] = $this->fetch($path);
 
-        $this->assertSame(200, $status);
-        $this->assertSame('plain upload', $body);
+            $this->assertSame(200, $status, $path);
+            $this->assertSame($expected, $body, $path);
+        }
     }
 }

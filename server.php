@@ -21,7 +21,8 @@
 $publicPath = getcwd();
 
 // The server decodes %XX only ("+" stays "+"), so rawurldecode - not urldecode - is what it will serve.
-$uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '');
+// REQUEST_URI is a request path. parse_url() would mistake a leading // for a host.
+$uri = rawurldecode(explode('?', $_SERVER['REQUEST_URI'], 2)[0]);
 
 // Judge the path the way the server and Windows will RESOLVE it, not the way it was typed: forward slashes only,
 // no empty or "." segments, ".." removes the folder before it, and every name loses trailing dots and spaces
@@ -59,28 +60,62 @@ $forbidden = function (string $message): bool {
     return true;
 };
 
-if (preg_match('#^/uploads/consultation_images(/|$)#i', $checked)) {
-    return $forbidden('Forbidden');
-}
+$refusePath = function (string $path) use ($scriptExtensions, $forbidden): bool {
+    if (preg_match('#^/uploads/consultation_images(/|$)#i', $path)) {
+        return $forbidden('Forbidden');
+    }
 
-if (preg_match('#^/uploads/.*\.(' . $scriptExtensions . ')$#i', $checked)) {
-    return $forbidden('Forbidden');
-}
+    if (preg_match('#^/uploads/.*\.(' . $scriptExtensions . ')$#i', $path)) {
+        return $forbidden('Forbidden');
+    }
 
-// A PHP file that is not the front controller is never executed from here.
-if (preg_match('#\.(php[0-9]?|phtml|phar|pht|phps)$#i', $checked) && strcasecmp($checked, '/index.php') !== 0) {
-    http_response_code(404);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo 'Not Found';
+    // A PHP file that is not the front controller is never executed from here.
+    if (preg_match('#\.(php[0-9]?|phtml|phar|pht|phps)$#i', $path) && strcasecmp($path, '/index.php') !== 0) {
+        http_response_code(404);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Not Found';
 
+        return true;
+    }
+
+    return false;
+};
+
+if ($refusePath($checked)) {
     return true;
 }
 
 // This file allows us to emulate Apache's "mod_rewrite" functionality from the
 // built-in PHP web server: real files are served as they are, everything else goes to Laravel.
-// Only the canonical path is looked up (the one every rule above judged), so a file is never served through a
-// spelling of its path that those rules did not see.
 if ($checked !== '/' && is_file($publicPath . $checked)) {
+    // NTFS accepts directory streams such as consultation_images:$I30:$INDEX_ALLOCATION.
+    // Their names survive realpath(), so refuse stream access before serving an existing file.
+    if (str_contains($uri, ':')) {
+        return $forbidden('Forbidden');
+    }
+
+    // realpath() expands Windows short names (CONSUL~1) and follows filesystem aliases.
+    // Apply the same rules to the actual file, and never serve an alias outside public/.
+    $resolvedPublicPath = realpath($publicPath);
+    $resolvedPath = realpath($publicPath . $checked);
+    if ($resolvedPublicPath === false || $resolvedPath === false) {
+        return $forbidden('Forbidden');
+    }
+
+    $publicPrefix = rtrim(str_replace('\\', '/', $resolvedPublicPath), '/') . '/';
+    $resolvedPath = str_replace('\\', '/', $resolvedPath);
+    $withinPublic = PHP_OS_FAMILY === 'Windows'
+        ? strncasecmp($resolvedPath, $publicPrefix, strlen($publicPrefix)) === 0
+        : strncmp($resolvedPath, $publicPrefix, strlen($publicPrefix)) === 0;
+
+    if (! $withinPublic) {
+        return $forbidden('Forbidden');
+    }
+
+    if ($refusePath('/' . substr($resolvedPath, strlen($publicPrefix)))) {
+        return true;
+    }
+
     return false;
 }
 
