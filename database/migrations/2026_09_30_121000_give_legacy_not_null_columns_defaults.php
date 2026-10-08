@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * P2-M8 follow-up: MySQL used to run in non-strict mode, where an INSERT that omitted a
@@ -39,22 +38,38 @@ return new class extends Migration
 
     public function up(): void
     {
-        if (! in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+        $connection = DB::connection();
+        if (! in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)) {
             return;
         }
 
-        foreach (self::COLUMNS as $table => $columns) {
-            if (! Schema::hasTable($table)) {
-                continue;
-            }
+        // A table rebuild can revalidate old zero dates in ANY column, even when
+        // the ALTER only changes an integer default. Read the writer's session
+        // mode and allow those legacy dates while preserving other strict checks.
+        // In migrate --pretend, SELECT returns no rows and statements are only logged.
+        $sqlMode = $connection->selectOne('SELECT @@SESSION.sql_mode AS sql_mode', [], false)?->sql_mode ?? '';
+        $legacySqlMode = implode(',', array_diff(explode(',', $sqlMode), ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE']));
+        $schema = $connection->getSchemaBuilder();
 
-            foreach ($columns as $column => $definition) {
-                if (! Schema::hasColumn($table, $column)) {
+        try {
+            $connection->statement('SET SESSION sql_mode = ?', [$legacySqlMode]);
+
+            foreach (self::COLUMNS as $table => $columns) {
+                if (! $schema->hasTable($table)) {
                     continue;
                 }
 
-                DB::statement(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $table, $column, $definition));
+                foreach ($columns as $column => $definition) {
+                    if (! $schema->hasColumn($table, $column)) {
+                        continue;
+                    }
+
+                    $connection->statement(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $table, $column, $definition));
+                }
             }
+        } finally {
+            // Later migrations and application writes must keep the original mode.
+            $connection->statement('SET SESSION sql_mode = ?', [$sqlMode]);
         }
     }
 
