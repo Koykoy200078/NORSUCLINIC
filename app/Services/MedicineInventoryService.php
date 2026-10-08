@@ -168,7 +168,7 @@ class MedicineInventoryService
 
                 // Deduct from batches of the PRESCRIBED strength only; without the dosage FEFO
                 // could hand out a 250 mg batch for a 500 mg order. M-02.
-                $allocationSummary[$line->medicine] = $this->deductStockFefo(
+                $allocationSummary[$line->medicine] = array_merge($allocationSummary[$line->medicine] ?? [], $this->deductStockFefo(
                     (int) $line->medicine,
                     $quantity,
                     $userId,
@@ -176,7 +176,7 @@ class MedicineInventoryService
                     'Prescription #' . $prescription->id . ' dispensed',
                     MedicineTransaction::TYPE_DISPENSE,
                     $line->dosage !== null ? (string) $line->dosage : null
-                );
+                ));
             }
 
             $this->recordDispensedItems($prescription, $allocationSummary);

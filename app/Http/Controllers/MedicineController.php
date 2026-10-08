@@ -10,6 +10,7 @@ use App\Models\Medicine;
 use App\Models\DispenseRecordItem;
 use App\Models\MedicineBatch;
 use App\Models\PurchasedMedicine;
+use App\Repositories\MedicineAvailabilityRepository;
 use App\Repositories\MedicineRepository;
 use App\Services\MedicineInventoryService;
 use Exception;
@@ -466,25 +467,8 @@ class MedicineController extends AppBaseController
 
     private function recordStockInIfProvided(Medicine $medicine, array $input): void
     {
-        $initialQty = (int) ($input['initial_stock_quantity'] ?? 0);
-        if ($initialQty <= 0) {
-            return;
-        }
-
-        $this->inventoryService->recordStockIn([
-            'medicine_id' => $medicine->id,
-            'quantity' => $initialQty,
-            'dosage' => $input['dosage'] ?? null,
-            'batch_number' => $input['batch_number'] ?? null,
-            'manufacturing_date' => $input['manufacturing_date'] ?? null,
-            'expiration_date' => $input['expiration_date'] ?? null,
-            'supplier_name' => $input['supplier_name'] ?? null,
-            'unit_cost' => $input['unit_cost'] ?? null,
-            'date_received' => now()->toDateString(),
-            'user_id' => getLogInUserId(),
-            'reference' => $medicine,
-            'remarks' => 'Initial stock from medicine form',
-        ]);
+        // Goes through the Stock-In register like any other delivery. R3-L5.
+        app(MedicineAvailabilityRepository::class)->storeFromMedicineForm($medicine, $input, 'Initial stock from medicine form');
     }
 
     /**

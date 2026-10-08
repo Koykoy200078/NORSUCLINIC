@@ -136,13 +136,13 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     // Countries routes
     Route::middleware('permission:manage_countries')->group(function () {
         Route::resource('countries', CountryController::class)->except(['create', 'show']);
-        Route::post('countries/{country}', [CountryController::class, 'update']);
+        // The edit pop-up posts to countries/{id} without a PUT override (resources/assets/js/countries), so this route is used.
+        Route::post('countries/{country}', [CountryController::class, 'update'])->name('countries.update.post');
     });
 
     // States routes
     Route::middleware('permission:manage_states')->group(function () {
         Route::resource('states', ProvinceController::class)->except(['create', 'show']);
-        Route::post('states/{state}', [ProvinceController::class, 'update']);
     });
 
     // Cities Routes

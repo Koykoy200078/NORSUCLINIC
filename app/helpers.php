@@ -1024,29 +1024,6 @@ if (! function_exists('isModuleActive')) {
     }
 }
 
-if (! function_exists('getPrescriptionRoute')) {
-    /**
-     * Get prescription route based on user role
-     * @param string $action
-     * @param array $parameters
-     * @return string
-     */
-    function getPrescriptionRoute(string $action, array $parameters = []): string
-    {
-        $user = getLogInUser();
-
-        if ($user->hasRole('clinic_admin')) {
-            return route('admin.prescriptions.' . $action, $parameters);
-        } elseif ($user->hasRole('doctor')) {
-            return route('doctors.prescriptions.' . $action, $parameters);
-        } elseif ($user->hasRole('staff') || $user->hasRole('nurse')) {
-            return route('staff.prescriptions.' . $action, $parameters);
-        } else {
-            return route('prescriptions.' . $action, $parameters);
-        }
-    }
-}
-
 if (!function_exists('getExpiringMedicinesCount')) {
     /**
      * Get count of medicines expiring within a month

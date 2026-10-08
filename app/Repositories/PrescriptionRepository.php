@@ -6,7 +6,6 @@ use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\Doctor;
 use App\Models\Medicine;
-use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\PrescriptionMedicine;
@@ -66,19 +65,12 @@ class PrescriptionRepository extends BaseRepository
 
     public function getPatients(): \Illuminate\Support\Collection
     {
-        $user = Auth::user();
-        if ($user && $user->hasRole('Doctor')) {
-            $patients = getPatientsList($user->owner_id);
-        } else {
-            $patients = Cache::remember('active_patients_prescription', 600, function () {
-                return Patient::with('user:id,first_name,last_name,status')
-                    ->whereHas('user', function (Builder $query) {
-                        $query->where('status', 1);
-                    })->get()->pluck('user.full_name', 'id')->sort();
-            });
-        }
-
-        return $patients;
+        return Cache::remember('active_patients_prescription', 600, function () {
+            return Patient::with('user:id,first_name,last_name,status')
+                ->whereHas('user', function (Builder $query) {
+                    $query->where('status', 1);
+                })->get()->pluck('user.full_name', 'id')->sort();
+        });
     }
 
     /**
@@ -96,22 +88,6 @@ class PrescriptionRepository extends BaseRepository
     //            throw new UnprocessableEntityHttpException($e->getMessage());
     //        }
     //    }
-
-    public function createNotification(array $input)
-    {
-        try {
-            $patient = Patient::with('user')->where('id', $input['patient_id'])->first();
-
-            addNotification([
-                Notification::NOTIFICATION_TYPE['Prescription'],
-                $patient->user_id,
-                Notification::NOTIFICATION_FOR[Notification::PATIENT],
-                $patient->user->full_name . ' your prescription has been created.',
-            ]);
-        } catch (Exception $e) {
-            throw new UnprocessableEntityHttpException($e->getMessage());
-        }
-    }
 
     public function getMedicines(): array
     {

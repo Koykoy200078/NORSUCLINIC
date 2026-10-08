@@ -295,11 +295,10 @@ $formMethod = $isEdit ? 'patch' : 'post';
                                             <option
                                                 :value="String(medicine.id)"
                                                 :selected="String(medicine.id) === String(row.medicine_id)"
-                                                :disabled="isSelectedElsewhere(medicine.id, index)"
                                                 x-text="medicine.name + ' (Stock: ' + medicine.available_quantity + ')'"></option>
                                         </template>
                                     </select>
-                                    <div class="text-danger fs-7 mt-1" x-show="isDuplicate(index)">Duplicate medicine is not allowed.</div>
+                                    <div class="text-danger fs-7 mt-1" x-show="isDuplicate(index)">The same medicine in the same strength is already on this prescription.</div>
                                     <div class="text-muted fs-8 mt-1" x-show="stockFor(row.medicine_id) !== null">
                                         Available stock: <span x-text="stockFor(row.medicine_id)"></span>
                                     </div>
@@ -561,8 +560,10 @@ $formMethod = $isEdit ? 'patch' : 'post';
                 return selected ? selected.available_quantity : null;
             },
 
-            isSelectedElsewhere(medicineId, index) {
-                return this.medicines.some((row, rowIndex) => rowIndex !== index && String(row.medicine_id) === String(medicineId));
+            // The same medicine may be listed twice in different strengths (250 mg and 500 mg);
+            // the same medicine in the same strength twice is the mistake.
+            strengthKey(row) {
+                return String(row.medicine_id) + '|' + String(row.dosage || '').toLowerCase().replace(/\s+/g, '');
             },
 
             isDuplicate(index) {
@@ -571,7 +572,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
                     return false;
                 }
 
-                return this.medicines.filter((row) => String(row.medicine_id) === String(current.medicine_id)).length > 1;
+                return this.medicines.filter((row) => row.medicine_id && this.strengthKey(row) === this.strengthKey(current)).length > 1;
             },
         };
     }

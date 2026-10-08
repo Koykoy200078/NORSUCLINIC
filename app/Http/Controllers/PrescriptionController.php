@@ -129,9 +129,8 @@ class PrescriptionController extends AppBaseController
         $input = $request->validated();
         $input = $this->applyAuthorship($input);
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
-        $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
-        if ($duplicateIds->isNotEmpty()) {
+        if ($this->hasDuplicateMedicineStrength($medicineRows)) {
             Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
 
             return Redirect::back()->withInput();
@@ -380,9 +379,8 @@ class PrescriptionController extends AppBaseController
         $input = $request->validated();
         $input = $this->applyAuthorship($input);
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
-        $duplicateIds = collect($medicineRows)->pluck('medicine_id')->duplicates();
 
-        if ($duplicateIds->isNotEmpty()) {
+        if ($this->hasDuplicateMedicineStrength($medicineRows)) {
             Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
 
             return Redirect::back()->withInput();
@@ -420,6 +418,13 @@ class PrescriptionController extends AppBaseController
 
         DB::beginTransaction();
         try {
+            // The check above ran before this transaction; lock the row and look again, so a dispense that
+            // happened in between is not overwritten (its stock was already deducted). R3-L6.
+            $current = Prescription::whereKey($prescription->id)->lockForUpdate()->first();
+            if (! $current || $this->isDispensed($current)) {
+                throw new \RuntimeException('This prescription was already dispensed and can no longer be edited.');
+            }
+
             $prescription->update($prescriptionData);
 
             $dispenseRecord = DispenseRecord::whereModelType(Prescription::class)
@@ -540,6 +545,18 @@ class PrescriptionController extends AppBaseController
             })
             ->values()
             ->toArray();
+    }
+
+    /**
+     * The same medicine may appear twice only in different strengths (e.g. Paracetamol 250 mg and 500 mg);
+     * the same medicine in the same strength twice is a typing mistake.
+     */
+    private function hasDuplicateMedicineStrength(array $rows): bool
+    {
+        return collect($rows)
+            ->map(fn (array $row) => $row['medicine_id'] . '|' . preg_replace('/\s+/', '', mb_strtolower((string) $row['dosage'])))
+            ->duplicates()
+            ->isNotEmpty();
     }
 
     private function resolveTotalQuantity(array $row): int
@@ -870,23 +887,9 @@ class PrescriptionController extends AppBaseController
                 'unit_cost',
             ]));
 
-            $initialQty = (int) ($input['initial_stock_quantity'] ?? 0);
-            if ($initialQty > 0) {
-                $this->medicineInventoryService->recordStockIn([
-                    'medicine_id' => $medicine->id,
-                    'quantity' => $initialQty,
-                    'dosage' => $input['dosage'] ?? null,
-                    'batch_number' => $input['batch_number'] ?? null,
-                    'manufacturing_date' => $input['manufacturing_date'] ?? null,
-                    'expiration_date' => $input['expiration_date'] ?? null,
-                    'supplier_name' => $input['supplier_name'] ?? null,
-                    'unit_cost' => $input['unit_cost'] ?? null,
-                    'date_received' => now()->toDateString(),
-                    'user_id' => getLogInUserId(),
-                    'reference' => $medicine,
-                    'remarks' => 'Initial stock from prescription medicine modal',
-                ]);
-            }
+            // Goes through the Stock-In register like any other delivery. R3-L5.
+            app(\App\Repositories\MedicineAvailabilityRepository::class)
+                ->storeFromMedicineForm($medicine, $input, 'Initial stock from prescription medicine modal');
 
             DB::commit();
 

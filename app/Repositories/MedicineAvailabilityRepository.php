@@ -127,11 +127,12 @@ class MedicineAvailabilityRepository extends BaseRepository
                     'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
                     'expiration_date' => $input['expiry_date'][$key] ?? null,
                     'supplier_name' => $input['supplier_name'] ?? null,
+                    'unit_cost' => $input['unit_cost'][$key] ?? null,
                     'date_received' => now()->toDateString(),
                     'opening_balance_before' => $previousAvailable,
                     'user_id' => getLogInUserId(),
                     'reference' => $medicineAvailability,
-                    'remarks' => 'Stock-in from procurement form',
+                    'remarks' => $input['remarks'] ?? 'Stock-in from procurement form',
                 ]);
 
                 // The line remembers the batch it created, so a later edit / delete reverses
@@ -151,8 +152,8 @@ class MedicineAvailabilityRepository extends BaseRepository
                     $medicine,
                     $input['quantity'][$key],
                     [
-                        'batch_no' => $input['manufacturing_date'][$key],
-                        'expiry_date' => $input['expiry_date'][$key],
+                        'batch_no' => $input['manufacturing_date'][$key] ?? null,
+                        'expiry_date' => $input['expiry_date'][$key] ?? null,
                     ]
                 );
             }
@@ -171,6 +172,51 @@ class MedicineAvailabilityRepository extends BaseRepository
             \Illuminate\Support\Facades\Log::error('Purchase Medicine Store Error: ' . $e->getMessage());
             \Illuminate\Support\Facades\Log::error('Stack Trace: ' . $e->getTraceAsString());
             throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * Opening / additional stock typed on a medicine form: saved as a normal Stock-In register entry (its own
+     * stock-in number, a procurement row in the activity log, editable and reversible from Stock-In), instead
+     * of a batch that no register knows about. R3-L5.
+     *
+     * @throws \RuntimeException with a message meant for the user
+     */
+    public function storeFromMedicineForm(Medicine $medicine, array $input, string $remarks): void
+    {
+        $quantity = (int) ($input['initial_stock_quantity'] ?? 0);
+        if ($quantity <= 0) {
+            return;
+        }
+
+        if (empty($input['expiration_date'])) {
+            throw new \RuntimeException('Expiration date is required for stock-in.');
+        }
+
+        $entry = [
+            'supplier_name' => $input['supplier_name'] ?? null,
+            'remarks' => $remarks,
+            'medicine' => [$medicine->id],
+            'quantity' => [$quantity],
+            'dosage' => [$input['dosage'] ?? null],
+            'batch_number' => [$input['batch_number'] ?? null],
+            'manufacturing_date' => [$input['manufacturing_date'] ?? null],
+            'expiry_date' => [$input['expiration_date']],
+            'unit_cost' => [$input['unit_cost'] ?? null],
+        ];
+
+        try {
+            retryOnDuplicateKey(function () use (&$entry) {
+                $entry['availability_no'] = generateUniqueAvailabilityNumber();
+                $this->store($entry);
+            });
+        } catch (UnprocessableEntityHttpException $e) {
+            // store() wraps every failure; keep the reason when it is one for the user ("batch ... already
+            // exists with expiry ...") and hide database details.
+            $message = $e->getMessage();
+            $isDatabaseError = str_contains($message, 'SQLSTATE') || str_contains($message, 'Integrity constraint');
+
+            throw new \RuntimeException($isDatabaseError || $message === '' ? 'The stock could not be saved.' : $message, 0, $e);
         }
     }
 

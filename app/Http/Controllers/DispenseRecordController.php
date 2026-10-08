@@ -316,7 +316,6 @@ class DispenseRecordController extends AppBaseController
         $input['status'] = isset($input['status']) ? 1 : 0;
 
         $this->patientRepository->store($input);
-        $this->prescriptionRepository->createNotification($input);
         $patients = $this->prescriptionRepository->getPatients();
 
         return $this->sendResponse($patients, __('messages.flash.Patient_saved'));

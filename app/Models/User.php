@@ -429,11 +429,6 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Patient::class, 'user_id');
     }
 
-    public function staff(): HasOne
-    {
-        return $this->hasOne(Staff::class);
-    }
-
     public function staffProfile(): HasOne
     {
         return $this->hasOne(StaffProfile::class, 'user_id');
