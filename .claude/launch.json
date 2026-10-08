@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "laravel",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["artisan", "serve"],
+      "url": "http://localhost:8000",
+      "port": 8000
+    }
+  ]
+}
