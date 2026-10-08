@@ -37,15 +37,11 @@
                         </ul>
                         <div class="text-lg-end header-btn-grp ms-xxl-5 ms-lg-3">
                             @if(getLogInUser())
-                            @if(isRole('doctor'))
-                            <a href="{{ route('doctors.dashboard') }}"
-                                class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
-                            @elseif(isRole('staff'))
-                            <a href="{{ route('staff.dashboard') }}"
-                                class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
-                            {{-- Patient self-service portal retired: patients are record-only and do not log in. --}}
-                            @else
-                            <a href="{{ route('admin.dashboard') }}"
+                            {{-- The dashboard that belongs to the signed-in role (admin / doctor / staff + nurse). Nothing is
+                                 drawn for an account with no dashboard (e.g. the retired patient role) instead of guessing
+                                 an admin URL that would answer 403. --}}
+                            @if($dashboardRoute = getDashboardRouteName())
+                            <a href="{{ route($dashboardRoute) }}"
                                 class="btn btn-outline-primary me-xxl-3 me-2 mb-3 mb-lg-0">{{ __('messages.dashboard') }}</a>
                             @endif
                             @else

@@ -79,8 +79,9 @@
                         <a href="{{ route('login') }}" class="landing-btn-white text-decoration-none">
                             <i class="fas fa-sign-in-alt me-2"></i>{{ __('messages.login') }}
                         </a>
-                        @else
-                        <a href="{{ route('patients.index') }}" class="landing-btn-white text-decoration-none">
+                        @elseif($dashboardRoute = getDashboardRouteName())
+                        {{-- Same rule as the header button: the signed-in role's own dashboard, never a fixed admin URL. --}}
+                        <a href="{{ route($dashboardRoute) }}" class="landing-btn-white text-decoration-none">
                             <i class="fas fa-th-large me-2"></i>{{ __('messages.web.dashboard') }}
                         </a>
                         @endif

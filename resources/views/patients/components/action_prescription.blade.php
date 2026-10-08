@@ -3,7 +3,8 @@ $patientUser = $row->user;
 @endphp
 
 <div class="d-flex justify-content-center">
-    @if($patientUser && !$row->trashed() && (isRole('clinic_admin') || isRole('staff') || isRole('doctor')))
+    {{-- Staff may start a prescription only with the prescriptions module (nurses, triage, front desk... get a 403). --}}
+    @if($patientUser && !$row->trashed() && (isRole('clinic_admin') || isRole('staff') || isRole('doctor')) && canStaffAccessModule('prescriptions'))
     <a href="{{ 
         isRole('clinic_admin') ? route('prescriptions.create', ['patientId' => $row->id]) : 
         (isRole('staff') ? route('staff.prescriptions.create', ['patientId' => $row->id]) : 

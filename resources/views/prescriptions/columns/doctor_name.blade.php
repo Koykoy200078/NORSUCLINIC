@@ -9,8 +9,11 @@ $doctorUser = $doctor->doctorUser;
 
 $doctorUrl = null;
 if ($doctor) {
-if (isRole('staff') && \Illuminate\Support\Facades\Route::has('staff.doctors.show')) {
-$doctorUrl = route('staff.doctors.show', $doctor->id);
+if (isRole('staff')) {
+// Only the clinic head has the doctors module; every other staff designation would get a 403 from the link,
+// and must never fall through to the administrator URL below.
+$doctorUrl = (canStaffAccessModule('doctors') && \Illuminate\Support\Facades\Route::has('staff.doctors.show'))
+? route('staff.doctors.show', $doctor->id) : null;
 } elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.doctors.detail')) {
 $doctorUrl = route('doctors.doctors.detail', $doctor->id);
 } elseif (\Illuminate\Support\Facades\Route::has('doctors.show')) {

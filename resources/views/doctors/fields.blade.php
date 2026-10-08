@@ -176,6 +176,6 @@
     </div>
     <div class="d-flex">
         {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
-        <a href="{{route('doctors.index')}}" type="reset"
+        <a href="{{ getRouteByRole('doctors.index') }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

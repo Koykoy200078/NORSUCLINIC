@@ -890,7 +890,8 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 <script>
     // Track removed existing images
     let removedImages = [];
-    const initialYearLevelId = @json($initialYearLevelId);
+    // Only the consultation form defines these (see the top of the file); a certificate / excuse slip shares this script.
+    const initialYearLevelId = @json($initialYearLevelId ?? 0);
 
     function removeExistingImage(index) {
         if (confirm('Are you sure you want to remove this image?')) {
@@ -1467,7 +1468,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
         // ==================== MEDICINE SELECTION FUNCTIONALITY ====================
 
-        const medicinesByCategoryUrl = @json($medicinesByCategoryUrl);
+        const medicinesByCategoryUrl = @json($medicinesByCategoryUrl ?? null);
         const canManagePlanMedicines = @json(isRole('doctor'));
         let medicinesData = [];
 

@@ -178,6 +178,37 @@ if (! function_exists('getBarangays')) {
     }
 }
 
+if (!function_exists('getDashboardRouteName')) {
+    /**
+     * Name of the dashboard route that belongs to the user's role, or null when the user has none (no role, or the
+     * retired patient role whose portal no longer exists).
+     *
+     * Callers that draw a "Dashboard" link must hide it on null instead of guessing a route: every guess lands on a
+     * page another role owns and answers 403 (the landing page used to send everybody to the admin patient list).
+     */
+    function getDashboardRouteName(?Authenticatable $user = null): ?string
+    {
+        $user = $user ?: getLogInUser();
+        if (! $user) {
+            return null;
+        }
+
+        // Role-based dashboard routes - check most common roles first
+        $routeName = null;
+        if ($user->hasRole('clinic_admin')) {
+            $routeName = 'admin.dashboard';
+        } elseif ($user->hasRole('staff') || $user->hasRole('nurse')) {
+            $routeName = 'staff.dashboard';
+        } elseif ($user->hasRole('doctor')) {
+            $routeName = 'doctors.dashboard';
+        } elseif ($user->hasRole('patient')) {
+            $routeName = 'patients.dashboard';
+        }
+
+        return ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) ? $routeName : null;
+    }
+}
+
 if (!function_exists('getDashboardURL')) {
     /**
      * Get the dashboard URL based on the user's role or permissions.
@@ -196,20 +227,8 @@ if (!function_exists('getDashboardURL')) {
             return url(RouteServiceProvider::HOME);
         }
 
-        $routeName = null;
-
-        // Role-based dashboard routes - check most common roles first
-        if ($user->hasRole('clinic_admin')) {
-            $routeName = 'admin.dashboard';
-        } elseif ($user->hasRole('staff') || $user->hasRole('nurse')) {
-            $routeName = 'staff.dashboard';
-        } elseif ($user->hasRole('doctor')) {
-            $routeName = 'doctors.dashboard';
-        } elseif ($user->hasRole('patient')) {
-            $routeName = 'patients.dashboard';
-        }
-
-        if ($routeName && \Illuminate\Support\Facades\Route::has($routeName)) {
+        $routeName = getDashboardRouteName($user);
+        if ($routeName) {
             return route($routeName);
         }
 
@@ -233,8 +252,10 @@ if (!function_exists('getDashboardURL')) {
             }
         }
 
-        // Default fallback
-        return url(RouteServiceProvider::HOME);
+        // A signed-in user without a dashboard (no role, retired patient role). HOME is the ADMIN dashboard, which
+        // answers 403 for them - and /login and the auth redirects all use this helper, so they would be stuck there.
+        // The public landing page is the one page every account can open.
+        return route('medical');
     }
 }
 

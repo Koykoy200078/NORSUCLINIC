@@ -87,7 +87,7 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <a href="{{ route('staff.patient-queue.index') }}" class="btn btn-secondary me-2">
+                <a href="{{ getRouteByRole('patient-queue.index') }}" class="btn btn-secondary me-2">
                     {{ __('messages.common.cancel') }}
                 </a>
                 {{ Form::submit(__('Update'), ['class' => 'btn btn-primary']) }}

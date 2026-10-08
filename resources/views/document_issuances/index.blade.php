@@ -88,9 +88,11 @@ Certificate Issuance
         <a href="{{ getRouteByRole('document-issuances.create', ['user_id' => $patient->user_id, 'document_type' => 'consultation_form', 'module' => 'consultation']) }}" class="btn btn-primary d-inline-flex align-items-center gap-2">
             <i class="fa-solid fa-notes-medical"></i> Record Walk-in / Schedule Visit
         </a>
+        @if(canStaffAccessModule('prescriptions'))
         <a href="{{ getRouteByRole('prescriptions.create', ['patientId' => $patient->id]) }}" class="btn btn-info text-white d-inline-flex align-items-center gap-2">
             <i class="fa-solid fa-file-prescription"></i> Create Prescription
         </a>
+        @endif
         @endif
     </div>
     @endif

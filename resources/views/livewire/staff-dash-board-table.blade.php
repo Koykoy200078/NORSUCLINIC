@@ -56,7 +56,12 @@
                                         <img src="{{ $patient['profile'] }}" alt="user" class="">
                                     </div>
                                     <div class="d-flex flex-column">
+                                        {{-- Only staff with the patients module can open a patient page (a pharmacist cannot: 403). --}}
+                                        @if(canStaffAccessModule('patients'))
                                         <a href="{{ route('staff.patients.show', $patient['id']) }}" class="text-primary-800 mb-1 fs-6 text-decoration-none">{{ $patient['user']['full_name'] }}</a>
+                                        @else
+                                        <span class="text-primary-800 mb-1 fs-6">{{ $patient['user']['full_name'] }}</span>
+                                        @endif
                                         <span class="text-muted fw-bold d-block">{{ $patient['user']['email'] }}</span>
                                     </div>
                                 </div>

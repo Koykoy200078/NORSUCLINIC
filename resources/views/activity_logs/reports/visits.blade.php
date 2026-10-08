@@ -68,11 +68,11 @@
                        title="Open the consultation to pick the illness and services">
                         <i class="fas fa-pen"></i> {{ $report->illnesses->isEmpty() ? 'Classify' : 'Edit' }}
                     </a>
-                    @endif
                     <a href="{{ route(isRole('clinic_admin') ? 'document-issuances.show' : (isRole('staff') ? 'staff.document-issuances.show' : 'doctors.document-issuances.show'), $report->id) }}"
                        class="btn btn-sm btn-light-primary" target="_blank">
                         <i class="fas fa-eye"></i> View
                     </a>
+                    @endif
                 </td>
             </tr>
             @empty

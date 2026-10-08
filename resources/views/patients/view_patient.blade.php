@@ -203,6 +203,8 @@ Patient Data
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">
                                     <div class="d-flex gap-2">
+                                        {{-- Staff open / edit / print consultations only with the consultations module (else 403). --}}
+                                        @if(canStaffAccessModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -219,6 +221,7 @@ Patient Data
                                         <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $consultation->id]) }}" class="btn btn-sm btn-success" title="PDF" target="_blank">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -260,6 +263,8 @@ Patient Data
                         <td>{{ $certificate->request_of ?? 'N/A' }}</td>
                         <td>
                             <div class="d-flex gap-2">
+                                {{-- Certificates (and excuse slips) belong to the certificates module for staff (else 403). --}}
+                                @if(canStaffAccessModule('certificates'))
                                 <!-- Edit Button -->
                                 <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $certificate->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Certificate">
                                     <i class="fa-solid fa-edit"></i>
@@ -287,6 +292,7 @@ Patient Data
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -326,12 +332,14 @@ Patient Data
                         <td>{{ $excuseSlip->subjects ?: ($excuseSlip->medical_cert_remarks ?: 'N/A') }}</td>
                         <td>
                             <div class="d-flex gap-2">
+                                @if(canStaffAccessModule('certificates'))
                                 <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $excuseSlip->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Excuse Slip">
                                     <i class="fa-solid fa-edit"></i>
                                 </a>
                                 <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $excuseSlip->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -964,12 +972,15 @@ Patient Data
                             </td>
                             <td class="pe-3 text-end">
                                 <div class="d-flex gap-1 justify-content-end flex-wrap">
+                                    {{-- Staff open a prescription only with the prescriptions module (else 403). --}}
+                                    @if(canStaffAccessModule('prescriptions'))
                                     <a href="{{ $prescRoute }}"
                                         class="btn btn-sm"
                                         style="background:#eff6ff;color:#1d4ed8;border:none;font-size:.78rem;"
                                         title="View Prescription">
                                         <i class="fas fa-eye me-1"></i>View
                                     </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

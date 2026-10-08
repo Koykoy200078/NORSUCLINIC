@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -28,7 +27,9 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        // The factory user holds no role, so it has no dashboard: it is sent to the public landing page, not to the
+        // administrator dashboard (which would answer 403). Role-specific landing spots: LandingPageDashboardTest.
+        $response->assertRedirect(route('medical'));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

@@ -9,8 +9,11 @@ $patientUser = $patient->patientUser;
 
 $patientUrl = null;
 if ($patient) {
-if (isRole('staff') && \Illuminate\Support\Facades\Route::has('staff.patients.show')) {
-$patientUrl = route('staff.patients.show', $patient->id);
+if (isRole('staff')) {
+// Staff open a patient page only with the patients module (a pharmacist has none: the link would answer 403),
+// and must never fall through to the administrator URL below.
+$patientUrl = (canStaffAccessModule('patients') && \Illuminate\Support\Facades\Route::has('staff.patients.show'))
+? route('staff.patients.show', $patient->id) : null;
 } elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.patients.show')) {
 $patientUrl = route('doctors.patients.show', $patient->id);
 } elseif (\Illuminate\Support\Facades\Route::has('patients.show')) {
