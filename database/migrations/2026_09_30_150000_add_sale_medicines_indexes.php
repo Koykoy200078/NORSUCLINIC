@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -17,13 +18,15 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('sale_medicines', function (Blueprint $table) {
-            if (! $this->hasIndex('sale_medicines', 'idx_sale_medicines_bill')) {
-                $table->index('medicine_bill_id', 'idx_sale_medicines_bill');
-            }
-            if (! $this->hasIndex('sale_medicines', 'idx_sale_medicines_medicine')) {
-                $table->index('medicine_id', 'idx_sale_medicines_medicine');
-            }
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('sale_medicines', function (Blueprint $table) {
+                if (! $this->hasIndex('sale_medicines', 'idx_sale_medicines_bill')) {
+                    $table->index('medicine_bill_id', 'idx_sale_medicines_bill');
+                }
+                if (! $this->hasIndex('sale_medicines', 'idx_sale_medicines_medicine')) {
+                    $table->index('medicine_id', 'idx_sale_medicines_medicine');
+                }
+            });
         });
     }
 
@@ -33,13 +36,15 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('sale_medicines', function (Blueprint $table) {
-            if ($this->hasIndex('sale_medicines', 'idx_sale_medicines_bill')) {
-                $table->dropIndex('idx_sale_medicines_bill');
-            }
-            if ($this->hasIndex('sale_medicines', 'idx_sale_medicines_medicine')) {
-                $table->dropIndex('idx_sale_medicines_medicine');
-            }
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('sale_medicines', function (Blueprint $table) {
+                if ($this->hasIndex('sale_medicines', 'idx_sale_medicines_bill')) {
+                    $table->dropIndex('idx_sale_medicines_bill');
+                }
+                if ($this->hasIndex('sale_medicines', 'idx_sale_medicines_medicine')) {
+                    $table->dropIndex('idx_sale_medicines_medicine');
+                }
+            });
         });
     }
 

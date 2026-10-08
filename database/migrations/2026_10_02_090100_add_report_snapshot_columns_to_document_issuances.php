@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Reports\ConsultationSnapshotBackfill;
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,14 +16,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('document_issuances', function (Blueprint $table) {
-            foreach (['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id'] as $column) {
-                $table->unsignedBigInteger($column)->nullable()->after('year_level');
-            }
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('document_issuances', function (Blueprint $table) {
+                foreach (['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id'] as $column) {
+                    $table->unsignedBigInteger($column)->nullable()->after('year_level');
+                }
 
-            $table->index('requested_at', 'document_issuances_requested_at_index');
-            $table->index('college_id', 'document_issuances_college_id_index');
-            $table->index('patient_type_id', 'document_issuances_patient_type_id_index');
+                $table->index('requested_at', 'document_issuances_requested_at_index');
+                $table->index('college_id', 'document_issuances_college_id_index');
+                $table->index('patient_type_id', 'document_issuances_patient_type_id_index');
+            });
         });
 
         app(ConsultationSnapshotBackfill::class)->run();
@@ -30,11 +33,13 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('document_issuances', function (Blueprint $table) {
-            $table->dropIndex('document_issuances_requested_at_index');
-            $table->dropIndex('document_issuances_college_id_index');
-            $table->dropIndex('document_issuances_patient_type_id_index');
-            $table->dropColumn(['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id']);
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('document_issuances', function (Blueprint $table) {
+                $table->dropIndex('document_issuances_requested_at_index');
+                $table->dropIndex('document_issuances_college_id_index');
+                $table->dropIndex('document_issuances_patient_type_id_index');
+                $table->dropColumn(['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id']);
+            });
         });
     }
 };

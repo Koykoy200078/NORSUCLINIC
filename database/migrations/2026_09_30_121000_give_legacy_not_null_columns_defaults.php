@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -43,17 +44,10 @@ return new class extends Migration
             return;
         }
 
-        // A table rebuild can revalidate old zero dates in ANY column, even when
-        // the ALTER only changes an integer default. Read the writer's session
-        // mode and allow those legacy dates while preserving other strict checks.
-        // In migrate --pretend, SELECT returns no rows and statements are only logged.
-        $sqlMode = $connection->selectOne('SELECT @@SESSION.sql_mode AS sql_mode', [], false)?->sql_mode ?? '';
-        $legacySqlMode = implode(',', array_diff(explode(',', $sqlMode), ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE']));
         $schema = $connection->getSchemaBuilder();
 
-        try {
-            $connection->statement('SET SESSION sql_mode = ?', [$legacySqlMode]);
-
+        // Rebuilding a table can revalidate zero dates in unrelated columns too.
+        LegacyMysqlMigration::withoutZeroDateChecks(function () use ($connection, $schema) {
             foreach (self::COLUMNS as $table => $columns) {
                 if (! $schema->hasTable($table)) {
                     continue;
@@ -67,10 +61,7 @@ return new class extends Migration
                     $connection->statement(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $table, $column, $definition));
                 }
             }
-        } finally {
-            // Later migrations and application writes must keep the original mode.
-            $connection->statement('SET SESSION sql_mode = ?', [$sqlMode]);
-        }
+        });
     }
 
     public function down(): void

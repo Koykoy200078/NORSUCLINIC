@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -53,16 +54,18 @@ return new class extends Migration
 
             // Two statements: MariaDB rejects dropping and re-adding the same constraint name in
             // one ALTER TABLE.
-            DB::statement(sprintf('ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $fk['table'], $existing->name));
-            DB::statement(sprintf(
-                'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s` (`id`) ON DELETE %s ON UPDATE %s',
-                $fk['table'],
-                $existing->name,
-                $fk['column'],
-                $fk['ref_table'],
-                $deleteRule,
-                $existing->update_rule ?: 'RESTRICT'
-            ));
+            LegacyMysqlMigration::withoutZeroDateChecks(function () use ($fk, $existing, $deleteRule) {
+                DB::statement(sprintf('ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $fk['table'], $existing->name));
+                DB::statement(sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s` (`id`) ON DELETE %s ON UPDATE %s',
+                    $fk['table'],
+                    $existing->name,
+                    $fk['column'],
+                    $fk['ref_table'],
+                    $deleteRule,
+                    $existing->update_rule ?: 'RESTRICT'
+                ));
+            });
         }
     }
 };

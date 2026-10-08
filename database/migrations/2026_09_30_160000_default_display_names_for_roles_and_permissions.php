@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +20,9 @@ return new class extends Migration
 
         foreach (['roles', 'permissions'] as $table) {
             if (Schema::hasTable($table) && Schema::hasColumn($table, 'display_name')) {
-                DB::statement("ALTER TABLE `{$table}` MODIFY `display_name` VARCHAR(191) NOT NULL DEFAULT ''");
+                LegacyMysqlMigration::withoutZeroDateChecks(function () use ($table) {
+                    DB::statement("ALTER TABLE `{$table}` MODIFY `display_name` VARCHAR(191) NOT NULL DEFAULT ''");
+                });
             }
         }
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -21,9 +22,11 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasColumn('lab_requests', 'deleted_at')) {
-            Schema::table('lab_requests', function (Blueprint $table) {
-                $table->softDeletes();
-                $table->index('deleted_at', 'lab_requests_deleted_at_index');
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('lab_requests', function (Blueprint $table) {
+                    $table->softDeletes();
+                    $table->index('deleted_at', 'lab_requests_deleted_at_index');
+                });
             });
         }
 
@@ -39,8 +42,10 @@ return new class extends Migration
                 ->contains(fn ($index) => $index->Column_name === 'availability_no' && (int) $index->Non_unique === 0);
 
             if ($duplicates === 0 && ! $hasIndex) {
-                Schema::table('medicine_availabilities', function (Blueprint $table) {
-                    $table->unique('availability_no', self::INDEX);
+                LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                    Schema::table('medicine_availabilities', function (Blueprint $table) {
+                        $table->unique('availability_no', self::INDEX);
+                    });
                 });
             }
         }
@@ -54,16 +59,20 @@ return new class extends Migration
                 throw new RuntimeException("{$deleted} deleted lab request(s) would become visible again. Restore or purge them first.");
             }
 
-            Schema::table('lab_requests', function (Blueprint $table) {
-                $table->dropIndex('lab_requests_deleted_at_index');
-                $table->dropSoftDeletes();
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('lab_requests', function (Blueprint $table) {
+                    $table->dropIndex('lab_requests_deleted_at_index');
+                    $table->dropSoftDeletes();
+                });
             });
         }
 
         $hasIndex = collect(DB::select('SHOW INDEX FROM medicine_availabilities'))->contains(fn ($index) => $index->Key_name === self::INDEX);
         if ($hasIndex) {
-            Schema::table('medicine_availabilities', function (Blueprint $table) {
-                $table->dropUnique(self::INDEX);
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('medicine_availabilities', function (Blueprint $table) {
+                    $table->dropUnique(self::INDEX);
+                });
             });
         }
     }

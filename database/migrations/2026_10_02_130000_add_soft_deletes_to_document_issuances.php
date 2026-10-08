@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,9 +21,11 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('document_issuances', function (Blueprint $table) {
-            $table->softDeletes();
-            $table->index('deleted_at', 'document_issuances_deleted_at_index');
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('document_issuances', function (Blueprint $table) {
+                $table->softDeletes();
+                $table->index('deleted_at', 'document_issuances_deleted_at_index');
+            });
         });
     }
 
@@ -37,9 +40,11 @@ return new class extends Migration
             throw new RuntimeException("{$deleted} deleted clinical record(s) would become visible again. Recover or purge them first.");
         }
 
-        Schema::table('document_issuances', function (Blueprint $table) {
-            $table->dropIndex('document_issuances_deleted_at_index');
-            $table->dropSoftDeletes();
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('document_issuances', function (Blueprint $table) {
+                $table->dropIndex('document_issuances_deleted_at_index');
+                $table->dropSoftDeletes();
+            });
         });
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,10 @@ return new class extends Migration
             )->c > 0;
 
         if (! $hasIndex) {
-            Schema::table('settings', function (Blueprint $table) {
-                $table->unique('key', 'settings_key_unique');
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('settings', function (Blueprint $table) {
+                    $table->unique('key', 'settings_key_unique');
+                });
             });
         }
     }
@@ -46,8 +49,10 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('settings')) {
-            Schema::table('settings', function (Blueprint $table) {
-                $table->dropUnique('settings_key_unique');
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('settings', function (Blueprint $table) {
+                    $table->dropUnique('settings_key_unique');
+                });
             });
         }
     }

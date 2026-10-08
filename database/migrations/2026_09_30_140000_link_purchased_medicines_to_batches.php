@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -22,10 +23,12 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('purchased_medicines', function (Blueprint $table) {
-            $table->unsignedBigInteger('batch_id')->nullable()->after('medicine_id');
-            $table->foreign('batch_id', 'purchased_medicines_batch_id_foreign')
-                ->references('id')->on('medicine_batches')->nullOnDelete();
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('purchased_medicines', function (Blueprint $table) {
+                $table->unsignedBigInteger('batch_id')->nullable()->after('medicine_id');
+                $table->foreign('batch_id', 'purchased_medicines_batch_id_foreign')
+                    ->references('id')->on('medicine_batches')->nullOnDelete();
+            });
         });
 
         if (! Schema::hasTable('medicine_transactions')) {
@@ -59,9 +62,11 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('purchased_medicines') && Schema::hasColumn('purchased_medicines', 'batch_id')) {
-            Schema::table('purchased_medicines', function (Blueprint $table) {
-                $table->dropForeign('purchased_medicines_batch_id_foreign');
-                $table->dropColumn('batch_id');
+            LegacyMysqlMigration::withoutZeroDateChecks(function () {
+                Schema::table('purchased_medicines', function (Blueprint $table) {
+                    $table->dropForeign('purchased_medicines_batch_id_foreign');
+                    $table->dropColumn('batch_id');
+                });
             });
         }
     }

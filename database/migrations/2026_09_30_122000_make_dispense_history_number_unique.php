@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -17,28 +18,30 @@ return new class extends Migration
             return;
         }
 
-        $duplicates = DB::table('medicine_bills')
-            ->select('history_number')
-            ->groupBy('history_number')
-            ->havingRaw('COUNT(*) > 1')
-            ->pluck('history_number');
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            $duplicates = DB::table('medicine_bills')
+                ->select('history_number')
+                ->groupBy('history_number')
+                ->havingRaw('COUNT(*) > 1')
+                ->pluck('history_number');
 
-        foreach ($duplicates as $historyNumber) {
-            $ids = DB::table('medicine_bills')->where('history_number', $historyNumber)->orderBy('id')->pluck('id');
+            foreach ($duplicates as $historyNumber) {
+                $ids = DB::table('medicine_bills')->where('history_number', $historyNumber)->orderBy('id')->pluck('id');
 
-            foreach ($ids->slice(1) as $id) {
-                DB::table('medicine_bills')->where('id', $id)->update([
-                    'history_number' => $historyNumber . '-' . $id,
-                ]);
+                foreach ($ids->slice(1) as $id) {
+                    DB::table('medicine_bills')->where('id', $id)->update([
+                        'history_number' => $historyNumber . '-' . $id,
+                    ]);
+                }
             }
-        }
 
-        Schema::table('medicine_bills', function ($table) {
-            $table->dropIndex('idx_medicine_bills_history_number');
-        });
+            Schema::table('medicine_bills', function ($table) {
+                $table->dropIndex('idx_medicine_bills_history_number');
+            });
 
-        Schema::table('medicine_bills', function ($table) {
-            $table->unique('history_number', 'uq_medicine_bills_history_number');
+            Schema::table('medicine_bills', function ($table) {
+                $table->unique('history_number', 'uq_medicine_bills_history_number');
+            });
         });
     }
 
@@ -48,12 +51,14 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('medicine_bills', function ($table) {
-            $table->dropUnique('uq_medicine_bills_history_number');
-        });
+        LegacyMysqlMigration::withoutZeroDateChecks(function () {
+            Schema::table('medicine_bills', function ($table) {
+                $table->dropUnique('uq_medicine_bills_history_number');
+            });
 
-        Schema::table('medicine_bills', function ($table) {
-            $table->index('history_number', 'idx_medicine_bills_history_number');
+            Schema::table('medicine_bills', function ($table) {
+                $table->index('history_number', 'idx_medicine_bills_history_number');
+            });
         });
     }
 };

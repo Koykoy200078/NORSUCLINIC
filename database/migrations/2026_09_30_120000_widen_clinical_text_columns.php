@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -60,12 +61,14 @@ return new class extends Migration
                     continue;
                 }
 
-                DB::statement(sprintf(
-                    'ALTER TABLE `%s` MODIFY `%s` TEXT %s',
-                    $table,
-                    $column,
-                    $nullable ? 'NULL' : 'NOT NULL'
-                ));
+                LegacyMysqlMigration::withoutZeroDateChecks(function () use ($table, $column, $nullable) {
+                    DB::statement(sprintf(
+                        'ALTER TABLE `%s` MODIFY `%s` TEXT %s',
+                        $table,
+                        $column,
+                        $nullable ? 'NULL' : 'NOT NULL'
+                    ));
+                });
             }
         }
     }

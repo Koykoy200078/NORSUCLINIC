@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\LegacyMysqlMigration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -43,17 +44,19 @@ return new class extends Migration
                 continue;
             }
 
-            // Two statements: MariaDB rejects dropping and re-adding a constraint of the same name
-            // inside one ALTER TABLE ("Duplicate key on write or update").
-            DB::statement(sprintf('ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $fk['table'], $fk['name']));
-            DB::statement(sprintf(
-                'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s` (`id`) ON DELETE %s ON UPDATE CASCADE',
-                $fk['table'],
-                $fk['name'],
-                $fk['column'],
-                $fk['ref_table'],
-                $deleteRule
-            ));
+            LegacyMysqlMigration::withoutZeroDateChecks(function () use ($fk, $deleteRule) {
+                // Two statements: MariaDB rejects dropping and re-adding a constraint of the same name
+                // inside one ALTER TABLE ("Duplicate key on write or update").
+                DB::statement(sprintf('ALTER TABLE `%s` DROP FOREIGN KEY `%s`', $fk['table'], $fk['name']));
+                DB::statement(sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s` (`id`) ON DELETE %s ON UPDATE CASCADE',
+                    $fk['table'],
+                    $fk['name'],
+                    $fk['column'],
+                    $fk['ref_table'],
+                    $deleteRule
+                ));
+            });
         }
     }
 };
