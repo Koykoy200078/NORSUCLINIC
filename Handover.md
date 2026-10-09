@@ -60,16 +60,51 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phases 0 and 1 of the plan: `7c6b5c5`, `d00cca3`, `c498798`, then the `handover:` commit of 2026-10-09 (Claude Code) |
-| Work in progress (not pushed) | none (a new START entry is opened for Phase 2 right after this push) |
-| Next step | Phase 2 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Dispense History shows consultation medicines |
+| Last pushed work | Phase 2: `c993859` (Dispense History includes consultation medicines), after the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (OpenAI Codex, 2026-10-09) |
+| Work in progress (not pushed) | none. Claude Code's open Phase 2 was taken over and finished by Codex with the owner's explicit approval; its original START below is preserved |
+| Next step | Phase 3 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Manage User roles apply; Staff = Nurse; remove designation / station access restrictions |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
-| Project status | [docs/STATUS.md](docs/STATUS.md) (its §8 "10-08 commits not pushed" lines are stale: fixed in plan Phase 10.2) |
+| Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, clinic schema and next phase updated; §8 retains an older snapshot to reconcile in plan Phase 10.2 |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-09 16:05 +08:00 — OpenAI Codex — START → END (pushed 2026-10-09)
+- **Branch / from:** `changes_v2` @ `4957fd9`.
+- **Work:** take over and finish Claude Code's open Phase 2 with the owner's explicit approval (2026-10-09,
+  "Take over and finish Phase 2"): review the existing Dispense History changes, fix any gaps test-first, verify the
+  full suite, mutation checks, link crawl and live browser, update the maintained records, then commit and push
+  `changes_v2`. Next is Phase 3 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md).
+- **END:** work committed and pushed as `c993859`, followed by this `handover:` commit, on the owner's standing go-ahead.
+  Claude Code's original START is preserved; its Phase 2 work is completed under this approved takeover.
+  - **Done:** the read-only history view / model, Source column and filter, word search and sorting, per-source actions,
+    consultation medicine detail page and three role-specific routes. Review fixes: exclude non-consultation documents,
+    retain archived patients' names without dead patient links, and use the correct `consultations` access key for the
+    "View Consultation" button (staff and legacy nurse roles). Plan and STATUS updated; no new Artisan commands,
+    `docs/commands.md` checked and unchanged.
+  - **Verified:** final full suite with `LINK_CRAWL=1`: **444 tests / 4,304 assertions**, all passing, none skipped,
+    9 min 20 sec / 190 MB. Phase 2 regression tests: 15 / 112 assertions. Five mutations each fail as expected
+    (document type, archived patient link, deleted consultation, prescription status, consultation access key).
+    The 16-user crawl made 1,143 requests / 1,093 pages, with no broken links, crashes, lazy failures or capped crawls.
+    Route baseline 472 → 475: exactly the three new consultation detail routes, with the existing role / permission
+    middleware. Inline review, PHP syntax and `git diff --check` passed.
+  - **Live:** Chrome over `192.168.2.13:8000` and `172.22.208.1:8000`: admin / doctor / clinic head pass filtering,
+    search, tab switching, all three detail pages and the consultation link; no JavaScript errors, failed requests
+    or internet dependencies. QA nurse has no dispensing module under the current designation policy: menu hidden,
+    list / details return the expected 403 (Phase 3 changes this). Consultations 3 / 6 / 7 show 9 / 14 / 15 units;
+    refreshing the live view changed no stock or ledger rows. `db:integrity --compare-fresh`: 0 errors / 3 existing
+    warnings, structure identical to a fresh install; 127 migrations, all 64 tables InnoDB, 47 foreign keys.
+  - **Where to continue:** Phase 3 (Manage User roles apply; Staff = Nurse). Phases 3–10 remain pending.
+  - **Left open:** the known duplicate-medicine / phone warnings, the designation access restrictions scheduled for
+    Phase 3, and the remaining decisions / documentation reconciliation in the plan. No unfinished Phase 2 work.
+
+### 2026-10-09 13:10 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v2` @ `4957fd9` (everything of Phases 0 and 1 is pushed)
+- **Work:** Phase 2 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Dispense History shows consultation
+  medicines (database view `dispense_history_view`, read-only model, Source column and filter, read-only detail page,
+  tests, live check on the clinic data). New commands, if any, go into [docs/commands.md](docs/commands.md).
 
 ### 2026-10-09 07:28 +08:00 — Claude Code — START → END (pushed 2026-10-09)
 - **Branch / from:** `changes_v2` @ `5155bf5`
