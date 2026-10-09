@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phase 2: `c993859` (Dispense History includes consultation medicines), after the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (OpenAI Codex, 2026-10-09) |
-| Work in progress (not pushed) | none. Claude Code's open Phase 2 was taken over and finished by Codex with the owner's explicit approval; its original START below is preserved |
-| Next step | Phase 3 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Manage User roles apply; Staff = Nurse; remove designation / station access restrictions |
+| Last pushed work | Phase 3: `b945e64` (Manage User roles apply; Staff = Nurse), after Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-10) |
+| Work in progress (not pushed) | none. Codex's open Phase 3 was taken over and finished by Claude Code with the owner's explicit approval; both START entries are preserved below |
+| Next step | Phase 4 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): the owner's requested changes (name "Medical University Clinic", COL, Guest column, yearly reports) |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, clinic schema and next phase updated; §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -70,6 +70,67 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-09 17:35 +08:00 — Claude Code — START → END (pushed 2026-10-10; takeover of Codex's open Phase 3 START)
+- **Branch / from:** `changes_v2` @ `144c83a` plus the **uncommitted Phase 3 working tree** that Codex left (about 65 files:
+  `ModuleAccess` + `canUseModule`, migration `2026_10_09_170000_unify_staff_nurse_access`, Roles screen, staff form,
+  routes, menus, tests). Taken over on the **owner's explicit approval** (2026-10-09: "another AI takeover … you take
+  over phase 3, double check it again and again and verify it, align it on the plan and Handover"). Codex's START below
+  is preserved unchanged.
+- **Work:** Phase 3 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) (3.1–3.7): review every inherited
+  change against the plan, fix the gaps test-first, verify (full suite, link crawl, permission oracle matrix, mutation
+  checks, rehearsal on the real clinic dump, live browser with admin / doctor / nurse side by side), update the records,
+  commit and push `changes_v2`.
+- **END:** pushed on 2026-10-10 on the owner's standing go-ahead.
+  - **Commits:** `b945e64` Phase 3, then this `handover:` commit.
+  - **Done (plan 3.1–3.7):**
+    - **Staff = Nurse:** one role "Staff (Nurse)"; the `nurse` role is retired (accounts moved by a migration that creates
+      nothing on a fresh install, removes direct per-user permissions and fills two empty permission labels found in the
+      clinic data); the staff form, list, show page, requests and "Prepared by" no longer use Role Designation, Assigned
+      Station or Shift Schedule (the hidden columns stay).
+    - **Role permissions apply everywhere:** `canUseModule()` + `App\Support\ModuleAccess` replace the 63 designation /
+      station checks; the `staff.module` middleware is gone; every staff and doctor route carries the permission of its
+      module (only the dashboards and Reports / Notifications are open on purpose, enforced by `ModuleAccessMapTest`);
+      route list: 475 routes, none added or removed, 136 changed middleware.
+    - **Roles screen:** only the five permissions that apply are offered, Clinic Admin and Patient are read-only (request
+      and repository both refuse), a role can be saved with none, explanations no longer slide away after 5 s, the
+      select-all box shows the right state on load (the dead `roles/create-edit.js` that reset it is removed).
+  - **Found and fixed while reviewing Codex's tree** (13 of 453 tests were red at the start): the migration created a
+    `staff` role on a fresh database (9 `ReportGenerationTest` errors); the staff save dropped the fixed country code; three
+    tests still encoded the designation policy; the doctor menu crashed for a doctor without a doctor record; two
+    permissions had empty labels at the clinic; the designation-pair loops in `RoleAwareLinksTest` no longer proved the
+    "hidden" side; the permission-variant link crawl found "Record form" / "View Form" buttons on the doctor queue that
+    answered 403 without the documents permission; the Reports global search listed patients, prescriptions and medicines
+    for roles that lost those modules.
+  - **Verified:** `LINK_CRAWL=1` full suite: 470 tests / 4,384 assertions, all passing, none skipped (16 min 53 sec). The 15-actor link crawl inside it (guest, admin, Doctor ×6, Staff (Nurse) ×7): 1,611 requests / 1,531 pages, 0 broken links, crashes, lazy-table failures or capped crawls. Permission oracle matrix (scratch harness): 230 staff / doctor / API routes × 16 role-permission variants = 3,680 requests, and a same-user run of 2,760: 0 server errors, no 200 for a guest / patient / deactivated doctor, all 223 cells whose permission was missing answered 403 (8 stock-in cells 404 only for want of a fixture row; 403 with one), no status change that the route's own permission does not explain. Rehearsal R4 on the real clinic dump under a MyISAM and an InnoDB default: 20
+    migrations, 64 InnoDB tables, 47 of 47 foreign keys, `db:integrity --compare-fresh` 0 errors / 3 existing warnings; the
+    only content changes were `roles`, `permissions` (two blank labels) and the Phase 1 zero date. 22 mutations of
+    production code each fail a test. Live browser (admin, doctor
+    and nurse sessions side by side on the upgraded clinic data): removing Manage Patients from Staff (Nurse) takes Patients
+    and Queue off the nurse's next page, `/staff/patients` answers 403 and the Reports global search drops its Patient card;
+    re-granting restores all of it; the same for Manage Medicines on the Doctor role; no console errors.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) was updated for the direct-permission clearing.
+  - **Where to continue:** Phase 4 (name "Medical University Clinic", College of Law CL → COL, Guest column, yearly
+    Accomplishment Report, yearly Medicine Inventory report).
+  - **Left open:**
+    - **Owner question:** the raw activity log ("Notifications & Alerts › System notifications": patient names, contact
+      numbers, complaints) is now open to every staff account and doctor, as the plan's rule for Reports and Notifications
+      says; before, only some staff designations could read it (R3-H6). One line limits it again (STATUS §6).
+    - Dead code for Phase 6: `hasRole('nurse')` / `isRole('nurse')` fallbacks, the `StaffDesignation` / `ClinicStation`
+      seeders and models (only the legacy test helper `makeStaff()` still uses them), the `getRouteByRole()` nurse branch.
+    - The QA accounts were re-created for the Staff (Nurse) model (`qa.nurse` plain, `qa.legacy` with a hidden profile);
+      logins are in the git-ignored `storage/app/qa-accounts.json`. The rehearsal tools live outside the repo
+      (`C:\Users\Franc\.claude\projects\C--Projects-NORSUCLINIC\tools\rehearsal\`, now with `RoleMatrixP3Test.php` and
+      `analyze-p3-matrix.py`).
+    - A PHP dev server started by Codex is still listening on `0.0.0.0:8000` (LAN) with the experimental clinic data:
+      stop it when not needed.
+
+### 2026-10-09 16:41 +08:00 — OpenAI Codex — START
+- **Branch / from:** `changes_v2` @ `144c83a` (Phase 2 pushed; working tree clean).
+- **Work:** Phase 3 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Staff = Nurse, remove the
+  designation / station / shift UI and access layer, make role permissions govern menus / routes / buttons,
+  correct the Roles screen and permission cache updates, replace policy tests and the link-crawl actors, then
+  verify the full suite, mutations and live browser before committing and pushing `changes_v2`.
 
 ### 2026-10-09 16:05 +08:00 — OpenAI Codex — START → END (pushed 2026-10-09)
 - **Branch / from:** `changes_v2` @ `4957fd9`.
