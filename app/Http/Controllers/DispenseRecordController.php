@@ -8,8 +8,10 @@ use App\Http\Requests\UpdateDispenseRecordRequest;
 use App\Models\Category;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
+use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
+use App\Models\Patient;
 use App\Repositories\DispenseRecordRepository;
 use App\Repositories\MedicineRepository;
 use App\Repositories\PatientRepository;
@@ -211,6 +213,35 @@ class DispenseRecordController extends AppBaseController
         $medicineBill = $dispenseRecord;
 
         return view('medicine-history.show', compact('medicineBill'));
+    }
+
+    /**
+     * Read-only page for the medicines recorded inside a consultation (a "Consultation" row of the Dispense
+     * History). Only what was handed out is shown here; the clinical notes stay in the consultation itself, which
+     * is linked only for users who may open consultations.
+     */
+    public function showConsultation(DocumentIssuance $document_issuance): View
+    {
+        abort_unless($document_issuance->document_type === 'consultation_form', 404);
+
+        $document_issuance->load([
+            'consultationMedicines.medicine:id,name,dosage',
+            'creator:id,first_name,middle_name,last_name,email',
+        ]);
+
+        $patient = Patient::with('user:id,first_name,middle_name,last_name,email,contact,gender,dob')
+            ->where('user_id', $document_issuance->user_id)
+            ->first();
+
+        $user = auth()->user();
+        $canOpenConsultation = $user->can('manage_request_documents')
+            && (! ($user->hasRole('staff') || $user->hasRole('nurse')) || canStaffAccessModule('consultations'));
+
+        return view('medicine-history.consultation', [
+            'consultation' => $document_issuance,
+            'patientUser' => $patient?->user,
+            'canOpenConsultation' => $canOpenConsultation,
+        ]);
     }
 
     /**

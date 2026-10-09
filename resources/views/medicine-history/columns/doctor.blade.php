@@ -1,46 +1,28 @@
 @php
-$doctor = $row->doctor ?? null;
-$doctorUser = null;
-if ($doctor && $doctor->relationLoaded('user')) {
-$doctorUser = $doctor->user;
-} elseif ($doctor && $doctor->relationLoaded('doctorUser')) {
-$doctorUser = $doctor->doctorUser;
-}
-
+// A doctor links to the doctor page; a nurse (or anyone else) who recorded a consultation has no doctor page.
 $doctorUrl = null;
-if ($doctor) {
-if (isRole('staff')) {
-// Only the clinic head has the doctors module; every other staff designation would get a 403 from the link,
-// and must never fall through to the administrator URL below.
-$doctorUrl = (canStaffAccessModule('doctors') && \Illuminate\Support\Facades\Route::has('staff.doctors.show'))
-? route('staff.doctors.show', $doctor->id) : null;
-} elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.doctors.detail')) {
-$doctorUrl = route('doctors.doctors.detail', $doctor->id);
-} elseif (\Illuminate\Support\Facades\Route::has('doctors.show')) {
-$doctorUrl = route('doctors.show', $doctor->id);
+if ($row->doctor_id) {
+    if (isRole('staff')) {
+        // Only the clinic head has the doctors module; every other staff designation would get a 403 from the link,
+        // and must never fall through to the administrator URL below.
+        $doctorUrl = (canStaffAccessModule('doctors') && \Illuminate\Support\Facades\Route::has('staff.doctors.show'))
+            ? route('staff.doctors.show', $row->doctor_id) : null;
+    } elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.doctors.detail')) {
+        $doctorUrl = route('doctors.doctors.detail', $row->doctor_id);
+    } elseif (\Illuminate\Support\Facades\Route::has('doctors.show')) {
+        $doctorUrl = route('doctors.show', $row->doctor_id);
+    }
 }
-}
-
-$doctorImage = (($doctorUser?->gender ?? null) == \App\Models\User::FEMALE)
-? asset('web/media/avatars/female.png')
-: asset('web/media/avatars/male.png');
 @endphp
 
-@if ($doctor && $doctorUser)
-<div class="d-flex align-items-center">
-    <div class="image image-mini me-3">
-        <a href="{{ $doctorUrl ?? 'javascript:void(0)' }}">
-            <div>
-                <img src="{{ $doctorImage }}" alt=""
-                    class="user-img image image-circle object-contain">
-            </div>
-        </a>
-    </div>
-    <div class="d-flex flex-column">
-        <a href="{{ $doctorUrl ?? 'javascript:void(0)' }}"
-            class="text-decoration-none mb-1">{{ $doctorUser->full_name }}</a>
-        <span>{{ $doctorUser->email ?? 'N/A' }}</span>
-    </div>
+@if ($row->given_by)
+<div class="d-flex flex-column">
+    @if ($doctorUrl)
+    <a href="{{ $doctorUrl }}" class="text-decoration-none mb-1">{{ $row->given_by }}</a>
+    @else
+    <span class="mb-1">{{ $row->given_by }}</span>
+    @endif
+    <span>{{ $row->given_by_email ?? 'N/A' }}</span>
 </div>
 @else
 NA

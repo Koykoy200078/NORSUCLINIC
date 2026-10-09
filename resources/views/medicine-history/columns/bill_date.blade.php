@@ -1,5 +1,5 @@
 @php
-$dispensedAt = $row->bill_date ?? $row->created_at;
+$dispensedAt = $row->dispensed_at;
 @endphp
 
 @if ($dispensedAt === null)
@@ -11,4 +11,5 @@ N/A
             {{ \Carbon\Carbon::parse($dispensedAt)->translatedFormat('jS M, Y')}}
         </div>
     </div>
-    @endif
+</div>
+@endif

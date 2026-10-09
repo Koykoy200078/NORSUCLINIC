@@ -299,6 +299,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     Route::post('dispense-records/store-patient', [DispenseRecordController::class, 'storePatient'])->name('dispense-records.store-patient');
     Route::get('dispense-records-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('dispense-records.pdf');
     Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
+    Route::get('dispense-records/consultation/{document_issuance}', [DispenseRecordController::class, 'showConsultation'])
+        ->whereNumber('document_issuance')->name('dispense-records.consultation');
 
     // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
     Route::redirect('medicine-history', '/admin/dispense-records');

@@ -1,7 +1,7 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0 and 1 done and tested on 2026-10-09 (commits `7c6b5c5`, `d00cca3` and the Phase 1 follow-up; pushed to
-`origin/changes_v2`); Phase 2 next · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` ·
+**Status:** Phases 0, 1 and 2 done and tested on 2026-10-09 (Phases 0-1: `7c6b5c5`, `d00cca3`, `c498798`; Phase 2: see
+[Handover.md](../Handover.md); all pushed to `origin/changes_v2`); Phase 3 next · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` ·
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -304,17 +304,25 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 4. Every `*_id` column was also scanned for rows pointing at nothing, even where no foreign key exists: the clinic data has none besides those batches.
 
 ### Phase 2 — Fix: Dispense History shows consultation medicines
-- [ ] 2.1 Database view `dispense_history_view`:
+- [x] 2.1 Database view `dispense_history_view`:
   - dispense records + dispensed prescriptions (today's rule), plus one row per non-deleted consultation with medicines (`CONS-{id}`, date the medicines left stock, patient, given by, total quantity, Plan / Nursing);
   - read-only model `DispenseHistoryEntry`.
-- [ ] 2.2 Dispense History table on the view: **Source** column + filter, name search, actions per source (consultation rows: View only).
-- [ ] 2.3 Read-only "consultation dispense" detail page inside Dispensing; link to the consultation only for users who can open consultations.
-- [ ] 2.4 Tests:
+  *Done:* migration `2026_10_09_140000_create_dispense_history_view` (a `UNION ALL` of two branches; `id` is `B<bill id>` / `C<consultation id>` because the sources number their rows independently; the consultation branch sums `consultation_medicines` only for consultation forms and lists the Plan / Nursing parts; a deleted consultation gave its stock back, so it is not listed and comes back when restored; "Dispensed At" of a consultation = when the consultation was recorded). `doctor_id` is set only when the person who recorded it is a doctor (a nurse has none). Model `App\Models\DispenseHistoryEntry` (read-only, string key). `lines` is a reserved word in MySQL: the sale-lines sub-select is `bill_lines`.
+- [x] 2.2 Dispense History table on the view: **Source** column + filter, name search, actions per source (consultation rows: View only).
+  *Done:* `MedicineDispenseTable` now reads the view. New **Source** column (badge, plus "Plan + Nursing" under consultations) and a **Source** filter in the header (All / Dispense Record / Prescription / Consultation), word search on patient and on doctor / recorded-by (name or email), sort on every column. The doctor column is titled "Doctor / Recorded by". Actions: a manual dispense record keeps View / Edit / Delete; a consultation row and a prescription row get **View only** (they belong to their own record; before, the prescription row showed Edit / Delete buttons that were then refused). Archived patients keep their history and displayed name, with no patient link that would return 404.
+- [x] 2.3 Read-only "consultation dispense" detail page inside Dispensing; link to the consultation only for users who can open consultations.
+  *Done:* `dispense-records.consultation` (3 new routes: admin, `staff.`, `doctors.`; 472 → 475 routes, the diff against the Phase 0 snapshot is exactly these three) → `DispenseRecordController::showConsultation` and `medicine-history/consultation.blade.php`: patient, recorded at / by, the medicine lines (dosage, Plan / Nursing, instructions, quantity) and the total. No clinical notes on this page. 404 for a deleted consultation or a document that is not a consultation. The "View Consultation" button needs `manage_request_documents` (+ the `consultations` module for staff / nurse roles, so a pharmacist does not get a dead link and a clinic head can open it).
+- [x] 2.4 Tests:
   - rows for nurse- and doctor-added medicines;
   - edit / remove a line / delete / restore a consultation;
   - pending vs dispensed prescription;
   - search, sort and filter; access.
   Live check on clinic data: consultations 3 / 6 / 7 show 9 / 14 / 15 units.
+  *Done:* `tests/Feature/Regression/DispenseHistoryTest` (15 tests / 112 assertions): doctor- and nurse-recorded consultations, no medicines, edit / remove lines, delete + restore, manual vs dispensed vs pending prescriptions, source filter, word search, sorting both ways, View-only consultation / prescription actions, role access and 404s. Takeover review added regressions for non-consultation documents, archived patient links and the clinic head's consultation link. All five mutations fail: document type, archived link, deleted consultation, prescription status and consultation access key.
+
+  Live check on `norsu_clinic`: refreshing the view changed no stock or ledger rows; consultations 3 / 6 / 7 show **9 / 14 / 15** units. Headless Chrome over `192.168.2.13:8000` and `172.22.208.1:8000`: admin, doctor and clinic head pass source filtering, search, tab switching and all three detail pages, with no JavaScript errors, failed requests or internet dependencies. The QA nurse has no dispensing module under the existing policy: the menu is hidden and the list / detail pages correctly return 403 (Phase 3 removes this designation layer). Admin / doctor / clinic head have a working "View Consultation" link; the pharmacist's hidden link is regression-tested. `db:integrity --compare-fresh`: 0 errors / 3 existing warnings, schema identical to a fresh install.
+
+  **Final verification (2026-10-09):** `LINK_CRAWL=1 php vendor/bin/phpunit` — **444 tests / 4,304 assertions**, all passing, none skipped (9 min 20 sec, 190 MB). The 16-user crawl made 1,143 requests over 1,093 pages: no broken links, crashes, lazy-table failures or capped crawls. Inline review and `git diff --check` passed. No new Artisan commands; [commands.md](commands.md) was checked and remains unchanged. Next: Phase 3.
 
 ### Phase 3 — Fix: Manage User roles really applies + Staff = Nurse
 - [ ] 3.1 **Staff = Nurse, one role.** A data migration:
@@ -578,7 +586,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Item | Status |
 |---|---|
 | Stock-out counted pending prescriptions / patient "N/A" (R3-M3) | ✅ |
-| **Dispense History misses consultation medicines** | 🆕 Phase 2 |
+| **Dispense History misses consultation medicines** | ✅ Phase 2 |
 
 ### 4.8 Lab Requests
 | Item | Status |

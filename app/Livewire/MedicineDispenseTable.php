@@ -2,18 +2,17 @@
 
 namespace App\Livewire;
 
-use App\Models\DispenseRecord;
-use App\Models\DispenseRecordItem;
-use App\Models\Prescription;
-use App\Models\User;
-use App\Support\SearchTerm;
+use App\Models\DispenseHistoryEntry;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
+use Rappasoft\LaravelLivewireTables\Views\Column;
 
 /**
  * Renamed from MedicineBillTable → MedicineDispenseTable.
  * Displays the dispensing history (Tab 4 of MedicineScreen).
+ *
+ * Reads `dispense_history_view` (plan Phase 2): dispense records, dispensed prescriptions AND the medicines
+ * recorded inside consultations, told apart by the Source column and the Source filter in the header.
  */
 #[Lazy]
 class MedicineDispenseTable extends LivewireTableComponent
@@ -22,14 +21,20 @@ class MedicineDispenseTable extends LivewireTableComponent
 
     public string $buttonComponent = 'medicine-history.add-button';
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    public bool $showFilterOnHeader = true;
 
-    protected $model = DispenseRecord::class;
+    public array $FilterComponent = ['medicine-history.components.source_filter', DispenseHistoryEntry::SOURCES];
+
+    public string $sourceFilter = '';
+
+    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+
+    protected $model = DispenseHistoryEntry::class;
 
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('medicine_bills.bill_date', 'desc');
+            ->setDefaultSort('dispensed_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {
@@ -47,74 +52,55 @@ class MedicineDispenseTable extends LivewireTableComponent
 
     public function columns(): array
     {
-        $columns = [
+        return [
             Column::make('Dispense ID', 'history_number')
                 ->sortable()->searchable()
                 ->view('medicine-history.columns.bill_id'),
-            Column::make('Dispensed At', 'bill_date')
+            Column::make('Source', 'source')
+                ->sortable()->searchable()
+                ->view('medicine-history.columns.source'),
+            Column::make('Dispensed At', 'dispensed_at')
                 ->sortable()->searchable()
                 ->view('medicine-history.columns.bill_date'),
             Column::make(__('messages.prescription.patient'), 'patient_id')->hideIf(1),
-            Column::make(__('messages.prescription.patient'), 'patient.user.first_name')
-                ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy(
-                        User::select('first_name')->whereColumn('id', 'patient.user_id'),
-                        $direction
-                    );
-                })->searchable(function (Builder $query, $word) {
-                    $query->whereHas('patient.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+            Column::make(__('messages.prescription.patient'), 'patient_name')
+                ->sortable()
+                ->searchable(function (Builder $query, $word) {
+                    $query->where(fn (Builder $person) => $person
+                        ->where('patient_name', 'like', \App\Support\SearchTerm::like($word))
+                        ->orWhere('patient_email', 'like', \App\Support\SearchTerm::like($word)));
                 })->view('medicine-history.columns.patient'),
-            Column::make(__('messages.doctor.doctor'), 'doctor_id')->hideIf(1),
-            Column::make(__('messages.doctor.doctor'), 'doctor.user.first_name')
-                ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy(
-                        User::select('first_name')->whereColumn('id', 'doctor.user_id'),
-                        $direction
-                    );
-                })->searchable(function (Builder $query, $word) {
-                    $query->whereHas('doctor.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+            Column::make('Doctor / Recorded by', 'given_by')
+                ->sortable()
+                ->searchable(function (Builder $query, $word) {
+                    $query->where(fn (Builder $person) => $person
+                        ->where('given_by', 'like', \App\Support\SearchTerm::like($word))
+                        ->orWhere('given_by_email', 'like', \App\Support\SearchTerm::like($word)));
                 })->view('medicine-history.columns.doctor'),
-            Column::make('Quantity Dispensed', 'id')
-                ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy('dispensed_quantity', $direction);
-                })
+            Column::make('Quantity Dispensed', 'quantity')
+                ->sortable()
                 ->view('medicine-history.columns.dispensed_quantity'),
-            Column::make(__('messages.common.action'), 'id')
+            Column::make(__('messages.common.action'), 'record_id')
                 ->view('medicine-history.columns.action'),
         ];
-
-        return $columns;
     }
 
     public function builder(): Builder
     {
-        return DispenseRecord::query()
-            ->select('medicine_bills.*')
-            ->selectSub(
-                DispenseRecordItem::query()
-                    ->selectRaw('COALESCE(SUM(sale_quantity), 0)')
-                    ->whereColumn('sale_medicines.medicine_bill_id', 'medicine_bills.id'),
-                'dispensed_quantity'
-            )
-            ->with([
-                'patient:id,user_id',
-                'patient.user:id,first_name,last_name,email,gender',
-                'doctor:id,user_id',
-                'doctor.user:id,first_name,last_name,email,gender',
-            ])
-            ->where(function (Builder $query) {
-                $query->whereIn('medicine_bills.model_type', [
-                    DispenseRecord::class,
-                    'App\Models\MedicineBill',
-                ])->orWhere(function (Builder $prescriptionQuery) {
-                    $prescriptionQuery->where('medicine_bills.model_type', Prescription::class)
-                        ->whereExists(function ($exists) {
-                            $exists->selectRaw('1')
-                                ->from('prescriptions')
-                                ->whereColumn('prescriptions.id', 'medicine_bills.model_id')
-                                ->where('prescriptions.status', Prescription::DISPENSE_STATUS_DISPENSED);
-                        });
-                });
-            });
+        $query = DispenseHistoryEntry::query()
+            ->select('dispense_history_view.*')
+            ->with(['patient:id,user_id', 'patient.user:id,gender']);
+
+        if (in_array($this->sourceFilter, DispenseHistoryEntry::SOURCES, true)) {
+            $query->where('dispense_history_view.source', $this->sourceFilter);
+        }
+
+        return $query;
+    }
+
+    public function updatedSourceFilter(): void
+    {
+        $this->setBuilder($this->builder());
+        $this->resetPage();
     }
 }

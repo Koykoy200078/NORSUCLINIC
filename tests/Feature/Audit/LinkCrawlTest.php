@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Audit;
 
+use App\Models\ConsultationMedicine;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\DocumentIssuance;
@@ -115,6 +116,12 @@ class LinkCrawlTest extends TestCase
                 'complaints' => 'cough', 'assessment' => 'URTI', 'plan' => 'rest',
             ]);
         }
+
+        // A consultation with a medicine line, so the Dispense History has a "Consultation" row (and its View link).
+        ConsultationMedicine::create([
+            'request_document_id' => DocumentIssuance::where('document_type', 'consultation_form')->value('id'),
+            'medicine_id' => $medicine->id, 'dosage' => '500mg', 'quantity' => 1, 'used_for' => 'plan',
+        ]);
 
         $prescription = Prescription::create(['patient_id' => $patient->id, 'doctor_id' => $doctor->doctor->id, 'status' => 'pending', 'is_active' => 1]);
         $record = DispenseRecord::create([

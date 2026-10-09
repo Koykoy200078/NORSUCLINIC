@@ -1,41 +1,33 @@
 @php
-$patient = $row->patient ?? null;
-$patientUser = null;
-if ($patient && $patient->relationLoaded('user')) {
-$patientUser = $patient->user;
-} elseif ($patient && $patient->relationLoaded('patientUser')) {
-$patientUser = $patient->patientUser;
-}
-
 $patientUrl = null;
-if ($patient) {
-if (isRole('staff')) {
-// Staff open a patient page only with the patients module (a pharmacist has none: the link would answer 403),
-// and must never fall through to the administrator URL below.
-$patientUrl = (canStaffAccessModule('patients') && \Illuminate\Support\Facades\Route::has('staff.patients.show'))
-? route('staff.patients.show', $patient->id) : null;
-} elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.patients.show')) {
-$patientUrl = route('doctors.patients.show', $patient->id);
-} elseif (\Illuminate\Support\Facades\Route::has('patients.show')) {
-$patientUrl = route('patients.show', $patient->id);
-}
+if ($row->patient && $row->patient->user) {
+    if (isRole('staff')) {
+        // Staff open a patient page only with the patients module (a pharmacist has none: the link would answer 403),
+        // and must never fall through to the administrator URL below.
+        $patientUrl = (canStaffAccessModule('patients') && \Illuminate\Support\Facades\Route::has('staff.patients.show'))
+            ? route('staff.patients.show', $row->patient_id) : null;
+    } elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.patients.show')) {
+        $patientUrl = route('doctors.patients.show', $row->patient_id);
+    } elseif (\Illuminate\Support\Facades\Route::has('patients.show')) {
+        $patientUrl = route('patients.show', $row->patient_id);
+    }
 }
 @endphp
 
-@if ($patient && $patientUser)
+@if ($row->patient_name)
 <div class="d-flex align-items-center">
     <div class="image image-mini me-3">
         <a href="{{ $patientUrl ?? 'javascript:void(0)' }}">
             <div>
-                <img src="{{ $patient->profile }}" alt=""
+                <img src="{{ $row->patient?->profile ?? asset('web/media/avatars/male.png') }}" alt=""
                     class="user-img image image-circle object-contain">
             </div>
         </a>
     </div>
     <div class="d-flex flex-column">
         <a href="{{ $patientUrl ?? 'javascript:void(0)' }}"
-            class="text-decoration-none mb-1">{{ $patientUser->full_name }}</a>
-        <span>{{ $patientUser->email ?? 'N/A' }}</span>
+            class="text-decoration-none mb-1">{{ $row->patient_name }}</a>
+        <span>{{ $row->patient_email ?? 'N/A' }}</span>
     </div>
 </div>
 @else
