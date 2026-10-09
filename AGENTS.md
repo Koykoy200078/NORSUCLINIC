@@ -85,8 +85,9 @@ PostgreSQL. Copies are in the owner's other project if the stack ever changes.
 - **Frontend:** after JS / CSS changes run `npm run dev` (or `npm run prod`); built assets are not in git (except
   `public/messages.js`, see STATUS §8).
 - **PHP style:** curly braces on every control structure, type hints on new code, StyleCI (`.styleci.yml`) style.
-- **Docs:** create documentation only when asked. The maintained records are `Handover.md`, `docs/STATUS.md` and the
-  audit plan.
+- **Docs:** create documentation only when asked. The maintained records are `Handover.md`, `docs/STATUS.md`, the
+  audit plan and [docs/commands.md](docs/commands.md), the **log of new artisan commands** (what each does, whether it
+  changes data, where and when to run it): add or update a row there in the same commit that adds or changes a command.
 - **Replies:** concise; say what was verified and how.
 
 ## 6. Data and secrets
@@ -97,6 +98,9 @@ PostgreSQL. Copies are in the owner's other project if the stack ever changes.
     is wiped on every run) and must **never** run against `norsu_clinic` (the same file enforces it).
 - Never print or commit `.env` values or passwords. The clinic dump (`Downloads/10082026.sql`) contains patient data:
   never copy it into the repository or into documents.
+- After a migration or a data change on `norsu_clinic`, run `php artisan db:integrity` (read-only; `--compare-fresh` also
+  compares the structure with a freshly built install). QA logins on the clinic data are in the git-ignored
+  `storage/app/qa-accounts.json`; never print the passwords.
 
 ## 7. Domain rules that cause bugs when forgotten
 

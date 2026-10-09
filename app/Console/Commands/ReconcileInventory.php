@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Medicine;
 use App\Models\MedicineBatch;
 use App\Models\PurchasedMedicine;
+use App\Services\InventoryConsistency;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Read-only consistency report for the medicine inventory. Run it after upgrading past the
@@ -21,37 +20,23 @@ class ReconcileInventory extends Command
 
     protected $description = 'Report medicines whose totals, batches or ledger disagree (read-only)';
 
-    public function handle(): int
+    public function handle(InventoryConsistency $consistency): int
     {
         $problems = 0;
 
         // 1. medicines.quantity must equal the sum of its batches.
-        $totals = MedicineBatch::query()
-            ->select('medicine_id', DB::raw('SUM(quantity) AS total'))
-            ->groupBy('medicine_id')
-            ->pluck('total', 'medicine_id');
-
-        $mismatch = [];
-        foreach (Medicine::query()->select('id', 'name', 'quantity')->cursor() as $medicine) {
-            $batchTotal = (int) ($totals[$medicine->id] ?? 0);
-            if ((int) $medicine->quantity !== $batchTotal) {
-                $mismatch[] = [$medicine->id, $medicine->name, (int) $medicine->quantity, $batchTotal];
-            }
-        }
+        $mismatch = array_map(
+            fn (array $row): array => [$row['id'], $row['name'], $row['recorded'], $row['batches']],
+            $consistency->totalMismatches()
+        );
         $problems += count($mismatch);
         $this->section('Medicines whose total differs from the sum of their batches', ['ID', 'Medicine', 'medicines.quantity', 'Sum of batches'], $mismatch);
 
         // 2. Each batch's quantity must equal the balance after its last ledger entry.
-        $lastBalance = DB::table('medicine_transactions as t')
-            ->join(DB::raw('(SELECT batch_id, MAX(id) AS last_id FROM medicine_transactions GROUP BY batch_id) l'), 'l.last_id', '=', 't.id')
-            ->pluck('t.balance_after', 't.batch_id');
-
-        $ledgerMismatch = [];
-        foreach (MedicineBatch::query()->with('medicine:id,name')->cursor() as $batch) {
-            if (isset($lastBalance[$batch->id]) && (int) $lastBalance[$batch->id] !== (int) $batch->quantity) {
-                $ledgerMismatch[] = [$batch->id, $batch->medicine->name ?? '#' . $batch->medicine_id, $batch->batch_number, (int) $batch->quantity, (int) $lastBalance[$batch->id]];
-            }
-        }
+        $ledgerMismatch = array_map(
+            fn (array $row): array => [$row['id'], $row['medicine'], $row['batch_number'], $row['quantity'], $row['ledger']],
+            $consistency->ledgerMismatches()
+        );
         $problems += count($ledgerMismatch);
         $this->section('Batches whose quantity differs from the last ledger balance', ['Batch', 'Medicine', 'Batch no.', 'Quantity', 'Ledger balance'], $ledgerMismatch);
 

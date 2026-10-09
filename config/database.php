@@ -72,7 +72,9 @@ return [
             // Strict mode makes MySQL reject over-length / invalid values instead of silently
             // truncating or coercing them (clinical text used to be cut off without any error).
             'strict' => env('DB_STRICT', true),
-            'engine' => null,
+            // Every new table is InnoDB (foreign keys, transactions, row locks) whatever the server's default engine
+            // is: the clinic's WAMP server defaulted to MyISAM, so its tables had none of those.
+            'engine' => env('DB_ENGINE', 'InnoDB'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
