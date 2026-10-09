@@ -93,7 +93,8 @@ PostgreSQL. Copies are in the owner's other project if the stack ever changes.
 
 - Databases on the dev laptop:
   - `norsu_clinic` is the only working database (experimental data);
-  - tests use their own throwaway schema `norsu_clinic_test` and must **never** run against `norsu_clinic` (`tests/CreatesApplication.php` enforces it).
+  - tests use their own throwaway schema `norsu_clinic_test` (`tests/CreatesApplication.php` creates it when it is missing; it
+    is wiped on every run) and must **never** run against `norsu_clinic` (the same file enforces it).
 - Never print or commit `.env` values or passwords. The clinic dump (`Downloads/10082026.sql`) contains patient data:
   never copy it into the repository or into documents.
 

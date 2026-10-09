@@ -1,7 +1,8 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** PLAN ONLY, nothing below has been started · **Branch:** `changes_v2` (base `develop`) · **Last commit:**
-`327aabc` (already on `origin/changes_v2`) · **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
+**Status:** Phase 0 done on 2026-10-09 (not committed yet); Phases 1–10 not started · **Branch:** `changes_v2` (base
+`develop`) · **Phase 0 started from:** `5155bf5` (on `origin/changes_v2`) · **Plan re-audited:** 2026-10-08, corrections
+listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
 something is unclear · no commit / push without the owner's go-ahead · every module is checked twice (code pass + live pass),
@@ -40,9 +41,9 @@ Every factual claim of the first version was checked again against git, the code
 | Claim in the first version | Checked against | Result |
 |---|---|---|
 | "last pushed docs commit `fd1b43a`" | `git log origin/changes_v2` | ❌ **Wrong**: everything up to `327aabc` is pushed. STATUS.md §1 / §8 ("committed 10-08, not pushed") is stale too; it gets fixed in Phase 10 |
-| "338 tests" | test files | ❌ **Stale**: the owner's 3 commits added 28 tests (16 + 6 + 6), so about **366**. Exact count after the Phase 0 run |
+| "338 tests" | test files, then the Phase 0 baseline run (2026-10-09) | ❌ **Stale**: the owner's 3 commits added 28 tests (16 + 6 + 6) = **366**; with the 11 tests added in Phase 0.2 the suite has **377** (3,994 assertions, 1 skipped) |
 | "about half of the 14 permissions have no screen for doctor / staff" | `routes/*.php`, `RoleRepository::getPermissions()` | ✏️ **Made precise**: the Roles form shows 13 (it hides `manage_admin_dashboard`); **8 of them do nothing for staff and 9 for doctors** |
-| "Illness / services migration fails on an InnoDB server" | reasoning only | ✏️ **Not yet proven**: it is the expected MySQL behaviour (an InnoDB foreign key cannot point at a MyISAM table). It is confirmed or refuted in Phase 0.5 |
+| "Illness / services migration fails on an InnoDB server" | reasoning only → rehearsal R0 (Phase 0.5, 2026-10-09) | ✅ **Confirmed**: error 1824 "Failed to open the referenced table 'document_issuances'" at `2026_10_02_090000`, leaving a half-built schema; on a MyISAM default the migration succeeds but creates MyISAM tables without foreign keys |
 | "Unreachable staff route groups (May finding C)" | `routes/staff.php` | ✅ **Already fixed**: no settings / roles / countries / CMS groups remain; the plan item is removed |
 | "PHP 8.2.26 at the clinic" | dump header | ✏️ That is phpMyAdmin's PHP on the clinic PC (almost certainly the same WAMP PHP). Confirmed on site before Phase 8 |
 | "local server was WAMP MySQL 8.4 without a password" | earlier notes only | ✏️ Worded as "earlier notes"; only the current server (MySQL 9.7.1, password set) is verified |
@@ -75,7 +76,7 @@ Every factual claim of the first version was checked again against git, the code
 |---|---|---|
 | Database server | **MySQL 9.7.1** with a root password (earlier notes: WAMP MySQL without a password) | `.env` updated by the owner; memory notes updated in Phase 10 |
 | `.env` | `APP_ENV=production`, `APP_DEBUG=false`, `DB_STRICT=true`, `APP_NAME="NORSU Clinic"` | name changes in Phase 4 |
-| Test schema | `norsu_clinic_test` (named in `phpunit.xml`) **does not exist** on this server | the test run will create its own throwaway schema automatically (Phase 0.2); no manual database setup |
+| Test schema | `norsu_clinic_test` (named in `phpunit.xml`) **did not exist** on this server | ✅ since Phase 0.2 the test run creates its own throwaway schema automatically; no manual database setup |
 | `norsu_clinic` | Fresh install: 1 admin, no clinical data, 123 migrations (batch 1), all InnoDB, 47 foreign keys | the only working database; replaced by the clinic dump after a backup (Phase 0 / 1) |
 | PHP | 8.3.31 locally; dump header says 8.2.26; `composer.json` platform pin = 8.1.0 | Reverb needs ≥ 8.2 → raise the pin (Phase 7) |
 | Framework | Laravel 10.50.3, Livewire 3.8.10, spatie/laravel-permission 5.11.1 | ✅ |
@@ -92,8 +93,8 @@ rows (the ledger matches the consultation medicines exactly), 1 pending prescrip
    - **every safeguard that relies on transactions or row locks does nothing at the clinic**: FEFO stock deduction
      (`lockForUpdate`), stock restores, queue call-next race, unique-number retry, all-or-nothing saves;
    - `2026_10_02_090000_create_illness_and_service_tables` creates tables with foreign keys to `document_issuances`.
-     **Expected** to fail on a server whose default engine is InnoDB, and to create MyISAM tables on a MyISAM server
-     (to be confirmed in Phase 0.5);
+     **Confirmed by rehearsal R0 (Phase 0.5):** on a server whose default engine is InnoDB it fails with error 1824 and
+     leaves a half-built schema; on a MyISAM server it creates MyISAM tables without foreign keys;
    - earlier rehearsals built the old schema through our own migrations (InnoDB), so they never saw this.
 2. **Zero date:** `sale_medicines.expiry_date = '0000-00-00 00:00:00'` (placeholder line of the prescription mirror).
    `121000` makes the column nullable, but the zero value stays.
@@ -204,23 +205,60 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 proposed commit (made only on the owner's go-ahead).
 
 ### Phase 0 — Safety nets and baselines
-- [ ] 0.1 Back up the current `norsu_clinic` (`php artisan db:backup`) and keep the file.
-- [ ] 0.2 Test database without manual setup. The test bootstrap (`tests/CreatesApplication.php`):
+- [x] 0.1 Back up the current `norsu_clinic` (`php artisan db:backup`) and keep the file.
+  *Done 2026-10-09:* it was the fresh install (1 user, 123 migrations, 64 InnoDB tables + 1 view, 47 foreign keys); the
+  backup (1.6 MB, ends with the "Dump completed" marker) was verified, and a copy is kept outside the repository and outside
+  the 30-day retention of `db:backup`.
+- [x] 0.2 Test database without manual setup. The test bootstrap (`tests/CreatesApplication.php`):
   - creates its throwaway schema (`norsu_clinic_test`) when it is missing;
   - keeps the guard that refuses to run against `norsu_clinic`.
   Then run the full suite once for the exact baseline count (one phpunit process at a time).
-- [ ] 0.3 Snapshots for later comparison: `php artisan route:list --json`; link crawl (`$env:LINK_CRAWL='1'; vendor/bin/phpunit --filter LinkCrawlTest`); route × role matrix ([route-access-audit-2026-10-02.md](route-access-audit-2026-10-02.md)).
-- [ ] 0.4 Rehearsal runner (script kept outside the repo; the dump contains patient data). It:
+  *Done 2026-10-09 (test-first):*
+  - `ensureTestSchemaExists()` creates the schema only after MySQL answers "Unknown database", only for a name the guard accepts, and once per PHP process. The guard became a testable function, `isSafeTestDatabase()` (plain word characters ending in `_test`, or in-memory SQLite);
+  - new regression test `tests/Feature/Regression/TestDatabaseBootstrapTest.php` (11 tests: a missing schema is created with utf8mb4 / utf8mb4_unicode_ci and left alone on a second run; 10 guard cases). RED first (the existing DB tests failed with `Unknown database 'norsu_clinic_test'`), then GREEN;
+  - proven end to end: with the schema dropped, a plain `vendor/bin/phpunit` created it again and passed; with `DB_DATABASE=norsu_clinic` the run aborts with exit code 1 before anything is dropped, and `norsu_clinic` was untouched;
+  - **baseline:** 377 tests, 3,994 assertions, 1 skipped (the opt-in link crawl), all green, 16 min on a busy machine (366 earlier tests + the 11 new ones). `phpunit.xml` and `AGENTS.md` no longer say "create the schema once".
+- [x] 0.3 Snapshots for later comparison: `php artisan route:list --json`; link crawl (`$env:LINK_CRAWL='1'; vendor/bin/phpunit --filter LinkCrawlTest`); route × role matrix ([route-access-audit-2026-10-02.md](route-access-audit-2026-10-02.md)).
+  *Done 2026-10-09 on `5155bf5` plus the Phase 0 changes (none of them touches a route or a page):*
+  - `route:list --json`: **472 routes** (admin 181, staff 121, doctors 105, the rest public / auth / vendor);
+  - link crawl: 16 kinds of user, **1,143 requests, 1,093 pages, 0 broken links, 0 crashes, 0 lazy-table failures** (7 min 19 s). The only external links are the two plain text links in the privacy policy (accepted, §4.12);
+  - route × role matrix: the 2026-10-02 harness was lost with its session, so it was rebuilt (`RouteRoleMatrixTest`, same fixtures and users as the link crawler): **441 routes × 18 users = 7,938 requests, 0 server errors**. The panels stay separated (`admin/*` answers 200 only to the administrator, `doctors/*` only to the doctor, `staff/*` only to staff accounts) and a deactivated doctor is sent to the login page everywhere (22.8 min). `compare-matrix.php` lists every cell that differs between two matrices, so Phases 3, 6 and 9 can show exactly which access changed. After Phase 3 the 12 designation / station users are replaced by Staff (Nurse) users with and without permissions;
+  - the three snapshots are JSON files kept with the rehearsal tools (outside the repository, see 0.4).
+- [x] 0.4 Rehearsal runner (script kept outside the repo; the dump contains patient data). It:
   - drops and re-imports the dump into **`norsu_clinic`**;
   - records row counts and checksums per table;
   - runs `migrate` with the default engine forced to MyISAM (as at the clinic) or InnoDB, one after the other;
   - runs the integrity checks.
   Repeatable as often as needed; each run starts from the dump.
-- [ ] 0.5 Rehearsal **R0** on the current code: record the exact errors under both engines (confirms or refutes §1.3).
+  *Done 2026-10-09:* `php rehearse.php --label=<name> --engine=MyISAM|InnoDB|server` (about 25 s per run). It refuses to
+  run unless the app is configured for exactly `norsu_clinic`. Per run it keeps `before.json` / `after.json` (per table:
+  engine, rows, `CHECKSUM TABLE`, a content signature over the columns that existed before, zero dates; foreign keys;
+  migrations), the `migrate` log, and a report; after a successful `migrate` it runs a second one (must do nothing). The
+  engine is forced with a PDO init command (`SET SESSION default_storage_engine`), so no server setting is changed. Two
+  runs of the same dump started from byte-identical snapshots. `db:integrity` (1.5) will add the domain checks (ledger,
+  stock-out, `inventory:reconcile`).
+  **Where it lives:** `C:\Users\Franc\.claude\projects\C--Projects-NORSUCLINIC\tools\rehearsal\` (outside the repository
+  because of the patient data): `rehearse.php`, `artisan-with-engine.php`, `inspect-db.php`, `restore-backup.php`,
+  `RouteRoleMatrixTest.php`, `compare-matrix.php`, `analyze-matrix.php`, plus `runs/` (R0 results), `backups/` (the 0.1
+  backup) and `baselines/` (0.3 snapshots). Run `php <path>\rehearse.php --label=R1 --engine=InnoDB`.
+- [x] 0.5 Rehearsal **R0** on the current code: record the exact errors under both engines (confirms or refutes §1.3).
+  *Done 2026-10-09: **§1.3 is confirmed.***
+
+  | | Default engine MyISAM (as at the clinic) | Default engine InnoDB (as on the dev laptop) |
+  |---|---|---|
+  | Dump after import | 59 MyISAM tables + the `used_medicines_view`, 44,558 rows, **0 foreign keys**, migrations stop at 108, **1 zero date** (`sale_medicines.expiry_date`) | same |
+  | `migrate` | **succeeds** (15 migrations) | **fails** at `2026_10_02_090000_create_illness_and_service_tables` |
+  | Error | none | `SQLSTATE[HY000] 1824 Failed to open the referenced table 'document_issuances'` (the foreign key `consultation_illnesses → document_issuances` cannot point at a MyISAM table) |
+  | State afterwards | 64 tables, **all MyISAM, still 0 foreign keys** (a fresh install has 47), zero date kept; the 5 new tables are MyISAM; `colleges` 10 → 11, `settings` 26 → 28; no other existing row changed; a second `migrate` does nothing | **half-built**: 10 migrations done, `illness_systems`, `illnesses`, `consultation_illnesses` created with 2 foreign keys, migrations stop at 118; a plain retry would fail with "table already exists" |
+
+  So at the clinic the upgrade "works" but silently leaves a schema without foreign keys or transactions, and on a server
+  whose default engine is InnoDB it fails half-way. Phase 1 (convert to InnoDB first) fixes both. `norsu_clinic` was
+  restored from the 0.1 backup afterwards (real import: 1.8).
 
 ### Phase 1 — Clinic-data upgrade
 - [ ] 1.1 `config/database.php`: `'engine' => env('DB_ENGINE', 'InnoDB')` (+ `.env.example`) so new tables are InnoDB on any server.
 - [ ] 1.2 Migration `2026_09_30_110000_convert_legacy_tables_to_innodb`: every MyISAM table → InnoDB (zero-date wrapper; views skipped; no-op on InnoDB databases). It sorts first, so the clinic runs it before the other new migrations.
+- [ ] 1.2a *(found by R0)* Make `2026_10_02_090000_create_illness_and_service_tables` safe to re-run: skip a table that already exists, so a database left half-built by an earlier failed attempt (R0 under InnoDB leaves 3 tables and 2 foreign keys behind) can continue instead of failing with "table already exists". Test with a database in exactly that state.
 - [ ] 1.3 Migration `2026_09_30_121500_normalize_zero_dates`: zero dates → NULL where the column allows NULL (runs after `121000`); reports the rest.
 - [ ] 1.4 Migration `2026_10_08_120000_restore_missing_foreign_keys`: adds each of the 47 reference foreign keys that is missing, **only** when the column types match and no orphan rows exist; otherwise skips and prints the orphan ids. Never changes data.
 - [ ] 1.5 Read-only command `php artisan db:integrity` (non-zero exit on errors). It checks:
@@ -462,7 +500,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Strict SQL mode, widened clinical text, NOT NULL defaults (09-30) | ✅ |
 | Zero-date tolerance in the 15 new migrations (owner, 10-08) | ✅ (kept, reused) |
 | Clinic tables MyISAM, 0 foreign keys, transactions void | 🆕 Phase 1 |
-| Illness / services migration on an InnoDB server with clinic data | 🆕 expected failure, confirm in 0.5, fix in Phase 1 |
+| Illness / services migration on an InnoDB server with clinic data | 🆕 confirmed failing (R0, error 1824, half-built schema), fix in Phase 1 |
 | Zero date left in `sale_medicines.expiry_date` | 🆕 Phase 1 |
 | Rehearsal on the **real** dump under both engines | 🆕 Phase 0 / 1 |
 | Test schema missing on MySQL 9.7 → tests create their own automatically | 🆕 Phase 0.2 |
@@ -578,9 +616,9 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 ### 4.13 Tests and tooling
 | Item | Status |
 |---|---|
-| ~366 tests (338 at 10-08 13:00 + 28 from the owner's commits) + opt-in link crawl | ✅ last green on the old server; re-run on MySQL 9.7 in Phase 0 |
-| Route × role matrix | 🟡 last run 10-02 |
-| Rehearsal runner on the real dump; `db:integrity` | 🆕 Phase 0 / 1 |
+| 377 tests (338 at 10-08 13:00 + 28 from the owner's commits + 11 for the test-schema bootstrap) + opt-in link crawl | ✅ green on MySQL 9.7 (2026-10-09, 3,994 assertions, 1 skipped = the crawl) |
+| Route × role matrix | ✅ rebuilt and run 2026-10-09 (7,938 requests, 0 server errors, no access leak); previous run 10-02 |
+| Rehearsal runner on the real dump; `db:integrity` | 🟡 runner done (Phase 0.4); `db:integrity` is Phase 1.5 |
 | Role × permission effect test; crawler without designation × station actors | 🆕 Phase 3.7 |
 
 ---

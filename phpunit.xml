@@ -25,10 +25,10 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <!-- The suite runs on a DEDICATED MySQL/MariaDB schema. Several migrations use MySQL-only SQL
-             (CREATE OR REPLACE VIEW, ALTER ... MODIFY), so SQLite cannot build the schema. Create it once:
-                 CREATE DATABASE norsu_clinic_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-             It uses the host / user / password from .env. tests/CreatesApplication.php aborts unless the
-             database name ends in "_test", so RefreshDatabase can never wipe the real clinic database. -->
+             (CREATE OR REPLACE VIEW, ALTER ... MODIFY), so SQLite cannot build the schema. It uses the
+             host / user / password from .env. tests/CreatesApplication.php creates the schema when it is
+             missing (no manual CREATE DATABASE) and aborts unless the database name ends in "_test", so
+             RefreshDatabase can never wipe the real clinic database. -->
         <env name="DB_CONNECTION" value="mysql"/>
         <env name="DB_DATABASE" value="norsu_clinic_test"/>
         <env name="DB_STRICT" value="true"/>
