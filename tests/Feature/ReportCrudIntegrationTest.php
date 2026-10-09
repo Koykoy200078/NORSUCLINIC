@@ -24,6 +24,7 @@ use Carbon\Carbon;
 class ReportCrudIntegrationTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Concerns\BuildsClinicData;
 
     protected $admin;
     protected $doctor;
@@ -183,7 +184,11 @@ class ReportCrudIntegrationTest extends TestCase
     /** @test */
     public function it_verifies_global_search_across_all_modules()
     {
-        $this->actingAs($this->admin);
+        // The global search only returns what the signed-in role may use, so this administrator must be a real one
+        // (the setUp account has no role at all).
+        $this->seedAccessControl();
+        $this->admin->assignRole('clinic_admin');
+        $this->actingAs($this->admin->fresh());
 
         // 1. Create a unique target
         $user = User::create(['first_name' => 'Xylophone', 'last_name' => 'Player', 'type' => User::PATIENT]);

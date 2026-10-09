@@ -19,18 +19,6 @@
     <span class="fs-4 text-gray-800">{{ !empty($staff->employee_id) ? $staff->employee_id : __('messages.common.n/a') }}</span>
 </div>
 <div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Role Designation') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty(optional($staff->staffProfile)->roleDesignation) ? $staff->staffProfile->roleDesignation->name : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Assigned Station') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty(optional($staff->staffProfile)->assignedStation) ? $staff->staffProfile->assignedStation->name : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-12 d-flex flex-column mb-md-10 mb-5">
-    <label class="pb-2 fs-4 text-gray-600">{{ __('Shift Schedule') }}</label>
-    <span class="fs-4 text-gray-800">{{ !empty(optional($staff->staffProfile)->shift_schedule) ? $staff->staffProfile->shift_schedule : __('messages.common.n/a') }}</span>
-</div>
-<div class="col-md-6 d-flex flex-column mb-md-10 mb-5">
     <label class="pb-2 fs-4 text-gray-600">{{ __('messages.patient.registered_on') }}</label>
     <span class="fs-4 text-gray-800">{{$staff->created_at->diffForHumans()}}</span>
 </div>

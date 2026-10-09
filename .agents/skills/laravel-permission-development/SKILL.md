@@ -12,22 +12,31 @@ Settings › Manage User roles, seeders that grant permissions, and access tests
 
 ## The access model here
 
-- **Roles:** `clinic_admin` (always every permission), `staff` (shown as **"Staff (Nurse)"** after the planned merge),
-  `doctor`, `patient` (patients do **not** sign in). A `nurse` role exists from older data but has no accounts; the plan
-  merges it into Staff. `isRole('staff')` already matches nurse-role users.
+- **Roles:** `clinic_admin` (always every permission; locked on the Roles screen), `staff` (shown as **"Staff (Nurse)"**:
+  the one role for staff and nurses), `doctor`, `patient` (patients do **not** sign in; read-only on the Roles screen).
+  The older `nurse` role is **retired**: the `2026_10_09_170000_unify_staff_nurse_access` migration moves its accounts to
+  `staff` and leaves the role in the table (default, hidden from the screen and the staff form, never assigned again).
 - **14 permissions** (`manage_patients`, `manage_request_documents`, `manage_medicines`, `manage_doctors`,
   `manage_specialties`, `manage_settings`, `manage_roles`, `manage_staff`, `manage_front_cms`, `manage_countries`,
   `manage_states`, `manage_cities`, `manage_admin_dashboard`, `manage_staff_dashboard`).
+- **Only five permissions apply to the Staff (Nurse) and Doctor panels:** `manage_patients` (patients + queue),
+  `manage_request_documents` (consultations, certificates, prescriptions, lab requests), `manage_medicines` (inventory,
+  dispensing, dispense history), `manage_doctors`, `manage_specialties` (`App\Support\ModuleAccess`). The Roles screen
+  offers a role only the permissions that apply to it and the server drops the rest; `manage_admin_dashboard` /
+  `manage_staff_dashboard` check nothing.
 - **Users get permissions only through their role.** Direct user permissions (`model_has_permissions`) make a later
-  revocation in the Roles screen silently ineffective — do not create them (the old `fix:dashboard-permissions` command
-  does; it is slated for removal).
+  revocation in the Roles screen silently ineffective — do not create them (the migration above cleared the existing ones
+  of non-admins and `php artisan db:integrity` reports any new ones; the old `fix:dashboard-permissions` command creates
+  them and is slated for removal).
 - **Each role has its own route file** with the stack `auth`, `checkUserStatus`, `role:<role>` and per-module
   `permission:<name>`: `routes/web.php` (admin, prefix `/admin` + name `admin.` / unprefixed), `routes/staff.php`
   (`/staff`, `staff.`), `routes/doctor.php` (`/doctors`, `doctors.`).
-- **Today** staff are also limited by `staff.module:<module>` (`EnsureStaffModuleAccess` → `canStaffAccessModule()`, with
-  designation / station maps in `app/helpers.php`). **The plan removes this layer** (designations and stations go away)
-  and adds `canUseModule($module)` = the module's permission. Check `docs/audit-plan-2026-10-08.md` Phase 3 and the code
-  for which state you are in.
+- **Module access = permission, nothing else.** `canUseModule($module)` (`app/helpers.php`, map in
+  `App\Support\ModuleAccess::PERMISSIONS`) is the one check for menus, dashboards and buttons and matches the `permission:`
+  middleware of the routes. Dashboard, Report Generation and Notifications & Alerts are open to every signed-in staff,
+  doctor and admin. The old designation / station layer (`staff.module` middleware, `canStaffAccessModule()`, the
+  designation / station maps) was removed in Phase 3; the `staff_profiles` designation / station / shift columns remain
+  in the database, hidden and unused.
 
 ## Laravel 10 specifics (differs from newer docs)
 

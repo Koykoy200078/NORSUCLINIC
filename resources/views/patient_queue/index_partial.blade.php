@@ -76,7 +76,7 @@ $regularQueues = $queues->where('is_priority', false);
                                         </form>
                                         @endif
 
-                                        @if(! $queue->attached_form_is_new && canStaffAccessModule('consultations'))
+                                        @if(! $queue->attached_form_is_new && canUseModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
                                            class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
                                             <i class="fas fa-file-circle-plus"></i>
@@ -179,7 +179,7 @@ $regularQueues = $queues->where('is_priority', false);
                                         </form>
                                         @endif
 
-                                        @if(! $queue->attached_form_is_new && canStaffAccessModule('consultations'))
+                                        @if(! $queue->attached_form_is_new && canUseModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
                                            class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
                                             <i class="fas fa-file-circle-plus"></i>

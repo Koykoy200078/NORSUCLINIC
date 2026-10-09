@@ -10,7 +10,7 @@ $dashboardUrl = getDashboardURL();
 
 {{-- [ORDER 2] Patients --}}
 @can('manage_patients')
-@if(canStaffAccessModule('patients'))
+@if(canUseModule('patients'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('patients') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('patients') ? 'active' : '' }}"
         href="{{ getRouteByRole('patients.index') }}">Patients</a>
@@ -18,7 +18,7 @@ $dashboardUrl = getDashboardURL();
 @endif
 
 {{-- [ORDER 3] Queue --}}
-@if(canStaffAccessModule('queue'))
+@if(canUseModule('queue'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('patient-queue') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('patient-queue') ? 'active' : '' }}"
         href="{{ getRouteByRole('patient-queue.index') }}">Queue</a>
@@ -29,7 +29,7 @@ $dashboardUrl = getDashboardURL();
 {{-- [ORDER 4] Consultations --}}
 @can('manage_request_documents')
 @php $documentIssuancesRouteName = getRouteNameByRole('document-issuances.index'); @endphp
-@if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canStaffAccessModule('consultations'))
+@if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canUseModule('consultations'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('consultations') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('consultations') ? 'active' : '' }}"
         href="{{ route($documentIssuancesRouteName) . '?module=consultation' }}">Consultations</a>
@@ -38,7 +38,7 @@ $dashboardUrl = getDashboardURL();
 
 {{-- [ORDER 5] Prescriptions --}}
 @php $prescriptionsRouteName = getRouteNameByRole('prescriptions.index'); @endphp
-@if(\Illuminate\Support\Facades\Route::has($prescriptionsRouteName) && canStaffAccessModule('prescriptions'))
+@if(\Illuminate\Support\Facades\Route::has($prescriptionsRouteName) && canUseModule('prescriptions'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('prescriptions') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('prescriptions') ? 'active' : '' }}"
         href="{{ route($prescriptionsRouteName) }}">Prescriptions</a>
@@ -48,13 +48,13 @@ $dashboardUrl = getDashboardURL();
 
 {{-- [ORDER 6 & 7] Inventory & Dispensing --}}
 @can('manage_medicines')
-@if(canStaffAccessModule('inventory'))
+@if(canUseModule('inventory'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('inventory') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('inventory') ? 'active' : '' }}"
         href="{{ getRouteByRole('medicine-inventory.index') }}">Inventory</a>
 </li>
 @endif
-@if(canStaffAccessModule('dispensing'))
+@if(canUseModule('dispensing'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('dispensing') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('dispensing') ? 'active' : '' }}"
         href="{{ getRouteByRole('medicine-dispensing.index') }}">Dispensing</a>
@@ -65,7 +65,7 @@ $dashboardUrl = getDashboardURL();
 {{-- [ORDER 8] Laboratory Requests --}}
 @can('manage_request_documents')
 @php $labRequestsRouteName = getRouteNameByRole('lab-requests.index'); @endphp
-@if(\Illuminate\Support\Facades\Route::has($labRequestsRouteName) && canStaffAccessModule('lab_requests'))
+@if(\Illuminate\Support\Facades\Route::has($labRequestsRouteName) && canUseModule('lab_requests'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('lab-requests') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('lab-requests') ? 'active' : '' }}"
         href="{{ route($labRequestsRouteName) }}">Lab Requests</a>
@@ -75,7 +75,7 @@ $dashboardUrl = getDashboardURL();
 
 {{-- [ORDER 9] Certificate Issuance --}}
 @can('manage_request_documents')
-@if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canStaffAccessModule('certificates'))
+@if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canUseModule('certificates'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('certificates') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('certificates') ? 'active' : '' }}"
         href="{{ route($documentIssuancesRouteName) . '?module=certificate' }}">Certificates</a>
@@ -84,7 +84,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 {{-- [ORDER 10] Reports --}}
-@if(isRole('clinic_admin') || isRole('doctor') || ((isRole('staff') || isRole('nurse')) && canStaffAccessModule('reports')))
+@if(canUseModule('reports'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('reports') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('reports') ? 'active' : '' }}"
         href="{{ getRouteByRole('activity-logs.index') }}">Reports</a>
@@ -102,16 +102,16 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_doctors')
-@if(canStaffAccessModule('doctors'))
+@if(canUseModule('doctors') && ($doctorsMenuUrl = getDoctorsMenuUrl()))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('doctors') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('doctors') ? 'active' : '' }}"
-        href="{{ getRouteByRole('doctors.index') }}">{{ __('messages.doctors') }}</a>
+        href="{{ $doctorsMenuUrl }}">{{ __('messages.doctors') }}</a>
 </li>
 @endif
 @endcan
 
 @can('manage_settings')
-@if(canStaffAccessModule('settings'))
+@if(canUseModule('settings'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/settings*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/settings*') ? 'active' : '' }}"
         href="{{ getRouteByRole('setting.index') }}">{{ __('messages.settings') }}</a>
@@ -120,7 +120,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_roles')
-@if(canStaffAccessModule('roles'))
+@if(canUseModule('roles'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/roles*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/roles*') ? 'active' : '' }}"
         href="{{ getRouteByRole('roles.index') }}">{{ __('messages.roles') }}</a>
@@ -129,7 +129,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_countries')
-@if(canStaffAccessModule('countries'))
+@if(canUseModule('countries'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/countries*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/countries*') ? 'active' : '' }}"
         href="{{ getRouteByRole('countries.index') }}">{{ __('messages.countries') }}</a>
@@ -138,7 +138,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_states')
-@if(canStaffAccessModule('states'))
+@if(canUseModule('states'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/states*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/states*') ? 'active' : '' }}"
         href="{{ getRouteByRole('states.index') }}">{{ __('messages.states') }}</a>
@@ -147,7 +147,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_cities')
-@if(canStaffAccessModule('cities'))
+@if(canUseModule('cities'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/cities*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/cities*') ? 'active' : '' }}"
         href="{{ getRouteByRole('cities.index') }}">{{ __('messages.cities') }}</a>
@@ -160,7 +160,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_specialties')
-@if(canStaffAccessModule('specializations'))
+@if(canUseModule('specializations'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !isModuleActive('specializations') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ isModuleActive('specializations') ? 'active' : '' }}"
         href="{{ getRouteByRole('specializations.index') }}">{{ __('messages.specializations') }}</a>
@@ -169,7 +169,7 @@ $dashboardUrl = getDashboardURL();
 @endcan
 
 @can('manage_front_cms')
-@if(canStaffAccessModule('cms'))
+@if(canUseModule('cms'))
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('*/cms*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('*/cms*') ? 'active' : '' }}"
         href="{{ getRouteByRole('cms.index') }}">{{ __('messages.cms.cms') }}</a>

@@ -22,7 +22,7 @@ class DefaultRoleSeeder extends Seeder
             ],
             [
                 'name' => 'staff',
-                'display_name' => 'Staff',
+                'display_name' => 'Staff (Nurse)',
                 'is_default' => true,
             ],
             [

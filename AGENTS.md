@@ -115,6 +115,10 @@ PostgreSQL. Copies are in the owner's other project if the stack ever changes.
 - **Soft deletes:** `users` / `patients` use `archived_at`; consultations / certificates / lab requests use `deleted_at`.
 - **Links:** named routes + role-aware helpers (`getRouteByRole()`, `getDashboardURL()`); unprefixed route names are admin
   routes; never hard-code `/admin/...`.
+- **Access:** a role's permissions (Settings > Manage User roles) are the only thing that decides what a Staff (Nurse) or
+  Doctor may open. `canUseModule($module)` (menus, dashboards, buttons) and the routes' `permission:` middleware use the same
+  five permissions (`App\Support\ModuleAccess`). Staff = Nurse = the `staff` role "Staff (Nurse)"; the `nurse` role is
+  retired and the designation / station / shift layer is gone (Phase 3). Give permissions to roles, never to a user.
 - **Passwords:** `User` does not hash automatically: `Hash::make()`.
 - **No prices, amounts, currency or payment** anywhere (free clinic).
 - **Decisions already taken** (do not re-ask): `docs/STATUS.md` §6 and `docs/audit-plan-2026-10-08.md` §2.

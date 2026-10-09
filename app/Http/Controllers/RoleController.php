@@ -53,7 +53,7 @@ class RoleController extends AppBaseController
      */
     public function store(CreateRoleRequest $request): RedirectResponse
     {
-        $input = $request->all();
+        $input = $request->validated();
         $this->roleRepository->store($input);
 
         Flash::success(__('messages.flash.role_create'));
@@ -68,7 +68,8 @@ class RoleController extends AppBaseController
      */
     public function edit(Role $role): \Illuminate\View\View
     {
-        $permissions = $this->roleRepository->getPermissions();
+        abort_if($role->name === 'nurse', 404);
+        $permissions = $this->roleRepository->getPermissions($role);
         $selectedPermissions = $role->getAllPermissions()->keyBy('id');
 
         return view('roles.edit', compact('role', 'permissions', 'selectedPermissions'));
@@ -81,7 +82,7 @@ class RoleController extends AppBaseController
      */
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
-        $this->roleRepository->update($request->all(), $role->id);
+        $this->roleRepository->update($request->validated(), $role->id);
         Flash::success(__('messages.flash.role_update'));
 
         return redirect(route('roles.index'));

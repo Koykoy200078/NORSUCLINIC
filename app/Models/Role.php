@@ -46,6 +46,12 @@ class Role extends roleModal
 
     public static $rules = [
         'display_name' => 'required|unique:roles,display_name',
-        'permission_id' => 'required',
+        'permission_id' => 'sometimes|array',
+        'permission_id.*' => 'integer|exists:permissions,id',
     ];
+
+    public function isReadOnly(): bool
+    {
+        return in_array($this->name, ['clinic_admin', 'patient', 'nurse'], true);
+    }
 }

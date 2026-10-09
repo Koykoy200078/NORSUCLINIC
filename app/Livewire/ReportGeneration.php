@@ -140,10 +140,8 @@ class ReportGeneration extends Component
     }
 
     /**
-     * The tab to show. A tab is "public" to this component (it is a Livewire property and the page route
-     * only sees the URL), so the designation limits are applied here as well: staff without the
-     * notifications module never get the raw activity log - which holds patient names, contact numbers,
-     * complaints and diagnoses - or the low-stock view, whatever tab is requested. R3-H6.
+     * Report and notification tabs are available to every signed-in clinic role.
+     * Check component access as well as the page route on Livewire updates.
      */
     private function permittedTab(?string $tab): string
     {
@@ -283,17 +281,31 @@ class ReportGeneration extends Component
                 break;
 
             case 'global_search':
+                // Reports are open to every staff account and doctor, but this tab finds records of other modules: it
+                // only searches (and links to) the modules the signed-in role may use.
+                $data['searchModules'] = [
+                    'patients' => canUseModule('patients'),
+                    'prescriptions' => canUseModule('prescriptions'),
+                    'inventory' => canUseModule('inventory'),
+                ];
+
                 if ($this->search) {
                     $person = fn ($inner, $word) => $inner->where(fn ($p) => SearchTerm::wordInColumns($p, $word, SearchTerm::PERSON_COLUMNS));
 
-                    $data['patients'] = SearchTerm::whereAllWords(Patient::with('user'), $this->search, [
-                        fn ($inner, $word) => $inner->whereHas('user', fn ($u) => $person($u, $word)),
-                        'patient_unique_id',
-                    ])->limit(10)->get();
-                    $data['prescriptions'] = SearchTerm::whereAllWords(Prescription::with('patient.user'), $this->search, [
-                        fn ($inner, $word) => $inner->whereHas('patient.user', fn ($u) => $person($u, $word)),
-                    ])->limit(10)->get();
-                    $data['inventory'] = SearchTerm::whereAllWords(Medicine::query(), $this->search, ['name'])->limit(10)->get();
+                    if ($data['searchModules']['patients']) {
+                        $data['patients'] = SearchTerm::whereAllWords(Patient::with('user'), $this->search, [
+                            fn ($inner, $word) => $inner->whereHas('user', fn ($u) => $person($u, $word)),
+                            'patient_unique_id',
+                        ])->limit(10)->get();
+                    }
+                    if ($data['searchModules']['prescriptions']) {
+                        $data['prescriptions'] = SearchTerm::whereAllWords(Prescription::with('patient.user'), $this->search, [
+                            fn ($inner, $word) => $inner->whereHas('patient.user', fn ($u) => $person($u, $word)),
+                        ])->limit(10)->get();
+                    }
+                    if ($data['searchModules']['inventory']) {
+                        $data['inventory'] = SearchTerm::whereAllWords(Medicine::query(), $this->search, ['name'])->limit(10)->get();
+                    }
                     $data['global_reports'] = canViewActivityLogTab('logs')
                         ? SearchTerm::whereAllWords(ActivityLog::query(), $this->search, ['patient_name', 'description'])->limit(10)->get()
                         : collect();

@@ -60,7 +60,8 @@ class ConsultationAccessTest extends TestCase
 
         // Still closed to staff whose designation/station has neither consultations nor inventory.
         $frontDesk = $this->makeStaff('clinic_staff', 'front_desk');
-        $this->actingAs($frontDesk)->getJson(route('staff.medicines.by.category'))->assertForbidden();
+        \App\Models\Role::findByName('staff')->revokePermissionTo(['manage_request_documents', 'manage_medicines']);
+        $this->actingAs($frontDesk->fresh())->getJson(route('staff.medicines.by.category'))->assertForbidden();
     }
 
     /** R3-H5: the stored available_quantity is only refreshed when stock moves, so the list cannot trust it */
@@ -179,13 +180,15 @@ class ConsultationAccessTest extends TestCase
             $this->assertTrue(true);
         }
 
-        // Building the consultation list is refused for them (Livewire's test client turns the 403 into a
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_request_documents');
+        $this->actingAs($frontDesk->fresh());
+        // Building either document list is refused without the permission (the test client turns the 403 into a
         // response, so the component's query builder is called directly).
         $component = new DocumentIssuanceTable();
         $component->module = 'consultation';
         try {
             $component->builder();
-            $this->fail('a certificates-only account must not be able to build the consultation list');
+            $this->fail('a role without document permission must not build the consultation list');
         } catch (HttpException $e) {
             $this->assertSame(403, $e->getStatusCode());
         }
@@ -222,7 +225,7 @@ class ConsultationAccessTest extends TestCase
     }
 
     /** R3-H6 */
-    public function test_a_nurse_without_the_notifications_module_cannot_read_the_activity_log(): void
+    public function test_notifications_and_reports_remain_available_without_optional_permissions(): void
     {
         $nurse = $this->makeStaff('nurse', 'triage_area'); // reports yes, notifications no
         $log = ActivityLog::create([
@@ -230,20 +233,21 @@ class ConsultationAccessTest extends TestCase
             'description' => 'Consultation form: SECRETLOG Patient', 'patient_name' => 'SECRETLOG Patient', 'date' => now()->toDateString(),
         ]);
 
-        $this->actingAs($nurse);
+        \App\Models\Role::findByName('staff')->syncPermissions([]);
+        $this->actingAs($nurse->fresh());
 
-        $this->get(route('staff.activity-logs.index', ['tab' => 'logs']))->assertForbidden();
-        $this->get(route('staff.activity-logs.index'))->assertOk()->assertDontSee('SECRETLOG Patient');
-        $this->get(route('staff.activity-logs.export'))->assertForbidden();
-        $this->get(route('staff.activity-logs.export', ['tab' => 'logs']))->assertForbidden();
-        $this->get(route('staff.activity-logs.show', $log))->assertForbidden();
+        $this->get(route('staff.activity-logs.index', ['tab' => 'logs']))->assertOk()->assertSee('SECRETLOG Patient');
+        $this->get(route('staff.activity-logs.index'))->assertOk()->assertSee('SECRETLOG Patient');
+        $this->get(route('staff.activity-logs.export'))->assertOk();
+        $this->get(route('staff.activity-logs.export', ['tab' => 'logs']))->assertOk();
+        $this->get(route('staff.activity-logs.show', $log))->assertOk();
         $this->get(route('staff.activity-logs.export', ['tab' => 'visits']))->assertOk();
 
         // Clicking the "Activity Logs" tab inside the open page does not get around it either.
         Livewire::test(ReportGeneration::class)
             ->call('setTab', 'logs')
-            ->assertSet('tab', 'visits')
-            ->assertDontSee('SECRETLOG Patient');
+            ->assertSet('tab', 'logs')
+            ->assertSee('SECRETLOG Patient');
     }
 
     public function test_staff_with_the_notifications_module_and_the_admin_can_still_read_the_activity_log(): void

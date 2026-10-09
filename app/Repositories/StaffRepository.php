@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Arr;
@@ -46,16 +45,6 @@ class StaffRepository extends BaseRepository
         return User::class;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRole()
-    {
-        // Staff accounts are either "staff" or "nurse"; the other roles belong to other account
-        // types and must not be assignable here. H-15.
-        return Role::whereIn('name', ['staff', 'nurse'])->pluck('display_name', 'id');
-    }
-
     public function store($input): bool
     {
         try {
@@ -67,13 +56,8 @@ class StaffRepository extends BaseRepository
             // Set email as verified with Philippine time
             $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
 
-            $staffProfileInput = Arr::only($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']);
-            $staff = User::create(Arr::except($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']));
-            $staff->staffProfile()->updateOrCreate(['user_id' => $staff->id], $staffProfileInput);
-
-            if (isset($input['role']) && ! empty($input['role'])) {
-                $staff->assignRole($input['role']);
-            }
+            $staff = User::create(Arr::only($input, ['first_name', 'last_name', 'email', 'employee_id', 'contact', 'country_code', 'password', 'gender', 'type', 'email_verified_at']));
+            $staff->assignRole('staff');
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $staff->addMedia($input['profile'])->toMediaCollection(User::PROFILE, config('app.media_disc'));
@@ -103,13 +87,8 @@ class StaffRepository extends BaseRepository
 
             $input['type'] = User::STAFF;
 
-            $staffProfileInput = Arr::only($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']);
-            $staff->update(Arr::except($input, ['role_designation_id', 'assigned_station_id', 'shift_schedule']));
-            $staff->staffProfile()->updateOrCreate(['user_id' => $staff->id], $staffProfileInput);
-
-            if (isset($input['role']) && ! empty($input['role'])) {
-                $staff->syncRoles($input['role']);
-            }
+            $staff->update(Arr::only($input, ['first_name', 'last_name', 'email', 'employee_id', 'contact', 'country_code', 'password', 'gender', 'type']));
+            $staff->syncRoles('staff');
 
             if (isset($input['profile']) && ! empty($input['profile'])) {
                 $staff->clearMediaCollection(User::PROFILE);

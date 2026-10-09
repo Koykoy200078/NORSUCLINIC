@@ -6,7 +6,7 @@
     (isRole('doctor') ? route('doctors.document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'consultation']) : '#'));
     @endphp
 
-    @if($count > 0 && canStaffAccessModule('consultations'))
+    @if($count > 0 && canUseModule('consultations'))
     <a href="{{ $route }}" class="badge bg-success text-decoration-none"
         title="View {{ optional($row->user)->first_name }} {{ optional($row->user)->last_name }}'s consultation forms"
         style="cursor: pointer;">

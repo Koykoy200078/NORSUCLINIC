@@ -274,7 +274,7 @@ class AccomplishmentReportTest extends TestCase
         $report = $this->build();
 
         $this->assertSame('Kath Academia', $report['prepared_by']['name']);
-        $this->assertSame('Registered Nurse', $report['prepared_by']['title'], 'the staff designation');
+        $this->assertSame('Staff (Nurse)', $report['prepared_by']['title'], 'the signed-in role');
         $this->assertSame('Dr. Michael S. Oliveros', $report['noted_by']['name']);
         $this->assertSame('University Physician', $report['noted_by']['title']);
     }
@@ -313,7 +313,7 @@ class AccomplishmentReportTest extends TestCase
         $this->assertStringContainsString('ACCOMPLISHMENT REPORT', $text);
         $this->assertStringContainsString('Cough/colds', $text);
         $this->assertStringContainsString('Ada Admin', $text, 'Prepared by is whoever downloads it');
-        $this->assertStringContainsString('Clinic Administrator', $text);
+        $this->assertStringContainsString('Clinic Admin', $text);
 
         // PDF
         $pdf = $this->get(route('activity-logs.accomplishment', ['format' => 'pdf'] + $query))->assertOk();
@@ -342,12 +342,13 @@ class AccomplishmentReportTest extends TestCase
 
         $this->actingAs($this->admin)->get(route('activity-logs.accomplishment', ['format' => 'docx']))->assertNotFound();
 
-        // A staff member whose designation / station has no reports module is refused, like the other report tabs.
+        // Reports remain available when every optional role permission has been revoked.
         $deskStaff = $this->makeStaff('clinic_head', 'front_desk', ['first_name' => 'Desk', 'last_name' => 'Staff']);
-        $allowed = canViewActivityLogTab('accomplishment', $deskStaff);
+        \App\Models\Role::findByName('staff')->syncPermissions([]);
+        $this->assertTrue(canViewActivityLogTab('accomplishment', $deskStaff->fresh()));
 
         $response = $this->actingAs($deskStaff)->get(route('staff.activity-logs.accomplishment', ['format' => 'csv']));
-        $allowed ? $response->assertOk() : $response->assertForbidden();
+        $response->assertOk();
 
         $this->actingAs($this->makeDoctor())->get(route('doctors.activity-logs.accomplishment', ['format' => 'csv']))->assertOk();
     }

@@ -101,11 +101,12 @@ class PatientModuleTest extends TestCase
         $this->assertSame('Purok 3, Bantayan', $log->address);
     }
 
-    public function test_staff_whose_designation_or_station_has_no_patients_module_cannot_register_patients(): void
+    public function test_staff_without_the_patients_permission_cannot_register_patients(): void
     {
         $pharmacist = $this->makeStaff('pharmacist', 'pharmacy');
         $nurseAtConsultation = $this->makeStaff('nurse', 'medical_consultation');
 
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_patients');
         foreach ([$pharmacist, $nurseAtConsultation] as $staff) {
             $this->actingAs($staff)->post(route('staff.patients.store'), $this->patientPayload())->assertForbidden();
             $this->actingAs($staff)->get(route('staff.patients.create'))->assertForbidden();

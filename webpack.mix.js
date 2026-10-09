@@ -201,7 +201,6 @@ mix.js(
         "resources/assets/js/barangays/barangays.js",
         "resources/assets/js/specializations/specializations.js",
         "resources/assets/js/roles/roles.js",
-        "resources/assets/js/roles/create-edit.js",
         "resources/assets/js/settings/settings.js",
         "resources/assets/js/staff/staff.js",
         "resources/assets/js/staff/create-edit.js",

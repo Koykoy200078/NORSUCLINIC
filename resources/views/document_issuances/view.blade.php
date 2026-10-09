@@ -27,7 +27,7 @@ $exportPdfUrl = $documentId
 
         <div class="flex gap-2">
             {{-- The doctor opens the nurse's form from the queue; this is the way on to the assessment and plan. --}}
-            @if($requestDocument->document_type == 'consultation_form' && canStaffAccessModule('consultations'))
+            @if($requestDocument->document_type == 'consultation_form' && canUseModule('consultations'))
             <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $requestDocument->id]) }}" class="bg-blue-600 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2">
                 <i class="fas fa-pen"></i> Edit / add assessment &amp; plan
             </a>

@@ -40,8 +40,6 @@ class DatabaseSeeder extends Seeder
         $this->call(VaccinationSeeder::class);
         $this->call(PatientTypeSeeder::class);
         $this->call(InsuranceProviderSeeder::class);
-        $this->call(StaffDesignationSeeder::class);
-        $this->call(ClinicStationSeeder::class);
         $this->call(IllnessSeeder::class);
         $this->call(ServiceTypeSeeder::class);
 

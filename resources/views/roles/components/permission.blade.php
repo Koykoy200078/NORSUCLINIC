@@ -1,7 +1,12 @@
 <div class="d-flex flex-wrap gap-1">
-    @forelse($row->permissions as $key => $permission)
+    @forelse($row->permissions->whereIn('name', \App\Support\ModuleAccess::applicablePermissions($row->name)) as $key => $permission)
         <span class="badge bg-{{ getBadgeColor($key) }} fs-7">{{$permission->display_name}}</span>
     @empty
         {{__('messages.common.n/a')}}
     @endforelse
+    @if(in_array($row->name, ['clinic_admin', 'staff', 'doctor'], true))
+        <span class="badge bg-secondary fs-7">Dashboard, Reports &amp; Notifications always available</span>
+    @elseif($row->name === 'patient')
+        <span class="text-muted">Patients do not sign in</span>
+    @endif
 </div>

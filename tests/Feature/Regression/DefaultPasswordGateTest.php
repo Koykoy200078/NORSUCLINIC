@@ -42,6 +42,7 @@ class DefaultPasswordGateTest extends TestCase
 
         $nurseRole = $this->makeStaff('nurse', 'triage_area');
         $nurseRole->syncRoles(['nurse']);
+        (require database_path('migrations/2026_10_09_170000_unify_staff_nurse_access.php'))->up();
         $nurseRole->forceFill(['password' => Hash::make('123456')])->save();
         $this->actingAs($nurseRole->fresh())->get(route('staff.patients.index'))->assertRedirect(route('staff.dashboard'));
     }

@@ -58,6 +58,23 @@ trait BuildsClinicData
         return $user->fresh();
     }
 
+    /**
+     * A "Staff (Nurse)" account the way the staff form creates it since Phase 3: the `staff` role only, no designation /
+     * station / shift profile. What it may do comes from the permissions of the role (Manage User roles).
+     */
+    protected function makeNurse(array $attributes = []): User
+    {
+        $user = User::create(array_merge($this->baseUser('Nurse', 'Tester', User::STAFF), $attributes));
+        $user->assignRole('staff');
+
+        return $user->fresh();
+    }
+
+    /**
+     * A staff account from before Phase 3: it also carries the hidden designation / station / shift columns. They are
+     * kept for history only and no longer decide anything, so every account is allowed exactly what the `staff` role
+     * allows, whatever these arguments are. Prefer {@see makeNurse()} in new tests.
+     */
     protected function makeStaff(string $designation = 'clinic_head', string $station = 'front_desk', array $attributes = []): User
     {
         $user = User::create(array_merge($this->baseUser('Staff', 'Tester', User::STAFF), $attributes));

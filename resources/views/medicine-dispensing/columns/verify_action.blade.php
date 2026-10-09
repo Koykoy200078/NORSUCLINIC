@@ -7,17 +7,19 @@ $dispenseRoute = isRole('doctor')
 ? 'doctors.prescriptions.dispense'
 : (isRole('staff') ? 'staff.prescriptions.dispense' : 'prescriptions.dispense');
 
-$canDispense = (isRole('clinic_admin') || isRole('staff'))
+$canDispense = (isRole('clinic_admin') || isRole('staff')) && canUseModule('dispensing') && canUseModule('prescriptions')
 && $row->status === \App\Models\Prescription::DISPENSE_STATUS_PENDING
 && ($row->is_active ?? true);
 @endphp
 
 <div class="d-flex align-items-center gap-2">
+    @if(canUseModule('prescriptions'))
     <a href="{{ route($showRoute, $row->id) }}"
         title="Verify Prescription"
         class="btn btn-sm btn-outline-info action-btn">
         <i class="fas fa-eye"></i>
     </a>
+    @endif
 
     @if($canDispense)
     <form action="{{ route($dispenseRoute, $row->id) }}" method="POST" class="d-inline">

@@ -204,7 +204,7 @@ Patient Data
                                 <td style="white-space: nowrap;">
                                     <div class="d-flex gap-2">
                                         {{-- Staff open / edit / print consultations only with the consultations module (else 403). --}}
-                                        @if(canStaffAccessModule('consultations'))
+                                        @if(canUseModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -264,7 +264,7 @@ Patient Data
                         <td>
                             <div class="d-flex gap-2">
                                 {{-- Certificates (and excuse slips) belong to the certificates module for staff (else 403). --}}
-                                @if(canStaffAccessModule('certificates'))
+                                @if(canUseModule('certificates'))
                                 <!-- Edit Button -->
                                 <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $certificate->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Certificate">
                                     <i class="fa-solid fa-edit"></i>
@@ -332,7 +332,7 @@ Patient Data
                         <td>{{ $excuseSlip->subjects ?: ($excuseSlip->medical_cert_remarks ?: 'N/A') }}</td>
                         <td>
                             <div class="d-flex gap-2">
-                                @if(canStaffAccessModule('certificates'))
+                                @if(canUseModule('certificates'))
                                 <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $excuseSlip->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Excuse Slip">
                                     <i class="fa-solid fa-edit"></i>
                                 </a>
@@ -973,7 +973,7 @@ Patient Data
                             <td class="pe-3 text-end">
                                 <div class="d-flex gap-1 justify-content-end flex-wrap">
                                     {{-- Staff open a prescription only with the prescriptions module (else 403). --}}
-                                    @if(canStaffAccessModule('prescriptions'))
+                                    @if(canUseModule('prescriptions'))
                                     <a href="{{ $prescRoute }}"
                                         class="btn btn-sm"
                                         style="background:#eff6ff;color:#1d4ed8;border:none;font-size:.78rem;"

@@ -54,12 +54,12 @@ class DocumentIssuanceTable extends DataTableComponent
         // Check the user's role and filter data accordingly
         $user = Auth::user();
 
-        // Staff/nurse see a document list only if their designation + station has that module; the page
+        // Check the role permission on Livewire requests as well as the page. The page
         // route checks it too, but the list is also served by Livewire requests that skip route middleware.
         abort_unless(
-            canStaffAccessModule($isConsultationModule ? 'consultations' : 'certificates', $user),
+            canUseModule($isConsultationModule ? 'consultations' : 'certificates', $user),
             403,
-            'You are not allowed to access this request document module for your designation/station assignment.'
+            'You do not have permission to access this document module.'
         );
 
         if ($user->type === User::PATIENT) { // Patient sees only own documents

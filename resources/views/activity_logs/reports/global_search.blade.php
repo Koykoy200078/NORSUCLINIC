@@ -6,6 +6,7 @@
                 <h3 class="text-muted">Enter a search term to find records across the system</h3>
             </div>
         @else
+            @if($searchModules['patients'] ?? false)
             <!-- Patients -->
             <div class="card mb-5 shadow-sm">
                 <div class="card-header bg-light-primary py-3">
@@ -43,6 +44,9 @@
                 </div>
             </div>
 
+            @endif
+
+            @if($searchModules['prescriptions'] ?? false)
             <!-- Prescriptions -->
             <div class="card mb-5 shadow-sm">
                 <div class="card-header bg-light-success py-3">
@@ -80,6 +84,9 @@
                 </div>
             </div>
 
+            @endif
+
+            @if($searchModules['inventory'] ?? false)
             <!-- Inventory -->
             <div class="card mb-5 shadow-sm">
                 <div class="card-header bg-light-warning py-3">
@@ -114,6 +121,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         @endif
     </div>
 </div>

@@ -31,7 +31,7 @@ class RoleTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return Role::with('permissions')
+        return Role::with('permissions')->where('name', '!=', 'nurse')
             ->whereNotNull('display_name')
             ->where('display_name', '!=', '')
             ->select('roles.*');

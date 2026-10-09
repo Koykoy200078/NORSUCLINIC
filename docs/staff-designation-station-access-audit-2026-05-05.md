@@ -1,5 +1,10 @@
 # Staff Role Designation + Assigned Station Access Audit (Deep Scan)
 
+> **Superseded (2026-10-09, audit plan Phase 3):** the designation / station / shift layer this audit describes was
+> removed. Staff = Nurse is one role, "Staff (Nurse)", and what it may open comes only from its permissions in Settings >
+> Manage User roles (`canUseModule()`, see [audit-plan-2026-10-08.md](audit-plan-2026-10-08.md) Phase 3). The three
+> `docs/staff-*.json` maps listed below were deleted with it. Kept for history only.
+
 Date: 2026-05-05  
 Scope: Audit + enforcement phase applied in this workspace
 

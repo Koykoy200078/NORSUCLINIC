@@ -74,16 +74,20 @@ class PatientQueueTest extends TestCase
         $this->assertNotNull($entry->fresh()->completed_at);
     }
 
-    public function test_only_staff_with_the_queue_module_may_queue_and_roles_stay_in_their_lane(): void
+    public function test_only_staff_with_the_patients_permission_may_queue_and_roles_stay_in_their_lane(): void
     {
-        $pharmacist = $this->makeStaff('pharmacist', 'pharmacy');
         $doctor = $this->makeDoctor();
-        $nurse = $this->makeStaff('nurse', 'triage_area');
+        $nurse = $this->makeNurse();
         $patient = $this->makePatient();
 
-        $this->actingAs($pharmacist)->post(route('staff.patient-queue.store'), ['patient_id' => $patient->id])->assertForbidden();
+        // The queue belongs to the patients permission: without it a staff account cannot queue anybody.
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_patients');
+        $this->actingAs($nurse->fresh())->post(route('staff.patient-queue.store'), ['patient_id' => $patient->id])->assertForbidden();
         $this->actingAs($doctor)->post(route('staff.patient-queue.store'), ['patient_id' => $patient->id])->assertForbidden();
         $this->assertSame(0, PatientQueue::count());
+
+        \App\Models\Role::findByName('staff')->givePermissionTo('manage_patients');
+        $nurse = $nurse->fresh();
 
         // Doctors do not use the staff screens and staff do not call or complete from the doctor screens.
         $entry = $this->queueEntry($patient, $nurse);

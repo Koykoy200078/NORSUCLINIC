@@ -55,6 +55,7 @@ class LandingPageDashboardTest extends TestCase
 
         $nurseRole = $this->makeStaff('nurse', 'triage_area', ['email' => 'landing.nurserole@test.local']);
         $nurseRole->syncRoles(['nurse']);
+        (require database_path('migrations/2026_10_09_170000_unify_staff_nurse_access.php'))->up();
         $actors['nurse role'] = [$nurseRole->fresh(), 'staff.dashboard'];
 
         return $actors;

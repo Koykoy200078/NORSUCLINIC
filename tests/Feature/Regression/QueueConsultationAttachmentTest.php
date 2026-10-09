@@ -259,13 +259,45 @@ class QueueConsultationAttachmentTest extends TestCase
         $this->doctorScreen($doctor)->assertSee(e($doctorCreate), false);
     }
 
-    public function test_staff_without_the_consultations_module_are_not_offered_the_record_button(): void
+    public function test_the_doctors_queue_offers_the_consultation_form_buttons_only_with_the_documents_permission(): void
     {
-        $front = $this->makeStaff('clinic_staff', 'front_desk');          // patients + queue + certificates, no consultations
+        // Found by the permission-variant link crawl: a doctor whose role lost manage_request_documents still saw "Record
+        // form" / "View Form" on the queue, and every one of them answered 403.
+        $nurse = $this->makeNurse();
+        $doctor = $this->makeDoctor();
+        $withForm = $this->makePatient(['first_name' => 'Wanda', 'last_name' => 'Withform']);
+        $withoutForm = $this->makePatient(['first_name' => 'Nico', 'last_name' => 'Noform']);
+        foreach ([$withForm, $withoutForm] as $patient) {
+            $this->actingAs($nurse)->post(route('staff.patient-queue.store'), ['patient_id' => $patient->id])->assertRedirect();
+        }
+        $this->actingAs($nurse)->post(route('staff.document-issuances.store'), $this->consultationPayload($withForm, $nurse))->assertRedirect();
+        $viewForm = route('doctors.patient-queue.view-consultation', PatientQueue::where('patient_id', $withForm->id)->firstOrFail());
+
+        // With the permission both buttons are there (so the checks below prove something).
+        $this->doctorScreen($doctor)->assertOk()->assertSee('Record form')->assertSee('View Form')->assertSee($viewForm, false);
+
+        \App\Models\Role::findByName('doctor')->revokePermissionTo('manage_request_documents');
+
+        // Without it the patients are still queued and can be called, but no button leads to a form.
+        $this->doctorScreen($doctor->fresh())->assertOk()
+            ->assertSee('Wanda Withform')->assertSee('Nico Noform')->assertSee('Call Next')
+            ->assertDontSee('Record form')->assertDontSee('View Form')->assertDontSee('View Consultation Form')->assertDontSee($viewForm, false)
+            ->assertDontSee('document-issuances/create', false);
+    }
+
+    public function test_staff_without_the_document_permission_are_not_offered_the_record_button(): void
+    {
+        $front = $this->makeNurse();
         $patient = $this->makePatient();
         $this->actingAs($front)->post(route('staff.patient-queue.store'), ['patient_id' => $patient->id])->assertRedirect();
 
+        // With the permission the button is there (so the check below proves something) ...
         $this->get(route('staff.patient-queue.refresh'))->assertOk()
+            ->assertSee('document_type=consultation_form');
+
+        // ... and when the administrator takes the permission away, the very next page load no longer offers it.
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_request_documents');
+        $this->actingAs($front->fresh())->get(route('staff.patient-queue.refresh'))->assertOk()
             ->assertDontSee('document_type=consultation_form');
     }
 }

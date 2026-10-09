@@ -662,9 +662,9 @@ if (! function_exists('isRole')) {
             return false;
         }
 
-        // "nurse" accounts use the same staff panel (routes are role:staff|nurse). Code that asks
-        // isRole('staff') to choose staff routes / buttons must therefore also match them,
-        // otherwise a nurse-role user was sent to admin routes (403) and lost action buttons.
+        // Staff = Nurse (plan Phase 3.1): the 2026_10_09 migration moves every account of the retired `nurse` role to
+        // `staff`. The old role is still matched here for a database that has not run that migration yet, so such an
+        // account is sent to the staff screens instead of the admin ones. (Dead code to remove in Phase 6.)
         if ($role === 'staff') {
             return $user->hasRole('staff') || $user->hasRole('nurse');
         }
@@ -761,243 +761,63 @@ if (! function_exists('normalizeStaffModuleKey')) {
     }
 }
 
-if (! function_exists('getStaffDesignationModuleMap')) {
+if (! function_exists('getDoctorsMenuUrl')) {
     /**
-     * Recommended module mapping by staff designation code.
+     * Where the "Doctors" menu entry leads for the signed-in user. Admin and staff have the doctors list; a doctor has no
+     * list, only profile pages, so the entry opens the doctor's own profile (null when that record is missing, which hides
+     * the entry instead of crashing every page).
      */
-    function getStaffDesignationModuleMap(): array
+    function getDoctorsMenuUrl(): ?string
     {
-        return [
-            'clinic_head' => [
-                'dashboard',
-                'patients',
-                'queue',
-                'consultations',
-                'prescriptions',
-                'lab_requests',
-                'certificates',
-                'inventory',
-                'dispensing',
-                'reports',
-                'notifications',
-                'doctors',
-                'specializations',
-            ],
-            'nurse' => [
-                'dashboard',
-                'patients',
-                'queue',
-                'consultations',
-                'lab_requests',
-                'certificates',
-                'reports',
-            ],
-            'pharmacist' => [
-                'dashboard',
-                'inventory',
-                'dispensing',
-                'prescriptions',
-                'reports',
-                'notifications',
-            ],
-            'triage_officer' => [
-                'dashboard',
-                'patients',
-                'queue',
-                'consultations',
-                'reports',
-            ],
-            'clinic_staff' => [
-                'dashboard',
-                'patients',
-                'queue',
-                'certificates',
-                'reports',
-            ],
-            'records_officer' => [
-                'dashboard',
-                'patients',
-                'consultations',
-                'certificates',
-                'reports',
-            ],
-        ];
-    }
-}
-
-if (! function_exists('getStaffStationModuleMap')) {
-    /**
-     * Operational module mapping by assigned station code.
-     */
-    function getStaffStationModuleMap(): array
-    {
-        return [
-            'front_desk' => ['patients', 'queue', 'certificates'],
-            'triage_area' => ['patients', 'queue', 'consultations'],
-            'medical_consultation' => ['consultations', 'prescriptions', 'lab_requests'],
-            'pharmacy' => ['inventory', 'dispensing', 'prescriptions'],
-            'records_area' => ['patients', 'certificates'],
-            'observation_room' => ['patients', 'queue'],
-            'isolation_room' => ['patients', 'queue', 'consultations'],
-        ];
-    }
-}
-
-if (! function_exists('getStaffDesignationStationMap')) {
-    /**
-     * Allowed station assignment per staff designation code.
-     */
-    function getStaffDesignationStationMap(): array
-    {
-        return [
-            'clinic_head' => ['*'],
-            'pharmacist' => ['pharmacy'],
-            'records_officer' => ['records_area'],
-            'clinic_staff' => ['front_desk', 'records_area'],
-            'triage_officer' => ['triage_area', 'isolation_room', 'observation_room'],
-            'nurse' => ['triage_area', 'medical_consultation', 'isolation_room', 'observation_room'],
-        ];
-    }
-}
-
-if (! function_exists('canStaffDesignationWorkAtStation')) {
-    /**
-     * Validate if a designation is allowed to be assigned to a station.
-     */
-    function canStaffDesignationWorkAtStation(?string $designationCode, ?string $stationCode): bool
-    {
-        if (! $designationCode || ! $stationCode) {
-            return false;
-        }
-
-        $designationCode = normalizeStaffModuleKey($designationCode);
-        $stationCode = normalizeStaffModuleKey($stationCode);
-
-        $designationStationMap = getStaffDesignationStationMap();
-        $allowedStations = $designationStationMap[$designationCode] ?? [];
-
-        if (empty($allowedStations)) {
-            return false;
-        }
-
-        if (in_array('*', $allowedStations, true)) {
-            return true;
-        }
-
-        return in_array($stationCode, $allowedStations, true);
-    }
-}
-
-if (! function_exists('getStaffProfileForUser')) {
-    /**
-     * Return the staff profile for the given user (cached per request).
-     */
-    function getStaffProfileForUser(?Authenticatable $user = null)
-    {
-        $user = $user ?: getLogInUser();
-        if (! $user || ! method_exists($user, 'staffProfile')) {
+        $user = getLogInUser();
+        if (! $user) {
             return null;
         }
 
-        static $profileCache = [];
-        $cacheKey = (int) $user->id;
+        if ($user->hasRole('doctor')) {
+            $doctorId = $user->doctor?->id;
 
-        if (array_key_exists($cacheKey, $profileCache)) {
-            return $profileCache[$cacheKey];
+            return $doctorId ? route('doctors.doctors.detail', $doctorId) : null;
         }
 
-        $profile = $user->relationLoaded('staffProfile')
-            ? $user->staffProfile
-            : $user->staffProfile()->with(['roleDesignation:id,code,name', 'assignedStation:id,code,name'])->first();
-
-        if ($profile) {
-            $profile->loadMissing(['roleDesignation:id,code,name', 'assignedStation:id,code,name']);
-        }
-
-        $profileCache[$cacheKey] = $profile;
-
-        return $profile;
+        return getRouteByRole('doctors.index');
     }
 }
 
-if (! function_exists('canStaffAccessModule')) {
+if (! function_exists('canUsePermission')) {
     /**
-     * Enforce designation + station-based module access for staff/nurse users.
+     * Whether the user holds a permission by name. A permission that is not in the table (an old or hand-edited
+     * database) reads as "not allowed": spatie would throw PermissionDoesNotExist, and since the menu asks on every
+     * page that would be a 500 for the whole panel.
      */
-    function canStaffAccessModule(string $module, ?Authenticatable $user = null): bool
+    function canUsePermission(Authenticatable $user, string $permission): bool
+    {
+        try {
+            return $user->hasPermissionTo($permission);
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist) {
+            return false;
+        }
+    }
+}
+
+if (! function_exists('canUseModule')) {
+    /** Module access follows the role grants; legacy staff profiles never restrict it. */
+    function canUseModule(string|array $module, ?Authenticatable $user = null): bool
     {
         $user = $user ?: getLogInUser();
-        if (! $user) {
+        if (! $user || ! $user->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
             return false;
         }
-
-        if (! ($user->hasRole('staff') || $user->hasRole('nurse'))) {
-            return true;
-        }
-
-        $module = normalizeStaffModuleKey($module);
-        if ($module === 'dashboard') {
-            return true;
-        }
-
-        // Settings is clinic_admin only — never accessible to staff/nurse roles
-        if ($module === 'settings') {
-            return false;
-        }
-
-        $staffProfile = getStaffProfileForUser($user);
-        if (! $staffProfile || ! $staffProfile->roleDesignation) {
-            return false;
-        }
-
-        $designationCode = normalizeStaffModuleKey((string) $staffProfile->roleDesignation->code);
-        $designationModules = getStaffDesignationModuleMap()[$designationCode] ?? [];
-        if (! in_array($module, $designationModules, true)) {
-            return false;
-        }
-
-        if ($designationCode === 'clinic_head') {
-            return true;
-        }
-
-        $stationScopedModules = [
-            'patients',
-            'queue',
-            'consultations',
-            'prescriptions',
-            'lab_requests',
-            'certificates',
-            'inventory',
-            'dispensing',
-        ];
-
-        if (! in_array($module, $stationScopedModules, true)) {
-            return true;
-        }
-
-        if (! $staffProfile->assignedStation) {
-            return false;
-        }
-
-        $stationCode = normalizeStaffModuleKey((string) $staffProfile->assignedStation->code);
-        $stationModules = getStaffStationModuleMap()[$stationCode] ?? [];
-
-        return in_array($module, $stationModules, true);
-    }
-}
-
-if (! function_exists('canStaffAccessAnyModule')) {
-    /**
-     * Convenience helper for checking multiple module keys.
-     */
-    function canStaffAccessAnyModule(array $modules, ?Authenticatable $user = null): bool
-    {
-        foreach ($modules as $module) {
-            if (canStaffAccessModule((string) $module, $user)) {
+        foreach ((array) $module as $key) {
+            $key = normalizeStaffModuleKey($key);
+            if (in_array($key, ['dashboard', 'reports', 'notifications', 'activity_logs'], true)) {
+                return true;
+            }
+            $permission = \App\Support\ModuleAccess::PERMISSIONS[$key] ?? null;
+            if ($permission && canUsePermission($user, $permission)) {
                 return true;
             }
         }
-
         return false;
     }
 }
@@ -1125,12 +945,11 @@ if (! function_exists('activityLogModuleForTab')) {
 
 if (! function_exists('canViewActivityLogTab')) {
     /**
-     * Whether the signed-in user may see a tab of the activity-log / reports screen. Staff/nurse follow
-     * their designation + station; every other role that reaches the screen is unrestricted, as before.
+     * Reports and notifications are available to every signed-in clinic role.
      * The raw activity log carries patient names, contact numbers, complaints and diagnoses.
      */
     function canViewActivityLogTab(?string $tab, ?Authenticatable $user = null): bool
     {
-        return canStaffAccessModule(activityLogModuleForTab($tab), $user);
+        return canUseModule(activityLogModuleForTab($tab), $user);
     }
 }

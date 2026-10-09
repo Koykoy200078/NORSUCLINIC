@@ -174,14 +174,15 @@ class AccountAndAccessTest extends TestCase
             'document_type' => 'consultation_form', 'document_creator_id' => $frontDesk->id, 'user_id' => $frontDesk->id,
             'name' => 'X', 'age' => 1, 'gender' => 'Male', 'address' => 'N/A',
         ]);
-        $this->actingAs($frontDesk)->getJson(route('staff.document-issuances.show', $consultation))->assertForbidden();
+        Role::findByName('staff')->revokePermissionTo('manage_request_documents');
+        $this->actingAs($frontDesk->fresh())->getJson(route('staff.document-issuances.show', $consultation))->assertForbidden();
     }
 
     /** P2-H1 */
     public function test_renaming_a_role_label_does_not_change_its_internal_name(): void
     {
         $admin = $this->makeAdmin();
-        $role = Role::where('name', 'clinic_admin')->firstOrFail();
+        $role = Role::where('name', 'staff')->firstOrFail();
         $permissionIds = $role->permissions()->pluck('id')->all();
 
         $this->actingAs($admin)->put(route('roles.update', $role->id), [
@@ -189,7 +190,7 @@ class AccountAndAccessTest extends TestCase
             'permission_id' => $permissionIds,
         ]);
 
-        $this->assertSame('clinic_admin', $role->fresh()->name);
+        $this->assertSame('staff', $role->fresh()->name);
         $this->actingAs($admin)->get(route('roles.index'))->assertOk();
     }
 
@@ -225,14 +226,17 @@ class AccountAndAccessTest extends TestCase
     }
 
     /** N-01 */
-    public function test_a_nurse_role_account_is_treated_as_staff_for_route_selection(): void
+    public function test_a_migrated_nurse_role_account_uses_staff_route_selection(): void
     {
         $nurse = $this->makeStaff();
-        $nurse->syncRoles(['nurse']);
+        $nurseRole = Role::firstOrCreate(['name' => 'nurse', 'guard_name' => 'web'], ['display_name' => 'Nurse']);
+        $nurse->syncRoles($nurseRole);
+        (require database_path('migrations/2026_10_09_170000_unify_staff_nurse_access.php'))->up();
+        $nurse = $nurse->fresh();
 
         $this->actingAs($nurse);
         $this->assertTrue(isRole('staff'));
-        $this->assertTrue(isRole('nurse'));
+        $this->assertFalse(isRole('nurse'));
         $this->assertFalse(isRole('doctor'));
     }
 

@@ -1269,9 +1269,8 @@ class DocumentIssuanceController extends Controller
         $data = $this->forceOwnNursingInCharge($data);
         $data = $this->normalizePatientContact($data);
 
-        // The document type is fixed at creation. Never take it from the request: the staff
-        // module check (EnsureStaffModuleAccess) authorises against the stored type, so a
-        // submitted type must not be able to route the update to a different handler.
+        // The document type is fixed at creation. Never take it from the request: a submitted
+        // type must not be able to route the update to a different handler.
         $documentType = $requestDocument->document_type;
 
         try {
@@ -1756,7 +1755,7 @@ class DocumentIssuanceController extends Controller
 
     /**
      * Stream one consultation image. Images are clinical records, so they are only served
-     * through this authenticated route (same role / staff-module checks as viewing the
+     * through this authenticated route (same role / permission checks as viewing the
      * consultation itself), never directly from the web root.
      */
     public function showImage(DocumentIssuance $document_issuance, int $index)

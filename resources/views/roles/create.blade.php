@@ -25,8 +25,6 @@
                             @include('layouts.errors')
                         </div>
                     </div>
-                    {{ Form::hidden('is_edit', $permissions['count'],['id' => 'totalPermissions']) }}
-                    {{ Form::hidden('is_edit', false,['id' => 'roleIsEdit']) }}
                     <div class="card">
                         <div class="card-body p-0">
                             {{ Form::open(['route' => 'roles.store']) }}

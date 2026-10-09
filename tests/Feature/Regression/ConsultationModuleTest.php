@@ -50,27 +50,42 @@ class ConsultationModuleTest extends TestCase
         ]);
     }
 
-    /** H-02 */
-    public function test_certificates_only_staff_cannot_reach_a_consultation_by_overriding_the_module(): void
+    /**
+     * H-02, restated for Phase 3. Consultations and certificates share ONE permission (manage_request_documents), so
+     * "certificates only" no longer exists; what must still hold is that the module / type a request names cannot get
+     * anybody past that permission, and that the stored type, not the submitted one, decides what an update does.
+     */
+    public function test_the_module_or_type_named_in_a_request_cannot_get_past_the_document_permission(): void
     {
-        $frontDesk = $this->makeStaff('clinic_staff', 'front_desk');
-        $consultation = $this->makeConsultation($frontDesk, $this->makePatient());
-        $certificate = $this->makeConsultation($frontDesk, $this->makePatient(), 'medical_certificate');
+        $nurse = $this->makeNurse();
+        $consultation = $this->makeConsultation($nurse, $this->makePatient());
+        $certificate = $this->makeConsultation($nurse, $this->makePatient(), 'medical_certificate');
 
-        $this->actingAs($frontDesk);
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_request_documents');
+        $this->actingAs($nurse->fresh());
 
         $this->get(route('staff.document-issuances.show', $consultation) . '?module=certificates')->assertForbidden();
         $this->get(route('staff.document-issuances.edit', $consultation) . '?module=certificate')->assertForbidden();
         $this->get(route('staff.document-issuances.export-pdf', $consultation) . '?module=certificates')->assertForbidden();
-
+        $this->get(route('staff.document-issuances.show', $certificate) . '?module=consultation')->assertForbidden();
         $this->put(route('staff.document-issuances.update', $consultation), [
             'document_type' => 'medical_certificate',
             'name' => 'Tampered Name',
         ])->assertForbidden();
         $this->assertSame('Juan Dela Cruz', $consultation->fresh()->name);
 
-        // Their own module still works.
-        $this->get(route('staff.document-issuances.show', $certificate))->assertOk();
+        // With the permission both kinds open, whatever module the URL names.
+        \App\Models\Role::findByName('staff')->givePermissionTo('manage_request_documents');
+        $this->actingAs($nurse->fresh());
+        $this->get(route('staff.document-issuances.show', $consultation) . '?module=certificates')->assertOk();
+        $this->get(route('staff.document-issuances.show', $certificate) . '?module=consultation')->assertOk();
+
+        // A submitted type never changes what the document is.
+        $this->put(route('staff.document-issuances.update', $consultation), [
+            'document_type' => 'medical_certificate',
+            'name' => 'Tampered Name',
+        ]);
+        $this->assertSame('consultation_form', $consultation->fresh()->document_type);
     }
 
     /** C-03 */

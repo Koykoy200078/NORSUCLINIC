@@ -775,6 +775,7 @@ class PrescriptionController extends AppBaseController
 
     public function dispense(Prescription $prescription): RedirectResponse|JsonResponse
     {
+        abort_unless(canUseModule('dispensing'), 403);
         // Allow clinic_admin, staff, and doctor to dispense
         if (! (isRole('clinic_admin') || isRole('staff') || isRole('doctor'))) {
             if (request()->ajax()) {

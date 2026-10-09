@@ -60,8 +60,6 @@ class StaffTable extends LivewireTableComponent
                 ->searchable(),
             Column::make(__('messages.common.email'), 'email')->hideIf(1),
             Column::make(__('messages.staff.role'), 'email')->view('staffs.components.role'),
-            Column::make('Designation', 'id')->view('staffs.components.designation'),
-            Column::make('Assigned Station', 'id')->view('staffs.components.station'),
             // Column::make(
             //     __('messages.common.email_verified'),
             //     'email_verified_at'
@@ -77,7 +75,7 @@ class StaffTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return User::with(['roles', 'staffProfile.roleDesignation:id,code,name', 'staffProfile.assignedStation:id,code,name'])
+        return User::with(['roles'])
             ->where('type', User::STAFF)
             ->where('id', '!=', getLogInUserId())
             ->select(['id', 'first_name', 'last_name', 'email', 'email_verified_at', 'type']);

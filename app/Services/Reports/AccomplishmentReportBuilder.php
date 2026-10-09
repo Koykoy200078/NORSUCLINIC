@@ -372,16 +372,8 @@ final class AccomplishmentReportBuilder
             return ['name' => '', 'title' => ''];
         }
 
-        $user->loadMissing('staffProfile.roleDesignation');
-
-        $title = $user->staffProfile?->roleDesignation?->name
-            ?? match ($user->roles->first()?->name) {
-                'clinic_admin' => 'Clinic Administrator',
-                'doctor' => 'Doctor',
-                'nurse' => 'Nurse',
-                'staff' => 'Clinic Staff',
-                default => '',
-            };
+        $user->loadMissing('roles');
+        $title = $user->roles->first()?->display_name ?? '';
 
         return ['name' => $user->full_name, 'title' => (string) $title];
     }

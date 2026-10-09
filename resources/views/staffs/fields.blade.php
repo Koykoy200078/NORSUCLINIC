@@ -1,20 +1,4 @@
 <div class="row">
-    @php
-    $selectedRoleDesignationId = old('role_designation_id', isset($staff) ? optional($staff->staffProfile)->role_designation_id : null);
-    $selectedRoleDesignationCode = $staffDesignationCodes[$selectedRoleDesignationId] ?? null;
-    $isClinicHeadSelected = $selectedRoleDesignationCode === 'clinic_head';
-
-    $assignedStationAttributes = [
-    'class' => 'form-select io-select2',
-    'id' => 'assigned_station_id',
-    'data-control' => 'select2',
-    'placeholder' => __('Select Assigned Station'),
-    ];
-
-    if (! $isClinicHeadSelected) {
-    $assignedStationAttributes['required'] = 'required';
-    }
-    @endphp
 
     <div class="col-lg-6">
         <div class="mb-5">
@@ -81,7 +65,6 @@
         </div>
     </div>
 
-    {{ Form::hidden('role', isset($staff) ? $staff->roles->first()->id : $defaultRoleId) }}
 
 
     <div class="col-lg-6">
@@ -98,36 +81,6 @@
                     <label class="form-label mr-3">{{ __('messages.staff.female') }}</label>
                 </div>
             </span>
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="mb-5">
-            {{ Form::label('role_designation_id', __('Role Designation').':', ['class' => 'form-label required']) }}
-            {{ Form::select('role_designation_id', $staffDesignations, old('role_designation_id', isset($staff) ? optional($staff->staffProfile)->role_designation_id : null), ['class' => 'form-select io-select2', 'id' => 'role_designation_id', 'data-control' => 'select2', 'placeholder' => __('Select Role Designation'), 'required']) }}
-        </div>
-    </div>
-
-    <div class="col-lg-6 {{ $isClinicHeadSelected ? 'd-none' : '' }}" id="assigned_station_group">
-        <div class="mb-5">
-            {{ Form::label('assigned_station_id', __('Assigned Station').':', ['class' => 'form-label'.($isClinicHeadSelected ? '' : ' required'), 'id' => 'assigned_station_label']) }}
-            {{ Form::select('assigned_station_id', $clinicStations, old('assigned_station_id', isset($staff) ? optional($staff->staffProfile)->assigned_station_id : null), $assignedStationAttributes) }}
-        </div>
-    </div>
-
-    <div class="col-lg-6 {{ $isClinicHeadSelected ? '' : 'd-none' }}" id="assigned_station_skip_note">
-        <div class="mb-5 mt-4">
-            <small class="text-muted">
-                <i class="fas fa-info-circle me-1"></i>
-                Assigned Station is optional for Clinic Head.
-            </small>
-        </div>
-    </div>
-
-    <div class="col-lg-12">
-        <div class="mb-5">
-            {{ Form::label('shift_schedule', __('Shift Schedule').':', ['class' => 'form-label required']) }}
-            {{ Form::textarea('shift_schedule', old('shift_schedule', isset($staff) ? optional($staff->staffProfile)->shift_schedule : null), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Mon-Fri 8:00 AM - 5:00 PM'), 'required']) }}
         </div>
     </div>
 
@@ -155,116 +108,3 @@
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    (function() {
-        function initAssignedStationToggle() {
-            const roleDesignationSelect = document.getElementById('role_designation_id');
-            const assignedStationGroup = document.getElementById('assigned_station_group');
-            const assignedStationSelect = document.getElementById('assigned_station_id');
-            const assignedStationLabel = document.getElementById('assigned_station_label');
-            const assignedStationSkipNote = document.getElementById('assigned_station_skip_note');
-            const designationCodeMap = @json($staffDesignationCodes ?? []);
-
-            if (!roleDesignationSelect || !assignedStationGroup || !assignedStationSelect) {
-                return;
-            }
-
-            function getSelectedDesignationText() {
-                const selectedOption = roleDesignationSelect.options[roleDesignationSelect.selectedIndex];
-
-                if (!selectedOption) {
-                    return '';
-                }
-
-                return String(selectedOption.text || '').toLowerCase().trim();
-            }
-
-            function getSelectedDesignationCode() {
-                const selectedId = String(roleDesignationSelect.value || '').trim();
-
-                if (selectedId === '' || !Object.prototype.hasOwnProperty.call(designationCodeMap, selectedId)) {
-                    return null;
-                }
-
-                return designationCodeMap[selectedId];
-            }
-
-            function isClinicHeadSelected() {
-                const selectedCode = getSelectedDesignationCode();
-
-                if (selectedCode === 'clinic_head') {
-                    return true;
-                }
-
-                // Fallback to designation label matching if code map is unavailable/stale.
-                return getSelectedDesignationText().includes('clinic head');
-            }
-
-            function applyAssignedStationRequirement(shouldClearAssignedStation) {
-                const isClinicHead = isClinicHeadSelected();
-
-                if (isClinicHead) {
-                    assignedStationGroup.classList.add('d-none');
-                    if (assignedStationSkipNote) {
-                        assignedStationSkipNote.classList.remove('d-none');
-                    }
-
-                    assignedStationSelect.setAttribute('disabled', 'disabled');
-                    assignedStationSelect.removeAttribute('required');
-                    if (shouldClearAssignedStation) {
-                        assignedStationSelect.value = '';
-                    }
-
-                    if (assignedStationLabel) {
-                        assignedStationLabel.classList.remove('required');
-                    }
-
-                    if (shouldClearAssignedStation && window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
-                        window.jQuery(assignedStationSelect).val('').trigger('change');
-                    }
-
-                    return;
-                }
-
-                assignedStationGroup.classList.remove('d-none');
-                if (assignedStationSkipNote) {
-                    assignedStationSkipNote.classList.add('d-none');
-                }
-
-                assignedStationSelect.removeAttribute('disabled');
-                assignedStationSelect.setAttribute('required', 'required');
-                if (assignedStationLabel) {
-                    assignedStationLabel.classList.add('required');
-                }
-            }
-
-            let lastClinicHeadState = isClinicHeadSelected();
-
-            function onDesignationChanged() {
-                const currentClinicHeadState = isClinicHeadSelected();
-                const shouldClearAssignedStation = currentClinicHeadState && !lastClinicHeadState;
-
-                applyAssignedStationRequirement(shouldClearAssignedStation);
-                lastClinicHeadState = currentClinicHeadState;
-            }
-
-            roleDesignationSelect.addEventListener('change', onDesignationChanged);
-
-            if (window.jQuery) {
-                window.jQuery(roleDesignationSelect).on('select2:select select2:clear change', onDesignationChanged);
-            }
-
-            applyAssignedStationRequirement(false);
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initAssignedStationToggle);
-            return;
-        }
-
-        initAssignedStationToggle();
-    })();
-</script>
-@endpush

@@ -12,7 +12,7 @@ class UpdateRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return ! $this->route('role')->isReadOnly();
     }
 
     /**

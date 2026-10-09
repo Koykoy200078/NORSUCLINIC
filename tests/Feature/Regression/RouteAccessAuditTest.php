@@ -53,7 +53,8 @@ class RouteAccessAuditTest extends TestCase
     public function test_a_consultations_only_nurse_can_read_the_latest_consultation_of_a_patient(): void
     {
         $patient = $this->makePatient();
-        $nurse = $this->makeStaff('nurse', 'medical_consultation');   // has consultations, not the queue
+        $nurse = $this->makeStaff('nurse', 'medical_consultation');
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_patients');
 
         $this->actingAs($nurse)->get('/api/patient/' . $patient->id . '/latest-consultation')->assertSuccessful();
     }
@@ -63,7 +64,8 @@ class RouteAccessAuditTest extends TestCase
         $observation = $this->makeStaff('nurse', 'observation_room');   // patients + queue only
         $pharmacist = $this->makeStaff('pharmacist', 'pharmacy');
 
-        $this->actingAs($observation)->get(route('staff.document-issuances.search-users', ['query' => 'ab']))->assertForbidden();
+        \App\Models\Role::findByName('staff')->revokePermissionTo(['manage_request_documents', 'manage_medicines']);
+        $this->actingAs($observation->fresh())->get(route('staff.document-issuances.search-users', ['query' => 'ab']))->assertForbidden();
         $this->get(route('staff.medicines.by.category'))->assertForbidden();
         $this->actingAs($pharmacist)->get(route('staff.document-issuances.search-users', ['query' => 'ab']))->assertForbidden();
     }

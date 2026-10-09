@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Support\ModuleAccess;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class RoleRepository
@@ -38,10 +40,10 @@ class RoleRepository extends BaseRepository
     /**
      * @return mixed
      */
-    public function getPermissions()
+    public function getPermissions(?Role $role = null): array
     {
-        $permissions['permissions'] = Permission::toBase()->where('name', '!=', 'manage_admin_dashboard')->get();
-        $permissions['count'] = Permission::count();
+        $permissions['permissions'] = Permission::whereIn('name', ModuleAccess::applicablePermissions($role->name ?? 'custom'))->get();
+        $permissions['count'] = $permissions['permissions']->count();
 
         return $permissions;
     }
@@ -61,9 +63,7 @@ class RoleRepository extends BaseRepository
             'guard_name' => 'web',
         ]);
 
-        if (isset($input['permission_id']) && ! empty($input['permission_id'])) {
-            $role->permissions()->sync($input['permission_id']);
-        }
+        $role->syncPermissions($this->filteredPermissions($input, $role));
 
         return $role;
     }
@@ -78,16 +78,20 @@ class RoleRepository extends BaseRepository
         // be re-derived from the label on every save, so renaming "Clinic Admin" to "Clinic
         // Administrator" changed the name to clinic_administrator and locked every admin out with
         // 403, including from the Roles screen needed to undo it. P2-H1.
-        $role->update([
-            'display_name' => $input['display_name'],
-        ]);
-
-        // The clinic_admin role always keeps every permission, so a bad edit cannot lock the
-        // administrators out of the screens needed to repair it.
-        if ($role->name !== 'clinic_admin' && isset($input['permission_id']) && ! empty($input['permission_id'])) {
-            $role->permissions()->sync($input['permission_id']);
-        }
+        abort_if($role->isReadOnly(), 403);
+        DB::transaction(function () use ($input, $role): void {
+            if ($role->display_name !== $input['display_name']) {
+                $role->update(['display_name' => $input['display_name']]);
+            }
+            $role->syncPermissions($this->filteredPermissions($input, $role));
+        });
 
         return $role;
+    }
+
+    private function filteredPermissions(array $input, Role $role): array
+    {
+        return Permission::whereIn('id', $input['permission_id'] ?? [])
+            ->whereIn('name', ModuleAccess::applicablePermissions($role->name))->pluck('name')->all();
     }
 }

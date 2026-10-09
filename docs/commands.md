@@ -73,7 +73,7 @@ asks for.
 | Batch balances match the stock ledger | error | A batch's quantity differs from the balance after its last ledger entry. |
 | Consultation medicines match the stock ledger | error | The medicines on a consultation do not equal what the ledger deducted for it (a deleted consultation must have given everything back). |
 | No stock without ledger rows | warning | Stock on the shelf that has no ledger row at all; the yearly inventory report needs one to know when it arrived. |
-| No direct permissions on non-admin users | warning | A permission was given straight to a user instead of through the role. |
+| No direct permissions on non-admin users | warning | A permission was given straight to a user instead of through the role, so taking it away in Manage User roles would not reach that person. The Phase 3 migration `2026_10_09_170000_unify_staff_nurse_access` removed every existing one; this warning appears only if one is created again. |
 | No duplicate candidates | warning | Two medicines with the same name and strength, or two patients with the same name and birth date (ids only are printed). Merged later in plan Phase 8. |
 | No pending data repairs | warning | What `text:repair-entities` and `phone:normalize` would still change (their dry runs). |
 
@@ -95,8 +95,8 @@ WARN  No pending data repairs (encoded text, phone numbers)
 ```
 
 **Where it is used in the plan:** Phase 1.5 (built), Phase 1.7 / 1.8 and Phase 9.2 (rehearsals on the clinic dump end with
-it; the rehearsal runner calls `db:integrity --compare-fresh` itself), Phase 3.6 (will report direct permissions before they
-are cleared), and the clinic deployment checklist ([STATUS §7](STATUS.md#7-to-do-on-the-clinic-copy-deployment-checklist)
+it; the rehearsal runner calls `db:integrity --compare-fresh` itself), Phase 3.6 (reports direct permissions; the Phase 3
+migration cleared the existing ones), and the clinic deployment checklist ([STATUS §7](STATUS.md#7-to-do-on-the-clinic-copy-deployment-checklist)
 step 3b).
 
 **Code:** `app/Console/Commands/DatabaseIntegrity.php`, `app/Services/DatabaseIntegrityChecker.php`,

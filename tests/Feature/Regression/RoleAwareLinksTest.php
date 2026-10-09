@@ -137,13 +137,15 @@ class RoleAwareLinksTest extends TestCase
         ];
 
         foreach ($pages as $label => [$draw, $marker]) {
-            $html = $draw($pharmacist);
+            \App\Models\Role::findByName('staff')->revokePermissionTo(['manage_patients', 'manage_doctors']);
+            $html = $draw($pharmacist->fresh());
             $this->assertStringContainsString($marker, $html, "{$label}: the row did not render, the check would prove nothing");
             $this->assertSame(0, preg_match('#href="[^"]*/staff/patients/\d+#', $html), "{$label}: pharmacist offered a patient page");
             $this->assertSame(0, preg_match('#href="[^"]*/staff/doctors/\d+#', $html), "{$label}: pharmacist offered a doctor page");
-            $this->assertStringNotContainsString('module=prescription', $html, "{$label}: pharmacist offered New Prescription");
+            $this->assertSame(0, preg_match('#href="[^"]*module=prescription#', $html), "{$label}: staff without patients permission offered New Prescription");
 
-            $html = $draw($head);
+            \App\Models\Role::findByName('staff')->givePermissionTo(['manage_patients', 'manage_doctors']);
+            $html = $draw($head->fresh());
             $this->assertSame(1, preg_match('#href="[^"]*/staff/patients/\d+#', $html), "{$label}: clinic head lost the patient link");
             $this->assertSame(1, preg_match('#href="[^"]*/staff/doctors/\d+#', $html), "{$label}: clinic head lost the doctor link");
         }
@@ -151,7 +153,7 @@ class RoleAwareLinksTest extends TestCase
         $this->assertStringContainsString('module=prescription', $pages['prescriptions'][0]($head), 'clinic head lost New Prescription');
     }
 
-    /** The visits table in Activity Logs offered "View" on consultations to staff whose station cannot open them. */
+    /** The visits table in Activity Logs offered "View" on consultations to staff whose role cannot open them. */
     public function test_the_visit_list_offers_view_only_to_staff_who_can_open_consultations(): void
     {
         $doctor = $this->makeDoctor();
@@ -161,24 +163,42 @@ class RoleAwareLinksTest extends TestCase
             'name' => 'Visit Patient', 'age' => 20, 'gender' => 'Male', 'address' => 'Dumaguete', 'requested_at' => now()->toDateString(),
         ]);
 
-        $pairs = [
-            ['clinic_head', 'front_desk'], ['records_officer', 'records_area'], ['clinic_staff', 'front_desk'],
-            ['triage_officer', 'observation_room'], ['nurse', 'observation_room'], ['nurse', 'medical_consultation'],
-        ];
-
         $failures = [];
-        foreach ($pairs as $i => [$designation, $station]) {
-            $user = $this->makeStaff($designation, $station, ['email' => "visit.staff{$i}@test.local"]);
+        $sawDenied = false;
+        foreach ($this->staffRoleVariants() as $i => $revoked) {
+            $user = $this->makeNurse(['email' => "visit.staff{$i}@test.local"]);
             $html = $this->actingAs($user)->get(route('staff.activity-logs.index', ['tab' => 'visits']))->getContent();
             $offered = preg_match('#href="[^"]*/staff/document-issuances/' . $visit->id . '"#', $html) === 1;
-            $allowed = canStaffAccessModule('consultations', $user);
+            $allowed = canUseModule('consultations', $user);
+            $sawDenied = $sawDenied || ! $allowed;
 
             if ($offered !== $allowed) {
-                $failures[] = "{$designation}@{$station}: View offered=" . var_export($offered, true) . ', consultations module=' . var_export($allowed, true);
+                $failures[] = ($revoked ? "staff without {$revoked}" : 'staff (default)') . ': View offered=' . var_export($offered, true) . ', consultations allowed=' . var_export($allowed, true);
             }
         }
 
         $this->assertSame([], $failures);
+        $this->assertTrue($sawDenied, 'no variant lacked the permission, so the "hidden" side was never checked');
+    }
+
+    /**
+     * The Staff (Nurse) role as the administrator can leave it: with every default permission, then with each of the
+     * five clinical permissions taken away in turn. The role is left in the state of the LAST variant; the callers make a
+     * fresh account per variant. Replaces the old designation x station pairs, which no longer change what anybody may do.
+     *
+     * @return \Generator<int, string|null> yields the permission removed in this variant (null = none)
+     */
+    private function staffRoleVariants(): \Generator
+    {
+        $role = \App\Models\Role::findByName('staff');
+        $all = \App\Support\ModuleAccess::CLINICAL_PERMISSIONS;
+
+        foreach ([null, ...$all] as $i => $revoked) {
+            $role->syncPermissions(array_values(array_diff($all, $revoked ? [$revoked] : [])));
+            app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            yield $i => $revoked;
+        }
     }
 
     /** The doctor list's name / photo links were hard-wired to the administrator's /admin/doctors/{id} (403 for staff). */
@@ -220,20 +240,21 @@ class RoleAwareLinksTest extends TestCase
             'patient_id' => $patient->id, 'doctor_id' => $doctor->doctor->id, 'status' => 'pending', 'is_active' => 1,
         ]);
 
-        $pairs = [
-            ['clinic_head', 'front_desk'], ['pharmacist', 'pharmacy'], ['records_officer', 'records_area'],
-            ['clinic_staff', 'front_desk'], ['clinic_staff', 'records_area'],
-            ['triage_officer', 'triage_area'], ['triage_officer', 'isolation_room'], ['triage_officer', 'observation_room'],
-            ['nurse', 'triage_area'], ['nurse', 'medical_consultation'], ['nurse', 'isolation_room'], ['nurse', 'observation_room'],
-        ];
-
         $has = fn (string $html, string $pattern): bool => preg_match('#href="[^"]*' . $pattern . '#', $html) === 1;
 
         $failures = [];
-        foreach ($pairs as $i => [$designation, $station]) {
-            $user = $this->makeStaff($designation, $station, ['email' => "policy.staff{$i}@test.local"]);
-            $who = "{$designation}@{$station}";
-            $can = fn (string $module) => canStaffAccessModule($module, $user);
+        $denied = [];
+        foreach ($this->staffRoleVariants() as $i => $revoked) {
+            $user = $this->makeNurse(['email' => "policy.staff{$i}@test.local"]);
+            $who = $revoked ? "staff without {$revoked}" : 'staff (default)';
+            $can = function (string $module) use ($user, &$denied, $who) {
+                $allowed = canUseModule($module, $user);
+                if (! $allowed) {
+                    $denied["{$who}: {$module}"] = true;
+                }
+
+                return $allowed;
+            };
 
             // ---- patient list (lazy table, drawn directly) ----
             $this->actingAs($user);
@@ -262,12 +283,13 @@ class RoleAwareLinksTest extends TestCase
 
             foreach ($expectations as $what => [$offered, $allowed]) {
                 if ($offered !== $allowed) {
-                    $failures[] = "{$who} - {$what}: offered=" . var_export($offered, true) . ', module allows=' . var_export($allowed, true);
+                    $failures[] = "{$who} - {$what}: offered=" . var_export($offered, true) . ', role allows=' . var_export($allowed, true);
                 }
             }
         }
 
         $this->assertSame([], $failures);
+        $this->assertNotEmpty($denied, 'no variant lacked a permission, so the "hidden" side was never checked');
     }
 
     /** The staff dashboard's "recent patients" linked every name, though a pharmacist has no patients module. */
@@ -277,12 +299,14 @@ class RoleAwareLinksTest extends TestCase
         $pharmacist = $this->makeStaff('pharmacist', 'pharmacy');
         $head = $this->makeStaff('clinic_head', 'front_desk');
 
-        $this->actingAs($pharmacist);
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_patients');
+        $this->actingAs($pharmacist->fresh());
         $html = \Livewire\Livewire::withoutLazyLoading()->test(\App\Livewire\StaffDashBoardTable::class)->html();
         $this->assertStringContainsString('Dashpatient', $html, 'the dashboard row did not render, the check would prove nothing');
         $this->assertSame(0, preg_match('#href="[^"]*/staff/patients/\d+"#', $html), 'pharmacist was offered a patient page');
 
-        $this->actingAs($head);
+        \App\Models\Role::findByName('staff')->givePermissionTo('manage_patients');
+        $this->actingAs($head->fresh());
         $html = \Livewire\Livewire::withoutLazyLoading()->test(\App\Livewire\StaffDashBoardTable::class)->html();
         $this->assertSame(1, preg_match('#href="[^"]*/staff/patients/\d+"#', $html), 'clinic head lost the patient link');
     }

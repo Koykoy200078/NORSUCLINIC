@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
-use App\Models\ClinicStation;
-use App\Models\Role;
-use App\Models\StaffDesignation;
 use App\Models\User;
 use App\Repositories\StaffRepository;
 use Illuminate\Support\Facades\Hash;
@@ -45,14 +42,7 @@ class StaffController extends AppBaseController
      */
     public function create(): \Illuminate\View\View
     {
-        $roles = $this->staffRepository->getRole();
-        $defaultRoleId = Role::whereName('staff')->value('id');
-
-        $staffDesignations = StaffDesignation::pluck('name', 'id');
-        $staffDesignationCodes = StaffDesignation::pluck('code', 'id')->toArray();
-        $clinicStations = ClinicStation::pluck('name', 'id');
-
-        return view('staffs.create', compact('roles', 'defaultRoleId', 'staffDesignations', 'staffDesignationCodes', 'clinicStations'));
+        return view('staffs.create');
     }
 
     /**
@@ -62,11 +52,7 @@ class StaffController extends AppBaseController
      */
     public function store(CreateStaffRequest $request): RedirectResponse
     {
-        $input = $request->all();
-        // Ensure role defaults to staff if not provided
-        if (!isset($input['role']) || empty($input['role'])) {
-            $input['role'] = Role::whereName('staff')->value('id');
-        }
+        $input = $request->validated();
         $this->staffRepository->store($input);
 
         Flash::success(__('messages.flash.staff_create'));
@@ -93,14 +79,7 @@ class StaffController extends AppBaseController
     {
         $this->assertStaffAccount($staff);
 
-        $roles = $this->staffRepository->getRole();
-        $defaultRoleId = Role::whereName('staff')->value('id');
-
-        $staffDesignations = StaffDesignation::pluck('name', 'id');
-        $staffDesignationCodes = StaffDesignation::pluck('code', 'id')->toArray();
-        $clinicStations = ClinicStation::pluck('name', 'id');
-
-        return view('staffs.edit', compact('staff', 'roles', 'defaultRoleId', 'staffDesignations', 'staffDesignationCodes', 'clinicStations'));
+        return view('staffs.edit', compact('staff'));
     }
 
     /**
@@ -112,11 +91,7 @@ class StaffController extends AppBaseController
     {
         $this->assertStaffAccount($staff);
 
-        $input = $request->all();
-        // Ensure role defaults to staff if not provided
-        if (!isset($input['role']) || empty($input['role'])) {
-            $input['role'] = Role::whereName('staff')->value('id');
-        }
+        $input = $request->validated();
         $this->staffRepository->update($input, $staff->id);
 
         Flash::success(__('messages.flash.staff_update'));

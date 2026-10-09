@@ -5,7 +5,6 @@ namespace App\Http;
 use App\Http\Middleware\AuditAdministrativeActions;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckUserStatus;
-use App\Http\Middleware\EnsureStaffModuleAccess;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceAdminDefaultPasswordChange;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -92,7 +91,6 @@ class Kernel extends HttpKernel
         'verified' => EnsureEmailIsVerified::class,
         'role' => RoleMiddleware::class,
         'permission' => PermissionMiddleware::class,
-        'staff.module' => EnsureStaffModuleAccess::class,
         'checkUserStatus' => CheckUserStatus::class,
         'setLanguage' => SetLanguage::class,
         'forceAdminPasswordChange' => ForceAdminDefaultPasswordChange::class,

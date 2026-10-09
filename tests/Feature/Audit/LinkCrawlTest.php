@@ -19,8 +19,9 @@ use Tests\TestCase;
 /**
  * LINK AUDIT - "does every link / button I am shown actually open for me?"
  *
- * Signs in as every kind of user (guest, administrator, doctor, every staff designation + station pair, a nurse-role
- * account), opens the landing page and every no-parameter page of the user's own panel, loads the lazy Livewire tables
+ * Signs in as guest, administrator, doctor and Staff (Nurse) - the last two also with each clinical permission taken
+ * away in Manage User roles (and the doctor with manage_doctors added) -
+ * opens the landing page and every no-parameter page of the user's own panel, loads the lazy Livewire tables
  * the way the browser does, then follows every <a href> it finds (two levels deep, so show / edit pages reached from
  * the list rows are covered) as the SAME user. A link that answers 403 / 404 / 405 / 419, or a page that crashes (5xx),
  * is a defect: a button that is shown but cannot be used, or a link that is hard-wired to another role's URL.
@@ -40,13 +41,6 @@ class LinkCrawlTest extends TestCase
 {
     use RefreshDatabase;
     use BuildsClinicData;
-
-    private const STAFF_PAIRS = [
-        ['clinic_head', 'front_desk'], ['pharmacist', 'pharmacy'], ['records_officer', 'records_area'],
-        ['clinic_staff', 'front_desk'], ['clinic_staff', 'records_area'],
-        ['triage_officer', 'triage_area'], ['triage_officer', 'isolation_room'], ['triage_officer', 'observation_room'],
-        ['nurse', 'triage_area'], ['nurse', 'medical_consultation'], ['nurse', 'isolation_room'], ['nurse', 'observation_room'],
-    ];
 
     /** Pages followed per user - a safety stop, reported when it is reached. */
     private const PAGE_CAP = 700;
@@ -69,8 +63,24 @@ class LinkCrawlTest extends TestCase
 
         $report = [];
         $problems = [];
+        // What the administrator can change in Manage User roles: the permissions of the Staff (Nurse) and Doctor roles.
+        // Each actor is crawled with the role set up as its label says; the originals are put back at the end.
+        $originals = [];
+        foreach (['staff', 'doctor'] as $roleName) {
+            $originals[$roleName] = \App\Models\Role::findByName($roleName)->permissions()->pluck('name')->all();
+        }
         foreach ($actors as $label => $user) {
-            $result = $this->crawl($user);
+            $roleName = $user?->hasRole('staff') ? 'staff' : ($user?->hasRole('doctor') ? 'doctor' : null);
+            if ($roleName) {
+                $permissions = $originals[$roleName];
+                if (preg_match('/^(?:staff|doctor) without (.+)$/', $label, $match)) {
+                    $permissions = array_values(array_diff($permissions, [$match[1]]));
+                } elseif ($label === 'doctor with manage_doctors') {
+                    $permissions[] = 'manage_doctors';
+                }
+                \App\Models\Role::findByName($roleName)->syncPermissions($permissions);
+            }
+            $result = $this->crawl($user?->fresh());
             $report[$label] = $result;
 
             foreach ($result['broken'] as $b) {
@@ -87,6 +97,9 @@ class LinkCrawlTest extends TestCase
             }
         }
 
+        foreach ($originals as $roleName => $permissions) {
+            \App\Models\Role::findByName($roleName)->syncPermissions($permissions);
+        }
         if ($out = getenv('CRAWL_OUT')) {
             file_put_contents($out, json_encode(['requests' => $this->requests, 'actors' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
@@ -137,14 +150,30 @@ class LinkCrawlTest extends TestCase
         ]);
         PatientQueue::create(['patient_id' => $queued->id, 'added_by' => $admin->id, 'status' => PatientQueue::STATUS_WAITING, 'scheduled_at' => now()]);
 
+        // A second queued patient whose consultation form is already recorded: the queue screens then offer "View Form" /
+        // "Has form" (the first one gets "Record form"), so both kinds of consultation buttons are on a page to be followed.
+        $queuedWithForm = $this->makePatient(['email' => 'crawl.patient3@test.local']);
+        DocumentIssuance::create([
+            'document_type' => 'consultation_form', 'document_creator_id' => $doctor->id, 'user_id' => $queuedWithForm->user_id,
+            'name' => 'Crawl Queued', 'age' => 20, 'gender' => 'Male', 'address' => 'Dumaguete',
+            'requested_at' => now()->toDateString(), 'consult_mode' => 'physical', 'complaints' => 'fever',
+        ]);
+        PatientQueue::create(['patient_id' => $queuedWithForm->id, 'added_by' => $admin->id, 'status' => PatientQueue::STATUS_WAITING, 'scheduled_at' => now()]);
+        PatientQueue::syncAttachment((int) $queuedWithForm->user_id);
+
         $actors = ['guest' => null, 'admin' => $admin, 'doctor' => $doctor];
-        foreach (self::STAFF_PAIRS as $i => [$designation, $station]) {
-            $actors["staff {$designation}@{$station}"] = $this->makeStaff($designation, $station, ['email' => "crawl.staff{$i}@test.local"]);
+        // The doctor as the administrator can leave the role: the default, one more permission, each default one removed.
+        $actors['doctor with manage_doctors'] = $this->makeDoctor();
+        foreach (['manage_patients', 'manage_request_documents', 'manage_medicines', 'manage_specialties'] as $permission) {
+            $actors['doctor without '.$permission] = $this->makeDoctor();
         }
 
-        $nurseRole = $this->makeStaff('nurse', 'triage_area', ['email' => 'crawl.nurserole@test.local']);
-        $nurseRole->syncRoles(['nurse']);
-        $actors['nurse role'] = $nurseRole->fresh();
+        $actors['staff default'] = $this->makeNurse();
+        // An account from before Phase 3 still has the hidden designation / station / shift columns: they change nothing.
+        $actors['staff with a legacy profile'] = $this->makeStaff();
+        foreach (\App\Support\ModuleAccess::CLINICAL_PERMISSIONS as $permission) {
+            $actors['staff without '.$permission] = $this->makeNurse();
+        }
 
         return $actors;
     }
@@ -171,6 +200,9 @@ class LinkCrawlTest extends TestCase
 
             [$url, $depth, $from] = array_shift($queue);
             if (isset($seen[$url])) {
+                if ($from !== '(start page)' && in_array($seen[$url], [403, 404, 405, 419], true)) {
+                    $result['broken'][] = ['url' => $url, 'from' => $from, 'status' => $seen[$url], 'final' => $url, 'text' => $texts[$url] ?? ''];
+                }
                 continue;
             }
             if (str_starts_with($url, 'EXTERNAL:')) {
@@ -180,9 +212,8 @@ class LinkCrawlTest extends TestCase
             if ($this->skip($url)) {
                 continue;
             }
-            $seen[$url] = true;
-
             $r = $this->fetch($user, $url);
+            $seen[$url] = $r['status'];
             $result['pages']++;
             if (str_contains($r['body'], 'LAZY-FAILED')) {
                 $result['lazy_failed'][] = $url;
@@ -204,7 +235,7 @@ class LinkCrawlTest extends TestCase
                 $base = parse_url($r['final'], PHP_URL_PATH) ?: '/';
                 foreach ($this->links($r['body'], $base) as $link => $text) {
                     $texts[$link] ??= $text;
-                    if (! isset($seen[$link])) {
+                    if (! isset($seen[$link]) || in_array($seen[$link], [403, 404, 405, 419], true)) {
                         $queue[] = [$link, $depth + 1, $url];
                     }
                 }

@@ -2,6 +2,8 @@
 $inProgressQueue = $queues->where('status', 'in_progress')->first();
 $priorityQueues = $queues->where('is_priority', true)->where('status', 'waiting');
 $regularQueues = $queues->where('is_priority', false)->where('status', 'waiting');
+// "Record form" / "View Form" lead to consultation pages: only with the documents permission, else they answer 403.
+$canOpenForms = canUseModule('consultations');
 $avgWaitTime = $queues->where('status', 'waiting')->avg(function ($q) {
 return $q->created_at->diffInMinutes(now());
 });
@@ -80,22 +82,24 @@ return $q->created_at->diffInMinutes(now());
                         <p class="mb-2">
                             <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
+                            @if($canOpenForms)
                             <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                 class="btn btn-sm btn-outline-primary ms-2">
                                 <i class="fas fa-eye"></i> View Form
                             </a>
+                            @endif
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
-                                @if(! $queue->attached_form_is_new)
+                                @if($canOpenForms && ! $queue->attached_form_is_new)
                                 <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
                                     class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
                                     <i class="fas fa-file-circle-plus"></i> Record form
                                 </a>
                                 @endif
-                                @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                @if($canOpenForms && $queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                     class="btn btn-sm btn-primary"
                                     title="View Consultation Form">
@@ -168,22 +172,24 @@ return $q->created_at->diffInMinutes(now());
                         <p class="mb-2">
                             <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
+                            @if($canOpenForms)
                             <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                 class="btn btn-sm btn-outline-primary ms-2">
                                 <i class="fas fa-eye"></i> View Form
                             </a>
+                            @endif
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
                             <div class="btn-group">
-                                @if(! $queue->attached_form_is_new)
+                                @if($canOpenForms && ! $queue->attached_form_is_new)
                                 <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
                                     class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
                                     <i class="fas fa-file-circle-plus"></i> Record form
                                 </a>
                                 @endif
-                                @if($queue->has_consultation_attachment && $queue->latestConsultation)
+                                @if($canOpenForms && $queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
                                     class="btn btn-sm btn-primary"
                                     title="View Consultation Form">

@@ -109,7 +109,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- [ORDER 2] Patients / Patient Record Management --}}
                 @can('manage_patients')
-                @if(canStaffAccessModule('patients'))
+                @if(canUseModule('patients'))
                 <li class="nav-item {{ isModuleActive('patients') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patients.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-hospital-user"></i></span>
@@ -119,7 +119,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 @endif
 
                 {{-- [ORDER 3] Patient Queuing --}}
-                @if(canStaffAccessModule('queue'))
+                @if(canUseModule('queue'))
                 <li class="nav-item {{ isModuleActive('patient-queue') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('patient-queue.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
@@ -146,7 +146,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- [ORDER 4] Consultations --}}
                 @can('manage_request_documents')
                 @php $documentIssuancesRouteName = getRouteNameByRole('document-issuances.index'); @endphp
-                @if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canStaffAccessModule('consultations'))
+                @if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canUseModule('consultations'))
                 <li class="nav-item {{ isModuleActive('consultations') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
                         href="{{ route($documentIssuancesRouteName) . '?module=consultation' }}">
@@ -168,7 +168,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- [ORDER 5] Prescription Management --}}
                 @can('manage_request_documents')
                 @php $prescriptionsRouteName = getRouteNameByRole('prescriptions.index'); @endphp
-                @if(\Illuminate\Support\Facades\Route::has($prescriptionsRouteName) && canStaffAccessModule('prescriptions'))
+                @if(\Illuminate\Support\Facades\Route::has($prescriptionsRouteName) && canUseModule('prescriptions'))
                 <li class="nav-item {{ isModuleActive('prescriptions') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
                         href="{{ route($prescriptionsRouteName) }}">
@@ -183,7 +183,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- [ORDER 6] Inventory --}}
                 @can('manage_medicines')
-                @if(canStaffAccessModule('inventory'))
+                @if(canUseModule('inventory'))
                 <li class="nav-item {{ isModuleActive('inventory') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('medicine-inventory.index') }}">
                         <span class="aside-menu-icon me-3"><i class="fas fa-capsules"></i></span>
@@ -223,7 +223,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 @endif
 
                 {{-- [ORDER 7] Dispensing --}}
-                @if(canStaffAccessModule('dispensing'))
+                @if(canUseModule('dispensing'))
                 <li class="nav-item {{ isModuleActive('dispensing') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('medicine-dispensing.index') }}">
                         <span class="aside-menu-icon me-3"><i class="fas fa-notes-medical"></i></span>
@@ -236,7 +236,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 {{-- [ORDER 8] Laboratory & Medical Request Management --}}
                 @can('manage_request_documents')
                 @php $labRequestsRouteName = getRouteNameByRole('lab-requests.index'); @endphp
-                @if(\Illuminate\Support\Facades\Route::has($labRequestsRouteName) && canStaffAccessModule('lab_requests'))
+                @if(\Illuminate\Support\Facades\Route::has($labRequestsRouteName) && canUseModule('lab_requests'))
                 <li class="nav-item {{ isModuleActive('lab-requests') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
                         href="{{ route($labRequestsRouteName) }}">
@@ -251,7 +251,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- [ORDER 9] Certificate Issuance --}}
                 @can('manage_request_documents')
-                @if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canStaffAccessModule('certificates'))
+                @if(\Illuminate\Support\Facades\Route::has($documentIssuancesRouteName) && canUseModule('certificates'))
                 <li class="nav-item {{ isModuleActive('certificates') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page"
                         href="{{ route($documentIssuancesRouteName) . '?module=certificate' }}">
@@ -265,7 +265,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 @endcan
 
                 {{-- [ORDER 10] Report Generation --}}
-                @if(isRole('clinic_admin') || isRole('doctor') || ((isRole('staff') || isRole('nurse')) && canStaffAccessModule('reports')))
+                @if(canUseModule('reports'))
                 <li class="nav-item {{ isModuleActive('reports') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('activity-logs.index') }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-chart-line"></i></span>
@@ -275,7 +275,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 @endif
 
                 {{-- [ORDER 11] Notifications & Alerts --}}
-                @if(isRole('clinic_admin') || isRole('doctor') || ((isRole('staff') || isRole('nurse')) && canStaffAccessModule('notifications')))
+                @if(canUseModule('notifications'))
                 <li class="nav-item aside-item-collapse {{ isModuleActive('notifications') ? 'show collapse-submenu' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ isModuleActive('notifications') ? 'true' : 'false' }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-bell"></i></span>
@@ -289,7 +289,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                                 <span class="aside-menu-title">Low stocks alert</span>
                             </a>
                         </li>
-                        @if(canStaffAccessModule('inventory'))
+                        @if(canUseModule('inventory'))
                         <li class="nav-item">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('medicine-inventory.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-calendar-times"></i></span>
@@ -309,7 +309,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                 {{-- [ORDER 12] Settings --}}
                 @canany(['manage_settings', 'manage_staff', 'manage_doctors', 'manage_roles', 'manage_specialties', 'manage_front_cms', 'manage_countries', 'manage_states', 'manage_cities'])
-                @if(! (isRole('staff') || isRole('nurse')) || canStaffAccessAnyModule(['settings', 'doctors', 'specializations', 'roles', 'countries', 'states', 'cities', 'cms']))
+                @if(canUseModule(['settings', 'doctors', 'specializations', 'roles', 'countries', 'states', 'cities', 'cms']))
                 <li class="nav-item aside-item-collapse {{ isModuleActive('settings') ? 'show collapse-submenu' : '' }}">
                     <a class="nav-link d-flex align-items-center py-4 aside-collapse-btn" href="javascript:void(0);" aria-expanded="{{ isModuleActive('settings') ? 'true' : 'false' }}">
                         <span class="aside-menu-icon pe-3"><i class="fas fa-cogs"></i></span>
@@ -330,9 +330,9 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                         @endcan
 
                         @can('manage_doctors')
-                        @if(canStaffAccessModule('doctors'))
+                        @if(canUseModule('doctors') && ($doctorsMenuUrl = getDoctorsMenuUrl()))
                         <li class="nav-item {{ Request::is('*/doctors*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('doctors.index') }}">
+                            <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ $doctorsMenuUrl }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-user-doctor"></i></span>
                                 <span class="aside-menu-title">{{ __('messages.doctors') }}</span>
                             </a>
@@ -342,7 +342,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                         {{-- Roles & Permissions --}}
                         @can('manage_roles')
-                        @if(canStaffAccessModule('roles'))
+                        @if(canUseModule('roles'))
                         <li class="nav-item {{ Request::is('*/roles*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('roles.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-user-tag"></i></span>
@@ -354,7 +354,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                         {{-- Specializations --}}
                         @can('manage_specialties')
-                        @if(canStaffAccessModule('specializations'))
+                        @if(canUseModule('specializations'))
                         <li class="nav-item {{ Request::is('*/specializations*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('specializations.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-user-shield"></i></span>
@@ -366,7 +366,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                         {{-- System Settings --}}
                         @can('manage_settings')
-                        @if(canStaffAccessModule('settings'))
+                        @if(canUseModule('settings'))
                         <li class="nav-item {{ Request::is('*/settings*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('setting.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-sliders-h"></i></span>
@@ -378,7 +378,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
 
                         {{-- Front CMS --}}
                         @can('manage_front_cms')
-                        @if(canStaffAccessModule('cms'))
+                        @if(canUseModule('cms'))
                         <li class="nav-item {{ Request::is('*/cms*', '*/sliders*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-4 ps-10" href="{{ getRouteByRole('cms.index') }}">
                                 <span class="aside-menu-icon pe-3"><i class="fas fa-tasks"></i></span>

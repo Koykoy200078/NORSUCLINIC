@@ -234,8 +234,7 @@ class DispenseRecordController extends AppBaseController
             ->first();
 
         $user = auth()->user();
-        $canOpenConsultation = $user->can('manage_request_documents')
-            && (! ($user->hasRole('staff') || $user->hasRole('nurse')) || canStaffAccessModule('consultations'));
+        $canOpenConsultation = canUseModule('consultations', $user);
 
         return view('medicine-history.consultation', [
             'consultation' => $document_issuance,

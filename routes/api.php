@@ -24,7 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // These live in the stateless "api" group, where `auth:web` never sees the login session, so the
 // queue-creation preview always got "Unauthenticated". Run them through the session ("web")
 // middleware with the same role / staff-module checks as the queue pages. M-06.
-Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|staff|nurse', 'staff.module:queue,consultations'])->group(function () {
+Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|staff', 'permission:manage_patients|manage_request_documents'])->group(function () {
     // Get latest consultation form for a patient (for queue management)
     Route::get('/patient/{patient}/latest-consultation', function (Patient $patient) {
         try {

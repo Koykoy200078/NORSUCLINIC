@@ -1,7 +1,7 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0, 1 and 2 done and tested on 2026-10-09 (Phases 0-1: `7c6b5c5`, `d00cca3`, `c498798`; Phase 2: see
-[Handover.md](../Handover.md); all pushed to `origin/changes_v2`); Phase 3 next · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` ·
+**Status:** Phases 0, 1, 2 and 3 done and tested on 2026-10-09 (Phases 0-1: `7c6b5c5`, `d00cca3`, `c498798`; Phase 2: `c993859`; Phase 3: see
+[Handover.md](../Handover.md); all pushed to `origin/changes_v2`); Phase 4 next · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` ·
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -105,14 +105,14 @@ rows (the ledger matches the consultation medicines exactly), 1 pending prescrip
 *All three are fixed by Phase 1 (migrations `2026_09_30_110000`, `121500`, `2026_10_08_120000`, config `DB_ENGINE`) and
 rehearsed on the real dump under both engines.*
 
-### 1.4 Dispense History misses consultation medicines (🆕)
+### 1.4 Dispense History misses consultation medicines (✅ fixed in Phase 2)
 
 `app/Livewire/MedicineDispenseTable.php` lists only `medicine_bills` (manual dispense records + dispensed prescriptions).
 Medicines added in a consultation by the nurse ("Nursing") or the doctor ("Plan") go to `consultation_medicines` and the
 stock ledger (`DocumentIssuanceController::handleMedicineDeduction` / `handleMedicineUpdates`), never to `medicine_bills`, so
 they appear only on the Stock-out tab.
 
-### 1.5 Manage User roles "does not apply" (🆕)
+### 1.5 Manage User roles "does not apply" (✅ fixed in Phase 3)
 
 Saving works (the role's `saved` event clears the Spatie cache; the file cache is kept per database). What breaks the
 owner's expectation:
@@ -200,7 +200,9 @@ counting rules (see [STATUS.md §6](STATUS.md#6-needs-your-decision-)).
 🔒 rotate the DB password (old one in git history) · 🔒 Laravel 11/12 upgrade (framework / medialibrary advisories) ·
 🔒 rappasoft tables 3.8 port · 🔒 npm runtime advisories / Vite migration · 🔒 merge `changes_v2` into `develop` · 🔒 PHI
 columns in `activity_logs` and log retention · 🔒 untrack `public/messages.js` or keep committing it · 🔒 drop the hidden
-designation / station / shift columns later (after the clinic runs without them).
+designation / station / shift columns later (after the clinic runs without them) · 🔒 who may read the raw activity log
+(Notifications & Alerts › System notifications: patient names, contact numbers, complaints): open to every staff account and
+doctor since Phase 3, as §2.2 says for Reports and Notifications; one line limits it again.
 
 ---
 
@@ -325,23 +327,26 @@ Each phase ends with: full test suite green → re-verification of the phase's i
   **Final verification (2026-10-09):** `LINK_CRAWL=1 php vendor/bin/phpunit` — **444 tests / 4,304 assertions**, all passing, none skipped (9 min 20 sec, 190 MB). The 16-user crawl made 1,143 requests over 1,093 pages: no broken links, crashes, lazy-table failures or capped crawls. Inline review and `git diff --check` passed. No new Artisan commands; [commands.md](commands.md) was checked and remains unchanged. Next: Phase 3.
 
 ### Phase 3 — Fix: Manage User roles really applies + Staff = Nurse
-- [ ] 3.1 **Staff = Nurse, one role.** A data migration:
+- [x] 3.1 **Staff = Nurse, one role.** A data migration:
   - moves any account holding the `nurse` role to `staff`, then retires the `nurse` role (kept unassignable, hidden from the Roles screen and the staff form);
   - names the Staff role **"Staff (Nurse)"**;
   - leaves permissions as they are.
   The staff form loses its role picker.
-- [ ] 3.2 **Remove Role Designation, Assigned Station and Shift Schedule** from:
+  *Done:* migration `2026_10_09_170000_unify_staff_nurse_access`. It labels `staff` "Staff (Nurse)" and moves every account of the `nurse` role (archived ones too) to `staff`. The `nurse` role stays in the table as a default role: the Roles screen cannot delete it, its list row is hidden and its edit page answers 404. Role permissions, the hidden staff profiles and archived accounts are untouched; running it twice changes nothing. On a **fresh install it creates nothing** (only the older `nurse` role exists then, the seeder creates "Staff (Nurse)"); it creates `staff` only when nurse accounts would otherwise have no role to move to. The same migration (a) removes the permissions given **straight to non-admin users** (3.6) and (b) gives the **two permissions that had an empty label at the clinic** (`manage_patients`, `manage_request_documents`) their labels, so the Roles screen is not blank. The staff form has no role picker: the request accepts only the `staff` role and the repository always assigns it. (`StaffNurseMigrationTest`, 4 tests, plus the migration test and the staff-form test in `RoleModuleAccessTest`.)
+- [x] 3.2 **Remove Role Designation, Assigned Station and Shift Schedule** from:
   - the staff create / edit forms, `CreateStaffRequest` / `UpdateStaffRequest`, `ValidStaffDesignationStationPair`;
   - `StaffRepository`, `StaffController`, `StaffTable` columns, staff show page, profile;
   - the Accomplishment Report "Prepared by" (role instead of designation).
   The columns and lookup tables (`staff_profiles.role_designation_id / assigned_station_id / shift_schedule`, `staff_designations`, `clinic_stations`) stay in the database, unused and hidden (🔒 drop later).
-- [ ] 3.3 **Remove the designation / station access layer:**
+  *Done:* all of the above; `ValidStaffDesignationStationPair` is deleted. `StaffRepository` now saves only the form's fields and the **fixed country code 63** (the first version of the rewrite dropped it; `PhilippinePhoneTest` caught it). Saving a staff account leaves a legacy profile row exactly as it was (tested). "Prepared by" shows the signed-in user's name and the label of their role ("Staff (Nurse)", "Doctor", "Clinic Admin").
+- [x] 3.3 **Remove the designation / station access layer:**
   - `getStaffDesignationModuleMap`, `getStaffStationModuleMap`, `getStaffDesignationStationMap` and `canStaffAccessModule` / `canStaffAccessAnyModule` (63 calls);
   - the `staff.module` middleware (`EnsureStaffModuleAccess`, 23 route guards);
   - `StaffDesignationSeeder` / `ClinicStationSeeder` from the seed run;
   - `StaffModuleAccessPolicyTest` (replaced by 3.7);
   - the obsolete JSON maps in `docs/` (`staff-*.json`).
-- [ ] 3.4 One helper `canUseModule($module)`: the module's permission for the signed-in role. Map:
+  *Done:* the seven helpers (those four plus `canStaffDesignationWorkAtStation` and `getStaffProfileForUser`) and all 63 calls are gone; `EnsureStaffModuleAccess`, its `staff.module` alias and its guards are deleted (the 23 guards covered 123 routes); the two seeders are no longer in `DatabaseSeeder` (the classes stay, only the legacy test helper `makeStaff()` still uses them); `StaffModuleAccessPolicyTest` and `StaffModuleRoutingTest` are deleted; the three `docs/staff-*.json` maps are deleted (they also held staff names and e-mails, flagged by the 09-30 re-audit). The May designation audit carries a "superseded" note.
+- [x] 3.4 One helper `canUseModule($module)`: the module's permission for the signed-in role. Map:
   - patients and queue → `manage_patients`;
   - consultations, certificates, prescriptions and lab → `manage_request_documents`;
   - inventory and dispensing → `manage_medicines`;
@@ -349,17 +354,24 @@ Each phase ends with: full test suite green → re-verification of the phase's i
   - settings, roles and CMS → their own permissions;
   - dashboard always on; reports and notifications open to every signed-in staff / doctor / admin (labelled on the Roles page).
   It replaces the 63 `canStaffAccessModule` calls (menu, dashboards, buttons) and matches the route middleware.
-- [ ] 3.5 Routes agree with the menu: the doctor Queue gets `permission:manage_patients`; every staff / doctor group carries the permission of its module.
-- [ ] 3.6 Honest Roles page:
+  *Done:* `canUseModule(string|array $module)` in `app/helpers.php`, map and lists in `App\Support\ModuleAccess`. An unknown module key is **denied** (a typo hides a link, it never opens one). The "Doctors" menu entry of a doctor opens the doctor's own profile (a doctor has no list); `getDoctorsMenuUrl()` leaves the entry out when the doctor record is missing instead of crashing every page (found in review). `ModuleAccessMapTest` proves the map and the routes agree.
+- [x] 3.5 Routes agree with the menu: the doctor Queue gets `permission:manage_patients`; every staff / doctor group carries the permission of its module.
+  *Done:* `route:list` against the Phase 2 snapshot: **475 routes, none added or removed**; 136 routes changed middleware: 123 staff / API routes lost the `staff.module` guard (and `role:staff|nurse` became `role:staff`), 13 doctor routes gained a permission (queue ×5, document look-ups ×4, doctor profile, queue consultation, prescription dispense, medicine list). **Every staff and doctor route now carries a permission except the two dashboards and the Reports / Notifications routes**, which are open on purpose; `ModuleAccessMapTest` fails when a new route has none. Dispensing a prescription now needs `manage_medicines` as well (the route and the controller both check it).
+- [x] 3.6 Honest Roles page:
   - shows only the permissions that apply to the role; the server drops the rest;
   - Clinic Admin is shown locked with an explanation; Patient read-only ("patients do not sign in");
   - corrected descriptions; role-aware Discard link; the select-all script works after Turbo navigation;
   - direct per-user permissions on non-admins are reported (`db:integrity`) and cleared, so the role is the only source.
-- [ ] 3.7 Tests:
+  *Done:* the form lists the five permissions a staff or doctor panel uses (`manage_patients`, `manage_request_documents`, `manage_medicines`, `manage_doctors`, `manage_specialties`) each with a plain description, and the server drops anything else (`manage_staff_dashboard`, `manage_admin_dashboard` and the admin-only ones check nothing for these roles). A role can now be saved with no permission at all (before, "required" blocked revoking the last one). Clinic Admin and Patient are read-only (the form request and the repository both refuse, so a second caller cannot get around the first), the retired `nurse` role is hidden. The index shows "Dashboard, Reports & Notifications always available". The select-all box is tri-state and re-initialised on `turbo:load`. The migration removed the existing direct permissions of non-admin users; `db:integrity` still reports any new one ([commands.md](commands.md)).
+- [x] 3.7 Tests:
   - for every role × permission: revoke in the Roles screen, then on the next page load the menu item is gone, its pages answer 403 and dashboard links are hidden; re-grant brings them back (run with the real **file** cache);
   - Clinic Admin lock; nurse-role merge; staff form without the three fields;
   - link crawler reworked: one Staff (Nurse) user with the default permissions and one per permission removed, instead of every designation × station pair.
   Live check with admin, doctor and a nurse side by side.
+  *Done:* `RoleModuleAccessTest` (the 10 role × permission cases, the permission filter and "clear every box" case, the read-only roles at both layers, the nurse merge, the staff form, route permissions, prescription dispensing, a doctor without a doctor record, a missing permission row, a legacy designation / station that no longer limits anybody, the Reports global search, the form, its explanations and the list contents), `StaffNurseMigrationTest`, `ModuleAccessMapTest`; the three designation tests were restated for permissions (`ConsultationModuleTest` H-02, `PatientQueueTest`, `QueueConsultationAttachmentTest`, which also got the doctor-queue button test) and the two designation-pair loops of `RoleAwareLinksTest` became permission variants, so they check the "hidden" side again. `LinkCrawlTest` now crawls Staff (Nurse) with the defaults, with a legacy profile and with each of the five permissions removed, and the doctor with the defaults, with `manage_doctors` added and with each default permission removed.
+  **Review of the inherited work and its fixes (2026-10-09):** the first full run on the inherited tree had 13 failing tests. Causes: the migration created a `staff` role on a fresh database (9 `ReportGenerationTest` errors "role already exists"; it now creates nothing there), the staff save dropped the country code (a real regression), and three tests still encoded the old designation policy. Also found and fixed in review: the doctor menu crash, the blank permission labels at the clinic, the designation-pair loops that no longer proved the "hidden" side, stale comments; a **missing permission row** in an old database made every page a 500 (`canUsePermission()` now reads it as "not allowed"); the permission-variant link crawl found **"Record form" / "View Form" buttons on the doctor queue** that answered 403 without the documents permission; the **Reports global search** listed patients, prescriptions and medicines for roles that lost those modules (it now searches and links only the modules the role may use); the live check found the Roles screen's explanation boxes sliding away after 5 s and the select-all box showing the wrong state on load (the dead `roles/create-edit.js` reset it; removed). The mutation run found two layers that could not be told apart by the tests (the form request vs. the repository, the route vs. the controller) and one vacuous assertion (the lazy roles table); all three got tests of their own.
+
+  **Final verification (2026-10-09/10):** `LINK_CRAWL=1 php vendor/phpunit/phpunit/phpunit`: **470 tests / 4,384 assertions**, all passing, none skipped (16 min 53 sec, 208 MB). The 15-actor link crawl inside it (guest, admin, Doctor ×6, Staff (Nurse) ×7) made 1,611 requests over 1,531 pages: no broken link, crash, lazy-table failure or capped crawl (its first permission-variant run had found the doctor-queue "Record form" defect). **Permission oracle matrix** (a scratch harness kept outside the repository): every staff, doctor and API route (230) called as Staff (Nurse) with the defaults and with each of the five permissions removed, and as Doctor with the defaults, with `manage_doctors` added and with each default permission removed, plus a guest, an administrator, a patient and a deactivated doctor: 3,680 requests, **0 server errors, no 200 for a guest / patient / deactivated doctor, and every one of the 223 cells whose permission was missing answered 403** (8 stock-in cells answered 404 only because the harness had no stock-in row; with a row they answer 403, checked separately). A second run with ONE doctor and ONE nurse for all variants (record ownership constant): 2,760 requests, 0 server errors and **no status that changes for a reason the route's own permission does not explain**; the remaining 403s on routes whose permission is satisfied are the existing owner / role rules (a consultation is deleted only by the admin or its creator, staff never delete prescriptions or lab requests, the reset-password route refuses a non-doctor target). **Rehearsal R4 on the real clinic dump** (MyISAM and InnoDB server defaults): 20 migrations (the 18 of Phase 1, the Phase 2 view, the Phase 3 migration), 64 tables all InnoDB plus 2 views, 47 of 47 foreign keys after the orphan recovery, a second `migrate` does nothing, `db:integrity --compare-fresh` 0 errors and the 3 existing warnings; the only content changes were `roles` (the Staff label), `permissions` (the two blank labels) and the Phase 1 zero date; the clinic data has no nurse-role accounts and no direct permissions on non-admins, so `model_has_roles` / `model_has_permissions` did not change. **22 mutations of production code** (the permission helper, route middleware, each migration step, the permission filter, the read-only roles at both layers, menus, buttons, the global search, the missing-permission case ...) each make at least one test fail; the first run found two-layer defences that hid each other, a vacuous assertion on a lazy table and a stale test filter, and each got its own test. **Live browser check** on the upgraded clinic data (three sessions side by side: `admin.localhost`, `doctor.localhost`, `nurse.localhost`): the Roles list shows 4 roles with labels, locks on Clinic Admin and Patient and no Nurse; Edit Staff (Nurse) lists the five permissions with descriptions and the select-all box is right on load (the dead `roles/create-edit.js` reset it, and the explanation boxes slid away after 5 s: both found live and fixed); removing Manage Patients takes Patients and Queue off the nurse's next page, `/staff/patients` answers 403, the Reports global search drops its Patient card, and **a Livewire action on an already-open Patients page answers 403**; re-granting restores everything; the same for Manage Medicines on the Doctor role (Inventory, Dispensing and the expiry alert disappear, dispensing answers 403) and `manage_doctors` added to the Doctor role (the Doctors menu entry opens the doctor's own profile); the staff list has no designation / station columns, Add Staff has no role / designation / station / shift field, and the nurse's Dispense History shows the three consultation rows (15 / 14 / 9 units). The roles were put back to their defaults afterwards; no console error. No new Artisan commands: [commands.md](commands.md) was updated for the direct-permission clearing only. Next: Phase 4.
 
 ### Phase 4 — Owner's requested changes (name, reports)
 - [ ] 4.1 **Project name "Medical University Clinic"** (clinic name only):
@@ -618,9 +630,9 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Item | Status |
 |---|---|
 | Roles name lock (P2-H1), seeder no longer resets Roles (R3-M7), admin 403 cache poisoning, `staff.module:a,b` bug | ✅ |
-| **Manage User roles changes not applying** (§1.5) | 🆕 Phase 3 |
-| Nurse role with no accounts (May finding B) | 🆕 Phase 3.1 (merged into Staff (Nurse)) |
-| Role Designation, Assigned Station, Shift Schedule | 🆕 removed in Phase 3.2 / 3.3 |
+| **Manage User roles changes not applying** (§1.5) | ✅ Phase 3 |
+| Nurse role with no accounts (May finding B) | ✅ Phase 3.1 (merged into Staff (Nurse)) |
+| Role Designation, Assigned Station, Shift Schedule | ✅ removed in Phase 3.2 / 3.3 (columns and lookup tables stay, hidden) |
 | Unreachable staff route groups (May finding C) | ✅ already gone (checked 10-08) |
 | Notifications submenu linking to Inventory (May finding D) | ✅ gated; replaced by `canUseModule` in 3.4 |
 | `reports` key in the station map (May finding E); pharmacist on the triage station (May finding A) | ℹ️ moot — designations and stations removed |
@@ -652,7 +664,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | 429 tests (338 at 10-08 13:00 + 28 from the owner's commits + 11 for the test-schema bootstrap + 52 for Phase 1) + opt-in link crawl | ✅ green on MySQL 9.7 (2026-10-09, 4,190 assertions, 1 skipped = the crawl, 6.5 min idle); route list identical to the Phase 0 snapshot (472, 0 differences) |
 | Route × role matrix | ✅ rebuilt and run 2026-10-09 (7,938 requests, 0 server errors, no access leak); previous run 10-02 |
 | Rehearsal runner on the real dump; `db:integrity` | ✅ runner (Phase 0.4, now also runs `db:integrity --compare-fresh`); `db:integrity` + `db:restore-foreign-keys` (Phase 1.5) |
-| Role × permission effect test; crawler without designation × station actors | 🆕 Phase 3.7 |
+| Role × permission effect test; crawler without designation × station actors | ✅ Phase 3.7 (`RoleModuleAccessTest`, `ModuleAccessMapTest`, `LinkCrawlTest` with permission variants) |
 
 ---
 

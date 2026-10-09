@@ -367,9 +367,10 @@ class DispenseHistoryTest extends TestCase
             ->assertOk()->assertSee('Paracetamol');
 
         $pharmacist = $this->makeStaff('pharmacist', 'pharmacy');
-        $response = $this->actingAs($pharmacist)->get(route('staff.dispense-records.consultation', $document->id));
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_request_documents');
+        $response = $this->actingAs($pharmacist->fresh())->get(route('staff.dispense-records.consultation', $document->id));
         $response->assertOk()->assertSee('Paracetamol');
-        // A pharmacist has no consultations module: no link into the consultation itself.
+        // A role without document permission has no consultation access: no link into the consultation itself.
         $response->assertDontSee(route('staff.document-issuances.show', $document->id), false);
 
         $this->actingAs($this->patient->user)

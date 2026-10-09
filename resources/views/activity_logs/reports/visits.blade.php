@@ -62,7 +62,7 @@
                     <div class="text-gray-600 fs-7">{{ $report->creator->full_name ?? 'System' }}</div>
                 </td>
                 <td class="text-end text-nowrap">
-                    @if(canStaffAccessModule('consultations'))
+                    @if(canUseModule('consultations'))
                     <a href="{{ route(isRole('clinic_admin') ? 'document-issuances.edit' : (isRole('staff') ? 'staff.document-issuances.edit' : 'doctors.document-issuances.edit'), $report->id) }}"
                        class="btn btn-sm {{ $report->illnesses->isEmpty() ? 'btn-light-warning' : 'btn-light' }}" target="_blank"
                        title="Open the consultation to pick the illness and services">

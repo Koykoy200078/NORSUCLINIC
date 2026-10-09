@@ -13,8 +13,6 @@
         <div class="col-12">
             @include('layouts.errors')
         </div>
-        {{ Form::hidden('is_edit', $permissions['count'],['id' => 'totalPermissions']) }}
-        {{ Form::hidden('is_edit', true,['id' => 'roleIsEdit']) }}
         <div class="card">
             <div class="card-body">
                 {{ Form::open(['route' => ['roles.update', $role->id], 'method' => 'put']) }}

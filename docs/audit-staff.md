@@ -1,5 +1,11 @@
 # NORSUCLINIC Staff Module — Comprehensive Audit
 
+> **Superseded (2026-10-09, audit plan Phase 3):** the designation / station layer this audit analyses was removed.
+> Staff = Nurse is one role, "Staff (Nurse)", and what it may open comes only from its permissions in Settings >
+> Manage User roles (`canUseModule()`, see [audit-plan-2026-10-08.md](audit-plan-2026-10-08.md) Phase 3);
+> `canStaffAccessModule()`, `EnsureStaffModuleAccess` and the `staff.module` middleware no longer exist. Kept for history only.
+
+
 > **Scope:** Deep analysis of the Staff module, with special focus on the `Role Designation` and `Assigned Station` fields. Covers routes, controllers, requests, models, repositories, database schema, seeders, views, and Livewire tables.
 
 ---

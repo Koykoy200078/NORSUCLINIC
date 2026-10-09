@@ -19,19 +19,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus', 'role:doctor', 'forcePasswordChange')->group(function () {
 
-    Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail');
+    Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail')->middleware('permission:manage_patients');
 
     //doctor dashboard route
     Route::get('/dashboard', [DashboardController::class, 'doctorDashboard'])->name('dashboard');
 
     // Patient Queue (Doctors can view and update queue)
-    Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index');
-    Route::get('patient-queue/refresh', [PatientQueueController::class, 'doctorQueuePartial'])->name('patient-queue.refresh');
-    Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next');
-    Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete');
-    Route::get('patient-queue/{patientQueue}/consultation', [PatientQueueController::class, 'viewConsultation'])->name('patient-queue.view-consultation');
+    Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index')->middleware('permission:manage_patients');
+    Route::get('patient-queue/refresh', [PatientQueueController::class, 'doctorQueuePartial'])->name('patient-queue.refresh')->middleware('permission:manage_patients');
+    Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next')->middleware('permission:manage_patients');
+    Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete')->middleware('permission:manage_patients');
+    Route::get('patient-queue/{patientQueue}/consultation', [PatientQueueController::class, 'viewConsultation'])->name('patient-queue.view-consultation')->middleware(['permission:manage_patients', 'permission:manage_request_documents']);
 
-    Route::get('doctors/{doctor}', [UserController::class, 'show'])->name('doctors.detail');
+    Route::get('doctors/{doctor}', [UserController::class, 'show'])->name('doctors.detail')->middleware('permission:manage_doctors');
 
     // Route for Prescription
     Route::middleware('permission:manage_request_documents')->group(function () {
@@ -42,7 +42,7 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
         Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
         Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
-        Route::post('prescriptions/{prescription}/dispense', [PrescriptionController::class, 'dispense'])->name('prescriptions.dispense');
+        Route::post('prescriptions/{prescription}/dispense', [PrescriptionController::class, 'dispense'])->name('prescriptions.dispense')->middleware('permission:manage_medicines');
     });
 
     // Patient Management (Doctors view and edit existing patients). Registering, archiving, restoring
@@ -61,11 +61,11 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::resource('specializations', SpecializationController::class)->except(['create', 'show']);
     });
 
-    // Search users route (moved outside middleware for testing)
-    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users');
-    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation');
-    Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate');
-    Route::get('lab-requests/search-users', [LabRequestController::class, 'searchUsers'])->name('lab-requests.search-users');
+    // Document form lookups
+    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users')->middleware('permission:manage_request_documents');
+    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation')->middleware('permission:manage_request_documents');
+    Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate')->middleware('permission:manage_request_documents');
+    Route::get('lab-requests/search-users', [LabRequestController::class, 'searchUsers'])->name('lab-requests.search-users')->middleware('permission:manage_request_documents');
 
     // Request Documents (Doctors can manage)
     Route::middleware('permission:manage_request_documents')->group(function () {
@@ -79,6 +79,9 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::get('lab-requests/{id}/pdf', [LabRequestController::class, 'exportPdf'])->name('lab-requests.pdf');
         Route::resource('lab-requests', LabRequestController::class);
     });
+
+    Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])
+        ->name('medicines.by.category')->middleware('permission:manage_request_documents|manage_medicines');
 
     // Medicine Management (Doctors can manage medicines, categories, generics)
     Route::middleware('permission:manage_medicines')->group(function () {
@@ -94,7 +97,6 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
-        Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])->name('medicines.by.category');
         Route::get('medicine-dispensing-management', [MedicineDispensingManagementController::class, 'index'])->name('medicine-dispensing.index');
 
         // Stock In (Medicine Purchasing)
