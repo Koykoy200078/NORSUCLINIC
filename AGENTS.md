@@ -13,7 +13,9 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
    - never continue or overwrite the other assistant's open (unpushed) work without asking the owner.
 3. The work order is [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); the project record is
    [docs/STATUS.md](docs/STATUS.md).
-4. **Never push without the owner's go-ahead.**
+4. **Pushing:** the owner's standing go-ahead (2026-10-09, "always push it, don't ask again"): after every phase that is
+   verified (full suite green, docs updated) commit it and push `changes_v2`, then continue. Never force-push, never push
+   another branch, never merge into `develop` without asking.
 
 ## 2. What this system is and where it runs
 

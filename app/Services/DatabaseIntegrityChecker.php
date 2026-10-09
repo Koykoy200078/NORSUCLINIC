@@ -384,8 +384,16 @@ final class DatabaseIntegrityChecker
         $server = DB::connection('integrity_server');
         $dropScratch = fn () => $server->statement('DROP DATABASE IF EXISTS '.SchemaInspector::quote($scratch));
 
+        // Never drop a schema this command did not create. A leftover of an interrupted run has to be dropped by hand.
+        $exists = (int) ($server->selectOne('SELECT COUNT(*) AS n FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', [$scratch])->n ?? 0);
+        if ($exists > 0) {
+            DB::purge('integrity_server');
+
+            throw new RuntimeException("A schema named {$scratch} already exists (left over from an interrupted run?). "
+                .'Drop it yourself (DROP DATABASE '.SchemaInspector::quote($scratch).') and run the command again; it is never replaced automatically.');
+        }
+
         try {
-            $dropScratch();
             $server->getSchemaBuilder()->createDatabase($scratch);
 
             $output = new BufferedOutput();

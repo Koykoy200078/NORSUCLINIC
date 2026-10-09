@@ -133,6 +133,24 @@ class DatabaseIntegritySchemaTest extends TestCase
         $this->assertSame([], $leftovers, 'the throwaway fresh-install schema must be dropped');
     }
 
+    public function test_the_comparison_refuses_to_replace_a_schema_that_already_has_its_name(): void
+    {
+        $scratch = substr(DB::connection()->getDatabaseName(), 0, 48).'_fresh_compare';
+        DB::statement('CREATE DATABASE `'.$scratch.'`');
+        DB::statement('CREATE TABLE `'.$scratch.'`.`precious` (`id` INT PRIMARY KEY) ENGINE=InnoDB');
+        DB::statement('INSERT INTO `'.$scratch.'`.`precious` VALUES (1)');
+
+        try {
+            $this->checker()->compareWithFreshInstall();
+            $this->fail('A schema that already exists must not be dropped and rebuilt.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString("A schema named {$scratch} already exists", $e->getMessage());
+            $this->assertSame(1, (int) DB::selectOne('SELECT COUNT(*) AS n FROM `'.$scratch.'`.`precious`')->n, 'its data is untouched');
+        } finally {
+            DB::statement('DROP DATABASE IF EXISTS `'.$scratch.'`');
+        }
+    }
+
     private function checker(): DatabaseIntegrityChecker
     {
         return new DatabaseIntegrityChecker();

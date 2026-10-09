@@ -1,11 +1,11 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phase 0 done (committed locally as `7c6b5c5`) and Phase 1 done and tested (not committed yet), both on
-2026-10-09; Phases 2–10 not started · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` (on
-`origin/changes_v2`) · **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
+**Status:** Phases 0 and 1 done and tested on 2026-10-09 (commits `7c6b5c5`, `d00cca3` and the Phase 1 follow-up; pushed to
+`origin/changes_v2`); Phase 2 next · **Branch:** `changes_v2` (base `develop`) · **Started from:** `5155bf5` ·
+**Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
-something is unclear · no commit / push without the owner's go-ahead · every module is checked twice (code pass + live pass),
+something is unclear · each verified phase is committed and pushed to `changes_v2` (the owner's standing go-ahead of 2026-10-09; never force-push, never merge into `develop` without asking) · every module is checked twice (code pass + live pass),
 then everything is re-checked once more at the end. **Two AIs (Claude Code and OpenAI Codex) share this work**: before
 starting, read `git log origin/changes_v2` and [Handover.md](../Handover.md). Write a START entry there when beginning and the END
 part only when the work is pushed, nothing in between.
@@ -197,7 +197,6 @@ counting rules (see [STATUS.md §6](STATUS.md#6-needs-your-decision-)).
 
 ### 2.4 Still waiting for the owner (from STATUS §6)
 
-🔒 the 4 stock batches of deleted medicines #1 / #2 / #28 (Phase 1 finding; see Phase 1 "Found by the rehearsal") ·
 🔒 rotate the DB password (old one in git history) · 🔒 Laravel 11/12 upgrade (framework / medialibrary advisories) ·
 🔒 rappasoft tables 3.8 port · 🔒 npm runtime advisories / Vite migration · 🔒 merge `changes_v2` into `develop` · 🔒 PHI
 columns in `activity_logs` and log retention · 🔒 untrack `public/messages.js` or keep committing it · 🔒 drop the hidden
@@ -207,8 +206,9 @@ designation / station / shift columns later (after the clinic runs without them)
 
 ## 3. Ordered phase checklist
 
-Each phase ends with: full test suite green → re-verification of the phase's items → this file and STATUS.md updated →
-proposed commit (made only on the owner's go-ahead).
+Each phase ends with: full test suite green → re-verification of the phase's items → this file, STATUS.md and
+[commands.md](commands.md) updated → one commit → push to `changes_v2` (standing go-ahead of the owner, 2026-10-09) with the
+`handover:` commit.
 
 ### Phase 0 — Safety nets and baselines
 - [x] 0.1 Back up the current `norsu_clinic` (`php artisan db:backup`) and keep the file.
@@ -262,7 +262,7 @@ proposed commit (made only on the owner's go-ahead).
   restored from the 0.1 backup afterwards (real import: 1.8).
 
 ### Phase 1 — Clinic-data upgrade
-*Phase 1 is done and tested (2026-10-09, full suite 424 tests / 4,161 assertions green, route list unchanged); not committed yet. Shared code: `App\Support\LegacySchemaUpgrade` (the upgrade steps),
+*Phase 1 is done and tested (2026-10-09; the follow-up for the orphan batches brings the suite to 429 tests; route list unchanged). Shared code: `App\Support\LegacySchemaUpgrade` (the upgrade steps),
 `SchemaInspector` (read-only schema queries), `ForeignKeyCatalog` (the 47 keys), `SchemaParity` (schema comparison),
 `App\Services\DatabaseIntegrityChecker` and `InventoryConsistency` (the checks). The migrations are thin wrappers around them.*
 
@@ -286,7 +286,7 @@ proposed commit (made only on the owner's go-ahead).
   - dry-run counts of `text:repair-entities` and `phone:normalize`.
   *Done (both commands are described in [commands.md](commands.md): what they do, where and when to run them):* 12 checks (each an error or a warning, see `DatabaseIntegrityChecker`); `--compare-fresh` builds a fresh install in a throwaway schema (all migrations), compares tables / columns / indexes / keys / views / engines with this database and drops the throwaway schema. The stock checks were taken out of `inventory:reconcile` into `InventoryConsistency` and shared (characterization test first; the command prints exactly what it printed before).
 - [x] 1.6 Regression tests for 1.1–1.5 (pattern `tests/Feature/Regression/LegacyColumnDefaultsMigrationTest.php`, which creates and drops its own small fixture schemas automatically).
-  *Done, 47 new tests* on throwaway schemas (`tests/Concerns/UsesFixtureDatabase.php`) and the suite schema: `LegacyInnoDbConversionTest` 4, `IllnessTablesMigrationRerunTest` 1, `LegacyZeroDatesTest` 3, `LegacyForeignKeysTest` 9, `ForeignKeyCatalogTest` 2, `SchemaParityTest` 4, `DatabaseIntegritySchemaTest` 8, `DatabaseIntegrityDataTest` 9, `DatabaseIntegrityCommandTest` 4, `DatabaseIntegrityFreshComparisonTest` 1, `InventoryReconcileCommandTest` 2.
+  *Done, 52 new tests* (47 + 4 for the orphan-batch recovery, `OrphanBatchRecoveryTest`, + 1 found by the pre-push review: `--compare-fresh` refuses to replace an existing schema) on throwaway schemas (`tests/Concerns/UsesFixtureDatabase.php`) and the suite schema: `LegacyInnoDbConversionTest` 4, `IllnessTablesMigrationRerunTest` 1, `LegacyZeroDatesTest` 3, `LegacyForeignKeysTest` 9, `ForeignKeyCatalogTest` 2, `SchemaParityTest` 4, `DatabaseIntegritySchemaTest` 8, `DatabaseIntegrityDataTest` 9, `DatabaseIntegrityCommandTest` 4, `DatabaseIntegrityFreshComparisonTest` 1, `InventoryReconcileCommandTest` 2.
 - [x] 1.7 Rehearse on `norsu_clinic` (re-import the dump each time) until clean under **both** engines. Pass when:
   - every table is InnoDB and the foreign keys are 47/47 (or each skip is explained);
   - counts and checksums are identical before and after;
@@ -298,7 +298,7 @@ proposed commit (made only on the owner's go-ahead).
   *Done:* `norsu_clinic` holds the upgraded clinic data. Four QA accounts (`qa.admin`, `qa.doctor`, `qa.nurse` = nurse at medical consultation, `qa.head` = clinic head at front desk, all `@qa.test`) were created with random passwords stored only in `storage/app/qa-accounts.json` (git-ignored); each signs in; the 12 real users' password hashes are unchanged (compared by fingerprint before / after). After Phase 3 these accounts are re-created for the Staff (Nurse) role.
 
 **Found by the rehearsal (for the owner):**
-1. 🔒 **4 stock batches belong to medicines that were deleted** (#1: 20 units, #2: 40, #28: 250 + 240; only ever stocked in, no dispenses). They block the foreign key `medicine_batches.medicine_id`; `db:integrity` reports it until it is resolved. Options in [STATUS.md §6](STATUS.md#6-needs-your-decision-): re-create the three medicines as inactive placeholders (recommended), delete the batches and their ledger rows, or leave it.
+1. ✅ **4 stock batches belonged to medicines that were deleted** (#1: 20 units, #2: 40, #28: 250 + 240; only ever stocked in, no dispenses). They blocked the foreign key `medicine_batches.medicine_id`. **Owner decision (2026-10-09): re-create them as placeholders, keep the history.** Done by the new command `php artisan inventory:recover-orphan-batches --apply` ([commands.md](commands.md)): each medicine is re-created under its old id as "Unknown medicine #N", and its stock is **written off through the ledger** (a medicine has no inactive flag, and every picker lists medicines with available stock, so a placeholder holding stock could have been dispensed). Result on the clinic data: 47 of 47 foreign keys, `db:integrity` 0 errors, structure identical to a fresh install, the Stock-out view unchanged (7 rows). Rehearsal **R3** (both engines) ran the whole path dump → `migrate` → recovery → `db:integrity --compare-fresh` with 0 errors. Rename the placeholders if you know what they were.
 2. The duplicate medicines named in §1.6 are confirmed by `db:integrity` (#41 / #42, #50 / #55): merged in Phase 8.2.
 3. `phone:normalize` has 8 records waiting (dry run); `text:repair-entities` has nothing to do. Run `phone:normalize` with `--apply` after a backup on the clinic copy.
 4. Every `*_id` column was also scanned for rows pointing at nothing, even where no foreign key exists: the clinic data has none besides those batches.
@@ -511,7 +511,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - fix the stale "not pushed" lines; counts and timeline;
   - clinic deployment checklist (§9 below).
 - [ ] 10.3 Memory notes: clinic MyISAM upgrade, Reverb real-time, RBAC (`canUseModule`, Staff = Nurse, no designation / station), inventory (dispense history view, yearly report), reports (COL, Guest, yearly), local MySQL 9.7 + test schema.
-- [ ] 10.4 One commit per phase, only on the owner's go-ahead; no push without approval. Each push ends with a `handover:` commit that closes the START entry in [Handover.md](../Handover.md) (END part + current checkpoint).
+- [ ] 10.4 One commit per phase, pushed after it is verified (standing go-ahead of the owner, 2026-10-09). Each push ends with a `handover:` commit that closes the START entry in [Handover.md](../Handover.md) (END part + current checkpoint).
 
 ---
 
@@ -524,7 +524,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 |---|---|
 | Strict SQL mode, widened clinical text, NOT NULL defaults (09-30) | ✅ |
 | Zero-date tolerance in the 15 new migrations (owner, 10-08) | ✅ (kept, reused) |
-| Clinic tables MyISAM, 0 foreign keys, transactions void | ✅ Phase 1: converted by migration; 46 of 47 keys (the 47th: 🔒 4 orphan batches) |
+| Clinic tables MyISAM, 0 foreign keys, transactions void | ✅ Phase 1: converted by migration; 47 of 47 keys (the 4 orphan batches were recovered, owner decision A) |
 | Illness / services migration on an InnoDB server with clinic data | ✅ Phase 1 (conversion first; migration re-runnable) |
 | Zero date left in `sale_medicines.expiry_date` | ✅ Phase 1 (set to NULL) |
 | Rehearsal on the **real** dump under both engines | ✅ R0 (the problem), R1 / R2 (the fix), each under MyISAM and InnoDB |
@@ -641,7 +641,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 ### 4.13 Tests and tooling
 | Item | Status |
 |---|---|
-| 424 tests (338 at 10-08 13:00 + 28 from the owner's commits + 11 for the test-schema bootstrap + 47 for Phase 1) + opt-in link crawl | ✅ green on MySQL 9.7 (2026-10-09, 4,161 assertions, 1 skipped = the crawl, 8.9 min idle); route list identical to the Phase 0 snapshot (472, 0 differences) |
+| 429 tests (338 at 10-08 13:00 + 28 from the owner's commits + 11 for the test-schema bootstrap + 52 for Phase 1) + opt-in link crawl | ✅ green on MySQL 9.7 (2026-10-09, 4,190 assertions, 1 skipped = the crawl, 6.5 min idle); route list identical to the Phase 0 snapshot (472, 0 differences) |
 | Route × role matrix | ✅ rebuilt and run 2026-10-09 (7,938 requests, 0 server errors, no access leak); previous run 10-02 |
 | Rehearsal runner on the real dump; `db:integrity` | ✅ runner (Phase 0.4, now also runs `db:integrity --compare-fresh`); `db:integrity` + `db:restore-foreign-keys` (Phase 1.5) |
 | Role × permission effect test; crawler without designation × station actors | 🆕 Phase 3.7 |
@@ -719,9 +719,11 @@ None blocking right now. Questions that may come up during the work are asked wh
    - renames the clinic to "Medical University Clinic" and College of Law to COL;
    - merges the nurse role into Staff (Nurse).
    It also runs every earlier step in STATUS §7.
-4. `php artisan db:integrity` (add `--compare-fresh` once): must finish without errors. On today's clinic data it reports the one
-   foreign key blocked by the 4 orphan batches until the owner decides what to do with them (STATUS §6); the other
-   output is warnings (duplicate medicines, 8 phone numbers: `php artisan phone:normalize`, then `--apply` after a backup).
+   Then, once: `php artisan inventory:recover-orphan-batches` (dry run) and `--apply` (the clinic data has 4 stock batches of
+   deleted medicines; this re-creates the medicines as placeholders, writes their stock off through the ledger and adds the
+   last foreign key; see [commands.md](commands.md)).
+4. `php artisan db:integrity` (add `--compare-fresh` once): must finish without errors. The other output is warnings
+   (duplicate medicines, 8 phone numbers: `php artisan phone:normalize`, then `--apply` after a backup).
 5. `npm ci && npm run prod`.
 6. Start through the startup script (now also starts Reverb); allow the Reverb port through the Windows firewall (owner).
 7. Admin: review the **Staff (Nurse)** role in Manage User roles (nurses now get exactly what it allows).

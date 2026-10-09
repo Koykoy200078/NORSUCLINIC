@@ -30,6 +30,9 @@ php artisan db:integrity
 |---|---|---|---|---|
 | [`db:integrity`](#dbintegrity) | Checks that the database is what a correct installation looks like; prints one line per check; **exit code 1 if anything is an error** | **No** (read-only). `--compare-fresh` builds and then drops a throwaway schema of its own; it never touches the real one | after every `php artisan migrate`, after importing data, before and after an upgrade, whenever numbers on screen look wrong | Phase 1.5, 2026-10-09 |
 | [`db:restore-foreign-keys`](#dbrestore-foreign-keys) | Adds the foreign keys a correct installation has and this database lacks | Changes the **structure** (adds keys); **never changes a row** | after a foreign key was reported missing and you have fixed its cause by hand | Phase 1.4, 2026-10-09 |
+| [`inventory:recover-orphan-batches`](#inventoryrecover-orphan-batches) | Finds stock batches whose medicine was deleted. With `--apply` it re-creates the medicine as "Unknown medicine #N" under its old id, **writes its stock off through the ledger**, then adds the foreign key those batches were blocking | **Dry run by default.** With `--apply`: adds medicine rows and ledger rows (`disposal`); deletes nothing | **once** on the clinic copy, after `migrate`, if `db:integrity` reports `medicine_batches_medicine_id_foreign`; take a backup first | Phase 1 follow-up, 2026-10-09 |
+
+Run order on the clinic copy: `db:backup` → `migrate` → `inventory:recover-orphan-batches --apply` (once) → `db:integrity`.
 
 Also worth knowing: [what `php artisan migrate` now does](#what-php-artisan-migrate-now-does-phase-1) and the
 [existing commands these two work with](#existing-commands-used-together-with-them).
@@ -74,7 +77,7 @@ asks for.
 | No duplicate candidates | warning | Two medicines with the same name and strength, or two patients with the same name and birth date (ids only are printed). Merged later in plan Phase 8. |
 | No pending data repairs | warning | What `text:repair-entities` and `phone:normalize` would still change (their dry runs). |
 
-**Example** (the real clinic data on the development laptop, 2026-10-09; 1 error, 3 warnings):
+**Example** (the real clinic data on the development laptop, 2026-10-09, *before* `inventory:recover-orphan-batches --apply`; 1 error, 3 warnings. Afterwards the error is gone: `0 error(s), 3 warning(s).`):
 
 ```text
 Database integrity - norsu_clinic
@@ -94,7 +97,7 @@ WARN  No pending data repairs (encoded text, phone numbers)
 **Where it is used in the plan:** Phase 1.5 (built), Phase 1.7 / 1.8 and Phase 9.2 (rehearsals on the clinic dump end with
 it; the rehearsal runner calls `db:integrity --compare-fresh` itself), Phase 3.6 (will report direct permissions before they
 are cleared), and the clinic deployment checklist ([STATUS §7](STATUS.md#7-to-do-on-the-clinic-copy-deployment-checklist)
-step 3a).
+step 3b).
 
 **Code:** `app/Console/Commands/DatabaseIntegrity.php`, `app/Services/DatabaseIntegrityChecker.php`,
 `app/Services/InventoryConsistency.php`, `app/Support/SchemaInspector.php`, `SchemaParity.php`, `ForeignKeyCatalog.php`.
@@ -120,12 +123,47 @@ deletes a row. Running it twice is harmless.
 **Output.** `Added N foreign key(s); M were already in place.` followed by one line per skipped key with its reason.
 **Exit code:** `0`.
 
-**Where it is used in the plan:** Phase 1.4 (built). Needed after the owner decides what to do with the 4 stock batches of
-deleted medicines ([STATUS §6](STATUS.md#6-needs-your-decision-)): once they are resolved, this command adds the last key
-(`medicine_batches_medicine_id_foreign`) and `db:integrity` turns green.
+**Where it is used in the plan:** Phase 1.4 (built). It is also the last step of
+[`inventory:recover-orphan-batches`](#inventoryrecover-orphan-batches), which adds the one key the clinic data blocks.
 
 **Code:** `app/Console/Commands/RestoreForeignKeys.php`, `app/Support/LegacySchemaUpgrade.php`.
 **Tests:** `tests/Feature/Regression/LegacyForeignKeysTest.php`, `DatabaseIntegrityCommandTest.php`.
+
+---
+
+## `inventory:recover-orphan-batches`
+
+```powershell
+php artisan db:backup                                     # first, before --apply
+php artisan inventory:recover-orphan-batches              # dry run: lists what it would do
+php artisan inventory:recover-orphan-batches --apply
+```
+
+**Purpose.** On the old MyISAM database a medicine could be deleted while stock batches still pointed at it. On the clinic's
+data that happened to medicines #1, #2 and #28 (4 batches, 550 units, only ever stocked in). Those batches block the foreign
+key `medicine_batches.medicine_id`, so `db:integrity` reports an error. **Owner decision, 2026-10-09: keep the history.**
+
+**What `--apply` does** (all or nothing):
+1. re-creates each missing medicine **under its old id**, named `Unknown medicine #N` (the dosage is kept when all its
+   batches share one), so the batches and their ledger rows have a parent again;
+2. **writes its stock off through the stock ledger** (`disposal` rows with the remark "Stock written off: its medicine
+   record had been deleted ..."). A medicine has no "inactive" flag and every picker (consultation, prescription,
+   dispensing) lists medicines with available stock, so a placeholder that kept its stock could be dispensed. After the
+   write-off it has 0 stock and appears in no picker; the history (stock-in rows, disposal rows) stays;
+3. adds the foreign key that was blocked (same step as `db:restore-foreign-keys`).
+
+Rename the placeholders in Inventory if you know what they were. **Nothing is deleted.** A second run finds nothing to do.
+If stock really was on the shelf, put it back with a normal Stock-In.
+
+**Output.** A table (missing medicine id, batches, units, dosage); then either "Dry run: ..." or "Re-created N medicine(s) ...".
+**Exit code:** `0`.
+
+**Where it is used in the plan:** Phase 1 follow-up. Run **once** on the clinic copy right after `php artisan migrate`
+(deployment checklist, [STATUS §7](STATUS.md#7-to-do-on-the-clinic-copy-deployment-checklist) step 3a); the rehearsal runner
+runs it too. It relates to Phase 8.4 (stock disposal), which will add a screen for the same ledger entry.
+
+**Code:** `app/Console/Commands/RecoverOrphanBatches.php`, `app/Services/OrphanBatchRecovery.php`.
+**Tests:** `tests/Feature/Regression/OrphanBatchRecoveryTest.php`.
 
 ---
 
@@ -170,6 +208,7 @@ Run them with `php <that folder>\<file>`.
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-09 | 1 follow-up | `inventory:recover-orphan-batches [--apply]` added (owner decision: keep the history of the 4 orphan batches); rehearsal runner runs it |
 | 2026-10-09 | 1.4 | `db:restore-foreign-keys` added |
 | 2026-10-09 | 1.5 | `db:integrity` (and `--compare-fresh`) added; `inventory:reconcile` now shares its stock checks with it (same output) |
 | 2026-10-09 | 1.1 – 1.3 | `DB_ENGINE` setting; migrations `110000`, `121500`, `2026_10_08_120000` added |
