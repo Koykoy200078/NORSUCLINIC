@@ -11,8 +11,10 @@ use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\Prescription;
+use App\Models\PrescriptionMedicine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
@@ -96,7 +98,7 @@ class DispenseHistoryTest extends TestCase
         return DocumentIssuance::where('document_type', 'consultation_form')->latest('id')->firstOrFail();
     }
 
-    private function dispenseRecordWithLines(array $lines, string $modelType = DispenseRecord::class, ?string $modelId = null): DispenseRecord
+    private function dispenseRecordWithLines(array $lines, string $modelType = DispenseRecord::class, ?string $modelId = null, $billDate = null): DispenseRecord
     {
         $record = DispenseRecord::create([
             'history_number' => 'HIS' . generateUniqueHistoryNumber(),
@@ -104,7 +106,7 @@ class DispenseHistoryTest extends TestCase
             'doctor_id' => $this->doctor->doctor->id,
             'model_type' => $modelType,
             'model_id' => $modelId ?? (string) $this->patient->id,
-            'bill_date' => now(),
+            'bill_date' => $billDate ?? now(),
         ]);
 
         foreach ($lines as [$medicine, $quantity]) {
@@ -294,6 +296,10 @@ class DispenseHistoryTest extends TestCase
 
         $all = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class)->set('sourceFilter', 'Consultation')->set('sourceFilter', '');
         $this->assertCount(3, $all->instance()->getRows());
+
+        // a value that is not one of the three sources (the property is editable from the browser) is ignored, not "no rows"
+        $forged = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class)->set('sourceFilter', 'Everything');
+        $this->assertCount(3, $forged->instance()->getRows());
     }
 
     public function test_a_consultation_row_is_found_by_the_patient_name_and_by_the_doctor_name(): void
@@ -316,7 +322,9 @@ class DispenseHistoryTest extends TestCase
         $medicine = $this->stockedMedicine('Paracetamol');
         $document = $this->consultationBy($this->doctor, [$this->row($medicine, 2)]);
         $record = $this->dispenseRecordWithLines([[$medicine, 5]]);
-        $document->update(['created_at' => now()->subDay()]);
+        // created_at is not fillable: update() silently kept both rows at the same second, so "newest first" was never tested
+        $document->forceFill(['created_at' => now()->subDay()])->saveQuietly();
+        $this->assertTrue($document->fresh()->created_at->lt(now()->subHours(12)), 'the consultation must really be older');
 
         $this->actingAs($this->admin);
         $component = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class);
@@ -405,5 +413,143 @@ class DispenseHistoryTest extends TestCase
             ->assertSee(route('staff.document-issuances.show', $document->id), false);
 
         $this->get(route('staff.document-issuances.show', $document->id))->assertOk();
+    }
+
+    /**
+     * Re-check 2026-10-11. Every manual dispense record of a day is saved at 00:00:00 (the form only has a date), so a busy
+     * day is a long run of IDENTICAL sort values. Without a unique last sort key MySQL may order the ties differently for
+     * each page query: one page repeats rows another page never shows (reproduced: 60 same-day records over 6 pages
+     * listed 48 distinct rows and repeated 23).
+     */
+    public function test_paging_never_repeats_or_skips_rows_that_share_the_same_date(): void
+    {
+        $medicine = $this->stockedMedicine('Paracetamol', 500);
+        $day = now()->subDays(3)->startOfDay();
+        $created = [];
+        for ($i = 0; $i < 60; $i++) {
+            $created[] = 'B' . $this->dispenseRecordWithLines([[$medicine, 1 + ($i % 5)]], DispenseRecord::class, null, $day)->id;
+        }
+
+        $this->actingAs($this->admin);
+        $component = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class);
+
+        $seen = [];
+        foreach (range(1, 6) as $page) {
+            $component->call('gotoPage', $page);
+            foreach ($component->instance()->getRows()->pluck('id') as $id) {
+                $seen[] = $id;
+            }
+        }
+
+        $this->assertCount(60, $seen, 'six pages of ten rows');
+        $this->assertCount(60, array_unique($seen), 'a row repeated on another page');
+        $this->assertEqualsCanonicalizing($created, $seen, 'a row never appeared on any page');
+        $this->assertSame(array_reverse($created), $seen, 'among rows with the same date the newest record comes first');
+
+        // The same must hold when another column is sorted (quantity has only five different values here).
+        $component->call('sortBy', 'quantity');
+        $seen = [];
+        foreach (range(1, 6) as $page) {
+            $component->call('gotoPage', $page);
+            foreach ($component->instance()->getRows()->pluck('id') as $id) {
+                $seen[] = $id;
+            }
+        }
+        $this->assertEqualsCanonicalizing($created, $seen, 'sorted by quantity, rows repeated or went missing between pages');
+    }
+
+    public function test_the_rows_show_the_number_the_parts_the_units_and_the_person_who_gave_the_medicine(): void
+    {
+        $paracetamol = $this->stockedMedicine('Paracetamol');
+        $ibuprofen = $this->stockedMedicine('Ibuprofen');
+        $document = $this->consultationBy($this->doctor, [$this->row($paracetamol, 2)], [$this->row($ibuprofen, 3)]);
+        $entry = $this->entries('Consultation')->firstOrFail();
+
+        $this->actingAs($this->admin);
+
+        $this->assertStringContainsString('#CONS-' . $document->id, view('medicine-history.columns.bill_id', ['row' => $entry])->render());
+        $this->assertSame('5', trim(view('medicine-history.columns.dispensed_quantity', ['row' => $entry])->render()));
+
+        $source = view('medicine-history.columns.source', ['row' => $entry])->render();
+        $this->assertStringContainsString('Consultation', $source);
+        $this->assertStringContainsString('Nursing + Plan', $source);
+
+        $date = view('medicine-history.columns.bill_date', ['row' => $entry])->render();
+        $this->assertStringContainsString($entry->dispensed_at->format('h:i A'), $date);
+        $this->assertStringContainsString($entry->dispensed_at->translatedFormat('jS M, Y'), $date);
+
+        $html = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class)->html();
+        $this->assertStringContainsString('Juan Dela Cruz', $html);
+        $this->assertStringContainsString('Hilda Ramos', $html);
+        $this->assertStringContainsString('aria-label="Filter by source"', $html, 'the source filter needs an accessible name');
+    }
+
+    public function test_a_prescription_dispensed_through_the_dispensing_screen_enters_the_history_with_the_units_handed_out(): void
+    {
+        $medicine = $this->stockedMedicine('Amoxicillin', 100);
+        $prescription = $this->prescription(Prescription::DISPENSE_STATUS_PENDING);
+        PrescriptionMedicine::create([
+            'prescription_id' => $prescription->id,
+            'medicine' => $medicine->id,
+            'dosage' => '500mg',
+            'route_of_administration' => 'oral',
+            'frequency' => 1,
+            'duration_value' => 6,
+            'duration_unit' => 'day',
+            'total_quantity' => 6,
+        ]);
+        // what the prescription form creates alongside: the dispense record with the PRESCRIBED line, dated when it was written
+        $this->dispenseRecordWithLines([[$medicine, 6]], Prescription::class, (string) $prescription->id, now()->subDays(3));
+
+        $this->assertCount(0, $this->entries(), 'a pending prescription moved no stock, so it is not history yet');
+
+        $before = now()->subSecond();
+        $this->actingAs($this->makeNurse())->postJson(route('staff.prescriptions.dispense', $prescription->id))->assertOk();
+
+        $entry = $this->entries('Prescription')->sole();
+        $this->assertSame(6, (int) $entry->quantity, 'the units handed out');
+        $this->assertTrue($entry->dispensed_at->greaterThanOrEqualTo($before), 'dated when it was dispensed, not when it was written');
+        $this->assertSame(94, (int) $medicine->fresh()->available_quantity);
+        $this->assertCount(1, $this->entries(), 'one row for the prescription, no duplicate');
+    }
+
+    /**
+     * Re-check 2026-10-11. The patient's own history page has a card with the same title as the Dispensing tab. It listed
+     * every dispense record of the patient, so pending and cancelled prescriptions (nothing was handed out) showed up as
+     * "dispensed", and the medicines recorded in consultations were missing, the very gap Phase 2 closed in the tab.
+     */
+    public function test_the_patients_history_page_lists_what_the_dispense_history_tab_lists(): void
+    {
+        $ibuprofen = $this->stockedMedicine('Ibuprofen');
+        $paracetamol = $this->stockedMedicine('Paracetamol');
+        $consultamol = $this->stockedMedicine('Consultamol');
+        $pendingcillin = $this->makeMedicine('Pendingcillin');
+        $cancelcillin = $this->makeMedicine('Cancelcillin');
+
+        $this->dispenseRecordWithLines([[$ibuprofen, 4]]);
+        $dispensed = $this->prescription(Prescription::DISPENSE_STATUS_DISPENSED);
+        $this->dispenseRecordWithLines([[$paracetamol, 2]], Prescription::class, (string) $dispensed->id);
+        $pending = $this->prescription(Prescription::DISPENSE_STATUS_PENDING);
+        $this->dispenseRecordWithLines([[$pendingcillin, 9]], Prescription::class, (string) $pending->id);
+        $cancelled = $this->prescription(Prescription::DISPENSE_STATUS_CANCELLED);
+        $this->dispenseRecordWithLines([[$cancelcillin, 7]], Prescription::class, (string) $cancelled->id);
+        $document = $this->consultationBy($this->doctor, [$this->row($consultamol, 3)]);
+
+        $html = $this->actingAs($this->admin)->get(route('patients.showMyHistory', $this->patient->id))->assertOk()->getContent();
+        $card = Str::after($html, 'Medicine Dispense History');
+
+        $this->assertStringContainsString('Ibuprofen', $card, 'the manual dispense record');
+        $this->assertStringContainsString('Paracetamol', $card, 'the dispensed prescription');
+        $this->assertStringContainsString('Consultamol', $card, 'the medicine recorded in the consultation');
+        $this->assertStringNotContainsString('Pendingcillin', $card, 'a pending prescription handed nothing out');
+        $this->assertStringNotContainsString('Cancelcillin', $card, 'a cancelled prescription handed nothing out');
+        $this->assertStringContainsString('3 record(s)', $card);
+        $this->assertStringContainsString('#CONS-' . $document->id, $card, 'the consultation row carries the same number as in the tab');
+
+        // a deleted consultation gave its stock back: it leaves this card too
+        $this->actingAs($this->doctor)->delete(route('doctors.document-issuances.destroy', $document))->assertRedirect();
+        $card = Str::after($this->actingAs($this->admin)->get(route('patients.showMyHistory', $this->patient->id))->getContent(), 'Medicine Dispense History');
+        $this->assertStringNotContainsString('Consultamol', $card);
+        $this->assertStringContainsString('2 record(s)', $card);
     }
 }

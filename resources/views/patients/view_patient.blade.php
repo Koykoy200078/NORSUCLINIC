@@ -999,6 +999,8 @@ Patient Data
 
     {{-- ========================================================= --}}
     {{-- Medicine Dispense History Section                         --}}
+    {{-- The same history as Dispensing > Dispense History: dispense records, dispensed prescriptions and the --}}
+    {{-- medicines recorded in consultations (a pending or cancelled prescription handed nothing out).        --}}
     {{-- ========================================================= --}}
     <div class="card mb-4 shadow-sm">
         <div class="card-header d-flex align-items-center justify-content-between py-3"
@@ -1007,39 +1009,55 @@ Patient Data
                 <i class="fa-solid fa-capsules fa-lg"></i>
                 <h5 class="mb-0 fw-semibold">Medicine Dispense History</h5>
             </div>
-            @if(isset($dispenseRecords))
-            <span class="badge bg-white text-success fw-semibold">{{ $dispenseRecords->count() }} record(s)</span>
+            @if(isset($dispenseHistory))
+            <span class="badge bg-white text-success fw-semibold">{{ $dispenseHistory->count() }} record(s)</span>
             @endif
         </div>
         <div class="card-body p-0">
-            @if(isset($dispenseRecords) && $dispenseRecords->isNotEmpty())
+            @if(isset($dispenseHistory) && $dispenseHistory->isNotEmpty())
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead style="background:#f0fdf4;">
                         <tr>
                             <th class="ps-3" style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DATE DISPENSED</th>
-                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">DISPENSED BY</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">SOURCE</th>
+                            <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">GIVEN BY</th>
                             <th style="font-size:.78rem;letter-spacing:.05em;color:#64748b;">MEDICINES DISPENSED</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($dispenseRecords as $dispense)
+                        @foreach($dispenseHistory as $history)
+                        @php
+                            $entry = $history['entry'];
+                            $nameParts = preg_split('/\s+/', trim((string) $entry->given_by), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                            $initials = $nameParts
+                                ? strtoupper(mb_substr($nameParts[0], 0, 1) . (count($nameParts) > 1 ? mb_substr(end($nameParts), 0, 1) : ''))
+                                : '';
+                        @endphp
                         <tr>
                             <td class="ps-3" style="white-space:nowrap;">
+                                @if($entry->dispensed_at)
                                 <div class="fw-semibold" style="font-size:.9rem;">
-                                    {{ \Carbon\Carbon::parse($dispense->created_at)->format('M j, Y') }}
+                                    {{ $entry->dispensed_at->format('M j, Y') }}
                                 </div>
-                                <small class="text-muted">{{ \Carbon\Carbon::parse($dispense->created_at)->format('g:i A') }}</small>
+                                <small class="text-muted">{{ $entry->dispensed_at->format('g:i A') }}</small>
+                                @else
+                                <span class="text-muted">N/A</span>
+                                @endif
+                            </td>
+                            <td style="white-space:nowrap;">
+                                @include('medicine-history.columns.source', ['row' => $entry])
+                                <div class="text-muted" style="font-size:.78rem;">#{{ $entry->history_number }}</div>
                             </td>
                             <td>
-                                @if($dispense->doctor?->user)
+                                @if($entry->given_by)
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
                                         style="width:30px;height:30px;background:#d1fae5;color:#065f46;font-size:.7rem;font-weight:700;">
-                                        {{ strtoupper(substr($dispense->doctor->user->first_name, 0, 1)) }}{{ strtoupper(substr($dispense->doctor->user->last_name, 0, 1)) }}
+                                        {{ $initials }}
                                     </div>
                                     <span style="font-size:.88rem;">
-                                        Dr. {{ $dispense->doctor->user->first_name }} {{ $dispense->doctor->user->last_name }}
+                                        {{ $entry->doctor_id ? 'Dr. ' : '' }}{{ $entry->given_by }}
                                     </span>
                                 </div>
                                 @else
@@ -1047,14 +1065,17 @@ Patient Data
                                 @endif
                             </td>
                             <td style="max-width:400px;">
-                                @if($dispense->dispenseItems && $dispense->dispenseItems->isNotEmpty())
+                                @if($history['items']->isNotEmpty())
                                 <div class="d-flex flex-wrap gap-2">
-                                    @foreach($dispense->dispenseItems as $item)
+                                    @foreach($history['items'] as $item)
                                     <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded"
                                         style="background:#f0fdf4;border:1px solid #bbf7d0;font-size:.8rem;">
                                         <i class="fa-solid fa-pills text-success fa-xs"></i>
-                                        <span class="fw-semibold">{{ $item->medicine?->name ?? 'N/A' }}</span>
-                                        <span class="text-muted">×{{ $item->quantity }}</span>
+                                        <span class="fw-semibold">{{ $item['name'] }}</span>
+                                        <span class="text-muted">×{{ $item['quantity'] }}</span>
+                                        @if($item['used_for'])
+                                        <span class="text-muted">({{ ucfirst($item['used_for']) }})</span>
+                                        @endif
                                     </div>
                                     @endforeach
                                 </div>

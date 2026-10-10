@@ -3,8 +3,8 @@
 $doctorUrl = null;
 if ($row->doctor_id && canUseModule('doctors')) {
     if (isRole('staff')) {
-        // Only the clinic head has the doctors module; every other staff designation would get a 403 from the link,
-        // and must never fall through to the administrator URL below.
+        // Staff open a doctor page only with the doctors permission (manage_doctors); without it the link would
+        // answer 403, and it must never fall through to the administrator URL below.
         $doctorUrl = (canUseModule('doctors') && \Illuminate\Support\Facades\Route::has('staff.doctors.show'))
             ? route('staff.doctors.show', $row->doctor_id) : null;
     } elseif (isRole('doctor') && \Illuminate\Support\Facades\Route::has('doctors.doctors.detail')) {

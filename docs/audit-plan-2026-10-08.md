@@ -313,7 +313,7 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 - [x] 2.2 Dispense History table on the view: **Source** column + filter, name search, actions per source (consultation rows: View only).
   *Done:* `MedicineDispenseTable` now reads the view. New **Source** column (badge, plus "Plan + Nursing" under consultations) and a **Source** filter in the header (All / Dispense Record / Prescription / Consultation), word search on patient and on doctor / recorded-by (name or email), sort on every column. The doctor column is titled "Doctor / Recorded by". Actions: a manual dispense record keeps View / Edit / Delete; a consultation row and a prescription row get **View only** (they belong to their own record; before, the prescription row showed Edit / Delete buttons that were then refused). Archived patients keep their history and displayed name, with no patient link that would return 404.
 - [x] 2.3 Read-only "consultation dispense" detail page inside Dispensing; link to the consultation only for users who can open consultations.
-  *Done:* `dispense-records.consultation` (3 new routes: admin, `staff.`, `doctors.`; 472 → 475 routes, the diff against the Phase 0 snapshot is exactly these three) → `DispenseRecordController::showConsultation` and `medicine-history/consultation.blade.php`: patient, recorded at / by, the medicine lines (dosage, Plan / Nursing, instructions, quantity) and the total. No clinical notes on this page. 404 for a deleted consultation or a document that is not a consultation. The "View Consultation" button needs `manage_request_documents` (+ the `consultations` module for staff / nurse roles, so a pharmacist does not get a dead link and a clinic head can open it).
+  *Done:* `dispense-records.consultation` (3 new routes: admin, `staff.`, `doctors.`; 472 → 475 routes, the diff against the Phase 0 snapshot is exactly these three) → `DispenseRecordController::showConsultation` and `medicine-history/consultation.blade.php`: patient, recorded at / by, the medicine lines (dosage, Plan / Nursing, instructions, quantity) and the total. No clinical notes on this page. 404 for a deleted consultation or a document that is not a consultation. The "View Consultation" button needs `manage_request_documents` (+ the `consultations` module for staff / nurse roles, so a pharmacist does not get a dead link and a clinic head can open it). *Since Phase 3 the button is drawn when `canUseModule('consultations')`, i.e. the role has `manage_request_documents`, for every role.*
 - [x] 2.4 Tests:
   - rows for nurse- and doctor-added medicines;
   - edit / remove a line / delete / restore a consultation;
@@ -325,6 +325,18 @@ Each phase ends with: full test suite green → re-verification of the phase's i
   Live check on `norsu_clinic`: refreshing the view changed no stock or ledger rows; consultations 3 / 6 / 7 show **9 / 14 / 15** units. Headless Chrome over `192.168.2.13:8000` and `172.22.208.1:8000`: admin, doctor and clinic head pass source filtering, search, tab switching and all three detail pages, with no JavaScript errors, failed requests or internet dependencies. The QA nurse has no dispensing module under the existing policy: the menu is hidden and the list / detail pages correctly return 403 (Phase 3 removes this designation layer). Admin / doctor / clinic head have a working "View Consultation" link; the pharmacist's hidden link is regression-tested. `db:integrity --compare-fresh`: 0 errors / 3 existing warnings, schema identical to a fresh install.
 
   **Final verification (2026-10-09):** `LINK_CRAWL=1 php vendor/bin/phpunit` — **444 tests / 4,304 assertions**, all passing, none skipped (9 min 20 sec, 190 MB). The 16-user crawl made 1,143 requests over 1,093 pages: no broken links, crashes, lazy-table failures or capped crawls. Inline review and `git diff --check` passed. No new Artisan commands; [commands.md](commands.md) was checked and remains unchanged. Next: Phase 3.
+
+  **Re-check after Phase 3 (2026-10-11, the owner asked to go back and double-check Phase 2):** the view, model, table, column partials, controller, routes and tests were read again against this plan and against the Phase 3 changes, then verified by data, by browser and by mutation.
+  - *Data:* an oracle written independently of the view (plain SQL on the base tables) compared the view row by row. On the **real clinic data**: 3 consultation rows with **9 / 14 / 15 units** (38 in all, equal to the Stock-out view's net 38), the one pending prescription correctly left out. On a **scratch data set** with all three sources, an archived patient, a deleted consultation and a pending and a cancelled prescription: every check passed. The view joins `patients` and `doctors` by `user_id`, which the schema does not force to be unique (the data has no duplicates).
+  - *Live* (scratch schema, admin / doctor / Staff (Nurse) sessions side by side): source filter, search (patient, doctor / recorded by, number, e-mail), every sort in both directions, paging, the filter returning to page 1, the three detail pages, 404 for a deleted, non-consultation or unknown id, deleting a manual dispense record from the history (stock +6 and a ledger adjustment), all 13 links on the page answer 200, **Manage User roles variants** (without documents: no "View Consultation" button and 403 on the consultation itself; without patients: no patient links; without doctors: no doctor links; without medicines: 403 everywhere, also for the Livewire update of an already open table), only requests to the same address, no horizontal page scroll at phone width.
+  - *Defects found and fixed, test-first:*
+    1. **Rows repeated and went missing between pages** whenever more rows than one page shared the sort value. Every manual dispense record of a day is saved at 00:00:00, so a busy day is a run of identical dates, and MySQL orders ties differently for each page query (reproduced: 60 same-day records listed only 48 different rows over 6 pages, 23 of them repeated). The table now always sorts by the record number and then the row id last (`MedicineDispenseTable::applySorting()`), so equal dates list the newest record first; a test pages through 60 same-day rows, also sorted by quantity.
+    2. **The patient's own history page** (Patients › History, card "Medicine Dispense History") had the same gap this phase closed in the tab, and a worse one: it listed every `medicine_bills` row of the patient, so **pending and cancelled prescriptions were shown as dispensed**, and the medicines recorded in consultations were missing. It now reads the same view (dispense records, dispensed prescriptions, consultation medicines), with the Source badge and the same number as the tab.
+    3. **A test that never tested "newest first"**: it back-dated the consultation with `update(['created_at' => ...])`, which is silently ignored (the column is not fillable), so both rows tied and the expected order only held by luck of the tie order. Now a real back-date with a check.
+    4. Smaller: the source filter had no accessible name (`aria-label`); stale designation / station comments in the doctor and patient column partials.
+  - *New tests* (`DispenseHistoryTest` now has 19 tests / 149 assertions, was 15 / 112): paging with ties, the patient history page, the real prescription-dispense flow (pending → dispensed, with the units handed out and the dispense date), the rendered row values, an invalid filter value is ignored. **13 mutations** (the last sort keys, the dispensed rule, deleted consultations, the Plan / Nursing parts, the quantity sum, the manual-record rule, both patient-page queries, the dispense date, the filter's name and its validation) each make a test fail. Full suite: `LINK_CRAWL=1` full suite **474 tests / 4,421 assertions**, all passing, none skipped (13 min 22 sec, 208 MB); the 15-user link crawl inside it (also run alone): 1,612 requests / 1,532 pages, no broken link, crash, lazy-table failure or capped crawl.
+  - *Measured, not changed:* the view is built from scratch for every query (and the table runs a count and a page), about **35 ms per 1,000 history rows**: ~0.35 s at 10,000 rows, ~1.7 s at 50,000 (measured on 50,000 consultation rows of scratch data; the dispense-record side joins about as much per row). Fine for years at this clinic's volume (the clinic data has 8 consultations); the options are in §8.
+  - *Observations, for the owner:* manual dispense records have no "recorded by" (the table has no such column, so that cell shows NA, as before Phase 2); a consultation's "Dispensed At" is when the consultation was recorded (a medicine added by a later edit keeps that date).
 
 ### Phase 3 — Fix: Manage User roles really applies + Staff = Nurse
 - [x] 3.1 **Staff = Nurse, one role.** A data migration:
@@ -412,7 +424,7 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 1. every route and Livewire action is authorised (role, permission, the record itself);
 2. saves, edits, deletes and restores are all-or-nothing (real transactions now), stock moves only through `MedicineInventoryService`, soft deletes, cascades and the audit trail;
 3. validation matches the database columns (strict mode);
-4. list search / sort / filter / paging, and screen = export;
+4. list search / sort / filter / paging, and screen = export; **a list sorted by a value that can repeat needs a unique last sort key**, otherwise rows repeat or vanish between pages (found on Dispense History in the Phase 2 re-check; the Stock-out and other lists sorted by a date or a status still need it);
 5. PDFs / exports with special characters, long text and missing data;
 6. N+1 queries and stale caches;
 7. nothing needs the internet to load: no CDN or third-party script / style / font / image link; every library is local.
@@ -425,12 +437,12 @@ Every defect gets a failing test, then the fix, then both passes again.
 | # | Module / area | Pass A | Pass B | Re-check (Phase 9) | Findings |
 |---|---|---|---|---|---|
 | 5.1 | Dashboard (admin / staff / doctor) | [ ] | [ ] | [ ] | |
-| 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [ ] | [ ] | [ ] | |
+| 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [ ] | [ ] | [ ] | Phase 2 re-check: the history page's dispensing card now lists what the Dispense History tab lists |
 | 5.3 | Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) | [ ] | [ ] | [ ] | |
 | 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [ ] | [ ] | [ ] | |
 | 5.5 | Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) | [ ] | [ ] | [ ] | |
 | 5.6 | Inventory (medicines, categories, generics, stock-in, batches, expiry, low-stock, reconcile) | [ ] | [ ] | [ ] | |
-| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [ ] | [ ] | [ ] | |
+| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [ ] | [ ] | [ ] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by" |
 | 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [ ] | [ ] | [ ] | |
 | 5.9 | Certificates (medical certificate, excuse slip, PDF, edit) | [ ] | [ ] | [ ] | |
 | 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [ ] | [ ] | [ ] | |
@@ -598,7 +610,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Item | Status |
 |---|---|
 | Stock-out counted pending prescriptions / patient "N/A" (R3-M3) | ✅ |
-| **Dispense History misses consultation medicines** | ✅ Phase 2 |
+| **Dispense History misses consultation medicines** | ✅ Phase 2 (re-checked 2026-10-11; the patient history card fixed too) |
 
 ### 4.8 Lab Requests
 | Item | Status |
@@ -726,7 +738,8 @@ None blocking right now. Questions that may come up during the work are asked wh
 - exact wording of the PDF / print headers after the name change, if a layout depends on the old text length;
 - whether any medicine's unit in the clinic data is wrong (the yearly report shows each medicine's own unit, e.g.
   "tablet" vs "box");
-- the Reverb port number if 8080 is already used on the clinic PC.
+- the Reverb port number if 8080 is already used on the clinic PC;
+- **Dispense History speed at volume** (Phase 2 re-check): ~35 ms per 1,000 history rows for every click. Nothing to do while the history stays under about 20,000 rows (~0.7 s). Beyond that: either an index on the consultation dates plus per-source paging, or a maintained history table (every write path would have to keep it current). Decide when the clinic's volume warrants it.
 
 ---
 

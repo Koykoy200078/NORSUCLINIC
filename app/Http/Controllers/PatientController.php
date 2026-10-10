@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Laracasts\Flash\Flash;
 use Exception;
+use App\Models\ConsultationMedicine;
+use App\Models\DispenseHistoryEntry;
+use App\Models\DispenseRecord;
 use App\Models\User;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
@@ -231,11 +235,9 @@ class PatientController extends AppBaseController
             'dispensedBy',             // Prescription::dispensedBy() → User
         ])->where('patient_id', $patient->id)->latest()->get();
 
-        // Load dispense records (medicine bills) with items
-        $dispenseRecords = \App\Models\DispenseRecord::with([
-            'dispenseItems.medicine',  // DispenseRecord::dispenseItems() → DispenseRecordItem::medicine() → Medicine
-            'doctor.user',             // DispenseRecord::doctor() → Doctor::user() → User
-        ])->where('patient_id', $patient->id)->latest()->get();
+        // The same history as Dispensing > Dispense History: dispense records, DISPENSED prescriptions and the
+        // medicines recorded in consultations (a pending or cancelled prescription handed nothing out).
+        $dispenseHistory = $this->dispenseHistoryOf($patient);
 
         // Pass the data to the view
         return view('patients.view_patient', compact(
@@ -244,8 +246,49 @@ class PatientController extends AppBaseController
             'medicalCertificates',
             'excuseSlips',
             'prescriptions',
-            'dispenseRecords'
+            'dispenseHistory'
         ));
+    }
+
+    /**
+     * What left the clinic for this patient, newest first: one element per history row,
+     * `['entry' => DispenseHistoryEntry, 'items' => [['name', 'quantity', 'used_for'], ...]]`.
+     *
+     * @return Collection<int, array{entry: DispenseHistoryEntry, items: Collection}>
+     */
+    private function dispenseHistoryOf(Patient $patient): Collection
+    {
+        $entries = DispenseHistoryEntry::where('patient_id', $patient->id)
+            ->orderByDesc('dispensed_at')
+            ->orderByDesc('record_id')
+            ->orderByDesc('id')
+            ->get();
+
+        $records = DispenseRecord::with('dispenseItems.medicine:id,name')
+            ->whereIn('id', $entries->where('source', '!=', DispenseHistoryEntry::SOURCE_CONSULTATION)->pluck('record_id'))
+            ->get()
+            ->keyBy('id');
+
+        $consultationLines = ConsultationMedicine::with('medicine:id,name')
+            ->whereIn('request_document_id', $entries->where('source', DispenseHistoryEntry::SOURCE_CONSULTATION)->pluck('record_id'))
+            ->get()
+            ->groupBy('request_document_id');
+
+        return $entries->map(function (DispenseHistoryEntry $entry) use ($records, $consultationLines) {
+            $items = $entry->isConsultation()
+                ? ($consultationLines[$entry->record_id] ?? collect())->map(fn (ConsultationMedicine $line) => [
+                    'name' => $line->medicine?->name ?? __('messages.common.n/a'),
+                    'quantity' => (int) $line->quantity,
+                    'used_for' => $line->used_for,
+                ])
+                : ($records[$entry->record_id]?->dispenseItems ?? collect())->map(fn ($item) => [
+                    'name' => $item->medicine?->name ?? __('messages.common.n/a'),
+                    'quantity' => (int) $item->quantity,
+                    'used_for' => null,
+                ]);
+
+            return ['entry' => $entry, 'items' => $items->values()];
+        });
     }
 
     public function resetPassword(User $user): JsonResponse

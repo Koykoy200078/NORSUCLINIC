@@ -98,6 +98,18 @@ class MedicineDispenseTable extends LivewireTableComponent
         return $query;
     }
 
+    /**
+     * The row's own number and then its id are always the last sort keys. Rows that share the sort value (every manual
+     * dispense record of a day is saved at 00:00:00) come back in a different order for each page query, so one page
+     * repeats rows that another page never shows. Newest record first among equals; the id (unique) settles the rest.
+     */
+    public function applySorting(): Builder
+    {
+        return parent::applySorting()
+            ->orderBy('dispense_history_view.record_id', 'desc')
+            ->orderBy('dispense_history_view.id', 'desc');
+    }
+
     public function updatedSourceFilter(): void
     {
         $this->setBuilder($this->builder());
