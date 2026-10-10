@@ -424,7 +424,7 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 1. every route and Livewire action is authorised (role, permission, the record itself);
 2. saves, edits, deletes and restores are all-or-nothing (real transactions now), stock moves only through `MedicineInventoryService`, soft deletes, cascades and the audit trail;
 3. validation matches the database columns (strict mode);
-4. list search / sort / filter / paging, and screen = export; **a list sorted by a value that can repeat needs a unique last sort key**, otherwise rows repeat or vanish between pages (found on Dispense History in the Phase 2 re-check; the Stock-out and other lists sorted by a date or a status still need it);
+4. list search / sort / filter / paging, and screen = export; **a list sorted by a value that can repeat needs a unique last sort key**, otherwise rows repeat or vanish between pages (found on Dispense History in the Phase 2 re-check; the Stock-out and other lists sorted by a date or a status have not been checked and probably need it too);
 5. PDFs / exports with special characters, long text and missing data;
 6. N+1 queries and stale caches;
 7. nothing needs the internet to load: no CDN or third-party script / style / font / image link; every library is local.

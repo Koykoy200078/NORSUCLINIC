@@ -108,8 +108,8 @@ Nothing is written while work is in progress, half-done or not started yet.
     - Dispense History speed at volume: about 35 ms per 1,000 rows for every click (0.35 s at 10,000 rows, 1.7 s at
       50,000); plan §8 lists the options. Nothing to do for this clinic's volume yet;
     - manual dispense records have no "recorded by" (the table has no such column; the cell shows NA, as before);
-    - other lists sorted by a repeating value (Stock-out, by date or status) need the same unique last sort key: plan
-      Phase 5, Pass A item 4, row 5.7;
+    - other lists sorted by a repeating value (Stock-out, by date or status) were not checked and probably need the same
+      unique last sort key: plan Phase 5, Pass A item 4, row 5.7;
     - the earlier open items (raw activity log readable by every staff account and doctor; dead `nurse` fallbacks; the
       PHP dev server Codex started on `0.0.0.0:8000`) are unchanged.
 
