@@ -60,8 +60,8 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phase 3: `b945e64` (Manage User roles apply; Staff = Nurse), after Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-10) |
-| Work in progress (not pushed) | none. Codex's open Phase 3 was taken over and finished by Claude Code with the owner's explicit approval; both START entries are preserved below |
+| Last pushed work | Phase 2 re-check: `ffda2df` (stable Dispense History paging, the patient history card), after Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-11) |
+| Work in progress (not pushed) | none |
 | Next step | Phase 4 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): the owner's requested changes (name "Medical University Clinic", COL, Guest column, yearly reports) |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
@@ -70,6 +70,48 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-11 00:45 +08:00 — Claude Code — START → END (pushed 2026-10-11)
+- **Branch / from:** `changes_v2` @ `5b7f3f2` (Phases 0-3 pushed; working tree clean except the build-generated
+  `public/messages.js`).
+- **Work:** re-check Phase 2 (Dispense History shows consultation medicines, plan 2.1-2.4; started by Claude Code, finished
+  by Codex as `c993859`) on the owner's request (2026-10-11: "go back to phase 2 ... double check ... follow the audit plan
+  and Handover"). Re-read the view / model / table / detail page / routes / tests against the plan and against the Phase 3
+  changes, compare the view with the base tables on the clinic data, mutation-check the tests, live browser check, fix any
+  gap test-first, update the plan / STATUS records, then commit and push `changes_v2`.
+- **END:** pushed on 2026-10-11 on the owner's standing go-ahead.
+  - **Commits:** `ffda2df` Phase 2 re-check, then this `handover:` commit.
+  - **Checked and fine:**
+    - the view against the base tables, row by row, with an oracle written independently of the view: on the real clinic data
+      (3 consultation rows, 9 / 14 / 15 = 38 units, equal to the Stock-out view's net 38; the one pending prescription
+      correctly left out) and on a scratch data set with all three sources, an archived patient, a deleted consultation
+      and a pending and a cancelled prescription;
+    - live (scratch schema, admin / doctor / Staff (Nurse) sessions side by side): source filter, search, every sort,
+      paging, the three detail pages and their 404s, deleting a manual record from the history (stock +6, ledger
+      adjustment), all links answer 200, role-permission variants (documents / patients / doctors / medicines removed),
+      same-origin requests only, no horizontal scroll at phone width;
+    - the real prescription-dispense flow puts exactly one row into the history, with the units handed out.
+  - **Found and fixed (test-first):**
+    - **rows repeated and went missing between pages** when many rows shared a date (every manual dispense record of a day
+      is saved at 00:00:00; reproduced: 60 same-day records listed 48 different rows over 6 pages). The table now sorts by
+      the record number and the row id last; equal dates list the newest record first;
+    - the patient's own history page (Patients › History) listed **pending and cancelled prescriptions as dispensed** and
+      lacked the consultation medicines; it now reads the same view as the tab;
+    - a test that never tested "newest first" (`created_at` is not fillable, `update()` was silently ignored);
+    - the source filter had no accessible name; stale designation comments in two column views.
+  - **Verified:** `LINK_CRAWL=1` full suite: 474 tests / 4,421 assertions, all passing, none skipped (13 min 22 sec). The 15-actor link crawl inside it: 1,612 requests / 1,532 pages, 0 broken links, crashes, lazy-table failures or capped crawls. `DispenseHistoryTest` 15 → 19 tests (149 assertions). 13 mutations of production code
+    each fail a test. Plan and STATUS updated; plan §8 has the new volume question.
+  - **No new Artisan commands.**
+  - **Where to continue:** Phase 4 (name "Medical University Clinic", College of Law CL → COL, Guest column, yearly
+    Accomplishment Report, yearly Medicine Inventory report), when the owner says go.
+  - **Left open:**
+    - Dispense History speed at volume: about 35 ms per 1,000 rows for every click (0.35 s at 10,000 rows, 1.7 s at
+      50,000); plan §8 lists the options. Nothing to do for this clinic's volume yet;
+    - manual dispense records have no "recorded by" (the table has no such column; the cell shows NA, as before);
+    - other lists sorted by a repeating value (Stock-out, by date or status) need the same unique last sort key: plan
+      Phase 5, Pass A item 4, row 5.7;
+    - the earlier open items (raw activity log readable by every staff account and doctor; dead `nurse` fallbacks; the
+      PHP dev server Codex started on `0.0.0.0:8000`) are unchanged.
 
 ### 2026-10-09 17:35 +08:00 — Claude Code — START → END (pushed 2026-10-10; takeover of Codex's open Phase 3 START)
 - **Branch / from:** `changes_v2` @ `144c83a` plus the **uncommitted Phase 3 working tree** that Codex left (about 65 files:
