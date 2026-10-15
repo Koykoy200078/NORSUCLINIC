@@ -14,6 +14,10 @@
         : []);
     $pickedServiceIds = collect(old('service_ids', $classifiedDocument ? $classifiedDocument->services->pluck('id')->all() : []))
         ->map(fn ($id) => (int) $id)->all();
+    $pickedServiceText = old('service_other', $classifiedDocument
+        ? $classifiedDocument->services->filter(fn ($service) => filled($service->pivot->other_text))
+            ->mapWithKeys(fn ($service) => [$service->id => $service->pivot->other_text])->all()
+        : []);
 
     // A line the clinic switched off is not offered any more, unless this consultation already has it picked.
     $offered = fn ($line, array $picked) => $line->is_active || in_array($line->id, $picked, true);
@@ -54,6 +58,7 @@
                                     <label class="form-check-label" for="illness_{{ $illness->id }}">{{ $illness->name }}</label>
                                     @if($illness->is_other)
                                         <input type="text" name="illness_other[{{ $illness->id }}]" value="{{ $pickedOtherText[$illness->id] ?? '' }}" maxlength="150"
+                                               data-other-for="illness_{{ $illness->id }}" {{ in_array($illness->id, $pickedIllnessIds, true) ? 'required' : '' }}
                                                class="form-control form-control-sm d-inline-block ms-2" style="width:220px;" placeholder="Specify {{ strtolower($system->name) }} illness">
                                     @endif
                                 </div>
@@ -84,6 +89,11 @@
                                 <span class="badge bg-light text-muted border ms-1" title="Also counted automatically from the visit's records">auto</span>
                             @endif
                         </label>
+                        @if($service->is_other)
+                            <input type="text" name="service_other[{{ $service->id }}]" value="{{ $pickedServiceText[$service->id] ?? '' }}" maxlength="150"
+                                   data-other-for="service_{{ $service->id }}" {{ in_array($service->id, $pickedServiceIds, true) ? 'required' : '' }}
+                                   class="form-control form-control-sm d-inline-block ms-2" style="width:220px;" placeholder="Specify other service">
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -127,9 +137,57 @@
             emptyNote.style.display = anyShown ? 'none' : '';
         }
 
-        section.addEventListener('change', function (event) {
-            if (event.target.classList.contains('illness-checkbox')) { refreshCounts(); }
-        });
+        // An "Others" line needs its name while it is ticked; typing a name ticks the line.
+        var servicesSection = document.getElementById('services_section');
+        function otherBoxes() {
+            return document.querySelectorAll('#classification_section [data-other-for], #services_section [data-other-for]');
+        }
+        function syncOtherBox(box) {
+            var checkbox = document.getElementById(box.getAttribute('data-other-for'));
+            if (checkbox) { box.required = checkbox.checked; }
+        }
+        otherBoxes().forEach(syncOtherBox);
+
+        function onOtherChange(event) {
+            var target = event.target;
+            if (target.type === 'checkbox') {
+                otherBoxes().forEach(function (box) {
+                    if (box.getAttribute('data-other-for') === target.id) { syncOtherBox(box); }
+                });
+            }
+            if (target.classList.contains('illness-checkbox')) { refreshCounts(); }
+        }
+        function onOtherInput(event) {
+            var box = event.target;
+            if (!box.hasAttribute || !box.hasAttribute('data-other-for')) { return; }
+            var checkbox = document.getElementById(box.getAttribute('data-other-for'));
+            if (checkbox && box.value.trim() !== '' && !checkbox.checked) {
+                checkbox.checked = true;
+                syncOtherBox(box);
+                refreshCounts();
+            }
+        }
+
+        // A ticked "Others" line with no name stops the save; if the illness search or a closed body system hides its box
+        // the browser cannot focus it and would refuse silently, so show the box first.
+        var form = section.closest('form');
+        if (form) {
+            form.addEventListener('invalid', function (event) {
+                var box = event.target;
+                if (!box.hasAttribute || !box.hasAttribute('data-other-for')) { return; }
+                var item = box.closest('.illness-item');
+                if (item) { item.style.display = ''; }
+                var details = box.closest('details');
+                if (details) { details.style.display = ''; details.open = true; }
+            }, true);
+        }
+
+        section.addEventListener('change', onOtherChange);
+        section.addEventListener('input', onOtherInput);
+        if (servicesSection) {
+            servicesSection.addEventListener('change', onOtherChange);
+            servicesSection.addEventListener('input', onOtherInput);
+        }
         filter.addEventListener('input', applyFilter);
         // Enter in the search box must not submit the whole consultation.
         filter.addEventListener('keydown', function (event) {

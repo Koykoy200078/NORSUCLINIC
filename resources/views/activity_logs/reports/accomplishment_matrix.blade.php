@@ -36,6 +36,15 @@
                         @endforeach
                         <td class="num total {{ $row['total'] === 0 ? 'zero' : '' }}">{{ $row['total'] === 0 ? $zero : $row['total'] }}</td>
                     </tr>
+                    @foreach($row['others'] ?? [] as $other)
+                        <tr class="other-name">
+                            <td class="item other-name-label" style="padding-left: 22px; font-style: italic;">&ndash; {{ $other['name'] }}</td>
+                            @foreach($cells($other['counts']) as $count)
+                                <td class="num {{ $count === 0 ? 'zero' : '' }}">{{ $count === 0 ? $zero : $count }}</td>
+                            @endforeach
+                            <td class="num total">{{ $other['total'] }}</td>
+                        </tr>
+                    @endforeach
                 @endforeach
             @endforeach
             <tr class="subtotal">
@@ -79,6 +88,15 @@
                     @endforeach
                     <td class="num total {{ $row['total'] === 0 ? 'zero' : '' }}">{{ $row['total'] === 0 ? $zero : $row['total'] }}</td>
                 </tr>
+                @foreach($row['others'] ?? [] as $other)
+                    <tr class="other-name">
+                        <td class="item other-name-label" style="padding-left: 22px; font-style: italic;">&ndash; {{ $other['name'] }}</td>
+                        @foreach($cells($other['counts']) as $count)
+                            <td class="num {{ $count === 0 ? 'zero' : '' }}">{{ $count === 0 ? $zero : $count }}</td>
+                        @endforeach
+                        <td class="num total">{{ $other['total'] }}</td>
+                    </tr>
+                @endforeach
             @endforeach
             <tr class="subtotal">
                 <td class="item">Total {{ $section['name'] }}</td>

@@ -15,8 +15,10 @@ use App\Models\PatientType;
 use App\Models\ServiceType;
 use App\Models\User;
 use App\Models\YearLevel;
+use App\Support\OtherName;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 /**
@@ -29,6 +31,10 @@ use Illuminate\Support\Collection;
  * One count per consultation and picked illness (a visit with two illnesses adds to both rows); a service counts
  * a consultation once, whether it was ticked by hand, recognised by its rule, or both (ServiceRules).
  *
+ * An "Others" row also lists the names typed on the consultation form as sub-rows ('others'), each with its own count per
+ * column; names that differ only by case, extra spaces or end punctuation are one sub-row (OtherName). The sub-rows add
+ * up to the "Others" row, which is what the section and grand totals count, so they are never counted twice.
+ *
  * The result is plain arrays so the screen, the PDF, the Excel file and the CSV all render the same data.
  */
 final class AccomplishmentReportBuilder
@@ -38,6 +44,9 @@ final class AccomplishmentReportBuilder
     public const GUEST = 'guest';
 
     public const UNSPECIFIED = 'unspecified';
+
+    /** The sub-row of an "Others" line for consultations saved without a name (saved before the name was required). */
+    public const NO_NAME = '(no name given)';
 
     /**
      * @return array<string, mixed>
@@ -62,8 +71,8 @@ final class AccomplishmentReportBuilder
         $illnessCounts = $this->illnessCounts($filters, $known, $bucketSql);
         $serviceCounts = $this->serviceCounts($filters, $known, $bucketSql);
 
-        $illnessSections = $this->illnessSections($filters, $illnessCounts);
-        $serviceSections = $this->serviceSections($filters, $serviceCounts);
+        $illnessSections = $this->illnessSections($filters, $illnessCounts, $this->illnessOtherNames($filters, $known, $bucketSql));
+        $serviceSections = $this->serviceSections($filters, $serviceCounts, $this->serviceOtherNames($filters, $known, $bucketSql));
 
         $illnessTotals = $this->sumRows(collect($illnessSections)->pluck('counts'));
         $serviceTotals = $this->sumRows(collect($serviceSections)->pluck('counts'));
@@ -218,6 +227,118 @@ final class AccomplishmentReportBuilder
     }
 
     /**
+     * The names typed on the "Others" illness lines: illness id => sub-rows.
+     *
+     * @param  array<string, true>  $known
+     * @return array<int, array<int, array<string, mixed>>>
+     */
+    private function illnessOtherNames(ReportFilters $filters, array $known, string $bucketSql): array
+    {
+        $query = $this->base($filters)
+            ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
+            ->join('consultation_illnesses as ci', 'ci.document_issuance_id', '=', 'document_issuances.id')
+            ->join('illnesses as i', 'i.id', '=', 'ci.illness_id')
+            ->where('i.is_other', true);
+
+        if ($filters->illnessSystemId !== null) {
+            $query->where('i.illness_system_id', $filters->illnessSystemId);
+        }
+        if ($filters->illnessId !== null) {
+            $query->where('i.id', $filters->illnessId);
+        }
+
+        // BINARY: the column's collation ignores case, and the report picks the most common spelling.
+        $rows = $query->toBase()
+            ->selectRaw('ci.illness_id as item_id, BINARY ci.other_text as other_text, ' . $bucketSql . ' as bucket, COUNT(*) as total, MIN(document_issuances.id) as first_id')
+            ->groupBy('ci.illness_id', DB::raw('BINARY ci.other_text'), 'bucket')
+            ->get();
+
+        return $this->otherNames($rows, $known);
+    }
+
+    /**
+     * The names typed on the "Others" service lines: service id => sub-rows.
+     *
+     * @param  array<string, true>  $known
+     * @return array<int, array<int, array<string, mixed>>>
+     */
+    private function serviceOtherNames(ReportFilters $filters, array $known, string $bucketSql): array
+    {
+        $names = [];
+
+        $services = ServiceType::query()->where('is_other', true);
+        if ($filters->serviceId !== null) {
+            $services->whereKey($filters->serviceId);
+        }
+
+        foreach ($services->get() as $service) {
+            $rows = $this->base($filters)
+                ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
+                ->join('consultation_services as cs', function ($join) use ($service) {
+                    $join->on('cs.document_issuance_id', '=', 'document_issuances.id')->where('cs.service_type_id', '=', $service->id);
+                })
+                ->toBase()
+                ->selectRaw($service->id . ' as item_id, BINARY cs.other_text as other_text, ' . $bucketSql . ' as bucket, COUNT(*) as total, MIN(document_issuances.id) as first_id')
+                ->groupBy(DB::raw('BINARY cs.other_text'), 'bucket')
+                ->get();
+
+            $names += $this->otherNames($rows, $known);
+        }
+
+        return $names;
+    }
+
+    /**
+     * Turns the (name as typed, column, count) rows of an "Others" line into sub-rows: names are merged by OtherName::key(),
+     * the spelling shown is the most common one (a tie goes to the one typed first), the busiest names come first and
+     * the consultations saved without a name are the last line.
+     *
+     * @param  Collection<int, object>  $rows
+     * @param  array<string, true>  $known
+     * @return array<int, array<int, array<string, mixed>>>  item id => [['name', 'counts', 'total'], ...]
+     */
+    private function otherNames(Collection $rows, array $known): array
+    {
+        $merged = [];
+
+        foreach ($rows as $row) {
+            $text = $row->other_text === null ? null : OtherName::clean((string) $row->other_text);
+            $key = $text === null ? '' : OtherName::key($text);
+            $bucket = isset($known[$row->bucket]) ? $row->bucket : self::UNSPECIFIED;
+            $item = (int) $row->item_id;
+
+            $line = &$merged[$item][$key];
+            $line['counts'][$bucket] = ($line['counts'][$bucket] ?? 0) + (int) $row->total;
+            if ($text !== null) {
+                $spelling = &$line['spellings'][$text];
+                $spelling['count'] = ($spelling['count'] ?? 0) + (int) $row->total;
+                $spelling['first'] = min($spelling['first'] ?? PHP_INT_MAX, (int) $row->first_id);
+                unset($spelling);
+            }
+            unset($line);
+        }
+
+        $result = [];
+        foreach ($merged as $item => $lines) {
+            $subRows = [];
+            foreach ($lines as $key => $line) {
+                $name = self::NO_NAME;
+                if ($key !== '') {
+                    $spellings = $line['spellings'];
+                    uksort($spellings, fn ($a, $b) => [$spellings[$b]['count'], $spellings[$a]['first'], $a] <=> [$spellings[$a]['count'], $spellings[$b]['first'], $b]);
+                    $name = (string) array_key_first($spellings);
+                }
+                $subRows[] = ['name' => $name, 'counts' => $line['counts'], 'total' => array_sum($line['counts']), 'unnamed' => $key === ''];
+            }
+
+            usort($subRows, fn ($a, $b) => [$a['unnamed'], -$a['total'], mb_strtolower($a['name'])] <=> [$b['unnamed'], -$b['total'], mb_strtolower($b['name'])]);
+            $result[$item] = array_map(fn ($sub) => ['name' => $sub['name'], 'counts' => $sub['counts'], 'total' => $sub['total']], $subRows);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param  Collection<int, object>  $rows
      * @param  array<string, true>  $known
      * @return array<int, array<string, int>>
@@ -235,8 +356,11 @@ final class AccomplishmentReportBuilder
         return $counts;
     }
 
-    /** @return array<int, array<string, mixed>> */
-    private function illnessSections(ReportFilters $filters, array $counts): array
+    /**
+     * @param  array<int, array<int, array<string, mixed>>>  $otherNames  illness id => sub-rows of its "Others" line
+     * @return array<int, array<string, mixed>>
+     */
+    private function illnessSections(ReportFilters $filters, array $counts, array $otherNames = []): array
     {
         $sections = [];
 
@@ -256,12 +380,16 @@ final class AccomplishmentReportBuilder
                     continue;
                 }
 
-                $groups[$illness->group_label ?? ''][] = [
+                $row = [
                     'name' => $illness->name,
                     'is_other' => (bool) $illness->is_other,
                     'counts' => $rowCounts,
                     'total' => $total,
                 ];
+                if ($illness->is_other) {
+                    $row['others'] = $otherNames[$illness->id] ?? [];
+                }
+                $groups[$illness->group_label ?? ''][] = $row;
                 $systemCounts[] = $rowCounts;
             }
 
@@ -293,8 +421,11 @@ final class AccomplishmentReportBuilder
         return false;
     }
 
-    /** @return array<int, array<string, mixed>> */
-    private function serviceSections(ReportFilters $filters, array $counts): array
+    /**
+     * @param  array<int, array<int, array<string, mixed>>>  $otherNames  service id => sub-rows of its "Others" line
+     * @return array<int, array<string, mixed>>
+     */
+    private function serviceSections(ReportFilters $filters, array $counts, array $otherNames = []): array
     {
         $sections = [];
 
@@ -315,7 +446,11 @@ final class AccomplishmentReportBuilder
                     continue;
                 }
 
-                $rows[] = ['name' => $service->name, 'is_other' => (bool) $service->is_other, 'auto' => $service->auto_rule !== null, 'counts' => $rowCounts, 'total' => $total];
+                $row = ['name' => $service->name, 'is_other' => (bool) $service->is_other, 'auto' => $service->auto_rule !== null, 'counts' => $rowCounts, 'total' => $total];
+                if ($service->is_other) {
+                    $row['others'] = $otherNames[$service->id] ?? [];
+                }
+                $rows[] = $row;
                 $categoryCounts[] = $rowCounts;
             }
 

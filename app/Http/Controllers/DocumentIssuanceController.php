@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
 use App\Models\Illness;
+use App\Models\ServiceType;
 use App\Models\ActivityLog;
 use App\Models\Office;
 use App\Models\Patient;
@@ -20,6 +21,7 @@ use App\Models\Vaccination;
 use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
 use App\Services\MedicineInventoryService;
+use App\Support\OtherName;
 use App\Support\PhilippinePhone;
 use App\Support\SearchTerm;
 use App\Traits\LogsActivity;
@@ -30,6 +32,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\ValidationException;
 
 class DocumentIssuanceController extends Controller
 {
@@ -81,6 +84,8 @@ class DocumentIssuanceController extends Controller
         'illness_other.*' => 'nullable|string|max:150',
         'service_ids' => 'nullable|array|max:60',
         'service_ids.*' => 'integer|exists:service_types,id',
+        'service_other' => 'nullable|array',
+        'service_other.*' => 'nullable|string|max:150',
     ];
 
     private MedicineInventoryService $medicineInventoryService;
@@ -155,6 +160,10 @@ class DocumentIssuanceController extends Controller
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));
+
+        if ($request->input('document_type') === 'consultation_form') {
+            $this->requireOtherNames($request->all());
+        }
 
         // document_creator_id is always the signed-in user; never trust it from the form.
         $data = $request->except(['_token', 'document_creator_id', 'consultation_images']);
@@ -466,11 +475,57 @@ class DocumentIssuanceController extends Controller
 
         $picks = [];
         foreach ($illnessIds as $id) {
-            $picks[$id] = ['other_text' => in_array($id, $otherLines, true) ? $this->normalizeNullableString($texts[$id] ?? null) : null];
+            $picks[$id] = ['other_text' => in_array($id, $otherLines, true) ? OtherName::clean($texts[$id] ?? null) : null];
+        }
+
+        $serviceIds = collect($data['service_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+        $otherServices = ServiceType::whereIn('id', $serviceIds)->where('is_other', true)->pluck('id')->all();
+        $serviceTexts = (array) ($data['service_other'] ?? []);
+
+        $servicePicks = [];
+        foreach ($serviceIds as $id) {
+            $servicePicks[$id] = ['other_text' => in_array($id, $otherServices, true) ? OtherName::clean($serviceTexts[$id] ?? null) : null];
         }
 
         $document->illnesses()->sync($picks);
-        $document->services()->sync(collect($data['service_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values()->all());
+        $document->services()->sync($servicePicks);
+    }
+
+    /**
+     * A ticked "Others" line (illness or service) must say what it is: the ACCOMPLISHMENT REPORT lists the typed names
+     * under "Others". Only checked when the form carried its picks, like syncClassification().
+     *
+     * @throws ValidationException
+     */
+    private function requireOtherNames(array $data): void
+    {
+        if (! array_key_exists('classification_submitted', $data)
+            && ! array_key_exists('illness_ids', $data)
+            && ! array_key_exists('service_ids', $data)) {
+            return;
+        }
+
+        $illnessTexts = (array) ($data['illness_other'] ?? []);
+        $serviceTexts = (array) ($data['service_other'] ?? []);
+        $errors = [];
+
+        $illnessIds = collect($data['illness_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+        foreach (Illness::with('system')->whereIn('id', $illnessIds)->where('is_other', true)->get() as $illness) {
+            if (OtherName::clean(is_string($illnessTexts[$illness->id] ?? null) ? $illnessTexts[$illness->id] : null) === null) {
+                $errors["illness_other.{$illness->id}"] = 'Please type what the "Others" illness under ' . ($illness->system?->name ?? 'the body system') . ' is, or untick it.';
+            }
+        }
+
+        $serviceIds = collect($data['service_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+        foreach (ServiceType::whereIn('id', $serviceIds)->where('is_other', true)->get() as $service) {
+            if (OtherName::clean(is_string($serviceTexts[$service->id] ?? null) ? $serviceTexts[$service->id] : null) === null) {
+                $errors["service_other.{$service->id}"] = 'Please type what the "Others" service under ' . (ServiceType::CATEGORY_LABELS[$service->category] ?? 'Services rendered') . ' is, or untick it.';
+            }
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
     }
 
     /**
@@ -1286,6 +1341,10 @@ class DocumentIssuanceController extends Controller
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));
+
+        if ($requestDocument->document_type === 'consultation_form') {
+            $this->requireOtherNames($request->all());
+        }
 
         $data = $request->except(['_token', '_method', 'document_type', 'document_creator_id', 'consultation_images']);
         $data = $this->forceOwnNursingInCharge($data);

@@ -304,11 +304,12 @@ class DocumentIssuance extends Model implements HasMedia
     }
 
     /**
-     * The services ticked for this consultation.
+     * The services ticked for this consultation (pivot: other_text for an "Others" line).
      */
     public function services()
     {
         return $this->belongsToMany(ServiceType::class, 'consultation_services', 'document_issuance_id', 'service_type_id')
+            ->withPivot('other_text')
             ->orderBy('service_types.category')
             ->orderBy('service_types.sort_order');
     }
@@ -332,7 +333,7 @@ class DocumentIssuance extends Model implements HasMedia
     }
 
     /**
-     * The ticked services as readable lines.
+     * The ticked services as readable lines: "Tetanus injection", and for an "Others" line "Others: Ear syringing".
      *
      * @return array<int, string>
      */
@@ -340,7 +341,9 @@ class DocumentIssuance extends Model implements HasMedia
     {
         $this->loadMissing('services');
 
-        return $this->services->pluck('name')->values()->all();
+        return $this->services->map(fn (ServiceType $service) => $service->is_other && filled($service->pivot->other_text)
+            ? $service->name . ': ' . $service->pivot->other_text
+            : $service->name)->values()->all();
     }
 
     /**

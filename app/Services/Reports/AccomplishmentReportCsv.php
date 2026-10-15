@@ -6,7 +6,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * The ACCOMPLISHMENT REPORT as a flat CSV: one line per illness and per service, one column per college, so it can
- * be filtered and totalled in a spreadsheet. Same numbers as the screen, PDF and Excel (all from the builder).
+ * be filtered and totalled in a spreadsheet. The names typed on an "Others" line follow it, one line each, as
+ * "Others: <name>" (they add up to the "Others" line, so a spreadsheet total must skip them, or skip the Others line). Same numbers as the screen, PDF and Excel (all from the builder).
  */
 final class AccomplishmentReportCsv
 {
@@ -25,6 +26,9 @@ final class AccomplishmentReportCsv
             foreach ($section['groups'] as $group) {
                 foreach ($group['rows'] as $row) {
                     $rows[] = array_merge(['Illness / diagnosis', $section['name'], $group['label'] ?? '', $row['name']], $counts($row['counts']), [$row['total']]);
+                    foreach ($row['others'] ?? [] as $other) {
+                        $rows[] = array_merge(['Illness / diagnosis', $section['name'], $group['label'] ?? '', $row['name'] . ': ' . $other['name']], $counts($other['counts']), [$other['total']]);
+                    }
                 }
             }
         }
@@ -33,6 +37,9 @@ final class AccomplishmentReportCsv
         foreach ($report['service_sections'] as $section) {
             foreach ($section['rows'] as $row) {
                 $rows[] = array_merge(['Other services', $section['name'], '', $row['name']], $counts($row['counts']), [$row['total']]);
+                foreach ($row['others'] ?? [] as $other) {
+                    $rows[] = array_merge(['Other services', $section['name'], '', $row['name'] . ': ' . $other['name']], $counts($other['counts']), [$other['total']]);
+                }
             }
         }
         $rows[] = array_merge(['Other services', 'TOTAL', '', ''], $counts($report['service_total']['counts']), [$report['service_total']['total']]);

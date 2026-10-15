@@ -484,13 +484,13 @@ Every defect gets a failing test, then the fix, then both passes again.
 | 5.1 | Dashboard (admin / staff / doctor) | [ ] | [ ] | [ ] | |
 | 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [ ] | [ ] | [ ] | Phase 2 re-check: the history page's dispensing card now lists what the Dispense History tab lists. Sweep A (10-15): field limits fit the columns, unique last sort key |
 | 5.3 | Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) | [ ] | [ ] | [ ] | |
-| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [ ] | [ ] | [ ] | Sweep A (10-15): text limits fit the columns, list sort key, PDF with awkward data. Includes 5.23: "Others" lines record the typed name (services get the box) |
+| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [ ] | [ ] | [ ] | Sweep A (10-15): text limits fit the columns, list sort key, PDF with awkward data. Item 5.23 done (10-16): illness and service "Others" names required when ticked, saved tidied and restored on edit; remaining module checks still pending |
 | 5.5 | Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) | [ ] | [ ] | [ ] | |
 | 5.6 | Inventory (medicines, categories, generics, stock-in, batches, expiry, low-stock, reconcile) | [ ] | [ ] | [ ] | Sweep A (10-15): field limits, stale pick-lists and expiry badge cleared on change, medicine list N+1 removed |
 | 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [ ] | [ ] | [ ] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by". Sweep A (10-15): note column widened (migration), PDF without a note no longer crashes |
 | 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [ ] | [ ] | [ ] | Sweep A (10-15): text limits, list sort key. Open: the list builder pre-orders, check the header sorts |
 | 5.9 | Certificates (medical certificate, excuse slip, PDF, edit) | [ ] | [ ] | [ ] | |
-| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [ ] | [ ] | [ ] | Includes 5.23: the typed "Others" names appear as sub-rows with their own counts |
+| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [ ] | [ ] | [ ] | Item 5.23 done (10-16): typed "Others" names grouped into sub-rows in the monthly / yearly screen, PDF, Excel and CSV; remaining module checks still pending |
 | 5.11 | Notifications & Alerts (low stock, expiry, system notifications) | [ ] | [ ] | [ ] | |
 | 5.12 | Settings › Staff (no designation / station / shift) | [ ] | [ ] | [ ] | |
 | 5.13 | Settings › Doctors | [ ] | [ ] | [ ] | |
@@ -506,15 +506,14 @@ Every defect gets a failing test, then the fix, then both passes again.
 - [ ] 5.22 The seven pages whose JavaScript never loads (`@section('scripts')`): Add-to-queue first, then medicines create / edit,
   lab request edit, generics create / edit / index, one page at a time with a browser check.
 
-- [ ] 5.23 **"Others" records what was actually done / found** (owner request 2026-10-15, with screenshots of Create Consultation
-  Form and the Accomplishment Report). Today an "Others" line only adds to a count. The owner wants the written name kept and shown.
-  *What exists now (checked in the code):* on the consultation form an illness "Others" line already has a "Specify … illness" box
+- [x] 5.23 **"Others" records what was actually done / found** (owner request 2026-10-15, with screenshots of Create Consultation
+  Form and the Accomplishment Report). The owner wants the written name kept and shown beneath its parent "Others" row.
+  *Before this change:* on the consultation form an illness "Others" line already had a "Specify … illness" box
   (`illness_other[<id>]`, stored in `consultation_illnesses.other_text`, 150 characters); a **Services rendered** "Others" line
-  (`service_types.is_other`) has **no box** and `consultation_services` has no text column; the Accomplishment Report
-  (`AccomplishmentReportBuilder`, rows carry `is_other`) prints one "Others" row per system / category with only the count, so the
-  typed name is lost in the report.
-  *To do (test-first, one change at a time):*
-  1. **Services "Others" gets a "Specify other service" box** like the illness one: only shown while the line is ticked, required
+  (`service_types.is_other`) had **no box** and `consultation_services` had no text column; the Accomplishment Report
+  (`AccomplishmentReportBuilder`, rows carry `is_other`) printed one "Others" row per system / category with only the count.
+  *Acceptance rules (test-first):*
+  1. **Services "Others" gets a "Specify other service" box** alongside the line, like the illness one: required
      when ticked (a ticked "Others" with no text is refused with a clear message), max 150 characters (the column width: the
      strict-mode rule of Phase 5 Pass A item 3), trimmed, saved all-or-nothing with the rest of the consultation, filled again on
      edit, and cleared when the line is un-ticked. Migration: `consultation_services.other_text` `string(150)` nullable (new
@@ -525,8 +524,9 @@ Every defect gets a failing test, then the fix, then both passes again.
   3. **Accomplishment Report** (monthly and yearly, screen = PDF = Excel = CSV, the one builder): directly under each **"Others" row**
      list the typed names as indented **sub-rows** (for example "Others" → "Dengue fever", "Conjunctivitis"), each with its **own count
      per college column and its own total**; the "Others" row itself keeps the total of all its sub-rows, so the system / category
-     totals and the grand totals do not change. Rules: names are grouped case-, spacing- and punctuation-insensitively (so "dengue",
-     "Dengue " and "DENGUE." are one line, shown as the most common spelling); sorted by count (highest first) then name; a name is
+     totals and the grand totals do not change. Rules: case, repeated whitespace and punctuation at either end do not distinguish names
+     ("dengue" / "Dengue " / "DENGUE." are one line; "aa" / "aA" are another; "dengue  fever" / "dengue fever" are another).
+     Show the most common spelling, with ties going to the first one entered; sort by count (highest first) then name, with unnamed legacy entries last. A name is
      counted once per consultation; the Guest column and the yearly Q1-Q4 view behave the same way; the report's existing filters
      (college, period, consult mode, illness / service picks) apply to the sub-rows too; an "Others" with no names shows no sub-rows.
      Special characters, formula-looking names (`=SUM(...)`) and very long text must survive in the PDF, Excel (plain text) and CSV.
@@ -534,9 +534,40 @@ Every defect gets a failing test, then the fix, then both passes again.
      independent query of the stored names for screen, PDF, Excel and CSV; the sum of sub-rows equals the "Others" count; totals
      unchanged; yearly and monthly; both roles; mutation-check each rule. **Live check** on a scratch copy of the clinic data with the
      browser (record a consultation with two different "Others" names in each list, open the report, download the three formats).
-  *Proposed by Claude, to confirm with the owner before coding:* "required when ticked" (items 1-2) and the spelling-insensitive grouping (item 3) are my suggestions, not the owner's words; the owner asked only that the Others text be fillable, recorded, and listed as a sub-name under "Others" in the Accomplishment Report. The report shows names only, never patient details.
-  *Do when:* after Phase 5 checkpoint A is pushed; it touches modules 5.4 (Consultations) and 5.10 (Report Generation), so do it
-  inside those two module passes (or earlier if the owner asks) and record it in their Findings column.
+  *Owner decisions (2026-10-15):* a ticked "Others" with no text is **refused**. Merge capitalization variants ("aa" / "aA"),
+  trim surrounding whitespace and collapse repeated spaces inside a name ("dengue  fever" / "dengue fever"); ignore end
+  punctuation ("dengue" / "Dengue " / "DENGUE."). Word boundaries remain meaningful: "aa" and "a a" are different names.
+  The report shows names only, never patient details.
+  **Done and verified (2026-10-15/16; code and tests by Claude Code, independent re-checks by OpenAI Codex, then a full re-check by Claude Code
+  after the owner handed the open work back):**
+  - *What it does:* every services "Others" line has a "Specify other service" box (migration `2026_10_15_110000_add_other_text_to_consultation_services`,
+    `consultation_services.other_text`, 150 characters, additive, existing rows stay "no name given"); a ticked "Others" line, illness or service,
+    **must carry a name** (server rule `requireOtherNames()` on create and edit of a consultation form, a message naming the body system / category;
+    the box is `required` while its line is ticked, typing a name ticks the line, and a hidden empty box is revealed instead of blocking the save
+    silently); names are saved tidied (`App\Support\OtherName::clean`: trimmed, runs of spaces / tabs / line breaks one space) and cleared when the line
+    is un-ticked; the Accomplishment Report (`AccomplishmentReportBuilder`, one result for screen, PDF, Excel and CSV; monthly and yearly) lists the
+    names as indented sub-rows under each "Others" row (`'others'`) with their own count per column and total, merged by `OtherName::key`
+    (case, repeated spaces and end punctuation ignored), the most common spelling shown (a tie goes to the first one typed), busiest first, consultations
+    saved without a name last as "(no name given)"; the "Others" row keeps the sum, so section and grand totals are unchanged; the CSV has one
+    "Others: <name>" line per name; the consultation view / PDF and the Patient Visits list and CSV show "Others: <name>" for services as they did for illnesses.
+  - *Tests:* `OtherNamesSaveTest` (7 tests / 69 assertions) and `OtherNamesReportTest` (9 / 1,059): the helper, the save and refusal rules for illnesses and
+    services on both panels, the limits, un-ticking, edit replacing, a refused edit saving nothing, the form's boxes and script, the sub-rows with the three
+    spellings, the filters, the yearly quarters, a college that no longer exists, the screen, CSV, Excel (formula-looking names stay plain text) and PDF.
+  - *Mutations:* 34 mutations of production code, 32 fail a test; the two survivors (the illness filter and the service filter inside the names queries)
+    are equivalent, because the final row selection of the report already applies those filters (they only save work).
+  - *Rehearsal:* the dump rewritten into a scratch schema (server default engine) and under MyISAM / InnoDB defaults (Codex): 132 migrations, 64 InnoDB
+    tables, 47 of 47 foreign keys, second `migrate` does nothing, `db:integrity --compare-fresh` 0 errors / 3 existing warnings; the new migration is the last one.
+  - *Live checks (scratch copy of the clinic data; nurse, doctor and admin; Codex on `norsu_clinic_others_scratch`, Claude Code on `norsu_clinic_p5_scratch`):*
+    the boxes appear for all 11 illness and both service "Others" lines; typing ticks and requires; ticking, hiding the line with the illness search and
+    saving reveals the box; a consultation saved through the real form kept "Lump on right LEG." and "Talk on hygiene" tidied; the edit page shows them
+    again; the report shows `lump on right leg 4 / aa 2 / Sprain 1` (7 under Others, from seven spellings) and the three downloads carry the same
+    names and totals; PDF pages inspected; no off-site request, no console error of ours (the only ones: a Livewire poll after a server was stopped and a
+    consultation photo that is not in the dump).
+  - *Full suite:* `LINK_CRAWL=1` **556 tests / 5,985 assertions, all passing** (39 min 16 sec: the machine was busy); the 15-actor link crawl made 1,614 requests,
+    no broken link, crash or lazy-table failure.
+  - *Not applied to `norsu_clinic`* (owner: leave it alone): the service-text migration, the note migration and the two Phase 4 data migrations. No routes or
+    Artisan commands added ([commands.md](commands.md) unchanged). Observed, not changed: the Accomplishment Report PDF took about 35 s on the busy machine
+    (DomPDF), inside the clinic PC's 120 s limit. Modules 5.4 / 5.10 still need their remaining passes.
 
 ### Phase 6 — Deep DRY refactor + dead-code removal (behaviour unchanged)
 Each step is guarded by: full suite + `route:list --json` diff (identical unless a change is listed) + link crawl + matrix.
