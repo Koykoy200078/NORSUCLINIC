@@ -2,34 +2,23 @@
 
 namespace App\Livewire;
 
-use App\Models\Patient;
-use Livewire\Component;
+use App\Repositories\DashboardRepository;
 use Livewire\Attributes\Lazy;
+use Livewire\Component;
 
 #[Lazy]
 class StaffDashBoardTable extends Component
 {
-    public $data;
+    /** @var array{patients: array<int, array<string, mixed>>, total: int} */
+    public $data = ['patients' => [], 'total' => 0];
 
-    public function mount()
+    public function mount(DashboardRepository $dashboard)
     {
-        $this->data = []; // Initialize array
-        $this->data['patients'] = Patient::with(['user:id,first_name,last_name,email,created_at,university_id_number', 'media'])
-            ->whereDate('created_at', today())
-            ->orderBy('created_at', 'DESC')
-            ->get()
-            ->map(fn($p) => [
-                'id'                 => $p->id,
-                'patient_identifier' => $p->user->university_id_number ?: $p->patient_unique_id,
-                'profile'            => $p->profile,
-                'user'               => [
-                    'id'         => $p->user->id,
-                    'full_name'  => $p->user->full_name,
-                    'email'      => $p->user->email,
-                    'created_at' => $p->user->created_at,
-                ],
-            ])
-            ->toArray();
+        // Today's registrations, read fresh (a patient added a second ago is in the list). The Week and Month tabs fetch
+        // theirs on click.
+        $today = $dashboard->recentPatients('day', 'staff');
+
+        $this->data = ['patients' => $today['data'], 'total' => $today['total']];
     }
 
     public function placeholder(): string

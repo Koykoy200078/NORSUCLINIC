@@ -7,9 +7,13 @@
                 <img src="{{:image}}" alt="user" class="">
             </div>
             <div class="d-flex flex-column">
+                {{if route}}
                 <a href="{{:route}}"
                    class="text-primary-800 mb-1 fs-6 text-decoration-none">
                     {{:name}}</a>
+                {{else}}
+                <span class="text-primary-800 mb-1 fs-6">{{:name}}</span>
+                {{/if}}
                 <span class="text-muted fw-bold d-block">{{:email}}</span>
             </div>
        </div>

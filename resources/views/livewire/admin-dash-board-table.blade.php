@@ -30,8 +30,9 @@
             </li>
         </ul>
     </div>
+    @php($patients = $data['patients'] ?? [])
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="month">
+        <div class="tab-pane fade" id="month">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -48,35 +49,7 @@
                         </tr>
                     </thead>
                     <tbody id="monthlyReport" class="text-gray-600 fw-bold">
-                        @forelse($data['patients'] as $patient)
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="image image-circle image-mini me-3">
-                                        <img src="{{ $patient['profile'] }}" alt="user" class="">
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <a href="{{ route('patients.show', $patient['id']) }}" class="text-primary-800 mb-1 fs-6 text-decoration-none">{{ $patient['user']['full_name'] }}</a>
-                                        <span class="text-muted fw-bold d-block">{{ $patient['user']['email'] }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-start">
-                                <span class="badge bg-light-success">{{ $patient['patient_identifier'] }}</span>
-                            </td>
-                            <td class="text-center text-muted fw-bold">
-                                <span class="badge bg-light-info">
-                                    {{ \Carbon\Carbon::parse($patient['user']['created_at'])->isoFormat('DD MMM YYYY hh:mm A') }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr class="text-center">
-                            <td colspan="3" class="text-center text-muted fw-bold">
-                                {{ __('messages.common.no_data_available') }}
-                            </td>
-                        </tr>
-                        @endforelse
+                        {{-- Today's rows are in the Day pane; the Week and Month tabs fill theirs on click. --}}
                     </tbody>
                 </table>
             </div>
@@ -102,7 +75,7 @@
                 </table>
             </div>
         </div>
-        <div class="tab-pane fade" id="day">
+        <div class="tab-pane fade show active" id="day">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -119,6 +92,45 @@
                         </tr>
                     </thead>
                     <tbody id="dailyReport" class="text-gray-600 fw-bold">
+                        @forelse($patients as $patient)
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="image image-circle image-mini me-3">
+                                        <img src="{{ $patient['profile'] }}" alt="user" class="">
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        {{-- The server sends no link when the role may not open the patient page (it would answer 403). --}}
+                                        @if($patient['url'])
+                                        <a href="{{ $patient['url'] }}" class="text-primary-800 mb-1 fs-6 text-decoration-none">{{ $patient['user']['full_name'] }}</a>
+                                        @else
+                                        <span class="text-primary-800 mb-1 fs-6">{{ $patient['user']['full_name'] }}</span>
+                                        @endif
+                                        <span class="text-muted fw-bold d-block">{{ $patient['user']['email'] }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-start">
+                                <span class="badge bg-light-success">{{ $patient['patient_identifier'] }}</span>
+                            </td>
+                            <td class="text-center text-muted fw-bold">
+                                <span class="badge bg-light-info">
+                                    {{ $patient['registered_label'] }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr class="text-center">
+                            <td colspan="3" class="text-center text-muted fw-bold">
+                                {{ __('messages.common.no_data_available') }}
+                            </td>
+                        </tr>
+                        @endforelse
+                        @if(($data['total'] ?? 0) > count($patients))
+                        <tr class="text-center">
+                            <td colspan="3" class="text-muted fw-bold">Showing the {{ count($patients) }} newest of {{ $data['total'] }}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>

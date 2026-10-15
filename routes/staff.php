@@ -21,6 +21,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
 
     // Staff Dashboard - accessible to all staff members
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('dashboard');
+    // The Day / Week / Month tabs of that dashboard (the admin copy answers 403 to staff).
+    Route::get('/dashboard-patients', [DashboardController::class, 'getStaffPatientList'])->name('patientData.dashboard');
 
     // Patient Management (Staff can manage patients but with limited access)
     Route::middleware(['permission:manage_patients'])->group(function () {

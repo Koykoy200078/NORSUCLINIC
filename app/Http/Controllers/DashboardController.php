@@ -31,24 +31,36 @@ class DashboardController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $data = $this->dashboardRepository->getData();
-        $clinic_name = getSettingValue('clinic_name');
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('dashboard.index', compact('data', 'clinic_name', 'hasDefaultPassword'));
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+
+        return view('dashboard.index', compact('hasDefaultPassword'));
     }
 
     /**
-     * @param  Request  $request  *
+     * The Day / Week / Month tabs of the admin dashboard (?day=day, ?week=week or ?month=month).
      */
     public function getPatientList(Request $request)
     {
-        $input = $request->all();
+        return $this->recentPatientsResponse($request, 'admin');
+    }
 
-        $data['patients'] = $this->dashboardRepository->patientData($input);
+    /**
+     * The same tabs on the staff dashboard (open to every staff member, like the dashboard itself).
+     */
+    public function getStaffPatientList(Request $request)
+    {
+        return $this->recentPatientsResponse($request, 'staff');
+    }
+
+    private function recentPatientsResponse(Request $request, string $panel): JsonResponse
+    {
+        $range = collect(['day', 'week', 'month'])->first(fn (string $key) => $request->has($key));
+
+        $data['patients'] = $this->dashboardRepository->recentPatients($range, $panel);
 
         return $this->sendResponse($data, __('messages.flash.patients_retrieve'));
     }
@@ -58,9 +70,9 @@ class DashboardController extends AppBaseController
      */
     public function doctorDashboard(Request $request): \Illuminate\View\View
     {
-        $appointments = $this->dashboardRepository->getDoctorData();
         $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
-        return view('doctor_dashboard.index', compact('appointments', 'hasDefaultPassword'));
+
+        return view('doctor_dashboard.index', compact('hasDefaultPassword'));
     }
 
     /**
@@ -79,15 +91,13 @@ class DashboardController extends AppBaseController
      */
     public function staffDashboard(Request $request)
     {
-        $data = $this->dashboardRepository->getStaffData();
-        $clinic_name = getSettingValue('clinic_name');
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
-
         if ($request->ajax()) {
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        return view('staff_dashboard.index', compact('data', 'clinic_name', 'hasDefaultPassword'));
+        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+
+        return view('staff_dashboard.index', compact('hasDefaultPassword'));
     }
 
     /**

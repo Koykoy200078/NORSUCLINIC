@@ -3,34 +3,30 @@
 namespace App\Livewire;
 
 use App\Models\PatientQueue;
-use App\Models\User;
+use App\Repositories\DashboardRepository;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
-
     public $totalDoctorCount;
+
     public $totalPatientCount;
+
     public $totalRegisteredPatientCount;
+
     public $todayQueueCount;
 
-    public function mount()
+    public function mount(DashboardRepository $dashboard)
     {
-        $todayDate = now()->format('Y-m-d');
-        $stats = Cache::remember('livewire_admin_dashboard_' . $todayDate, 60, function () use ($todayDate) {
-            return [
-                'totalDoctorCount'  => User::toBase()->whereType(User::DOCTOR)->where('status', User::ACTIVE)->count(),
-                'totalPatientCount' => User::toBase()->whereType(User::PATIENT)->count(),
-            ];
-        });
-        $this->totalDoctorCount            = $stats['totalDoctorCount'];
-        $this->totalPatientCount           = $stats['totalPatientCount'];
-        // Always query fresh — never cache today's registered count so new patients reflect immediately
-        $this->totalRegisteredPatientCount = User::toBase()->whereType(User::PATIENT)->whereDate('created_at', $todayDate)->count();
+        // Read fresh every time: a patient or doctor added a second ago is counted, and the figures are the ones of the
+        // Patients and Doctors lists (see DashboardRepository).
+        foreach ($dashboard->figures() as $figure => $value) {
+            $this->{$figure} = $value;
+        }
+
         $this->todayQueueCount = PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-            ->whereDate('created_at', $todayDate)
+            ->whereDate('created_at', today())
             ->count();
     }
 

@@ -1,163 +1,77 @@
-// Dashboard "Recent Patients" tabs (day / week / month) for the admin dashboard.
+// Dashboard "Recent Patients" tabs (day / week / month) of the admin and staff dashboards.
 //
 // The revenue / "Total Earning" charts, per-month currency totals, radial performance
 // gauges, the doctor appointment ApexChart, and the service/doctor/category revenue filters
-// were REMOVED — the clinic app is de-monetized and none of those elements are rendered by
-// any blade anymore (verified: #adminChartData/#patientChartData/#doctorChartData,
-// .totalEarning/.total-amount/.*-month-total-amount/.js-radial/#serviceId all have zero
-// blade references). Only the non-revenue patient-list tab handlers remain.
+// were REMOVED - the clinic app is de-monetized and none of those elements are rendered by
+// any blade anymore. Only the non-revenue patient-list tab handlers remain.
+//
+// The server decides what each row looks like: the link (a staff member without Manage Patients gets none, the page
+// would answer 403) and the registration time in the clinic's timezone (a JSON date is UTC and would show 8 hours early).
 
-listenClick("#monthData", function (e) {
-    e.preventDefault();
+function loadRecentPatients(range, pane, body) {
+    var params = {};
+    params[range] = range;
+
     $.ajax({
-        url: route("patientData.dashboard"),
+        url: panelRoute("patientData.dashboard"),
         type: "GET",
-        data: { month: "month" },
+        data: params,
         success: function (result) {
-            if (result.success) {
-                $("#monthlyReport").empty();
-                $(document).find("#week").removeClass("show active");
-                $(document).find("#day").removeClass("show active");
-                $(document).find("#month").addClass("show active");
-                if (result.data.patients.data != "") {
-                    $.each(result.data.patients.data, function (index, value) {
-                        let data = [
+            if (!result.success) {
+                return;
+            }
+
+            var list = result.data.patients;
+            $(body).empty();
+            $(document).find("#day, #week, #month").removeClass("show active");
+            $(document).find(pane).addClass("show active");
+
+            if (list.data.length) {
+                $.each(list.data, function (index, value) {
+                    $(body).append(
+                        prepareTemplateRender("#adminDashboardTemplate", [
                             {
                                 image: value.profile,
                                 name: value.user.full_name,
                                 email: value.user.email,
-                                patientId:
-                                    value.user.university_id_number ||
-                                    value.patient_unique_id,
-                                registered: moment
-                                    .parseZone(value.user.created_at)
-                                    .format("Do MMM Y hh:mm A"),
-                                route: route("patients.show", value.id),
+                                patientId: value.patient_identifier,
+                                registered: value.registered_label,
+                                route: value.url,
                             },
-                        ];
-                        $(document)
-                            .find("#monthlyReport")
-                            .append(
-                                prepareTemplateRender(
-                                    "#adminDashboardTemplate",
-                                    data,
-                                ),
-                            );
-                    });
-                } else {
-                    $(document).find("#monthlyReport")
-                        .append(`<tr class="text-center">
+                        ]),
+                    );
+                });
+
+                if (list.total > list.data.length) {
+                    $(body).append(
+                        `<tr class="text-center"><td colspan="3" class="text-muted fw-bold">Showing the ${list.data.length} newest of ${list.total}</td></tr>`,
+                    );
+                }
+            } else {
+                $(body).append(`<tr class="text-center">
                                                     <td colspan="3" class="text-muted fw-bold">${noData}</td>
                                                 </tr>`);
-                }
             }
         },
         error: function (result) {
             displayErrorMessage(result.responseJSON.message);
         },
     });
+}
+
+listenClick("#monthData", function (e) {
+    e.preventDefault();
+    loadRecentPatients("month", "#month", "#monthlyReport");
 });
 
 listenClick("#weekData", function (e) {
     e.preventDefault();
-    $.ajax({
-        url: route("patientData.dashboard"),
-        type: "GET",
-        data: { week: "week" },
-        success: function (result) {
-            if (result.success) {
-                $("#weeklyReport").empty();
-                $(document).find("#month").removeClass("show active");
-                $(document).find("#day").removeClass("show active");
-                $(document).find("#week").addClass("show active");
-                if (result.data.patients.data != "") {
-                    $.each(result.data.patients.data, function (index, value) {
-                        let data = [
-                            {
-                                image: value.profile,
-                                name: value.user.full_name,
-                                email: value.user.email,
-                                patientId:
-                                    value.user.university_id_number ||
-                                    value.patient_unique_id,
-                                registered: moment
-                                    .parseZone(value.user.created_at)
-                                    .format("Do MMM Y hh:mm A"),
-                                route: route("patients.show", value.id),
-                            },
-                        ];
-                        $(document)
-                            .find("#weeklyReport")
-                            .append(
-                                prepareTemplateRender(
-                                    "#adminDashboardTemplate",
-                                    data,
-                                ),
-                            );
-                    });
-                } else {
-                    $(document).find("#weeklyReport")
-                        .append(`<tr class="text-center">
-                                                    <td colspan="3" class="text-muted fw-bold">${noData}</td>
-                                                </tr>`);
-                }
-            }
-        },
-        error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
-        },
-    });
+    loadRecentPatients("week", "#week", "#weeklyReport");
 });
 
 listenClick("#dayData", function (e) {
     e.preventDefault();
-    $.ajax({
-        url: route("patientData.dashboard"),
-        type: "GET",
-        data: { day: "day" },
-        success: function (result) {
-            if (result.success) {
-                $("#dailyReport").empty();
-                $(document).find("#month").removeClass("show active");
-                $(document).find("#week").removeClass("show active");
-                $(document).find("#day").addClass("show active");
-                if (result.data.patients.data != "") {
-                    $.each(result.data.patients.data, function (index, value) {
-                        let data = [
-                            {
-                                image: value.profile,
-                                name: value.user.full_name,
-                                email: value.user.email,
-                                patientId:
-                                    value.user.university_id_number ||
-                                    value.patient_unique_id,
-                                registered: moment
-                                    .parseZone(value.user.created_at)
-                                    .format("Do MMM Y hh:mm A"),
-                                route: route("patients.show", value.id),
-                            },
-                        ];
-                        $(document)
-                            .find("#dailyReport")
-                            .append(
-                                prepareTemplateRender(
-                                    "#adminDashboardTemplate",
-                                    data,
-                                ),
-                            );
-                    });
-                } else {
-                    $(document).find("#dailyReport").append(`
-                    <tr class="text-center">
-                        <td colspan="3" class="text-muted fw-bold"> ${noData}</td>
-                    </tr>`);
-                }
-            }
-        },
-        error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
-        },
-    });
+    loadRecentPatients("day", "#day", "#dailyReport");
 });
 
 listenClick(".dayData", function () {
