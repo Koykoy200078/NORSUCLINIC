@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
-| Work in progress (not pushed) | none |
-| Next step | Phase 5 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) (every module, two passes each), only when the owner says go |
+| Last pushed work | Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Work in progress (not pushed) | none (a new START entry below opens the next chunk, nothing is written yet) |
+| Next step | Phase 5 module passes (rows 5.1 onward) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); item 5.23 ("Others" request) waits for the owner to confirm two proposed rules |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -70,6 +70,27 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-15 20:10 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v2` @ the `handover:` commit that follows `2462ee8` (checkpoint A is pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5, the module-by-module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) (rows 5.1 onward: record-level authorisation, then Pass B live per role on a scratch copy of the clinic data; `norsu_clinic` stays untouched), and plan item 5.23 (the "Others" request) inside 5.4 / 5.10 once the owner confirms the two proposed rules.
+
+### 2026-10-15 14:55 +08:00 — Claude Code — START → END (pushed 2026-10-15)
+- **Branch / from:** `changes_v2` @ `3350155` (Phase 4 and its handover are pushed; working tree clean except the build-generated
+  `public/messages.js`).
+- **Work:** Phase 5 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-15: "continue to
+  phase 5"): every module twice, Pass A (code: authorisation, transactions, validation vs columns, unique last sort keys,
+  exports, N+1, no internet dependency) and Pass B (live, each role, on a scratch copy of the clinic data: the owner asked to
+  leave `norsu_clinic` alone). Every defect gets a failing test, then the fix, then both passes again. Pushed in verified
+  checkpoints (full suite + docs), the plan's table 5.1-5.22 records each module.
+- **END (checkpoint A):** pushed on the owner's standing go-ahead.
+  - **Commits:** `2462ee8` Phase 5 checkpoint A, then this `handover:` commit.
+  - **Done:** the cross-cutting Pass A sweeps (plan "Phase 5 — progress 2026-10-15"): unique last sort key on every list; every form / consultation / lab rule fits its database column (additive migration `2026_10_15_100000_widen_medicine_bill_note`, **not applied to `norsu_clinic`**); role / settings / Front CMS saves are transactions; the dispense-record PDF survives a missing note; stale pick-list / expiry-badge / PDF-header caches dropped on change; N+1 removed from the doctor, staff and medicine lists; `tests/TestCase.php` resets `set_time_limit` after each test (the consultation PDF export sets 120 s for the whole phpunit process and killed the run at test ~427). 33 new tests; 30 mutations (29 fail a test, 1 equivalent).
+  - **Verified:** `LINK_CRAWL=1` full suite **540 tests / 4,857 assertions**, all passing (13 min 35 sec); link crawl 1,613 requests, no problems. `norsu_clinic` untouched (still not migrated for Phase 4 or for the note migration).
+  - **Owner request recorded, not started:** plan item **5.23** ("Others" lines record the typed name: services get a text box; the Accomplishment Report lists the typed illness / service names as sub-rows under "Others" with their own counts). Two points are my proposals to confirm with the owner before coding (required when ticked; spelling-insensitive grouping).
+  - **Where to continue:** the module-by-module passes (5.1 Dashboard onward, Pass A record-level authorisation and Pass B live per role); do 5.23 inside 5.4 / 5.10.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+
 
 ### 2026-10-12 08:50 +08:00 — Claude Code — START → END (pushed 2026-10-15)
 - **Branch / from:** `changes_v2` @ `254c812` (Phases 0-3 and the Phase 2 re-check are pushed; working tree clean except the
