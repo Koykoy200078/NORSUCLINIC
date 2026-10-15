@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Plan row 5.1 Dashboard: `e33cfc7`, then this `handover:` commit (Claude Code, 2026-10-16); before it plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
-| Work in progress (not pushed) | none (the START entry for row 5.2 below opens the next chunk) |
-| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1 and item 5.23 are done, **5.2 Patients** is next |
+| Last pushed work | Plan row 5.2 Patients: `7a74078`, then this `handover:` commit (Claude Code, 2026-10-16); before it row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Work in progress (not pushed) | none |
+| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1, 5.2 and item 5.23 are done, **5.3 Queue** is next |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -71,9 +71,17 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
-### 2026-10-16 11:40 +08:00 — Claude Code — START
+### 2026-10-16 11:40 +08:00 — Claude Code — START → END (pushed 2026-10-16)
 - **Branch / from:** `changes_v2` @ the `handover:` commit that follows `e33cfc7` (row 5.1 is pushed; working tree clean except the build-generated `public/messages.js`).
 - **Work:** Phase 5 row 5.2 Patients (list, create, edit, history, archive / restore, reset password, email verification) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-16: "continue to the next plan item, 5.2 Patients"): Pass A (authorisation, all-or-nothing saves, validation vs columns, list search / sort / export, N+1 and caches, no internet dependency) test-first, then Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` stays untouched), full suite, records, commit and push `changes_v2`.
+
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** `7a74078` plan row 5.2 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.2, Pass A and Pass B):** the list's date range includes its last day (it stopped at midnight: "Today" showed nobody) and ignores junk; the welcome e-mail is sent after the registration commits and only when the patient has an address; "resend verification" works only for patient / doctor accounts (any id was accepted) and refuses a missing address with a 422; the history page's compare table loads medicines and the nurse once (a query per consultation before); the create and edit forms validate the date of birth, gender and the 11 pick-list ids (they reached the database unchecked); a refused or failed patient save logs field names, not the patient's data; the dead dashboard cache keys are no longer cleared by the registration.
+  - **Verified:** `LINK_CRAWL=1` full suite **585 tests / 6,205 assertions**, all passing (13 min 56 sec); crawl 1,621 requests, no problems; no route added. 14 new tests (`PatientsPassATest`); 18 mutations of production code each fail a test. Pass B on a scratch copy of the real clinic data with nurse, doctor and admin: registration through the real form (all ids saved), edit of a legacy patient, the list's "Today" range, archive and restore through the real buttons, the history page with the compare table, the doctor's reduced buttons, and 403 on list / create / edit / history without Manage Patients. Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.3 Queue.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (recorded in the plan block, for later):** repositories rethrow raw exception messages (database errors quote SQL and values) to the browser: one fix in the exception handler is a cross-cutting item; the route `delete-old-patients` has no page and is a Phase 6.6 dead-code candidate; the reset-password endpoint returns raw exception text and patients can no longer sign in.
 
 ### 2026-10-16 08:30 +08:00 — Claude Code — START → END (pushed 2026-10-16)
 - **Branch / from:** `changes_v2` @ `eed070f` (item 5.23 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
