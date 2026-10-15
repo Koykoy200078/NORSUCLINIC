@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Plan item 5.23 ("Others" names): `a0fea49`, then this `handover:` commit (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
-| Work in progress (not pushed) | none |
-| Next step | Phase 5 module passes (rows 5.1 onward) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); item 5.23 is done |
+| Last pushed work | Plan row 5.1 Dashboard: `e33cfc7`, then this `handover:` commit (Claude Code, 2026-10-16); before it plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Work in progress (not pushed) | none (the START entry for row 5.2 below opens the next chunk) |
+| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1 and item 5.23 are done, **5.2 Patients** is next |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -70,6 +70,22 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-16 11:40 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v2` @ the `handover:` commit that follows `e33cfc7` (row 5.1 is pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5 row 5.2 Patients (list, create, edit, history, archive / restore, reset password, email verification) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-16: "continue to the next plan item, 5.2 Patients"): Pass A (authorisation, all-or-nothing saves, validation vs columns, list search / sort / export, N+1 and caches, no internet dependency) test-first, then Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` stays untouched), full suite, records, commit and push `changes_v2`.
+
+### 2026-10-16 08:30 +08:00 — Claude Code — START → END (pushed 2026-10-16)
+- **Branch / from:** `changes_v2` @ `eed070f` (item 5.23 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5 row 5.1 Dashboard (admin / staff / doctor) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-16: "continue to the next plan item, 5.1 Dashboard"): Pass A (authorisation, stale caches and figures that disagree with the module lists, the Day / Week / Month tabs, N+1, no internet) test-first, then Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` stays untouched), full suite, records, commit and push `changes_v2`.
+
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** `e33cfc7` plan row 5.1 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.1, Pass A and Pass B):** the figures and today's list are read fresh and count patient records like the Patients module (they were cached 60 s and counted accounts); Day / Week / Month tabs: month of this year (was any year), the week's last minutes included, the 50 newest with the real total (was cut at 5), clinic-clock times (were UTC, 8 hours early); the **staff** dashboard's tabs work (they called the admin-only route and answered 403) through the new route `staff.patientData.dashboard`, with each row's link decided by the server (none for a staff member without Manage Patients); a patient whose account was archived on its own no longer breaks the page; the first pane is the Day pane; the dead repository loads (`getData`, `getStaffData`, `getDoctorData`) are gone.
+  - **Verified:** `LINK_CRAWL=1` full suite **571 tests / 6,066 assertions**, all passing (16 min 13 sec); crawl 1,621 requests, no problems; route list 478 → 479. 15 new tests (`DashboardTest`); 22 mutations of production code each fail a test (one first survived and got its own test). Pass B on a scratch copy of the real clinic data with nurse, doctor and admin: the figures equal an independent SQL oracle, the staff tabs answer, the no-Manage-Patients variant shows plain names, same-origin requests only. Assets rebuilt with `npm run dev` (build output, not in git). Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.2 Patients.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (owner question, STATUS §6):** the dashboards stay open to every staff account and doctor (the plan's rule), so a staff account without Manage Patients still sees today's registered patients (name, e-mail, no link).
 
 ### 2026-10-16 00:15 +08:00 — Claude Code — START → END (pushed 2026-10-16; takeover of Codex's open 5.23 START below)
 - **Branch / from:** `changes_v2` @ `faf2d0c` plus the **uncommitted item 5.23 working tree** (the code and tests were written by Claude Code and staged before a usage-limit pause; Codex then added the verification notes to the plan and its START). Taken over on the **owner's explicit instruction** (2026-10-16: "i let OpenAI Codex takeover the last, now i want to continue it, i want to double check it again and again and make sure to align with the plan and Handover"). Codex's START below is preserved unchanged.
