@@ -35,11 +35,11 @@ class CreatePatientRequest extends FormRequest
 
         // Guest (id=4) does not require university_id_number; Student, Staff, Faculty do.
         // Unique among ACTIVE accounts; a match with an archived one gets its own clear message (see withValidator). M-13.
-        $rules['email'] = ['nullable', 'email', $this->uniqueAmongActiveUsers('email')];
+        $rules['email'] = ['nullable', 'email', 'max:191', $this->uniqueAmongActiveUsers('email')];
         $rules['university_id_number'] = ['nullable', 'string', 'max:100', $this->uniqueAmongActiveUsers('university_id_number')];
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
-        $rules['immunization_record'] = 'required|string';
+        $rules['immunization_record'] = 'required|string|max:10000';
         $rules['postal_code'] = 'nullable|numeric';
         $rules['contact'] = ['nullable', new PhilippinePhoneNumber()];
         $rules['emergency_contact_no'] = ['nullable', new PhilippinePhoneNumber()];

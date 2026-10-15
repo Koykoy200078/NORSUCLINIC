@@ -46,6 +46,8 @@ class SettingsService
     public static function clearCache()
     {
         Cache::forget(self::CACHE_KEY);
+        // The prescription and dispense PDFs keep their own five-minute copy of the settings (their header shows the clinic name).
+        Cache::forget('prescription_settings');
     }
 
     /**

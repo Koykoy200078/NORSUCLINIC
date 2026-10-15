@@ -45,7 +45,7 @@ class Role extends roleModal
     protected $table = 'roles';
 
     public static $rules = [
-        'display_name' => 'required|unique:roles,display_name',
+        'display_name' => 'required|string|max:191|unique:roles,display_name',
         'permission_id' => 'sometimes|array',
         'permission_id.*' => 'integer|exists:permissions,id',
     ];

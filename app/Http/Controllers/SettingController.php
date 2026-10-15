@@ -15,6 +15,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Laracasts\Flash\Flash;
 use App\Models\User;
@@ -63,18 +64,25 @@ class SettingController extends AppBaseController
     public function update(UpdateSettingRequest $request): RedirectResponse
     {
         $language = $request->language;
+        $id = Auth::id();
+
+        // The language and the other settings of the form are saved together.
+        DB::transaction(function () use ($request, $language, $id) {
+            if (!empty($language)) {
+                Setting::where('key', 'language')->update([
+                    'value' => $language,
+                ]);
+                // One UPDATE instead of loading and saving every non-admin user one by one.
+                User::whereNot('type', User::ADMIN)->update(['language' => $language]);
+            }
+
+            $this->settingRepository->update($request->all(), $id);
+        });
+
         if (!empty($language)) {
-            Setting::where('key', 'language')->update([
-                'value' => $language,
-            ]);
-            // One UPDATE instead of loading and saving every non-admin user one by one.
-            User::whereNot('type', User::ADMIN)->update(['language' => $language]);
             session()->forget('languageName');
         }
 
-        $id = Auth::id();
-
-        $this->settingRepository->update($request->all(), $id);
         Flash::success(__('messages.flash.setting_update'));
 
         return Redirect::back();

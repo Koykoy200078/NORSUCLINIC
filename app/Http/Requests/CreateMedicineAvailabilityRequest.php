@@ -52,7 +52,7 @@ class CreateMedicineAvailabilityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'availability_no' => ['nullable', 'string', 'max:255'],
+            'availability_no' => ['nullable', 'string', 'max:191'],
             'medicine' => ['required', 'array', 'min:1'],
             'medicine.*' => ['required', 'integer', 'exists:medicines,id'],
             'dosage' => ['nullable', 'array'],

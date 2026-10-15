@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Support\PhilippinePhone;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
@@ -64,28 +65,31 @@ class SettingRepository extends BaseRepository
             $inputArr['postal_code'] = (empty($inputArr['postal_code'])) ? '' : $inputArr['postal_code'];
         }
 
-        foreach ($inputArr as $key => $value) {
+        // One form is saved as a whole: a failing logo upload must not leave the other settings half written.
+        DB::transaction(function () use ($inputArr) {
+            foreach ($inputArr as $key => $value) {
 
-            /** @var Setting $setting */
-            $setting = Setting::where('key', $key)->first();
-            if (! $setting) {
-                continue;
+                /** @var Setting $setting */
+                $setting = Setting::where('key', $key)->first();
+                if (! $setting) {
+                    continue;
+                }
+
+                $setting->update(['value' => $value]);
+
+                if (in_array($key, ['logo']) && ! empty($value)) {
+                    $setting->clearMediaCollection(Setting::LOGO);
+                    $media = $setting->addMedia($value)->toMediaCollection(Setting::LOGO, config('app.media_disc'));
+                    $setting->update(['value' => $media->getUrl()]);
+                }
+
+                if (in_array($key, ['favicon']) && ! empty($value)) {
+                    $setting->clearMediaCollection(Setting::FAVICON);
+                    $media = $setting->addMedia($value)->toMediaCollection(Setting::FAVICON, config('app.media_disc'));
+                    $setting->update(['value' => $media->getUrl()]);
+                }
             }
-
-            $setting->update(['value' => $value]);
-
-            if (in_array($key, ['logo']) && ! empty($value)) {
-                $setting->clearMediaCollection(Setting::LOGO);
-                $media = $setting->addMedia($value)->toMediaCollection(Setting::LOGO, config('app.media_disc'));
-                $setting->update(['value' => $media->getUrl()]);
-            }
-
-            if (in_array($key, ['favicon']) && ! empty($value)) {
-                $setting->clearMediaCollection(Setting::FAVICON);
-                $media = $setting->addMedia($value)->toMediaCollection(Setting::FAVICON, config('app.media_disc'));
-                $setting->update(['value' => $media->getUrl()]);
-            }
-        }
+        });
 
         // Invalidate only the settings cache. Cache::flush() ignores its argument and wipes
         // the ENTIRE cache store (dashboards, medicine/doctor lists, etc.). CONFIG-3.

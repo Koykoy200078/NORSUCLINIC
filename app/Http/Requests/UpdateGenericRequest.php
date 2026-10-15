@@ -22,7 +22,7 @@ class UpdateGenericRequest extends FormRequest
     {
         $rules = Generic::$rules;
         $rules['email'] = 'nullable|email|unique:generics,email,' . $this->route('generic')->id;
-        $rules['name'] = 'required|unique:generics,name,' . $this->route('generic')->id;
+        $rules['name'] = 'required|string|max:160|unique:generics,name,' . $this->route('generic')->id;
 
         return $rules;
     }

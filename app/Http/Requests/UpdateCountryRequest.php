@@ -19,7 +19,7 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules['name'] = 'required|unique:countries,name,'.$this->route('country')->id;
+        $rules['name'] = 'required|string|max:191|unique:countries,name,'.$this->route('country')->id;
 
         return $rules;
     }

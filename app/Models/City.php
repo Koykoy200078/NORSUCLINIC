@@ -64,7 +64,7 @@ class City extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|max:191',
         'type' => 'required|in:city,municipality',
         'state_id' => 'required|exists:states,id',
     ];

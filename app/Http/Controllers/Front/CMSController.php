@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\UpdateFrontCmsRequest;
 use App\Models\Setting;
+use App\Services\SettingsService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
 use Laracasts\Flash\Flash;
 
 class CMSController extends AppBaseController
@@ -55,37 +57,31 @@ class CMSController extends AppBaseController
         $data['about_short_description'] = $input['about_short_description'];
         $data['about_experience'] = $input['about_experience'];
 
-        if (isset($input['about_image_1'])) {
-            $setting = Setting::where('key', 'about_image_1')->first();
-            $setting->clearMediaCollection(Setting::IMAGE);
-            $media = $setting->addMedia($input['about_image_1'])->toMediaCollection(Setting::IMAGE, config('app.media_disc'));
-            $setting->update(['value' => $media->getUrl()]);
-        }
-
-        if (isset($input['about_image_2'])) {
-            $setting = Setting::where('key', 'about_image_2')->first();
-            $setting->clearMediaCollection(Setting::IMAGE);
-            $media = $setting->addMedia($input['about_image_2'])->toMediaCollection(Setting::IMAGE, config('app.media_disc'));
-            $setting->update(['value' => $media->getUrl()]);
-        }
-
-        if (isset($input['about_image_3'])) {
-            $setting = Setting::where('key', 'about_image_3')->first();
-            $setting->clearMediaCollection(Setting::IMAGE);
-            $media = $setting->addMedia($input['about_image_3'])->toMediaCollection(Setting::IMAGE, config('app.media_disc'));
-            $setting->update(['value' => $media->getUrl()]);
-        }
-
-        foreach ($data as $key => $value) {
-
-            /** @var Setting $setting */
-            $setting = Setting::where('key', $key)->first();
-            if (! $setting) {
-                continue;
+        // The About texts and images are saved together: a failing upload must not leave a half-edited page.
+        DB::transaction(function () use ($data, $input) {
+            foreach (['about_image_1', 'about_image_2', 'about_image_3'] as $key) {
+                if (isset($input[$key])) {
+                    $setting = Setting::where('key', $key)->first();
+                    $setting->clearMediaCollection(Setting::IMAGE);
+                    $media = $setting->addMedia($input[$key])->toMediaCollection(Setting::IMAGE, config('app.media_disc'));
+                    $setting->update(['value' => $media->getUrl()]);
+                }
             }
 
-            $setting->update(['value' => $value]);
-        }
+            foreach ($data as $key => $value) {
+
+                /** @var Setting $setting */
+                $setting = Setting::where('key', $key)->first();
+                if (! $setting) {
+                    continue;
+                }
+
+                $setting->update(['value' => $value]);
+            }
+        });
+
+        // The public About page reads these through the settings cache (one hour): show the new text at once.
+        SettingsService::clearCache();
 
         Flash::success(__('messages.flash.cms_update'));
 

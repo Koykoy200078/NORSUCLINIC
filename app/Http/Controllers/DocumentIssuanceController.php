@@ -52,6 +52,28 @@ class DocumentIssuanceController extends Controller
     ];
 
     /** The illness / services picks of the ACCOMPLISHMENT REPORT (ids from the clinic's own lists). */
+    /**
+     * Every free-text box of the consultation form fits the column it is saved in (document_issuances). A longer text
+     * used to fail the whole save in strict mode with only "An error occurred while creating the request document".
+     * 191 is what a varchar column holds here; the long boxes are `text` columns (a limit well inside 64 KB, since a
+     * character can take four bytes).
+     */
+    private const CONSULTATION_TEXT_RULES = [
+        'name' => 'nullable|string|max:191', 'gender' => 'nullable|string|max:191', 'status' => 'nullable|string|max:191',
+        'religion' => 'nullable|string|max:191', 'patient_contact' => 'nullable|string|max:191', 'campus' => 'nullable|string|max:191',
+        'college' => 'nullable|string|max:191', 'course' => 'nullable|string|max:191', 'year_level' => 'nullable|string|max:191',
+        'informant' => 'nullable|string|max:191', 'covid_vaccination' => 'nullable|string|max:191', 'request_of' => 'nullable|string|max:191',
+        'doc_lic_no' => 'nullable|string|max:191', 'doc_prt_no' => 'nullable|string|max:191', 'examined_on' => 'nullable|string|max:255',
+        'vital_signs_bp' => 'nullable|string|max:191', 'vital_signs_pr' => 'nullable|string|max:191', 'vital_signs_temp' => 'nullable|string|max:191',
+        'vital_signs_rr' => 'nullable|string|max:191', 'vital_signs_o2_sat' => 'nullable|string|max:191', 'vital_signs_height' => 'nullable|string|max:191',
+        'vital_signs_weight' => 'nullable|string|max:191',
+        'address' => 'nullable|max:10000', 'emergency_contact' => 'nullable|max:10000', 'complaints' => 'nullable|max:10000', 'note' => 'nullable|max:10000',
+        'allergies' => 'nullable|max:10000', 'admissions_surgeries' => 'nullable|max:10000', 'maintenance' => 'nullable|max:10000',
+        'pregnancy_status' => 'nullable|max:10000', 'lmp_aog' => 'nullable|max:10000', 'pertinent_exam' => 'nullable|max:10000',
+        'assessment' => 'nullable|max:10000', 'plan' => 'nullable|max:10000', 'nursing_intervention' => 'nullable|max:10000',
+        'complaints_diagnosis' => 'nullable|max:10000', 'medical_cert_remarks' => 'nullable|max:10000',
+    ];
+
     private const CLASSIFICATION_RULES = [
         'illness_ids' => 'nullable|array|max:60',
         'illness_ids.*' => 'integer|exists:illnesses,id',
@@ -127,7 +149,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES), array_merge([
             'document_type.required' => 'Please choose the type of document to create.',
             'document_type.in' => 'Unknown document type.',
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
@@ -1260,7 +1282,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES), array_merge([
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));

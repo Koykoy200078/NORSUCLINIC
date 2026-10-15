@@ -24,6 +24,25 @@ class LabRequestController extends Controller
 {
     use LogsActivity;
 
+    /**
+     * The texts the request forms save (lab_requests columns). They used to be saved unchecked, and the name was allowed
+     * 255 characters by a column of 191: a longer text failed the whole save in strict mode. 191 is what a varchar
+     * column holds here; the long boxes are `text` columns.
+     */
+    private const TEXT_RULES = [
+        'patient_name' => 'required|string|max:191',
+        'patient_age' => 'nullable|integer|min:0|max:150',
+        'patient_gender' => 'nullable|string|max:191',
+        'patient_contact' => 'nullable|string|max:191',
+        'address' => 'nullable|max:10000',
+        'status_affiliation' => 'nullable|string|max:191',
+        'clinical_indication' => 'nullable|max:10000',
+        'remarks' => 'nullable|max:10000',
+        'requesting_physician' => 'nullable|string|max:191',
+        'physician_license_no' => 'nullable|string|max:191',
+        'custom_tests.*' => 'nullable|string|max:191',
+    ];
+
     // =========================================================================
     // INDEX
     // =========================================================================
@@ -90,13 +109,11 @@ class LabRequestController extends Controller
             'patient_user_id' => isRole('patient')
                 ? 'nullable'
                 : ['required', Rule::exists('users', 'id')->where('type', User::PATIENT)],
-            'patient_name'    => 'required|string|max:255',
             'requested_at'    => 'required|date',
             'test_ids'        => 'nullable|array',
             'test_ids.*'      => 'integer|exists:lab_tests,id',
             'custom_tests'    => 'nullable|array',
-            'custom_tests.*'  => 'nullable|string|max:255',
-        ]);
+        ] + self::TEXT_RULES);
 
         try {
             $patientUserId = isRole('patient') ? Auth::id() : $request->patient_user_id;
@@ -254,13 +271,11 @@ class LabRequestController extends Controller
         }
 
         $request->validate([
-            'patient_name'   => 'required|string|max:255',
             'requested_at'   => 'required|date',
             'test_ids'       => 'nullable|array',
             'test_ids.*'     => 'integer|exists:lab_tests,id',
             'custom_tests'   => 'nullable|array',
-            'custom_tests.*' => 'nullable|string|max:255',
-        ]);
+        ] + self::TEXT_RULES);
 
         try {
             $newIds = array_values(array_unique(array_map('intval', $request->input('test_ids', []))));

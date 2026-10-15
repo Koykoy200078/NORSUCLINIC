@@ -43,16 +43,16 @@ class Slider extends Model implements HasMedia
      * @var string[]
      */
     public static $rules = [
-        'title' => 'required',
+        'title' => 'required|string|max:191',
         'image' => 'required|mimes:jpeg,png,jpg',
-        'short_description' => 'required',
+        'short_description' => 'required|max:55',
     ];
 
     /**
      * @var string[]
      */
     public static $editRules = [
-        'title' => 'required',
+        'title' => 'required|string|max:191',
         'image' => 'nullable|mimes:jpeg,png,jpg',
         'short_description' => 'required|max:55',
     ];

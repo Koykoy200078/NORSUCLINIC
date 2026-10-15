@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Livewire\Concerns\SearchesByWords;
+use App\Livewire\Concerns\SortsByUniqueKey;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\DocumentIssuance;
@@ -14,6 +15,7 @@ use Livewire\Attributes\Locked;
 class DocumentIssuanceTable extends DataTableComponent
 {
     use SearchesByWords;
+    use SortsByUniqueKey;
 
     protected $model = DocumentIssuance::class;
     public bool $showFilterOnHeader = false;

@@ -57,8 +57,8 @@ class Qualification extends Model
      * @var array
      */
     public static $rules = [
-        'degree' => 'required',
-        'university' => 'required',
-        'year' => 'required',
+        'degree' => 'required|string|max:191',
+        'university' => 'required|string|max:191',
+        'year' => 'required|string|max:191',
     ];
 }

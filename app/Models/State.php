@@ -79,7 +79,7 @@ class State extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:states,name',
+        'name' => 'required|string|max:191|unique:states,name',
     ];
 
     public function country(): BelongsTo

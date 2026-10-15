@@ -110,6 +110,12 @@ class MedicineDispenseTable extends LivewireTableComponent
             ->orderBy('dispense_history_view.id', 'desc');
     }
 
+    /** The two keys above end this list's order; the view's own id (a text such as "B12") must not come before them. */
+    protected function tieBreakerColumn(Builder $builder): ?string
+    {
+        return null;
+    }
+
     public function updatedSourceFilter(): void
     {
         $this->setBuilder($this->builder());

@@ -431,6 +431,38 @@ Each phase ends with: full test suite green → re-verification of the phase's i
 
   **Final verification (2026-10-15):** `LINK_CRAWL=1` full suite: **507 tests, 4,717 assertions, all passing, none skipped** (43 min 42 sec, 234 MB: the machine was busy, an idle run takes about 13 min). The 15-actor link crawl inside it (guest, admin, Doctor ×6, Staff (Nurse) ×7) made 1,613 requests over 1,533 pages: no broken link, crash, lazy-table failure, capped crawl or page that still shows the old name. **48 mutations of production code (the name migration, the college migration, the seeders, the registration mail, the language file, the landing page, the Guest column, the quarter bucketing, the yearly dates, the year validation, the CSV header and file name, the screen controls of the yearly views, every ledger cut and boundary, signed adjustments, the expiry boundary, the shelf comparison, the sort order, formula protection, the download links ...) each make at least one test fail. Two runs (32 + 16): 7 mutations first survived (an empty-row guard, the shelf comparison, the stock-list controls that must disappear in the yearly view, the expiry-day boundary and the year in the download links); each got a test of its own and now fails one.** Rehearsal on a **scratch copy of the real clinic dump** (the dump rewritten into a throw-away schema, MyISAM and InnoDB server defaults; `norsu_clinic` itself was left untouched at the owner's request, 2026-10-15): 22 migrations (the 20 earlier ones plus the 2 of Phase 4), 64 InnoDB tables and 2 views, 47 of 47 foreign keys after the orphan recovery, a second `migrate` does nothing, `db:integrity --compare-fresh` 0 errors and the 3 existing warnings. The content changes were `roles`, `permissions`, `sale_medicines` (the Phase 1 zero date) and `sliders` (the default text), plus the `clinic_name` setting and the college row: afterwards `clinic_name` is "Medical University Clinic", college #10 is "College of Law (COL)", no "(CL)" is left anywhere and the only "norsu" texts left are the e-mail address, the logo / favicon paths and two user e-mails. **Live browser check** on that scratch copy of the clinic data (own servers on 127.0.0.1; admin in the browser pane, doctor and nurse over HTTP): the page titles and Settings › General show "Medical University Clinic" (the guest pages hold no old-name text); the Accomplishment Report by college has the **COL** and **Guest** columns (Guest at 0); choosing "Yearly 2026" gives Q1-Q4 and YEAR TOTAL on both tables, hides the date fields and the period buttons, and the PDF / Excel / CSV links carry the year; Medicine Inventory › "Yearly 2026" lists 55 medicines (left 0, additional 37,957, year end 37,369) with the stock-list export, search and status filter gone, and Reset returns to the current stock list; the PDF (text read back in content order and in table mode), the Excel file (62 non-empty rows, no formula cell) and the CSV (56 lines) match the screen; a junk year falls back to this year, an unknown format answers 404, a guest is sent to the login page; the doctor and the nurse open both yearly reports and their downloads through their own role routes; no console error and only same-origin requests. An **independent oracle** on the same data: the yearly Accomplishment Report equals the by-college report for the same dates (8 consultations in quarters 2 / 1 / 5, 104 row totals, services 5), the yearly inventory's additional, used and disposed equal the ledger sums for all 55 medicines, every medicine adds up, and the year-end figure equals the units on the shelf for every medicine. Observed, not changed: the yearly inventory PDF takes about 10 s for these 55 medicines (about 38 s for 220, linear: DomPDF), well inside the 120 s limit of the clinic PC. **The working database `norsu_clinic` was deliberately left alone** (owner, 2026-10-15): the two Phase 4 data migrations are not applied there yet, so it still says "Norsu Clinic" and "College of Law (CL)" until `php artisan migrate` is run. No new Artisan commands: [commands.md](commands.md) was checked and is unchanged. Next: Phase 5, when the owner says go.
 
+### Phase 5 — progress 2026-10-15: cross-cutting Pass A sweeps (checkpoint A)
+
+Before the module-by-module passes, the Pass A items that can be checked across **all** modules at once were done test-first
+(33 new tests, 6 new files under `tests/Feature/Regression/`; **30 mutations of production code: 29 fail a test, 1 is equivalent**
+(ordering by `doctors.id` resolves rappasoft's own alias, so removing that tie-breaker line changes nothing: documented, not chased)).
+
+| Pass A item | What was found | What was done (test) |
+|---|---|---|
+| 3 validation matches columns | no `max` on most text fields; a long value failed the INSERT in strict mode with a database error page (patients, users / staff / doctors, categories, generics, countries, states, cities, barangays, specializations, roles, sliders, qualifications, medicines, stock-in, consultation and lab-request text fields, `medicine_bills.note`) | every rule now fits its column (`FormRulesFitColumnsTest` reads the rules and the real columns and compares them; `ConsultationFieldLimitsTest`, `LabRequestFieldLimitsTest`); the dispense-record note column is widened by the **additive migration `2026_10_15_100000_widen_medicine_bill_note`** (not applied to `norsu_clinic`: the owner asked to leave it alone) |
+| 2 all-or-nothing saves | role create, the settings save and the Front CMS save wrote several rows without a transaction | wrapped in transactions; the CMS save also clears the settings cache (`SavesAreAllOrNothingTest`, 4) |
+| 4 sort / paging | a list sorted by a value that can repeat (date, status, name) could show a row twice or never between pages | one trait `SortsByUniqueKey` adds the model key as the last sort key to every rappasoft list (the dispense list has its own unique key); `ListPagingTest` (6) pages every list and compares the union with the full set |
+| 5 PDFs / exports | the dispense-record PDF crashed on a missing note | `?? ''`; `PdfNastyDataTest` (5): quotes, `<`, `&`, emoji / accents, 150-character names, missing data in the prescription, lab, certificate, consultation and dispense outputs |
+| 6 stale caches | the dispense-form medicine list, the category list, the doctor lists, the expiring-stock badge and the PDF header settings were cached 5-60 minutes and not dropped when the data changed | model `booted()` hooks and `SettingsService::clearCache()` now drop them (`StaleCachesTest`, 5) |
+| 6 N+1 | the doctor, staff and medicine lists ran one query per row | eager loads (`user`, `roles`, `media`, `batches`); `ListQueryCountTest` (6) shows the query count does not grow from 3 to 10 rows |
+| 7 no internet | not re-audited in this sweep; the link crawl (unchanged) still reports no third-party link |
+
+**Test harness:** `set_time_limit(120)` inside `DocumentIssuanceController::exportPdf()` applies to the whole phpunit process, so
+once a test exported a consultation PDF every later test hit the 120-second limit; `tests/TestCase.php` now resets the limit after
+every test. (Web requests are not affected: the limit ends with the request.)
+
+**Scans kept for 5.19 / 5.21 (not changed yet):** `app/helpers.php` has 49 functions; 8 are never used outside the file
+(`filterLangChange`, `getBadgeStatusColor`, `getCurrentLanguageName`, `getStatusBadgeColor`, `getStatusClassName`,
+`getStatusColor`, `getUserLanguages`, `getYearDate`) and 10 are used once. `.env.example` has 37 keys; `SESSION_PATH` and
+`QUERY_DETECTOR_ENABLED` are read by no `env()` call; no `env()` call exists outside `config/`.
+
+**Leads for the module passes:** the Lab request list builder pre-orders, so its header sorts may not apply (5.8);
+`UpdateGenericRequest` has an unrelated `generics.email` unique rule (5.6); `Cache::put('settings')` is dead (5.16);
+authorisation at record level and the live passes with each role (Pass B) are still to do in every row.
+
+**Verified:** `LINK_CRAWL=1` full suite **540 tests, 4,857 assertions, all passing** (13 min 35 sec); the link crawl inside it:
+15 actors, 1,613 requests, no broken link, crash or lazy-table failure. The working database `norsu_clinic` was not touched.
+
 ### Phase 5 — Every module, two passes each
 
 **Pass A (code)** for each module:
@@ -450,29 +482,61 @@ Every defect gets a failing test, then the fix, then both passes again.
 | # | Module / area | Pass A | Pass B | Re-check (Phase 9) | Findings |
 |---|---|---|---|---|---|
 | 5.1 | Dashboard (admin / staff / doctor) | [ ] | [ ] | [ ] | |
-| 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [ ] | [ ] | [ ] | Phase 2 re-check: the history page's dispensing card now lists what the Dispense History tab lists |
+| 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [ ] | [ ] | [ ] | Phase 2 re-check: the history page's dispensing card now lists what the Dispense History tab lists. Sweep A (10-15): field limits fit the columns, unique last sort key |
 | 5.3 | Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) | [ ] | [ ] | [ ] | |
-| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [ ] | [ ] | [ ] | |
+| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [ ] | [ ] | [ ] | Sweep A (10-15): text limits fit the columns, list sort key, PDF with awkward data. Includes 5.23: "Others" lines record the typed name (services get the box) |
 | 5.5 | Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) | [ ] | [ ] | [ ] | |
-| 5.6 | Inventory (medicines, categories, generics, stock-in, batches, expiry, low-stock, reconcile) | [ ] | [ ] | [ ] | |
-| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [ ] | [ ] | [ ] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by" |
-| 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [ ] | [ ] | [ ] | |
+| 5.6 | Inventory (medicines, categories, generics, stock-in, batches, expiry, low-stock, reconcile) | [ ] | [ ] | [ ] | Sweep A (10-15): field limits, stale pick-lists and expiry badge cleared on change, medicine list N+1 removed |
+| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [ ] | [ ] | [ ] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by". Sweep A (10-15): note column widened (migration), PDF without a note no longer crashes |
+| 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [ ] | [ ] | [ ] | Sweep A (10-15): text limits, list sort key. Open: the list builder pre-orders, check the header sorts |
 | 5.9 | Certificates (medical certificate, excuse slip, PDF, edit) | [ ] | [ ] | [ ] | |
-| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [ ] | [ ] | [ ] | |
+| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [ ] | [ ] | [ ] | Includes 5.23: the typed "Others" names appear as sub-rows with their own counts |
 | 5.11 | Notifications & Alerts (low stock, expiry, system notifications) | [ ] | [ ] | [ ] | |
 | 5.12 | Settings › Staff (no designation / station / shift) | [ ] | [ ] | [ ] | |
 | 5.13 | Settings › Doctors | [ ] | [ ] | [ ] | |
-| 5.14 | Settings › Manage User roles | [ ] | [ ] | [ ] | |
+| 5.14 | Settings › Manage User roles | [ ] | [ ] | [ ] | Sweep A (10-15): role create is a transaction, name limits |
 | 5.15 | Settings › Specializations | [ ] | [ ] | [ ] | |
-| 5.16 | Settings › System settings (General incl. clinic name, Report lists, Deleted records) | [ ] | [ ] | [ ] | |
-| 5.17 | Settings › Front CMS, Backup data, Locations (countries / states / cities / barangays) | [ ] | [ ] | [ ] | |
+| 5.16 | Settings › System settings (General incl. clinic name, Report lists, Deleted records) | [ ] | [ ] | [ ] | Sweep A (10-15): settings save is a transaction, PDF-header settings cache cleared on save |
+| 5.17 | Settings › Front CMS, Backup data, Locations (countries / states / cities / barangays) | [ ] | [ ] | [ ] | Sweep A (10-15): CMS save is a transaction and clears the settings cache, location name limits |
 | 5.18 | Auth, profile, default-password gate, impersonation, failed sign-ins | [ ] | [ ] | [ ] | |
-| 5.19 | `app/helpers.php` (every function: used? duplicated? tested?) | [ ] | — | [ ] | |
+| 5.19 | `app/helpers.php` (every function: used? duplicated? tested?) | [ ] | — | [ ] | Sweep A (10-15): 8 helpers unused outside the file (list above), 10 used once; nothing removed yet |
 | 5.20 | `routes/*` (middleware stack per group, dead routes, duplicates) | [ ] | — | [ ] | |
-| 5.21 | `config/*`, `.env` keys actually read, `server.php` (`BuiltInServerRouterTest`), backup command on MySQL 9.7 | [ ] | — | [ ] | |
+| 5.21 | `config/*`, `.env` keys actually read, `server.php` (`BuiltInServerRouterTest`), backup command on MySQL 9.7 | [ ] | — | [ ] | Sweep A (10-15): `.env.example` keys checked (2 never read), no `env()` outside `config/` |
 
 - [ ] 5.22 The seven pages whose JavaScript never loads (`@section('scripts')`): Add-to-queue first, then medicines create / edit,
   lab request edit, generics create / edit / index, one page at a time with a browser check.
+
+- [ ] 5.23 **"Others" records what was actually done / found** (owner request 2026-10-15, with screenshots of Create Consultation
+  Form and the Accomplishment Report). Today an "Others" line only adds to a count. The owner wants the written name kept and shown.
+  *What exists now (checked in the code):* on the consultation form an illness "Others" line already has a "Specify … illness" box
+  (`illness_other[<id>]`, stored in `consultation_illnesses.other_text`, 150 characters); a **Services rendered** "Others" line
+  (`service_types.is_other`) has **no box** and `consultation_services` has no text column; the Accomplishment Report
+  (`AccomplishmentReportBuilder`, rows carry `is_other`) prints one "Others" row per system / category with only the count, so the
+  typed name is lost in the report.
+  *To do (test-first, one change at a time):*
+  1. **Services "Others" gets a "Specify other service" box** like the illness one: only shown while the line is ticked, required
+     when ticked (a ticked "Others" with no text is refused with a clear message), max 150 characters (the column width: the
+     strict-mode rule of Phase 5 Pass A item 3), trimmed, saved all-or-nothing with the rest of the consultation, filled again on
+     edit, and cleared when the line is un-ticked. Migration: `consultation_services.other_text` `string(150)` nullable (new
+     migration file, additive; existing rows stay NULL = "no name given"). Same on the consultation **edit** form, the doctor and
+     the nurse panels, and the PDF / view page of the consultation (they already print the illness names, add the service text).
+  2. **Illness "Others"**: keep the existing box; make it required when ticked too (same rule and message style), so an "Others" count
+     in the report always has a name behind it. Rows saved before this rule with an empty name are reported under "(no name given)".
+  3. **Accomplishment Report** (monthly and yearly, screen = PDF = Excel = CSV, the one builder): directly under each **"Others" row**
+     list the typed names as indented **sub-rows** (for example "Others" → "Dengue fever", "Conjunctivitis"), each with its **own count
+     per college column and its own total**; the "Others" row itself keeps the total of all its sub-rows, so the system / category
+     totals and the grand totals do not change. Rules: names are grouped case-, spacing- and punctuation-insensitively (so "dengue",
+     "Dengue " and "DENGUE." are one line, shown as the most common spelling); sorted by count (highest first) then name; a name is
+     counted once per consultation; the Guest column and the yearly Q1-Q4 view behave the same way; the report's existing filters
+     (college, period, consult mode, illness / service picks) apply to the sub-rows too; an "Others" with no names shows no sub-rows.
+     Special characters, formula-looking names (`=SUM(...)`) and very long text must survive in the PDF, Excel (plain text) and CSV.
+  4. **Tests:** consultation create / edit saves and refuses (empty, over 150, un-ticked clears); the report's sub-rows equal an
+     independent query of the stored names for screen, PDF, Excel and CSV; the sum of sub-rows equals the "Others" count; totals
+     unchanged; yearly and monthly; both roles; mutation-check each rule. **Live check** on a scratch copy of the clinic data with the
+     browser (record a consultation with two different "Others" names in each list, open the report, download the three formats).
+  *Proposed by Claude, to confirm with the owner before coding:* "required when ticked" (items 1-2) and the spelling-insensitive grouping (item 3) are my suggestions, not the owner's words; the owner asked only that the Others text be fillable, recorded, and listed as a sub-name under "Others" in the Accomplishment Report. The report shows names only, never patient details.
+  *Do when:* after Phase 5 checkpoint A is pushed; it touches modules 5.4 (Consultations) and 5.10 (Report Generation), so do it
+  inside those two module passes (or earlier if the owner asks) and record it in their Findings column.
 
 ### Phase 6 — Deep DRY refactor + dead-code removal (behaviour unchanged)
 Each step is guarded by: full suite + `route:list --json` diff (identical unless a change is listed) + link crawl + matrix.

@@ -49,7 +49,7 @@ class Generic extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:generics,name',
+        'name' => 'required|string|max:160|unique:generics,name',
     ];
 
     public function medicines(): HasMany

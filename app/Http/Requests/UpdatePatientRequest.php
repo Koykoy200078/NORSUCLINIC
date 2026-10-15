@@ -39,7 +39,7 @@ class UpdatePatientRequest extends FormRequest
         $rules = Patient::$editRules;
 
         if ($patient instanceof Patient) {
-            $rules['email'] = ['nullable', 'email:filter', $this->uniqueAmongActiveUsers('email', (int) $patient->user_id)];
+            $rules['email'] = ['nullable', 'email:filter', 'max:191', $this->uniqueAmongActiveUsers('email', (int) $patient->user_id)];
             $rules['university_id_number'] = ['nullable', 'string', 'max:100', $this->uniqueAmongActiveUsers('university_id_number', (int) $patient->user_id)];
         } else {
             // Fallback - should not reach here if route model binding works
@@ -47,7 +47,7 @@ class UpdatePatientRequest extends FormRequest
                 'route_name' => $this->route()->getName(),
                 'parameters' => $this->route()->parameters(),
             ]);
-            $rules['email'] = 'nullable|email:filter';
+            $rules['email'] = 'nullable|email:filter|max:191';
             $rules['university_id_number'] = 'nullable|string|max:100';
         }
 
@@ -56,7 +56,7 @@ class UpdatePatientRequest extends FormRequest
 
         $rules['patient_type_id'] = 'required|exists:patient_types,id';
         $rules['nationality_citizenship'] = 'required|string|max:120';
-        $rules['immunization_record'] = 'required|string';
+        $rules['immunization_record'] = 'required|string|max:10000';
         $rules['postal_code'] = 'nullable|numeric';
         $rules['profile'] = 'nullable|mimes:jpeg,jpg,png|max:2000';
 

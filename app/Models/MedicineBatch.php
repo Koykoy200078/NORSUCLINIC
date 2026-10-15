@@ -10,6 +10,14 @@ class MedicineBatch extends Model
 {
     protected $table = 'medicine_batches';
 
+    /** The menu badge counts the medicines that expire within a month and is cached for an hour: any change of a batch (stock in, dispensing, disposal) must drop it. */
+    protected static function booted(): void
+    {
+        $flush = fn () => \Illuminate\Support\Facades\Cache::forget('expiring_medicines_count');
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
     protected $fillable = [
         'medicine_id',
         'batch_number',

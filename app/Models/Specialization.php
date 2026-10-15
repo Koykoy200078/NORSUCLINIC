@@ -51,7 +51,7 @@ class Specialization extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:specializations,name',
+        'name' => 'required|string|max:191|unique:specializations,name',
     ];
 
     public function doctors(): BelongsToMany

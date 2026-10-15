@@ -33,9 +33,9 @@ class UpdateStaffRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => ['required', 'email:filter', $this->uniqueAmongActiveUsers('email', (int) $this->route('staff')->id)],
+            'first_name' => 'required|string|max:191',
+            'last_name' => 'required|string|max:191',
+            'email' => ['required', 'email:filter', 'max:191', $this->uniqueAmongActiveUsers('email', (int) $this->route('staff')->id)],
             'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id', (int) $this->route('staff')->id)],
             'country_code' => ['nullable', 'in:'.PhilippinePhone::COUNTRY_CODE],
             'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact', (int) $this->route('staff')->id)],

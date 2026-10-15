@@ -50,6 +50,14 @@ class Medicine extends Model
 {
     public $table = 'medicines';
 
+    /** The dispense form lists the medicines from a 10-minute cache: a medicine added or renamed must be in it at once. */
+    protected static function booted(): void
+    {
+        $flush = fn () => \Illuminate\Support\Facades\Cache::forget('medicines_list');
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
     public $fillable = [
         'category_id',
         'generic_id',
@@ -106,10 +114,10 @@ class Medicine extends Model
      * @var array
      */
     public static $rules = [
-        'generic_name' => 'required|string|max:255',
-        'brand_name' => 'nullable|string|max:255',
-        'category' => 'required|string|max:255',
-        'category_name' => 'nullable|string|max:255',
+        'generic_name' => 'required|string|max:191',
+        'brand_name' => 'nullable|string|max:191',
+        'category' => 'required|string|max:191',
+        'category_name' => 'nullable|string|max:191',
         'dosage' => 'required|string|max:100',
         'uom' => 'required|string|max:50',
         'sku' => 'nullable|string|max:100|unique:medicines,sku',
@@ -222,6 +230,17 @@ class Medicine extends Model
      */
     public function getEarliestExpiryDateAttribute()
     {
+        // The medicine list loads the in-stock batches of every row in one query: use them instead of asking again per row.
+        if ($this->relationLoaded('batches')) {
+            $today = now()->toDateString();
+
+            return $this->batches
+                ->filter(fn ($batch) => (int) $batch->quantity > 0 && $batch->expiration_date !== null)
+                ->map(fn ($batch) => \Illuminate\Support\Carbon::parse($batch->expiration_date)->toDateString())
+                ->filter(fn ($date) => $date >= $today)
+                ->min();
+        }
+
         return MedicineBatch::where('medicine_id', $this->id)
             ->where('quantity', '>', 0)
             ->whereNotNull('expiration_date')

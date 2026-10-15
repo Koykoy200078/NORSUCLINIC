@@ -34,6 +34,14 @@ class Category extends Model
 
     public $table = 'categories';
 
+    /** The dispense form lists the active categories from a 10-minute cache: a new or switched-off category must show at once. */
+    protected static function booted(): void
+    {
+        $flush = fn () => \Illuminate\Support\Facades\Cache::forget('active_medicine_categories');
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
     public $fillable = [
         'name', 'is_active',
     ];
@@ -67,7 +75,7 @@ class Category extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:categories,name',
+        'name' => 'required|string|max:160|unique:categories,name',
     ];
 
     public function medicines(): HasMany

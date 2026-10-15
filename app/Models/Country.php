@@ -303,6 +303,6 @@ class Country extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|unique:countries,name',
+        'name' => 'required|string|max:191|unique:countries,name',
     ];
 }

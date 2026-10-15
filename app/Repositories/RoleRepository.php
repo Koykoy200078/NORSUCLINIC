@@ -56,16 +56,19 @@ class RoleRepository extends BaseRepository
         // Allow-list the columns — Spatie's base Role has $guarded=[] so passing the raw
         // request would let a caller inject is_default=1 (making the role undeletable) or a
         // bogus guard_name. CRUD-MA.
-        /** @var Role $role */
-        $role = Role::create([
-            'name' => $input['name'],
-            'display_name' => $input['display_name'] ?? null,
-            'guard_name' => 'web',
-        ]);
+        // The role and its permissions are saved together: a role without its permissions would lock its users out.
+        return DB::transaction(function () use ($input): Role {
+            /** @var Role $role */
+            $role = Role::create([
+                'name' => $input['name'],
+                'display_name' => $input['display_name'] ?? null,
+                'guard_name' => 'web',
+            ]);
 
-        $role->syncPermissions($this->filteredPermissions($input, $role));
+            $role->syncPermissions($this->filteredPermissions($input, $role));
 
-        return $role;
+            return $role;
+        });
     }
 
     public function update($input, $id): Role

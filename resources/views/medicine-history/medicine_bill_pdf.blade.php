@@ -23,8 +23,8 @@
                 <div class="logo">
                     <img width="100px" src="{{ asset('assets/image/norsu_logo.png') }}" alt="">
                 </div>
-                <div class="hospital-name">{{ $data['clinic_name'] }}</div>
-                <div class="hospital-name font-color-gray">{{ $data['address_one'] }}</div>
+                <div class="hospital-name">{{ $data['clinic_name'] ?? '' }}</div>
+                <div class="hospital-name font-color-gray">{{ $data['address_one'] ?? '' }}</div>
             </td>
         </tr>
         <tr>

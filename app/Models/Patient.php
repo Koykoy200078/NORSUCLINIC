@@ -157,31 +157,31 @@ class Patient extends Model implements HasMedia
      * @var array
      */
     public static $rules = [
-        'first_name' => 'required',
-        'last_name' => 'required',
-        'email' => 'nullable|email|unique:users,email',
+        'first_name' => 'required|string|max:191',
+        'last_name' => 'required|string|max:191',
+        'email' => 'nullable|email|max:191|unique:users,email',
         'university_id_number' => 'nullable|string|max:100|unique:users,university_id_number',
         'contact' => 'nullable',
         'nationality_citizenship' => 'nullable|string|max:120',
         'password' => 'nullable|same:password_confirmation|min:6',
         'postal_code' => 'nullable|numeric',
         'patient_type_id' => 'nullable|exists:patient_types,id',
-        'immunization_record' => 'nullable|string',
+        'immunization_record' => 'nullable|string|max:10000',
         'insurance_provider_id' => 'nullable|exists:insurance_providers,id',
         'insurance_policy_number' => 'nullable|string|max:120',
         'primary_care_physician_name' => 'nullable|string|max:191',
         'primary_care_physician_contact' => 'nullable|string|max:100',
         'primary_care_physician_email' => 'nullable|email|max:191',
         'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
-        'emergency_contact_name' => 'nullable',
+        'emergency_contact_name' => 'nullable|string|max:191',
         'emergency_contact_no' => 'nullable',
-        'emergency_relationship' => 'nullable|string',
-        'allergies' => 'nullable|string',
-        'comorbidities' => 'nullable',
+        'emergency_relationship' => 'nullable|string|max:191',
+        'allergies' => 'nullable|string|max:10000',
+        'comorbidities' => 'nullable|max:10000',
         'comorbidities.*' => 'nullable|string|max:191',
-        'admissions_surgeries' => 'nullable|string',
-        'maintenance' => 'nullable|string',
-        'covid_vaccination' => 'nullable|string',
+        'admissions_surgeries' => 'nullable|string|max:10000',
+        'maintenance' => 'nullable|string|max:10000',
+        'covid_vaccination' => 'nullable|string|max:191',
     ];
 
     /**
@@ -190,27 +190,27 @@ class Patient extends Model implements HasMedia
      * @var array
      */
     public static $editRules = [
-        'first_name' => 'required',
-        'last_name' => 'required',
+        'first_name' => 'required|string|max:191',
+        'last_name' => 'required|string|max:191',
         'university_id_number' => 'nullable|string|max:100',
         'nationality_citizenship' => 'nullable|string|max:120',
         'patient_type_id' => 'nullable|exists:patient_types,id',
-        'immunization_record' => 'nullable|string',
+        'immunization_record' => 'nullable|string|max:10000',
         'insurance_provider_id' => 'nullable|exists:insurance_providers,id',
         'insurance_policy_number' => 'nullable|string|max:120',
         'primary_care_physician_name' => 'nullable|string|max:191',
         'primary_care_physician_contact' => 'nullable|string|max:100',
         'primary_care_physician_email' => 'nullable|email|max:191',
         'profile' => 'nullable|mimes:jpeg,jpg,png',
-        'emergency_contact_name' => 'nullable',
+        'emergency_contact_name' => 'nullable|string|max:191',
         'emergency_contact_no' => 'nullable',
-        'emergency_relationship' => 'nullable|string',
-        'allergies' => 'nullable|string',
-        'comorbidities' => 'nullable',
+        'emergency_relationship' => 'nullable|string|max:191',
+        'allergies' => 'nullable|string|max:10000',
+        'comorbidities' => 'nullable|max:10000',
         'comorbidities.*' => 'nullable|string|max:191',
-        'admissions_surgeries' => 'nullable|string',
-        'maintenance' => 'nullable|string',
-        'covid_vaccination' => 'nullable|string',
+        'admissions_surgeries' => 'nullable|string|max:10000',
+        'maintenance' => 'nullable|string|max:10000',
+        'covid_vaccination' => 'nullable|string|max:191',
         'postal_code' => 'nullable|numeric',
     ];
 
@@ -226,6 +226,7 @@ class Patient extends Model implements HasMedia
         'active_patients_medicine_bill',
         'active_doctors_prescription',
         'active_doctors_medicine_bill',
+        'doctors_list',
     ];
 
     public static function flushLookupCaches(): void

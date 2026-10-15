@@ -33,13 +33,13 @@ class CreateUserRequest extends FormRequest
     {
         $rules = User::$rules;
 
-        $rules['email'] = ['nullable', 'email', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
+        $rules['email'] = ['nullable', 'email', 'max:191', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
         $rules['contact'] = ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')];
         $rules['employee_id'] = ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')];
         $rules['prc_license_number'] = 'required|string|max:100|unique:doctors,prc_license_number';
         $rules['ptr_number'] = 'required|string|max:100';
         $rules['s2_license_number'] = 'nullable|string|max:100';
-        $rules['consultation_hours'] = 'required|string';
+        $rules['consultation_hours'] = 'required|string|max:10000';
 
         return $rules;
     }

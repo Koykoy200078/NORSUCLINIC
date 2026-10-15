@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Livewire\Concerns\SearchesByWords;
+use App\Livewire\Concerns\SortsByUniqueKey;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Exceptions\DataTableConfigurationException;
 use Livewire\Attributes\Lazy;
@@ -14,6 +15,7 @@ use Livewire\Attributes\Lazy;
 class LivewireTableComponent extends DataTableComponent
 {
     use SearchesByWords;
+    use SortsByUniqueKey;
 
     protected bool $columnSelectStatus = false;
 

@@ -19,7 +19,7 @@ class UpdateSpecializationRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules['name'] = 'required|unique:specializations,name,'.$this->route('specialization')->id;
+        $rules['name'] = 'required|string|max:191|unique:specializations,name,'.$this->route('specialization')->id;
 
         return $rules;
     }

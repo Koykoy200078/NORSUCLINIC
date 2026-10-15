@@ -31,9 +31,9 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => ['required', 'email', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email', (int) $this->route('doctor')->user_id)],
+            'first_name' => 'required|string|max:191',
+            'last_name' => 'required|string|max:191',
+            'email' => ['required', 'email', 'max:191', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email', (int) $this->route('doctor')->user_id)],
             'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id', (int) $this->route('doctor')->user_id)],
             'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact', (int) $this->route('doctor')->user_id)],
             'dob' => 'nullable|date|before_or_equal:today',
@@ -41,11 +41,11 @@ class UpdateUserRequest extends FormRequest
             'prc_license_number' => 'required|string|max:100|unique:doctors,prc_license_number,' . $this->route('doctor')->id,
             'ptr_number' => 'required|string|max:100',
             's2_license_number' => 'nullable|string|max:100',
-            'consultation_hours' => 'required|string',
+            'consultation_hours' => 'required|string|max:10000',
             'specializations' => 'required',
             'gender' => 'required',
             'status' => 'nullable',
-            'postal_code' => 'nullable',
+            'postal_code' => 'nullable|string|max:20',
             'profile' => 'mimes:jpeg,jpg,png|max:2000',
         ];
     }

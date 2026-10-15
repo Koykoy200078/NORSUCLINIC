@@ -47,6 +47,14 @@ class Doctor extends Model
 
     protected $table = 'doctors';
 
+    /** The doctor pick-lists of the forms and dashboards are cached for 10 minutes: a doctor added or changed must show at once. */
+    protected static function booted(): void
+    {
+        $flush = fn () => \App\Models\Patient::flushLookupCaches();
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
     /**
      * @var string[]
      */

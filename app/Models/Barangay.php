@@ -53,7 +53,7 @@ class Barangay extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|max:191',
         'city_id' => 'required|exists:cities,id',
     ];
 

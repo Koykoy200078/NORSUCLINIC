@@ -75,9 +75,10 @@ class StaffTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return User::with(['roles'])
+        // `media` and `gender` feed the profile picture of every row: loaded once for the page, not once per row.
+        return User::with(['roles', 'media'])
             ->where('type', User::STAFF)
             ->where('id', '!=', getLogInUserId())
-            ->select(['id', 'first_name', 'last_name', 'email', 'email_verified_at', 'type']);
+            ->select(['id', 'first_name', 'last_name', 'email', 'email_verified_at', 'type', 'gender']);
     }
 }
