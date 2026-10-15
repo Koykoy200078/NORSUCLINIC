@@ -218,6 +218,8 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::get('/export', [\App\Http\Controllers\ActivityLogController::class, 'export'])->name('activity-logs.export');
         Route::get('/accomplishment/{format}', [\App\Http\Controllers\ActivityLogController::class, 'accomplishment'])
             ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('activity-logs.accomplishment');
+        Route::get('/inventory-yearly/{format}', [\App\Http\Controllers\ActivityLogController::class, 'inventoryYearly'])
+            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('activity-logs.inventory-yearly');
         Route::get('/{id}', [\App\Http\Controllers\ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 

@@ -3,7 +3,7 @@
 <table>
     <tr><td colspan="{{ $width }}"><strong>{{ getSettingValue('clinic_name') ?: 'Clinic' }}</strong></td></tr>
     <tr><td colspan="{{ $width }}"><strong>ACCOMPLISHMENT REPORT</strong></td></tr>
-    <tr><td colspan="{{ $width }}">{{ $report['period'] }}, as per college/department</td></tr>
+    <tr><td colspan="{{ $width }}">{{ $report['period'] }}, {{ $report['basis'] ?? 'as per college/department' }}</td></tr>
     @if(! empty($report['filter_summary']))
         <tr><td colspan="{{ $width }}">{{ implode(' | ', $report['filter_summary']) }}</td></tr>
     @endif

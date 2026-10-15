@@ -18,7 +18,7 @@
             @foreach($columns as $column)
                 <th class="num" title="{{ $column['name'] }}">{{ $column['label'] }}</th>
             @endforeach
-            <th class="num">TOTAL</th>
+            <th class="num">{{ $report['total_label'] ?? 'TOTAL' }}</th>
         </tr>
     </thead>
     <tbody>
@@ -65,7 +65,7 @@
             @foreach($columns as $column)
                 <th class="num" title="{{ $column['name'] }}">{{ $column['label'] }}</th>
             @endforeach
-            <th class="num">TOTAL</th>
+            <th class="num">{{ $report['total_label'] ?? 'TOTAL' }}</th>
         </tr>
     </thead>
     <tbody>

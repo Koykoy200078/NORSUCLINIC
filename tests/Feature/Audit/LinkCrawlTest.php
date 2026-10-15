@@ -92,6 +92,9 @@ class LinkCrawlTest extends TestCase
             foreach ($result['lazy_failed'] as $url) {
                 $problems[] = "[{$label}] a lazy table failed to load on {$url}";
             }
+            foreach ($result['old_name'] as $url) {
+                $problems[] = "[{$label}] {$url} still shows the old clinic name \"NORSU Clinic\"";
+            }
             if ($result['capped']) {
                 $problems[] = "[{$label}] stopped at the " . self::PAGE_CAP . '-page safety cap: raise PAGE_CAP or the audit is incomplete';
             }
@@ -190,7 +193,7 @@ class LinkCrawlTest extends TestCase
             $queue[] = [$seed, 0, '(start page)'];
         }
 
-        $result = ['pages' => 0, 'broken' => [], 'crashed' => [], 'external' => [], 'lazy_failed' => [], 'capped' => false];
+        $result = ['pages' => 0, 'broken' => [], 'crashed' => [], 'external' => [], 'lazy_failed' => [], 'old_name' => [], 'capped' => false];
 
         while ($queue) {
             if (count($seen) >= self::PAGE_CAP) {
@@ -217,6 +220,10 @@ class LinkCrawlTest extends TestCase
             $result['pages']++;
             if (str_contains($r['body'], 'LAZY-FAILED')) {
                 $result['lazy_failed'][] = $url;
+            }
+            // Plan Phase 4.1: the clinic is "Medical University Clinic"; no page may still show the old display name.
+            if ($r['body'] !== '' && preg_match('/norsu[ \t]+clinic/i', $r['body'])) {
+                $result['old_name'][] = $url;
             }
 
             if ($r['status'] >= 500) {

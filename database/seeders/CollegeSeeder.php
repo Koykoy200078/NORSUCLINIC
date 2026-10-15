@@ -42,7 +42,7 @@ class CollegeSeeder extends Seeder
                 'college_name' => 'College of Teacher Education (CTED)',
             ],
             [
-                'college_name' => 'College of Law (CL)',
+                'college_name' => 'College of Law (COL)',
             ],
             [
                 'college_name' => 'Graduate School (GS)',

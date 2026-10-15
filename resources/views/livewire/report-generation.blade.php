@@ -7,7 +7,7 @@
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex align-items-center">
-                        @if($tab !== 'global_search' && $tab !== 'accomplishment')
+                        @if($tab !== 'global_search' && $tab !== 'accomplishment' && ! $yearlyInventory)
                         <a href="{{ 
                             isRole('clinic_admin') ? route('activity-logs.export', $exportQuery) : 
                             (isRole('staff') ? route('staff.activity-logs.export', $exportQuery) : 
@@ -78,7 +78,31 @@
                 <!-- Filter Form -->
                 <div class="mb-8 p-5 bg-light rounded border">
                     <div class="row g-3">
-                        @if($tab !== 'accomplishment')
+                        @if($tab === 'accomplishment')
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Report</label>
+                            <select wire:model.live="year" class="form-select form-select-sm">
+                                <option value="">By college, for the dates below</option>
+                                @foreach($choices['years'] as $reportYear)
+                                <option value="{{ $reportYear }}">Yearly {{ $reportYear }}: Q1, Q2, Q3, Q4 and year total</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
+                        @if($tab === 'inventory')
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Report</label>
+                            <select wire:model.live="inventory_year" class="form-select form-select-sm">
+                                <option value="">Current stock</option>
+                                @foreach($inventoryYears as $reportYear)
+                                <option value="{{ $reportYear }}">Yearly {{ $reportYear }}: left, added and remaining per quarter</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
+                        @if($tab !== 'accomplishment' && ! $yearlyInventory)
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Search Keywords</label>
                             <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm"
@@ -109,7 +133,7 @@
                         </div>
                         @endif
 
-                        @if($tab === 'inventory')
+                        @if($tab === 'inventory' && ! $yearlyInventory)
                         <div class="col-md-2">
                             <label class="form-label fw-bold">Stock Status</label>
                             <select wire:model.live="status" class="form-select form-select-sm">
@@ -119,7 +143,13 @@
                         </div>
                         @endif
 
-                        @if($tab !== 'inventory' && $tab !== 'global_search')
+                        @if($yearlyAccomplishment)
+                        <div class="col-md-4 d-flex align-items-end">
+                            <span class="text-muted fs-7">The yearly report covers the whole year (January 1 to December 31); the dates are not used.</span>
+                        </div>
+                        @endif
+
+                        @if($tab !== 'inventory' && $tab !== 'global_search' && ! $yearlyAccomplishment)
                         <div class="col-md-2">
                             <label class="form-label fw-bold">Date From</label>
                             <input type="date" wire:model.live="date_from" class="form-control form-control-sm">
@@ -153,12 +183,14 @@
                         @endphp
                         <div class="col-12" x-data="{ open: false }">
                             <div class="d-flex flex-wrap gap-2 align-items-center">
+                                @unless($yearlyAccomplishment)
                                 <span class="fw-bold me-1">Period:</span>
                                 <button type="button" wire:click="setPeriod('this_month')" class="btn btn-sm btn-light">This month</button>
                                 <button type="button" wire:click="setPeriod('last_month')" class="btn btn-sm btn-light">Last month</button>
                                 <button type="button" wire:click="setPeriod('this_year')" class="btn btn-sm btn-light">This year</button>
                                 <button type="button" wire:click="setPeriod('last_year')" class="btn btn-sm btn-light">Last year</button>
                                 <input type="month" wire:model.live="month" class="form-control form-control-sm w-auto" title="Pick a month" aria-label="Pick a month">
+                                @endunless
                                 <button type="button" class="btn btn-sm btn-light-primary ms-md-auto" @click="open = !open">
                                     <i class="fas fa-filter"></i> Filters
                                     @if($activeFilters > 0)<span class="badge bg-primary ms-1">{{ $activeFilters }}</span>@endif

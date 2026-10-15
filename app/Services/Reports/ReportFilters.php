@@ -74,6 +74,8 @@ final class ReportFilters
         public string $pregnancy = 'all',
         public string $chronic = 'all',
         public ?string $chronicText = null,
+        /** The yearly Accomplishment Report (Q1-Q4 and the year total) for this year; null = the by-college report. */
+        public ?int $year = null,
     ) {
     }
 
@@ -119,6 +121,7 @@ final class ReportFilters
             pregnancy: self::choice($input['pregnancy'] ?? null, self::PREGNANCY),
             chronic: self::choice($input['chronic'] ?? null, self::CHRONIC),
             chronicText: self::text($input['chronic_text'] ?? null),
+            year: self::year($input['year'] ?? null),
         );
     }
 
@@ -141,6 +144,7 @@ final class ReportFilters
             'user_type' => $this->userType !== 'all' ? $this->userType : null,
             'action' => $this->action !== 'all' ? $this->action : null,
             'status' => $this->status !== 'all' ? $this->status : null,
+            'year' => $this->year,
         ];
 
         foreach (self::ID_FILTERS as $key => $property) {
@@ -182,6 +186,18 @@ final class ReportFilters
         $value = trim((string) $value);
 
         return $value === '' ? null : $value;
+    }
+
+    /** A calendar year: exactly four digits, 1990 to 2100; anything else is ignored. */
+    public static function year(mixed $value): ?int
+    {
+        $value = self::text($value);
+
+        if ($value === null || ! preg_match('/^\d{4}$/', $value)) {
+            return null;
+        }
+
+        return (int) $value >= 1990 && (int) $value <= 2100 ? (int) $value : null;
     }
 
     /** A record id: only a plain positive whole number is accepted. */

@@ -30,7 +30,7 @@ class PatientRegistrationMail extends Mailable
      */
     public function build(): static
     {
-        $clinicName = getSettingValue('clinic_name') ?: 'NORSU Clinic';
+        $clinicName = getSettingValue('clinic_name') ?: 'Medical University Clinic';
 
         // Get featured slider or first available slider
         $slider = Slider::where('is_default', true)->first() ?: Slider::first();

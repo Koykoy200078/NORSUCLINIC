@@ -19,7 +19,7 @@ final class AccomplishmentReportCsv
         $keys = array_column($report['columns'], 'key');
         $counts = fn (array $counts) => array_map(fn ($key) => (int) ($counts[$key] ?? 0), $keys);
 
-        $rows = [array_merge(['Section', 'Body system / category', 'Group', 'Item'], array_column($report['columns'], 'label'), ['Total'])];
+        $rows = [array_merge(['Section', 'Body system / category', 'Group', 'Item'], array_column($report['columns'], 'label'), [ucfirst(strtolower($report['total_label'] ?? 'TOTAL'))])];
 
         foreach ($report['illness_sections'] as $section) {
             foreach ($section['groups'] as $group) {
@@ -47,7 +47,7 @@ final class AccomplishmentReportCsv
     /** @param  array<string, mixed>  $report */
     public static function response(array $report): StreamedResponse
     {
-        $filename = 'accomplishment_report_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = self::fileName($report, '.csv');
 
         return response()->streamDownload(function () use ($report) {
             $file = fopen('php://output', 'w');
@@ -59,6 +59,12 @@ final class AccomplishmentReportCsv
 
             fclose($file);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /** "accomplishment_report_2026-10-12_091500", or "accomplishment_report_2026_yearly_..." for the yearly report. */
+    public static function fileName(array $report, string $extension): string
+    {
+        return 'accomplishment_report_' . (! empty($report['year']) ? $report['year'] . '_yearly_' : '') . now()->format('Y-m-d_His') . $extension;
     }
 
     /** A cell that starts with = + - @ is read as a formula by Excel; an apostrophe makes it text. */

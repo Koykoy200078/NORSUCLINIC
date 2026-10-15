@@ -15,7 +15,7 @@ class SettingTableSeeder extends Seeder
         $logoUrl = ('assets/image/norsu_logo.png');
         $favicon = ('assets/image/norsu_favicon.ico');
 
-        Setting::firstOrCreate(['key' => 'clinic_name'], ['value' => 'Norsu Clinic']);
+        Setting::firstOrCreate(['key' => 'clinic_name'], ['value' => 'Medical University Clinic']);
         Setting::firstOrCreate(['key' => 'landline_no'], ['value' => '522-5050 then local 1149']);
         Setting::firstOrCreate(['key' => 'contact_no'], ['value' => '9123456789']);
         Setting::firstOrCreate(['key' => 'email'], ['value' => 'norsumedicalclinic@gmail.com']);

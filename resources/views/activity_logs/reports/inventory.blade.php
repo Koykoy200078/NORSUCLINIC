@@ -1,3 +1,6 @@
+@if(isset($inventoryYearly))
+    @include('activity_logs.reports.inventory_yearly', ['report' => $inventoryYearly])
+@else
 <div class="table-responsive">
     <table class="table table-hover table-rounded table-striped border gy-5 gs-7">
         <thead>
@@ -55,3 +58,4 @@
         </tbody>
     </table>
 </div>
+@endif

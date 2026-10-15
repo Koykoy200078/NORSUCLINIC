@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
  * Visits tab uses, so the matrix always agrees with the list.
  *
  * Column of a visit: a student is counted under the college they were in on the day; faculty and staff under
- * F&S; a guest under Guests/Others; a student with no college under Unspecified.
+ * F&S; a guest under Guest (always a column); a student with no college under Unspecified (only when used).
  * One count per consultation and picked illness (a visit with two illnesses adds to both rows); a service counts
  * a consultation once, whether it was ticked by hand, recognised by its rule, or both (ServiceRules).
  *
@@ -44,13 +44,23 @@ final class AccomplishmentReportBuilder
      */
     public function build(ReportFilters $filters, ?User $preparedBy = null): array
     {
-        $columns = $this->collegeColumns();
-        $known = array_flip(array_column($columns, 'key'));
-        $known[self::FACULTY_STAFF] = true;
-        $known[self::GUEST] = true;
+        // The yearly report (Q1-Q4 and the year total) counts the same consultations with the same rules and filters;
+        // only the columns differ and the dates are the whole year.
+        $yearly = $filters->year !== null;
+        if ($yearly) {
+            $filters = $this->wholeYear($filters);
+        }
 
-        $illnessCounts = $this->illnessCounts($filters, $known);
-        $serviceCounts = $this->serviceCounts($filters, $known);
+        $columns = $yearly ? $this->quarterColumns() : $this->collegeColumns();
+        $known = array_flip(array_column($columns, 'key'));
+        if (! $yearly) {
+            $known[self::FACULTY_STAFF] = true;
+            $known[self::GUEST] = true;
+        }
+        $bucketSql = $yearly ? $this->quarterBucketSql() : $this->bucketSql();
+
+        $illnessCounts = $this->illnessCounts($filters, $known, $bucketSql);
+        $serviceCounts = $this->serviceCounts($filters, $known, $bucketSql);
 
         $illnessSections = $this->illnessSections($filters, $illnessCounts);
         $serviceSections = $this->serviceSections($filters, $serviceCounts);
@@ -58,13 +68,15 @@ final class AccomplishmentReportBuilder
         $illnessTotals = $this->sumRows(collect($illnessSections)->pluck('counts'));
         $serviceTotals = $this->sumRows(collect($serviceSections)->pluck('counts'));
 
-        $columns[] = ['key' => self::FACULTY_STAFF, 'label' => 'F&S', 'name' => 'Faculty and staff'];
+        if (! $yearly) {
+            $columns[] = ['key' => self::FACULTY_STAFF, 'label' => 'F&S', 'name' => 'Faculty and staff'];
 
-        // Guests and unclassified affiliations only get a column when the report has someone in it.
-        foreach ([self::GUEST => ['Guests/Others', 'Guests and others'], self::UNSPECIFIED => ['Unspecified', 'College not recorded']] as $key => [$label, $name]) {
-            $used = ($illnessTotals[$key] ?? 0) + ($serviceTotals[$key] ?? 0) > 0;
-            if ($used) {
-                $columns[] = ['key' => $key, 'label' => $label, 'name' => $name];
+            // Guest is always a column, even when nobody is in it (a report handed in with no guest still has it, at 0).
+            $columns[] = ['key' => self::GUEST, 'label' => 'Guest', 'name' => 'Guests and others'];
+
+            // Visits whose college was not recorded only get a column when the report has someone in it.
+            if (($illnessTotals[self::UNSPECIFIED] ?? 0) + ($serviceTotals[self::UNSPECIFIED] ?? 0) > 0) {
+                $columns[] = ['key' => self::UNSPECIFIED, 'label' => 'Unspecified', 'name' => 'College not recorded'];
             }
         }
 
@@ -72,13 +84,16 @@ final class AccomplishmentReportBuilder
 
         return [
             'columns' => $columns,
+            'total_label' => $yearly ? 'YEAR TOTAL' : 'TOTAL',
+            'basis' => $yearly ? 'by quarter' : 'as per college/department',
+            'year' => $yearly ? $filters->year : null,
             'illness_sections' => $illnessSections,
             'illness_total' => $this->total($illnessTotals),
             'service_sections' => $serviceSections,
             'service_total' => $this->total($serviceTotals),
             'consultations' => $consultations,
             'unclassified' => $this->base($filters)->whereRaw('NOT ' . ServiceRules::hasIllness())->count(),
-            'period' => $this->periodLabel($filters),
+            'period' => $yearly ? 'for the year ' . $filters->year : $this->periodLabel($filters),
             'filter_summary' => $this->filterSummary($filters),
             'prepared_by' => $this->preparedBy($preparedBy),
             'noted_by' => [
@@ -104,6 +119,33 @@ final class AccomplishmentReportBuilder
             . " ELSE '" . self::UNSPECIFIED . "' END";
     }
 
+    /** The filters of the yearly report: the whole calendar year replaces whatever dates were typed on the screen. */
+    private function wholeYear(ReportFilters $filters): ReportFilters
+    {
+        $yearly = clone $filters;
+        $yearly->dateFrom = $filters->year . '-01-01';
+        $yearly->dateTo = $filters->year . '-12-31';
+
+        return $yearly;
+    }
+
+    /** The four columns of the yearly report. */
+    private function quarterColumns(): array
+    {
+        return [
+            ['key' => 'q1', 'label' => 'Q1', 'name' => 'January - March'],
+            ['key' => 'q2', 'label' => 'Q2', 'name' => 'April - June'],
+            ['key' => 'q3', 'label' => 'Q3', 'name' => 'July - September'],
+            ['key' => 'q4', 'label' => 'Q4', 'name' => 'October - December'],
+        ];
+    }
+
+    /** The quarter a consultation is counted in (by its visit date), as SQL: q1 .. q4. */
+    private function quarterBucketSql(): string
+    {
+        return "CONCAT('q', QUARTER(" . ServiceRules::visitDate() . '))';
+    }
+
     /** One column per college of the system (abbreviation as heading); Graduate School goes last. */
     private function collegeColumns(): array
     {
@@ -121,7 +163,7 @@ final class AccomplishmentReportBuilder
      * @param  array<string, true>  $known  column keys that exist
      * @return array<int, array<string, int>>  illness id => column key => count
      */
-    private function illnessCounts(ReportFilters $filters, array $known): array
+    private function illnessCounts(ReportFilters $filters, array $known, string $bucketSql): array
     {
         $query = $this->base($filters)
             ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
@@ -137,7 +179,7 @@ final class AccomplishmentReportBuilder
         }
 
         $rows = $query->toBase()
-            ->selectRaw('ci.illness_id as item_id, ' . $this->bucketSql() . ' as bucket, COUNT(*) as total')
+            ->selectRaw('ci.illness_id as item_id, ' . $bucketSql . ' as bucket, COUNT(*) as total')
             ->groupBy('ci.illness_id', 'bucket')
             ->get();
 
@@ -148,7 +190,7 @@ final class AccomplishmentReportBuilder
      * @param  array<string, true>  $known
      * @return array<int, array<string, int>>  service id => column key => count
      */
-    private function serviceCounts(ReportFilters $filters, array $known): array
+    private function serviceCounts(ReportFilters $filters, array $known, string $bucketSql): array
     {
         $counts = [];
 
@@ -165,7 +207,7 @@ final class AccomplishmentReportBuilder
             ServiceRules::matching($query, $service);
 
             $rows = $query->toBase()
-                ->selectRaw($service->id . ' as item_id, ' . $this->bucketSql() . ' as bucket, COUNT(*) as total')
+                ->selectRaw($service->id . ' as item_id, ' . $bucketSql . ' as bucket, COUNT(*) as total')
                 ->groupBy('bucket')
                 ->get();
 

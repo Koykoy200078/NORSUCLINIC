@@ -12,10 +12,13 @@ use App\Models\Prescription;
 use App\Models\PatientQueue;
 use App\Models\UsedMedicine;
 use App\Exports\AccomplishmentReportExport;
+use App\Exports\YearlyInventoryReportExport;
 use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\AccomplishmentReportCsv;
 use App\Services\Reports\ReportCsv;
 use App\Services\Reports\ReportFilters;
+use App\Services\Reports\YearlyInventoryReportBuilder;
+use App\Services\Reports\YearlyInventoryReportCsv;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -69,13 +72,37 @@ class ActivityLogController extends Controller
         abort_unless(in_array($format, ['pdf', 'xlsx', 'csv'], true), 404, 'Unknown format.');
 
         $report = app(AccomplishmentReportBuilder::class)->build(ReportFilters::fromRequest($request), $request->user());
-        $name = 'accomplishment_report_' . now()->format('Y-m-d_His');
+        $name = AccomplishmentReportCsv::fileName($report, '');
 
         return match ($format) {
             'csv' => AccomplishmentReportCsv::response($report),
             'xlsx' => Excel::download(new AccomplishmentReportExport($report), $name . '.xlsx'),
             // 8.5" x 13" (long bond) portrait, the paper the clinic prints its other forms on.
             'pdf' => Pdf::loadView('activity_logs.reports.accomplishment_pdf', ['report' => $report])
+                ->setPaper([0, 0, 612, 936], 'portrait')
+                ->setWarnings(false)
+                ->stream($name . '.pdf'),
+        };
+    }
+
+    /**
+     * The YEARLY MEDICINE INVENTORY (left from last year, additional and the remaining of each quarter, per medicine)
+     * as a PDF, an Excel sheet or a CSV, all built from the same YearlyInventoryReportBuilder result so they hold the
+     * same figures. A missing or invalid year means this year.
+     */
+    public function inventoryYearly(Request $request, string $format)
+    {
+        abort_unless(canViewActivityLogTab('inventory'), 403, 'You are not allowed to export this report.');
+        abort_unless(in_array($format, ['pdf', 'xlsx', 'csv'], true), 404, 'Unknown format.');
+
+        $year = ReportFilters::year($request->query('year')) ?? (int) now()->year;
+        $report = app(YearlyInventoryReportBuilder::class)->build($year, $request->user());
+        $name = YearlyInventoryReportCsv::fileName($report, '');
+
+        return match ($format) {
+            'csv' => YearlyInventoryReportCsv::response($report),
+            'xlsx' => Excel::download(new YearlyInventoryReportExport($report), $name . '.xlsx'),
+            'pdf' => Pdf::loadView('activity_logs.reports.inventory_yearly_pdf', ['report' => $report])
                 ->setPaper([0, 0, 612, 936], 'portrait')
                 ->setWarnings(false)
                 ->stream($name . '.pdf'),

@@ -84,7 +84,7 @@ return [
 
     'web' => [
         'dashboard' => 'Dashboard',
-        'welcome_to_norsu_clinic' => 'Welcome to NORSU Clinic',
+        'welcome_to_norsu_clinic' => 'Welcome to Medical University Clinic',
         'your_health_our_priority' => 'Your health is our priority',
         'enter_your_email' => 'Enter Your Email',
         'emergency_help' => 'Emergency Help',

@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <img src="{{ $sliders ? $sliders->slider_image : asset('assets/image/norsu_logo.png') }}" alt="NORSU Clinic" class="landing-hero-img img-fluid" loading="lazy" />
+                    <img src="{{ $sliders ? $sliders->slider_image : asset('assets/image/norsu_logo.png') }}" alt="{{ getAppName() }}" class="landing-hero-img img-fluid" loading="lazy" />
                 </div>
             </div>
         </div>

@@ -20,6 +20,8 @@ use App\Models\YearLevel;
 use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\ReportFilters;
 use App\Services\Reports\ReportQueries;
+use App\Services\Reports\ServiceRules;
+use App\Services\Reports\YearlyInventoryReportBuilder;
 use App\Support\SearchTerm;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -44,6 +46,10 @@ class ReportGeneration extends Component
 
     // Patient / visit filters (Patient Visits and Accomplishment Report). '' means "any".
     public $month = '';
+    /** The yearly Accomplishment Report (Q1-Q4 and the year total) for this year; '' = the by-college report. */
+    public $year = '';
+    /** The yearly Medicine Inventory (left, additional, Q1-Q4 remaining) for this year; '' = the current stock list. */
+    public $inventory_year = '';
     public $campus_id = '';
     public $college_id = '';
     public $course_id = '';
@@ -74,6 +80,8 @@ class ReportGeneration extends Component
         'status' => ['except' => 'all'],
         'date_from' => ['except' => ''],
         'date_to' => ['except' => ''],
+        'year' => ['except' => ''],
+        'inventory_year' => ['except' => ''],
         'campus_id' => ['except' => ''],
         'college_id' => ['except' => ''],
         'course_id' => ['except' => ''],
@@ -111,6 +119,8 @@ class ReportGeneration extends Component
         $this->status = request('status', 'all');
         $this->date_from = request('date_from', '');
         $this->date_to = request('date_to', '');
+        $this->year = (string) request('year', '');
+        $this->inventory_year = (string) request('inventory_year', '');
 
         foreach (self::CONSULTATION_FILTERS as $property) {
             $this->{$property} = request($property, $this->{$property});
@@ -156,7 +166,7 @@ class ReportGeneration extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to', 'month', ...self::CONSULTATION_FILTERS]);
+        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to', 'month', 'year', 'inventory_year', ...self::CONSULTATION_FILTERS]);
 
         $this->consult_mode_auto = false;
         if ($this->tab === 'accomplishment') {
@@ -227,6 +237,8 @@ class ReportGeneration extends Component
             'user_type' => $this->user_type,
             'action' => $this->action,
             'status' => $this->status,
+            // The year makes the Accomplishment Report yearly; the other tabs have no use for it.
+            'year' => $this->tab === 'accomplishment' ? $this->year : '',
         ] + collect(self::CONSULTATION_FILTERS)->mapWithKeys(fn ($property) => [$property => $this->{$property}])->all());
     }
 
@@ -255,7 +267,21 @@ class ReportGeneration extends Component
                 ->get(['id', 'first_name', 'middle_name', 'last_name'])
                 ->mapWithKeys(fn (User $user) => [$user->id => $user->full_name]),
             'ageGroups' => ReportFilters::AGE_GROUPS,
+            'years' => $this->reportYears(),
         ];
+    }
+
+    /** The years the yearly report can be made for: from the first consultation up to this year, newest first. */
+    private function reportYears(): array
+    {
+        $first = DocumentIssuance::query()
+            ->where('document_type', 'consultation_form')
+            ->selectRaw('MIN(YEAR(' . ServiceRules::visitDate() . ')) as first_year')
+            ->value('first_year');
+
+        $last = (int) now()->year;
+
+        return range($last, $first ? min((int) $first, $last) : $last);
     }
 
     public function render()
@@ -269,8 +295,16 @@ class ReportGeneration extends Component
                 $data['activityLogs'] = ReportQueries::logs($filters)->paginate(20);
                 break;
 
-            case 'visits':
             case 'inventory':
+                // A year makes it the yearly report (left, additional, Q1-Q4 remaining); without one it is the stock list.
+                if (($inventoryYear = ReportFilters::year($this->inventory_year)) !== null) {
+                    $data['inventoryYearly'] = app(YearlyInventoryReportBuilder::class)->build($inventoryYear, auth()->user());
+                } else {
+                    $data['reports'] = ReportQueries::forTab('inventory', $filters)->paginate(20);
+                }
+                break;
+
+            case 'visits':
             case 'dispensing':
             case 'appointments':
                 $data['reports'] = ReportQueries::forTab($this->tab, $filters)->paginate(20);
@@ -316,6 +350,10 @@ class ReportGeneration extends Component
         return view('livewire.report-generation', array_merge($data, [
             'actions' => $actions,
             'choices' => in_array($this->tab, self::CONSULTATION_TABS, true) ? $this->filterChoices() : [],
+            // What the two yearly reports need to know: is one on, and which years can be picked.
+            'yearlyAccomplishment' => $this->tab === 'accomplishment' && $filters->year !== null,
+            'yearlyInventory' => isset($data['inventoryYearly']),
+            'inventoryYears' => $this->tab === 'inventory' ? YearlyInventoryReportBuilder::years() : [],
             'activeFilters' => $filters->activeConsultationFilters(),
             // Query-string values of the Export CSV link: the same filters the table above is using.
             'exportQuery' => $filters->toQuery() + ['tab' => $this->tab],

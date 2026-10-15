@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to NORSU Clinic</title>
+    <title>Welcome to Medical University Clinic</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -119,21 +119,21 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <img src="{{ asset(getAppLogo()) }}" alt="{{ getSettingValue('clinic_name') ?: 'NORSU CLINIC' }} Logo" style="max-height: 60px; width: auto; margin-right: 10px; vertical-align: middle;">
-                {{ getSettingValue('clinic_name') ?: 'NORSU CLINIC' }}
+                <img src="{{ asset(getAppLogo()) }}" alt="{{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }} Logo" style="max-height: 60px; width: auto; margin-right: 10px; vertical-align: middle;">
+                {{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }}
             </div>
             <div class="subtitle">
                 @if(isset($slider) && $slider && $slider->title)
                 {{ $slider->title }}
                 @else
-                Negros Oriental State University Clinic
+                Negros Oriental State University
                 @endif
             </div>
         </div>
 
         <div class="content">
             <div class="welcome-message">
-                🎉 Welcome to {{ getSettingValue('clinic_name') ?: 'NORSU Clinic' }}!
+                🎉 Welcome to {{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }}!
             </div>
 
             @if(isset($slider) && $slider && $slider->short_description)
@@ -144,7 +144,7 @@
 
             <p>Dear <strong>{{ $patientName }}</strong>,</p>
 
-            <p>Congratulations! You have been successfully registered with {{ getSettingValue('clinic_name') ?: 'NORSU Clinic' }}. We're excited to have you as part of our healthcare community.</p>
+            <p>Congratulations! You have been successfully registered with {{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }}. We're excited to have you as part of our healthcare community.</p>
 
             <div class="patient-info">
                 <h3 style="margin-top: 0; color: #007bff;">📋 Your Registration Details</h3>
@@ -195,7 +195,7 @@
             <p>If you have any questions or need assistance, please don't hesitate to contact our clinic staff.</p>
 
             <p style="margin-top: 25px;">
-                <strong>Welcome to {{ getSettingValue('clinic_name') ?: 'NORSU Clinic' }} family!</strong><br>
+                <strong>Welcome to {{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }} family!</strong><br>
                 @if(isset($slider) && $slider && $slider->short_description)
                 <em>{{ $slider->short_description }} 🏥💙</em>
                 @else
@@ -205,7 +205,7 @@
         </div>
 
         <div class="footer">
-            <p><strong>{{ getSettingValue('clinic_name') ?: 'NORSU Clinic' }}</strong> - Negros Oriental State University</p>
+            <p><strong>{{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }}</strong> - Negros Oriental State University</p>
             <p>{{ getSettingValue('address_one') ?: 'University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City' }}</p>
             <p>📞 {{ getSettingValue('landline_no') ?: '225-9400 (Local # 188)' }} | 📱 {{ getSettingValue('contact_no') ?: '09263829484' }}</p>
             @if(getSettingValue('email'))

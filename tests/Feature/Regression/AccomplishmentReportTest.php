@@ -138,7 +138,7 @@ class AccomplishmentReportTest extends TestCase
         $ctx = 'c' . $this->ctx->id;
         $oth = 'c' . $this->oth->id;
 
-        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guests/Others', 'Unspecified'], array_column($report['columns'], 'label'));
+        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guest', 'Unspecified'], array_column($report['columns'], 'label'));
 
         $illness = $this->illnessRows($report);
         $this->assertSame([$ctx => 4, $oth => 1, 'fs' => 1, '_total' => 6], $illness['Cough/colds']);
@@ -152,6 +152,228 @@ class AccomplishmentReportTest extends TestCase
 
         $respiratory = collect($report['illness_sections'])->firstWhere('name', 'Respiratory System');
         $this->assertSame(7, $respiratory['total']);
+    }
+
+    /**
+     * Plan Phase 4.3: "Guest" is always a column of the report, even when nobody is in it (a clinic that has seen no
+     * guest still hands the report in with the column, at 0). "Unspecified" is only for visits whose college was not
+     * recorded, so it appears only when it is used.
+     */
+    public function test_the_guest_column_is_always_shown_and_unspecified_only_when_it_is_used(): void
+    {
+        $this->visit(['name' => 'Student One'], ['Cough/colds']);
+        $report = $this->build();
+
+        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guest'], array_column($report['columns'], 'label'), 'no guest, no unspecified: Guest stays');
+        $guest = collect($report['columns'])->firstWhere('key', 'guest');
+        $this->assertSame('Guests and others', $guest['name']);
+        $this->assertSame(0, $report['illness_total']['counts']['guest'] ?? 0);
+
+        $this->visit(['name' => 'Student Six', 'college_id' => null], ['Asthma']);
+        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guest', 'Unspecified'], array_column($this->build()['columns'], 'label'));
+
+        // Even a report with no consultation at all has the column.
+        DocumentIssuance::query()->delete();
+        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guest'], array_column($this->build()['columns'], 'label'));
+    }
+
+    public function test_the_guest_column_is_in_the_screen_the_pdf_the_excel_sheet_and_the_csv(): void
+    {
+        $this->visit(['name' => 'Student One'], ['Cough/colds']);
+        $this->actingAs($this->admin);
+        $report = $this->build();
+
+        $header = '<th class="num" title="Guests and others">Guest</th>';
+
+        $screen = Livewire::withQueryParams(['tab' => 'accomplishment'])->test(ReportGeneration::class);
+        $screen->assertSeeHtml($header);
+
+        $this->assertStringContainsString($header, view('activity_logs.reports.accomplishment_pdf', ['report' => $report])->render());
+        $this->assertStringContainsString($header, view('activity_logs.reports.accomplishment_sheet', ['report' => $report])->render());
+
+        $csv = $this->get(route('activity-logs.accomplishment', ['format' => 'csv']))->assertOk()->streamedContent();
+        $this->assertContains('Guest', str_getcsv(preg_split('/\r\n|\n/', substr($csv, 3))[0]));
+
+        $excel = $this->get(route('activity-logs.accomplishment', ['format' => 'xlsx']))->assertOk();
+        $sheet = IOFactory::load($excel->baseResponse->getFile()->getPathname())->getActiveSheet();
+        $this->assertContains('Guest', collect($sheet->toArray())->flatten()->all());
+    }
+
+    // ---- Plan Phase 4.4: the yearly Accomplishment Report (Q1, Q2, Q3, Q4 and the year total) --------------------------
+
+    /** Cough/colds on the edges of every quarter, plus the day before and the day after the year. */
+    private function yearScenario(): void
+    {
+        foreach (['2025-12-31', '2026-01-15', '2026-03-31', '2026-04-01', '2026-06-30', '2026-07-01', '2026-09-30', '2026-10-01', '2026-12-31', '2027-01-01'] as $date) {
+            $this->visit(['requested_at' => $date, 'name' => 'Visit ' . $date], ['Cough/colds']);
+        }
+
+        // A very old consultation without a date of its own counts on the day it was typed in.
+        $undated = $this->visit(['requested_at' => null, 'name' => 'Visit undated'], ['Cough/colds']);
+        $undated->forceFill(['created_at' => '2026-08-20 10:00:00'])->saveQuietly();
+    }
+
+    public function test_the_yearly_report_counts_each_visit_in_the_quarter_of_its_consultation_date(): void
+    {
+        $this->yearScenario();
+        $report = $this->build(['year' => '2026']);
+
+        $this->assertSame(['Q1', 'Q2', 'Q3', 'Q4'], array_column($report['columns'], 'label'), 'no college, F&S, Guest or Unspecified column');
+        $this->assertSame('YEAR TOTAL', $report['total_label']);
+        $this->assertSame('for the year 2026', $report['period']);
+        $this->assertSame('by quarter', $report['basis']);
+
+        $this->assertSame(['q1' => 2, 'q2' => 2, 'q3' => 3, 'q4' => 2, '_total' => 9], $this->illnessRows($report)['Cough/colds']);
+        $this->assertSame(9, $report['consultations'], 'the day before and the day after the year are not in it');
+        $this->assertSame(9, $report['illness_total']['total']);
+
+        // The same data without a year is still the by-college report over every date.
+        $college = $this->build();
+        $this->assertSame('as per college/department', $college['basis']);
+        $this->assertSame('TOTAL', $college['total_label']);
+        $this->assertSame(11, $college['consultations']);
+    }
+
+    public function test_the_yearly_report_has_the_same_rows_counting_rules_and_filters_as_the_college_report(): void
+    {
+        $this->visit(['requested_at' => '2026-02-10', 'name' => 'Two illnesses'], ['Cough/colds', 'Hypertension'], ['Tetanus injection']);
+        $this->visit(['requested_at' => '2026-05-11', 'name' => 'Other college', 'college_id' => $this->oth->id, 'gender' => 'Female'], ['Cough/colds']);
+        $this->visit(['requested_at' => '2026-05-12', 'name' => 'Virtual', 'consult_mode' => 'virtual'], ['Cough/colds']);
+        $this->visit(['requested_at' => '2026-11-02', 'name' => 'Guest', 'informant' => 'Guest', 'patient_type_id' => $this->type('guest'), 'college_id' => null], ['Asthma']);
+        $this->visit(['requested_at' => '2026-11-03', 'name' => 'No illness']);
+
+        $report = $this->build(['year' => '2026']);
+        $illness = $this->illnessRows($report);
+
+        // A visit with two illnesses is counted in both rows; the services come from the same rules.
+        $this->assertSame(['q1' => 1, 'q2' => 2, '_total' => 3], $illness['Cough/colds']);
+        $this->assertSame(['q1' => 1, '_total' => 1], $illness['Hypertension']);
+        $this->assertSame(['q4' => 1, '_total' => 1], $illness['Asthma'], 'a guest still counts in its quarter');
+        $this->assertSame(['q1' => 1, '_total' => 1], $this->serviceRows($report)['Tetanus injection']);
+        $this->assertSame(5, $report['consultations']);
+        $this->assertSame(1, $report['unclassified']);
+
+        // Every filter narrows the yearly report exactly as it narrows the college report and the visit list.
+        $cases = [
+            'one college' => [['college_id' => $this->ctx->id], 3],
+            'walk-in only' => [['consult_mode' => 'physical'], 4],
+            'female' => [['gender' => 'Female'], 1],
+            'has hypertension' => [['illness_id' => Illness::where('name', 'Hypertension')->value('id')], 1],
+            'not classified yet' => [['illness_id' => 'none'], 1],
+        ];
+        foreach ($cases as $label => [$query, $expected]) {
+            $this->assertSame($expected, $this->build(['year' => '2026'] + $query)['consultations'], "yearly, {$label}");
+            $this->assertSame($expected, $this->build(['date_from' => '2026-01-01', 'date_to' => '2026-12-31'] + $query)['consultations'], "by college, {$label}");
+        }
+
+        $filtered = $this->build(['year' => '2026', 'illness_id' => Illness::where('name', 'Hypertension')->value('id')]);
+        $this->assertSame(['Hypertension'], array_keys($this->illnessRows($filtered)), 'an illness filter lists only that line');
+        $this->assertContains('Illness: Hypertension', $filtered['filter_summary']);
+        $this->assertSame(1, $filtered['consultations']);
+    }
+
+    public function test_the_year_replaces_the_dates_and_a_year_that_is_not_one_is_ignored(): void
+    {
+        $this->yearScenario();
+
+        $filters = ReportFilters::fromArray(['year' => '2026', 'date_from' => '2026-03-01', 'date_to' => '2026-03-31']);
+        $this->assertSame(2026, $filters->year);
+        $this->assertSame(2026, $filters->toQuery()['year']);
+        $this->assertSame(9, app(AccomplishmentReportBuilder::class)->build($filters)['consultations'], 'the dates of the screen do not cut the year');
+        $this->assertSame(0, $filters->activeConsultationFilters(), 'the year is a kind of report, not a filter');
+
+        foreach (['', 'abc', '1899', '99999', '20 26', '2026; DROP TABLE users', '-2026', '2026.5'] as $junk) {
+            $this->assertNull(ReportFilters::fromArray(['year' => $junk])->year, "'{$junk}'");
+        }
+        $this->assertNull(ReportFilters::fromArray([])->year);
+        $this->assertSame('as per college/department', $this->build(['year' => 'abc'])['basis']);
+    }
+
+    public function test_the_yearly_report_of_a_year_without_consultations_is_empty_but_complete(): void
+    {
+        $report = $this->build(['year' => '2031']);
+
+        $this->assertSame(['Q1', 'Q2', 'Q3', 'Q4'], array_column($report['columns'], 'label'));
+        $this->assertSame(0, $report['consultations']);
+        $this->assertSame('for the year 2031', $report['period']);
+
+        // Complete: every active illness and service line is listed, each at 0 in every quarter.
+        $this->assertNotEmpty($report['illness_sections']);
+        $this->assertNotEmpty($report['service_sections']);
+        $this->assertSame(0, $report['illness_total']['total']);
+        $this->assertSame(0, $report['service_total']['total']);
+        $this->assertSame([0], array_values(array_unique(collect($this->illnessRows($report))->pluck('_total')->all())));
+    }
+
+    public function test_the_yearly_report_comes_out_the_same_on_the_screen_in_the_pdf_the_excel_sheet_and_the_csv(): void
+    {
+        $this->yearScenario();
+        $this->visit(['requested_at' => '2026-05-11', 'name' => 'Two illnesses'], ['Cough/colds', 'Hypertension']);
+        $this->actingAs($this->admin);
+        $report = $this->build(['year' => '2026']);
+        $coughTotal = $this->illnessRows($report)['Cough/colds']['_total'];
+        $this->assertSame(10, $coughTotal);
+
+        // Screen: the year choice shows the yearly tables and no college columns.
+        $screen = Livewire::withQueryParams(['tab' => 'accomplishment'])->test(ReportGeneration::class)
+            ->set('year', '2026')
+            ->assertSee('ACCOMPLISHMENT REPORT')
+            ->assertSee('for the year 2026, by quarter')
+            ->assertSeeHtml('<th class="num" title="January - March">Q1</th>')
+            ->assertSeeHtml('<th class="num" title="October - December">Q4</th>')
+            ->assertSee('YEAR TOTAL')
+            ->assertDontSee('as per college/department')
+            ->assertDontSeeHtml('title="Faculty and staff"');
+        $screen->assertSee('Cough/colds');
+        $this->assertSame(2, substr_count($screen->html(), '<th class="num">YEAR TOTAL</th>'), 'both the illness table and the services table end in YEAR TOTAL');
+
+        // PDF and Excel are rendered from the same Blade tables as the screen.
+        $pdfHtml = view('activity_logs.reports.accomplishment_pdf', ['report' => $report])->render();
+        $this->assertStringContainsString('for the year 2026, by quarter', $pdfHtml);
+        $this->assertSame(2, substr_count($pdfHtml, '<th class="num">YEAR TOTAL</th>'));
+        $pdf = $this->get(route('activity-logs.accomplishment', ['format' => 'pdf', 'year' => 2026]))->assertOk();
+        $this->assertStringStartsWith('%PDF', $pdf->getContent());
+        $this->assertStringContainsString('accomplishment_report_2026_yearly_', (string) $pdf->headers->get('Content-Disposition'));
+
+        $excel = $this->get(route('activity-logs.accomplishment', ['format' => 'xlsx', 'year' => 2026]))->assertOk();
+        $sheet = IOFactory::load($excel->baseResponse->getFile()->getPathname())->getActiveSheet();
+        $cells = collect($sheet->toArray())->flatten()->filter(fn ($cell) => $cell !== null && $cell !== '')->values()->all();
+        $this->assertContains('Q1', $cells);
+        $this->assertContains('YEAR TOTAL', $cells);
+        $this->assertContains('Ada Admin', $cells, 'Prepared by');
+        $this->assertStringContainsString('for the year 2026, by quarter', implode('|', $cells));
+        $excelRow = collect($sheet->toArray())->first(fn ($row) => ($row[0] ?? null) === 'Cough/colds');
+        $this->assertSame([2, 3, 3, 2, 10], array_map('intval', array_slice($excelRow, 1, 5)));
+
+        // CSV: one line per row, the four quarters and the year total.
+        $csv = $this->get(route('activity-logs.accomplishment', ['format' => 'csv', 'year' => 2026]))->assertOk()->streamedContent();
+        $lines = array_map('str_getcsv', preg_split('/\r\n|\n/', trim(substr($csv, 3))));
+        $this->assertSame(['Section', 'Body system / category', 'Group', 'Item', 'Q1', 'Q2', 'Q3', 'Q4', 'Year total'], $lines[0]);
+        $cough = collect($lines)->first(fn ($line) => ($line[3] ?? null) === 'Cough/colds');
+        $this->assertSame(['2', '3', '3', '2', '10'], array_slice($cough, 4));
+    }
+
+    public function test_the_report_screen_offers_the_years_that_have_consultations_and_hides_the_dates_for_a_yearly_report(): void
+    {
+        $this->visit(['requested_at' => '2024-06-01'], ['Cough/colds']);
+        $this->visit(['requested_at' => '2026-02-01'], ['Cough/colds']);
+        $this->actingAs($this->admin);
+
+        $screen = Livewire::withQueryParams(['tab' => 'accomplishment'])->test(ReportGeneration::class);
+        $screen->assertSee('By college')
+            ->assertSeeHtml('<option value="2024">')->assertSeeHtml('<option value="2025">')->assertSeeHtml('<option value="2026">')
+            ->assertSeeHtml('wire:model.live="date_from"');
+
+        $screen->set('year', '2024')->assertDontSeeHtml('wire:model.live="date_from"')->assertSee('whole year');
+        $screen->call('resetFilters');
+        $this->assertSame('', $screen->get('year'), 'Reset goes back to the by-college report');
+        $screen->assertSeeHtml('wire:model.live="date_from"');
+
+        // The year belongs to the Accomplishment Report only: the other tabs do not get it.
+        $screen->set('year', '2026');
+        $this->assertSame(2026, $screen->instance()->reportFilters()->year);
+        $screen->call('setTab', 'visits');
+        $this->assertNull($screen->instance()->reportFilters()->year);
     }
 
     public function test_services_count_a_visit_once_whether_ticked_recognised_by_its_rule_or_both(): void
@@ -300,7 +522,7 @@ class AccomplishmentReportTest extends TestCase
         $lines = array_map('str_getcsv', preg_split('/\r\n|\n/', trim(substr($csv, 3))));
         $header = $lines[0];
         $this->assertSame(['Section', 'Body system / category', 'Group', 'Item'], array_slice($header, 0, 4));
-        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guests/Others', 'Unspecified', 'Total'], array_slice($header, 4));
+        $this->assertSame(['CTX', 'OTH', 'GS', 'F&S', 'Guest', 'Unspecified', 'Total'], array_slice($header, 4));
         $cough = collect($lines)->first(fn ($line) => ($line[3] ?? null) === 'Cough/colds');
         $ctxIndex = 4;
         $this->assertSame(2, (int) $cough[$ctxIndex], 'Cough/colds under CTX in March, walk-in');

@@ -126,6 +126,8 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
         Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
         Route::get('/accomplishment/{format}', [ActivityLogController::class, 'accomplishment'])
             ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('accomplishment');
+        Route::get('/inventory-yearly/{format}', [ActivityLogController::class, 'inventoryYearly'])
+            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-yearly');
         Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 });

@@ -1,4 +1,4 @@
-# NORSU Clinic Management System — Recode Project Guide & Feature Tracker
+# Medical University Clinic Management System — Recode Project Guide & Feature Tracker
 
 > **Status:** Deep-scan completed April 15, 2026  
 > **Source project:** `c:\Projects\NORSUCLINIC`  
@@ -57,7 +57,7 @@
 
 ## 1. Project Overview
 
-**NORSU Clinic Management System** is a university clinic management application for Negros Oriental State University (NORSU). It manages:
+**Medical University Clinic Management System** is a university clinic management application for Negros Oriental State University (NORSU). It manages:
 
 - University student, faculty patients and guests
 - Doctor and clinic staff workflows
