@@ -60,16 +60,42 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phase 2 re-check: `ffda2df` (stable Dispense History paging, the patient history card), after Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-11) |
+| Last pushed work | Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
 | Work in progress (not pushed) | none |
-| Next step | Phase 4 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): the owner's requested changes (name "Medical University Clinic", COL, Guest column, yearly reports) |
+| Next step | Phase 5 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) (every module, two passes each), only when the owner says go |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
-| Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, clinic schema and next phase updated; §8 retains an older snapshot to reconcile in plan Phase 10.2 |
+| Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-12 08:50 +08:00 — Claude Code — START → END (pushed 2026-10-15)
+- **Branch / from:** `changes_v2` @ `254c812` (Phases 0-3 and the Phase 2 re-check are pushed; working tree clean except the
+  build-generated `public/messages.js`).
+- **Work:** Phase 4 of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-12: "continue to
+  phase 4"): 4.1 project name "Medical University Clinic" (clinic name only), 4.2 College of Law CL → COL, 4.3 Guest column
+  always shown, 4.4 yearly Accomplishment Report, 4.5 yearly Medicine Inventory report (screen = PDF = Excel = CSV). Test-first,
+  rehearsal of the migrations on the real clinic dump, live browser check, then commit and push `changes_v2`.
+- **END:** pushed on 2026-10-15 on the owner's standing go-ahead. The owner answered the two open questions on 2026-10-15 (the printed form codes stay; leave `norsu_clinic` alone).
+  - **Commits:** `125de63` Phase 4, then this `handover:` commit.
+  - **Done (plan 4.1-4.5):**
+    - **4.1 name:** "Medical University Clinic" in `.env.example`, the seeders, the language file, the registration e-mail, the landing page and the recode guide's title, and by a data migration for the `clinic_name` setting and the default slider text (only a value that still is the old default; the settings cache is cleared; reversible); the link crawl now fails on any page that still says "NORSU Clinic". Kept: the university name, logo, e-mail address, `norsu_clinic` database, backup prefix, folders and (owner decision) the printed form codes "NORSU-CLINIC-FORM-01 / 02".
+    - **4.2 COL:** a migration renames the college and every saved copy of its name (consultations, lab requests, activity log); the seeder and the report header follow.
+    - **4.3 Guest:** the Accomplishment Report always has a "Guest" column (Unspecified only when used), in the screen, PDF, Excel and CSV.
+    - **4.4 yearly Accomplishment Report:** a "Report" choice on the tab: the same rows, rules and filters with the columns Q1-Q4 and YEAR TOTAL (by consultation date); one builder for screen, PDF (8.5×13), Excel and CSV.
+    - **4.5 yearly Medicine Inventory report:** a "Report" choice on Medicine Inventory: per medicine, left from last year, additional, remaining at the end of each quarter in its own unit, read from the stock ledger, expired stock noted, an add-up check per medicine (and against the shelf for the current year); screen, PDF, Excel and CSV from one builder. Three new routes (`activity-logs.inventory-yearly`, `staff.` and `doctors.`; route list 478).
+  - **Found and fixed while doing it (test-first):** the mutation checks found 7 weak spots in my first tests (an empty-row guard of the yearly inventory, its comparison with the shelf, the stock-list export / search / status filter that must not show in the yearly view, the expiry-day boundary and the missing year in the download links): each got a test of its own and now fails its mutation. Earlier, the first ledger scenario had only a positive adjustment (a sign mutation would have survived), so a negative adjustment and a "two wrong lines that cancel out" test were added.
+  - **Verified:** `LINK_CRAWL=1` full suite: **507 tests / 4,717 assertions**, all passing, none skipped (43 min 42 sec: the machine was busy). The 15-actor link crawl inside it: 1,613 requests / 1,533 pages, 0 broken links, crashes, lazy-table failures, capped crawls or pages that still show the old name. 48 mutations of production code each fail a test. Rehearsal on a scratch copy of the real clinic dump under a MyISAM and an InnoDB default (22 migrations, 64 InnoDB tables, 47 of 47 foreign keys, `db:integrity --compare-fresh` 0 errors / 3 existing warnings, a second `migrate` does nothing; afterwards `clinic_name` = "Medical University Clinic" and college #10 = "College of Law (COL)"). Live browser check on that copy with admin, doctor and nurse sessions: both yearly reports on screen and as PDF, Excel and CSV (the yearly inventory has 55 medicines, left 0, additional 37,957, year end 37,369); a read-only oracle with independent SQL agrees (the yearly Accomplishment Report equals the by-college report for the same dates; additional / used / disposed equal the ledger sums; every medicine adds up; the year end equals the shelf); no console error, same-origin requests only.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) checked and unchanged.
+  - **Where to continue:** Phase 5 (every module, two passes each), only when the owner says go.
+  - **Left open:** 
+    - **The working database `norsu_clinic` was left alone at the owner's request (2026-10-15):** the two Phase 4 data migrations (`2026_10_12_090000_rename_college_of_law_cl_to_col`, `2026_10_12_091000_rename_clinic_to_medical_university_clinic`) are not applied there, so it still says "Norsu Clinic" and "College of Law (CL)" until `php artisan migrate` is run (they were rehearsed on a scratch copy of the dump, then the scratch schema was dropped).
+    - **Deployment:** set `APP_NAME="Medical University Clinic"` in the clinic server's own `.env` by hand (not in git; it titles the guest pages and also names the session cookie, so everybody signs in once more).
+    - The printed form codes "NORSU-CLINIC-FORM-01 / 02" stay as they are (owner decision, 2026-10-15).
+    - Observed, not changed: the yearly inventory PDF takes about 10 s for 55 medicines (DomPDF; about 38 s for 220), inside the clinic PC's 120 s limit.
+    - The earlier open items are unchanged (Dispense History speed at volume, manual dispense records have no "recorded by", other lists sorted by a repeating value are unchecked: plan Phase 5 Pass A item 4; the raw activity log is readable by every staff account and doctor; dead `nurse` fallbacks).
 
 ### 2026-10-11 00:45 +08:00 — Claude Code — START → END (pushed 2026-10-11)
 - **Branch / from:** `changes_v2` @ `5b7f3f2` (Phases 0-3 pushed; working tree clean except the build-generated
