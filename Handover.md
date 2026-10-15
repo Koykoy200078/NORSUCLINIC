@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
-| Work in progress (not pushed) | none (a new START entry below opens the next chunk, nothing is written yet) |
-| Next step | Phase 5 module passes (rows 5.1 onward) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); item 5.23 ("Others" request) waits for the owner to confirm two proposed rules |
+| Last pushed work | Plan item 5.23 ("Others" names): `a0fea49`, then this `handover:` commit (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Work in progress (not pushed) | none |
+| Next step | Phase 5 module passes (rows 5.1 onward) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); item 5.23 is done |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -71,7 +71,22 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
-### 2026-10-15 20:10 +08:00 — Claude Code — START
+### 2026-10-16 00:15 +08:00 — Claude Code — START → END (pushed 2026-10-16; takeover of Codex's open 5.23 START below)
+- **Branch / from:** `changes_v2` @ `faf2d0c` plus the **uncommitted item 5.23 working tree** (the code and tests were written by Claude Code and staged before a usage-limit pause; Codex then added the verification notes to the plan and its START). Taken over on the **owner's explicit instruction** (2026-10-16: "i let OpenAI Codex takeover the last, now i want to continue it, i want to double check it again and again and make sure to align with the plan and Handover"). Codex's START below is preserved unchanged.
+- **Work:** re-check item 5.23 ("Others" names on consultations and in the Accomplishment Report) against the plan's acceptance rules (plan 5.23 items 1-4) and against Codex's recorded verification, fix any gap test-first, rerun the full suite with the link crawl, mutation checks and a scratch-copy live check, update the records, then commit and push `changes_v2`.
+- **END:** pushed on the owner's standing go-ahead. Codex's START below is **closed by this END**: its recorded checks (plan 5.23, "Done and verified") were re-run and kept; nothing of Codex's was discarded. Codex's untracked browser-snapshot folder `.playwright-mcp/` (page snapshots of the scratch copy of the clinic data) was deleted from the repo folder, never committed.
+  - **Commits:** `a0fea49` plan item 5.23 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.23):** services "Others" lines get a name box (`consultation_services.other_text`, migration `2026_10_15_110000_add_other_text_to_consultation_services`, additive, **not applied to `norsu_clinic`**); a ticked "Others" line (illness or service) must carry a name (server rule on create and edit, `required` box while ticked, typing ticks the line, a hidden empty box is revealed instead of blocking the save silently); names are saved tidied and cleared when un-ticked; the Accomplishment Report (monthly and yearly; screen, PDF, Excel, CSV) lists the typed names as sub-rows under each "Others" row with their own counts, merged when they differ only by case, repeated spaces or end punctuation (owner decisions 2026-10-15); section and grand totals unchanged. New `App\Support\OtherName`.
+  - **Verified:** `LINK_CRAWL=1` full suite **556 tests / 5,985 assertions**, all passing (39 min 16 sec: busy machine); link crawl 1,614 requests, no problems. 16 new tests (`OtherNamesSaveTest`, `OtherNamesReportTest`); 34 mutations of production code, 32 fail a test, 2 equivalent (the filters inside the names queries; the row selection already applies them). Rehearsal on a fresh scratch copy of the dump: 24 migrations (132 rows), `db:integrity --compare-fresh` 0 errors / 3 existing warnings. Live check on the scratch copy with doctor, nurse and admin (boxes, tick / require / reveal, saved through the real form, edit page, report screen, CSV / Excel / PDF with the same names and totals); scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** the module-by-module passes of Phase 5 (5.1 Dashboard onward; 5.4 and 5.10 still need their record-level authorisation and Pass B passes).
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open:** `norsu_clinic` still needs `php artisan migrate --force` (4 pending: the two Phase 4 data migrations, the note widening, the service text column) when the owner decides; the Accomplishment Report PDF took ~35 s on the busy machine (DomPDF), inside the clinic PC's 120 s limit.
+
+### 2026-10-15 — OpenAI Codex — START
+- **Branch / from:** `changes_v2` @ `faf2d0c`. The owner asked to continue the current work, authorising completion of the inherited open item 5.23 below.
+- **Work:** finish the approved Others names on consultations and the Accomplishment Report: review, remaining mutation checks, scratch migration rehearsal and browser verification, full suite, maintained records, then commit and push. Keep `norsu_clinic` untouched; preserve the printed form codes.
+
+### 2026-10-15 20:10 +08:00 — Claude Code — START (closed 2026-10-16: no module-pass work was done under it; item 5.23 was finished instead, see the entry above)
 - **Branch / from:** `changes_v2` @ the `handover:` commit that follows `2462ee8` (checkpoint A is pushed; working tree clean except the build-generated `public/messages.js`).
 - **Work:** Phase 5, the module-by-module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) (rows 5.1 onward: record-level authorisation, then Pass B live per role on a scratch copy of the clinic data; `norsu_clinic` stays untouched), and plan item 5.23 (the "Others" request) inside 5.4 / 5.10 once the owner confirms the two proposed rules.
 
