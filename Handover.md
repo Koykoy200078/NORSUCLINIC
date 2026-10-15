@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Plan row 5.2 Patients: `7a74078`, then this `handover:` commit (Claude Code, 2026-10-16); before it row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Last pushed work | Plan row 5.3 Queue: `71c14fe`, then this `handover:` commit (Claude Code, 2026-10-16); before it row 5.2 Patients `7a74078` / `f7f6212`, row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
 | Work in progress (not pushed) | none |
-| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1, 5.2 and item 5.23 are done, **5.3 Queue** is next |
+| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1, 5.2, 5.3 and item 5.23 are done, **5.4 Consultations** is next |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -70,6 +70,17 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-16 14:20 +08:00 — Claude Code — START → END (pushed 2026-10-16)
+- **Branch / from:** `changes_v2` @ `f7f6212` (row 5.2 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5 row 5.3 Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-16: "continue to the next plan item, 5.3 Queue"): Pass A test-first, then Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push. (The START entry was written together with the END this time.)
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** `71c14fe` plan row 5.3 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.3, Pass A and Pass B):** the sidebar badge is read fresh (it was cached for 30 s for everybody); "how many are in the queue" had four definitions (badge, admin dashboard, doctor dashboard, queue screens) and now has one, `PatientQueue::openToday()` (entries without a live patient were counted by three of them and not by the screens); the doctor's "Current patient" card no longer crashes the screen (500) for an in-progress entry without a call time; no N+1 was found (pinned). The earlier R3 hardening (atomic call / complete, no reopening, one place per patient, stale entries, attachment sync) was re-checked and left as it was.
+  - **Verified:** `LINK_CRAWL=1` full suite **588 tests / 6,243 assertions**, all passing (15 min 15 sec); crawl 1,621 requests, no problems; no route added. 3 new tests (`QueuePassATest`); 8 mutations of production code each fail a test (one first survived and the test was fixed). Pass B on a scratch copy of the real clinic data with nurse, doctor and admin: add through the real form (priority and regular), the duplicate refused, the badge follows at once, priority first on both screens, the doctor calls and completes, the nurse sees the completed entry with its times, cancel through the edit form works and reopening is refused, and without Manage Patients all seven queue routes answer 403. Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.4 Consultations (it also holds the record-level and Pass B work that item 5.23 left open).
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (plan block and STATUS §6):** the queue has no audit trail and a delete removes an entry for good in any status (owner question); the add-to-queue page script never loads (plan 5.22, owner decision pending); `scheduled_at` is read by the Reports "appointments" list but never set (row 5.10).
 
 ### 2026-10-16 11:40 +08:00 — Claude Code — START → END (pushed 2026-10-16)
 - **Branch / from:** `changes_v2` @ the `handover:` commit that follows `e33cfc7` (row 5.1 is pushed; working tree clean except the build-generated `public/messages.js`).
