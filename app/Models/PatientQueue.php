@@ -88,6 +88,17 @@ class PatientQueue extends Model
     }
 
     /**
+     * The people in today's queue: waiting or being seen, queued today, and still with a live patient record. This is
+     * the one definition behind the sidebar badge, both dashboards and the queue screens, so they always agree.
+     */
+    public function scopeOpenToday($query)
+    {
+        return $query->whereIn('status', self::OPEN_STATUSES)
+            ->whereDate('created_at', today())
+            ->withLivePatient();
+    }
+
+    /**
      * Close every entry still open from a previous day. The clinic queue is a same-day list: a patient
      * who left yesterday must not block being queued today, show up on the doctor's screen, or keep
      * counting in the sidebar badge.

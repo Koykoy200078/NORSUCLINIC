@@ -21,7 +21,7 @@ return $q->created_at->diffInMinutes(now());
                 @if($inProgressQueue->room_number)
                 <strong>Room:</strong> <span class="badge bg-info">{{ $inProgressQueue->room_number }}</span> |
                 @endif
-                <strong>Called:</strong> {{ $inProgressQueue->called_at->format('h:i A') }}
+                <strong>Called:</strong> {{ ($inProgressQueue->called_at ?? $inProgressQueue->created_at)->format('h:i A') }}
             </p>
             @if($inProgressQueue->notes)
             <p class="mt-2 mb-0"><strong>Notes:</strong> {{ $inProgressQueue->notes }}</p>

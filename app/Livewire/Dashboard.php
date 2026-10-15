@@ -25,9 +25,7 @@ class Dashboard extends Component
             $this->{$figure} = $value;
         }
 
-        $this->todayQueueCount = PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-            ->whereDate('created_at', today())
-            ->count();
+        $this->todayQueueCount = PatientQueue::openToday()->count();
     }
 
     public function render(): View

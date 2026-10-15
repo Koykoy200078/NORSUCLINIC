@@ -24,9 +24,7 @@ class DoctorDashboardTable extends Component
       $this->medicinesCount     = Medicine::count();
       $this->patientsCount      = Patient::count();
       // Filter by today so the label "Patient Queues Today" is accurate
-      $this->patientQueuesCount = PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-         ->whereDate('created_at', today())
-         ->count();
+      $this->patientQueuesCount = PatientQueue::openToday()->count();
    }
 
    public function render()

@@ -2,14 +2,12 @@
 @php
 // -----------------------------------------------------------------------
 // Sidebar badge data — computed ONCE per request with caching.
-// queue: 30s TTL (near-real-time). medicine: 300s. docs: 60s.
+// queue: read fresh on every page (one small COUNT, and the badge must follow an add / call / complete at once).
+// medicine: 300s. docs: 60s.
 // -----------------------------------------------------------------------
-$_menuQueueBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_queue', 30, function () {
-return \App\Models\PatientQueue::whereIn('status', ['waiting', 'in_progress'])
-->whereDate('created_at', today())
+$_menuQueueBadge = \App\Models\PatientQueue::openToday()
 ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
 ->first();
-});
 
 // Once a day (also where the scheduler is not running) refresh each medicine's "available" figure for batches
 // that expired, so expired units stop being offered in forms and reports. R3-H5.
