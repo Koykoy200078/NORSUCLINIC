@@ -695,10 +695,7 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @php
-                                $planMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
-                                ->where('used_for', 'plan')
-                                ->with('medicine')
-                                ->get();
+                                $planMedicines = $consultation->consultationMedicines->where('used_for', 'plan');
                                 @endphp
 
                                 @if($planMedicines->isNotEmpty())
@@ -760,10 +757,7 @@ Patient Data
                             @foreach($selectedConsultations as $consultation)
                             <td>
                                 @php
-                                $nursingMedicines = \App\Models\ConsultationMedicine::where('request_document_id', $consultation->id)
-                                ->where('used_for', 'nursing')
-                                ->with('medicine')
-                                ->get();
+                                $nursingMedicines = $consultation->consultationMedicines->where('used_for', 'nursing');
                                 @endphp
 
                                 @if($nursingMedicines->isNotEmpty())
@@ -796,7 +790,7 @@ Patient Data
                             <td>
                                 @if($consultation->nursing_incharged_id)
                                 @php
-                                $nursingStaff = \App\Models\User::find($consultation->nursing_incharged_id);
+                                $nursingStaff = $consultation->nursingInCharge;
                                 @endphp
                                 {{ $nursingStaff ? $nursingStaff->first_name . ' ' . $nursingStaff->last_name : 'N/A' }}
                                 @else

@@ -96,10 +96,11 @@ class UpdatePatientRequest extends FormRequest
      */
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
+        // Which fields were refused, never what was typed: the form holds names, allergies, conditions and the
+        // immunization record of a patient, and the log file is not a place for them.
         Log::error('UpdatePatientRequest validation failed', [
             'route_name' => $this->route()->getName(),
-            'errors' => $validator->errors()->toArray(),
-            'input' => $this->except(['profile', 'password']),
+            'refused_fields' => array_keys($validator->errors()->toArray()),
         ]);
 
         parent::failedValidation($validator);

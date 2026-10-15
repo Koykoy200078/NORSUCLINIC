@@ -292,31 +292,24 @@ class PatientRepository extends BaseRepository
                 $patient->addMedia($input['profile'])->toMediaCollection(Patient::PROFILE, config('app.media_disc'));
             }
 
-            // Send welcome email to the newly registered patient
-            try {
-                Mail::to($user->email)->send(new PatientRegistrationMail($user, $patient));
-            } catch (\Exception $mailException) {
-                // Log the email error but don't fail the registration
-                Log::warning('Failed to send registration email to patient: ' . $user->email, [
-                    'error' => $mailException->getMessage(),
-                    'patient_id' => $user->university_id_number ?? $patient->id,
-                ]);
-            }
-
-            // $user->sendEmailVerificationNotification();
-
             // Log patient creation activity
             self::logPatientCreation($patient, $user);
 
             DB::commit();
 
-            // Invalidate dashboard caches so today's registered count reflects immediately
-            $todayKey = now()->format('Y-m-d');
-            Cache::forget('livewire_admin_dashboard_' . $todayKey);
-            Cache::forget('livewire_staff_dashboard_' . $todayKey);
-            Cache::forget('admin_dashboard_data_' . $todayKey);
-            Cache::forget('staff_dashboard_data_' . $todayKey);
-            Cache::forget('admin_dashboard_today_patients_' . $todayKey);
+            // The welcome e-mail goes out only once the registration is saved (never from inside the transaction: a slow or
+            // failing mail server must not hold the database, and a rolled-back registration must not send anything), and
+            // only when the patient has an address. A mail failure never fails the registration.
+            if (filled($user->email)) {
+                try {
+                    Mail::to($user->email)->send(new PatientRegistrationMail($user, $patient));
+                } catch (\Exception $mailException) {
+                    Log::warning('Failed to send the registration e-mail of a new patient', [
+                        'exception' => get_class($mailException),
+                        'patient_id' => $patient->id,
+                    ]);
+                }
+            }
 
             return true;
         } catch (\Exception $e) {
@@ -389,11 +382,12 @@ class PatientRepository extends BaseRepository
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
+            // The message of a database error can quote the values being saved (names, allergies...): the log gets the
+            // exception class and the place, and the patient's number, not the text.
             Log::error('PatientRepository::update failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'exception' => get_class($e),
+                'where' => basename($e->getFile()) . ':' . $e->getLine(),
                 'patient_id' => $patient->id ?? 'unknown',
-                'input' => array_diff_key($input, array_flip(['profile', 'password'])),
             ]);
             throw new UnprocessableEntityHttpException($e->getMessage());
         }

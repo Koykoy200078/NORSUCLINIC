@@ -417,9 +417,14 @@ class UserController extends AppBaseController
 
     public function resendEmailVerification($userId): JsonResponse
     {
-        $user = User::findOrFail($userId);
+        // Only the accounts the patient and doctor pages manage (as emailVerified() does), never admin or staff accounts.
+        $user = User::whereIn('type', [User::DOCTOR, User::PATIENT])->findOrFail($userId);
         if ($user->hasVerifiedEmail()) {
             return $this->sendError(__('messages.flash.user_already_verified'));
+        }
+
+        if (blank($user->email)) {
+            return $this->sendError('This account has no e-mail address to send the verification to.', 422);
         }
 
         $user->sendEmailVerificationNotification();

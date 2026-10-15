@@ -214,9 +214,11 @@ class PatientController extends AppBaseController
 
     public function showMyHistory(Patient $patient)
     {
-        // Load consultations and related data
+        // Load consultations and related data. The compare table reads each consultation's medicines and nurse in charge,
+        // so they are loaded for all of them at once (not one query per consultation).
         $patient->load([
-            'documentIssuances',
+            'documentIssuances.consultationMedicines.medicine:id,name',
+            'documentIssuances.nursingInCharge:id,first_name,last_name',
         ]);
 
         // Fetch all consultations with `consultation_form` type

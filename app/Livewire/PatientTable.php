@@ -83,15 +83,35 @@ class PatientTable extends LivewireTableComponent
             $query->onlyTrashed();
         }
 
-        if (!empty($this->dateFilter) && $this->dateFilter != getWeekDate()) {
-            [$startDate, $endDate] = array_map(function ($date) {
-                return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
-            }, explode(' - ', $this->dateFilter));
-
-            $query->whereBetween('patients.created_at', [$startDate, $endDate]);
+        if ($range = $this->dateRange()) {
+            $query->whereBetween('patients.created_at', $range);
         }
 
         return $query;
+    }
+
+    /**
+     * The picked "dd/mm/yyyy - dd/mm/yyyy" range as two moments: the start of the first day and the END of the last day
+     * (the whole last day counts). Anything that is not such a range (the property can be set from the browser) is
+     * ignored, and a range typed backwards is turned round.
+     *
+     * @return array{0: Carbon, 1: Carbon}|null
+     */
+    private function dateRange(): ?array
+    {
+        if ($this->dateFilter === '' || $this->dateFilter === getWeekDate()) {
+            return null;
+        }
+
+        $parts = array_map('trim', explode(' - ', $this->dateFilter));
+        if (count($parts) !== 2 || ! Carbon::hasFormat($parts[0], 'd/m/Y') || ! Carbon::hasFormat($parts[1], 'd/m/Y')) {
+            return null;
+        }
+
+        $from = Carbon::createFromFormat('!d/m/Y', $parts[0])->startOfDay();
+        $to = Carbon::createFromFormat('!d/m/Y', $parts[1])->endOfDay();
+
+        return $from->greaterThan($to) ? [$to->copy()->startOfDay(), $from->copy()->endOfDay()] : [$from, $to];
     }
 
     /**

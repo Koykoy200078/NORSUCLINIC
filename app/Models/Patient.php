@@ -182,6 +182,21 @@ class Patient extends Model implements HasMedia
         'admissions_surgeries' => 'nullable|string|max:10000',
         'maintenance' => 'nullable|string|max:10000',
         'covid_vaccination' => 'nullable|string|max:191',
+        // Values the form's pick-lists and date picker send, checked the way the columns need them: a date that exists and is
+        // not in the future, one of the two genders, and ids that point at a row of their list (not at nothing).
+        'dob' => 'nullable|date_format:Y-m-d|after:1899-12-31|before_or_equal:today',
+        'gender' => 'nullable|in:1,2',
+        'campus_id' => 'nullable|integer|exists:campuses,id',
+        'college_id' => 'nullable|integer|exists:colleges,id',
+        'course_id' => 'nullable|integer|exists:courses,id',
+        'year_level_id' => 'nullable|integer|exists:year_levels,id',
+        'office_id' => 'nullable|integer|exists:offices,id',
+        'department_id' => 'nullable|integer|exists:departments,id',
+        'vaccination_id' => 'nullable|integer|exists:vaccinations,id',
+        'country_id' => 'nullable|integer|exists:countries,id',
+        'state_id' => 'nullable|integer|exists:states,id',
+        'city_id' => 'nullable|integer|exists:cities,id',
+        'barangay_id' => 'nullable|integer|exists:barangays,id',
     ];
 
     /**
@@ -212,6 +227,21 @@ class Patient extends Model implements HasMedia
         'maintenance' => 'nullable|string|max:10000',
         'covid_vaccination' => 'nullable|string|max:191',
         'postal_code' => 'nullable|numeric',
+        // Values the form's pick-lists and date picker send, checked the way the columns need them: a date that exists and is
+        // not in the future, one of the two genders, and ids that point at a row of their list (not at nothing).
+        'dob' => 'nullable|date_format:Y-m-d|after:1899-12-31|before_or_equal:today',
+        'gender' => 'nullable|in:1,2',
+        'campus_id' => 'nullable|integer|exists:campuses,id',
+        'college_id' => 'nullable|integer|exists:colleges,id',
+        'course_id' => 'nullable|integer|exists:courses,id',
+        'year_level_id' => 'nullable|integer|exists:year_levels,id',
+        'office_id' => 'nullable|integer|exists:offices,id',
+        'department_id' => 'nullable|integer|exists:departments,id',
+        'vaccination_id' => 'nullable|integer|exists:vaccinations,id',
+        'country_id' => 'nullable|integer|exists:countries,id',
+        'state_id' => 'nullable|integer|exists:states,id',
+        'city_id' => 'nullable|integer|exists:cities,id',
+        'barangay_id' => 'nullable|integer|exists:barangays,id',
     ];
 
     protected $appends = ['profile'];
