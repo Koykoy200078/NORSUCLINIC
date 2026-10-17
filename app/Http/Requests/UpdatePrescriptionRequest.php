@@ -25,7 +25,7 @@ class UpdatePrescriptionRequest extends FormRequest
             'doctor_license_s2_number' => 'nullable|string|max:100',
             // Staff write a prescription only on a doctor's verbal / phone order, and must say so.
             'verbal_order' => isRole('staff') ? ['accepted'] : ['nullable', 'boolean'],
-            'consultation_date' => 'required|date',
+            'consultation_date' => 'required|date_format:Y-m-d|after:1899-12-31|before_or_equal:+1 year',
             'icd10_diagnosis_id' => 'nullable|integer|exists:diagnoses,id',
             'problem_description' => 'nullable|string|max:2000',
             'advice' => 'nullable|string|max:2000',
@@ -50,6 +50,9 @@ class UpdatePrescriptionRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'consultation_date.date_format' => 'The consultation date must be a real date (year-month-day).',
+            'consultation_date.after' => 'The consultation date cannot be before the year 1900.',
+            'consultation_date.before_or_equal' => 'The consultation date cannot be more than a year ahead.',
             'verbal_order.accepted' => 'Tick the verbal / phone order box to confirm that the doctor ordered this prescription.',
             'medicines.required' => 'Add at least one medicine item.',
             'medicines.*.medicine_id.required' => 'Medicine selection is required for each row.',

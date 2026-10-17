@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-4 col-sm-6 co-12">
         <div class="image mb-7">
-            <img src="{{ asset($data['logo']) }}" alt="user" class="object-cover prescription-app-logo">
+            <img src="{{ asset(! empty($data['logo']) ? normalizeLocalUrl($data['logo']) : 'assets/image/norsu_logo.png') }}" alt="user" class="object-cover prescription-app-logo">
         </div>
         <h3>{{ $prescription['prescription']->doctor->user->full_name }}</h3>
         <h4 class="fs-5 text-gray-600 fw-light mb-0">

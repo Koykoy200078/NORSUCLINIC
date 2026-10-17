@@ -23,6 +23,7 @@ use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laracasts\Flash\Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -852,6 +853,10 @@ class PrescriptionController extends AppBaseController
             return $this->sendError('You are not authorized to perform this action.');
         }
 
+        // A new catalog medicine with opening stock is the Inventory module's work, whatever page it is sent from:
+        // the permission of a role decides, not the page. Row 5.5.
+        abort_unless(canUseModule('inventory'), 403);
+
         DB::beginTransaction();
         try {
             $input = $request->validated();
@@ -1046,6 +1051,8 @@ class PrescriptionController extends AppBaseController
             return response($pdf->output(), 200)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'inline; filename="prescription-' . $id . '.pdf"');
+        } catch (ModelNotFoundException $e) {
+            throw $e; // a prescription that does not exist is a 404, not a failed PDF
         } catch (\Exception $e) {
             Log::error('PDF generation failed: ' . $e->getMessage(), [
                 'prescription_id' => $id,

@@ -4,7 +4,11 @@ $editUrl = getRouteByRole('prescriptions.edit', ['prescription' => $row->id]);
 $pdfUrl = getRouteByRole('prescriptions.pdf', ['id' => $row->id]);
 $statusUrl = getRouteByRole('prescription.status', ['prescription' => $row->id]);
 $isCancelled = $row->status === \App\Models\Prescription::DISPENSE_STATUS_CANCELLED || ! ($row->is_active ?? true);
-$canSwitch = $row->status !== \App\Models\Prescription::DISPENSE_STATUS_DISPENSED && ! isRole('patient');
+$isDispensed = $row->status === \App\Models\Prescription::DISPENSE_STATUS_DISPENSED;
+$canSwitch = ! $isDispensed && ! isRole('patient');
+// A dispensed prescription is a closed record (no edit, no delete) and staff never delete one: draw only what works.
+$canEdit = ! $isDispensed;
+$canDelete = ! $isDispensed && ! isRole('staff') && ! isRole('patient');
 @endphp
 
 <div class="d-flex align-items-center gap-2">
@@ -16,11 +20,13 @@ $canSwitch = $row->status !== \App\Models\Prescription::DISPENSE_STATUS_DISPENSE
     </a>
 
     {{-- Edit Button --}}
+    @if ($canEdit)
     <a href="{{ $editUrl }}"
         title="{{ __('messages.common.edit') }}"
         class="btn btn-sm btn-outline-primary action-btn">
         <i class="fas fa-edit"></i>
     </a>
+    @endif
 
     {{-- PDF Button --}}
     <a href="{{ $pdfUrl }}"
@@ -45,10 +51,12 @@ $canSwitch = $row->status !== \App\Models\Prescription::DISPENSE_STATUS_DISPENSE
     @endif
 
     {{-- Delete Button --}}
+    @if ($canDelete)
     <button type="button"
         title="{{ __('messages.common.delete') }}"
         class="btn btn-sm btn-outline-danger action-btn delete-prescription-btn"
         data-id="{{ $row->id }}">
         <i class="fas fa-trash"></i>
     </button>
+    @endif
 </div>

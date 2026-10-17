@@ -60,9 +60,9 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Plan row 5.4 Consultations: `6682265`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.3 Queue `71c14fe` / `8a74e35` (2026-10-16), row 5.2 Patients `7a74078` / `f7f6212`, row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Last pushed work | Plan row 5.5 Prescriptions: the `Plan 5.5` commit, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.4 Consultations: `6682265`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.3 Queue `71c14fe` / `8a74e35` (2026-10-16), row 5.2 Patients `7a74078` / `f7f6212`, row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
 | Work in progress (not pushed) | none |
-| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1, 5.2, 5.3, 5.4 and item 5.23 are done, **5.5 Prescriptions** is next |
+| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1 to 5.5 and item 5.23 are done, **5.6 Inventory** is next |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
 | Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
@@ -70,6 +70,17 @@ Nothing is written while work is in progress, half-done or not started yet.
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-18 03:00 +08:00 — Claude Code — START → END (pushed 2026-10-18)
+- **Branch / from:** `changes_v2` @ `722fffd` (row 5.4 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5 row 5.5 Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), on the owner's go (2026-10-18: "continue to the next plan item, 5.5 Prescriptions"): Pass A test-first (authorisation incl. record level, all-or-nothing saves, validation vs columns, list, PDF, N+1 / caches, no internet), then Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** the `Plan 5.5` commit (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.5, Pass A and Pass B):** the endpoint that creates a catalog medicine with opening stock (`prescription.medicine.store`) now needs the Inventory permission (it needed only the documents permission); the list draws Delete / Edit only where they work (staff never delete, a dispensed prescription is closed); the visit date must be a real date from 1900 to one year ahead (create and edit); the View page no longer crashes (500) when the clinic logo setting is missing; the PDF of a missing prescription is a 404; all-or-nothing saves and the page queries are pinned by tests.
+  - **Verified:** `LINK_CRAWL=1` full suite **605 tests / 6,431 assertions**, all passing (14 min 44 sec); crawl 1,622 requests, no problems; no route added. 9 new tests (`PrescriptionPassATest`); 12 mutations of production code each fail a test (one first survived and the test was strengthened). Pass B on a scratch copy of the real clinic data with nurse, doctor and admin: the doctor's form refuses a year-1066 date and saves a normal one (markup shown as text), the nurse sees no Delete button and cancels / reactivates through the real button, the PDF opens and a missing id gives 404, the administrator deletes through the real pop-up, and without the documents permission every prescription page and the new-medicine endpoint answer 403. Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.6 Inventory.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (plan block and STATUS §6):** owner question: a prescription fills blank vitals from the latest consultation on every save; double-click creates two prescriptions; unused repository methods (Phase 6.6); the dispense side is row 5.7.
 
 ### 2026-10-16 17:30 +08:00 — Claude Code — START → END (pushed 2026-10-18)
 - **Branch / from:** `changes_v2` @ `8a74e35` (row 5.3 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
