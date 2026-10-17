@@ -315,6 +315,38 @@ class DocumentIssuance extends Model implements HasMedia
     }
 
     /**
+     * Consultation forms that still lack the doctor's Assessment or Plan. Blank means nothing readable: empty, only spaces
+     * or a missing value (a "0" is something that was written). The one definition behind the sidebar badge, the list's
+     * "Incomplete" label, the doctor's alert and the row buttons.
+     */
+    public function scopeIncompleteConsultations($query)
+    {
+        return $query->where('document_type', 'consultation_form')
+            ->where(function ($inner) {
+                // MySQL's TRIM only takes off spaces; a text of tabs or line breaks is blank too (as PHP's trim() sees it).
+                $inner->whereRaw("COALESCE(document_issuances.assessment, '') NOT REGEXP '[^[:space:]]'")
+                    ->orWhereRaw("COALESCE(document_issuances.plan, '') NOT REGEXP '[^[:space:]]'");
+            });
+    }
+
+    /**
+     * What a consultation form still lacks: [] when it is complete, else 'Assessment' and / or 'Plan'.
+     *
+     * @return array<int, string>
+     */
+    public function missingAssessmentOrPlan(): array
+    {
+        if ($this->document_type !== 'consultation_form') {
+            return [];
+        }
+
+        return array_values(array_filter([
+            trim((string) $this->assessment) === '' ? 'Assessment' : null,
+            trim((string) $this->plan) === '' ? 'Plan' : null,
+        ]));
+    }
+
+    /**
      * The picked illnesses as readable lines: "Cough/colds", and for an "Others" line "Skeletal System: Lump on right leg".
      *
      * @return array<int, string>

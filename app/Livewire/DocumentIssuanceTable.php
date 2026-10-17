@@ -129,18 +129,13 @@ class DocumentIssuanceTable extends DataTableComponent
                         return '<span class="badge bg-secondary text-white">N/A</span>';
                     }
 
-                    $hasAssessment = !empty(trim((string)$row->assessment));
-                    $hasPlan = !empty(trim((string)$row->plan));
+                    $missing = $row->missingAssessmentOrPlan();
 
-                    if ($hasAssessment && $hasPlan) {
+                    if ($missing === []) {
                         return '<span class="badge bg-success text-white">
                                     <i class="fas fa-check-circle"></i> Completed
                                 </span>';
                     }
-
-                    $missing = [];
-                    if (!$hasAssessment) $missing[] = 'Assessment';
-                    if (!$hasPlan) $missing[] = 'Plan';
 
                     return '<span class="badge bg-warning text-dark" data-bs-toggle="tooltip" title="Missing: ' . implode(', ', $missing) . '">
                                 <i class="fas fa-exclamation-triangle"></i> Incomplete

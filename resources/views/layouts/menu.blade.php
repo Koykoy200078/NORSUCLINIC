@@ -5,9 +5,9 @@
 // queue: read fresh on every page (one small COUNT, and the badge must follow an add / call / complete at once).
 // medicine: 300s. docs: 60s.
 // -----------------------------------------------------------------------
-$_menuQueueBadge = \App\Models\PatientQueue::openToday()
+$_menuQueueBadge = canUseModule('queue') ? \App\Models\PatientQueue::openToday()
 ->selectRaw('COUNT(*) as total, SUM(is_priority) as priority, SUM(CASE WHEN status = "in_progress" THEN 1 ELSE 0 END) as in_progress')
-->first();
+->first() : null;
 
 // Once a day (also where the scheduler is not running) refresh each medicine's "available" figure for batches
 // that expired, so expired units stop being offered in forms and reports. R3-H5.
@@ -69,13 +69,7 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
                 return compact('criticalCount', 'warningCount', 'lowStockCount', 'expiredCount');
                 });
 
-                $_menuIncompleteDocsBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_incomplete_docs', 60, function () {
-                return \App\Models\DocumentIssuance::where('document_type', 'consultation_form')
-                ->where(function ($q) {
-                $q->whereNull('assessment')->orWhere('assessment', '')
-                ->orWhereNull('plan')->orWhere('plan', '');
-                })->count();
-                });
+                $_menuIncompleteDocsBadge = canUseModule('consultations') ? \App\Models\DocumentIssuance::incompleteConsultations()->count() : 0;
                 @endphp
                 <div class="no-record text-center d-none">{{ __('messages.no_matching_records_found') }}</div>
 

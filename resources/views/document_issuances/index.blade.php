@@ -103,12 +103,8 @@ Certificate Issuance
     @php
     $doctorUserId = getLogInUser()->id;
     $incompleteCount = $doctorUserId
-        ? \App\Models\DocumentIssuance::where('document_type', 'consultation_form')
+        ? \App\Models\DocumentIssuance::incompleteConsultations()
             ->where('document_creator_id', $doctorUserId)
-            ->where(function($query) {
-                $query->whereRaw("TRIM(COALESCE(assessment, '')) = ''")
-                      ->orWhereRaw("TRIM(COALESCE(plan, '')) = ''");
-            })
             ->count()
         : 0;
     @endphp

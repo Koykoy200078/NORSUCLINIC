@@ -2,10 +2,7 @@
 // Check if consultation form has incomplete assessment or plan (for doctors only)
 $needsAttention = false;
 if (isset($row) && isRole('doctor') && $row->document_type === 'consultation_form') {
-// Check if assessment or plan is truly empty (null or empty string after trimming)
-$assessmentEmpty = is_null($row->assessment) || trim($row->assessment) === '';
-$planEmpty = is_null($row->plan) || trim($row->plan) === '';
-$needsAttention = $assessmentEmpty || $planEmpty;
+$needsAttention = $row->missingAssessmentOrPlan() !== [];
 }
 
 $queryParams = array_filter([

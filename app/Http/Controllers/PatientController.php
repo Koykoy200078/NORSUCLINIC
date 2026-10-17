@@ -214,32 +214,49 @@ class PatientController extends AppBaseController
 
     public function showMyHistory(Patient $patient)
     {
+        // The page belongs to the Patients module, but each history part belongs to its own module: a staff member with
+        // Manage Patients alone sees the patient's record and none of the clinical content of the others (the parts are
+        // neither drawn nor read). The plan's rule: a role's permissions are the only thing that decides what it may open.
+        $mayConsultations = canUseModule('consultations');
+        $mayCertificates = canUseModule('certificates');
+        $mayPrescriptions = canUseModule('prescriptions');
+        $mayDispensing = canUseModule('dispensing');
+
         // Load consultations and related data. The compare table reads each consultation's medicines and nurse in charge,
         // so they are loaded for all of them at once (not one query per consultation).
-        $patient->load([
-            'documentIssuances.consultationMedicines.medicine:id,name',
-            'documentIssuances.nursingInCharge:id,first_name,last_name',
-        ]);
+        if ($mayConsultations) {
+            $patient->load([
+                'documentIssuances.consultationMedicines.medicine:id,name',
+                'documentIssuances.nursingInCharge:id,first_name,last_name',
+            ]);
+        } elseif ($mayCertificates) {
+            // Certificates and excuse slips only: the consultations' medicines and nurses are not read.
+            $patient->load('documentIssuances');
+        } else {
+            $patient->setRelation('documentIssuances', collect());
+        }
 
         // Fetch all consultations with `consultation_form` type
-        $consultations = $patient->documentIssuances->where('document_type', 'consultation_form');
+        $consultations = $mayConsultations ? $patient->documentIssuances->where('document_type', 'consultation_form') : collect();
 
         // Fetch all medical certificates
-        $medicalCertificates = $patient->documentIssuances->where('document_type', 'medical_certificate');
+        $medicalCertificates = $mayCertificates ? $patient->documentIssuances->where('document_type', 'medical_certificate') : collect();
 
         // Fetch all excuse slips (they were issued but never listed in the history)
-        $excuseSlips = $patient->documentIssuances->where('document_type', 'excuse_slip');
+        $excuseSlips = $mayCertificates ? $patient->documentIssuances->where('document_type', 'excuse_slip') : collect();
 
         // Load prescriptions with associated medicines and dispenser info
-        $prescriptions = \App\Models\Prescription::with([
-            'getMedicine.medicines',   // PrescriptionMedicine::medicines() → Medicine
-            'doctor.user',             // Prescription::doctor() → Doctor::user() → User
-            'dispensedBy',             // Prescription::dispensedBy() → User
-        ])->where('patient_id', $patient->id)->latest()->get();
+        $prescriptions = $mayPrescriptions
+            ? \App\Models\Prescription::with([
+                'getMedicine.medicines',   // PrescriptionMedicine::medicines() → Medicine
+                'doctor.user',             // Prescription::doctor() → Doctor::user() → User
+                'dispensedBy',             // Prescription::dispensedBy() → User
+            ])->where('patient_id', $patient->id)->latest()->get()
+            : collect();
 
         // The same history as Dispensing > Dispense History: dispense records, DISPENSED prescriptions and the
         // medicines recorded in consultations (a pending or cancelled prescription handed nothing out).
-        $dispenseHistory = $this->dispenseHistoryOf($patient);
+        $dispenseHistory = $mayDispensing ? $this->dispenseHistoryOf($patient) : collect();
 
         // Pass the data to the view
         return view('patients.view_patient', compact(

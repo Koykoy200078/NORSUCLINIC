@@ -1860,11 +1860,7 @@
                         setFieldValue('maintenance', data.maintenance);
                         setFieldValue('pregnancy_status', data.pregnancy_status);
                         setFieldValue('lmp_aog', data.lmp_aog);
-                        setFieldValue('vital_signs_bp', data.vital_signs_bp);
-                        setFieldValue('vital_signs_pr', data.vital_signs_pr);
-                        setFieldValue('vital_signs_temp', data.vital_signs_temp);
-                        setFieldValue('vital_signs_rr', data.vital_signs_rr);
-                        setFieldValue('vital_signs_o2_sat', data.vital_signs_o2_sat);
+                        // BP, PR, Temp, RR and O2 Sat are measured at every visit and are not carried over from an earlier one.
                         setFieldValue('vital_signs_weight', data.vital_signs_weight);
                         setFieldValue('vital_signs_height', data.vital_signs_height);
 

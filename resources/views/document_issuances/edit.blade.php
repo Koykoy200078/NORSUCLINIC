@@ -209,7 +209,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     <div class="grid grid-cols-2 gap-2">
                         <div class="col-span-1">
                             <label class="block text-xs" for="vaccination_id">COVID Vaccination<span class="text-red-500">*</span></label>
-                            <select id="vaccination_id" name="vaccination_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" required>
+                            <select id="vaccination_id" name="vaccination_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
                                 <option value="">Select Vaccination Status</option>
                                 @foreach($vaccinations as $vaccination)
                                 <option value="{{ $vaccination->id }}" {{ (string) $selectedVaccinationId === (string) $vaccination->id ? 'selected' : '' }}>
@@ -257,7 +257,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
-                            <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}" required>
+                            <input type="text" id="pregnancy_status" name="pregnancy_status" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('pregnancy_status', $requestDocument->pregnancy_status) }}">
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="lmp_aog">If YES, LMP/AOG</label>
@@ -405,7 +405,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                     <label class="block">Nursing Intervention<span class="text-red-500">*</span></label>
                 </div>
                 <div class="col-span-3">
-                    <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5" required>{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}</textarea>
+                    <textarea id="nursing_intervention" name="nursing_intervention" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all auto-resize-textarea" rows="5">{{ old('nursing_intervention', $requestDocument->nursing_intervention) }}</textarea>
 
                     <!-- Medicine Selection for Nursing Intervention -->
                     <div class="mt-3">

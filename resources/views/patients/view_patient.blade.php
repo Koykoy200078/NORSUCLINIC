@@ -125,6 +125,7 @@ Patient Data
         </div>
     </div>
 
+    @if(canUseModule('consultations'))
     <!-- Consultation History -->
     <div class="card shadow-sm mb-6 border-0 rounded-xl overflow-hidden">
         <div class="card-header bg-white py-4 px-6 border-bottom border-light d-flex align-items-center justify-content-between">
@@ -233,6 +234,9 @@ Patient Data
         </div>
     </div>
 
+    @endif
+
+    @if(canUseModule('certificates'))
     <!-- Medical Certificate History -->
     <div class="card shadow-sm mb-6 border-0 rounded-xl overflow-hidden">
         <div class="card-header bg-white py-4 px-6 border-bottom border-light">
@@ -303,6 +307,9 @@ Patient Data
         </div>
     </div>
 
+    @endif
+
+    @if(canUseModule('certificates'))
     <!-- Excuse Slip History -->
     <div class="card shadow-sm mb-6 border-0 rounded-xl overflow-hidden">
         <div class="card-header bg-white py-4 px-6 border-bottom border-light">
@@ -350,6 +357,9 @@ Patient Data
         </div>
     </div>
 
+    @endif
+
+    @if(canUseModule('consultations'))
     <!-- Comparison Section -->
     <div class="card shadow-sm mb-6 border-0 rounded-xl overflow-hidden border-top border-primary border-4">
         <div class="card-header bg-white py-4 px-6 border-bottom border-light">
@@ -845,6 +855,9 @@ Patient Data
     </div>
     @endif
 
+    @endif
+
+    @if(canUseModule('prescriptions'))
     {{-- ========================================================= --}}
     {{-- Prescription History Section                               --}}
     {{-- ========================================================= --}}
@@ -991,6 +1004,9 @@ Patient Data
         </div>
     </div>
 
+    @endif
+
+    @if(canUseModule('dispensing'))
     {{-- ========================================================= --}}
     {{-- Medicine Dispense History Section                         --}}
     {{-- The same history as Dispensing > Dispense History: dispense records, dispensed prescriptions and the --}}
@@ -1090,6 +1106,8 @@ Patient Data
             @endif
         </div>
     </div>
+
+    @endif
 
 </div> <!-- End of container -->
 

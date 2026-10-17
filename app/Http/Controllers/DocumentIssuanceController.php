@@ -77,6 +77,22 @@ class DocumentIssuanceController extends Controller
         'complaints_diagnosis' => 'nullable|max:10000', 'medical_cert_remarks' => 'nullable|max:10000',
     ];
 
+    /**
+     * Values of the consultation / certificate forms that the database would not take, or that would point at nothing:
+     * a visit date that exists and is not absurd, one of the two consult modes, and ids that belong to their list.
+     * (The age is worked out from the date of birth, whatever is posted.)
+     */
+    private const CONSULTATION_VALUE_RULES = [
+        'requested_at' => 'nullable|date_format:Y-m-d|after:1899-12-31|before_or_equal:+1 year',
+        'consult_mode' => 'nullable|in:physical,virtual',
+        'campus_id' => 'nullable|integer|exists:campuses,id',
+        'college_id' => 'nullable|integer|exists:colleges,id',
+        'course_id' => 'nullable|integer|exists:courses,id',
+        'year_level_id' => 'nullable|integer|exists:year_levels,id',
+        'department_id' => 'nullable|integer|exists:departments,id',
+        'office_id' => 'nullable|integer|exists:offices,id',
+    ];
+
     private const CLASSIFICATION_RULES = [
         'illness_ids' => 'nullable|array|max:60',
         'illness_ids.*' => 'integer|exists:illnesses,id',
@@ -154,7 +170,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES), array_merge([
             'document_type.required' => 'Please choose the type of document to create.',
             'document_type.in' => 'Unknown document type.',
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
@@ -1337,7 +1353,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES), array_merge([
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));
@@ -2456,11 +2472,9 @@ class DocumentIssuanceController extends Controller
                 'maintenance',
                 'pregnancy_status',
                 'lmp_aog',
-                'vital_signs_bp',
-                'vital_signs_pr',
-                'vital_signs_temp',
-                'vital_signs_rr',
-                'vital_signs_o2_sat',
+                // Height and weight change slowly and are carried over. BP, pulse, temperature, breathing rate and O2
+                // saturation are measured at every visit: they are never copied from an earlier one (an old reading
+                // that is not overwritten would be saved, and counted in the reports, as today's). Owner decision 2026-10-16.
                 'vital_signs_weight',
                 'vital_signs_height',
             ];
@@ -2536,11 +2550,11 @@ class DocumentIssuanceController extends Controller
                     'maintenance' => $resolvedHistoryData['maintenance'],
                     'pregnancy_status' => $resolvedHistoryData['pregnancy_status'],
                     'lmp_aog' => $resolvedHistoryData['lmp_aog'],
-                    'vital_signs_bp' => $resolvedHistoryData['vital_signs_bp'],
-                    'vital_signs_pr' => $resolvedHistoryData['vital_signs_pr'],
-                    'vital_signs_temp' => $resolvedHistoryData['vital_signs_temp'],
-                    'vital_signs_rr' => $resolvedHistoryData['vital_signs_rr'],
-                    'vital_signs_o2_sat' => $resolvedHistoryData['vital_signs_o2_sat'],
+                    'vital_signs_bp' => null,
+                    'vital_signs_pr' => null,
+                    'vital_signs_temp' => null,
+                    'vital_signs_rr' => null,
+                    'vital_signs_o2_sat' => null,
                     'vital_signs_weight' => $resolvedHistoryData['vital_signs_weight'],
                     'vital_signs_height' => $resolvedHistoryData['vital_signs_height'],
                 ]

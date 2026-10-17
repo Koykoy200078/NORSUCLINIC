@@ -5,6 +5,7 @@ namespace Tests\Feature\Regression;
 use App\Models\Campus;
 use App\Models\College;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\DocumentIssuance;
 use App\Models\Illness;
 use App\Models\IllnessSystem;
@@ -132,14 +133,16 @@ class ConsultationClassificationTest extends TestCase
         $doctor = $this->makeDoctor();
         $nurse = $this->makeStaff('nurse', 'triage_area');
         $employee = $this->makePatient();
+        // The form takes only a department that exists (a made-up id is refused since plan row 5.4).
+        $department = Department::create(['department_name' => 'Zzdepartment', 'college_id' => College::first()?->id ?? College::create(['college_name' => 'Zzcollege'])->id]);
 
         $this->actingAs($doctor)->post(route('doctors.document-issuances.store'), $this->payload($employee->user, $nurse, [
-            'informant' => 'Faculty', 'department_id' => 3,
+            'informant' => 'Faculty', 'department_id' => $department->id,
         ]))->assertRedirect();
 
         $document = DocumentIssuance::firstOrFail();
         $this->assertSame((int) PatientType::where('code', 'faculty')->value('id'), (int) $document->patient_type_id);
-        $this->assertSame(3, (int) $document->department_id);
+        $this->assertSame($department->id, (int) $document->department_id);
     }
 
     public function test_a_nurse_can_classify_a_visit_and_editing_replaces_the_picks(): void
