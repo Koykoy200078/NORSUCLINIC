@@ -43,6 +43,16 @@ class LabRequestController extends Controller
         'custom_tests.*' => 'nullable|string|max:191',
     ];
 
+    /** The date of the request (a date box, Y-m-d) and the results typed on the edit page. */
+    private const DATE_RULE = 'required|date_format:Y-m-d|after:1899-12-31|before_or_equal:+1 year';
+
+    private const DATE_MESSAGES = [
+        'requested_at.required' => 'The date of the request is required.',
+        'requested_at.date_format' => 'The date of the request must be a real date (year-month-day).',
+        'requested_at.after' => 'The date of the request cannot be before the year 1900.',
+        'requested_at.before_or_equal' => 'The date of the request cannot be more than a year ahead.',
+    ];
+
     // =========================================================================
     // INDEX
     // =========================================================================
@@ -77,7 +87,12 @@ class LabRequestController extends Controller
             $user   = User::with(['patient', 'campus', 'college', 'course', 'yearLevel', 'patient.address', 'address.barangay', 'address.city', 'address.state'])
                 ->find($userId);
 
-            if ($user && $user->type === User::PATIENT) {
+            // Only a patient is copied into the form: another kind of account (doctor, staff, admin) is not a patient.
+            if ($user && $user->type !== User::PATIENT) {
+                $user = null;
+            }
+
+            if ($user) {
                 $patient = $user->patient;
             }
         }
@@ -109,11 +124,11 @@ class LabRequestController extends Controller
             'patient_user_id' => isRole('patient')
                 ? 'nullable'
                 : ['required', Rule::exists('users', 'id')->where('type', User::PATIENT)],
-            'requested_at'    => 'required|date',
+            'requested_at'    => self::DATE_RULE,
             'test_ids'        => 'nullable|array',
             'test_ids.*'      => 'integer|exists:lab_tests,id',
             'custom_tests'    => 'nullable|array',
-        ] + self::TEXT_RULES);
+        ] + self::TEXT_RULES, self::DATE_MESSAGES);
 
         try {
             $patientUserId = isRole('patient') ? Auth::id() : $request->patient_user_id;
@@ -271,11 +286,16 @@ class LabRequestController extends Controller
         }
 
         $request->validate([
-            'requested_at'   => 'required|date',
+            'requested_at'   => self::DATE_RULE,
             'test_ids'       => 'nullable|array',
             'test_ids.*'     => 'integer|exists:lab_tests,id',
             'custom_tests'   => 'nullable|array',
-        ] + self::TEXT_RULES);
+            // the results typed next to each test: the status is one of the four the column holds (it was written unchecked)
+            'results'                  => 'nullable|array',
+            'results.*.result_value'   => 'nullable|string|max:10000',
+            'results.*.result_status'  => ['nullable', Rule::in(array_keys(LabRequestItem::resultStatuses()))],
+            'results.*.notes'          => 'nullable|string|max:10000',
+        ] + self::TEXT_RULES, self::DATE_MESSAGES);
 
         try {
             $newIds = array_values(array_unique(array_map('intval', $request->input('test_ids', []))));
@@ -487,34 +507,29 @@ class LabRequestController extends Controller
         ]);
 
         $newStatus = $request->status;
-        $allowed   = LabRequest::allowedTransitions()[$lab_request->status] ?? [];
-
-        if (!in_array($newStatus, $allowed)) {
-            return redirect()->back()->with('error', "Cannot transition from '{$lab_request->status}' to '{$newStatus}'.");
-        }
 
         try {
-            $updateData = [
-                'status'      => $newStatus,
-                'status_note' => $request->status_note,
-            ];
+            $refused = null;
 
-            // Record timestamp for the new status
-            $timestampField = match ($newStatus) {
-                'collected'  => 'collected_at',
-                'processing' => 'processed_at',
-                'completed'  => 'completed_at',
-                'cancelled'  => 'cancelled_at',
-                'referred'   => 'referred_at',
-                'rejected'   => 'rejected_at',
-                default      => null,
-            };
+            // Read again under a lock: two people pressing a status button at the same moment (or a stale page) must not
+            // write over a request that has already moved on, for example reopen a finished one.
+            DB::transaction(function () use ($request, $lab_request, $newStatus, &$refused) {
+                $current = LabRequest::whereKey($lab_request->getKey())->lockForUpdate()->firstOrFail();
+                $allowed = LabRequest::allowedTransitions()[$current->status] ?? [];
 
-            if ($timestampField) {
-                $updateData[$timestampField] = now();
+                if (! in_array($newStatus, $allowed, true)) {
+                    $refused = "Cannot transition from '{$current->status}' to '{$newStatus}'.";
+
+                    return;
+                }
+
+                $lab_request->setRawAttributes($current->getAttributes(), true);
+                $this->writeStatus($request, $lab_request, $newStatus);
+            });
+
+            if ($refused !== null) {
+                return redirect()->back()->with('error', $refused);
             }
-
-            $lab_request->update($updateData);
 
             self::logActivity(
                 'lab_request_status_updated',
@@ -531,6 +546,32 @@ class LabRequestController extends Controller
             Log::error('LabRequest status update error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to update status.');
         }
+    }
+
+    /** Write the new status and the time it happened (called inside the lock of updateStatus). */
+    private function writeStatus(Request $request, LabRequest $lab_request, string $newStatus): void
+    {
+        $updateData = [
+            'status'      => $newStatus,
+            'status_note' => $request->status_note,
+        ];
+
+        // Record timestamp for the new status
+        $timestampField = match ($newStatus) {
+            'collected'  => 'collected_at',
+            'processing' => 'processed_at',
+            'completed'  => 'completed_at',
+            'cancelled'  => 'cancelled_at',
+            'referred'   => 'referred_at',
+            'rejected'   => 'rejected_at',
+            default      => null,
+        };
+
+        if ($timestampField) {
+            $updateData[$timestampField] = now();
+        }
+
+        $lab_request->update($updateData);
     }
 
     // =========================================================================

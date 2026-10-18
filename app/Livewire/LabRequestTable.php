@@ -31,6 +31,7 @@ class LabRequestTable extends DataTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
+        $this->setDefaultSort('lab_requests.requested_at', 'desc');
         $this->setTableAttributes([
             'class' => 'table table-striped table-bordered',
         ]);
@@ -69,7 +70,7 @@ class LabRequestTable extends DataTableComponent
             $query->where('status', $this->status);
         }
 
-        return $query->orderByDesc('requested_at')->orderByDesc('id');
+        return $query;
     }
 
     public function filters(): array
@@ -80,9 +81,14 @@ class LabRequestTable extends DataTableComponent
     public function columns(): array
     {
         return [
+            // The search finds a request by its number or by a test that was asked for in it.
             Column::make('Request #', 'request_number')
                 ->sortable()
-                ->searchable(),
+                ->searchable(function (\Illuminate\Database\Eloquent\Builder $query, $word) {
+                    $like = \App\Support\SearchTerm::like($word);
+                    $query->where('lab_requests.request_number', 'like', $like)
+                        ->orWhereHas('items', fn ($items) => $items->where('test_name', 'like', $like));
+                }),
 
             Column::make('Patient Name', 'patient_name')
                 ->sortable()
