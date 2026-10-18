@@ -32,7 +32,7 @@ class InitialStockRegisterTest extends TestCase
         return array_merge([
             'generic_name' => 'Paracetamol', 'brand_name' => 'Biogesic', 'category' => 'Analgesic', 'dosage' => '500mg', 'uom' => 'tablet',
             'initial_stock_quantity' => 30, 'batch_number' => 'B-100', 'manufacturing_date' => '2026-01-01',
-            'expiration_date' => now()->addYear()->toDateString(), 'supplier_name' => 'Mercury Drug', 'unit_cost' => '2.50',
+            'expiration_date' => now()->addYear()->toDateString(), 'supplier_name' => 'Mercury Drug',
         ], $overrides);
     }
 
@@ -54,7 +54,6 @@ class InitialStockRegisterTest extends TestCase
         $this->assertSame(30, (int) $batch->quantity);
         $this->assertSame('B-100', $batch->batch_number);
         $this->assertSame('Mercury Drug', $batch->supplier_name);
-        $this->assertEquals(2.5, (float) $batch->unit_cost);
         $this->assertSame(30, (int) $medicine->fresh()->available_quantity);
         $this->assertNotNull(ActivityLog::where('action', 'procured_medicine')->where('subject_id', $medicine->id)->first());
     }
@@ -110,9 +109,11 @@ class InitialStockRegisterTest extends TestCase
 
     public function test_the_prescription_quick_add_pop_up_also_uses_the_register(): void
     {
-        $doctor = $this->makeDoctor();
+        // Doctors are read-only in the inventory (owner decision 2026-10-18), so the pop-up is for staff and the admin.
+        $this->actingAs($this->makeDoctor())->postJson(route('doctors.prescription.medicine.store'), $this->medicinePayload())->assertForbidden();
+        $this->assertSame(0, StockIn::count());
 
-        $this->actingAs($doctor)->postJson(route('doctors.prescription.medicine.store'), $this->medicinePayload())->assertOk();
+        $this->actingAs($this->makeNurse())->postJson(route('staff.prescription.medicine.store'), $this->medicinePayload())->assertOk();
 
         $this->assertSame(1, StockIn::count());
         $this->assertSame(30, (int) MedicineBatch::firstOrFail()->quantity);

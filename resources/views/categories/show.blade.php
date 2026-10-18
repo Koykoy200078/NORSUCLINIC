@@ -7,8 +7,10 @@
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
             <h1 class="mb-0 me-1">{{__('messages.medicine.medicine_category_details')}}</h1>
             <div class="text-end mt-4 mt-md-0">
-                <a class="btn btn-primary category-edit-btn"
+                @unless(isRole('doctor'))
+<a class="btn btn-primary category-edit-btn"
                    href="javascript:void(0)" data-id="{{ $category->id }}">{{ __('messages.common.edit') }}</a>
+@endunless
                 <a href="{{ route('categories.index') }}"
                    class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
             </div>
@@ -26,7 +28,9 @@
                 </div>
             </div>
             @include('categories.show_fields')
+            @unless(isRole('doctor'))
             @include('categories.edit_modal')
+            @endunless
         </div>
     </div>
 @endsection

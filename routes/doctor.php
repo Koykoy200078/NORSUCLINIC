@@ -83,24 +83,24 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
     Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])
         ->name('medicines.by.category')->middleware('permission:manage_request_documents|manage_medicines');
 
-    // Medicine Management (Doctors can manage medicines, categories, generics)
+    // Medicine inventory: doctors LOOK, they never change it (owner decision 2026-10-18): the lists and detail pages
+    // only; adding, editing, deleting, stock-in and the category switch are for staff and the clinic admin.
     Route::middleware('permission:manage_medicines')->group(function () {
         // Medicine Categories
-        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->except(['create']);
-        Route::post('categories/{category_id}/active-deactive', [CategoryController::class, 'activeDeActiveCategory'])->name('active.deactive');
+        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->only(['index', 'show']);
 
         // Medicine Generics
-        Route::resource('generics', GenericController::class);
+        Route::resource('generics', GenericController::class)->only(['index', 'show']);
 
         // Medicines
-        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->except(['show']);
+        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->only(['index']);
         Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
         Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
         Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
         Route::get('medicine-dispensing-management', [MedicineDispensingManagementController::class, 'index'])->name('medicine-dispensing.index');
 
         // Stock In (Medicine Purchasing)
-        Route::resource('stock-in', StockInController::class);
+        Route::resource('stock-in', StockInController::class)->only(['index', 'show']);
         Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
         Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
         Route::get('used-medicine', function () {

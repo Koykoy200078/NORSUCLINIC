@@ -68,10 +68,6 @@ $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
                 {{ Form::text('batch_number', old('batch_number'), ['class' => 'form-control', 'placeholder' => 'Required if stock quantity > 0']) }}
             </div>
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('unit_cost', 'Unit Cost:', ['class' => 'form-label']) }}
-                {{ Form::number('unit_cost', old('unit_cost'), ['class' => 'form-control', 'step' => '0.01', 'min' => 0, 'placeholder' => 'Optional']) }}
-            </div>
-            <div class="form-group col-md-4 mb-4">
                 {{ Form::label('manufacturing_date', 'Manufacturing Date:', ['class' => 'form-label']) }}
                 {{ Form::date('manufacturing_date', old('manufacturing_date'), ['class' => 'form-control']) }}
             </div>

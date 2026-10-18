@@ -7,12 +7,14 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">{{__('messages.medicine.medicine_generics_details')}}</h1>
         <div class="text-end mt-4 mt-md-0">
-            <a class="btn btn-primary edit-btn"
+            @unless(isRole('doctor'))
+<a class="btn btn-primary edit-btn"
                 href="{{ 
                        isRole('clinic_admin') ? route('generics.edit', ['generic' => $generic->id]) : 
                        (isRole('staff') ? route('staff.generics.edit', ['generic' => $generic->id]) : 
                        (isRole('doctor') ? route('doctors.generics.edit', ['generic' => $generic->id]) : route('generics.edit', ['generic' => $generic->id]))) 
                    }}">{{ __('messages.common.edit') }}</a>
+@endunless
             <a href="{{ 
                     isRole('clinic_admin') ? route('generics.index') : 
                     (isRole('staff') ? route('staff.generics.index') : 

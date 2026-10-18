@@ -11,6 +11,8 @@ Medicine Inventory Tracking
 {{-- Modals & templates live outside the Livewire component to avoid
      DOMDocument multiple-root-element detection issues --}}
 @include('medicines.show_modal')
+@unless(isRole('doctor'))
 @include('medicines.create_modal')
 @include('medicine-availabilities.create_modal')
+@endunless
 @endsection

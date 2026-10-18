@@ -92,7 +92,6 @@ class MedicineInventoryService
             $batch->manufacturing_date = $data['manufacturing_date'] ?? $batch->manufacturing_date;
             $batch->expiration_date = Carbon::parse($resolvedExpirationDate)->toDateString();
             $batch->supplier_name = $data['supplier_name'] ?? $batch->supplier_name;
-            $batch->unit_cost = isset($data['unit_cost']) ? (float) $data['unit_cost'] : $batch->unit_cost;
             $batch->date_received = Carbon::parse($resolvedDateReceived)->toDateString();
             if ($resolvedDosage !== '') {
                 $batch->dosage = $resolvedDosage;

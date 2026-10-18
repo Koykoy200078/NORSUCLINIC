@@ -342,6 +342,10 @@ class DispenseRecordController extends AppBaseController
 
     public function storePatient(CreatePatientRequest $request): JsonResponse
     {
+        // A pharmacist with the medicines permission only may not register people; doctors view and edit patients,
+        // they do not register them (owner decision). Row 5.7.
+        abort_unless(canUseModule('patients') && ! isRole('doctor'), 403);
+
         $input           = $request->all();
         $input['status'] = isset($input['status']) ? 1 : 0;
 
@@ -466,28 +470,34 @@ class DispenseRecordController extends AppBaseController
 
         $medicines = $medicinesQuery->get(['id', 'name', 'dosage', 'available_quantity']);
 
+        // One query for the batches of all the listed medicines (it was two queries per medicine).
+        $batchesByMedicine = MedicineBatch::whereIn('medicine_id', $medicines->pluck('id')->all())
+            ->where('quantity', '>', 0)
+            ->get(['medicine_id', 'dosage', 'quantity', 'expiration_date'])
+            ->groupBy('medicine_id');
+
         $data['medicine'] = $medicines->pluck('name', 'id')->toArray();
-        $data['medicine_details'] = $medicines->map(function (Medicine $medicine) {
+        $data['medicine_details'] = $medicines->map(function (Medicine $medicine) use ($batchesByMedicine) {
             return [
                 'id' => $medicine->id,
                 'name' => $medicine->name,
                 'available_quantity' => (int) $medicine->available_quantity,
-                'dosages' => $this->resolveDosageAvailability($medicine),
+                'dosages' => $this->resolveDosageAvailability($medicine, $batchesByMedicine->get($medicine->id, collect())),
             ];
         })->values();
 
         return $this->sendResponse($data, 'retrieved');
     }
 
-    private function resolveDosageAvailability(Medicine $medicine): array
+    /**
+     * @param  \Illuminate\Support\Collection<int, MedicineBatch>  $positiveBatches  the medicine's batches that still hold units
+     */
+    private function resolveDosageAvailability(Medicine $medicine, \Illuminate\Support\Collection $positiveBatches): array
     {
-        $dosages = MedicineBatch::where('medicine_id', $medicine->id)
-            ->where('quantity', '>', 0)
-            ->where(function ($query) {
-                $query->whereNull('expiration_date')
-                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
-            })
-            ->get(['dosage', 'quantity', 'expiration_date'])
+        $today = Carbon::today()->toDateString();
+
+        $dosages = $positiveBatches
+            ->filter(fn (MedicineBatch $batch) => $batch->expiration_date === null || $batch->expiration_date->toDateString() >= $today)
             ->groupBy(function (MedicineBatch $batch) use ($medicine) {
                 $batchDosage = trim((string) ($batch->dosage ?? ''));
                 if ($batchDosage !== '') {
@@ -515,9 +525,7 @@ class DispenseRecordController extends AppBaseController
             ->values()
             ->all();
 
-        $hasPositiveBatch = MedicineBatch::where('medicine_id', $medicine->id)
-            ->where('quantity', '>', 0)
-            ->exists();
+        $hasPositiveBatch = $positiveBatches->isNotEmpty();
 
         if (empty($dosages) && ! $hasPositiveBatch && (int) $medicine->available_quantity > 0) {
             $fallbackDosage = trim((string) ($medicine->dosage ?? ''));

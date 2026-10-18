@@ -46,7 +46,6 @@ class CreateMedicineRequest extends FormRequest
             'manufacturing_date' => ['nullable', 'date', 'after:1989-12-31', 'before_or_equal:today'],
             'expiration_date' => ['nullable', 'date', 'after_or_equal:manufacturing_date', 'after:1989-12-31', 'before:2101-01-01'],
             'supplier_name' => ['nullable', 'string', 'max:191'],
-            'unit_cost' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 

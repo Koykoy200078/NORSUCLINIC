@@ -464,7 +464,6 @@ class MedicineController extends AppBaseController
             'manufacturing_date',
             'expiration_date',
             'supplier_name',
-            'unit_cost',
         ]);
     }
 

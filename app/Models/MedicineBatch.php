@@ -26,7 +26,6 @@ class MedicineBatch extends Model
         'manufacturing_date',
         'expiration_date',
         'supplier_name',
-        'unit_cost',
         'date_received',
     ];
 
@@ -36,7 +35,6 @@ class MedicineBatch extends Model
         'quantity' => 'integer',
         'manufacturing_date' => 'date',
         'expiration_date' => 'date',
-        'unit_cost' => 'decimal:2',
         'date_received' => 'date',
     ];
 

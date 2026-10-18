@@ -16,7 +16,9 @@
             <livewire:medicine-category-table/>
         </div>
         @include('categories.modal')
+        @unless(isRole('doctor'))
         @include('categories.edit_modal')
+        @endunless
         @include('categories.templates.templates')
         {{-- @include('partials.page.templates.templates') --}}
     </div>

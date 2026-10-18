@@ -238,16 +238,21 @@ class InventoryPassATest extends TestCase
         }
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        foreach ([['staff.', $nurse], ['doctors.', $doctor]] as [$prefix, $user]) {
-            $this->actingAs($user);
-            $this->post(route($prefix . 'medicines.store'), $this->medicinePayload())->assertForbidden();
-            $this->put(route($prefix . 'medicines.update', $medicine), $this->medicinePayload())->assertForbidden();
-            $this->deleteJson(route($prefix . 'medicines.destroy', $medicine))->assertForbidden();
-            $this->post(route($prefix . 'stock-in.store'), $this->stockInPayload($medicine))->assertForbidden();
-            $this->postJson(route($prefix . 'categories.store'), ['name' => 'Nope'])->assertForbidden();
-            $this->postJson(route($prefix . 'generics.store'), ['name' => 'Nope'])->assertForbidden();
-            $this->getJson(route($prefix . 'medicines.show.modal', $medicine))->assertForbidden();
-        }
+        // staff: every write is refused; doctors have no inventory write routes at all (owner decision 2026-10-18),
+        // and without the permission they cannot even look
+        $this->actingAs($nurse);
+        $this->post(route('staff.medicines.store'), $this->medicinePayload())->assertForbidden();
+        $this->put(route('staff.medicines.update', $medicine), $this->medicinePayload())->assertForbidden();
+        $this->deleteJson(route('staff.medicines.destroy', $medicine))->assertForbidden();
+        $this->post(route('staff.stock-in.store'), $this->stockInPayload($medicine))->assertForbidden();
+        $this->postJson(route('staff.categories.store'), ['name' => 'Nope'])->assertForbidden();
+        $this->postJson(route('staff.generics.store'), ['name' => 'Nope'])->assertForbidden();
+        $this->getJson(route('staff.medicines.show.modal', $medicine))->assertForbidden();
+
+        $this->actingAs($doctor);
+        $this->getJson(route('doctors.medicines.show.modal', $medicine))->assertForbidden();
+        $this->get(route('doctors.medicine-inventory.index'))->assertForbidden();
+        $this->get(route('doctors.stock-in.index'))->assertForbidden();
 
         $this->assertSame(1, Medicine::count());
         $this->assertSame(0, StockIn::count());

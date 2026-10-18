@@ -127,7 +127,6 @@ class MedicineAvailabilityRepository extends BaseRepository
                     'manufacturing_date' => $input['manufacturing_date'][$key] ?? null,
                     'expiration_date' => $input['expiry_date'][$key] ?? null,
                     'supplier_name' => $input['supplier_name'] ?? null,
-                    'unit_cost' => $input['unit_cost'][$key] ?? null,
                     'date_received' => now()->toDateString(),
                     'opening_balance_before' => $previousAvailable,
                     'user_id' => getLogInUserId(),
@@ -202,7 +201,6 @@ class MedicineAvailabilityRepository extends BaseRepository
             'batch_number' => [$input['batch_number'] ?? null],
             'manufacturing_date' => [$input['manufacturing_date'] ?? null],
             'expiry_date' => [$input['expiration_date']],
-            'unit_cost' => [$input['unit_cost'] ?? null],
         ];
 
         try {

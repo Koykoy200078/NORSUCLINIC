@@ -8,13 +8,15 @@
         @include('layouts.errors')
         <h1 class="mb-0 me-1">{{__('messages.medicine_availability.medicine_availability_details')}}</h1>
         <div class="text-end mt-4 mt-md-0">
-            <a href="{{ 
+            @unless(isRole('doctor'))
+<a href="{{ 
                 isRole('clinic_admin') ? route('stock-in.edit', $medicineAvailability->id) : 
                 (isRole('staff') ? route('staff.stock-in.edit', $medicineAvailability->id) : 
                 (isRole('doctor') ? route('doctors.stock-in.edit', $medicineAvailability->id) : route('stock-in.edit', $medicineAvailability->id))) 
             }}" class="btn btn-primary">
                 <i class="fas fa-edit me-2"></i>{{ __('messages.common.edit') }}
             </a>
+@endunless
             <a href="{{ 
                     isRole('clinic_admin') ? route('stock-in.index') : 
                     (isRole('staff') ? route('staff.stock-in.index') : 

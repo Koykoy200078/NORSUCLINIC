@@ -23,7 +23,7 @@ class CreateMedicineBillRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|integer|exists:patients,id',
-            'bill_date' => 'required|date',
+            'bill_date' => 'required|date_format:Y-m-d H:i:s,Y-m-d H:i,Y-m-d|after:1899-12-31|before_or_equal:+1 day',
             'category_id' => 'required|array|min:1',
             'category_id.*' => 'required|integer|exists:categories,id',
             'medicine' => 'required|array|min:1',

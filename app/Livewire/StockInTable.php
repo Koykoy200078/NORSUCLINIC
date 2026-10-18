@@ -32,6 +32,9 @@ class StockInTable extends LivewireTableComponent
     {
         $this->setQueryStringStatus(false);
         $this->setDefaultSort('medicine_availabilities.created_at', 'desc');
+
+        // Doctors are read-only in the inventory: no "new stock-in" button.
+        $this->showButtonOnHeader = ! isRole('doctor');
         $this->setPrimaryKey('id');
 
         $this->setThAttributes(function (Column $column) {

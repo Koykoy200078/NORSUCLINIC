@@ -855,7 +855,7 @@ class PrescriptionController extends AppBaseController
 
         // A new catalog medicine with opening stock is the Inventory module's work, whatever page it is sent from:
         // the permission of a role decides, not the page. Row 5.5.
-        abort_unless(canUseModule('inventory'), 403);
+        abort_unless(canUseModule('inventory') && ! isRole('doctor'), 403); // doctors are read-only in the inventory
 
         DB::beginTransaction();
         try {
@@ -891,7 +891,6 @@ class PrescriptionController extends AppBaseController
                 'manufacturing_date',
                 'expiration_date',
                 'supplier_name',
-                'unit_cost',
             ]));
 
             // Goes through the Stock-In register like any other delivery. R3-L5.

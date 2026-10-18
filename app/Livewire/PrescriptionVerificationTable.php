@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Doctor;
 use App\Models\Prescription;
 use App\Models\PrescriptionMedicine;
+use App\Support\SearchTerm;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -33,11 +34,18 @@ class PrescriptionVerificationTable extends LivewireTableComponent
     {
         return [
             Column::make('RX #', 'id')
-                ->sortable(),
+                ->sortable()
+                ->searchable(fn (Builder $query, $word) => $query->where('prescriptions.id', 'like', SearchTerm::like($word))),
             Column::make('Patient', 'patient.user.first_name')
-                ->label(fn($row) => optional(optional($row->patient)->user)->full_name ?: 'N/A'),
+                ->label(fn($row) => optional(optional($row->patient)->user)->full_name ?: 'N/A')
+                ->searchable(function (Builder $query, $word) {
+                    $query->whereHas('patient.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                }),
             Column::make('Doctor', 'doctor.user.first_name')
-                ->label(fn($row) => optional(optional($row->doctor)->user)->full_name ?: 'N/A'),
+                ->label(fn($row) => optional(optional($row->doctor)->user)->full_name ?: 'N/A')
+                ->searchable(function (Builder $query, $word) {
+                    $query->whereHas('doctor.user', fn (Builder $q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)));
+                }),
             Column::make('Consultation Date', 'consultation_date')
                 ->format(fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : 'N/A')
                 ->sortable(),
@@ -78,9 +86,8 @@ class PrescriptionVerificationTable extends LivewireTableComponent
 
         if (isRole('doctor')) {
             $doctor = Doctor::where('user_id', getLogInUserId())->first();
-            if ($doctor) {
-                $query->where('prescriptions.doctor_id', $doctor->id);
-            }
+            // A doctor account without a doctor profile has no prescriptions (it used to be handed everybody's).
+            $query->where('prescriptions.doctor_id', $doctor?->id ?? 0);
         }
 
         return $query;
