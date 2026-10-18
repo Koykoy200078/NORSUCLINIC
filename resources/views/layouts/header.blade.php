@@ -13,6 +13,10 @@
         </div>
     </nav>
     <ul class="nav align-items-center">
+        {{-- shown by resources/assets/js/realtime while the live connection is down; the page then refreshes every minute --}}
+        <li class="px-2 d-none" id="live-updates-badge" title="Real-time updates are not connected. This page refreshes itself every minute until they are back.">
+            <span class="badge bg-warning text-dark d-flex align-items-center"><i class="fas fa-plug me-1"></i> Live updates off</span>
+        </li>
         @impersonating
         <li class="px-xxl-3 px-2">
             <span class="text-primary">

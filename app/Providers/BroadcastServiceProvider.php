@@ -12,7 +12,8 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Broadcast::routes();
+        // The channel authorisation endpoint: only a signed-in, active user (the same stack as every clinic page).
+        Broadcast::routes(['middleware' => ['web', 'auth', 'checkUserStatus']]);
 
         require base_path('routes/channels.php');
     }

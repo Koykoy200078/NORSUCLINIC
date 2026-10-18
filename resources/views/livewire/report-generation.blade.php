@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div class="card-body pt-0" wire:poll.30s>
+            <div class="card-body pt-0">
                 <!-- Navigation Tabs -->
                 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
                     <li class="nav-item">

@@ -29,6 +29,9 @@ use Livewire\WithPagination;
 
 class ReportGeneration extends Component
 {
+    /** Redraws on the real-time notice of a module this page shows (resources/assets/js/realtime), and every minute while it is down. */
+    protected $listeners = ['refresh' => '$refresh'];
+
     use WithPagination;
 
     protected $paginationTheme = 'bootstrap';

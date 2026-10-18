@@ -23,7 +23,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
   - patients, queue, consultations (`document_issuances`), prescriptions, medicine inventory (FEFO batches + stock ledger), dispensing;
   - lab requests, medical certificates / excuse slips;
   - Report Generation (Accomplishment Report, inventory), Settings.
-- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, scheduled backups, later Reverb).
+- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, scheduled backups, Reverb for real-time updates).
   Staff, nurses and doctors use it from **their own devices on the same local network** through a browser.
   - Every link and asset must work from any LAN address (never only `localhost`).
   - The database stays on the server PC.
@@ -35,7 +35,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 
 | | |
 |---|---|
-| PHP | 8.2 at the clinic, 8.3 on the dev laptop (`composer.json` platform pin 8.1 until Reverb raises it) |
+| PHP | 8.2 at the clinic, 8.3 on the dev laptop (`composer.json` requires `^8.2`, platform pin 8.2.0, since Reverb) |
 | Laravel | **10.50** (no Laravel 11+ APIs: `casts()`, `once()`, `defer()`, `Context`, `bootstrap/app.php` …) |
 | Livewire | **3.8** (class-based components; no Livewire 4 features) |
 | Tables | rappasoft/laravel-livewire-tables **3.2** (do not upgrade: 3.8 breaks the customised views) |

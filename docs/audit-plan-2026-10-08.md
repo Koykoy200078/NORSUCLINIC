@@ -80,7 +80,7 @@ Every factual claim of the first version was checked again against git, the code
 | `.env` | `APP_ENV=production`, `APP_DEBUG=false`, `DB_STRICT=true`, `APP_NAME="NORSU Clinic"` | ✅ name changed in Phase 4.1 (the development `.env` says "Medical University Clinic"; the clinic copy's `.env` is edited by hand, §9) |
 | Test schema | `norsu_clinic_test` (named in `phpunit.xml`) **did not exist** on this server | ✅ since Phase 0.2 the test run creates its own throwaway schema automatically; no manual database setup |
 | `norsu_clinic` | *On 2026-10-08:* fresh install: 1 admin, no clinical data, 123 migrations, all InnoDB, 47 foreign keys. *Since Phase 1.8 (2026-10-09):* the **upgraded clinic dump**: 12 real users + 4 QA accounts, 126 migrations, all InnoDB, 46 of 47 foreign keys | the only working database |
-| PHP | 8.3.31 locally; dump header says 8.2.26; `composer.json` platform pin = 8.1.0 | Reverb needs ≥ 8.2 → raise the pin (Phase 7) |
+| PHP | 8.3.31 locally; dump header says 8.2.26; `composer.json` platform pin = 8.1.0 | ✅ Reverb needs ≥ 8.2: `composer.json` now requires `^8.2`, platform pin 8.2.0 (Phase 7, 2026-10-19) |
 | Framework | Laravel 10.50.3, Livewire 3.8.10, spatie/laravel-permission 5.11.1 | ✅ |
 
 ### 1.3 Clinic-data upgrade: root cause (🆕)
@@ -637,6 +637,22 @@ The "Notifications & Alerts" menu has three entries: **Low stocks alert** (the M
 **Verified:** `NotificationsPassATest` 5 tests / 21 assertions; 10 mutations of production code each fail a test (two first survived: the "counts once" test had only one expired batch, and the low-stock test could not tell the old rule from the new; both cases were added). `LINK_CRAWL=1` full suite ****647 tests / 6,778 assertions, all passing** (18 min 58 sec); crawl 1,604 requests, no problems**; no route added. **Pass B** on a scratch copy of the real clinic data (nurse; `norsu_clinic` untouched): the sidebar shows "Low Stock: 1" (Laradin 295, minimum 300); a Stock-In of 100 units for it through the real form takes the badge away on the next page (it would have stayed for five minutes); all three Notifications & Alerts entries open (200); with the medicines permission taken off the Staff role the Inventory and Dispensing entries, the badges and the Expiry entry are gone, and Low stocks alert and System notifications still open. (The Stock-In first went to the other "Laradin" (#50): the clinic data holds the duplicate medicines #50 / #55 that `db:integrity` warns about; the merge tool is plan 8.2.)
 **Observed, not changed:** the raw activity log behind System notifications is open to every staff account and doctor (owner question in STATUS §6); the doctor's header bell reads the `notifications` table on every page although nothing in the system ever writes to it (dead, Phase 6.6); the expiry colours of the medicine list use their own 7 / 30 day literals (same numbers as `InventoryAlerts`).
 
+### Phase 7 — progress 2026-10-19: real-time updates with Laravel Reverb (done)
+
+**How it works.** Every INSERT / UPDATE / DELETE that reaches the database is looked at once (`App\Support\Realtime`, one listener on the connection: Eloquent, the query builder and raw statements all count, so no controller can forget it). The written table decides the module(s) (`Realtime::TABLES`). When the surrounding transaction commits, one notice per module (`App\Events\ModuleChanged`: the module name and the time, nothing else) goes out on the private channel `module.<name>`; a rolled-back save announces nothing. The browser (`resources/assets/js/realtime/realtime.js`, Echo + pusher-js bundled by Mix) connects to the page's own host and listens to the channels of the modules its user may use (`routes/channels.php` uses `canUseModule()`, the same rule as menus, routes and buttons). On a notice for a module the current page shows (`Realtime::PAGES`, by URL) it fires the window event `clinic:live-refresh` (the two queue pages redraw their partial), Livewire's `refresh` (every table; `ReportGeneration`, `Dashboard` and `StaffDashboard` listen too), and redraws the sidebar badges from the new route `GET /live/menu` (queue, consultations "needs assessment", inventory alerts). Notices that arrive together become one refresh, with a random 0-1.2 s spread so ten open screens do not all ask in the same instant.
+
+| Plan item | What was done |
+|---|---|
+| 7.1 spike | `laravel/reverb` 1.12 (react/* and pusher-php-server as its dependencies; no existing package changed), PHP requirement `^8.2` and platform 8.2.0, `laravel-echo` 2.6 and `pusher-js` 8.6; Reverb runs on Windows PHP 8.3, a WebSocket client connected and received a notice published from PHP |
+| 7.2 server | `ModuleChanged`, the channels, `Realtime` (listener, table → module map, after-commit, rollback clears, per-application guard), `config/broadcasting.php` `reverb` connection with 1 s connect / 2 s total timeouts; **a stopped Reverb never fails a save**: the publish is wrapped, the first failure writes one warning and marks real-time "down" for 30 s (the clinic server shares the mark through the cache), during which nothing is tried |
+| 7.3 browser | one connection per window (`window.clinicRealtime`), the badge "Live updates off" in the header while it is down (not while still connecting), the 60 s fallback refresh only while disconnected, an immediate refresh when the connection returns after an outage; the queue pages lost their 5-second countdown, Auto-Refresh toggle and error `location.reload()`; the report page lost `wire:poll.30s` |
+| 7.4 modules | the table map covers patients, queue, consultations, certificates, prescriptions, lab, inventory (medicines, batches, stock-in, categories, generics), dispensing (bills, sale lines, ledger), doctors, specializations, notifications (activity log) and the Settings lists; `PAGES` maps every module page and both dashboards |
+| 7.5 startup | `startup-dev-environment.ps1` / `.bat` start `php artisan reverb:start` in a minimized window (skipped when the port is already in use); `.env.example` has the keys; the one-time firewall rule for TCP 8080 is in [commands.md](commands.md) |
+| a defect found by the live check | **the queue refreshed itself for ever**: `PatientQueue::closeStaleEntries()` sent an UPDATE on every page draw (almost always changing nothing), and every write is announced, so each redraw caused the next. It now asks `exists()` first. `test_opening_a_screen_announces_nothing` opens every main page as admin, Staff (Nurse) and doctor and fails if any of them announces a write |
+
+**Verified:** `RealtimeServerTest` 11 tests / 107 assertions (a notice per save and per module, a query-builder UPDATE counts, three writes in one transaction are one notice, a rollback announces nothing and the next save still does, the payload is `module` + `at` only, channel access per permission incl. the user channel and names that are no channel, the page / module maps, the layout's config, `/live/menu` for signed-in users only, no `wire:poll` / `setInterval` left in views or scripts, opening a screen announces nothing, a save with Reverb down succeeds and is announced once); 18 mutations of production code each fail a test (two first survived: a channel name outside the module list was accepted, and one mutation was equivalent so it was rewritten to the real per-process flag). `LINK_CRAWL=1` full suite **658 tests / 6,885 assertions, all passing** (17 min 9 sec); crawl 1,606 requests, no problems; one route added (`GET /live/menu`). The first full run found two older queue tests that read the sidebar badge by its old markup (the badge now sits in a container the script redraws); their pattern was updated. **Live check** on a scratch copy of the clinic data with nurse, doctor and admin sessions on separate hosts: the nurse added patients to the queue and the doctor's open screen redrew without a reload, with the sidebar badge following (also from a write made outside the browser: a Livewire table and the report page redrew with one `/livewire/update` and one `/live/menu` request); with nobody changing anything the screens made no requests; Reverb stopped: the badge appeared within about 6 seconds, the nurse's save answered normally (one warning in the log), the doctor's screen caught up by the 60 s fallback; Reverb started again: the screens reconnected by themselves (about a minute, pusher's retry back-off) and went live again. Scratch schema dropped, `norsu_clinic` untouched.
+**Observed, not changed:** the plain pages without a redraw hook (a patient's history page, forms) do not redraw themselves on a notice, they show the new data on the next page load; real-time on a LAN needs TCP 8080 open in the clinic PC's firewall (owner action, see commands.md); `REVERB_APP_*` must be set to private random values in the clinic's own `.env`.
+
 ### Phase 5 — Every module, two passes each
 
 **Pass A (code)** for each module:
@@ -765,29 +781,30 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - regenerate `_ide_helper*`.
 
 ### Phase 7 — Real-time updates with Laravel Reverb (replaces every timer)
-- [ ] 7.1 **Spike** (stop and ask if it fails):
-  - raise composer's PHP pin to 8.2 and `composer require laravel/reverb`;
-  - `npm i laravel-echo pusher-js` (bundled by Mix, no CDN);
-  - confirm Reverb runs on Windows next to `artisan serve` and a second LAN PC connects.
-- [ ] 7.2 **Server:**
-  - private channels per module (only users who can use the module may listen) + one per user;
-  - one `ModuleChanged` event carrying the module and record ids only (**no patient data**), sent after the save commits;
-  - a stopped Reverb **never** makes a save fail.
-- [ ] 7.3 **Browser:**
-  - one Echo setup (connects to the same host the page came from, no fixed IP);
-  - tables refresh themselves on their module's events; the queue pages reuse their partial refresh;
-  - "Live updates off" badge + 60 s fallback only while disconnected;
-  - all `setInterval` / `setTimeout` reloads and `wire:poll` removed.
-- [ ] 7.4 Wire every module: Queue, Consultations (+ "needs assessment" badge), Prescriptions / verify, Inventory (+ badges), Dispensing (history / stock-out), Lab, Certificates, Reports (incl. yearly reports), Notifications, Dashboards, Patients, Settings lists.
-- [ ] 7.5 Startup script starts Reverb; firewall rule for its port written down for the owner.
-- [ ] 7.6 Tests:
-  - an event per save;
-  - channel access denied without the module;
-  - a save still succeeds with Reverb down.
+**Done 2026-10-19** (owner's request: do Phase 7 before the rest of Phase 5; it approves the new packages). Details in "Phase 7 — progress 2026-10-19" below.
+- [x] 7.1 **Spike**:
+  - [x] composer's PHP pin raised to 8.2 (`require` `^8.2`, platform 8.2.0) and `laravel/reverb` 1.12 added;
+  - [x] `laravel-echo` and `pusher-js` added (bundled by Mix, no CDN);
+  - [x] Reverb runs on Windows next to `artisan serve`; a client on the page's own host connects and receives a notice sent from PHP.
+- [x] 7.2 **Server:**
+  - [x] private channels per module (only users who can use the module may listen) + one per user (`routes/channels.php`);
+  - [x] one `ModuleChanged` event carrying the module and the time only (**no patient data, no ids**: every screen asks the server again), sent after the save commits (`App\Support\Realtime`);
+  - [x] a stopped Reverb **never** makes a save fail (one warning in the log, then 30 s without trying).
+- [x] 7.3 **Browser:**
+  - [x] one Echo setup (`resources/assets/js/realtime/realtime.js`, connects to the same host the page came from, no fixed IP);
+  - [x] tables refresh themselves on their module's events; the queue pages reuse their partial refresh;
+  - [x] "Live updates off" badge + 60 s fallback only while disconnected;
+  - [x] all `setInterval` / `setTimeout` reloads and `wire:poll` removed (a test fails if one comes back).
+- [x] 7.4 Wire every module: Queue, Consultations (+ "needs assessment" badge), Prescriptions / verify, Inventory (+ badges), Dispensing (history / stock-out), Lab, Certificates, Reports (incl. yearly reports), Notifications, Dashboards, Patients, Settings lists (`Realtime::TABLES` and `Realtime::PAGES`).
+- [x] 7.5 Startup script starts Reverb; firewall rule for its port written down for the owner (`docs/commands.md`, "Real-time updates").
+- [x] 7.6 Tests:
+  - [x] an event per save;
+  - [x] channel access denied without the module;
+  - [x] a save still succeeds with Reverb down.
   Live check:
-  - the nurse adds to the queue → the doctor's screen updates without a reload;
-  - stop Reverb → badge + fallback;
-  - start it → live again.
+  - [x] the nurse adds to the queue → the doctor's screen updates without a reload;
+  - [x] stop Reverb → badge + fallback;
+  - [x] start it → live again.
 
 ### Phase 8 — Improvements (each with tests + a live check)
 - [ ] 8.1 **Searchable "Add medicines"** (consultation create / edit, nurse and doctor):
@@ -861,7 +878,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Call-next race, stale entries, archived patients, attachment sync, New / Previous form labels, Record form button | ✅ |
 | Doctor queue routes not permission-gated | 🆕 Phase 3.5 |
 | Add-to-queue page JavaScript never loads (patient search + latest-consultation preview) | ⏳ → Phase 5.22 |
-| Timer polling → WebSocket | 🆕 Phase 7 |
+| Timer polling → WebSocket | ✅ Phase 7 (2026-10-19) |
 | Queue display board | 🆕 Phase 8.6 |
 
 ### 4.4 Consultations
@@ -916,7 +933,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Yearly Accomplishment Report (Q1–Q4 + Year total) | ✅ Phase 4.4 |
 | Yearly Medicine Inventory report (left from last year, additional, Q1–Q4 remaining) | ✅ Phase 4.5 |
 | "Prepared by" shows the designation → role | 🆕 Phase 3.2 |
-| `wire:poll.30s` → WebSocket | 🆕 Phase 7 |
+| `wire:poll.30s` → WebSocket | ✅ Phase 7 (2026-10-19) |
 | Notification center (per-user, read / unread, live) | 🆕 Phase 8.5 |
 | Saved report filters / one-click monthly report | 💡 §6 |
 

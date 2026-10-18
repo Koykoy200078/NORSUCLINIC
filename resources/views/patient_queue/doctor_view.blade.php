@@ -36,58 +36,6 @@
             transform: rotate(360deg);
         }
     }
-
-    #countdown-badge {
-        font-size: 0.9rem;
-        padding: 0.5rem 0.75rem;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    #countdown-badge.pulse {
-        animation: pulse 1s ease-in-out;
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.1);
-        }
-    }
-
-    /* Color states for countdown */
-    #countdown-badge.countdown-5 {
-        background-color: #28a745 !important;
-        /* Green - Just started */
-    }
-
-    #countdown-badge.countdown-4 {
-        background-color: #20c997 !important;
-        /* Teal */
-    }
-
-    #countdown-badge.countdown-3 {
-        background-color: #ffc107 !important;
-        /* Yellow - Halfway */
-        color: #000 !important;
-    }
-
-    #countdown-badge.countdown-2 {
-        background-color: #fd7e14 !important;
-        /* Orange - Getting close */
-        color: #fff !important;
-    }
-
-    #countdown-badge.countdown-1 {
-        background-color: #dc3545 !important;
-        /* Red - About to refresh */
-        color: #fff !important;
-        animation: pulse 0.5s ease-in-out;
-    }
 </style>
 <div class="container-fluid">
     @include('flash::message')
@@ -98,12 +46,6 @@
             <button class="btn btn-info" id="manual-refresh-btn" onclick="window.manualQueueRefresh()">
                 <i class="fas fa-sync" id="refresh-icon"></i> Refresh Queue
             </button>
-            <button class="btn btn-outline-primary" id="toggle-auto-refresh" onclick="window.toggleQueueAutoRefresh()">
-                <i class="fas fa-play"></i> <span id="toggle-text">Auto-Refresh OFF</span>
-            </button>
-            <span class="badge d-none d-flex align-items-center countdown-5" id="countdown-badge">
-                <i class="fas fa-clock me-1"></i> <span id="countdown">5s</span>
-            </span>
         </div>
     </div>
 
@@ -114,238 +56,84 @@
 </div>
 
 <script>
-    const queueRefreshUrl = "{{ route('doctors.patient-queue.refresh') }}";
+    // Redraws itself on the real-time notice for the queue (resources/assets/js/realtime) and, only while the live
+    // connection is down, every minute; the Refresh Queue button does the same on demand.
+    (function() {
+        const queueRefreshUrl = "{{ route('doctors.patient-queue.refresh') }}";
+        let fetching = false;
+        let again = false;
 
-    // Global state
-    window.queueAutoRefresh = {
-        enabled: localStorage.getItem('queueAutoRefresh') !== 'false',
-        countdownInterval: null,
-        refreshTimeout: null,
-        countdownSeconds: 5,
-        isFetching: false
-    };
+        window.fetchQueueContent = function() {
+            if (fetching) {
+                again = true; // something changed while the last answer was on its way: ask once more afterwards
+                return;
+            }
+            fetching = true;
+            const icon = document.getElementById('refresh-icon');
+            if (icon) icon.classList.add('spinning');
 
-    // Fetch only the dynamic content and swap it in — no full page reload
-    window.fetchQueueContent = function() {
-        const state = window.queueAutoRefresh;
-        if (state.isFetching) {
-            if (state.enabled) window.startQueueCountdown();
-            return;
-        }
-        state.isFetching = true;
-        updateCountdown();
-        const icon = document.getElementById('refresh-icon');
-        if (icon) icon.classList.add('spinning');
+            fetch(queueRefreshUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    const container = document.getElementById('queue-dynamic-content');
+                    if (container) container.innerHTML = html;
+                })
+                .catch(function() {})
+                .finally(function() {
+                    fetching = false;
+                    if (icon) icon.classList.remove('spinning');
+                    if (again) {
+                        again = false;
+                        window.fetchQueueContent();
+                    }
+                });
+        };
 
-        fetch(queueRefreshUrl, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(response) {
-                return response.text();
-            })
-            .then(function(html) {
-                const container = document.getElementById('queue-dynamic-content');
-                if (container) container.innerHTML = html;
-                if (icon) icon.classList.remove('spinning');
-                state.isFetching = false;
+        // AJAX complete consultation handler (called by Complete button in partial)
+        window.completeConsultation = function(formEl) {
+            const btn = formEl.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Completing...';
+            }
 
-                // Restart countdown if auto-refresh is still ON
-                if (state.enabled) {
-                    window.startQueueCountdown();
-                }
-            })
-            .catch(function() {
-                if (icon) icon.classList.remove('spinning');
-                state.isFetching = false;
-                if (window.queueAutoRefresh.enabled) {
-                    window.startQueueCountdown();
-                }
-            });
-    };
-
-    // AJAX complete consultation handler (called by Complete button in partial)
-    window.completeConsultation = function(formEl) {
-        const btn = formEl.querySelector('button[type="submit"]');
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Completing...';
-        }
-
-        fetch(formEl.action, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': formEl.querySelector('[name=_token]').value
-                }
-            })
-            .then(function(r) {
-                return r.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Cancel current cycle and immediately refresh the partial
-                    const state = window.queueAutoRefresh;
-                    if (state.countdownInterval) clearInterval(state.countdownInterval);
-                    if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-                    state.isFetching = false;
+            fetch(formEl.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formEl.querySelector('[name=_token]').value
+                    }
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        window.fetchQueueContent();
+                    }
+                })
+                .catch(function() {
+                    // the answer was lost: draw the queue again to show what really happened
                     window.fetchQueueContent();
-                }
-            })
-            .catch(function() {
-                // Fallback: full reload
-                window.location.reload();
-            });
-        return false;
-    };
+                });
+            return false;
+        };
 
-    // Manual refresh button
-    window.manualQueueRefresh = function() {
-        const state = window.queueAutoRefresh;
-        if (state.enabled) {
-            if (state.countdownInterval) clearInterval(state.countdownInterval);
-            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-        }
-        window.fetchQueueContent();
-    };
+        window.manualQueueRefresh = window.fetchQueueContent;
 
-    // Toggle auto-refresh function
-    window.toggleQueueAutoRefresh = function() {
-        const state = window.queueAutoRefresh;
-        state.enabled = !state.enabled;
-        localStorage.setItem('queueAutoRefresh', state.enabled);
-
-        const toggleBtn = document.getElementById('toggle-auto-refresh');
-        const toggleText = document.getElementById('toggle-text');
-        const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-
-        if (state.enabled) {
-            if (toggleBtn) {
-                toggleBtn.classList.remove('btn-outline-primary');
-                toggleBtn.classList.add('btn-outline-success');
-            }
-            if (icon) {
-                icon.classList.remove('fa-play');
-                icon.classList.add('fa-pause');
-            }
-            if (toggleText) toggleText.textContent = 'Auto-Refresh ON';
-            window.startQueueCountdown();
-        } else {
-            if (toggleBtn) {
-                toggleBtn.classList.remove('btn-outline-success');
-                toggleBtn.classList.add('btn-outline-primary');
-            }
-            if (icon) {
-                icon.classList.remove('fa-pause');
-                icon.classList.add('fa-play');
-            }
-            if (toggleText) toggleText.textContent = 'Auto-Refresh OFF';
-
-            if (state.countdownInterval) clearInterval(state.countdownInterval);
-            if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-
-            updateCountdown();
-        }
-    };
-
-    // Start countdown — triggers fetchQueueContent (not location.reload)
-    window.startQueueCountdown = function() {
-        const state = window.queueAutoRefresh;
-        if (!state.enabled) return;
-
-        state.countdownSeconds = 5;
-        updateCountdown();
-
-        if (state.countdownInterval) clearInterval(state.countdownInterval);
-        if (state.refreshTimeout) clearTimeout(state.refreshTimeout);
-
-        state.countdownInterval = setInterval(function() {
-            state.countdownSeconds--;
-            updateCountdown();
-            if (state.countdownSeconds <= 0) {
-                clearInterval(state.countdownInterval);
-            }
-        }, 1000);
-
-        state.refreshTimeout = setTimeout(function() {
-            if (state.enabled) {
+        window.removeEventListener('clinic:live-refresh', window.queueLiveHandler);
+        window.queueLiveHandler = function(event) {
+            if (event.detail && event.detail.module === 'queue' && document.getElementById('queue-dynamic-content')) {
                 window.fetchQueueContent();
             }
-        }, 5000);
-    };
-
-    // Update countdown badge helper
-    function updateCountdown() {
-        const state = window.queueAutoRefresh;
-        const badge = document.getElementById('countdown-badge');
-        const countdownEl = document.getElementById('countdown');
-
-        if (!badge || !countdownEl) return;
-
-        if (!state.enabled) {
-            badge.classList.add('d-none');
-            return;
-        }
-
-        badge.classList.remove('d-none', 'countdown-5', 'countdown-4', 'countdown-3', 'countdown-2', 'countdown-1');
-
-        if (state.isFetching) {
-            badge.classList.add('countdown-4');
-            countdownEl.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
-            return;
-        }
-
-        countdownEl.textContent = state.countdownSeconds + 's';
-        if (state.countdownSeconds >= 1 && state.countdownSeconds <= 5) {
-            badge.classList.add('countdown-' + state.countdownSeconds);
-        }
-        badge.classList.add('pulse');
-        setTimeout(function() {
-            badge.classList.remove('pulse');
-        }, 300);
-    }
-
-    // Initialize when page loads
-    (function() {
-        'use strict';
-
-        function initQueuePage() {
-            const state = window.queueAutoRefresh;
-            const toggleBtn = document.getElementById('toggle-auto-refresh');
-            const toggleText = document.getElementById('toggle-text');
-            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-            const countdownBadge = document.getElementById('countdown-badge');
-
-            if (!toggleBtn) return;
-
-            if (state.enabled) {
-                toggleBtn.classList.add('btn-outline-success');
-                toggleBtn.classList.remove('btn-outline-primary');
-                if (icon) {
-                    icon.classList.add('fa-pause');
-                    icon.classList.remove('fa-play');
-                }
-                if (toggleText) toggleText.textContent = 'Auto-Refresh ON';
-                if (countdownBadge) countdownBadge.classList.remove('d-none');
-                window.startQueueCountdown();
-            } else {
-                toggleBtn.classList.add('btn-outline-primary');
-                toggleBtn.classList.remove('btn-outline-success');
-                if (icon) {
-                    icon.classList.add('fa-play');
-                    icon.classList.remove('fa-pause');
-                }
-                if (toggleText) toggleText.textContent = 'Auto-Refresh OFF';
-                if (countdownBadge) countdownBadge.classList.add('d-none');
-            }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initQueuePage);
-        } else {
-            initQueuePage();
-        }
+        };
+        window.addEventListener('clinic:live-refresh', window.queueLiveHandler);
     })();
 </script>
 @endsection

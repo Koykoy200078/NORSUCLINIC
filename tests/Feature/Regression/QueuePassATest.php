@@ -44,7 +44,7 @@ class QueuePassATest extends TestCase
     {
         $html = $this->actingAs($user)->get(route($user->hasRole('doctor') ? 'doctors.dashboard' : 'staff.dashboard'))->assertOk()->getContent();
 
-        return preg_match('/aside-menu-title">Queue<\/span>\s*(?:<span class="badge[^>]*>\s*(?:<i[^>]*><\/i>\s*)?(\d*)\s*<\/span>)?/s', $html, $m) && ($m[1] ?? '') !== '' ? (int) $m[1] : null;
+        return preg_match('/aside-menu-title">Queue<\/span>\s*(?:<span class="ms-auto d-flex" data-live-badge="queue">\s*)?(?:<span class="badge[^>]*>\s*(?:<i[^>]*><\/i>\s*)?(\d*)\s*<\/span>)?/s', $html, $m) && ($m[1] ?? '') !== '' ? (int) $m[1] : null;
     }
 
     public function test_the_sidebar_badge_follows_every_change_of_the_queue_at_once(): void

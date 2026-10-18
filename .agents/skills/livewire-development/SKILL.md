@@ -68,8 +68,11 @@ class Counter extends Component
 - `wire:loading` / `wire:target` for loading states; `wire:model.live` only where instant updates are needed (default is deferred in v3).
 - Events: `$this->dispatch('name')` (v3) and `#[On('name')]` listeners; tables listen for `refresh`.
 - `#[Url]` for state kept in the query string (validate it in `mount()`; see `MedicineDispensingScreen`).
-- Real-time: today Report Generation uses `wire:poll.30s`; the plan (`docs/audit-plan-2026-10-08.md` Phase 7) replaces
-  polling with Laravel Reverb broadcasts. Do not add new `wire:poll` timers.
+- Real-time (Phase 7, done): no `wire:poll` and no `setInterval` reloads. A committed write to a clinic table is announced
+  (`App\Support\Realtime`, table -> module) and the open screens redraw: tables and components listen for `refresh`
+  (`protected $listeners = ['refresh' => '$refresh']` on a non-table component), plain pages listen for the window event
+  `clinic:live-refresh`. A new table needs a row in `Realtime::TABLES`; a new page a row in `Realtime::PAGES`. Never make a page
+  write on read (it would refresh itself for ever: `test_opening_a_screen_announces_nothing`). Do not add `wire:poll` timers.
 
 ## Testing (PHPUnit)
 

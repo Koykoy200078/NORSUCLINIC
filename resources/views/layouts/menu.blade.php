@@ -80,6 +80,7 @@ $_menuMedicineBadge = [
                         <span class="aside-menu-icon pe-3"><i class="fas fa-users-line"></i></span>
                         <span class="aside-menu-title">Queue</span>
                         @php $queueData = $_menuQueueBadge; @endphp
+                        <span class="ms-auto d-flex" data-live-badge="queue">
                         @if($queueData && $queueData->total > 0)
                         @if(isRole('doctor') && $queueData->in_progress > 0)
                         <span class="badge bg-warning rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="Patient in progress">
@@ -91,6 +92,7 @@ $_menuMedicineBadge = [
                         <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;">{{ $queueData->total }}</span>
                         @endif
                         @endif
+                        </span>
                     </a>
                 </li>
                 @endif
@@ -110,11 +112,13 @@ $_menuMedicineBadge = [
                         </span>
                         <span class="aside-menu-title">Consultations</span>
                         @php $incompleteDocsCount = $_menuIncompleteDocsBadge; @endphp
+                        <span class="ms-auto d-flex" data-live-badge="consultations">
                         @if($incompleteDocsCount > 0)
                         <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.7rem; min-width: 20px;" title="{{ $incompleteDocsCount }} consultation form(s) need Assessment/Plan">
                             <i class="fas fa-exclamation-triangle me-1" style="font-size: 0.6rem;"></i>{{ $incompleteDocsCount }}
                         </span>
                         @endif
+                        </span>
                     </a>
                 </li>
                 @endif
@@ -150,7 +154,7 @@ $_menuMedicineBadge = [
                         $expiredCount = $_menuMedicineBadge['expiredCount'] ?? 0;
                         @endphp
 
-                        <div class="d-flex align-items-center ms-auto gap-1">
+                        <div class="d-flex align-items-center ms-auto gap-1" data-live-badge="inventory">
                             @if($expiredCount > 0)
                             <span class="badge bg-dark rounded-pill" style="font-size: 0.7rem; min-width: 20px;" title="Expired stock on the shelf: {{ $expiredCount }} medicine(s) - take it out of stock">
                                 <i class="fas fa-ban me-1" style="font-size: 0.6rem;"></i>{{ $expiredCount }}

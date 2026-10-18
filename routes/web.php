@@ -64,6 +64,11 @@ Route::middleware('setLanguage')->group(function () {
 //Change language
 Route::post('/change-language', [FrontController::class, 'changeLanguage'])->name('front.change.language');
 
+// The sidebar menu alone (its badges are redrawn when a module changes, see resources/assets/js/realtime).
+Route::get('/live/menu', fn () => view('layouts.menu'))
+    ->middleware(['auth', 'checkUserStatus'])
+    ->name('live.menu');
+
 //Dark Mode
 Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])
     ->middleware(['auth', 'checkUserStatus'])

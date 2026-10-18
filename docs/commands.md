@@ -204,10 +204,26 @@ Run them with `php <that folder>\<file>`.
 | `inspect-db.php` | Read-only: engines, foreign keys, migrations and row counts of the connected database. |
 | `RouteRoleMatrixTest.php`, `compare-matrix.php`, `analyze-matrix.php` | Route × role matrix (run with phpunit; never together with another phpunit process) and its comparison. |
 
+## Real-time updates (Laravel Reverb, plan Phase 7)
+
+| Command | What it does | Changes data? | Where / when to run it |
+|---|---|---|---|
+| `php artisan reverb:start` | Starts the WebSocket server that pushes "module X changed" notices to the open pages (port `REVERB_PORT`, default 8080, listens on all addresses). | No | **Clinic server PC**, kept running next to `artisan serve`; `startup-dev-environment.ps1` / `.bat` start it in its own minimized window. If it is stopped, saving still works: pages show "Live updates off" and refresh every minute. |
+| `php artisan reverb:start --debug` | The same, printing every connection and message. | No | Only to diagnose a connection problem. |
+
+One-time setup on the clinic server PC:
+
+1. `.env`: `BROADCAST_DRIVER=reverb` and your own random `REVERB_APP_ID`, `REVERB_APP_KEY`, `REVERB_APP_SECRET` (keep `REVERB_HOST=127.0.0.1`, `REVERB_PORT=8080`, `REVERB_SCHEME=http`); then `php artisan config:clear`.
+2. Firewall: the other PCs connect to this PC's port 8080 directly, so allow it once (PowerShell as administrator):
+   `New-NetFirewallRule -DisplayName "Medical University Clinic - real-time updates" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Private,Domain`
+   Check from another PC: `Test-NetConnection <server-ip> -Port 8080`.
+3. Nothing leaves the local network: the browser connects to the page's own address (never the internet), and the notices carry only the module name and a time.
+
 ## Change log
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-19 | 7 | `reverb:start` (vendor command of laravel/reverb) is now part of the startup scripts; firewall rule for port 8080 documented above |
 | 2026-10-09 | 1 follow-up | `inventory:recover-orphan-batches [--apply]` added (owner decision: keep the history of the 4 orphan batches); rehearsal runner runs it |
 | 2026-10-09 | 1.4 | `db:restore-foreign-keys` added |
 | 2026-10-09 | 1.5 | `db:integrity` (and `--compare-fresh`) added; `inventory:reconcile` now shares its stock checks with it (same output) |

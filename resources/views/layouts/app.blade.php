@@ -136,6 +136,18 @@
     <!-- General Scripts -->
     <script src="{{ mix('js/third-party.js') . '&v=' . filemtime(public_path('js/third-party.js')) }}"></script>
     <script src="{{ mix('js/pages.js') }}"></script>
+
+    {{-- Real-time updates (plan Phase 7): one connection to the clinic server's own Reverb; see resources/assets/js/realtime --}}
+    @php $liveUser = auth()->user(); @endphp
+    <div id="live-config" class="d-none"
+        data-enabled="{{ config('broadcasting.default') === 'reverb' && config('broadcasting.connections.reverb.key') ? 1 : 0 }}"
+        data-key="{{ config('broadcasting.connections.reverb.key') }}"
+        data-port="{{ config('broadcasting.connections.reverb.options.port') }}"
+        data-scheme="{{ config('broadcasting.connections.reverb.options.scheme') }}"
+        data-menu-url="{{ route('live.menu') }}"
+        data-modules="{{ implode(',', \App\Support\Realtime::modulesFor($liveUser)) }}"
+        data-page-modules="{{ implode(',', \App\Support\Realtime::pageModules(null, $liveUser)) }}"></div>
+    <script data-turbo-eval="false" src="{{ mix('js/realtime.js') }}"></script>
     <script src="{{ asset('vendor/laravel-livewire-tables.min.js') }}"></script>
     <script src="{{ asset('vendor/laravel-livewire-tables-thirdparty.min.js') }}"></script>
 

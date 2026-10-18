@@ -203,6 +203,16 @@ Write-Header "Laravel Development Server Starting..."
 # (`php artisan db:backup`). Without it NO scheduled backup ever runs. Keep that window open.
 Start-Process -FilePath 'php' -ArgumentList 'artisan','schedule:work' -WorkingDirectory $ProjectPath -WindowStyle Minimized | Out-Null
 
+# Real-time updates: the Reverb WebSocket server (port 8080 by default, REVERB_PORT in .env). Keep this window open.
+# Without it the pages still work: they show "Live updates off" and refresh every minute. Other PCs on the network need
+# inbound TCP 8080 allowed in the firewall of this PC once (docs/commands.md > "Real-time updates").
+$ReverbPort = 8080
+if (Test-PortInUse -Port $ReverbPort) {
+    Write-Host "  Reverb (real-time updates) is already running on port $ReverbPort." -ForegroundColor $WarningColor
+} else {
+    Start-Process -FilePath 'php' -ArgumentList 'artisan','reverb:start' -WorkingDirectory $ProjectPath -WindowStyle Minimized | Out-Null
+}
+
 # Open the default browser to the server URL automatically once it is up. php artisan serve
 # is blocking, so schedule the open in a background job that waits a few seconds first.
 Start-Job -ArgumentList $ServerUrl -ScriptBlock {

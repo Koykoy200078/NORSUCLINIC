@@ -240,6 +240,8 @@ mix.js(
     "public/js/front-pages.js",
 );
 
+mix.js("resources/assets/js/realtime/realtime.js", "public/js/realtime.js");
+
 mix.js("resources/js/app.js", "public/js").postCss(
     "resources/css/app.css",
     "public/css",

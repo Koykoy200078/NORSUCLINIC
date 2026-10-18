@@ -71,6 +71,10 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-19 02:30 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v2` @ `9d9198e` (rows 5.7 to 5.11 and their handover are pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** on the owner's instruction (2026-10-19: skip the remaining Phase 5 rows for now, do **Phase 7 — Real-time updates with Laravel Reverb** first, then continue with Phase 5.12 Settings (General)): [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) Phase 7.1 to 7.6. The owner's request approves the new dependencies the phase needs (composer `laravel/reverb`, the PHP pin raised to 8.2, npm `laravel-echo` and `pusher-js`, bundled by Mix, no CDN). Spike first (7.1: stop and ask if it fails), then server events and private channels (7.2), the browser Echo setup with the "Live updates off" badge and 60 s fallback (7.3), every module wired (7.4), startup script and firewall note (7.5), tests and live check (7.6).
+
 ### 2026-10-19 00:30 +08:00 — Claude Code — START → END (pushed 2026-10-19)
 - **Branch / from:** `changes_v2` @ `615f283` (row 5.10 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
 - **Work:** Phase 5 row 5.11 Notifications & Alerts (low stock, expiry, system notifications) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), the last part of the owner's request "5.7 Dispensing to 5.11 Notifications & Alerts" (2026-10-18): Pass A test-first, Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.

@@ -105,13 +105,20 @@ class PatientQueue extends Model
      */
     public static function closeStaleEntries(): int
     {
-        return static::whereIn('status', self::OPEN_STATUSES)
-            ->where('created_at', '<', today())
-            ->update([
-                'status' => self::STATUS_CANCELLED,
-                'completed_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $stale = static::whereIn('status', self::OPEN_STATUSES)->where('created_at', '<', today());
+
+        // Every queue screen and the sidebar call this on each draw, and almost always there is nothing to close: ask
+        // first instead of sending an UPDATE that changes nothing, because every write to the table is announced to the
+        // open screens (App\Support\Realtime), which would redraw, call this again, and so on.
+        if (! $stale->exists()) {
+            return 0;
+        }
+
+        return $stale->update([
+            'status' => self::STATUS_CANCELLED,
+            'completed_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     /**

@@ -34,6 +34,8 @@
         <env name="DB_STRICT" value="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <!-- Real-time updates (Phase 7): the suite never talks to a Reverb server; the tests that look at the notices fake the event. -->
+        <env name="BROADCAST_DRIVER" value="null"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>

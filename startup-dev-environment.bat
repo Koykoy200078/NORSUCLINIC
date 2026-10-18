@@ -137,6 +137,11 @@ REM Run the Laravel scheduler in its own minimized window: it runs the hourly da
 REM (`php artisan db:backup`). Without it NO scheduled backup ever runs. Keep the window open.
 start "NORSU Scheduler" /min cmd /c "cd /d %~dp0 && php artisan schedule:work"
 
+REM Real-time updates: the Reverb WebSocket server (port 8080, REVERB_PORT in .env). Keep this window open. Without it the
+REM pages still work ("Live updates off", refresh every minute). Other PCs need inbound TCP 8080 allowed in this PC's firewall.
+netstat -ano | findstr /R /C:":8080 .*LISTENING" >nul
+if errorlevel 1 start "NORSU Reverb" /min cmd /c "cd /d %~dp0 && php artisan reverb:start"
+
 REM Open the default browser to the server once it is up (delayed, minimized helper)
 start "" /min cmd /c "timeout /t 4 /nobreak >nul & explorer http://%SERVER_HOST%:8000"
 
