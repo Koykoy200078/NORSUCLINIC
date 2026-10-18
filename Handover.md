@@ -71,6 +71,17 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-19 07:30 +08:00 — Claude Code — START → END (pushed 2026-10-19)
+- **Branch / from:** `changes_v2` @ `3b069ff` (Phase 7 and its handover are pushed; working tree clean).
+- **Work:** the owner's second step after Phase 7 (2026-10-19: "after implement i want to continue Phase 5.12 Settings"): Phase 5 row **5.12 Settings › Staff** (plan table; the owner and earlier notes call it "Settings (General)") of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Pass A test-first, Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** `f8d3217` plan row 5.12 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.12, Pass A and Pass B):** gender on the staff forms was only "required" (an integer column): now `integer|in:1,2`. Archiving a staff member made every record they had made show "N/A" / "System" / a dash (queue "Added by", lab request, visits report, dispensing report, ledger, trail): `PatientQueue::addedBy`, `DocumentIssuance::creator` / `nursingInCharge`, `LabRequest::creator`, `Prescription::dispensedBy`, `MedicineTransaction::user` and `ActivityLog::user` now use `withTrashed()` (**rule for new code: a relation that names the person who did something must name an archived account too**). Authorisation of the eight routes, field limits, duplicate e-mail / employee id in any case, all-or-nothing, the list scope, HTML in names, audit lines and the sign-in of a new account are pinned.
+  - **Verified:** `LINK_CRAWL=1` full suite **671 tests / 7,057 assertions, all passing** (18 min 3 sec); crawl 1,606 requests, no problems; no route added. 13 new tests (`StaffPassATest`); 9 mutations of production code each fail a test. Pass B on a scratch copy of the real clinic data (admin creates a staff member, the account signs in, is archived from the list, its session ends, its queue entry still names it; a nurse gets 403). Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.13 Settings › Doctors (the same "archived author" rule applies to a doctor's records), then 5.14 to 5.22 of the plan's table.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (STATUS §6):** unchanged owner questions.
+
 ### 2026-10-19 02:30 +08:00 — Claude Code — START → END (pushed 2026-10-19)
 - **Branch / from:** `changes_v2` @ `9d9198e` (rows 5.7 to 5.11 and their handover are pushed; working tree clean except the build-generated `public/messages.js`).
 - **Work:** on the owner's instruction (2026-10-19: skip the remaining Phase 5 rows for now, do **Phase 7 — Real-time updates with Laravel Reverb** first, then continue with Phase 5.12 Settings (General)): [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md) Phase 7.1 to 7.6. The owner's request approves the new dependencies the phase needs (composer `laravel/reverb`, the PHP pin raised to 8.2, npm `laravel-echo` and `pusher-js`, bundled by Mix, no CDN). Spike first (7.1: stop and ask if it fails), then server events and private channels (7.2), the browser Echo setup with the "Live updates off" badge and 60 s fallback (7.3), every module wired (7.4), startup script and firewall note (7.5), tests and live check (7.6).
