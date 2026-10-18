@@ -21,36 +21,16 @@ report($e);
 return true;
 });
 
-$_menuMedicineBadge = \Illuminate\Support\Facades\Cache::remember('menu_badge_medicine', 300, function () {
-$today = \Carbon\Carbon::now();
-
-$expiredCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
-->whereNotNull('expiration_date')
-->whereDate('expiration_date', '<', $today->toDateString())
-->distinct('medicine_id')
-->count('medicine_id');
-$criticalUntil = $today->copy()->addDays(7)->toDateString();
-$warningFrom = $today->copy()->addDays(8)->toDateString();
-$warningUntil = $today->copy()->addDays(30)->toDateString();
-
-$criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
-->whereNotNull('expiration_date')
-->whereDate('expiration_date', '>=', $today->toDateString())
-->whereDate('expiration_date', '<=', $criticalUntil)
-    ->distinct('medicine_id')
-    ->count('medicine_id');
-
-    $warningCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
-    ->whereNotNull('expiration_date')
-    ->whereDate('expiration_date', '>=', $warningFrom)
-    ->whereDate('expiration_date', '<=', $warningUntil)
-        ->distinct('medicine_id')
-        ->count('medicine_id');
-
-        // One definition of low stock for the badge, the report and the list: Medicine::scopeLowStock().
-        $lowStockCount = \App\Models\Medicine::lowStock()->count();
-                return compact('criticalCount', 'warningCount', 'lowStockCount', 'expiredCount');
-                });
+// Counted when the page is drawn (a stock change must be on the badge at once) and only for a role that can open the
+// inventory; one definition of every alert: App\Support\InventoryAlerts (low stock: Medicine::scopeLowStock()).
+$_menuMedicineBadge = [];
+if (canUseModule('inventory')) {
+$_alerts = \App\Support\InventoryAlerts::counts();
+$_menuMedicineBadge = [
+'expiredCount' => $_alerts['expired'], 'criticalCount' => $_alerts['critical'],
+'warningCount' => $_alerts['warning'], 'lowStockCount' => $_alerts['low_stock'],
+];
+}
 
                 $_menuIncompleteDocsBadge = canUseModule('consultations') ? \App\Models\DocumentIssuance::incompleteConsultations()->count() : 0;
                 @endphp
