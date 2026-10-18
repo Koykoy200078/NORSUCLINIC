@@ -33,7 +33,7 @@ class UpdatePatientQueueRequest extends FormRequest
             'room_number' => 'nullable|string|max:50',
             'is_priority' => 'boolean',
             'notes' => 'nullable|string|max:500',
-            'status' => "nullable|in:{$statuses}",
+            'status' => "sometimes|in:{$statuses}", // a blank status would write NULL into a NOT NULL column
         ];
     }
 

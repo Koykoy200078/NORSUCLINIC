@@ -132,6 +132,10 @@ class PrescriptionPassATest extends TestCase
         $this->grant('staff', ['manage_patients', 'manage_request_documents', 'manage_medicines']);
         $this->actingAs($nurse)->postJson(route('staff.prescription.medicine.store'), $payload)->assertStatus(200);
         $this->assertSame(1, Medicine::where('brand_name', 'Zzbrand')->count());
+
+        // the form sends an unfilled reorder level as a blank: that is 0, not a database error
+        $this->actingAs($nurse)->postJson(route('staff.prescription.medicine.store'), array_merge($payload, ['brand_name' => 'Zzbrand2', 'reorder_level' => '']))->assertStatus(200);
+        $this->assertSame(0, (int) Medicine::where('brand_name', 'Zzbrand2')->value('reorder_level'));
     }
 
     public function test_the_list_offers_only_the_buttons_the_role_may_use_on_that_row(): void

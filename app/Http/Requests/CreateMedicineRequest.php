@@ -43,8 +43,8 @@ class CreateMedicineRequest extends FormRequest
                 'string',
                 'max:100',
             ],
-            'manufacturing_date' => ['nullable', 'date'],
-            'expiration_date' => ['nullable', 'date', 'after_or_equal:manufacturing_date'],
+            'manufacturing_date' => ['nullable', 'date', 'after:1989-12-31', 'before_or_equal:today'],
+            'expiration_date' => ['nullable', 'date', 'after_or_equal:manufacturing_date', 'after:1989-12-31', 'before:2101-01-01'],
             'supplier_name' => ['nullable', 'string', 'max:191'],
             'unit_cost' => ['nullable', 'numeric', 'min:0'],
         ];
@@ -53,6 +53,10 @@ class CreateMedicineRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'manufacturing_date.after' => 'The manufacturing date cannot be before 1990.',
+            'manufacturing_date.before_or_equal' => 'The manufacturing date cannot be in the future.',
+            'expiration_date.after' => 'The expiration date cannot be before 1990.',
+            'expiration_date.before' => 'The expiration date cannot be after the year 2100.',
             'category.required' => __('messages.common.category_required'),
             'generic_name.required' => __('messages.common.generic_required'),
             'batch_number.required' => 'Batch number is required when initial stock is provided.',

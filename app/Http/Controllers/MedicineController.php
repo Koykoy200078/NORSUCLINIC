@@ -87,10 +87,10 @@ class MedicineController extends AppBaseController
      */
     public function store(CreateMedicineRequest $request): JsonResponse|RedirectResponse
     {
-        $input = $this->prepareMedicineInput($request->validated());
-
         DB::beginTransaction();
         try {
+            // Inside the transaction: the generic and the category it may create are undone with a refused form.
+            $input = $this->prepareMedicineInput($request->validated());
             $medicine = $this->medicineRepository->create($this->extractPersistableFields($input));
             $this->recordStockInIfProvided($medicine, $input);
             DB::commit();
@@ -139,10 +139,9 @@ class MedicineController extends AppBaseController
      */
     public function update(Medicine $medicine, UpdateMedicineRequest $request): RedirectResponse
     {
-        $input = $this->prepareMedicineInput($request->validated(), $medicine);
-
         DB::beginTransaction();
         try {
+            $input = $this->prepareMedicineInput($request->validated(), $medicine);
             $this->medicineRepository->update($this->extractPersistableFields($input), $medicine->id);
             $medicine->refresh();
             $this->recordStockInIfProvided($medicine, $input);
@@ -356,19 +355,23 @@ class MedicineController extends AppBaseController
             $dispensableToday($query);
         })->orderBy('name')->get();
 
-        $result = $categories->map(function ($category) {
+        // One query for the batches of every listed medicine (it was two queries per medicine).
+        $batchesByMedicine = MedicineBatch::whereIn('medicine_id', $categories->flatMap(fn ($category) => $category->medicines->pluck('id'))->unique()->all())
+            ->where('quantity', '>', 0)
+            ->get()
+            ->groupBy('medicine_id');
+        $today = \Carbon\Carbon::today()->toDateString();
+
+        $result = $categories->map(function ($category) use ($batchesByMedicine, $today) {
             return [
                 'id' => $category->id,
                 'name' => $category->name,
-                'medicines' => $category->medicines->map(function ($medicine) {
+                'medicines' => $category->medicines->map(function ($medicine) use ($batchesByMedicine, $today) {
+                    $positiveBatches = $batchesByMedicine->get($medicine->id, collect());
+
                     // Dosage availability from batch-ledger to include all stock-in paths.
-                    $dosages = MedicineBatch::where('medicine_id', $medicine->id)
-                        ->where('quantity', '>', 0)
-                        ->where(function ($query) {
-                            $query->whereNull('expiration_date')
-                                ->orWhereDate('expiration_date', '>=', \Carbon\Carbon::today()->toDateString());
-                        })
-                        ->get()
+                    $dosages = $positiveBatches
+                        ->filter(fn (MedicineBatch $batch) => $batch->expiration_date === null || $batch->expiration_date->toDateString() >= $today)
                         ->groupBy(function (MedicineBatch $batch) use ($medicine) {
                             $dosage = trim((string) ($batch->dosage ?? ''));
                             if ($dosage !== '') {
@@ -387,9 +390,7 @@ class MedicineController extends AppBaseController
                         })
                         ->values();
 
-                    $hasPositiveBatch = MedicineBatch::where('medicine_id', $medicine->id)
-                        ->where('quantity', '>', 0)
-                        ->exists();
+                    $hasPositiveBatch = $positiveBatches->isNotEmpty();
 
                     if ($dosages->isEmpty() && ! $hasPositiveBatch && (int) $medicine->available_quantity > 0) {
                         $dosages = collect([[
@@ -423,6 +424,8 @@ class MedicineController extends AppBaseController
         $input['category_name'] = $categoryName;
         $input['name'] = $brandName !== '' ? $brandName : $genericName;
         $input['minimum_stock_alert'] = $input['reorder_level'] ?? $input['minimum_stock_alert'] ?? null;
+        // The form sends a blank reorder level as null, and the column is NOT NULL (default 0): a blank means 0.
+        $input['reorder_level'] = (int) ($input['reorder_level'] ?? 0);
 
         if ($existingMedicine) {
             $input['quantity'] = (int) $existingMedicine->quantity;

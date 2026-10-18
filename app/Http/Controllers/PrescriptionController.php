@@ -883,6 +883,7 @@ class PrescriptionController extends AppBaseController
             $input['quantity'] = 0;
             $input['available_quantity'] = 0;
             $input['minimum_stock_alert'] = $input['reorder_level'] ?? null;
+            $input['reorder_level'] = (int) ($input['reorder_level'] ?? 0); // the column is NOT NULL (default 0)
 
             $medicine = $this->medicineRepository->create(Arr::except($input, [
                 'initial_stock_quantity',

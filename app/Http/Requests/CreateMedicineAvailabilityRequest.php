@@ -138,6 +138,17 @@ class CreateMedicineAvailabilityRequest extends FormRequest
                         "Row {$rowNumber}: Expiry date must be after or equal to manufacturing date."
                     );
                 }
+
+                // Dates that cannot be real are a typing mistake: a medicine not made yet, a year before 1990 (manufacturing; the expiry cannot be earlier than it) or an expiry after 2100.
+                if ($manufacturingDate->gt(Carbon::today())) {
+                    $validator->errors()->add("manufacturing_date.$index", "Row {$rowNumber}: Manufacturing date cannot be in the future.");
+                }
+                if ($manufacturingDate->year < 1990) {
+                    $validator->errors()->add("manufacturing_date.$index", "Row {$rowNumber}: Manufacturing date cannot be before 1990.");
+                }
+                if ($expiryDate->year > 2100) {
+                    $validator->errors()->add("expiry_date.$index", "Row {$rowNumber}: Expiry date cannot be after the year 2100.");
+                }
             }
         });
     }
