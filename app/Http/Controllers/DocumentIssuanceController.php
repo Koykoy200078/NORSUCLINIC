@@ -93,6 +93,25 @@ class DocumentIssuanceController extends Controller
         'office_id' => 'nullable|integer|exists:offices,id',
     ];
 
+    /**
+     * The medical certificate and the excuse slip name their boxes differently from the consultation form (the vital
+     * signs are `vital_signs_*_2`, the blood pressure is two boxes that are joined with a slash, the excuse slip has a
+     * list of subjects with their teachers). Those boxes were saved unchecked: a long text failed the save with a
+     * general error, the patient could be a number that points at no account, and the joined pressure could pass the
+     * 191 characters of its column.
+     */
+    private const CERTIFICATE_RULES = [
+        'user_id' => 'nullable|integer|exists:users,id',
+        'vital_signs_bp_2' => 'nullable|string|max:90', 'vital_signs_bp_22' => 'nullable|string|max:90',
+        'vital_signs_pr_2' => 'nullable|string|max:191', 'vital_signs_rr_2' => 'nullable|string|max:191',
+        'vital_signs_temp_2' => 'nullable|string|max:191', 'vital_signs_height_2' => 'nullable|string|max:191',
+        'vital_signs_weight_2' => 'nullable|string|max:191',
+        'subjects' => 'nullable|array|max:30',
+        'subjects.*' => 'nullable|array',
+        'subjects.*.subject' => 'nullable|string|max:191',
+        'subjects.*.teacher' => 'nullable|string|max:191',
+    ];
+
     private const CLASSIFICATION_RULES = [
         'illness_ids' => 'nullable|array|max:60',
         'illness_ids.*' => 'integer|exists:illnesses,id',
@@ -166,11 +185,10 @@ class DocumentIssuanceController extends Controller
     {
         $request->validate(array_merge([
             'document_type' => 'required|in:' . implode(',', self::DOCUMENT_TYPES),
-            'user_id' => 'nullable|integer',
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES, self::CERTIFICATE_RULES), array_merge([
             'document_type.required' => 'Please choose the type of document to create.',
             'document_type.in' => 'Unknown document type.',
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
@@ -261,13 +279,22 @@ class DocumentIssuanceController extends Controller
         return $data;
     }
 
+    /** The two pressure boxes joined as "120/80"; both blank is no pressure at all (it used to be saved as "/"). */
+    private function joinBloodPressure(?string $systolic, ?string $diastolic): ?string
+    {
+        $systolic = trim((string) $systolic);
+        $diastolic = trim((string) $diastolic);
+
+        return ($systolic === '' && $diastolic === '') ? null : $systolic . '/' . $diastolic;
+    }
+
     /**
      * Store a medical certificate document.
      */
     private function storeMedicalCertificate(array $data)
     {
         // Prepare the data for insertion
-        $data['vital_signs_bp'] = ($data['vital_signs_bp_2'] ?? '') . '/' . ($data['vital_signs_bp_22'] ?? '');
+        $data['vital_signs_bp'] = $this->joinBloodPressure($data['vital_signs_bp_2'] ?? null, $data['vital_signs_bp_22'] ?? null);
         $data['vital_signs_pr'] = $data['vital_signs_pr_2'] ?? null;
         $data['vital_signs_rr'] = $data['vital_signs_rr_2'] ?? null;
         $data['vital_signs_temp'] = $data['vital_signs_temp_2'] ?? null;
@@ -1353,7 +1380,7 @@ class DocumentIssuanceController extends Controller
             'dob' => 'nullable|date|before_or_equal:today',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
             'nursing_incharged' => 'nullable|integer|exists:users,id',
-        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES), array_merge([
+        ], self::CONSULTATION_IMAGE_RULES, self::CLASSIFICATION_RULES, self::CONSULTATION_TEXT_RULES, self::CONSULTATION_VALUE_RULES, self::CERTIFICATE_RULES), array_merge([
             'dob.before_or_equal' => 'Date of Birth cannot be in the future.',
             'date_of_birth.before_or_equal' => 'Date of Birth cannot be in the future.',
         ], self::CONSULTATION_IMAGE_MESSAGES));
@@ -1423,8 +1450,8 @@ class DocumentIssuanceController extends Controller
     private function updateMedicalCertificate(DocumentIssuance $requestDocument, array $data)
     {
         // Prepare the data for insertion
-        $data['vital_signs_bp'] = (isset($data['vital_signs_bp_2']) && isset($data['vital_signs_bp_22']))
-            ? $data['vital_signs_bp_2'] . '/' . $data['vital_signs_bp_22']
+        $data['vital_signs_bp'] = (array_key_exists('vital_signs_bp_2', $data) && array_key_exists('vital_signs_bp_22', $data))
+            ? $this->joinBloodPressure($data['vital_signs_bp_2'], $data['vital_signs_bp_22'])
             : $requestDocument->vital_signs_bp;
         $data['vital_signs_pr'] = $data['vital_signs_pr_2'] ?? $requestDocument->vital_signs_pr;
         $data['vital_signs_rr'] = $data['vital_signs_rr_2'] ?? $requestDocument->vital_signs_rr;

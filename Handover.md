@@ -71,6 +71,10 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-18 17:30 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v2` @ `117c88e` (row 5.8 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
+- **Work:** Phase 5 row 5.9 Certificates (medical certificate, excuse slip, PDF / print, edit) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), part 3 of the owner's request "5.7 Dispensing to 5.11 Notifications & Alerts" (2026-10-18): Pass A test-first, Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
+
 ### 2026-10-18 13:30 +08:00 — Claude Code — START → END (pushed 2026-10-18)
 - **Branch / from:** `changes_v2` @ `6b08e32` (row 5.7 and its handover are pushed; working tree clean except the build-generated `public/messages.js`).
 - **Work:** Phase 5 row 5.8 Lab requests (create / edit, results, status workflow, PDF, delete / restore) of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md), part 2 of the owner's request "5.7 Dispensing to 5.11 Notifications & Alerts" (2026-10-18): Pass A test-first, Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
