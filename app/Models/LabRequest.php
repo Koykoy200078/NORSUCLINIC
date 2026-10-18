@@ -170,7 +170,7 @@ class LabRequest extends Model
      */
     public function creator()
     {
-        return $this->belongsTo(User::class, 'document_creator_id');
+        return $this->belongsTo(User::class, 'document_creator_id')->withTrashed();
     }
 
     /**

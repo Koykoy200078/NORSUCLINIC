@@ -40,7 +40,7 @@ class CreateStaffRequest extends FormRequest
             'country_code' => ['nullable', 'in:'.PhilippinePhone::COUNTRY_CODE],
             'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')],
             'password' => 'required|same:password_confirmation|min:6',
-            'gender' => 'required',
+            'gender' => 'required|integer|in:1,2',
             'role' => ['sometimes', 'nullable', 'integer', Rule::exists('roles', 'id')->where('name', 'staff')],
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
         ];

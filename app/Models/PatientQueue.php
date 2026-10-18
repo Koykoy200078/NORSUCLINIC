@@ -52,11 +52,12 @@ class PatientQueue extends Model
     }
 
     /**
-     * Get the user (nurse/staff) who added this queue entry
+     * Get the user (nurse/staff) who added this queue entry. An archived account is still named: archiving a staff
+     * member must not erase who added the patient.
      */
     public function addedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'added_by')->withTrashed();
     }
 
     /**

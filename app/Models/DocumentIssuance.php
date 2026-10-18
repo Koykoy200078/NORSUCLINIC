@@ -273,7 +273,7 @@ class DocumentIssuance extends Model implements HasMedia
      */
     public function creator()
     {
-        return $this->belongsTo(User::class, 'document_creator_id');
+        return $this->belongsTo(User::class, 'document_creator_id')->withTrashed();
     }
 
     /**
@@ -281,7 +281,7 @@ class DocumentIssuance extends Model implements HasMedia
      */
     public function nursingInCharge()
     {
-        return $this->belongsTo(User::class, 'nursing_incharged_id');
+        return $this->belongsTo(User::class, 'nursing_incharged_id')->withTrashed();
     }
 
     /**

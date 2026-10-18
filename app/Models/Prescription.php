@@ -284,6 +284,6 @@ class Prescription extends Model
 
     public function dispensedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'dispensed_by');
+        return $this->belongsTo(User::class, 'dispensed_by')->withTrashed();
     }
 }
