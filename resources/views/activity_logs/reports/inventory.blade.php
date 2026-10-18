@@ -23,14 +23,15 @@
                     <div class="text-gray-600 fs-7">{{ $medicine->generic->name ?? 'N/A' }}</div>
                 </td>
                 <td>
-                    <span class="fw-bold {{ $medicine->available_quantity <= $medicine->minimum_stock_alert ? 'text-danger' : 'text-success' }}">
+                    <span class="fw-bold {{ $medicine->available_quantity <= 0 || $medicine->isLowStock() ? 'text-danger' : 'text-success' }}">
                         {{ $medicine->available_quantity }}
                     </span>
-                    <span class="text-gray-600 fs-7">/ Reorder at {{ $medicine->minimum_stock_alert }}</span>
+                    <span class="text-gray-600 fs-7">/ Reorder at {{ $medicine->minimum_stock_alert ?? '—' }}</span>
                 </td>
                 <td>
                     @php
-                        $expiringBatch = $medicine->batches()->where('quantity', '>', 0)->orderBy('expiration_date', 'asc')->first();
+                        // from the batches loaded with the list (one query for all rows, not one per medicine)
+                        $expiringBatch = $medicine->batches->where('quantity', '>', 0)->sortBy('expiration_date')->first();
                     @endphp
                     @if($expiringBatch)
                         <span class="badge bg-{{ $expiringBatch->expiration_date <= now()->addDays(30) ? 'danger' : 'info' }}">
@@ -41,9 +42,10 @@
                     @endif
                 </td>
                 <td>
-                    @if($medicine->available_quantity <= 0)
+                    @php $stockStatus = $medicine->stockStatus(); @endphp
+                    @if($stockStatus === 'Out of Stock')
                         <span class="badge bg-danger text-white">Out of Stock</span>
-                    @elseif($medicine->available_quantity <= $medicine->minimum_stock_alert)
+                    @elseif($stockStatus === 'Low Stock')
                         <span class="badge bg-warning text-dark">Low Stock</span>
                     @else
                         <span class="badge bg-success text-white">Healthy</span>

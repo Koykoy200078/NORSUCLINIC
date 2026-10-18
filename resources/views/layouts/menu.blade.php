@@ -47,25 +47,8 @@ $criticalCount = \App\Models\MedicineBatch::where('quantity', '>', 0)
         ->distinct('medicine_id')
         ->count('medicine_id');
 
-        $hasBaselineColumn = \Illuminate\Support\Facades\Cache::remember('schema_has_baseline_qty', 3600, function () {
-        return \Illuminate\Support\Facades\Schema::hasColumn('medicines', 'baseline_quantity');
-        });
-        $stableDenominatorSql = $hasBaselineColumn
-        ? 'COALESCE(NULLIF(baseline_quantity, 0), NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)'
-        : 'COALESCE(NULLIF(reorder_level, 0), NULLIF(minimum_stock_alert, 0), 1)';
-
-        // A medicine that ran out counts too (it used to be skipped because its quantity is 0); a catalogue entry that
-        // never had any stock does not.
-        $lowStockCount = \App\Models\Medicine::where(function ($q) use ($hasBaselineColumn) {
-        $q->where('available_quantity', '>', 0);
-        if ($hasBaselineColumn) {
-        $q->orWhere('baseline_quantity', '>', 0);
-        }
-        })
-        ->where(function ($q) use ($stableDenominatorSql) {
-        $q->whereRaw('minimum_stock_alert IS NOT NULL AND minimum_stock_alert > 0 AND available_quantity <= minimum_stock_alert')
-            ->orWhereRaw("stock_alert_percentage IS NOT NULL AND stock_alert_percentage > 0 AND (available_quantity / NULLIF($stableDenominatorSql, 0) * 100) <= stock_alert_percentage");
-                })->count();
+        // One definition of low stock for the badge, the report and the list: Medicine::scopeLowStock().
+        $lowStockCount = \App\Models\Medicine::lowStock()->count();
                 return compact('criticalCount', 'warningCount', 'lowStockCount', 'expiredCount');
                 });
 

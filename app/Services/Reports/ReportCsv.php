@@ -130,9 +130,7 @@ final class ReportCsv
 
     public static function stockStatus(Medicine $medicine): string
     {
-        return $medicine->available_quantity <= 0
-            ? 'Out of Stock'
-            : ($medicine->available_quantity <= $medicine->minimum_stock_alert ? 'Low Stock' : 'Healthy');
+        return $medicine->stockStatus();
     }
 
     /** @return array<int, mixed> */

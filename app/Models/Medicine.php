@@ -129,6 +129,61 @@ class Medicine extends Model
         // 'available_quantity' => 'required|integer|lte:quantity'
     ];
 
+    /**
+     * LOW STOCK: the one definition behind the sidebar badge, the Report inventory tab (and its CSV) and the warning in
+     * the medicine list. A medicine counts when it has ever held stock (units now, or a recorded baseline) and
+     *  - its units are at or below its minimum alert, or
+     *  - its units are at or below the alert percentage of its stable base (the baseline, else the reorder level, else the
+     *    minimum alert, else 1).
+     * A medicine that ran out counts too; a catalogue entry that never had any stock does not.
+     * isLowStock() must give the same answer as this scope for every row (LowStockDefinitionTest).
+     */
+    public function scopeLowStock($query)
+    {
+        $base = 'COALESCE(NULLIF(medicines.baseline_quantity, 0), NULLIF(medicines.reorder_level, 0), NULLIF(medicines.minimum_stock_alert, 0), 1)';
+
+        return $query
+            ->where(function ($ever) {
+                $ever->where('medicines.available_quantity', '>', 0)->orWhere('medicines.baseline_quantity', '>', 0);
+            })
+            ->where(function ($low) use ($base) {
+                $low->whereRaw('medicines.minimum_stock_alert IS NOT NULL AND medicines.minimum_stock_alert > 0 AND medicines.available_quantity <= medicines.minimum_stock_alert')
+                    ->orWhereRaw("medicines.stock_alert_percentage IS NOT NULL AND medicines.stock_alert_percentage > 0 AND (medicines.available_quantity / {$base} * 100) <= medicines.stock_alert_percentage");
+            });
+    }
+
+    /** The same rule as scopeLowStock(), for a medicine that is already loaded. */
+    public function isLowStock(): bool
+    {
+        $available = (int) $this->available_quantity;
+        $baseline = (int) $this->baseline_quantity;
+        $reorder = (int) $this->reorder_level;
+        $minimum = (int) $this->minimum_stock_alert;
+        $percent = (float) $this->stock_alert_percentage;
+
+        if ($available <= 0 && $baseline <= 0) {
+            return false;
+        }
+
+        if ($minimum > 0 && $available <= $minimum) {
+            return true;
+        }
+
+        $base = $baseline > 0 ? $baseline : ($reorder > 0 ? $reorder : ($minimum > 0 ? $minimum : 1));
+
+        return $percent > 0 && ($available / $base * 100) <= $percent;
+    }
+
+    /** "Out of Stock", "Low Stock" or "Healthy": the status the report, its CSV and the list use. */
+    public function stockStatus(): string
+    {
+        if ((int) $this->available_quantity <= 0) {
+            return 'Out of Stock';
+        }
+
+        return $this->isLowStock() ? 'Low Stock' : 'Healthy';
+    }
+
     public function category(): BelongsTo
     {
         return $this->medicineCategory();

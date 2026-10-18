@@ -6,10 +6,9 @@ $reorderLevel = isset($row->reorder_level) && $row->reorder_level !== null ? (in
 $minAlert = isset($row->minimum_stock_alert) && $row->minimum_stock_alert !== null ? (int) $row->minimum_stock_alert : 0;
 $percentAlert = isset($row->stock_alert_percentage) && $row->stock_alert_percentage !== null ? (float) $row->stock_alert_percentage : 0;
 
-// Use a stable denominator so percentage does not mirror live stock.
-$stableDenominator = $baselineQty > 0
-? $baselineQty
-: ($reorderLevel > 0 ? $reorderLevel : ($minAlert > 0 ? $minAlert : max($totalQty, 1)));
+// Same rule as the sidebar badge and the report (Medicine::isLowStock()): the percentage is taken of a stable base
+// (the baseline, else the reorder level, else the minimum alert, else 1), so it does not mirror live stock.
+$stableDenominator = $baselineQty > 0 ? $baselineQty : ($reorderLevel > 0 ? $reorderLevel : ($minAlert > 0 ? $minAlert : 1));
 
 $percentageRemaining = round((floatval($availableQty) / floatval($stableDenominator)) * 100, 2);
 
@@ -21,22 +20,19 @@ $warningMessage = '';
 $debugInfo = "Avail=$availableQty, StableBase=$stableDenominator, %Remain=$percentageRemaining%, Alert=$percentAlert%";
 
 if ($availableQty === 0) {
-$badgeClass = 'bg-light-danger';
-$textClass = 'text-danger';
-$showWarning = true;
-$warningMessage = 'Out of stock!';
-} elseif ($minAlert > 0 && $availableQty <= $minAlert) {
-    $badgeClass='bg-light-warning' ;
-    $textClass='text-warning' ;
-    $showWarning=true;
-    $warningMessage='Low stock! Only ' . $availableQty . ' left (Min: ' . $minAlert . ')' ;
-    } elseif ($percentAlert> 0 && $percentageRemaining <= $percentAlert) {
-        $badgeClass='bg-light-warning' ;
-        $textClass='text-warning' ;
-        $showWarning=true;
-        $warningMessage='Low stock! ' . number_format($percentageRemaining, 2) . '% remaining (Alert at ' . number_format($percentAlert, 2) . '%)' ;
-        }
-        @endphp
+    $badgeClass = 'bg-light-danger';
+    $textClass = 'text-danger';
+    $showWarning = true;
+    $warningMessage = 'Out of stock!';
+} elseif ($row->isLowStock()) {
+    $badgeClass = 'bg-light-warning';
+    $textClass = 'text-warning';
+    $showWarning = true;
+    $warningMessage = ($minAlert > 0 && $availableQty <= $minAlert)
+        ? 'Low stock! Only ' . $availableQty . ' left (Min: ' . $minAlert . ')'
+        : 'Low stock! ' . number_format($percentageRemaining, 2) . '% remaining (Alert at ' . number_format($percentAlert, 2) . '%)';
+}
+@endphp
 
         <div class="d-flex align-items-center">
         <span class="badge {{ $badgeClass }} {{ $textClass }}" style="font-size: 0.85rem; min-width: 60px;" title="{{ $debugInfo }}">

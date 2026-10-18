@@ -83,7 +83,7 @@ final class ReportQueries
         $query = Medicine::query()->with(['category', 'generic', 'batches'])->orderBy('name', 'asc')->orderBy('id', 'asc');
 
         if ($filters->status === 'low_stock') {
-            $query->whereRaw('available_quantity <= minimum_stock_alert');
+            $query->lowStock();
         }
 
         return SearchTerm::whereAllWords($query, $filters->search, [
