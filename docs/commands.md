@@ -208,7 +208,7 @@ Run them with `php <that folder>\<file>`.
 
 | Command | What it does | Changes data? | Where / when to run it |
 |---|---|---|---|
-| `php artisan reverb:start` | Starts the WebSocket server that pushes "module X changed" notices to the open pages (port `REVERB_PORT`, default 8080, listens on all addresses). | No | **Clinic server PC**, kept running next to `artisan serve`; `startup-dev-environment.ps1` / `.bat` start it in its own minimized window. If it is stopped, saving still works: pages show "Live updates off" and refresh every minute. |
+| `php artisan reverb:start` | Starts the WebSocket server that pushes "module X changed" notices to the open pages (port `REVERB_PORT`, default 8080, listens on all addresses). | No | **Clinic server PC**, kept running next to `artisan serve`; `startup-dev-environment.ps1` / `.bat` start it inside the same terminal (no extra window, output in `storage/logs/reverb.log`). If it is stopped, saving still works: pages show "Live updates off" and refresh every minute. |
 | `php artisan reverb:start --debug` | The same, printing every connection and message. | No | Only to diagnose a connection problem. |
 
 One-time setup on the clinic server PC:

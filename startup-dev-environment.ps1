@@ -1,49 +1,54 @@
 # ============================================================
-# NORSUCLINIC Development Environment Startup Script (PowerShell)
-# This script automatically:
-# 1. Starts WAMP Server
-# 2. Waits for services to be ready
-# 3. Clears all Laravel caches
-# 4. Starts Laravel development server
+# Medical University Clinic - start the clinic server (PowerShell)
+#
+# Everything runs in THIS ONE terminal, no extra windows:
+#   1. makes sure the database (WAMP MySQL) is running
+#   2. clears and rebuilds the Laravel caches
+#   3. starts Reverb (real-time updates) in the background of this terminal, its output goes to storage\logs\reverb*.log
+#   4. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
+#      http://localhost:8000, http://127.0.0.1:8000 and http://<this PC's current LAN address>:8000
+#
+# The LAN address is detected every time the script runs, so DHCP (dynamic) and static addresses both work.
+# Ctrl+C stops the web server and Reverb together.
+#
+#   .\startup-dev-environment.ps1                 start
+#   .\startup-dev-environment.ps1 -OpenBrowser    also open the page in the default browser
+#
+# There is no scheduler window: the automatic database backup was removed.
 # ============================================================
+param(
+    [switch]$OpenBrowser
+)
 
-# Configuration
-$WampPath = "C:\wamp64\wampmanager.exe"
+$ErrorActionPreference = 'Continue'
 
-# Auto-detect the project root from THIS script's own location (no hardcoded path).
+# The project root is the folder of THIS script (nothing hard-coded).
 $ProjectPath = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Definition }
+Set-Location $ProjectPath
 
-$ServerPort = "8000"
+$WampPath = 'C:\wamp64\wampmanager.exe'
+$WampMysqlService = 'wampmysqld64'
+$AppPort = 8000
 
-# Detect this machine's CURRENT LAN IPv4 dynamically (no hardcoded/static IP).
-function Get-PreferredIPv4 {
-    try {
-        $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.IPAddress -notlike '127.*' -and
-                $_.IPAddress -notlike '169.254.*' -and
-                $_.PrefixOrigin -ne 'WellKnown'
-            } | Sort-Object -Property InterfaceMetric | Select-Object -First 1 -ExpandProperty IPAddress
-        if ($ip) { return $ip }
-    } catch { }
-
-    try {
-        $ip = [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
-            Where-Object { $_.AddressFamily -eq 'InterNetwork' -and $_.IPAddressToString -notlike '169.254.*' -and $_.IPAddressToString -notlike '127.*' } |
-            Select-Object -First 1 -ExpandProperty IPAddressToString
-        if ($ip) { return $ip }
-    } catch { }
-
-    return "127.0.0.1"
+# Read ONE non-secret setting from .env (never print the file).
+function Get-EnvSetting {
+    param([string]$Name, [string]$Default)
+    $file = Join-Path $ProjectPath '.env'
+    if (Test-Path $file) {
+        $line = Select-String -Path $file -Pattern "^\s*$Name\s*=\s*(.+?)\s*$" | Select-Object -First 1
+        if ($line) { return $line.Matches[0].Groups[1].Value.Trim('"', "'") }
+    }
+    return $Default
 }
 
-# Returns $true if something is already LISTENING on the given TCP port.
+$DbPort = [int](Get-EnvSetting 'DB_PORT' '3306')
+$ReverbPort = [int](Get-EnvSetting 'REVERB_PORT' '8080')
+
+# True when something is LISTENING on the TCP port.
 function Test-PortInUse {
     param([int]$Port)
     try {
-        if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) {
-            return $true
-        }
+        if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) { return $true }
     } catch { }
     try {
         foreach ($line in (netstat -ano -p tcp 2>$null | Select-String ":$Port\s")) {
@@ -53,177 +58,156 @@ function Test-PortInUse {
     return $false
 }
 
-$ServerHost = Get-PreferredIPv4
+# The IPv4 addresses of this PC, best first: the adapter that has the default gateway (the real LAN / Wi-Fi) before
+# virtual adapters (WSL, Hyper-V, VirtualBox, VMware, Docker ...), which are listed last.
+function Get-LanIPv4 {
+    $virtualPattern = 'vEthernet|WSL|Hyper-V|VirtualBox|VMware|Docker|Loopback|Bluetooth|Tailscale|ZeroTier|TAP-|TUN'
+    $found = @()
+    try {
+        foreach ($config in (Get-NetIPConfiguration -ErrorAction Stop)) {
+            if (-not $config.NetAdapter -or $config.NetAdapter.Status -ne 'Up') { continue }
+            foreach ($address in $config.IPv4Address) {
+                $ip = $address.IPAddress
+                if (-not $ip -or $ip -like '127.*' -or $ip -like '169.254.*') { continue }
+                $found += [pscustomobject]@{
+                    IP      = $ip
+                    Alias   = $config.InterfaceAlias
+                    Gateway = [bool]$config.IPv4DefaultGateway
+                    Virtual = ($config.InterfaceAlias -match $virtualPattern) -or ($config.InterfaceDescription -match $virtualPattern)
+                }
+            }
+        }
+    } catch { }
 
-# Colors
-$ErrorColor = "Red"
-$SuccessColor = "Green"
-$InfoColor = "Cyan"
-$WarningColor = "Yellow"
+    if ($found.Count -eq 0) {
+        try {
+            foreach ($address in [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName())) {
+                $ip = $address.IPAddressToString
+                if ($address.AddressFamily -eq 'InterNetwork' -and $ip -notlike '127.*' -and $ip -notlike '169.254.*') {
+                    $found += [pscustomobject]@{ IP = $ip; Alias = 'network'; Gateway = $false; Virtual = $false }
+                }
+            }
+        } catch { }
+    }
 
-function Write-Header {
-    param([string]$Message)
-    Write-Host "`n============================================================" -ForegroundColor $InfoColor
-    Write-Host "  $Message" -ForegroundColor White
-    Write-Host "============================================================`n" -ForegroundColor $InfoColor
+    return @($found | Sort-Object @{ Expression = { $_.Virtual } }, @{ Expression = { -not $_.Gateway } })
 }
 
 function Write-Step {
-    param([string]$Step, [string]$Message)
-    Write-Host "[$Step] " -ForegroundColor $WarningColor -NoNewline
-    Write-Host $Message
-}
-
-function Write-Success {
     param([string]$Message)
-    Write-Host "  ✓ $Message" -ForegroundColor $SuccessColor
+    Write-Host "[..] $Message" -ForegroundColor Cyan
 }
 
-function Write-Error-Message {
+function Write-Ok {
     param([string]$Message)
-    Write-Host "  ✗ $Message" -ForegroundColor $ErrorColor
+    Write-Host "[ok] $Message" -ForegroundColor Green
 }
 
-# Start script
-Clear-Host
-Write-Header "NORSUCLINIC - Starting Development Environment"
-
-# ============================================================
-# Guard: if the server is already running on the port, do NOT proceed
-# (a second `php artisan serve` would just fail with "address already in use").
-# ============================================================
-if (Test-PortInUse -Port ([int]$ServerPort)) {
-    Write-Host "[WARN] A server is already running on port $ServerPort. Not starting another instance." -ForegroundColor $WarningColor
-    Write-Host "  Access it at: http://${ServerHost}:${ServerPort}  (or http://127.0.0.1:${ServerPort})" -ForegroundColor White
-    Start-Process "http://127.0.0.1:${ServerPort}"
-    Read-Host "`nPress Enter to exit"
-    exit 0
+function Write-Warn {
+    param([string]$Message)
+    Write-Host "[!!] $Message" -ForegroundColor Yellow
 }
 
-# ============================================================
-# Step 1: Start WAMP Server
-# ============================================================
-Write-Step "1/4" "Starting WAMP Server..."
-
-$wampProcess = Get-Process -Name "wampmanager" -ErrorAction SilentlyContinue
-
-if ($wampProcess) {
-    Write-Success "WAMP Server is already running!"
-} else {
-    if (Test-Path $WampPath) {
-        Start-Process $WampPath
-        Write-Success "WAMP Server started successfully!"
-        
-        Write-Host "`n  Waiting for WAMP services to initialize..." -ForegroundColor $InfoColor
-        Start-Sleep -Seconds 15
-        Write-Success "WAMP services should now be ready"
-    } else {
-        Write-Error-Message "WAMP Server not found at: $WampPath"
-        Write-Host "`n  Please update the `$WampPath variable in this script." -ForegroundColor $WarningColor
-        Read-Host "`nPress Enter to exit"
-        exit 1
+# Run an artisan command quietly; show only a failure.
+function Invoke-ArtisanQuiet {
+    param([string[]]$Arguments)
+    $output = & php artisan @Arguments 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warn ("php artisan " + ($Arguments -join ' ') + " failed")
+        $output | Select-Object -First 5 | ForEach-Object { Write-Host "     $_" -ForegroundColor DarkYellow }
     }
 }
 
-# ============================================================
-# Step 2: Navigate to project directory
-# ============================================================
-Write-Step "`n2/4" "Navigating to project directory..."
+Write-Host ''
+Write-Host '  Medical University Clinic - starting the server' -ForegroundColor White
+Write-Host ''
 
-if (Test-Path $ProjectPath) {
-    Set-Location $ProjectPath
-    Write-Success "Current directory: $ProjectPath"
-} else {
-    Write-Error-Message "Project directory not found: $ProjectPath"
-    Read-Host "`nPress Enter to exit"
-    exit 1
+# ------------------------------------------------------------ guard: already running
+if (Test-PortInUse -Port $AppPort) {
+    Write-Warn "A server is already running on port $AppPort, not starting another one."
+    foreach ($lan in (Get-LanIPv4)) { Write-Host "     http://$($lan.IP):$AppPort" }
+    Write-Host "     http://localhost:$AppPort"
+    exit 0
 }
 
-# ============================================================
-# Step 3: Clear all Laravel caches
-# ============================================================
-Write-Step "`n3/4" "Clearing all Laravel caches..."
-Write-Host ""
+# ------------------------------------------------------------ 1. database
+Write-Step "Database (MySQL on port $DbPort)"
+if (Test-PortInUse -Port $DbPort) {
+    Write-Ok 'MySQL is already running'
+} else {
+    $started = $false
+    # Without any window: start the WAMP MySQL service (needs an administrator terminal).
+    if (Get-Service -Name $WampMysqlService -ErrorAction SilentlyContinue) {
+        try { Start-Service -Name $WampMysqlService -ErrorAction Stop; $started = $true } catch { }
+    }
+    # Otherwise let WAMP's own manager start it (minimized, it lives in the tray).
+    if (-not $started -and (Test-Path $WampPath)) {
+        if (-not (Get-Process -Name 'wampmanager' -ErrorAction SilentlyContinue)) {
+            Start-Process -FilePath $WampPath -WindowStyle Minimized | Out-Null
+        }
+    }
+    # Wait for the port instead of a fixed pause.
+    $deadline = (Get-Date).AddSeconds(60)
+    while (-not (Test-PortInUse -Port $DbPort) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
+    if (Test-PortInUse -Port $DbPort) {
+        Write-Ok 'MySQL is running'
+    } else {
+        Write-Warn "MySQL did not answer on port $DbPort within 60 seconds. Start WAMP by hand; the site will not work without it."
+    }
+}
 
-# Clear application cache
-Write-Host "  - Clearing application cache..." -ForegroundColor Gray
-php artisan cache:clear 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "Application cache cleared" }
+# ------------------------------------------------------------ 2. caches
+Write-Step 'Clearing and rebuilding the Laravel caches'
+foreach ($command in @('cache:clear', 'config:clear', 'route:clear', 'view:clear', 'clear-compiled', 'optimize:clear', 'optimize')) {
+    Invoke-ArtisanQuiet -Arguments @($command)
+}
+Write-Ok 'Caches ready'
 
-# Clear configuration cache
-Write-Host "  - Clearing configuration cache..." -ForegroundColor Gray
-php artisan config:clear 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "Configuration cache cleared" }
-
-# Clear route cache
-Write-Host "  - Clearing route cache..." -ForegroundColor Gray
-php artisan route:clear 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "Route cache cleared" }
-
-# Clear view cache
-Write-Host "  - Clearing compiled views..." -ForegroundColor Gray
-php artisan view:clear 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "Compiled views cleared" }
-
-# Clear compiled services
-Write-Host "  - Clearing compiled services..." -ForegroundColor Gray
-php artisan clear-compiled 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "Compiled services cleared" }
-
-# Optional: Clear OPcache via optimize:clear
-Write-Host "  - Clearing all optimizations..." -ForegroundColor Gray
-php artisan optimize:clear 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "All optimizations cleared" }
-
-Write-Host "  - All optimizations..." -ForegroundColor Gray
-php artisan optimize 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) { Write-Success "All optimizations" }
-
-Write-Host ""
-Write-Success "All Laravel caches cleared successfully!"
-Write-Host ""
-
-# ============================================================
-# Step 4: Start Laravel development server
-# ============================================================
-Write-Step "`n4/4" "Starting Laravel development server..."
-Write-Host ""
-
-$ServerUrl = "http://${ServerHost}:${ServerPort}"
-
-Write-Host "  Server will be accessible at:" -ForegroundColor $InfoColor
-Write-Host "    - $ServerUrl  (LAN - auto-detected IP)" -ForegroundColor White
-Write-Host "    - http://127.0.0.1:$ServerPort" -ForegroundColor White
-Write-Host ""
-Write-Host "  Press Ctrl+C to stop the server" -ForegroundColor $WarningColor
-Write-Host ""
-Write-Header "Laravel Development Server Starting..."
-
-# Run the Laravel scheduler in its own minimized window: it runs the hourly database backup
-# (`php artisan db:backup`). Without it NO scheduled backup ever runs. Keep that window open.
-Start-Process -FilePath 'php' -ArgumentList 'artisan','schedule:work' -WorkingDirectory $ProjectPath -WindowStyle Minimized | Out-Null
-
-# Real-time updates: the Reverb WebSocket server (port 8080 by default, REVERB_PORT in .env). Keep this window open.
-# Without it the pages still work: they show "Live updates off" and refresh every minute. Other PCs on the network need
-# inbound TCP 8080 allowed in the firewall of this PC once (docs/commands.md > "Real-time updates").
-$ReverbPort = 8080
+# ------------------------------------------------------------ 3. Reverb (real-time updates), same terminal
+$reverb = $null
+$logDirectory = Join-Path $ProjectPath 'storage\logs'
 if (Test-PortInUse -Port $ReverbPort) {
-    Write-Host "  Reverb (real-time updates) is already running on port $ReverbPort." -ForegroundColor $WarningColor
+    Write-Ok "Reverb (real-time updates) is already running on port $ReverbPort"
 } else {
-    Start-Process -FilePath 'php' -ArgumentList 'artisan','reverb:start' -WorkingDirectory $ProjectPath -WindowStyle Minimized | Out-Null
+    Write-Step "Reverb (real-time updates) on port $ReverbPort"
+    $reverb = Start-Process -FilePath 'php' -ArgumentList 'artisan', 'reverb:start' -WorkingDirectory $ProjectPath `
+        -NoNewWindow -PassThru `
+        -RedirectStandardOutput (Join-Path $logDirectory 'reverb.log') -RedirectStandardError (Join-Path $logDirectory 'reverb-error.log')
+    Start-Sleep -Seconds 2
+    if ($reverb.HasExited) {
+        Write-Warn 'Reverb did not start (see storage\logs\reverb-error.log). The pages still work: they refresh every minute.'
+        $reverb = $null
+    } else {
+        Write-Ok 'Reverb is running (output: storage\logs\reverb.log)'
+    }
 }
 
-# Open the default browser to the server URL automatically once it is up. php artisan serve
-# is blocking, so schedule the open in a background job that waits a few seconds first.
-Start-Job -ArgumentList $ServerUrl -ScriptBlock {
-    param($url)
-    Start-Sleep -Seconds 4
-    Start-Process $url
-} | Out-Null
+# ------------------------------------------------------------ 4. web server on every address
+$lanAddresses = Get-LanIPv4
+Write-Host ''
+Write-Host '  Open the clinic from this PC or from any device on the same network:' -ForegroundColor White
+Write-Host "     http://localhost:$AppPort" -ForegroundColor Green
+Write-Host "     http://127.0.0.1:$AppPort" -ForegroundColor Green
+foreach ($lan in $lanAddresses) {
+    $note = if ($lan.Virtual) { "   ($($lan.Alias), virtual adapter)" } else { "   ($($lan.Alias))" }
+    Write-Host "     http://$($lan.IP):$AppPort$note" -ForegroundColor Green
+}
+Write-Host ''
+Write-Host "  Other devices need inbound TCP $AppPort and $ReverbPort allowed in this PC's firewall (docs/commands.md)." -ForegroundColor DarkGray
+Write-Host '  Ctrl+C stops the server and Reverb.' -ForegroundColor DarkGray
+Write-Host ''
 
-# Start Laravel server (binds to the auto-detected IP)
-php artisan serve --host=$ServerHost --port=$ServerPort
+if ($OpenBrowser) {
+    Start-Process "http://localhost:$AppPort" | Out-Null
+}
 
-# This line executes only if server is stopped
-Write-Host "`n`nDevelopment server stopped." -ForegroundColor $WarningColor
-Read-Host "Press Enter to exit"
+try {
+    # 0.0.0.0 = every network interface: localhost, 127.0.0.1 and the LAN address all work, whatever the address is today.
+    & php artisan serve --host=0.0.0.0 --port=$AppPort
+} finally {
+    if ($reverb -and -not $reverb.HasExited) {
+        Stop-Process -Id $reverb.Id -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host ''
+    Write-Host 'Server stopped.' -ForegroundColor Yellow
+}

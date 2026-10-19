@@ -71,6 +71,11 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-20 07:40 +08:00 — Claude Code — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `b706ed5` (working tree clean).
+- **Work:** the owner's request to rework `startup-dev-environment.ps1` / `.bat`: one terminal and no extra windows, no scheduler window (the automatic database backup was removed by the owner), and the site must open from `localhost` as well as from the LAN address.
+- **END:** pushed on the owner's standing go-ahead. The `.bat` is now a thin launcher of the `.ps1`. The server binds to `0.0.0.0` (it was bound to the one detected IP, so `localhost` / `127.0.0.1` were refused); the banner lists `localhost`, `127.0.0.1` and every current LAN address, detected on each start (the adapter with the default gateway first, virtual adapters such as WSL / Hyper-V last: the old script picked the WSL address 172.22.x.x); Reverb runs in the background of the same terminal (logs in `storage/logs/reverb.log` / `reverb-error.log`) and stops with Ctrl+C; MySQL is waited for on its port instead of a fixed 15 s pause (starts the WAMP MySQL service when the terminal is an administrator's, otherwise the WAMP manager minimized); optional `-OpenBrowser`. Verified by running it: MySQL / caches / Reverb / server came up and `/login` answered 200 on `localhost`, `127.0.0.1` and the LAN address. No code or test change (the suite is unaffected); no new Artisan command.
+
 ### 2026-10-19 07:30 +08:00 — Claude Code — START → END (pushed 2026-10-19)
 - **Branch / from:** `changes_v2` @ `3b069ff` (Phase 7 and its handover are pushed; working tree clean).
 - **Work:** the owner's second step after Phase 7 (2026-10-19: "after implement i want to continue Phase 5.12 Settings"): Phase 5 row **5.12 Settings › Staff** (plan table; the owner and earlier notes call it "Settings (General)") of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Pass A test-first, Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
