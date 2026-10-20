@@ -60,16 +60,26 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | `63ccd48` — Phase 6.1 shared route definitions (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
+| Last pushed work | `392b931` — Phase 6.2 shared role routing and default password (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
 | Work in progress (not pushed) | none |
-| Next step | **Phase 6.2 — role routing and shared default-password constant**, then 6.3–6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
+| Next step | **Phase 6.3 — shared ⋮ row-action menu**, then 6.4–6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | No new commands in this checkpoint. [docs/commands.md](docs/commands.md) also records the reviewed existing `cache:warmup` and `user:restore` behavior. |
-| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 707 tests / 7,865 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged. |
+| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 715 tests / 7,906 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-20 11:23 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `943650f` (Phase 6.1 and handover pushed; working tree clean).
+- **Work:** continue Phase **6.2** inline and test-first: consolidate role URL/name/redirect helpers, replace controller/view route-selection copies, centralize the existing default password, and verify with the route contract, full suite, crawl, matrix and real-browser checks before pushing.
+- **END (2026-10-20 12:48 +08:00):** committed and pushed on the owner's standing go-ahead.
+  - **Commits:** `392b931` (code, eight new helper regressions, plan and STATUS), then this `handover:` commit.
+  - **Done:** Phase **6.2**. Shared URL/name/redirect helpers, nine controller route getters removed, repeated view routing consolidated, doctor profile alias and legacy patient cancel destination preserved, dashboard helper reused, `User::DEFAULT_PASSWORD` used by the server and browser.
+  - **Verified:** full suite with crawl **715 tests / 7,906 assertions**, all passing (05:52.401); **1,610 crawl requests / 15 variants**, zero problems. Complete **461-route** manifest unchanged; matrix **6,288 requests / 393 routes / 16 variants**, identical to the Phase 6 baseline, zero crashes or access violations. Five deliberate regressions detected; sources restored byte-for-byte. Asset build, inline review and diff check pass. Context7 Laravel 10 redirect/query/flash docs used.
+  - **Browser / data:** **45 real pages** as admin/staff/doctor, correct panel form actions, doctor/staff reset confirmation text, no JavaScript errors or external asset requests. Fresh synthetic data only; server, scratch schema and temporary access file removed. Working `norsu_clinic` unchanged. No new Artisan command.
+  - **Where to continue:** **6.3**, then 6.4–6.6. Owner questions in STATUS §6 unchanged.
 
 ### 2026-10-20 11:07 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `af66ff0` (fetched; HEAD matches the pushed checkpoint; working tree clean).
