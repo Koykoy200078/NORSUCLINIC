@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreatePrescriptionRequest extends FormRequest
 {
@@ -21,7 +24,9 @@ class CreatePrescriptionRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|integer|exists:patients,id',
-            'doctor_id' => 'required|integer|exists:doctors,id',
+            'doctor_id' => ['required', 'integer', Rule::exists('doctors', 'id')->where(
+                fn (Builder $query): Builder => $query->whereIn('user_id', User::query()->select('id'))
+            )],
             'doctor_license_s2_number' => 'nullable|string|max:100',
             // Staff write a prescription only on a doctor's verbal / phone order, and must say so.
             'verbal_order' => isRole('staff') ? ['accepted'] : ['nullable', 'boolean'],

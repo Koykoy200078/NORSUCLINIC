@@ -51,7 +51,7 @@ class DoctorTable extends LivewireTableComponent
             'user:id,first_name,last_name,email,status,email_verified_at,gender',
             'user.media',
             'specializations:id,name'
-        ])->select('doctors.*');
+        ])->whereHas('user')->select('doctors.*');
 
         $query->when(
             $this->statusFilter != '' && $this->statusFilter != User::ALL,

@@ -19,5 +19,5 @@
     </div>
 </div>
 @endsection
-@section('scripts')
+@section('page_js')
 @endsection

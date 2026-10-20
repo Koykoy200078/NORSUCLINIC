@@ -127,7 +127,8 @@ class FormRulesFitColumnsTest extends TestCase
                     continue; // a number, a date, a list choice or a file: not free text
                 }
 
-                $max = preg_match('/\bmax:(\d+)/', $text, $found) === 1 ? (int) $found[1] : null;
+                // An exact string size is also an upper bound (e.g. a two-character country code).
+                $max = preg_match('/\b(?:max|size):(\d+)/', $text, $found) === 1 ? (int) $found[1] : null;
                 foreach ($columns[$field] as [$table, $length]) {
                     if (! in_array($table, $tables, true)) {
                         continue;

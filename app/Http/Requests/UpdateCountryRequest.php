@@ -20,6 +20,7 @@ class UpdateCountryRequest extends FormRequest
     public function rules(): array
     {
         $rules['name'] = 'required|string|max:191|unique:countries,name,'.$this->route('country')->id;
+        $rules['short_code'] = 'sometimes|required|string|size:2';
 
         return $rules;
     }

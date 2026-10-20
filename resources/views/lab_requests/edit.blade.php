@@ -386,7 +386,7 @@ Edit Lab Request #{{ $lab_request->request_number }}
 @endif
 @endsection
 
-@section('scripts')
+@section('page_js')
 <script>
     (function() {
         const badge = document.getElementById('selected-count-badge');

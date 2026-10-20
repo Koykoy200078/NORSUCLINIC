@@ -146,8 +146,8 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
             ->whereNumber('document_issuance')->name('dispense-records.consultation');
 
         // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
-        Route::redirect('medicine-history', '/staff/dispense-records');
-        Route::redirect('medicine-history/{id}', '/staff/dispense-records/{id}');
+        Route::redirect('medicine-history', '/staff/dispense-records')->name('medicine-history.index');
+        Route::redirect('medicine-history/{id}', '/staff/dispense-records/{id}')->name('medicine-history.show');
     });
 
     // Activity Logs (Staff can view activity logs)

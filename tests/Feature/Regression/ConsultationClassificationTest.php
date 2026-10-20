@@ -272,7 +272,7 @@ class ConsultationClassificationTest extends TestCase
 
         $this->actingAs($admin)->post(route('setting.update'), [
             'sectionName' => 'general',
-            'clinic_name' => 'Norsu Clinic', 'email' => 'clinic@test.local', 'contact_no' => '9171234567', 'specialties' => ['1'],
+            'clinic_name' => 'Norsu Clinic', 'email' => 'clinic@test.local', 'contact_no' => '9171234567', 'specialties' => [\App\Models\Specialization::firstOrCreate(['name' => 'General Medicine'])->id],
             'university_physician_name' => 'Dr. Michael S. Oliveros',
             'university_physician_title' => 'University Physician',
         ])->assertSessionMissing('errors');

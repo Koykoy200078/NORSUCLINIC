@@ -186,7 +186,7 @@ class PhilippinePhoneTest extends TestCase
         Setting::where('key', 'country_code')->update(['value' => '1']);
 
         $payload = [
-            'sectionName' => 'general', 'email' => 'clinic@test.local', 'specialties' => [1], 'clinic_name' => 'NORSU Clinic',
+            'sectionName' => 'general', 'email' => 'clinic@test.local', 'specialties' => [\App\Models\Specialization::firstOrCreate(['name' => 'General Medicine'])->id], 'clinic_name' => 'NORSU Clinic',
             'language' => 'en',
         ];
 

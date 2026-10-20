@@ -39,9 +39,11 @@ Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|s
                     'consultation' => [
                         'id' => $latestConsultation->id,
                         'created_at' => $latestConsultation->created_at,
-                        'complaints' => $latestConsultation->complaints,
-                        'assessment' => $latestConsultation->assessment,
-                        'has_images' => !empty($latestConsultation->consultation_images)
+                        ...(canUseModule('consultations') ? [
+                            'complaints' => $latestConsultation->complaints,
+                            'assessment' => $latestConsultation->assessment,
+                            'has_images' => !empty($latestConsultation->consultation_images),
+                        ] : []),
                     ]
                 ]);
             }
@@ -56,5 +58,5 @@ Route::middleware(['web', 'auth', 'checkUserStatus', 'role:clinic_admin|doctor|s
                 'message' => 'Error retrieving consultation form information.'
             ], 500);
         }
-    });
+    })->name('patient.latest-consultation');
 });

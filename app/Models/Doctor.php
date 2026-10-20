@@ -113,6 +113,12 @@ class Doctor extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /** Archived profiles remain for restoration, but their old management URLs must stay unavailable. */
+    public function resolveRouteBindingQuery($query, $value, $field = null)
+    {
+        return parent::resolveRouteBindingQuery($query, $value, $field)->whereHas('user');
+    }
+
     public function testUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

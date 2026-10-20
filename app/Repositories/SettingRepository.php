@@ -49,25 +49,23 @@ class SettingRepository extends BaseRepository
             $inputArr['contact_no'] = (empty($inputArr['contact_no'])) ? '' : $inputArr['contact_no'];
             $inputArr['email'] = (empty($inputArr['email'])) ? '' : $inputArr['email'];
             $inputArr['specialties'] = (empty($inputArr['specialties'])) ? '1' : json_encode($inputArr['specialties']);
-            $inputArr['currency'] = (empty($inputArr['currency'])) ? '1' : $inputArr['currency'];
-            $inputArr['prefix'] = (empty($inputArr['prefix'])) ? '' : $inputArr['prefix'];
             // Philippine numbers only: the dial code and the default country are fixed.
             $inputArr['country_code'] = PhilippinePhone::COUNTRY_CODE;
             $inputArr['email_verified'] = (empty($inputArr['email_verified'])) ? '0' : $inputArr['email_verified'];
             $inputArr['default_country_code'] = PhilippinePhone::DEFAULT_COUNTRY_ISO;
         }
-        if ($inputArr['sectionName'] == 'contact_information') {
+        if ($inputArr['sectionName'] == 'contact-information') {
             $inputArr['address_one'] = (empty($inputArr['address_one'])) ? '' : $inputArr['address_one'];
             $inputArr['address_two'] = (empty($inputArr['address_two'])) ? '' : $inputArr['address_two'];
-            $inputArr['country'] = (empty($inputArr['country'])) ? '1' : $inputArr['country'];
-            $inputArr['state'] = (empty($inputArr['state'])) ? '1' : $inputArr['state'];
-            $inputArr['city'] = (empty($inputArr['city'])) ? '1' : $inputArr['city'];
             $inputArr['postal_code'] = (empty($inputArr['postal_code'])) ? '' : $inputArr['postal_code'];
         }
 
         // One form is saved as a whole: a failing logo upload must not leave the other settings half written.
         DB::transaction(function () use ($inputArr) {
             foreach ($inputArr as $key => $value) {
+                if (in_array($key, ['logo', 'favicon'], true) && empty($value)) {
+                    continue;
+                }
 
                 /** @var Setting $setting */
                 $setting = Setting::where('key', $key)->first();
@@ -75,7 +73,8 @@ class SettingRepository extends BaseRepository
                     continue;
                 }
 
-                $setting->update(['value' => $value]);
+                // Optional text boxes arrive as null when cleared; settings.value is NOT NULL.
+                $setting->update(['value' => $value ?? '']);
 
                 if (in_array($key, ['logo']) && ! empty($value)) {
                     $setting->clearMediaCollection(Setting::LOGO);

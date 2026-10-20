@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateStateRequest;
 use App\Models\Address;
 use App\Models\Country;
 use App\Models\Province;
+use App\Models\State;
 use App\Repositories\StateRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -41,7 +42,7 @@ class ProvinceController extends AppBaseController
         $country = Country::where('id', $input['country_id'])->pluck('name')->first();
 
         $isdata = 0;
-        foreach (Province::STATE_ARRAY as $key => $value) {
+        foreach (State::STATE_ARRAY as $key => $value) {
             if ($value == $country) {
                 $isdata = 1;
             }

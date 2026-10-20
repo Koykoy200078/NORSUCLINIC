@@ -6,7 +6,6 @@ use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Rules\PhilippinePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class UpdateUserProfileRequest extends FormRequest
 {
@@ -71,16 +70,4 @@ class UpdateUserProfileRequest extends FormRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     */
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
-    {
-        Log::error('Profile Update Validation Failed:', [
-            'errors' => $validator->errors()->toArray(),
-            'input' => $this->except(['password', 'image'])
-        ]);
-
-        parent::failedValidation($validator);
-    }
 }

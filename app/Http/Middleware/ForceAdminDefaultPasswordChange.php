@@ -62,7 +62,14 @@ class ForceAdminDefaultPasswordChange
         // Background calls (the dashboard's own AJAX / Livewire / JSON requests) are not page visits: let them through.
         $isBackgroundCall = $request->ajax() || $request->expectsJson() || $request->hasHeader('X-Livewire');
 
-        if ($usesDefaultPassword && ! $request->routeIs($dashboardRoute) && ! $isBackgroundCall) {
+        if ($usesDefaultPassword && ! $request->routeIs($dashboardRoute)) {
+            if ($isBackgroundCall && ! $request->isMethod('GET') && ! $request->isMethod('HEAD')) {
+                abort(403, 'Change your default password before continuing.');
+            }
+            if ($isBackgroundCall) {
+                return $next($request);
+            }
+
             return redirect()->route($dashboardRoute);
         }
 

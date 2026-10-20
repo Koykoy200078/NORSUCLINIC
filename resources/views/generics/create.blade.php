@@ -43,6 +43,6 @@
     </div>
 </div>
 @endsection
-@section('scripts')
+@section('page_js')
 {{-- assets/js/generics/create-edit.js--}}
 @endsection

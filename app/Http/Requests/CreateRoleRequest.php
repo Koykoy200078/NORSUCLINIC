@@ -20,7 +20,17 @@ class CreateRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Role::$rules;
+        $rules = Role::$rules;
+        $rules['display_name'] = [
+            'required', 'string', 'max:191', 'unique:roles,display_name',
+            function (string $attribute, mixed $value, \Closure $fail): void {
+                if (is_string($value) && Role::where('name', str_replace(' ', '_', strtolower($value)))->exists()) {
+                    $fail(__('messages.common.name_already_taken'));
+                }
+            },
+        ];
+
+        return $rules;
     }
 
     /**

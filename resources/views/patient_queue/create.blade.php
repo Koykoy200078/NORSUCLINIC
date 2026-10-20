@@ -75,7 +75,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@section('page_js')
 <script>
     $(document).ready(function() {
         // Initialize Select2 for better patient selection
@@ -94,7 +94,7 @@
                 
                 // Fetch patient consultation form info via AJAX
                 $.ajax({
-                    url: '/api/patient/' + patientId + '/latest-consultation',
+                    url: @json(route('patient.latest-consultation', ['patient' => '__PATIENT__'])).replace('__PATIENT__', patientId),
                     method: 'GET',
                     success: function(response) {
                         let consultationInfo = '';

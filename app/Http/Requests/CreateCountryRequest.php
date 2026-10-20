@@ -20,6 +20,6 @@ class CreateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Country::$rules;
+        return Country::$rules + ['short_code' => 'required|string|size:2'];
     }
 }

@@ -85,4 +85,16 @@ class DefaultPasswordGateTest extends TestCase
             ->get(route('doctors.patients.index'))->assertOk();
         $this->actingAs($this->makeStaff('nurse', 'triage_area'))->get(route('staff.patients.index'))->assertOk();
     }
+
+    public function test_json_headers_do_not_allow_writes_before_the_default_password_is_changed(): void
+    {
+        $admin = $this->makeAdmin(['password' => Hash::make('123456')]);
+        $this->actingAs($admin)->postJson(route('specializations.store'), ['name' => 'Bypassed gate'])->assertForbidden();
+        $this->assertDatabaseMissing('specializations', ['name' => 'Bypassed gate']);
+
+        $this->putJson(route('user.changePassword'), [
+            'current_password' => '123456', 'new_password' => 'New-strong-password', 'confirm_password' => 'New-strong-password',
+        ])->assertOk();
+        $this->postJson(route('specializations.store'), ['name' => 'Allowed after change'])->assertOk();
+    }
 }

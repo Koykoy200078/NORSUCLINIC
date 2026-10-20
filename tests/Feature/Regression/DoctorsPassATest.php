@@ -247,6 +247,80 @@ class DoctorsPassATest extends TestCase
 
     // ------------------------------------------------------------------ archiving
 
+    public function test_retained_archived_profiles_cannot_be_selected_by_prescription_forms(): void
+    {
+        $user = $this->makeDoctor();
+        $doctorId = $user->doctor->id;
+        $requests = [new \App\Http\Requests\CreatePrescriptionRequest(), new \App\Http\Requests\UpdatePrescriptionRequest()];
+        $accepts = fn ($request) => \Illuminate\Support\Facades\Validator::make(
+            ['doctor_id' => $doctorId], ['doctor_id' => $request->rules()['doctor_id']]
+        )->passes();
+        foreach ($requests as $request) {
+            $this->assertTrue($accepts($request), 'an unarchived doctor is a valid selection');
+        }
+        $user->delete();
+        foreach ($requests as $request) {
+            $this->assertFalse($accepts($request), 'a retained archived profile is not a selectable doctor');
+        }
+        $user->restore();
+        foreach ($requests as $request) {
+            $this->assertTrue($accepts($request), 'restoration makes the same doctor selectable again');
+        }
+    }
+
+    public function test_archive_and_restore_keep_the_complete_doctor_profile_and_reserved_licence(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        $doctor = $this->createDoctor(['address1' => 'Clinic Road']);
+        $user = $doctor->user;
+        $addressId = $user->address->id;
+        $user->qualifications()->create(['degree' => 'MD', 'university' => 'Test University', 'year' => '2005']);
+        $media = $user->addMedia(\Illuminate\Http\UploadedFile::fake()->image('doctor.png'))->toMediaCollection(User::PROFILE, 'public');
+        $photoPath = $media->getPathRelativeToRoot();
+
+        $this->deleteJson(route('doctors.destroy', $doctor->id))->assertOk();
+
+        $this->assertNotNull(Doctor::find($doctor->id), 'the doctor profile must survive archiving');
+        $this->assertDatabaseHas('addresses', ['id' => $addressId, 'address1' => 'Clinic Road']);
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($photoPath);
+        $this->assertSame(1, $doctor->specializations()->count());
+        $this->assertSame(1, $user->qualifications()->count());
+
+        $this->assertRefused($this->post(route('doctors.store'), $this->valid([
+            'email' => 'replacement@test.local', 'employee_id' => 'EMP-REPLACEMENT', 'contact' => '9170000019',
+        ])), 'prc license number');
+
+        $this->artisan('user:restore', ['--id' => $user->id])->assertExitCode(0);
+        $restored = User::findOrFail($user->id);
+        $this->assertSame($doctor->id, $restored->doctor->id);
+        $this->assertSame($addressId, $restored->address->id);
+        $this->assertSame($media->id, $restored->getFirstMedia(User::PROFILE)->id);
+        $this->get(route('doctors.edit', $doctor->id))->assertOk();
+    }
+
+    public function test_retained_profiles_of_archived_accounts_are_hidden_from_lists_and_old_urls(): void
+    {
+        $user = $this->makeDoctor(['first_name' => 'Archiveddoc']);
+        $doctor = $user->doctor;
+        $admin = $this->makeAdmin();
+        $this->actingAs($admin);
+        $this->assertContains($doctor->id, Livewire::withoutLazyLoading()->test(DoctorTable::class)->instance()->getRows()->pluck('id')->all());
+        $user->delete();
+
+        $this->assertNotContains($doctor->id, Livewire::withoutLazyLoading()->test(DoctorTable::class)->instance()->getRows()->pluck('id')->all());
+        foreach (['doctors.show', 'doctors.edit'] as $name) {
+            $this->get(route($name, $doctor->id))->assertNotFound();
+        }
+        $this->deleteJson(route('doctors.destroy', $doctor->id))->assertNotFound();
+        $this->assertArrayNotHasKey($doctor->id, app(\App\Repositories\PrescriptionRepository::class)->getDoctors()->all());
+
+        $this->artisan('cache:warmup')->assertExitCode(0);
+        $this->assertArrayNotHasKey($doctor->id, \Illuminate\Support\Facades\Cache::get('doctors_list'));
+        $user->restore();
+        $this->assertArrayHasKey($doctor->id, app(\App\Repositories\PrescriptionRepository::class)->getDoctors()->all());
+    }
+
     public function test_archiving_a_doctor_signs_them_out_keeps_their_consultations_named_and_leaves_audit_lines(): void
     {
         $doctor = $this->createDoctor();

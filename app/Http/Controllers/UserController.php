@@ -179,17 +179,7 @@ class UserController extends AppBaseController
             // Store user reference
             $user = $doctor->user;
 
-            // Files + rows of the profile picture (deleting only the rows left the files behind)
-            $user->clearMediaCollection(User::PROFILE);
-
-            if ($user->address) {
-                $user->address()->delete();
-            }
-
-            // Delete doctor record
-            $doctor->delete();
-
-            // Finally archive the user
+            // Keep the complete profile, address and photo so user:restore brings the doctor back intact.
             $user->delete();
 
             DB::commit();

@@ -114,7 +114,7 @@ class SavesAreAllOrNothingTest extends TestCase
         });
         $this->actingAs($this->makeAdmin())->post(route('setting.update'), [
             'sectionName' => 'general', 'language' => 'en', 'clinic_name' => 'Medical University Clinic', 'email' => 'c@test.local',
-            'contact_no' => '9171234567', 'specialties' => ['1'],
+            'contact_no' => '9171234567', 'specialties' => [\App\Models\Specialization::firstOrCreate(['name' => 'General Medicine'])->id],
         ]);
 
         $this->assertGreaterThanOrEqual(3, count($levels), 'the language, the users and the form settings were written');

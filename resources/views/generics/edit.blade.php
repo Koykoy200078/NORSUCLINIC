@@ -38,7 +38,7 @@
     </div>
 </div>
 @endsection
-@section('scripts')
+@section('page_js')
 {{-- assets/js/generics/create-edit.js --}}
 {{-- assets/js/custom/phone-number-country-code.js --}}
 @endsection

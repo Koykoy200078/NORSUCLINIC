@@ -20,6 +20,7 @@ class UpdateStateRequest extends FormRequest
     public function rules(): array
     {
         $rules['name'] = 'required|string|max:191|unique:states,name,'.$this->route('state')->id;
+        $rules['country_id'] = 'sometimes|required|integer|exists:countries,id';
 
         return $rules;
     }

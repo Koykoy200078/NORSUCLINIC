@@ -49,8 +49,8 @@ class SettingController extends AppBaseController
         if (isset($setting['country_id'])) {
             $states = getStates($setting['country_id']);
         }
-        if (isset($states)) {
-            $cities = getCities($states);
+        if (! empty($setting['state_id'])) {
+            $cities = getCities($setting['state_id']);
         }
         $countries = Country::toBase()->pluck('name', 'id');
         $specialties = Specialization::orderBy('name', 'asc')->pluck('name', 'id');
@@ -76,7 +76,7 @@ class SettingController extends AppBaseController
                 User::whereNot('type', User::ADMIN)->update(['language' => $language]);
             }
 
-            $this->settingRepository->update($request->all(), $id);
+            $this->settingRepository->update($request->validated(), $id);
         });
 
         if (!empty($language)) {

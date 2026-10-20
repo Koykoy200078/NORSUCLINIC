@@ -23,11 +23,20 @@ class UpdateFrontCmsRequest extends FormRequest
             'about_image_1' => 'mimes:jpg,jpeg,png',
             'about_image_2' => 'mimes:jpg,jpeg,png',
             'about_image_3' => 'mimes:jpg,jpeg,png',
-            'about_title' => 'required',
-            'about_experience' => 'required|numeric',
-            'about_short_description' => 'required',
-            'terms_conditions' => 'required',
-            'privacy_policy' => 'required',
+            'about_title' => 'required|string|max:191',
+            'about_experience' => 'required|numeric|min:0',
+            'about_short_description' => 'required|string',
+            'terms_conditions' => $this->richTextRules(),
+            'privacy_policy' => $this->richTextRules(),
         ];
+    }
+
+    private function richTextRules(): array
+    {
+        return ['bail', 'required', 'string', 'json', function (string $attribute, mixed $value, \Closure $fail): void {
+            if (! is_string(json_decode($value, true))) {
+                $fail('The '.str_replace('_', ' ', $attribute).' must contain text.');
+            }
+        }];
     }
 }

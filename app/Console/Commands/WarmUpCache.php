@@ -32,7 +32,7 @@ class WarmUpCache extends Command
 
         // Warm up doctors list cache  
         $this->info('Caching doctors list...');
-        Cache::put('doctors_list', Doctor::with('user:id,first_name,last_name')->get()
+        Cache::put('doctors_list', Doctor::with('user:id,first_name,last_name')->whereHas('user')->get()
             ->pluck('user.full_name', 'id')->toArray(), 600);
 
         $this->info('Cache warming completed successfully!');

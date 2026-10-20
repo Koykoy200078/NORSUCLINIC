@@ -24,6 +24,9 @@ class UpdateSettingRequest extends FormRequest
         // The clinic works with Philippine numbers only: the country is fixed, not selectable.
         $this->normalizePhilippinePhones(['contact_no' => 'national']);
         $this->merge(['default_country_code' => PhilippinePhone::DEFAULT_COUNTRY_ISO]);
+        if ($this->input('sectionName') === 'contact_information') {
+            $this->merge(['sectionName' => 'contact-information']);
+        }
     }
 
     /**
@@ -40,22 +43,26 @@ class UpdateSettingRequest extends FormRequest
             'favicon' => 'nullable|image|mimes:png|dimensions:width=32,height=32',
         ];
 
-        if ($this->request->get('sectionName') == 'contact-information') {
+        if ($this->input('sectionName') === 'contact-information') {
             return array_merge($rules, [
-                'country_id' => 'required',
-                'state_id' => 'required',
-                'city_id' => 'required',
-                'address_one' => 'required',
-                'address_two' => 'required',
-                'postal_code' => 'required',
+                'country_id' => 'required|integer|exists:countries,id',
+                'state_id' => 'required|integer|exists:states,id',
+                'city_id' => 'required|integer|exists:cities,id',
+                'address_one' => 'required|string|max:191',
+                'address_two' => 'required|string|max:191',
+                'postal_code' => 'required|string|max:20',
             ]);
         }
 
-        if ($this->request->get('sectionName') == 'general') {
+        if ($this->input('sectionName') === 'general') {
             return array_merge($rules, [
                 'email' => 'required|email:filter',
-                'specialties' => 'required',
-                'clinic_name' => 'required',
+                'specialties' => 'required|array|min:1',
+                'specialties.*' => 'integer|exists:specializations,id',
+                'clinic_name' => 'required|string|max:191',
+                'landline_no' => 'nullable|string|max:30',
+                'email_verified' => 'sometimes|boolean',
+                'default_country_code' => 'required|in:ph',
                 'contact_no' => ['required', new PhilippinePhoneNumber()],
                 // The General form has no language picker any more (the controller only acts on a non-empty value),
                 // so requiring it made every save fail with "The language field is required".

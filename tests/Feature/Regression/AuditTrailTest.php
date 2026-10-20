@@ -35,7 +35,7 @@ class AuditTrailTest extends TestCase
 
         $this->actingAs($admin)->post(route('setting.update'), [
             'sectionName' => 'general', 'clinic_name' => 'Secret Clinic Name', 'email' => 'clinic@test.local', 'contact_no' => '9171234567',
-            'specialties' => ['1'],
+            'specialties' => [\App\Models\Specialization::firstOrCreate(['name' => 'General Medicine'])->id],
         ])->assertSessionDoesntHaveErrors();
 
         $row = $this->rows('settings_changed')->first();
