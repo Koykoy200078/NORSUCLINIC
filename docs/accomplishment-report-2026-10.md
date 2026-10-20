@@ -53,8 +53,15 @@ names, and a fix for name searches that found nothing.
 * One count per consultation x picked illness: a visit with two illnesses adds to both rows, so the illness TOTAL can
   exceed the number of consultations. The page prints "Consultations in this report" and "Unclassified consultations"
   (visits with no illness picked) so the totals reconcile.
-* Column: student -> their college that day; faculty and staff -> F&S; guest -> Guests/Others (column only when it has
-  data); student without a college -> Unspecified (only when it has data). Graduate School is the last college column.
+* Classification (owner decision, 2026-10-20): when the consultation's **Informant** is exactly `Guest`, `Faculty` or
+  `Staff` (any case, surrounding spaces ignored), that label takes priority. Otherwise use that consultation's saved
+  **Patient Type**, not the patient's current profile. Guest -> **Guest**; Faculty / Staff -> **F&S**; all remaining
+  visits use their saved college, or **Unspecified** when no college was recorded. Each visit enters only one column
+  per illness / service, even when both fields identify the same type. The Guest and F&S columns are always shown;
+  Unspecified appears only when used. Graduate School is the last college column.
+* The Patient Type filter uses this same classification on Patient Visits and the Accomplishment Report, including
+  downloads and the yearly report. The yearly columns remain Q1–Q4 and year total. The 2026-10-20 correction applies
+  when reading existing consultations; no migration, backfill or edit of clinical records is needed.
 * The Accomplishment Report starts on **Walk-in** (`consult_mode = physical`); change the Consult mode filter for All or
   Virtual. The other tabs start on All.
 * Services are counted once per consultation whether ticked, recognised by the system, or both:

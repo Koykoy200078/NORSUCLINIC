@@ -119,11 +119,13 @@ final class AccomplishmentReportBuilder
         return ConsultationFilter::apply(DocumentIssuance::query(), $filters);
     }
 
-    /** The column a consultation is counted in, as SQL (needs the patient_types join named pt_col). */
+    /** The column a consultation is counted in, using the same patient-type rule as the report filters. */
     private function bucketSql(): string
     {
-        return "CASE WHEN pt_col.code IN ('faculty', 'staff') THEN '" . self::FACULTY_STAFF . "'"
-            . " WHEN pt_col.code = 'guest' THEN '" . self::GUEST . "'"
+        $type = '('.ConsultationPatientType::codeSql().')';
+
+        return "CASE WHEN {$type} IN ('faculty', 'staff') THEN '" . self::FACULTY_STAFF . "'"
+            . " WHEN {$type} = 'guest' THEN '" . self::GUEST . "'"
             . " WHEN document_issuances.college_id IS NOT NULL THEN CONCAT('c', document_issuances.college_id)"
             . " ELSE '" . self::UNSPECIFIED . "' END";
     }
@@ -175,7 +177,6 @@ final class AccomplishmentReportBuilder
     private function illnessCounts(ReportFilters $filters, array $known, string $bucketSql): array
     {
         $query = $this->base($filters)
-            ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
             ->join('consultation_illnesses as ci', 'ci.document_issuance_id', '=', 'document_issuances.id')
             ->join('illnesses as i', 'i.id', '=', 'ci.illness_id');
 
@@ -209,8 +210,7 @@ final class AccomplishmentReportBuilder
         }
 
         foreach ($services->get() as $service) {
-            $query = $this->base($filters)
-                ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id');
+            $query = $this->base($filters);
 
             // The service filter itself already narrowed the visits to this service; the other lines still count.
             ServiceRules::matching($query, $service);
@@ -235,7 +235,6 @@ final class AccomplishmentReportBuilder
     private function illnessOtherNames(ReportFilters $filters, array $known, string $bucketSql): array
     {
         $query = $this->base($filters)
-            ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
             ->join('consultation_illnesses as ci', 'ci.document_issuance_id', '=', 'document_issuances.id')
             ->join('illnesses as i', 'i.id', '=', 'ci.illness_id')
             ->where('i.is_other', true);
@@ -273,7 +272,6 @@ final class AccomplishmentReportBuilder
 
         foreach ($services->get() as $service) {
             $rows = $this->base($filters)
-                ->leftJoin('patient_types as pt_col', 'pt_col.id', '=', 'document_issuances.patient_type_id')
                 ->join('consultation_services as cs', function ($join) use ($service) {
                     $join->on('cs.document_issuance_id', '=', 'document_issuances.id')->where('cs.service_type_id', '=', $service->id);
                 })

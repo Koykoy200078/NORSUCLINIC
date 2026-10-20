@@ -154,6 +154,136 @@ class AccomplishmentReportTest extends TestCase
         $this->assertSame(7, $respiratory['total']);
     }
 
+    /** @dataProvider classificationCases */
+    public function test_informant_and_saved_patient_type_assign_one_report_column(?string $informant, ?string $savedType, string $bucket): void
+    {
+        $this->visit(['informant' => $informant, 'patient_type_id' => $savedType === null ? null : $this->type($savedType)],
+            ['Cough/colds'], ['Tetanus injection']);
+        $report = $this->build();
+        $expected = [$bucket === 'college' ? 'c'.$this->ctx->id : $bucket => 1, '_total' => 1];
+
+        $this->assertSame($expected, $this->illnessRows($report)['Cough/colds']);
+        $this->assertSame($expected, $this->serviceRows($report)['Tetanus injection']);
+        $this->assertSame(1, $report['consultations']);
+        $this->assertSame(1, $report['illness_total']['total']);
+    }
+
+    public static function classificationCases(): array
+    {
+        return [
+            'Guest without type' => ['Guest', null, 'guest'],
+            'lowercase guest' => ['guest', null, 'guest'],
+            'mixed case and spaces' => ['  gUeSt  ', null, 'guest'],
+            'Faculty without type' => ['Faculty', null, 'fs'],
+            'lowercase faculty' => ['faculty', null, 'fs'],
+            'Staff without type' => ['Staff', null, 'fs'],
+            'lowercase staff and spaces' => ['  staff  ', null, 'fs'],
+            'guest overrides student type' => ['Guest', 'student', 'guest'],
+            'faculty overrides student type' => ['Faculty', 'student', 'fs'],
+            'staff overrides student type' => ['Staff', 'student', 'fs'],
+            'guest overrides faculty type' => ['Guest', 'faculty', 'guest'],
+            'guest overrides staff type' => ['Guest', 'staff', 'guest'],
+            'faculty overrides guest type' => ['Faculty', 'guest', 'fs'],
+            'staff overrides guest type' => ['Staff', 'guest', 'fs'],
+            'saved guest with blank informant' => [null, 'guest', 'guest'],
+            'saved faculty with blank informant' => [null, 'faculty', 'fs'],
+            'saved staff with spaces' => ['  ', 'staff', 'fs'],
+            'unrecognized informant uses type' => ['Relative', 'guest', 'guest'],
+            'student label does not discard saved guest' => ['Student', 'guest', 'guest'],
+            'both sources guest count once' => ['Guest', 'guest', 'guest'],
+            'both sources faculty count once' => ['Faculty', 'faculty', 'fs'],
+            'both sources staff count once' => ['Staff', 'staff', 'fs'],
+            'student keeps college' => ['Student', 'student', 'college'],
+            'missing type keeps college' => [null, null, 'college'],
+            'guest phrase is not the guest label' => ['Guest speaker', 'student', 'college'],
+            'staff substring is not the staff label' => ['Stafford', 'student', 'college'],
+        ];
+    }
+
+    public function test_patient_type_filters_use_the_same_classification_and_keep_other_constraints(): void
+    {
+        $expected = [];
+        foreach (['guest' => ' gUeSt ', 'faculty' => 'FACULTY', 'staff' => 'staff'] as $code => $informant) {
+            $text = $this->visit(['informant' => $informant, 'patient_type_id' => $this->type($code === 'guest' ? 'student' : 'guest')], ['Cough/colds']);
+            $saved = $this->visit(['informant' => null, 'patient_type_id' => $this->type($code)], ['Cough/colds']);
+            $expected[$code] = [$text->id, $saved->id];
+        }
+        $student = $this->visit(['informant' => 'Guest speaker'], ['Cough/colds']);
+        $expected['student'] = [$student->id];
+        $this->visit(['informant' => 'Guest', 'requested_at' => '2026-04-01'], ['Cough/colds']);
+        $this->visit(['informant' => 'Guest'], ['Cough/colds'])->delete();
+        $this->visit(['informant' => 'Guest', 'document_type' => 'medical_certificate'], ['Cough/colds']);
+        $query = ['date_from' => '2026-03-01', 'date_to' => '2026-03-31'];
+
+        foreach ($expected as $code => $ids) {
+            $filters = $query + ['patient_type_id' => $this->type($code)];
+            $this->assertEqualsCanonicalizing($ids, ReportQueries::visits(ReportFilters::fromArray($filters))->pluck('document_issuances.id')->all(), $code);
+            $report = $this->build($filters);
+            $bucket = in_array($code, ['faculty', 'staff'], true) ? 'fs' : ($code === 'student' ? 'c'.$this->ctx->id : 'guest');
+            $this->assertSame([$bucket => count($ids), '_total' => count($ids)], $this->illnessRows($report)['Cough/colds'], $code);
+            $this->assertSame(count($ids), $report['consultations']);
+        }
+        $yearly = $this->build(['year' => 2026, 'patient_type_id' => $this->type('guest')]);
+        $this->assertSame(['q1' => 2, 'q2' => 1, '_total' => 3], $this->illnessRows($yearly)['Cough/colds']);
+        $this->assertSame(3, $yearly['consultations']);
+    }
+
+    public function test_informant_classification_reaches_other_names_screen_and_all_exports(): void
+    {
+        $otherIllness = Illness::where('is_other', true)->firstOrFail();
+        $otherService = ServiceType::where('is_other', true)->firstOrFail();
+        foreach ([['Guest', 'student'], ['guest', null], ['Faculty', 'guest'], [null, 'staff']] as [$informant, $savedType]) {
+            $visit = $this->visit(['informant' => $informant, 'patient_type_id' => $savedType === null ? null : $this->type($savedType)],
+                ['Cough/colds'], ['Tetanus injection']);
+            $visit->illnesses()->syncWithoutDetaching([$otherIllness->id => ['other_text' => 'Report symptom']]);
+            $visit->services()->syncWithoutDetaching([$otherService->id => ['other_text' => 'Report intervention']]);
+        }
+        $this->actingAs($this->admin);
+        $query = ['date_from' => '2026-03-01', 'date_to' => '2026-03-31', 'consult_mode' => 'physical'];
+        $report = $this->build($query);
+        $this->assertEquals(['fs' => 2, 'guest' => 2, '_total' => 4], $this->illnessRows($report)['Cough/colds']);
+        $this->assertEquals(['fs' => 2, 'guest' => 2, '_total' => 4], $this->serviceRows($report)['Tetanus injection']);
+        $illnessNames = collect($report['illness_sections'])->flatMap(fn ($section) => $section['groups'])
+            ->flatMap(fn ($group) => $group['rows'])->flatMap(fn ($row) => $row['others'] ?? []);
+        $serviceNames = collect($report['service_sections'])->flatMap(fn ($section) => $section['rows'])
+            ->flatMap(fn ($row) => $row['others'] ?? []);
+        foreach ([$illnessNames->firstWhere('name', 'Report symptom'), $serviceNames->firstWhere('name', 'Report intervention')] as $other) {
+            $this->assertNotNull($other);
+            $this->assertSame(2, $other['counts']['guest']);
+            $this->assertSame(2, $other['counts']['fs']);
+            $this->assertSame(4, $other['total']);
+        }
+
+        $screen = Livewire::withQueryParams(['tab' => 'accomplishment'] + $query)->test(ReportGeneration::class);
+        $this->assertSame($report['illness_total'], $screen->viewData('accomplishment')['illness_total']);
+        $expected = array_map(fn ($column) => in_array($column['key'], ['fs', 'guest'], true) ? 2 : 0, $report['columns']);
+        $expected[] = 4;
+        foreach ([$screen->html(), view('activity_logs.reports.accomplishment_pdf', ['report' => $report])->render(),
+            view('activity_logs.reports.accomplishment_sheet', ['report' => $report])->render()] as $html) {
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($html);
+            $cells = (new \DOMXPath($dom))->query('//tr[td[normalize-space(.)="Cough/colds"]]/td[contains(@class,"num")]');
+            $values = [];
+            foreach ($cells as $cell) {
+                $values[] = (int) trim($cell->textContent);
+            }
+            $this->assertSame($expected, $values);
+        }
+
+        $csv = $this->get(route('activity-logs.accomplishment', ['format' => 'csv'] + $query))->assertOk()->streamedContent();
+        $lines = array_map('str_getcsv', preg_split('/\r\n|\n/', trim(substr($csv, 3))));
+        $cough = collect($lines)->first(fn ($line) => ($line[3] ?? null) === 'Cough/colds');
+        $this->assertSame($expected, array_map('intval', array_slice($cough, 4)));
+        $excel = $this->get(route('activity-logs.accomplishment', ['format' => 'xlsx'] + $query))->assertOk();
+        $rows = IOFactory::load($excel->baseResponse->getFile()->getPathname())->getActiveSheet()->toArray();
+        $header = collect($rows)->first(fn ($row) => in_array('Guest', $row, true));
+        $cough = collect($rows)->first(fn ($row) => in_array('Cough/colds', $row, true));
+        $this->assertSame(2, (int) $cough[array_search('Guest', $header, true)]);
+        $this->assertSame(2, (int) $cough[array_search('F&S', $header, true)]);
+        $pdf = $this->get(route('activity-logs.accomplishment', ['format' => 'pdf'] + $query))->assertOk();
+        $this->assertStringStartsWith('%PDF', $pdf->getContent());
+    }
+
     /**
      * Plan Phase 4.3: "Guest" is always a column of the report, even when nobody is in it (a clinic that has seen no
      * guest still hands the report in with the column, at 0). "Unspecified" is only for visits whose college was not

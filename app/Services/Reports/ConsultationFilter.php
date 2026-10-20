@@ -36,11 +36,15 @@ final class ConsultationFilter
             'year_level_id' => $filters->yearLevelId,
             'department_id' => $filters->departmentId,
             'office_id' => $filters->officeId,
-            'patient_type_id' => $filters->patientTypeId,
         ] as $column => $value) {
             if ($value !== null) {
                 $query->where("document_issuances.{$column}", $value);
             }
+        }
+
+        if ($filters->patientTypeId !== null) {
+            $query->whereRaw('('.ConsultationPatientType::codeSql().') = '
+                .'(SELECT LOWER(TRIM(code)) FROM patient_types WHERE id = ?)', [$filters->patientTypeId]);
         }
 
         if ($filters->gender !== null) {
