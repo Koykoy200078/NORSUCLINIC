@@ -311,8 +311,10 @@ class MedicineController extends AppBaseController
     /**
      * Get medicines grouped by category with dosage information
      */
-    public function getMedicinesByCategory(): JsonResponse
+    public function getMedicinesByCategory(Request $request): JsonResponse
     {
+        // Consultation search keeps unavailable choices visible but disabled; older callers retain their list.
+        $includeUnavailable = $request->boolean('include_unavailable');
         // "Can be given today" comes from the batches (units that have not expired), not from
         // medicines.available_quantity: that column is only refreshed when stock moves, so it keeps counting
         // a batch for days after it expired. Medicines with no batch rows at all (old aggregate-only stock)
@@ -331,30 +333,46 @@ class MedicineController extends AppBaseController
             });
         };
 
-        $categories = Category::with(['medicines' => function ($query) use ($dispensableToday) {
-            $dispensableToday($query);
+        $categoryQuery = Category::with(['medicines' => function ($query) use ($dispensableToday, $includeUnavailable) {
+            if (! $includeUnavailable) {
+                $dispensableToday($query);
+            }
+            $query->with('generic');
             $query->orderBy('name');
-        }])->whereHas('medicines', function ($query) use ($dispensableToday) {
-            $dispensableToday($query);
-        })->orderBy('name')->get();
+        }])->whereHas('medicines', function ($query) use ($dispensableToday, $includeUnavailable) {
+            if (! $includeUnavailable) {
+                $dispensableToday($query);
+            }
+        });
+        $categories = $categoryQuery->orderBy('name')->get();
+
+        if ($includeUnavailable) {
+            $uncategorized = Medicine::with('generic')->whereDoesntHave('category')->orderBy('name')->get();
+            if ($uncategorized->isNotEmpty()) {
+                $category = new Category(['name' => 'Uncategorized']);
+                $category->setRelation('medicines', $uncategorized);
+                $categories->push($category);
+            }
+        }
 
         // One query for the batches of every listed medicine (it was two queries per medicine).
         $batchesByMedicine = MedicineBatch::whereIn('medicine_id', $categories->flatMap(fn ($category) => $category->medicines->pluck('id'))->unique()->all())
-            ->where('quantity', '>', 0)
             ->get()
             ->groupBy('medicine_id');
         $today = \Carbon\Carbon::today()->toDateString();
 
-        $result = $categories->map(function ($category) use ($batchesByMedicine, $today) {
+        $result = $categories->map(function ($category) use ($batchesByMedicine, $today, $includeUnavailable) {
             return [
                 'id' => $category->id,
                 'name' => $category->name,
-                'medicines' => $category->medicines->map(function ($medicine) use ($batchesByMedicine, $today) {
-                    $positiveBatches = $batchesByMedicine->get($medicine->id, collect());
+                'medicines' => $category->medicines->map(function ($medicine) use ($batchesByMedicine, $today, $includeUnavailable) {
+                    $allBatches = $batchesByMedicine->get($medicine->id, collect());
+                    $positiveBatches = $allBatches->filter(fn (MedicineBatch $batch) => $batch->quantity > 0);
+                    $usableBatches = $positiveBatches
+                        ->filter(fn (MedicineBatch $batch) => $batch->expiration_date === null || $batch->expiration_date->toDateString() >= $today);
 
                     // Dosage availability from batch-ledger to include all stock-in paths.
-                    $dosages = $positiveBatches
-                        ->filter(fn (MedicineBatch $batch) => $batch->expiration_date === null || $batch->expiration_date->toDateString() >= $today)
+                    $dosages = $usableBatches
                         ->groupBy(function (MedicineBatch $batch) use ($medicine) {
                             $dosage = trim((string) ($batch->dosage ?? ''));
                             if ($dosage !== '') {
@@ -373,21 +391,36 @@ class MedicineController extends AppBaseController
                         })
                         ->values();
 
-                    $hasPositiveBatch = $positiveBatches->isNotEmpty();
-
-                    if ($dosages->isEmpty() && ! $hasPositiveBatch && (int) $medicine->available_quantity > 0) {
+                    if ($dosages->isEmpty() && $allBatches->isEmpty() && (int) $medicine->available_quantity > 0) {
                         $dosages = collect([[
                             'dosage' => $medicine->dosage ?: 'N/A',
                             'available_quantity' => (int) $medicine->available_quantity,
                         ]]);
                     }
 
-                    return [
+                    $available = (int) $dosages->sum('available_quantity');
+                    $item = [
                         'id' => $medicine->id,
                         'name' => $medicine->name,
-                        'available_quantity' => $medicine->available_quantity,
+                        'available_quantity' => $available,
                         'dosages' => $dosages
                     ];
+                    if ($includeUnavailable) {
+                        $item += [
+                            'brand_name' => $medicine->brand_name,
+                            'generic_name' => $medicine->generic_name,
+                            'generic_label' => $medicine->generic?->name,
+                            'strength' => $medicine->dosage,
+                            'sku' => $medicine->sku,
+                            // 2099-12-31 is the inventory service's unknown-expiry opening-balance sentinel.
+                            'nearest_expiry' => $usableBatches->map(fn (MedicineBatch $batch) => $batch->expiration_date?->toDateString())
+                                ->filter(fn ($date) => $date !== null && $date !== '2099-12-31')->min(),
+                            'disabled' => $available <= 0,
+                            'stock_status' => $available > 0 ? 'available' : ($positiveBatches->isNotEmpty() ? 'expired' : 'out_of_stock'),
+                        ];
+                    }
+
+                    return $item;
                 })
             ];
         });

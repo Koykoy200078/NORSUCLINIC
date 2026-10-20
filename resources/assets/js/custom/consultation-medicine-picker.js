@@ -7,6 +7,7 @@ function initConsultationMedicinePicker() {
     }
     const config = JSON.parse(element.textContent);
     const editing = config.editing;
+    const $ = window.jQuery;
 
     const medicinesByCategoryUrl = config.url;
     const canManagePlanMedicines = config.canManagePlanMedicines;
@@ -38,15 +39,24 @@ function initConsultationMedicinePicker() {
                 if (editing) {
                     loadExistingMedicines();
                 }
+                if (addPlanMedicineBtn && canManagePlanMedicines) {
+                    addPlanMedicineBtn.disabled = false;
+                }
+                if (addNursingMedicineBtn) {
+                    addNursingMedicineBtn.disabled = false;
+                }
             } else {
-                console.error('Error fetching medicines:', result.message);
+                throw new Error('Medicine catalog could not be loaded');
             }
         } catch (error) {
             console.error('Error fetching medicines:', error);
+            const warning = document.createElement('div');
+            warning.className = 'alert alert-danger';
+            warning.setAttribute('role', 'alert');
+            warning.textContent = 'Medicine list could not be loaded. Reload this page to try again.';
+            element.insertAdjacentElement('afterend', warning);
         }
     }
-
-    fetchMedicines();
 
     // Load existing medicines from the database
     function loadExistingMedicines() {
@@ -82,6 +92,7 @@ function initConsultationMedicinePicker() {
 
     const addPlanMedicineBtn = document.getElementById('add_plan_medicine_btn');
     const addNursingMedicineBtn = document.getElementById('add_nursing_medicine_btn');
+    [addPlanMedicineBtn, addNursingMedicineBtn].filter(Boolean).forEach(button => { button.disabled = true; });
 
     if (addPlanMedicineBtn && canManagePlanMedicines) {
         addPlanMedicineBtn.addEventListener('click', function() {
@@ -122,6 +133,7 @@ function initConsultationMedicinePicker() {
         medicineSelect.name = `medicines[${type}][${index}][medicine_id]`;
         medicineSelect.className = 'medicine-select';
         medicineSelect.required = true;
+        medicineSelect.setAttribute('aria-label', 'Medicine');
 
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
@@ -168,33 +180,34 @@ function initConsultationMedicinePicker() {
             let hasValidMedicines = false;
 
             category.medicines.forEach(medicine => {
-                // Check if medicine has available stock OR is the currently selected existing medicine
                 const isCurrentlyUsed = existingData && medicine.id === existingData.medicineId;
-                const hasStock = medicine.available_quantity > 0 ||
-                    (medicine.dosages && medicine.dosages.length > 0);
+                const hasStock = medicine.available_quantity > 0;
+                const option = document.createElement('option');
+                option.value = medicine.id;
+                option.textContent = medicine.name;
+                option.dataset.medicineId = medicine.id;
+                option.dataset.medicineName = medicine.name;
+                option.dataset.dosages = JSON.stringify(medicine.dosages);
+                option.dataset.totalStock = medicine.available_quantity;
+                option.dataset.isOutOfStock = hasStock ? 'false' : 'true';
+                option.disabled = !hasStock && !isCurrentlyUsed;
+                const strengths = [...new Set([medicine.strength, ...(medicine.dosages || []).map(item => item.dosage)].filter(Boolean))];
+                option.dataset.search = [medicine.name, medicine.brand_name, medicine.generic_name, medicine.generic_label,
+                    category.name, medicine.sku, ...strengths].filter(Boolean).join(' ');
+                const status = hasStock ? `Stock: ${medicine.available_quantity}` :
+                    (medicine.stock_status === 'expired' ? 'Expired stock — unavailable' : 'Out of stock');
+                option.dataset.details = [medicine.generic_name || medicine.generic_label, strengths.join(', '), medicine.sku,
+                    status, `Nearest expiry: ${medicine.nearest_expiry || 'Not recorded'}`].filter(Boolean).join(' · ');
 
-                // Only show if it has stock OR is already being used in this consultation
-                if (!editing || hasStock || isCurrentlyUsed) {
-                    const option = document.createElement('option');
-                    option.value = medicine.id;
-                    option.textContent = `${medicine.name}`;
-                    option.dataset.medicineId = medicine.id;
-                    option.dataset.medicineName = medicine.name;
-                    option.dataset.dosages = JSON.stringify(medicine.dosages);
-                    option.dataset.totalStock = medicine.available_quantity;
-
-                    // Pre-select if this is existing data
-                    if (existingData && medicine.id === existingData.medicineId) {
-                        option.selected = true;
-                    }
-
-                    optgroup.appendChild(option);
-                    hasValidMedicines = true;
+                if (isCurrentlyUsed) {
+                    option.selected = true;
                 }
+                optgroup.appendChild(option);
+                hasValidMedicines = true;
             });
 
             // Only add optgroup if it has valid medicines
-            if (!editing || hasValidMedicines) {
+            if (hasValidMedicines) {
                 medicineSelect.appendChild(optgroup);
             }
         });
@@ -202,6 +215,7 @@ function initConsultationMedicinePicker() {
         const dosageSelect = document.createElement('select');
         dosageSelect.name = `medicines[${type}][${index}][dosage]`;
         dosageSelect.className = 'dosage-select';
+        dosageSelect.setAttribute('aria-label', 'Strength');
         dosageSelect.required = true;
         dosageSelect.disabled = true;
 
@@ -212,6 +226,7 @@ function initConsultationMedicinePicker() {
 
         const quantityInput = document.createElement('input');
         quantityInput.type = 'number';
+        quantityInput.setAttribute('aria-label', 'Quantity');
         quantityInput.name = `medicines[${type}][${index}][quantity]`;
         quantityInput.placeholder = 'Qty';
         quantityInput.min = '1';
@@ -231,6 +246,7 @@ function initConsultationMedicinePicker() {
         removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
         removeBtn.addEventListener('click', function() {
             if (!editing) {
+                $(medicineSelect).select2('destroy');
                 row.remove();
                 return;
             }
@@ -246,11 +262,12 @@ function initConsultationMedicinePicker() {
             }
 
             if (confirm(confirmMessage)) {
+                $(medicineSelect).select2('destroy');
                 row.remove();
             }
         });
 
-        medicineSelect.addEventListener('change', function() {
+        $(medicineSelect).on('change', function() {
             const selectedOption = this.options[this.selectedIndex];
 
             dosageSelect.innerHTML = '';
@@ -269,6 +286,11 @@ function initConsultationMedicinePicker() {
             if (!selectedOption.value) return;
 
             const dosages = JSON.parse(selectedOption.dataset.dosages || '[]');
+            const editingOriginal = existingData && existingData.isExisting && String(selectedOption.value) === String(existingData.medicineId);
+            // A saved strength must remain editable even when it has no usable batch left today.
+            if (editingOriginal && !dosages.some(item => item.dosage === existingData.dosage)) {
+                dosages.push({dosage: existingData.dosage, available_quantity: 0});
+            }
 
             if (dosages.length === 0) {
                 const warning = document.createElement('div');
@@ -286,7 +308,7 @@ function initConsultationMedicinePicker() {
                 // Calculate display quantity (add existing if this is the current dosage)
                 let displayQuantity = dosageItem.available_quantity;
                 let isAdjusted = false;
-                if (existingData && existingData.isExisting && dosageItem.dosage === existingData.dosage) {
+                if (editingOriginal && dosageItem.dosage === existingData.dosage) {
                     displayQuantity = dosageItem.available_quantity + existingData.existingQuantity;
                     isAdjusted = true;
                 }
@@ -419,7 +441,10 @@ function initConsultationMedicinePicker() {
             row.appendChild(rowIdInput);
         }
 
-        row.appendChild(medicineSelect);
+        const medicineChoice = document.createElement('div');
+        medicineChoice.className = 'consultation-medicine-choice';
+        medicineChoice.appendChild(medicineSelect);
+        row.appendChild(medicineChoice);
         row.appendChild(dosageSelect);
         row.appendChild(quantityInput);
         row.appendChild(dosageInstructions);
@@ -437,10 +462,47 @@ function initConsultationMedicinePicker() {
 
         container.appendChild(row);
 
+        $(medicineSelect).select2({
+            width: '100%',
+            placeholder: 'Search medicines',
+            matcher: matchMedicine,
+            templateResult: function (item) {
+                if (!item.id) {
+                    return item.text;
+                }
+                const result = $('<span>');
+                $('<span>').text(item.text).appendTo(result);
+                $('<small>').addClass('d-block').text(item.element.dataset.details || 'Stock: 0 · Nearest expiry: Not recorded').appendTo(result);
+                return result;
+            },
+        }).on('select2:open', function () {
+            const search = document.querySelector('.select2-container--open .select2-search__field');
+            if (search) {
+                search.setAttribute('aria-label', 'Search medicines by brand, generic, strength, category or SKU');
+                search.focus();
+            }
+        });
+        $(medicineSelect).next('.select2-container').find('[role="combobox"]')
+            .removeAttr('aria-labelledby').attr('aria-label', 'Medicine');
+
         // If loading existing data, trigger medicine select change to populate dosages
         if (existingData && existingData.medicineId) {
             medicineSelect.dispatchEvent(new Event('change'));
         }
+    }
+
+    function matchMedicine(params, item) {
+        const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const terms = normalize(params.term).trim().split(/\s+/).filter(Boolean);
+        if (!terms.length) {
+            return item;
+        }
+        if (item.children) {
+            const children = item.children.map(child => matchMedicine(params, child)).filter(Boolean);
+            return children.length ? {...item, children} : null;
+        }
+        const text = normalize(item.element?.dataset.search || item.text);
+        return terms.every(term => text.includes(term)) ? item : null;
     }
     function initDuplicateMedicineGuard() {
         const anchor = document.getElementById('plan_medicines_container') || document.getElementById('nursing_medicines_container');
@@ -483,4 +545,5 @@ function initConsultationMedicinePicker() {
     }
 
     initDuplicateMedicineGuard();
+    fetchMedicines();
 }

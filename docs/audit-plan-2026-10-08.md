@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7 done and verified; Phase 6 completed 2026-10-20. The owner's **Phase 5.10 report follow-up** is also complete (2026-10-20): Guest / F&S counts use Informant first, then the consultation's saved Patient Type. **Next:** Phase 8.1 (searchable Add medicines), pending and deferred at the owner's request for this follow-up. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7 and the Phase 5.10 report follow-up are complete. The owner resumed Phase 8 on 2026-10-20; **8.1 searchable Add medicines** is implemented and checked (progress below). **Next:** 8.2 duplicate medicine / stock merge; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -927,7 +927,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - [x] start it → live again.
 
 ### Phase 8 — Improvements (each with tests + a live check)
-- [ ] 8.1 **Searchable "Add medicines"** (consultation create / edit, nurse and doctor):
+- [x] 8.1 **Searchable "Add medicines"** (consultation create / edit, nurse and doctor), completed 2026-10-20 (checks below):
   - search by brand, generic name, strength, category and SKU;
   - each option shows stock in hand and nearest expiry;
   - out-of-stock / expired options are disabled.
@@ -950,6 +950,20 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
 - [ ] 8.6 **Queue display board:**
   - waiting-area screen on a secret link: now serving / next numbers and rooms, no names;
   - chime on call; live via Reverb.
+
+### Phase 8 — progress 2026-10-20: 8.1 searchable Add medicines
+
+The shared consultation picker now uses the already bundled **Select2 4.x** widget. Searches match all entered words across display / brand name, saved and linked generic names, available strengths, category and SKU, ignoring case and accents. Results display stock in hand and nearest usable expiry; unknown dates (including the legacy opening-balance sentinel) display "Not recorded". Text is inserted with DOM / jQuery text methods, so medicine labels cannot become HTML. The widget supports keyboard search / selection / Escape, has accessible control names, and fits a 440px viewport.
+
+The existing role-aware catalog route accepts `include_unavailable=1` for this picker. It includes disabled expired / out-of-stock choices and uncategorized legacy medicines; existing callers still receive their categorized, dispensable-only list. Availability and strength choices come from positive, unexpired batches **as of today**, including the expiry date itself, rather than a potentially stale stored total. Aggregate-only medicines retain their legacy stock fallback only when no batches exist. Generic metadata and batches are loaded in fixed queries; reading the catalog does not change inventory.
+
+On edit, saved row IDs, sections, strengths and quantity credits remain intact, including a now-empty / expired saved line that can be retained, reduced or removed. Changing to another medicine no longer borrows the previous medicine's quantity credit. Plan medicines remain doctor-only; duplicate guards and removal confirmation retain their previous behavior. Add buttons wait for the catalog; a failed load shows a message instead of allowing empty rows. No route, migration, dependency or Artisan-command change.
+
+**Verification:** three new PHP catalog cases (metadata / expiry / read-only stock, unavailable / legacy choices, fixed query count) plus the updated six-panel configuration contract. Focused consultation / inventory checks **26 tests / 233 assertions**, passing. New standalone Chrome regression covers create / edit × staff / doctor, every search field, mixed case / accents / multiple words, no match, disabled choices, escaped labels, keyboard, saved expired strengths, correct edit quantity credits and loading / failure handling. The earlier picker DOM / stock / ID / permissions / duplicate / removal contract still passes unchanged. **14 deliberate faults detected**: five PHP catalog faults (availability inclusion, stale stock, expiry boundary, nearest expiry, N+1) and nine browser-only fault copies (five search-field omissions, enabled unavailable options, wrong edit credit, missing saved strength, missing loading guard). Controller bytes restored after every PHP fault; one transient Windows restoration error was repaired and the whole mutation / focused sequence rerun successfully. Browser faults never changed application source or built assets. Context7 Laravel **10.x** eager loading and Select2 matching / templates / disabled-option documentation checked against installed code. `npm run dev` passed; generated translations restored.
+
+**Live check:** six real pages, admin / Staff (Nurse) / doctor create and edit, using a fresh synthetic database: each search field returns the correct medicine with **12 usable units** and its nearest expiry; a new 500mg line is capped at **7**, its saved line at **10** including the 3 already used, and a saved empty line at **4**. Expired 100mg stock is absent from strength choices; expired / empty medicines are visible but disabled for new rows. Desktop and 440px search / selection / Escape checks pass; zero JavaScript errors, external requests or server failures. Working `norsu_clinic` unchanged; no clinic data copied. Second-device LAN validation remains Phase 9.
+
+**Final safety nets:** full suite with crawl **777 tests / 8,248 assertions**, passing (**05:30.075**); crawl **1,609 requests / 15 variants**, zero broken / crashed / lazy-table / capped results. All **459 source routes** unchanged; access matrix **6,288 requests / 393 routes / 16 variants** identical to baseline, zero server errors or access violations. Browser search tests reset to a no-match state between fields; reopened keyboard-selected widgets are exercised with actual keystrokes, as advised by Context7 Playwright documentation. Synthetic server, schema, access file and cached configuration removed after checking. No new Artisan command.
 
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.
@@ -1006,7 +1020,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 |---|---|
 | Stock returned to the right batch, duplicate lines, soft delete + restore, audit snapshot, illness / services | ✅ |
 | Certificate / excuse-slip edit crash (10-08) | ✅ |
-| Searchable "Add medicines" (name / generic / strength / category / SKU) | 🆕 Phase 8.1 (shared picker in 6.4) |
+| Searchable "Add medicines" (name / generic / strength / category / SKU) | ✅ Phase 8.1 (2026-10-20): local search, usable stock / nearest expiry, disabled unavailable choices; shared picker from 6.4 |
 | Controller split (2,596 lines) | 🆕 Phase 6.5 |
 | Mass "Classify" for old visits | 🔒 later (one-at-a-time exists) |
 | Consultation autosave drafts | 💡 §6 |

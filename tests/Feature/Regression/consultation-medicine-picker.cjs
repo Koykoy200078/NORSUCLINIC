@@ -18,6 +18,9 @@ const saved = [{id:81,used_for:'plan',medicine_id:11,dosage:'500mg',quantity:3,d
       page.on('pageerror',e=>errors.push(e.message));
       page.on('dialog',async d=>{dialogs.push(d.message()); if(d.type()==='confirm' && !acceptRemove)await d.dismiss();else await d.accept();});
       await page.setContent('<form id="fixture"><button type="button" id="add_plan_medicine_btn">Plan</button><button type="button" id="add_nursing_medicine_btn">Nursing</button><div id="plan_medicines_container"></div><div id="nursing_medicines_container"></div></form>');
+      await page.addScriptTag({path:'resources/theme/js/vendor.js'});
+      if(!await page.evaluate(()=>!!window.jQuery.fn.select2))await page.addScriptTag({path:'resources/theme/js/plugins.js'});
+      await page.addStyleTag({path:'resources/theme/css/plugins.css'});
       await page.evaluate(({catalog,editing,doctor,saved})=>{
         window.fetch = async ()=>({ok:true,status:200,headers:{get:()=> 'application/json'},json:async()=>({success:true,data:catalog})});
         const config=document.createElement('script');
@@ -29,11 +32,13 @@ const saved = [{id:81,used_for:'plan',medicine_id:11,dosage:'500mg',quantity:3,d
       await page.addScriptTag({content:fs.readFileSync(process.env.PICKER_SCRIPT || 'resources/assets/js/custom/consultation-medicine-picker.js','utf8')});
       await page.evaluate(()=>document.dispatchEvent(new Event('DOMContentLoaded')));
       if(editing) await page.locator('#nursing_medicines_container .medicine-row').waitFor();
-      await page.locator('#add_plan_medicine_btn').click();
+      if(doctor)await page.locator('#add_plan_medicine_btn').click();
+      else assert.equal(await page.locator('#add_plan_medicine_btn').isDisabled(),true);
       assert.equal(await page.locator('#plan_medicines_container .medicine-row').count(),doctor?(editing?2:1):0,key);
       await page.locator('#add_nursing_medicine_btn').click();
       const nursing = page.locator('#nursing_medicines_container .medicine-row').last();
-      await nursing.locator('.medicine-select').selectOption('11');
+      await nursing.getByRole('combobox',{name:'Medicine',exact:true}).click();
+      await page.getByRole('option').filter({hasText:'Medicine <tag> & café'}).click();
       await nursing.locator('.dosage-select').selectOption('500mg');
       const quantity = nursing.locator('input[type=number]');
       assert.equal(await quantity.getAttribute('max'),'7');
@@ -48,7 +53,8 @@ const saved = [{id:81,used_for:'plan',medicine_id:11,dosage:'500mg',quantity:3,d
       // A duplicate is refused within a section, while the same medicine across sections remains allowed.
       await page.locator('#add_nursing_medicine_btn').click();
       const duplicate = page.locator('#nursing_medicines_container .medicine-row').last();
-      await duplicate.locator('.medicine-select').selectOption('11');
+      await duplicate.getByRole('combobox',{name:'Medicine',exact:true}).click();
+      await page.getByRole('option').filter({hasText:'Medicine <tag> & café'}).click();
       await duplicate.locator('.dosage-select').selectOption('500mg');
       assert.equal(await page.evaluate(()=>document.querySelector('form').dispatchEvent(new Event('submit',{cancelable:true}))),false);
       assert(dialogs.some(text=>text.includes('listed more than once')));

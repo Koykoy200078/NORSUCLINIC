@@ -2,7 +2,7 @@
 
 @php
 $config = [
-    'url' => parse_url(getRouteByRole('medicines.by.category'), PHP_URL_PATH) ?: getRouteByRole('medicines.by.category'),
+    'url' => (parse_url(getRouteByRole('medicines.by.category'), PHP_URL_PATH) ?: getRouteByRole('medicines.by.category')).'?include_unavailable=1',
     'editing' => $editing,
     'canManagePlanMedicines' => isRole('doctor'),
     'existingMedicines' => $existingMedicines,

@@ -925,3 +925,28 @@ body {
     color: #9ca3af !important;
     cursor: not-allowed !important;
 }
+
+.consultation-medicine-choice {
+    min-width: 0;
+
+    .select2-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .medicine-row:has(.consultation-medicine-choice) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+
+        .consultation-medicine-choice,
+        .medicine-stock-info {
+            grid-column: 1 / -1;
+        }
+
+        input,
+        select {
+            min-width: 0;
+            width: 100%;
+        }
+    }
+}
