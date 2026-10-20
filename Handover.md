@@ -60,16 +60,28 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | Plan row 5.11 Notifications & Alerts: `15624ea`, then this `handover:` commit (Claude Code, 2026-10-19); before it row 5.10 Report Generation: `f409c58`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.9 Certificates: code and tests `564437d` (its commit message says "handover", written before the records were ready), records in the commit after it (Claude Code, 2026-10-18); before it row 5.8 Lab requests: `746707e`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.7 Dispensing with the row 5.6 owner decisions: `6a93b65`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.6 Inventory: `36f9cf4`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.5 Prescriptions: `25e1ddb`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.4 Consultations: `6682265`, then this `handover:` commit (Claude Code, 2026-10-18); before it row 5.3 Queue `71c14fe` / `8a74e35` (2026-10-16), row 5.2 Patients `7a74078` / `f7f6212`, row 5.1 Dashboard `e33cfc7` / `6de3e2b` and plan item 5.23 ("Others" names): `a0fea49`, handover `eed070f` (Claude Code, 2026-10-16); before it Phase 5 checkpoint A: `2462ee8` (cross-cutting code sweeps, 33 new tests), then this `handover:` commit (Claude Code, 2026-10-15); before it Phase 4: `125de63` (name "Medical University Clinic", COL, Guest column, yearly Accomplishment Report, yearly Medicine Inventory report), after the Phase 2 re-check `ffda2df`, Phase 3 `b945e64`, Phase 2 `c993859` (Codex) and the Phases 0 / 1 checkpoint `4957fd9`; then this `handover:` commit (Claude Code, 2026-10-15) |
+| Last pushed work | `3845b69` — Phase 5 rows 5.14–5.22 and approved doctor archive/restore follow-up (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
 | Work in progress (not pushed) | none |
-| Next step | Phase 5 module passes of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): rows 5.1 to 5.11 and item 5.23 are done, **5.12 Settings (General)** is next; the owner's request "5.7 to 5.11" is complete (the owner asked for 5.7 to 5.11 in a row) |
+| Next step | **Phase 6.1 — shared route definitions**, then the rest of Phase 6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
-| Commands added so far | [docs/commands.md](docs/commands.md): `db:integrity`, `db:restore-foreign-keys`, `inventory:recover-orphan-batches` |
-| Project status | [docs/STATUS.md](docs/STATUS.md): current checkpoint, tests, features and next phase updated (Phase 4); `norsu_clinic` is not yet migrated for Phase 4 (see the entry below); §8 retains an older snapshot to reconcile in plan Phase 10.2 |
+| Commands added so far | No new commands in this checkpoint. [docs/commands.md](docs/commands.md) also records the reviewed existing `cache:warmup` and `user:restore` behavior. |
+| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan now show the current checkpoint: 703 tests / 7,835 assertions; link crawl 1,610 requests / 15 actor variants, no problems. The working `norsu_clinic` database was unchanged; the approved scratch copy was removed. |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-20 — OpenAI Codex — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `0a826c5` (fetched; working tree clean; row 5.13 and its handover are pushed).
+- **Work:** owner's takeover request: implement the approved STATUS §6 doctor-archive recommendation (retain doctor profile, address and photo; hide archived accounts from doctor lists), then audit plan row 5.14 Settings › Manage User roles followed by 5.15–5.22, inline and test-first, with live checks, full-suite verification and pushed checkpoints.
+
+- **END (2026-10-20 10:57 +08:00):** committed and pushed on the owner's standing go-ahead.
+  - **Commits:** `3845b69` (code, 21 new regressions, plan, STATUS and command log), then this `handover:` commit.
+  - **Done:** approved doctor archive retention (profile, licence reservation, specialization links, address, photo), hidden archived profiles/old URLs and prescription-form selection; rows 5.14–5.22 complete. Fixed role identifier collisions; form-scoped settings, contact validation/city lookup and blank optional fields; CMS/location validation and province creation; default-password JSON write bypass; invalid-profile logging; queue-preview clinical fields; duplicate redirect names; seven dead page-script sections. Reviewed all 49 helpers, 461 routes and 44 example environment keys; no dead-code removal or dependency change.
+  - **Verified:** `LINK_CRAWL=1 php -d xdebug.mode=off vendor/bin/phpunit`: **703 tests / 7,835 assertions, all passing**; **1,610 crawl requests / 15 actor variants, no problems**. Fifteen regression revert checks detected their removed fixes. `npm run dev` succeeded; diff check clean. Context7 used for Laravel 10 soft-delete/relationship and validation documentation.
+  - **Live checks:** admin, doctor, Staff (Nurse) and revoked/re-granted role permissions; specialization popups; real General and CMS saves; report-list service add/disable; deleted lab-request restore; country/province/city/barangay create; all seven repaired pages; doctor archive/session expiry/complete restore; password reset/default-password modal/change; failed sign-in and impersonation/return. No JavaScript errors or external asset requests in the checked flows.
+  - **Data:** the owner explicitly approved a temporary local copy of clinic data. Its server, scratch schema, temporary dump and synthetic access file were removed afterward; `norsu_clinic` was not changed. Automatic approval review rejected binding the scratch server across the LAN, so these browser checks used localhost; a second-device LAN check remains for Phase 9.
+  - **Where to continue:** Phase **6.1**, following the audit plan inline. The doctor/archive and page-script decisions in STATUS §6 are closed; other owner questions remain unchanged. No new Artisan command.
 
 ### 2026-10-20 08:10 +08:00 — Claude Code — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `f666007` (row 5.12, the startup-script change and their handovers are pushed; working tree clean).
