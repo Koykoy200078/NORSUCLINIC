@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", loadCustomData);
 
+require("./row-actions");
+
 let source = null;
 let jsrender = require("jsrender");
 let csrfToken = $('meta[name="csrf-token"]').attr("content");

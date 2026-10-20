@@ -57,12 +57,13 @@ $regularQueues = $queues->where('is_priority', false);
                                     <small>{{ $queue->created_at->diffForHumans() }}</small>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
+                                    <x-row-actions module="queue">
                                         @if($queue->status === 'waiting')
                                         <form action="{{ getRouteByRole('patient-queue.call-next', [$queue]) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
+                                            <button type="submit" class="dropdown-item text-success" title="Call Patient" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-phone"></i>
+                                                <span>Call Patient</span>
                                             </button>
                                         </form>
                                         @endif
@@ -70,31 +71,35 @@ $regularQueues = $queues->where('is_priority', false);
                                         @if($queue->status === 'in_progress')
                                         <form action="{{ getRouteByRole('patient-queue.complete', [$queue]) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-primary" title="Complete">
+                                            <button type="submit" class="dropdown-item text-primary" title="Complete" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-check"></i>
+                                                <span>Complete</span>
                                             </button>
                                         </form>
                                         @endif
 
                                         @if(! $queue->attached_form_is_new && canUseModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
-                                           class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
+                                           class="dropdown-item text-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)" role="menuitem" tabindex="-1">
                                             <i class="fas fa-file-circle-plus"></i>
+                                            <span>Record this patient's consultation form (it appears on the doctor's screen by itself)</span>
                                         </a>
                                         @endif
 
-                                        <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="dropdown-item text-warning" title="Edit" role="menuitem" tabindex="-1">
                                             <i class="fas fa-edit"></i>
+                                            <span>Edit</span>
                                         </a>
 
                                         <form action="{{ getRouteByRole('patient-queue.destroy', [$queue]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Remove">
+                                            <button type="submit" class="dropdown-item text-danger" title="Remove" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-trash"></i>
+                                                <span>Remove</span>
                                             </button>
                                         </form>
-                                    </div>
+                                    </x-row-actions>
                                 </td>
                             </tr>
                             @endforeach
@@ -160,12 +165,13 @@ $regularQueues = $queues->where('is_priority', false);
                                     <small>{{ $queue->created_at->diffForHumans() }}</small>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
+                                    <x-row-actions module="queue">
                                         @if($queue->status === 'waiting')
                                         <form action="{{ getRouteByRole('patient-queue.call-next', [$queue]) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" title="Call Patient">
+                                            <button type="submit" class="dropdown-item text-success" title="Call Patient" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-phone"></i>
+                                                <span>Call Patient</span>
                                             </button>
                                         </form>
                                         @endif
@@ -173,31 +179,35 @@ $regularQueues = $queues->where('is_priority', false);
                                         @if($queue->status === 'in_progress')
                                         <form action="{{ getRouteByRole('patient-queue.complete', [$queue]) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-primary" title="Complete">
+                                            <button type="submit" class="dropdown-item text-primary" title="Complete" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-check"></i>
+                                                <span>Complete</span>
                                             </button>
                                         </form>
                                         @endif
 
                                         @if(! $queue->attached_form_is_new && canUseModule('consultations'))
                                         <a href="{{ getRouteByRole('document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
-                                           class="btn btn-sm btn-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)">
+                                           class="dropdown-item text-info" title="Record this patient's consultation form (it appears on the doctor's screen by itself)" role="menuitem" tabindex="-1">
                                             <i class="fas fa-file-circle-plus"></i>
+                                            <span>Record this patient's consultation form (it appears on the doctor's screen by itself)</span>
                                         </a>
                                         @endif
 
-                                        <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <a href="{{ getRouteByRole('patient-queue.edit', [$queue]) }}" class="dropdown-item text-warning" title="Edit" role="menuitem" tabindex="-1">
                                             <i class="fas fa-edit"></i>
+                                            <span>Edit</span>
                                         </a>
 
                                         <form action="{{ getRouteByRole('patient-queue.destroy', [$queue]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Remove">
+                                            <button type="submit" class="dropdown-item text-danger" title="Remove" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-trash"></i>
+                                                <span>Remove</span>
                                             </button>
                                         </form>
-                                    </div>
+                                    </x-row-actions>
                                 </td>
                             </tr>
                             @endforeach

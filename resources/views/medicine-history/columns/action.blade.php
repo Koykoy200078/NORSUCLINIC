@@ -1,20 +1,26 @@
 {{-- Full access for all roles that can see the history. A consultation / prescription row belongs to its own record: View only. --}}
-<div class="d-flex align-items-center justify-content-center">
+<x-row-actions module="dispensing">
     @if ($row->isConsultation())
     <a href="{{ getRouteByRole('dispense-records.consultation', [$row->record_id]) }}"
-        title="{{ __('messages.common.view') }}" class='btn px-2 text-primary fs-3 ps-0'> <i class="fas fa-eye text-success"></i></a>
+        title="{{ __('messages.common.view') }}" class='dropdown-item px-2 text-primary fs-3 ps-0' role="menuitem" tabindex="-1"> <i class="fas fa-eye text-success"></i>
+        <span>{{ __('messages.common.view') }}</span>
+    </a>
     @else
     <a href="{{ getRouteByRole('dispense-records.show', [$row->record_id]) }}"
-        title="{{ __('messages.common.view') }}" class='btn px-2 text-primary fs-3 ps-0'> <i class="fas fa-eye text-success"></i></a>
+        title="{{ __('messages.common.view') }}" class='dropdown-item px-2 text-primary fs-3 ps-0' role="menuitem" tabindex="-1"> <i class="fas fa-eye text-success"></i>
+        <span>{{ __('messages.common.view') }}</span>
+    </a>
     @endif
     @if ($row->isManualDispenseRecord())
     <a href="{{ getRouteByRole('dispense-records.edit', [$row->record_id]) }}"
-        title="<?php echo __('messages.common.edit') ?>" class="btn px-2 edit-btn text-primary fs-3 py-2">
+        title="<?php echo __('messages.common.edit') ?>" class="dropdown-item px-2 edit-btn text-primary fs-3 py-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i>
+        <span><?php echo __('messages.common.edit') ?></span>
     </a>
     <a title="<?php echo __('messages.common.delete'); ?>" data-id="{{ $row->record_id }}"
-        class="btn medicine-bill-delete-btn px-2 text-danger pe-0 py-2">
+        class="dropdown-item medicine-bill-delete-btn px-2 text-danger pe-0 py-2" role="menuitem" href="javascript:void(0)" tabindex="-1">
         <i class="fa-solid fa-trash"></i>
+        <span><?php echo __('messages.common.delete'); ?></span>
     </a>
     @endif
-</div>
+</x-row-actions>

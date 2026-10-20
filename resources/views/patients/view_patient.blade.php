@@ -203,27 +203,31 @@ Patient Data
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_height ? $consultation->vital_signs_height . 'cm' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">{{ $consultation->vital_signs_weight ? $consultation->vital_signs_weight . 'kg' : 'N/A' }}</td>
                                 <td style="white-space: nowrap;">
-                                    <div class="d-flex gap-2">
+                                    <x-row-actions module="consultations">
                                         {{-- Staff open / edit / print consultations only with the consultations module (else 403). --}}
                                         @if(canUseModule('consultations'))
-                                        <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-primary" title="Edit">
+                                        <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $consultation->id, 'patient_id' => $patient->id]) }}" class="dropdown-item text-primary" title="Edit" role="menuitem" tabindex="-1">
                                             <i class="fas fa-edit"></i>
+                                            <span>Edit</span>
+                                        </a>
+
+                                        <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $consultation->id]) }}" class="dropdown-item text-success" title="PDF" target="_blank" role="menuitem" tabindex="-1">
+                                            <i class="fas fa-file-pdf"></i>
+                                            <span>PDF</span>
                                         </a>
                                         @if($consultation->canBeDeletedBy(auth()->user()))
                                         <form action="{{ getRouteByRole('document-issuances.destroy', ['document_issuance' => $consultation->id]) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')">
+                                            <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this consultation record?')" role="menuitem" tabindex="-1">
                                                 <i class="fas fa-trash"></i>
+                                                <span>Delete</span>
                                             </button>
                                         </form>
                                         @endif
-                                        <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $consultation->id]) }}" class="btn btn-sm btn-success" title="PDF" target="_blank">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </a>
                                         @endif
-                                    </div>
+                                    </x-row-actions>
                                 </td>
                             </tr>
                             @endforeach
@@ -266,24 +270,27 @@ Patient Data
 
                         <td>{{ $certificate->request_of ?? 'N/A' }}</td>
                         <td>
-                            <div class="d-flex gap-2">
+                            <x-row-actions module="certificates">
                                 {{-- Certificates (and excuse slips) belong to the certificates module for staff (else 403). --}}
                                 @if(canUseModule('certificates'))
                                 <!-- Edit Button -->
-                                <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $certificate->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Certificate">
+                                <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $certificate->id, 'patient_id' => $patient->id]) }}" class="dropdown-item text-info" title="Edit Certificate" role="menuitem" tabindex="-1">
                                     <i class="fa-solid fa-edit"></i>
+                                    <span>Edit Certificate</span>
                                 </a>
 
                                 <!-- Export PDF Button -->
-                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $certificate->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
+                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $certificate->id]) }}" class="dropdown-item text-primary" title="Download PDF" role="menuitem" tabindex="-1">
                                     <i class="fa-solid fa-file-pdf"></i>
+                                    <span>Download PDF</span>
                                 </a>
 
                                 <!-- Print Button -->
-                                <button type="button" class="btn btn-sm btn-success print-certificate"
+                                <button type="button" class="dropdown-item text-success print-certificate"
                                     data-certificate-id="{{ $certificate->id }}"
-                                    title="Print Certificate">
+                                    title="Print Certificate" role="menuitem" tabindex="-1">
                                     <i class="fa-solid fa-print"></i>
+                                    <span>Print Certificate</span>
                                 </button>
 
                                 <!-- Delete Button -->
@@ -291,13 +298,14 @@ Patient Data
                                     @csrf
                                     @method('DELETE')
                                     <input type="hidden" name="redirect_patient_id" value="{{ $patient->id }}">
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"
-                                        onclick="return confirm('Are you sure you want to delete this certificate record?')">
+                                    <button type="submit" class="dropdown-item text-danger" title="Delete"
+                                        onclick="return confirm('Are you sure you want to delete this certificate record?')" role="menuitem" tabindex="-1">
                                         <i class="fa-solid fa-trash"></i>
+                                        <span>Delete</span>
                                     </button>
                                 </form>
                                 @endif
-                            </div>
+                            </x-row-actions>
                         </td>
                     </tr>
                     @endforeach
@@ -338,16 +346,18 @@ Patient Data
                         <td>{{ $excuseSlip->examined_on ? formatExaminedOnForPDF($excuseSlip->examined_on) : 'N/A' }}</td>
                         <td>{{ $excuseSlip->subjects ?: ($excuseSlip->medical_cert_remarks ?: 'N/A') }}</td>
                         <td>
-                            <div class="d-flex gap-2">
+                            <x-row-actions module="certificates">
                                 @if(canUseModule('certificates'))
-                                <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $excuseSlip->id, 'patient_id' => $patient->id]) }}" class="btn btn-sm btn-info" title="Edit Excuse Slip">
+                                <a href="{{ getRouteByRole('document-issuances.edit', ['document_issuance' => $excuseSlip->id, 'patient_id' => $patient->id]) }}" class="dropdown-item text-info" title="Edit Excuse Slip" role="menuitem" tabindex="-1">
                                     <i class="fa-solid fa-edit"></i>
+                                    <span>Edit Excuse Slip</span>
                                 </a>
-                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $excuseSlip->id]) }}" class="btn btn-sm btn-primary" title="Download PDF">
+                                <a href="{{ getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $excuseSlip->id]) }}" class="dropdown-item text-primary" title="Download PDF" role="menuitem" tabindex="-1">
                                     <i class="fa-solid fa-file-pdf"></i>
+                                    <span>Download PDF</span>
                                 </a>
                                 @endif
-                            </div>
+                            </x-row-actions>
                         </td>
                     </tr>
                     @endforeach
@@ -975,17 +985,17 @@ Patient Data
                                 @endif
                             </td>
                             <td class="pe-3 text-end">
-                                <div class="d-flex gap-1 justify-content-end flex-wrap">
+                                <x-row-actions module="prescriptions">
                                     {{-- Staff open a prescription only with the prescriptions module (else 403). --}}
                                     @if(canUseModule('prescriptions'))
                                     <a href="{{ $prescRoute }}"
-                                        class="btn btn-sm"
+                                        class="dropdown-item"
                                         style="background:#eff6ff;color:#1d4ed8;border:none;font-size:.78rem;"
-                                        title="View Prescription">
+                                        title="View Prescription" role="menuitem" tabindex="-1">
                                         <i class="fas fa-eye me-1"></i>View
                                     </a>
                                     @endif
-                                </div>
+                                </x-row-actions>
                             </td>
                         </tr>
                         @endforeach

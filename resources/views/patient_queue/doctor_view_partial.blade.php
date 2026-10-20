@@ -82,40 +82,35 @@ return $q->created_at->diffInMinutes(now());
                         <p class="mb-2">
                             <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
-                            @if($canOpenForms)
-                            <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
-                                class="btn btn-sm btn-outline-primary ms-2">
-                                <i class="fas fa-eye"></i> View Form
-                            </a>
-                            @endif
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
-                            <div class="btn-group">
+                            <x-row-actions module="queue">
                                 @if($canOpenForms && ! $queue->attached_form_is_new)
                                 <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
-                                    class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
+                                    class="dropdown-item text-secondary" title="Record today's consultation form for this patient" role="menuitem" tabindex="-1">
                                     <i class="fas fa-file-circle-plus"></i> Record form
                                 </a>
                                 @endif
                                 @if($canOpenForms && $queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
-                                    class="btn btn-sm btn-primary"
-                                    title="View Consultation Form">
+                                    class="dropdown-item text-primary"
+                                    title="View Consultation Form" role="menuitem" tabindex="-1">
                                     <i class="fas fa-file-medical"></i>
+                                    <span>View Form</span>
                                 </a>
                                 @endif
                                 @if(!$inProgressQueue)
                                 <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
                                     @csrf
                                     <input type="hidden" name="queue_id" value="{{ $queue->id }}">
-                                    <button type="submit" class="btn btn-sm btn-success">
+                                    <button type="submit" class="dropdown-item text-success" role="menuitem" tabindex="-1">
                                         <i class="fas fa-phone"></i> Call Next
                                     </button>
                                 </form>
                                 @endif
-                            </div>
+                            </x-row-actions>
                         </div>
                     </div>
                     @endforeach
@@ -172,40 +167,35 @@ return $q->created_at->diffInMinutes(now());
                         <p class="mb-2">
                             <strong>{{ $queue->attached_form_is_new ? "This visit's consultation:" : 'Previous consultation:' }}</strong>
                             <small class="text-muted">{{ $queue->latestConsultation->created_at->format('M d, Y h:i A') }}</small>
-                            @if($canOpenForms)
-                            <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
-                                class="btn btn-sm btn-outline-primary ms-2">
-                                <i class="fas fa-eye"></i> View Form
-                            </a>
-                            @endif
                         </p>
                         @endif
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">Added by: {{ $queue->addedBy?->full_name ?? 'N/A' }}</small>
-                            <div class="btn-group">
+                            <x-row-actions module="queue">
                                 @if($canOpenForms && ! $queue->attached_form_is_new)
                                 <a href="{{ route('doctors.document-issuances.create', ['document_type' => 'consultation_form', 'module' => 'consultation', 'user_id' => $queue->patient->user_id]) }}"
-                                    class="btn btn-sm btn-outline-secondary" title="Record today's consultation form for this patient">
+                                    class="dropdown-item text-secondary" title="Record today's consultation form for this patient" role="menuitem" tabindex="-1">
                                     <i class="fas fa-file-circle-plus"></i> Record form
                                 </a>
                                 @endif
                                 @if($canOpenForms && $queue->has_consultation_attachment && $queue->latestConsultation)
                                 <a href="{{ route('doctors.patient-queue.view-consultation', $queue) }}"
-                                    class="btn btn-sm btn-primary"
-                                    title="View Consultation Form">
+                                    class="dropdown-item text-primary"
+                                    title="View Consultation Form" role="menuitem" tabindex="-1">
                                     <i class="fas fa-file-medical"></i>
+                                    <span>View Form</span>
                                 </a>
                                 @endif
                                 @if(!$inProgressQueue && $priorityQueues->count() === 0)
                                 <form action="{{ route('doctors.patient-queue.call-next', $queue) }}" method="POST" class="d-inline">
                                     @csrf
                                     <input type="hidden" name="queue_id" value="{{ $queue->id }}">
-                                    <button type="submit" class="btn btn-sm btn-success">
+                                    <button type="submit" class="dropdown-item text-success" role="menuitem" tabindex="-1">
                                         <i class="fas fa-phone"></i> Call Next
                                     </button>
                                 </form>
                                 @endif
-                            </div>
+                            </x-row-actions>
                         </div>
                     </div>
                     @endforeach

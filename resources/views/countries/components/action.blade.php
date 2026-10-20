@@ -1,12 +1,14 @@
-<div class="d-flex justify-content-center">
+<x-row-actions module="countries">
     <a href="javascript:void(0)" title="{{ __('messages.common.edit') }}"
-       class="btn px-1 text-primary fs-3 country-edit-btn" data-bs-toggle="tooltip"
-       data-bs-original-title="{{ __('messages.common.edit') }}" data-id="{{$row->id}}">
+       class="dropdown-item px-1 text-primary fs-3 country-edit-btn" data-bs-toggle="tooltip"
+       data-bs-original-title="{{ __('messages.common.edit') }}" data-id="{{$row->id}}" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i>
+        <span>{{ __('messages.common.edit') }}</span>
     </a>
     <a href="javascript:void(0)" data-id="{{ $row->id }}" title="{{ __('messages.common.delete') }}"  data-bs-toggle="tooltip"
        data-bs-original-title="{{ __('messages.common.delete') }}"
-       class="btn px-1 text-danger fs-3 country-delete-btn">
+       class="dropdown-item px-1 text-danger fs-3 country-delete-btn" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-trash"></i>
+        <span>{{ __('messages.common.delete') }}</span>
     </a>
-</div>
+</x-row-actions>

@@ -7,9 +7,7 @@ use App\Http\Requests\UpdateMedicineRequest;
 use App\Models\Category;
 use App\Models\Generic;
 use App\Models\Medicine;
-use App\Models\DispenseRecordItem;
 use App\Models\MedicineBatch;
-use App\Models\PurchasedMedicine;
 use App\Repositories\MedicineAvailabilityRepository;
 use App\Repositories\MedicineRepository;
 use App\Services\MedicineInventoryService;
@@ -165,7 +163,7 @@ class MedicineController extends AppBaseController
         // inventory record and is never deleted. Deleting it used to cascade through the database
         // and erase its stock batches, the whole stock ledger, prescription lines and consultation
         // medicine rows (and the "already in use" warning still let the user go ahead). C-04.
-        if ($this->medicineHasHistory($medicine)) {
+        if ($medicine->hasHistory()) {
             return $this->sendError(
                 'This medicine has stock, dispensing or prescription history and cannot be deleted. '
                 . 'Its records are kept for the inventory ledger and patient history.'
@@ -298,7 +296,7 @@ class MedicineController extends AppBaseController
     public function checkUseOfMedicine(Medicine $medicine)
     {
 
-        $result['result'] = $this->medicineHasHistory($medicine);
+        $result['result'] = $medicine->hasHistory();
         $result['id'] = $medicine->id;
 
         // (This used to test the array itself, which is always truthy, so it always answered
@@ -458,15 +456,4 @@ class MedicineController extends AppBaseController
         app(MedicineAvailabilityRepository::class)->storeFromMedicineForm($medicine, $input, 'Initial stock from medicine form');
     }
 
-    /**
-     * Whether any inventory, dispensing, prescribing or consultation record refers to the medicine.
-     */
-    private function medicineHasHistory(Medicine $medicine): bool
-    {
-        return MedicineBatch::where('medicine_id', $medicine->id)->exists()
-            || PurchasedMedicine::where('medicine_id', $medicine->id)->exists()
-            || DispenseRecordItem::where('medicine_id', $medicine->id)->exists()
-            || \App\Models\PrescriptionMedicine::where('medicine', $medicine->id)->exists()
-            || \App\Models\ConsultationMedicine::where('medicine_id', $medicine->id)->exists();
-    }
 }

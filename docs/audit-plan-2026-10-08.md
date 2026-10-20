@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–5 and 7 done and verified; Phase 6.1–6.2 completed 2026-10-20. **Next:** Phase 6.3 (shared row-action menu). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–5 and 7 done and verified; Phase 6.1–6.3 completed 2026-10-20. **Next:** Phase 6.4 (shared medicine picker). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -822,11 +822,19 @@ Every defect gets a failing test, then the fix, then both passes again.
 
 **Verified:** eight new `RoleRoutingHelpersTest` cases (RED for missing helper/constant and profile alias, then GREEN); five deliberate regressions detected (prefix, alias, query, password and validation), all sources restored byte-for-byte. Focused link/password/route checks **34 tests / 186 assertions**, then final helper/default-gate checks **15 / 69**. `npm run dev` succeeded; generated translation output restored. Browser: **45 real pages** as admin/staff/doctor, form actions in the correct panel, doctor/staff reset prompts, zero JavaScript errors or external asset requests. Used fresh synthetic fixtures; their server, database and temporary access file were removed. Full suite with crawl: **715 tests / 7,906 assertions**, all passing (05:52.401); **1,610 crawl requests / 15 variants**, zero problems. All **461 routes** remain byte-identical. Matrix **6,288 requests / 393 routes / 16 variants**, identical to the Phase 6 baseline with zero crashes or access violations. Inline review and diff check clean; Context7 Laravel **10.x** redirect/query/flash documentation used. No working-database, schema, dependency or Artisan-command change.
 
+### Phase 6 — progress 2026-10-20: 6.3 shared row-action menus (done)
+
+`<x-row-actions>` supplies a named toggle, visible action labels, keyboard navigation and fixed-position menus that escape scrolling tables. Replaced 22 row-action templates/components, the queue row/card groups and four patient-history groups. The original 23-view inventory included `medicine-availabilities/action.blade.php`, which is the page's Add button; it remains a visible header button. Existing routes, permission/record guards, confirmation flows and JavaScript hooks remain. Delete/archive is last. Empty or unauthorized menus are omitted, including prescription-only patient access. Medicine Delete uses the server's existing five-source history rule; eager existence flags avoid per-row queries. The doctor's Stock-In menu keeps View only.
+
+**Verified:** 12 new `RowActionsTest` cases, **12 tests / 45 assertions**; RED/GREEN for the shared menu and the optional custom-action title; five deliberate regressions detected (module gate, empty slot, medicine history guard, eager history flags and optional-label fallback), all sources restored byte-for-byte. `npm run dev` succeeded; generated translations restored. Chrome: **102 recorded menu-entry clicks** across admin/staff/doctor, list/history/queue states, plus actual archive/filter/restore of a synthetic patient and doctor inventory checks. Save/destructive confirmations were cancelled in the entry walk-through; Phase 5 covered their completed workflows. Keyboard arrows/Enter/Escape and table clipping passed at 1,100 and 440 pixels with Bootstrap 5.1.3; no browser errors, external network requests or server failures. The isolated Apache process, synthetic browser schema and private access file were removed; no clinic records were copied or changed. Full suite with crawl: **727 tests / 7,951 assertions**, all passing (12:34.011); **1,610 crawl requests / 15 variants**, zero problems. All **461 routes** remain identical. Matrix **6,288 requests / 393 routes / 16 variants**, identical to the baseline with zero crashes or access violations. Inline review and diff check clean. Context7 Laravel **10.x** Blade/existence-query and Bootstrap dropdown documentation used. No dependency, schema or Artisan-command change.
+
+**Runtime observation for Phase 9:** Windows PHP 8.3.31's CLI server intermittently returned a truncated HTTP 200 document (64,256 bytes, ending in the inline route script); isolated Apache on localhost served the complete pages consistently. A [PHP upstream partial-write fix](https://github.com/php/php-src/pull/23969) describes matching behavior; that is a possible explanation, not a verified version diagnosis. No PHP upgrade or application workaround was introduced. Re-check the supported clinic runtime and second-device/LAN access in Phase 9.
+
 ### Phase 6 — Deep DRY refactor + dead-code removal (behaviour unchanged)
 Each step is guarded by: full suite + `route:list --json` diff (identical unless a change is listed) + link crawl + matrix.
 - [x] 6.1 **Routes:** one shared definition per module with per-panel differences; `web.php`, `staff.php` and `doctor.php` use it. Every URL and route name stays identical.
 - [x] 6.2 **Role routing:** the per-controller `getIndexRoute()` / `resolve*Route()` copies and the ~130 view ternaries `isRole(..) ? route(a) : ..` → `getRouteByRole()` / `redirectByRole()`; overlapping helpers merged; default password `123456` in one constant.
-- [ ] 6.3 **⋮ action menu:**
+- [x] 6.3 **⋮ action menu:**
   - one component `<x-row-actions>` (dropdown not clipped by the table, keyboard-usable, delete last);
   - an item is drawn only when `canUseModule()` / the record rules allow it;
   - existing JavaScript hooks are kept;

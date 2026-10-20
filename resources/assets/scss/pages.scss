@@ -1,3 +1,48 @@
+.row-actions {
+    display: inline-block;
+
+    .dropdown-menu {
+        min-width: 12rem;
+        max-width: min(24rem, calc(100vw - 1rem));
+        z-index: 1060;
+
+        form {
+            display: block !important;
+            margin: 0;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            width: 100%;
+            margin: 0 !important;
+            padding: 0.6rem 1rem !important;
+            border: 0;
+            border-radius: 0;
+            font-size: 0.95rem !important;
+            color: inherit !important;
+            text-align: left;
+            white-space: normal;
+
+            &.text-danger {
+                color: var(--bs-danger, #f62947) !important;
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--bs-primary, #6571ff);
+                outline-offset: -2px;
+            }
+
+            i, svg {
+                flex-shrink: 0;
+                width: 1.2rem;
+                font-size: 1rem;
+            }
+        }
+    }
+}
+
 .time-slot {
     border-radius: 30px;
     margin-bottom: 10px;

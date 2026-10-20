@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Str;
 
 /**
  * App\Models\Medicine
@@ -48,6 +49,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  */
 class Medicine extends Model
 {
+    public const HISTORY_RELATIONS = ['batches', 'stockInItems', 'dispenseItems', 'prescriptionItems', 'consultationItems'];
+
     public $table = 'medicines';
 
     /** The dispense form lists the medicines from a 10-minute cache: a medicine added or renamed must be in it at once. */
@@ -217,6 +220,42 @@ class Medicine extends Model
     public function batches(): HasMany
     {
         return $this->hasMany(MedicineBatch::class, 'medicine_id');
+    }
+
+    public function hasHistory(): bool
+    {
+        foreach (self::HISTORY_RELATIONS as $relation) {
+            $flag = Str::snake($relation).'_exists';
+            if (array_key_exists($flag, $this->attributes)) {
+                if ((bool) $this->getAttribute($flag)) {
+                    return true;
+                }
+            } elseif ($this->$relation()->exists()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function stockInItems(): HasMany
+    {
+        return $this->hasMany(PurchasedMedicine::class, 'medicine_id');
+    }
+
+    public function dispenseItems(): HasMany
+    {
+        return $this->hasMany(DispenseRecordItem::class, 'medicine_id');
+    }
+
+    public function prescriptionItems(): HasMany
+    {
+        return $this->hasMany(PrescriptionMedicine::class, 'medicine');
+    }
+
+    public function consultationItems(): HasMany
+    {
+        return $this->hasMany(ConsultationMedicine::class, 'medicine_id');
     }
 
     public function transactions(): HasManyThrough

@@ -83,6 +83,7 @@ class MedicineTable extends LivewireTableComponent
             ->select([
                 'medicines.*'
             ])
+            ->withExists(Medicine::HISTORY_RELATIONS)
             // Eager-load in-stock batches so the Expiration column can show every batch's
             // expiry (a medicine can have several batches with different dates) without N+1.
             ->with(['batches' => function ($query) {

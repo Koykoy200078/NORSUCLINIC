@@ -7,29 +7,32 @@
 'extraActions' => []
 ])
 
-<div class="d-flex align-items-center gap-2">
+<x-row-actions>
     @if(isset($routes['show']) && (!isset($permissions['show']) || auth()->user()->can($permissions['show'])))
     <a href="{{ route($routes['show'], $model) }}"
         @if($showTooltips) title="{{ __('messages.common.view') }}" @endif
-        class="btn btn-{{ $size }} btn-outline-info action-btn">
+        class="dropdown-item text-info action-btn" role="menuitem" tabindex="-1">
         <i class="fas fa-eye"></i>
+        <span>{{ __('messages.common.view') }}</span>
     </a>
     @endif
 
     @if(isset($routes['edit']) && (!isset($permissions['edit']) || auth()->user()->can($permissions['edit'])))
     <a href="{{ route($routes['edit'], $model) }}"
         @if($showTooltips) title="{{ __('messages.common.edit') }}" @endif
-        class="btn btn-{{ $size }} btn-outline-primary action-btn">
+        class="dropdown-item text-primary action-btn" role="menuitem" tabindex="-1">
         <i class="fas fa-edit"></i>
+        <span>{{ __('messages.common.edit') }}</span>
     </a>
     @endif
 
     @if(isset($routes['pdf']) && (!isset($permissions['pdf']) || auth()->user()->can($permissions['pdf'])))
     <a href="{{ route($routes['pdf'], $model) }}"
         @if($showTooltips) title="{{ __('messages.prescription.download_pdf') }}" @endif
-        class="btn btn-{{ $size }} btn-outline-secondary action-btn"
-        target="_blank">
+        class="dropdown-item text-secondary action-btn"
+        target="_blank" role="menuitem" tabindex="-1">
         <i class="fas fa-file-pdf"></i>
+        <span>{{ __('messages.prescription.download_pdf') }}</span>
     </a>
     @endif
 
@@ -37,9 +40,10 @@
     @if(!isset($action['permission']) || auth()->user()->can($action['permission']))
     <a href="{{ route($action['route'], $model) }}"
         @if($showTooltips && isset($action['title'])) title="{{ $action['title'] }}" @endif
-        class="btn btn-{{ $size }} btn-outline-{{ $action['color'] ?? 'secondary' }} action-btn"
-        @if(isset($action['target'])) target="{{ $action['target'] }}" @endif>
+        class="dropdown-item btn-outline-{{ $action['color'] ?? 'secondary' }} action-btn"
+        @if(isset($action['target'])) target="{{ $action['target'] }}" @endif role="menuitem" tabindex="-1">
         <i class="{{ $action['icon'] }}"></i>
+        <span>{{ $action['title'] ?? __('Action') }}</span>
     </a>
     @endif
     @endforeach
@@ -47,15 +51,16 @@
     @if(isset($routes['delete']) && (!isset($permissions['delete']) || auth()->user()->can($permissions['delete'])))
     <button type="button"
         @if($showTooltips) title="{{ __('messages.common.delete') }}" @endif
-        class="btn btn-{{ $size }} btn-outline-danger action-btn delete-btn"
+        class="dropdown-item text-danger action-btn delete-btn"
         data-url="{{ route($routes['delete'], $model) }}"
         data-name="{{ $model->name ?? ($model->user->university_id_number ?? $model->patient_unique_id ?? $model->id) }}"
         data-bs-toggle="modal"
-        data-bs-target="#deleteConfirmationModal">
+        data-bs-target="#deleteConfirmationModal" role="menuitem" tabindex="-1">
         <i class="fas fa-trash"></i>
+        <span>{{ __('messages.common.delete') }}</span>
     </button>
     @endif
-</div>
+</x-row-actions>
 
 @push('scripts')
 <script>

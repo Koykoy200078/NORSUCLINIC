@@ -8,12 +8,13 @@ $canDispense = (isRole('clinic_admin') || isRole('staff')) && canUseModule('disp
 && ($row->is_active ?? true);
 @endphp
 
-<div class="d-flex align-items-center gap-2">
+<x-row-actions module="dispensing">
     @if(canUseModule('prescriptions'))
     <a href="{{ route($showRoute, $row->id) }}"
         title="Verify Prescription"
-        class="btn btn-sm btn-outline-info action-btn">
+        class="dropdown-item text-info action-btn" role="menuitem" tabindex="-1">
         <i class="fas fa-eye"></i>
+        <span>Verify Prescription</span>
     </a>
     @endif
 
@@ -22,10 +23,11 @@ $canDispense = (isRole('clinic_admin') || isRole('staff')) && canUseModule('disp
         @csrf
         <button type="submit"
             title="Dispense Medicine"
-            class="btn btn-sm btn-outline-success action-btn"
-            onclick="return confirm('Dispense this prescription to the patient and update stock now?')">
+            class="dropdown-item text-success action-btn"
+            onclick="return confirm('Dispense this prescription to the patient and update stock now?')" role="menuitem" tabindex="-1">
             <i class="fas fa-check-circle"></i>
+            <span>Dispense Medicine</span>
         </button>
     </form>
     @endif
-</div>
+</x-row-actions>

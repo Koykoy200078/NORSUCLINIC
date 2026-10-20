@@ -11,29 +11,32 @@ $canEdit = ! $isDispensed;
 $canDelete = ! $isDispensed && ! isRole('staff') && ! isRole('patient');
 @endphp
 
-<div class="d-flex align-items-center gap-2">
+<x-row-actions module="prescriptions">
     {{-- Show Button --}}
     <a href="{{ $showUrl }}"
         title="{{ __('messages.common.view') }}"
-        class="btn btn-sm btn-outline-info action-btn">
+        class="dropdown-item text-info action-btn" role="menuitem" tabindex="-1">
         <i class="fas fa-eye"></i>
+        <span>{{ __('messages.common.view') }}</span>
     </a>
 
     {{-- Edit Button --}}
     @if ($canEdit)
     <a href="{{ $editUrl }}"
         title="{{ __('messages.common.edit') }}"
-        class="btn btn-sm btn-outline-primary action-btn">
+        class="dropdown-item text-primary action-btn" role="menuitem" tabindex="-1">
         <i class="fas fa-edit"></i>
+        <span>{{ __('messages.common.edit') }}</span>
     </a>
     @endif
 
     {{-- PDF Button --}}
     <a href="{{ $pdfUrl }}"
         title="{{ __('messages.prescription.download_pdf') }}"
-        class="btn btn-sm btn-outline-secondary action-btn"
-        target="_blank">
+        class="dropdown-item text-secondary action-btn"
+        target="_blank" role="menuitem" tabindex="-1">
         <i class="fas fa-file-pdf"></i>
+        <span>{{ __('messages.prescription.download_pdf') }}</span>
     </a>
 
     {{-- Cancel / Reactivate: a cancelled prescription leaves the pharmacy queue and cannot be dispensed.
@@ -44,8 +47,9 @@ $canDelete = ! $isDispensed && ! isRole('staff') && ! isRole('patient');
         @csrf
         <button type="submit"
             title="{{ $isCancelled ? 'Reactivate prescription' : 'Cancel prescription' }}"
-            class="btn btn-sm {{ $isCancelled ? 'btn-outline-success' : 'btn-outline-warning' }} action-btn">
+            class="dropdown-item {{ $isCancelled ? 'text-success' : 'text-warning' }} action-btn" role="menuitem" tabindex="-1">
             <i class="fas {{ $isCancelled ? 'fa-rotate-left' : 'fa-ban' }}"></i>
+            <span>{{ $isCancelled ? 'Reactivate prescription' : 'Cancel prescription' }}</span>
         </button>
     </form>
     @endif
@@ -54,9 +58,10 @@ $canDelete = ! $isDispensed && ! isRole('staff') && ! isRole('patient');
     @if ($canDelete)
     <button type="button"
         title="{{ __('messages.common.delete') }}"
-        class="btn btn-sm btn-outline-danger action-btn delete-prescription-btn"
-        data-id="{{ $row->id }}">
+        class="dropdown-item text-danger action-btn delete-prescription-btn"
+        data-id="{{ $row->id }}" role="menuitem" tabindex="-1">
         <i class="fas fa-trash"></i>
+        <span>{{ __('messages.common.delete') }}</span>
     </button>
     @endif
-</div>
+</x-row-actions>

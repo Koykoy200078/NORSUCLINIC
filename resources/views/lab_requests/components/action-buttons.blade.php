@@ -5,22 +5,25 @@
     $deleteRoute = getRouteByRole('lab-requests.destroy', [$row]);
 @endphp
 
-<div class="d-flex gap-1 flex-wrap">
+<x-row-actions module="lab_requests">
     {{-- View --}}
-    <a href="{{ $showRoute }}" class="btn btn-sm btn-info text-white" title="View Request">
+    <a href="{{ $showRoute }}" class="dropdown-item text-info" title="View Request" role="menuitem" tabindex="-1">
         <i class="fas fa-eye"></i>
+        <span>View Request</span>
     </a>
 
     {{-- Edit (disabled for terminal states) --}}
     @if(!$row->isTerminal())
-    <a href="{{ $editRoute }}" class="btn btn-sm btn-warning text-dark" title="Edit Request">
+    <a href="{{ $editRoute }}" class="dropdown-item text-warning" title="Edit Request" role="menuitem" tabindex="-1">
         <i class="fas fa-edit"></i>
+        <span>Edit Request</span>
     </a>
     @endif
 
     {{-- Print PDF --}}
-    <a href="{{ $pdfRoute }}" target="_blank" class="btn btn-sm btn-secondary" title="Print Request Form">
+    <a href="{{ $pdfRoute }}" target="_blank" class="dropdown-item text-secondary" title="Print Request Form" role="menuitem" tabindex="-1">
         <i class="fas fa-print"></i>
+        <span>Print Request Form</span>
     </a>
 
     {{-- Delete: only a pending / cancelled request, by its creator or the clinic admin --}}
@@ -30,10 +33,11 @@
           onsubmit="return confirm('Delete Lab Request #{{ $row->request_number }}? This cannot be undone.');">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+        <button type="submit" class="dropdown-item text-danger" title="Delete" role="menuitem" tabindex="-1">
             <i class="fas fa-trash"></i>
+            <span>Delete</span>
         </button>
     </form>
     @endcan
     @endif
-</div>
+</x-row-actions>

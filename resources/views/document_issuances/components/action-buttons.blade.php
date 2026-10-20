@@ -23,42 +23,46 @@ $editUrl .= '?' . $queryString;
 }
 @endphp
 
-<div class="d-flex justify-content-center align-items-center gap-1">
+<x-row-actions module="document_issuances">
     <a href="{{ $showUrl }}"
-        class="btn px-1 text-primary fs-3"
+        class="dropdown-item px-1 text-primary fs-3"
         data-bs-toggle="tooltip"
-        data-bs-original-title="{{ __('messages.common.view') }}">
+        data-bs-original-title="{{ __('messages.common.view') }}" role="menuitem" tabindex="-1">
         <i class="fas fa-eye"></i>
+        <span>{{ __('messages.common.view') }}</span>
     </a>
 
     <a href="{{ $editUrl }}"
-        class="btn px-1 {{ $needsAttention ? 'text-warning' : 'text-primary' }} fs-3 {{ $needsAttention ? 'pulse-animation' : '' }} position-relative"
+        class="dropdown-item px-1 {{ $needsAttention ? 'text-warning' : 'text-primary' }} fs-3 {{ $needsAttention ? 'pulse-animation' : '' }} position-relative"
         data-bs-toggle="tooltip"
-        data-bs-original-title="{{ $needsAttention ? 'Complete Assessment/Plan Required' : __('messages.common.edit') }}">
+        data-bs-original-title="{{ $needsAttention ? 'Complete Assessment/Plan Required' : __('messages.common.edit') }}" role="menuitem" tabindex="-1">
         <i class="fas fa-pencil"></i>
         @if($needsAttention)
         <i class="fas fa-exclamation-circle text-danger" style="font-size: 0.5em; position: absolute; top: 5px; right: 0;"></i>
         @endif
+        <span>{{ $needsAttention ? 'Complete Assessment/Plan Required' : __('messages.common.edit') }}</span>
     </a>
 
     <a href="{{ $exportPdfUrl }}"
         target="_blank"
-        class="btn px-1 text-success fs-3"
+        class="dropdown-item px-1 text-success fs-3"
         data-bs-toggle="tooltip"
-        data-bs-original-title="Export PDF">
+        data-bs-original-title="Export PDF" role="menuitem" tabindex="-1">
         <i class="fas fa-file-pdf"></i>
+        <span>Export PDF</span>
     </a>
 
     @if(isset($row) && ($row->document_type == 'excuse_slip' || $row->document_type == 'medical_certificate'))
     <a href="{{ $exportPdfUrl }}{{ str_contains($exportPdfUrl, '?') ? '&' : '?' }}action=print"
         target="_blank"
-        class="btn px-1 text-info fs-3"
+        class="dropdown-item px-1 text-info fs-3"
         data-bs-toggle="tooltip"
-        data-bs-original-title="Direct Print (Fast)">
+        data-bs-original-title="Direct Print (Fast)" role="menuitem" tabindex="-1">
         <i class="fas fa-print"></i>
+        <span>Direct Print (Fast)</span>
     </a>
     @endif
-</div>
+</x-row-actions>
 
 @if($needsAttention)
 <style>
