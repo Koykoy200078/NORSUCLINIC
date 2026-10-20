@@ -9,9 +9,7 @@
     <div class="d-flex justify-content-end">
         {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'id' => 'genericSave']) }}
         <a href="{!! 
-            isRole('clinic_admin') ? route('generics.index') : 
-            (isRole('staff') ? route('staff.generics.index') : 
-            (isRole('doctor') ? route('doctors.generics.index') : route('generics.index'))) 
+            getRouteByRole('generics.index')
         !!}"
             class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
     </div>

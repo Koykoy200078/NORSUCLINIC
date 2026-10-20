@@ -17,7 +17,7 @@
 
     <div class="card">
         <div class="card-body">
-            {{ Form::open(['route' => isRole('clinic_admin') ? 'patient-queue.store' : 'staff.patient-queue.store', 'id' => 'createQueueForm']) }}
+            {{ Form::open(['route' => getRouteNameByRole('patient-queue.store'), 'id' => 'createQueueForm']) }}
 
             <div class="row">
                 <!-- Patient Selection -->

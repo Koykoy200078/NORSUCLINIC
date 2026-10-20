@@ -13,8 +13,7 @@
         {{-- Excel export removed - route does not exist
         <li>
             <a href="{{ 
-                isRole('clinic_admin') ? route('generics.excel') : 
-                (isRole('staff') ? route('staff.generics.excel') : route('generics.excel')) 
+                getRouteByRole('generics.excel')
             }}"
         class="dropdown-item px-5">{{ __('messages.common.export_to_excel') }}</a>
         </li>

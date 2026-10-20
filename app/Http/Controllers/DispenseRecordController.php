@@ -38,31 +38,7 @@ class DispenseRecordController extends AppBaseController
     private $dispenseRecordRepository;
     private MedicineInventoryService $medicineInventoryService;
 
-    private function getIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('medicine-dispensing.index', ['tab' => 'dispense-history']);
-        } elseif (isRole('staff')) {
-            return route('staff.medicine-dispensing.index', ['tab' => 'dispense-history']);
-        } elseif (isRole('doctor')) {
-            return route('doctors.medicine-dispensing.index', ['tab' => 'dispense-history']);
-        }
 
-        return route('medicine-dispensing.index', ['tab' => 'dispense-history']);
-    }
-
-    private function getCreateRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('dispense-records.create');
-        } elseif (isRole('staff')) {
-            return route('staff.dispense-records.create');
-        } elseif (isRole('doctor')) {
-            return route('doctors.dispense-records.create');
-        }
-
-        return route('dispense-records.create');
-    }
 
     public function __construct(
         PrescriptionRepository $prescriptionRepo,
@@ -109,7 +85,7 @@ class DispenseRecordController extends AppBaseController
                 return $this->sendError(__('messages.medicine_bills.medicine_not_selected'));
             }
             Flash::error(__('messages.medicine_bills.medicine_not_selected'));
-            return redirect($this->getCreateRoute());
+            return redirectByRole('dispense-records.create');
         }
 
         $lineIdentifiers = collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
@@ -125,7 +101,7 @@ class DispenseRecordController extends AppBaseController
             }
             Flash::error(__('messages.medicine_bills.duplicate_medicine'));
 
-            return redirect($this->getCreateRoute());
+            return redirectByRole('dispense-records.create');
         }
 
         DB::beginTransaction();
@@ -182,7 +158,7 @@ class DispenseRecordController extends AppBaseController
 
             Flash::success(__('messages.medicine_bills.saved_created'));
 
-            return redirect($this->getIndexRoute());
+            return redirectByRole('medicine-dispensing.index', ['tab' => 'dispense-history']);
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Dispense record store failed', [
@@ -196,7 +172,7 @@ class DispenseRecordController extends AppBaseController
 
             Flash::error($this->userFacingErrorMessage($e));
 
-            return redirect($this->getCreateRoute());
+            return redirectByRole('dispense-records.create');
         }
     }
 
@@ -265,7 +241,7 @@ class DispenseRecordController extends AppBaseController
         if ($this->isPrescriptionOwned($medicine_history)) {
             Flash::error($this->prescriptionOwnedMessage());
 
-            return redirect($this->getIndexRoute());
+            return redirectByRole('medicine-dispensing.index', ['tab' => 'dispense-history']);
         }
 
         $dispenseRecord = $medicine_history;

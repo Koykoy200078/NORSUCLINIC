@@ -38,21 +38,6 @@ class PatientController extends AppBaseController
         $this->patientRepository = $patientRepo;
     }
 
-    /**
-     * Get the appropriate patient index route based on user role
-     */
-    private function getPatientIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('patients.index');
-        } elseif (isRole('staff')) {
-            return route('staff.patients.index');
-        } elseif (isRole('doctor')) {
-            return route('doctors.patients.index');
-        }
-
-        return route('patients.index');
-    }
 
     /**
      * Display a listing of the Patient.
@@ -90,7 +75,7 @@ class PatientController extends AppBaseController
 
         Flash::success(__('messages.flash.patient_create'));
 
-        return redirect($this->getPatientIndexRoute());
+        return redirectByRole('patients.index');
     }
 
     /**
@@ -103,7 +88,7 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect($this->getPatientIndexRoute());
+            return redirectByRole('patients.index');
         }
 
         $patient = $this->patientRepository->getPatientData($patient);
@@ -122,7 +107,7 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect($this->getPatientIndexRoute());
+            return redirectByRole('patients.index');
         }
         $data = $this->patientRepository->getData();
 
@@ -152,14 +137,14 @@ class PatientController extends AppBaseController
         if (empty($patient)) {
             Flash::error(__('messages.flash.patient_not_found'));
 
-            return redirect($this->getPatientIndexRoute());
+            return redirectByRole('patients.index');
         }
 
         $patient = $this->patientRepository->update($input, $patient);
 
         Flash::success(__('messages.flash.patient_update'));
 
-        return redirect($this->getPatientIndexRoute());
+        return redirectByRole('patients.index');
     }
 
     /**
@@ -318,12 +303,12 @@ class PatientController extends AppBaseController
 
         try {
             $user->update([
-                'password' => Hash::make('123456')
+                'password' => Hash::make(User::DEFAULT_PASSWORD)
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password has been reset to default (123456) successfully.'
+                'message' => 'Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.'
             ]);
         } catch (Exception $e) {
             return response()->json([

@@ -4,8 +4,7 @@
     <span>{{$row->name}}</span>
     @else
     <a href="{{
-            isRole('clinic_admin') ? route('categories.show', $row->id) : 
-            (isRole('staff') ? route('staff.categories.show', $row->id) : route('categories.show', $row->id))
+            getRouteByRole('categories.show', [$row->id])
         }}" class="text-decoration-none">{{$row->name}}</a>
     @endif
 </div>

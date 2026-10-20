@@ -896,10 +896,7 @@ Patient Data
                         ];
                         $status = $statusMap[$prescription->status] ?? $statusMap['pending'];
 
-                        $prescRoute = isRole('clinic_admin')
-                        ? route('prescriptions.show', $prescription->id)
-                        : (isRole('staff') ? route('staff.prescriptions.show', $prescription->id)
-                        : route('doctors.prescriptions.show', $prescription->id));
+                        $prescRoute = getRouteByRole('prescriptions.show', [$prescription->id]);
                         @endphp
                         <tr>
                             <td class="ps-3" style="white-space:nowrap;">

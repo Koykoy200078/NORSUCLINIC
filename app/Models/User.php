@@ -122,6 +122,8 @@ class User extends Authenticatable implements HasMedia
 
     public const DELETED_AT = 'archived_at';
 
+    public const DEFAULT_PASSWORD = '123456';
+
     protected static function booted(): void
     {
         // A renamed / deactivated / archived patient or doctor must leave the cached pick-lists at once.

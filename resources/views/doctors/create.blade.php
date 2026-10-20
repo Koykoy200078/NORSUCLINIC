@@ -8,8 +8,7 @@
         <h1>@yield('title')</h1>
         <a class="btn btn-outline-primary float-end"
             href="{{ 
-                   isRole('clinic_admin') ? route('doctors.index') : 
-                   (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
+                   getRouteByRole('doctors.index')
                }}">{{ __('messages.common.back') }}</a>
     </div>
 
@@ -19,8 +18,7 @@
     <div class="card">
         <div class="card-body">
             {{ Form::open(['route' => [
-                    isRole('clinic_admin') ? 'doctors.store' : 
-                    (isRole('staff') ? 'staff.doctors.store' : 'doctors.store')
+                    getRouteNameByRole('doctors.store')
                 ], 'method' => 'POST', 'files' => true,'id'=> 'createDoctorForm']) }}
             @include('doctors.fields')
             {{ Form::close() }}

@@ -33,17 +33,6 @@ class StockInController extends AppBaseController
         $this->medicineRepository             = $medicineRepository;
     }
 
-    private function getIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('stock-in.index');
-        } elseif (isRole('staff')) {
-            return route('staff.stock-in.index');
-        } elseif (isRole('doctor')) {
-            return route('doctors.stock-in.index');
-        }
-        return route('stock-in.index');
-    }
 
     public function index(): View
     {
@@ -95,7 +84,7 @@ class StockInController extends AppBaseController
 
         Flash::success(__('messages.medicine_availability.medicine_availability_success'));
 
-        return redirect($this->getIndexRoute());
+        return redirectByRole('stock-in.index');
     }
 
     public function show(StockIn $stockIn): View
@@ -133,7 +122,7 @@ class StockInController extends AppBaseController
 
         Flash::success(__('messages.medicine_availability.purchased_medicine_updated'));
 
-        return redirect($this->getIndexRoute());
+        return redirectByRole('stock-in.index');
     }
 
     /**
@@ -162,7 +151,7 @@ class StockInController extends AppBaseController
         $items = StockIn::with('purchasedMedcines')->get();
         if ($items->isEmpty()) {
             Flash::error(__('messages.no_data_available'));
-            return redirect($this->getIndexRoute());
+            return redirectByRole('stock-in.index');
         }
         $response = Excel::download(new MedicineAvailabilityExport, 'stock-in-' . time() . '.xlsx');
         ob_end_clean();

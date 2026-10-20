@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Repositories\DashboardRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -35,7 +36,7 @@ class DashboardController extends AppBaseController
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        $hasDefaultPassword = Hash::check(User::DEFAULT_PASSWORD, Auth::user()->password);
 
         return view('dashboard.index', compact('hasDefaultPassword'));
     }
@@ -70,7 +71,7 @@ class DashboardController extends AppBaseController
      */
     public function doctorDashboard(Request $request): \Illuminate\View\View
     {
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        $hasDefaultPassword = Hash::check(User::DEFAULT_PASSWORD, Auth::user()->password);
 
         return view('doctor_dashboard.index', compact('hasDefaultPassword'));
     }
@@ -81,7 +82,7 @@ class DashboardController extends AppBaseController
     public function patientDashboard(): \Illuminate\View\View
     {
         $logo = getSettingValue('logo');
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        $hasDefaultPassword = Hash::check(User::DEFAULT_PASSWORD, Auth::user()->password);
         return view('patient_dashboard.index', compact('logo', 'hasDefaultPassword'));
     }
 
@@ -95,7 +96,7 @@ class DashboardController extends AppBaseController
             return $this->sendResponse([], __('messages.filter_success'));
         }
 
-        $hasDefaultPassword = Hash::check('123456', Auth::user()->password);
+        $hasDefaultPassword = Hash::check(User::DEFAULT_PASSWORD, Auth::user()->password);
 
         return view('staff_dashboard.index', compact('hasDefaultPassword'));
     }
@@ -121,7 +122,7 @@ class DashboardController extends AppBaseController
             }
 
             // Ensure new password is not the same as default
-            if ($request->new_password === '123456') {
+            if ($request->new_password === User::DEFAULT_PASSWORD) {
                 throw ValidationException::withMessages([
                     'new_password' => ['Please choose a different password from the default one.'],
                 ]);

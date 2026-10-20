@@ -38,7 +38,7 @@ class ForceAdminDefaultPasswordChange
             return $next($request);
         }
 
-        $dashboardRoute = $this->dashboardRouteFor($user);
+        $dashboardRoute = (int) $user->type === User::ADMIN ? 'admin.dashboard' : getDashboardRouteName($user);
 
         if ($dashboardRoute === null) {
             return $next($request);
@@ -52,7 +52,7 @@ class ForceAdminDefaultPasswordChange
         if (is_array($cached) && ($cached['hash'] ?? null) === $user->password) {
             $usesDefaultPassword = (bool) $cached['is_default'];
         } else {
-            $usesDefaultPassword = Hash::check('123456', $user->password);
+            $usesDefaultPassword = Hash::check(User::DEFAULT_PASSWORD, $user->password);
             $request->session()->put('default_password_check', [
                 'hash' => $user->password,
                 'is_default' => $usesDefaultPassword,
@@ -74,23 +74,5 @@ class ForceAdminDefaultPasswordChange
         }
 
         return $next($request);
-    }
-
-    /** The dashboard this account lives on, or null for an account type this rule does not cover. */
-    private function dashboardRouteFor(User $user): ?string
-    {
-        if ((int) $user->type === User::ADMIN || $user->hasRole('clinic_admin')) {
-            return 'admin.dashboard';
-        }
-
-        if ($user->hasRole('doctor')) {
-            return 'doctors.dashboard';
-        }
-
-        if ($user->hasRole('staff') || $user->hasRole('nurse')) {
-            return 'staff.dashboard';
-        }
-
-        return null;
     }
 }

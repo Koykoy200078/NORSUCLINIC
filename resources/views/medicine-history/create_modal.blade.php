@@ -27,7 +27,7 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
                 {{ Form::hidden('uniqueId', 2, ['id' => 'medicineUniqueId']) }}
                 {{ Form::hidden('associateMedicines', json_encode($modalMedicineList), ['class' => 'associatePurchaseMedicines']) }}
                 {{ Form::hidden('medicineCategories', json_encode($modalMedicineCategoriesList), ['id' => 'showMedicineCategoriesMedicineBill']) }}
-                {{ Form::open(['route' => isRole('clinic_admin') ? 'dispense-records.store' : (isRole('staff') ? 'staff.dispense-records.store' : (isRole('doctor') ? 'doctors.dispense-records.store' : 'dispense-records.store')), 'id' => 'CreateMedicineBillForm']) }}
+                {{ Form::open(['route' => getRouteNameByRole('dispense-records.store'), 'id' => 'CreateMedicineBillForm']) }}
                 @include('medicine-history.medicine-table', [
                 'patients' => $modalPatients,
                 'medicines' => $modalMedicines,

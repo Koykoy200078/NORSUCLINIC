@@ -158,9 +158,7 @@
                 <div class="float-end mt-5">
                     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2','saveBtnPurchaseMedicne' ]) !!}
                     <a href="{!! 
-                            isRole('clinic_admin') ? route('stock-in.index') : 
-                            (isRole('staff') ? route('staff.stock-in.index') : 
-                            (isRole('doctor') ? route('doctors.stock-in.index') : route('stock-in.index'))) 
+                            getRouteByRole('stock-in.index')
                         !!}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
 

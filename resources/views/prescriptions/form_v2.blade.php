@@ -54,17 +54,11 @@ $temperatureValue = old('body_temperature', $isEdit ? $prescription->body_temper
 $bloodPressureValue = old('blood_pressure', $isEdit ? $prescription->blood_pressure : ($patientSummary['blood_pressure'] ?? null));
 $heightValue = old('height_cm', $isEdit ? $prescription->height_cm : ($patientSummary['height_cm'] ?? null));
 
-$storeRoute = isRole('doctor')
-? 'doctors.prescriptions.store'
-: (isRole('staff') ? 'staff.prescriptions.store' : (isRole('patient') ? 'patients.prescriptions.store' : 'prescriptions.store'));
+$storeRoute = getRouteNameByRole('prescriptions.store');
 
-$updateRoute = isRole('doctor')
-? 'doctors.prescriptions.update'
-: (isRole('staff') ? 'staff.prescriptions.update' : (isRole('patient') ? 'patients.prescriptions.update' : 'prescriptions.update'));
+$updateRoute = getRouteNameByRole('prescriptions.update');
 
-$cancelRoute = isRole('doctor')
-? 'doctors.prescriptions.index'
-: (isRole('staff') ? 'staff.prescriptions.index' : (isRole('patient') ? 'patients.dashboard' : 'prescriptions.index'));
+$cancelRoute = isRole('patient') ? 'patients.dashboard' : getRouteNameByRole('prescriptions.index');
 
 $formRoute = $isEdit ? [$updateRoute, $prescription->id] : $storeRoute;
 $formMethod = $isEdit ? 'patch' : 'post';

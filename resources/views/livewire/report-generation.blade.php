@@ -9,9 +9,7 @@
                     <div class="d-flex align-items-center">
                         @if($tab !== 'global_search' && $tab !== 'accomplishment' && ! $yearlyInventory)
                         <a href="{{ 
-                            isRole('clinic_admin') ? route('activity-logs.export', $exportQuery) : 
-                            (isRole('staff') ? route('staff.activity-logs.export', $exportQuery) : 
-                            route('doctors.activity-logs.export', $exportQuery))
+                            getRouteByRole('activity-logs.export', $exportQuery)
                         }}"
                             class="btn btn-sm btn-outline-primary me-2">
                             <i class="fas fa-file-csv"></i> Export CSV
@@ -344,7 +342,7 @@
                                                 <span class="badge bg-success text-white fw-bold">{{ $log->formatted_action }}</span>
                                             </td>
                                             <td class="text-end">
-                                                <a href="{{ isRole('clinic_admin') ? route('activity-logs.show', $log->id) : (isRole('staff') ? route('staff.activity-logs.show', $log->id) : route('doctors.activity-logs.show', $log->id)) }}"
+                                                <a href="{{ getRouteByRole('activity-logs.show', [$log->id]) }}"
                                                    class="btn btn-sm btn-icon btn-light-primary btn-active-primary shadow-sm" title="View Details">
                                                     <i class="fas fa-eye"></i>
                                                 </a>

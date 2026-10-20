@@ -10,17 +10,11 @@ $queryParams = array_filter([
 'patient_id' => request()->query('patient_id'),
 ], fn($value) => $value !== null && $value !== '');
 
-$showUrl = isRole('clinic_admin') ? route('document-issuances.show', $id) :
-(isRole('staff') ? route('staff.document-issuances.show', $id) :
-(isRole('doctor') ? route('doctors.document-issuances.show', $id) : route('document-issuances.show', $id)));
+$showUrl = getRouteByRole('document-issuances.show', [$id]);
 
-$editUrl = isRole('clinic_admin') ? route('document-issuances.edit', $id) :
-(isRole('staff') ? route('staff.document-issuances.edit', $id) :
-(isRole('doctor') ? route('doctors.document-issuances.edit', $id) : route('document-issuances.edit', $id)));
+$editUrl = getRouteByRole('document-issuances.edit', [$id]);
 
-$exportPdfUrl = isRole('clinic_admin') ? route('document-issuances.export-pdf', ['document_issuance' => $id]) :
-(isRole('staff') ? route('staff.document-issuances.export-pdf', ['document_issuance' => $id]) :
-(isRole('doctor') ? route('doctors.document-issuances.export-pdf', ['document_issuance' => $id]) : route('document-issuances.export-pdf', ['document_issuance' => $id])));
+$exportPdfUrl = getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $id]);
 
 if (!empty($queryParams)) {
 $queryString = http_build_query($queryParams);

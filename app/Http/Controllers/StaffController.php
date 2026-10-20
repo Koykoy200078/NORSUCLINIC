@@ -123,9 +123,9 @@ class StaffController extends AppBaseController
         $staff = $user;
         abort_unless((int) $staff->type === User::STAFF, 403);
 
-        $staff->update(['password' => Hash::make('123456')]);
+        $staff->update(['password' => Hash::make(User::DEFAULT_PASSWORD)]);
 
-        return $this->sendSuccess('Password has been reset to default (123456) successfully.');
+        return $this->sendSuccess('Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.');
     }
 
     /**

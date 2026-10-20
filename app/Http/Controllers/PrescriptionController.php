@@ -213,7 +213,7 @@ class PrescriptionController extends AppBaseController
             DB::commit();
             Flash::success(__('messages.prescription.prescription_saved'));
 
-            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+            return redirectByRole('prescription.medicine.show', [$prescription->id]);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Prescription store failed', [
@@ -251,7 +251,7 @@ class PrescriptionController extends AppBaseController
             return Redirect::back();
         }
 
-        return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+        return redirectByRole('prescription.medicine.show', [$prescription->id]);
     }
 
     /**
@@ -281,7 +281,7 @@ class PrescriptionController extends AppBaseController
         if ($this->isDispensed($prescription)) {
             Flash::error('This prescription was already dispensed and can no longer be edited.');
 
-            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+            return redirectByRole('prescription.medicine.show', [$prescription->id]);
         }
 
         $prescription->load([
@@ -374,7 +374,7 @@ class PrescriptionController extends AppBaseController
         if ($this->isDispensed($prescription)) {
             Flash::error('This prescription was already dispensed and can no longer be edited.');
 
-            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+            return redirectByRole('prescription.medicine.show', [$prescription->id]);
         }
 
         $input = $request->validated();
@@ -479,7 +479,7 @@ class PrescriptionController extends AppBaseController
             DB::commit();
             Flash::success(__('messages.prescription.prescription_updated'));
 
-            return redirect(route($this->resolvePrescriptionShowRoute(), $prescription->id));
+            return redirectByRole('prescription.medicine.show', [$prescription->id]);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Prescription update failed', [
@@ -582,24 +582,6 @@ class PrescriptionController extends AppBaseController
         };
     }
 
-    private function resolvePrescriptionShowRoute(): string
-    {
-        $user = getLogInUser();
-
-        if ($user && $user->hasRole('patient')) {
-            return 'patients.prescription.medicine.show';
-        }
-
-        if ($user && ($user->hasRole('staff') || $user->hasRole('nurse'))) {
-            return 'staff.prescription.medicine.show';
-        }
-
-        if ($user && $user->hasRole('doctor')) {
-            return 'doctors.prescription.medicine.show';
-        }
-
-        return 'prescription.medicine.show';
-    }
 
     /**
      * @return JsonResponse|RedirectResponse|Redirector

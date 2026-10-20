@@ -1,9 +1,7 @@
 <div class="d-flex justify-content-center">
     @php
     $count = $row->medical_certificate_count ?? 0;
-    $route = isRole('clinic_admin') ? route('document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'certificate']) :
-    (isRole('staff') ? route('staff.document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'certificate']) :
-    (isRole('doctor') ? route('doctors.document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'certificate']) : '#'));
+    $route = getRouteByRole('document-issuances.index', ['patient_id' => $row->user_id, 'module' => 'certificate']);
     @endphp
 
     @if($count > 0)

@@ -1,11 +1,7 @@
 @php
-$showRoute = isRole('doctor')
-? 'doctors.prescription.medicine.show'
-: (isRole('staff') ? 'staff.prescription.medicine.show' : 'prescription.medicine.show');
+$showRoute = getRouteNameByRole('prescription.medicine.show');
 
-$dispenseRoute = isRole('doctor')
-? 'doctors.prescriptions.dispense'
-: (isRole('staff') ? 'staff.prescriptions.dispense' : 'prescriptions.dispense');
+$dispenseRoute = getRouteNameByRole('prescriptions.dispense');
 
 $canDispense = (isRole('clinic_admin') || isRole('staff')) && canUseModule('dispensing') && canUseModule('prescriptions')
 && $row->status === \App\Models\Prescription::DISPENSE_STATUS_PENDING

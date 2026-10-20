@@ -219,8 +219,7 @@ class LabRequestController extends Controller
                 ]
             );
 
-            $indexRoute = $this->getIndexRoute();
-            return redirect()->route($indexRoute)
+            return redirectByRole('lab-requests.index')
                 ->with('success', "Lab request #{$labRequest->request_number} created successfully.");
         } catch (\Throwable $e) {
             Log::error('LabRequest store error: ' . $e->getMessage());
@@ -252,7 +251,7 @@ class LabRequestController extends Controller
     public function edit(LabRequest $lab_request)
     {
         if ($lab_request->isTerminal()) {
-            return redirect()->route($this->getIndexRoute())
+            return redirectByRole('lab-requests.index')
                 ->with('error', 'This lab request is already in a terminal state and cannot be edited.');
         }
 
@@ -422,8 +421,7 @@ class LabRequestController extends Controller
                 ]
             );
 
-            $indexRoute = $this->getIndexRoute();
-            return redirect()->route($indexRoute)
+            return redirectByRole('lab-requests.index')
                 ->with('success', "Lab request #{$lab_request->request_number} updated successfully.");
         } catch (\Throwable $e) {
             Log::error('LabRequest update error: ' . $e->getMessage());
@@ -486,8 +484,7 @@ class LabRequestController extends Controller
                 $lab_request->delete(); // boot() cascades delete to items
             });
 
-            $indexRoute = $this->getIndexRoute();
-            return redirect()->route($indexRoute)
+            return redirectByRole('lab-requests.index')
                 ->with('success', "Lab request #{$requestNumber} deleted successfully.");
         } catch (\Exception $e) {
             Log::error('LabRequest destroy error: ' . $e->getMessage());
@@ -679,22 +676,5 @@ class LabRequestController extends Controller
         $normalized = preg_replace('/\s+/', ' ', trim($testName));
 
         return strtolower((string) $normalized);
-    }
-
-    /**
-     * Get the correct named route for the index page based on current role.
-     */
-    private function getIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return 'lab-requests.index';
-        } elseif (isRole('staff')) {
-            return 'staff.lab-requests.index';
-        } elseif (isRole('doctor')) {
-            return 'doctors.lab-requests.index';
-        } elseif (isRole('patient')) {
-            return 'patients.lab-requests.index';
-        }
-        return 'lab-requests.index';
     }
 }

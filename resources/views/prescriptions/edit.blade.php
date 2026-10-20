@@ -7,9 +7,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">@yield('title')</h1>
         @php
-        $backRoute = isRole('doctor')
-            ? 'doctors.prescriptions.index'
-            : (isRole('staff') ? 'staff.prescriptions.index' : (isRole('patient') ? 'patients.dashboard' : 'prescriptions.index'));
+        $backRoute = isRole('patient') ? 'patients.dashboard' : getRouteNameByRole('prescriptions.index');
         @endphp
         <a href="{{ route($backRoute) }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>

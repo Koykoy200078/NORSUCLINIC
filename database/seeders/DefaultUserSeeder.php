@@ -27,7 +27,7 @@ class DefaultUserSeeder extends Seeder
                 'type' => User::ADMIN,
                 'email' => 'admin@norsuclinic.com',
                 'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('123456'),
+                'password' => Hash::make(User::DEFAULT_PASSWORD),
                 'country_code' => '63',
                 'time_zone' => 'Asia/Manila',
             ]

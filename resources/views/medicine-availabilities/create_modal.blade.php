@@ -17,7 +17,7 @@ $modalMedicineList[] = ['key' => $id, 'value' => $name];
                 <div class="alert alert-danger d-none" id="stockInErrorsBox"></div>
                 {{ Form::hidden('uniqueId', 2, ['id' => 'purchaseUniqueId']) }}
                 {{ Form::hidden('associateMedicines', json_encode($modalMedicineList), ['class' => 'associatePurchaseMedicines']) }}
-                {{ Form::open(['route' => isRole('clinic_admin') ? 'stock-in.store' : (isRole('staff') ? 'staff.stock-in.store' : (isRole('doctor') ? 'doctors.stock-in.store' : 'stock-in.store')), 'data-turbo' => 'false', 'id' => 'purchaseMedicineFormId']) }}
+                {{ Form::open(['route' => getRouteNameByRole('stock-in.store'), 'data-turbo' => 'false', 'id' => 'purchaseMedicineFormId']) }}
                 <div class="row">
                     @include('medicine-availabilities.fields', ['medicines' => $modalMedicines, 'hideFormButtons' => true])
                 </div>

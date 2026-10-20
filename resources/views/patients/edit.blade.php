@@ -8,9 +8,7 @@
         <h1>@yield('title')</h1>
         <a class="btn btn-outline-primary float-end"
             href="{{ 
-                   isRole('clinic_admin') ? route('patients.index') : 
-                   (isRole('staff') ? route('staff.patients.index') : 
-                   (isRole('doctor') ? route('doctors.patients.index') : route('patients.index')))
+                   getRouteByRole('patients.index')
                }}">{{ __('messages.common.back') }}</a>
     </div>
 
@@ -20,9 +18,7 @@
     <div class="card">
         <div class="card-body">
             {{ Form::model($patient, ['route' => [
-                isRole('clinic_admin') ? 'patients.update' : 
-                (isRole('staff') ? 'staff.patients.update' : 
-                (isRole('doctor') ? 'doctors.patients.update' : 'patients.update')), 
+                getRouteNameByRole('patients.update'),
                 $patient->id], 'method' => 'patch', 'files' => 'true','id'=>'editPatientForm']) }}
             {{ Form::hidden('is_edit', true,['id' => 'staffIsEdit']) }}
             {{ Form::hidden('is_edit', true,['id' => 'patientIsEdit']) }}

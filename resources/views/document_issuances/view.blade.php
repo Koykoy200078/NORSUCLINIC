@@ -5,9 +5,7 @@
 @section('content')
 @php
 $documentModule = request('module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
-$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
-(isRole('staff') ? route('staff.document-issuances.index') :
-(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexRoute = getRouteByRole('document-issuances.index');
 $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 
 $routeDocument = request()->route('document_issuance');
@@ -16,9 +14,7 @@ $documentId = $requestDocument->id
 ?? request()->route('id');
 
 $exportPdfUrl = $documentId
-? (isRole('clinic_admin') ? route('document-issuances.export-pdf', ['document_issuance' => $documentId]) :
-(isRole('staff') ? route('staff.document-issuances.export-pdf', ['document_issuance' => $documentId]) :
-(isRole('doctor') ? route('doctors.document-issuances.export-pdf', ['document_issuance' => $documentId]) : route('document-issuances.export-pdf', ['document_issuance' => $documentId]))))
+? (getRouteByRole('document-issuances.export-pdf', ['document_issuance' => $documentId]))
 : null;
 @endphp
 <div class="p-4">

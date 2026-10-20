@@ -17,7 +17,7 @@
 
     <div class="card">
         <div class="card-body">
-            {{ Form::model($patientQueue, ['route' => [isRole('clinic_admin') ? 'patient-queue.update' : 'staff.patient-queue.update', $patientQueue], 'method' => 'PUT']) }}
+            {{ Form::model($patientQueue, ['route' => [getRouteNameByRole('patient-queue.update'), $patientQueue], 'method' => 'PUT']) }}
 
             <div class="row">
                 <!-- Patient Info (Read-only) -->

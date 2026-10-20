@@ -94,9 +94,7 @@ class UserController extends AppBaseController
 
         Flash::success(__('messages.flash.doctor_create'));
 
-        $indexRoute = isRole('clinic_admin') ? 'doctors.index' : (isRole('staff') ? 'staff.doctors.index' : 'doctors.index');
-
-        return redirect(route($indexRoute));
+        return redirectByRole('doctors.index');
     }
 
     /**
@@ -444,12 +442,12 @@ class UserController extends AppBaseController
 
         try {
             $user->update([
-                'password' => Hash::make('123456')
+                'password' => Hash::make(User::DEFAULT_PASSWORD)
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password has been reset to default (123456) successfully.'
+                'message' => 'Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.'
             ]);
         } catch (Exception $e) {
             return response()->json([

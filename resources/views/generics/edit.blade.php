@@ -9,9 +9,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">@yield('title')</h1>
         <a href="{{ 
-                isRole('clinic_admin') ? route('generics.index') : 
-                (isRole('staff') ? route('staff.generics.index') : 
-                (isRole('doctor') ? route('doctors.generics.index') : route('generics.index'))) 
+                getRouteByRole('generics.index')
             }}"
             class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
     </div>

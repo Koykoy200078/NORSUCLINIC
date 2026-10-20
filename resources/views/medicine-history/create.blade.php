@@ -6,7 +6,7 @@ Add Dispense Record
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">@yield('title')</h1>
-        <a href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : (isRole('staff') ? route('staff.medicine-dispensing.index') : route('doctors.medicine-dispensing.index')) }}"
+        <a href="{{ getRouteByRole('medicine-dispensing.index') }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -26,7 +26,7 @@ Add Dispense Record
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::open(['route' => isRole('clinic_admin') ? 'dispense-records.store' : (isRole('staff') ? 'staff.dispense-records.store' : 'doctors.dispense-records.store'), 'id' => 'CreateMedicineBillForm']) }}
+                {{ Form::open(['route' => getRouteNameByRole('dispense-records.store'), 'id' => 'CreateMedicineBillForm']) }}
                 @include('medicine-history.medicine-table')
                 {{ Form::close() }}
             </div>

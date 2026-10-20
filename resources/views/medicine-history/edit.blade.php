@@ -6,7 +6,7 @@ Edit Dispense Record
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1"></h1>
-        <a href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : (isRole('staff') ? route('staff.medicine-dispensing.index') : route('doctors.medicine-dispensing.index')) }}"
+        <a href="{{ getRouteByRole('medicine-dispensing.index') }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -27,7 +27,7 @@ Edit Dispense Record
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::model($medicineBill, ['route' => isRole('clinic_admin') ? ['dispense-records.update', $medicineBill->id] : (isRole('staff') ? ['staff.dispense-records.update', $medicineBill->id] : ['doctors.dispense-records.update', $medicineBill->id]), 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
+                {{ Form::model($medicineBill, ['route' => [getRouteNameByRole('dispense-records.update'), $medicineBill->id], 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
                 {{-- @include('medicine-history.fields')  --}}
                 <div class="row">
                     @include('medicine-history.medicine-table')

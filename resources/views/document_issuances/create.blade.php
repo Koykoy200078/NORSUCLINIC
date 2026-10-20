@@ -5,9 +5,7 @@
 @section('content')
 @php
 $documentModule = request('module', request('document_type') === 'medical_certificate' ? 'certificate' : 'consultation');
-$indexRoute = isRole('clinic_admin') ? route('document-issuances.index') :
-(isRole('staff') ? route('staff.document-issuances.index') :
-(isRole('doctor') ? route('doctors.document-issuances.index') : route('document-issuances.index')));
+$indexRoute = getRouteByRole('document-issuances.index');
 $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
 @endphp
 <div class="p-4">
@@ -31,10 +29,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
             @endif
             <a href="{{ 
                 request('user_id') && isset($patient) ? 
-                    (isRole('clinic_admin') ? route('patients.showMyHistory', ['patient' => $patient->id]) : 
-                    (isRole('staff') ? route('staff.patients.showMyHistory', ['patient' => $patient->id]) : 
-                    (isRole('doctor') ? route('doctors.patients.showMyHistory', ['patient' => $patient->id]) : 
-                    route('patients.showMyHistory', ['patient' => $patient->id])))) :
+                    (getRouteByRole('patients.showMyHistory', ['patient' => $patient->id])) :
                     $indexUrlWithModule
             }}" class="bg-blue-500 text-white px-4 py-2 rounded">Back</a>
         </div>

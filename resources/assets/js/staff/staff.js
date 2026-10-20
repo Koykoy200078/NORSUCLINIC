@@ -10,7 +10,7 @@ listenClick(".staff-reset-password-btn", function () {
     let resetUrl = $(this).attr("data-reset-url");
     swal({
         title: "Are you sure?",
-        text: "This will reset the staff's password to default (123456)",
+        text: "This will reset the staff's password to default (" + window.defaultPassword + ")",
         icon: "warning",
         buttons: {
             cancel: {

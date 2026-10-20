@@ -86,6 +86,6 @@ $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
 <!-- Submit Field -->
 <div class="d-flex justify-content-end">
     {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'id' => 'medicineSave']) }}
-    <a href="{{ isRole('clinic_admin') ? route('medicine-inventory.index') : (isRole('staff') ? route('staff.medicine-inventory.index') : route('doctors.medicine-inventory.index')) }}"
+    <a href="{{ getRouteByRole('medicine-inventory.index') }}"
         class="btn btn-secondary">{{ __('messages.common.cancel') }}</a>
 </div>

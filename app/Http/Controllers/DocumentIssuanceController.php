@@ -233,24 +233,17 @@ class DocumentIssuanceController extends Controller
                         : ($data['document_type'] === 'excuse_slip' ? 'Excuse slip created successfully.' : 'Consultation form created successfully.');
 
                     // Role-based patient history redirect
-                    if (isRole('clinic_admin')) {
-                        return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
-                            ->with('success', $successMessage);
-                    } elseif (isRole('staff')) {
-                        return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
-                            ->with('success', $successMessage);
-                    } elseif (isRole('doctor')) {
-                        return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                    if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
+                        return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
                             ->with('success', $successMessage);
                     }
                 }
             }
 
             // Default: Return to request documents index with role-based redirect
-            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
             $documentModule = ($data['document_type'] ?? null) === 'consultation_form' ? 'consultation' : 'certificate';
 
-            return redirect()->route($redirectRoute, ['module' => $documentModule])
+            return redirectByRole('document-issuances.index', ['module' => $documentModule])
                 ->with('success', 'Request document created successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -814,7 +807,7 @@ class DocumentIssuanceController extends Controller
             'status' => true,
             'language' => 'en',
             'type' => User::PATIENT,
-            'password' => Hash::make('123456'),
+            'password' => Hash::make(User::DEFAULT_PASSWORD),
             'email_verified_at' => now()->setTimezone('Asia/Manila')->toDateTimeString(),
             'campus_id' => $this->normalizeNullableInt($data['campus_id'] ?? null),
             'college_id' => $this->normalizeNullableInt($data['college_id'] ?? null),
@@ -1416,23 +1409,16 @@ class DocumentIssuanceController extends Controller
                 $patientId = $request->input('redirect_patient_id');
 
                 // Redirect back to patient history
-                if (isRole('clinic_admin')) {
-                    return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Request document updated successfully.');
-                } elseif (isRole('staff')) {
-                    return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Request document updated successfully.');
-                } elseif (isRole('doctor')) {
-                    return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
+                    return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
                         ->with('success', 'Request document updated successfully.');
                 }
             }
 
             // Default: Redirect to request documents index
-            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' : 'document-issuances.index'));
             $documentModule = $request->input('redirect_module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
 
-            return redirect()->route($redirectRoute, ['module' => $documentModule])
+            return redirectByRole('document-issuances.index', ['module' => $documentModule])
                 ->with('success', 'Request document updated successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -2282,24 +2268,16 @@ class DocumentIssuanceController extends Controller
                 $patientId = request()->input('redirect_patient_id');
 
                 // Redirect back to patient history
-                if (isRole('clinic_admin')) {
-                    return redirect()->route('patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', $deletedLabel . ' deleted successfully.');
-                } elseif (isRole('staff')) {
-                    return redirect()->route('staff.patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', $deletedLabel . ' deleted successfully.');
-                } elseif (isRole('doctor')) {
-                    return redirect()->route('doctors.patients.showMyHistory', ['patient' => $patientId])
+                if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
+                    return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
                         ->with('success', $deletedLabel . ' deleted successfully.');
                 }
             }
 
             // Default: Redirect to request documents index
-            $redirectRoute = isRole('clinic_admin') ? 'document-issuances.index' : (isRole('staff') ? 'staff.document-issuances.index' : (isRole('doctor') ? 'doctors.document-issuances.index' :
-                'document-issuances.index'));
             $documentModule = request()->input('redirect_module', $request_document->document_type === 'consultation_form' ? 'consultation' : 'certificate');
 
-            return redirect()->route($redirectRoute, ['module' => $documentModule])
+            return redirectByRole('document-issuances.index', ['module' => $documentModule])
                 ->with('success', $deletedLabel . ' deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Error deleting request document: ' . $e->getMessage());

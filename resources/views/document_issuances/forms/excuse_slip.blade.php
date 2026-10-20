@@ -54,10 +54,9 @@
         </div>
 
         <form action="{{ 
-            isRole('clinic_admin') ? (isset($requestDocument) ? route('document-issuances.update', $requestDocument->id) : route('document-issuances.store')) : 
-            (isRole('staff') ? (isset($requestDocument) ? route('staff.document-issuances.update', $requestDocument->id) : route('staff.document-issuances.store')) : 
-            (isRole('doctor') ? (isset($requestDocument) ? route('doctors.document-issuances.update', $requestDocument->id) : route('doctors.document-issuances.store')) : 
-            (isset($requestDocument) ? route('document-issuances.update', $requestDocument->id) : route('document-issuances.store'))))
+            isset($requestDocument)
+                ? getRouteByRole('document-issuances.update', [$requestDocument->id])
+                : getRouteByRole('document-issuances.store')
         }}" method="POST">
             @csrf
             @if(isset($requestDocument))

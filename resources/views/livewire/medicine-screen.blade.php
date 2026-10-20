@@ -23,8 +23,7 @@
 
     {{-- Hidden URL helpers expected by JS in child views --}}
     {{ Form::hidden('medicineUrl',
-        isRole('staff') ? route('staff.medicines.index') :
-        (isRole('doctor') ? route('doctors.medicines.index') : route('medicines.index')),
+        getRouteByRole('medicines.index'),
         ['id' => 'indexMedicineUrl']) }}
     {{ Form::hidden('medicines-show-modal', url('medicines-show-modal'), ['id' => 'medicinesShowModal']) }}
     {{ Form::hidden('medicine-language', getCurrentLoginUserLanguageName(), ['id' => 'medicineLanguage']) }}

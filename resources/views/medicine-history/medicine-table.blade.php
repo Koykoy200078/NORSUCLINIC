@@ -118,7 +118,7 @@
 
                 <div class="float-end mt-5">
                     {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
-                    <a href="{{ isRole('clinic_admin') ? route('medicine-dispensing.index') : (isRole('staff') ? route('staff.medicine-dispensing.index') : route('doctors.medicine-dispensing.index')) }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
+                    <a href="{{ getRouteByRole('medicine-dispensing.index') }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
             </div>
             @endif

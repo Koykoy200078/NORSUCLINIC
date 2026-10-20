@@ -127,7 +127,7 @@ class PatientQueueController extends Controller
             $message .= " No consultation form yet: record one and it will appear on the doctor's screen by itself.";
         }
 
-        return redirect()->route($this->getIndexRoute())
+        return redirectByRole('patient-queue.index')
             ->with('success', $message);
     }
 
@@ -190,25 +190,10 @@ class PatientQueueController extends Controller
     {
         $patientQueue->delete();
 
-        return redirect()->route($this->getIndexRoute())
+        return redirectByRole('patient-queue.index')
             ->with('success', 'Patient removed from queue.');
     }
 
-    /**
-     * Get the appropriate index route based on user role
-     */
-    private function getIndexRoute()
-    {
-        if (isRole('clinic_admin')) {
-            return 'patient-queue.index';
-        } elseif (isRole('staff')) {
-            return 'staff.patient-queue.index';
-        } elseif (isRole('doctor')) {
-            return 'doctors.patient-queue.index';
-        }
-
-        return 'patient-queue.index'; // default fallback
-    }
 
     /**
      * Display queue for doctors

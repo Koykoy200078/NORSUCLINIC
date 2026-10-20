@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-3">@yield('title')</h1>
-        <a href="{{ isRole('clinic_admin') ? route('medicine-inventory.index') : (isRole('staff') ? route('staff.medicine-inventory.index') : route('doctors.medicine-inventory.index')) }}"
+        <a href="{{ getRouteByRole('medicine-inventory.index') }}"
             class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -22,9 +22,7 @@
         <div class="card">
             <div class="card-body">
                 {{ Form::model($medicine, ['route' => [
-                        isRole('clinic_admin') ? 'medicines.update' : 
-                        (isRole('staff') ? 'staff.medicines.update' : 
-                        (isRole('doctor') ? 'doctors.medicines.update' : 'medicines.update')), 
+                        getRouteNameByRole('medicines.update'),
                         $medicine->id], 'method' => 'patch', 'id' => 'editMedicine']) }}
                 <div class="row">
                     @include('medicines.fields')

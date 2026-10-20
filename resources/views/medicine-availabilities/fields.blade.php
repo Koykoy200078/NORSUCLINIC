@@ -113,9 +113,7 @@
         @if(!isset($hideFormButtons) || !$hideFormButtons)
         <div class="mt-3 text-end">
             <a href="{!! 
-                    isRole('clinic_admin') ? route('stock-in.index') : 
-                    (isRole('staff') ? route('staff.stock-in.index') : 
-                    (isRole('doctor') ? route('doctors.stock-in.index') : route('stock-in.index'))) 
+                    getRouteByRole('stock-in.index')
                 !!}" class="btn btn-secondary me-2">
                 {{__('messages.common.cancel')}}
             </a>

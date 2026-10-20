@@ -282,7 +282,7 @@ class PatientRepository extends BaseRepository
                 'patient_type_lookup',
             ]);
 
-            $userInput['password'] = Hash::make(!empty($input['password']) ? $input['password'] : '123456');
+            $userInput['password'] = Hash::make(!empty($input['password']) ? $input['password'] : User::DEFAULT_PASSWORD);
             $user = User::create($userInput);
 
             $patient = $user->patient()->create($patientArray);

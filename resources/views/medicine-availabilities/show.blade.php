@@ -10,17 +10,13 @@
         <div class="text-end mt-4 mt-md-0">
             @unless(isRole('doctor'))
 <a href="{{ 
-                isRole('clinic_admin') ? route('stock-in.edit', $medicineAvailability->id) : 
-                (isRole('staff') ? route('staff.stock-in.edit', $medicineAvailability->id) : 
-                (isRole('doctor') ? route('doctors.stock-in.edit', $medicineAvailability->id) : route('stock-in.edit', $medicineAvailability->id))) 
+                getRouteByRole('stock-in.edit', [$medicineAvailability->id])
             }}" class="btn btn-primary">
                 <i class="fas fa-edit me-2"></i>{{ __('messages.common.edit') }}
             </a>
 @endunless
             <a href="{{ 
-                    isRole('clinic_admin') ? route('stock-in.index') : 
-                    (isRole('staff') ? route('staff.stock-in.index') : 
-                    (isRole('doctor') ? route('doctors.stock-in.index') : route('stock-in.index'))) 
+                    getRouteByRole('stock-in.index')
                 }}" class="btn btn-outline-primary ms-2">
                 {{ __('messages.common.back') }}
             </a>

@@ -212,7 +212,7 @@ listenClick(".patient-reset-password-btn", function () {
 
     swal({
         title: "Are you sure?",
-        text: "This will reset the patient's password to default (123456)",
+        text: "This will reset the patient's password to default (" + window.defaultPassword + ")",
         icon: "warning",
         buttons: {
             cancel: {

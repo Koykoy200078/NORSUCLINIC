@@ -39,21 +39,6 @@ class MedicineController extends AppBaseController
         $this->inventoryService = $inventoryService;
     }
 
-    /**
-     * Get the appropriate medicine index route based on user role
-     */
-    private function getMedicineIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('medicine-inventory.index');
-        } elseif (isRole('staff')) {
-            return route('staff.medicine-inventory.index');
-        } elseif (isRole('doctor')) {
-            return route('doctors.medicine-inventory.index');
-        }
-
-        return route('medicine-inventory.index');
-    }
 
     /**
      * Display a listing of the Medicine.
@@ -116,7 +101,7 @@ class MedicineController extends AppBaseController
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.saved_successfully'));
 
-        return redirect($this->getMedicineIndexRoute());
+        return redirectByRole('medicine-inventory.index');
     }
 
     /**
@@ -161,7 +146,7 @@ class MedicineController extends AppBaseController
 
         Flash::success(__('messages.medicine.medicine') . ' ' . __('messages.medicine.updated_successfully'));
 
-        return redirect($this->getMedicineIndexRoute());
+        return redirectByRole('medicine-inventory.index');
     }
 
     /**

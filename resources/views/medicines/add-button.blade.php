@@ -13,7 +13,7 @@
         </li>
         {{-- Excel export not implemented for medicines module --}}
         {{-- <li>
-            <a href="{{ isRole('clinic_admin') ? route('medicines.excel') : (isRole('staff') ? route('staff.medicines.excel') : route('doctors.medicines.excel')) }}"
+            <a href="{{ getRouteByRole('medicines.excel') }}"
         class="dropdown-item px-5">{{ __('messages.common.export_to_excel') }}</a>
         </li> --}}
     </ul>
@@ -23,4 +23,4 @@
         class="btn btn-primary">{{ __('messages.medicine.new_medicine') }}</a>
     @endif
 </div>
-
+

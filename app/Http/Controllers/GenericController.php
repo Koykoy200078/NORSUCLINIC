@@ -27,21 +27,6 @@ class GenericController extends AppBaseController
         $this->genericRepository = $genericRepo;
     }
 
-    /**
-     * Get the appropriate generic index route based on user role
-     */
-    private function getGenericIndexRoute(): string
-    {
-        if (isRole('clinic_admin')) {
-            return route('generics.index');
-        } elseif (isRole('staff')) {
-            return route('staff.generics.index');
-        } elseif (isRole('doctor')) {
-            return route('doctors.generics.index');
-        }
-
-        return route('generics.index');
-    }
 
     /**
      * Display a listing of the Generic.
@@ -80,7 +65,7 @@ class GenericController extends AppBaseController
 
         Flash::success(__('messages.medicine_generics') . ' ' . __('messages.medicine.saved_successfully'));
 
-        return redirect($this->getGenericIndexRoute());
+        return redirectByRole('generics.index');
     }
 
     /**
@@ -114,7 +99,7 @@ class GenericController extends AppBaseController
         $this->genericRepository->update($input, $generic->id);
         Flash::success(__('messages.medicine_generics') . ' ' . __('messages.medicine.updated_successfully'));
 
-        return redirect($this->getGenericIndexRoute());
+        return redirectByRole('generics.index');
     }
 
     /**

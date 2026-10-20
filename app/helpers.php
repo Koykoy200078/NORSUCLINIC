@@ -682,22 +682,7 @@ if (! function_exists('getRouteByRole')) {
      */
     function getRouteByRole(string $baseName, array $parameters = []): string
     {
-        $user = getLogInUser();
-        if (!$user) {
-            return route($baseName, $parameters);
-        }
-
-        $routeName = $baseName;
-
-        if ($user->hasRole('staff')) {
-            $routeName = 'staff.' . $baseName;
-        } elseif ($user->hasRole('nurse')) {
-            $routeName = 'staff.' . $baseName;
-        } elseif ($user->hasRole('doctor')) {
-            $routeName = 'doctors.' . $baseName;
-        } elseif ($user->hasRole('patient')) {
-            $routeName = 'patients.' . $baseName;
-        }
+        $routeName = getRouteNameByRole($baseName);
 
         // Check if route exists, if not fallback to baseName
         if (!\Illuminate\Support\Facades\Route::has($routeName)) {
@@ -705,6 +690,13 @@ if (! function_exists('getRouteByRole')) {
         }
 
         return route($routeName, $parameters);
+    }
+}
+
+if (! function_exists('redirectByRole')) {
+    function redirectByRole(string $baseName, array $parameters = []): \Illuminate\Http\RedirectResponse
+    {
+        return redirect(getRouteByRole($baseName, $parameters));
     }
 }
 
@@ -726,7 +718,8 @@ if (! function_exists('getRouteNameByRole')) {
         }
 
         if ($user->hasRole('doctor')) {
-            return 'doctors.' . $baseName;
+            // The doctor panel historically calls its doctor profile "detail" rather than "show".
+            return 'doctors.' . ($baseName === 'doctors.show' ? 'doctors.detail' : $baseName);
         }
 
         if ($user->hasRole('patient')) {
@@ -777,7 +770,7 @@ if (! function_exists('getDoctorsMenuUrl')) {
         if ($user->hasRole('doctor')) {
             $doctorId = $user->doctor?->id;
 
-            return $doctorId ? route('doctors.doctors.detail', $doctorId) : null;
+            return $doctorId ? getRouteByRole('doctors.show', [$doctorId]) : null;
         }
 
         return getRouteByRole('doctors.index');

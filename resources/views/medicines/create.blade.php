@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">{{ __('messages.medicine.new_medicine') }}</h1>
-        <a href="{{ isRole('clinic_admin') ? route('medicine-inventory.index') : (isRole('staff') ? route('staff.medicine-inventory.index') : route('doctors.medicine-inventory.index')) }}"
+        <a href="{{ getRouteByRole('medicine-inventory.index') }}"
             class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
     </div>
 </div>
@@ -22,9 +22,7 @@
         <div class="card">
             <div class="card-body">
                 {{ Form::open(['route' => 
-                    isRole('clinic_admin') ? 'medicines.store' : 
-                    (isRole('staff') ? 'staff.medicines.store' : 
-                    (isRole('doctor') ? 'doctors.medicines.store' : 'medicines.store')), 
+                    getRouteNameByRole('medicines.store'),
                     'id' => 'createMedicine']) }}
                 <div class="row">
                     @include('medicines.fields')

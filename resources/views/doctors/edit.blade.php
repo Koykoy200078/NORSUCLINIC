@@ -8,8 +8,7 @@
         <h1>@yield('title')</h1>
         <a class="btn btn-outline-primary float-end"
             href="{{ 
-                   isRole('clinic_admin') ? route('doctors.index') : 
-                   (isRole('staff') ? route('staff.doctors.index') : route('doctors.index'))
+                   getRouteByRole('doctors.index')
                }}">{{ __('messages.common.back') }}</a>
     </div>
 
@@ -20,8 +19,7 @@
         {{Form::hidden('qualification',$qualifications,['id' => 'qualificationData'])}}
         <div class="card-body">
             {{ Form::open(['route' => [
-                    isRole('clinic_admin') ? 'doctors.update' : 
-                    (isRole('staff') ? 'staff.doctors.update' : 'doctors.update'),
+                    getRouteNameByRole('doctors.update'),
                     $user->doctor->id
                 ], 'method' => 'Patch', 'files' => true,'id'=> 'editDoctorForm']) }}
             {{ Form::hidden('user_id', $doctor->id,['id' => 'editDoctorId']) }}
@@ -32,8 +30,7 @@
             {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'doctorBackgroundImg']) }}
             {{-- Add redirect URL based on user role --}}
             {{ Form::hidden('doctorIndexRedirectUrl', 
-                   isRole('clinic_admin') ? route('doctors.index') : 
-                   (isRole('staff') ? route('staff.doctors.index') : route('doctors.index')),
+                   getRouteByRole('doctors.index'),
                    ['id' => 'doctorIndexRedirectUrl']) }}
             @include('doctors.edit-fields')
             {{ Form::close() }}

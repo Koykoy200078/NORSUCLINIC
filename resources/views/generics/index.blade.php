@@ -8,9 +8,7 @@
 @section('content')
 <div class="container-fluid">
     {{Form::hidden('genericUrl',
-            isRole('clinic_admin') ? route('generics.index') :
-            (isRole('staff') ? route('staff.generics.index') :
-            (isRole('doctor') ? route('doctors.generics.index') : route('generics.index'))),
+            getRouteByRole('generics.index'),
         ['id'=>'indexGenericUrl'])}}
     {{ Form::hidden('medicine_generic', __('messages.medicine.medicine'). ' ' . __('messages.medicine.generic') , ['id' => 'medicineGeneric']) }}
     <div class="d-flex flex-column">

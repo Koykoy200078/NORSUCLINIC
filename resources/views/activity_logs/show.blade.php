@@ -16,9 +16,7 @@ Report Details
                 </div>
                 <div class="card-toolbar">
                     <a href="{{ 
-                        isRole('clinic_admin') ? route('activity-logs.index') : 
-                        (isRole('staff') ? route('staff.activity-logs.index') : 
-                        route('doctors.activity-logs.index'))
+                        getRouteByRole('activity-logs.index')
                     }}" class="btn btn-sm btn-light-primary">
                         <i class="fas fa-arrow-left"></i> Back to List
                     </a>

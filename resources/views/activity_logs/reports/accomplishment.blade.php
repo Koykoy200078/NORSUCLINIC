@@ -8,11 +8,7 @@
         : (isRole('staff')
             ? route('staff.activity-logs.index', array_merge(\Illuminate\Support\Arr::except($linkQuery, ['illness_system_id']), ['tab' => 'visits', 'illness_id' => 'none']))
             : route('doctors.activity-logs.index', array_merge(\Illuminate\Support\Arr::except($linkQuery, ['illness_system_id']), ['tab' => 'visits', 'illness_id' => 'none'])));
-    $accomplishmentLink = fn (string $format) => isRole('clinic_admin')
-        ? route('activity-logs.accomplishment', ['format' => $format] + $linkQuery)
-        : (isRole('staff')
-            ? route('staff.activity-logs.accomplishment', ['format' => $format] + $linkQuery)
-            : route('doctors.activity-logs.accomplishment', ['format' => $format] + $linkQuery));
+    $accomplishmentLink = fn (string $format) => getRouteByRole('activity-logs.accomplishment', ['format' => $format] + $linkQuery);
 @endphp
 
 <style>

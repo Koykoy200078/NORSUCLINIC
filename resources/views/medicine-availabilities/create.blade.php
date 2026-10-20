@@ -10,9 +10,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
         <h1 class="mb-0 me-1">{{ __('messages.medicine_availability.medicine_availability') }}</h1>
         <a href="{{ 
-            isRole('clinic_admin') ? route('stock-in.index') : 
-            (isRole('staff') ? route('staff.stock-in.index') : 
-            (isRole('doctor') ? route('doctors.stock-in.index') : route('stock-in.index'))) 
+            getRouteByRole('stock-in.index')
         }}"
             class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
     </div>
@@ -30,7 +28,7 @@
             <div class="card-body">
                 {{Form::hidden('uniqueId',2,['id'=>'purchaseUniqueId'])}}
                 {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
-                {{ Form::open(['route' => isRole('clinic_admin') ? 'stock-in.store' : (isRole('staff') ? 'staff.stock-in.store' : (isRole('doctor') ? 'doctors.stock-in.store' : 'stock-in.store')),'data-turbo'=>'false','id'=>'purchaseMedicineFormId']) }}
+                {{ Form::open(['route' => getRouteNameByRole('stock-in.store'),'data-turbo'=>'false','id'=>'purchaseMedicineFormId']) }}
                 <div class="row">
                     @include('medicine-availabilities.fields')
                 </div>

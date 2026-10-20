@@ -48,7 +48,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $hasDefaultPassword = $user && Hash::check('123456', $user->password);
+        $hasDefaultPassword = $user && Hash::check(User::DEFAULT_PASSWORD, $user->password);
         $isClinicAdmin = $user && (int) $user->type === User::ADMIN;
 
         // Force clinic admin to land on dashboard if still using the seeded default password.

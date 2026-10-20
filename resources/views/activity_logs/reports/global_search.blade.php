@@ -30,7 +30,7 @@
                                     <td>{{ $p->user->full_name }}</td>
                                     <td>{{ $p->contact_no }}</td>
                                     <td class="text-end">
-                                        <a href="{{ route(isRole('clinic_admin') ? 'patients.show' : (isRole('staff') ? 'staff.patients.show' : 'doctors.patients.show'), $p->id) }}" class="btn btn-sm btn-icon btn-light-primary">
+                                        <a href="{{ route(getRouteNameByRole('patients.show'), $p->id) }}" class="btn btn-sm btn-icon btn-light-primary">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -70,7 +70,7 @@
                                     <td>{{ $pres->patient->user->full_name }}</td>
                                     <td>#{{ $pres->id }}</td>
                                     <td class="text-end">
-                                        <a href="{{ route(isRole('clinic_admin') ? 'prescriptions.show' : (isRole('staff') ? 'staff.prescriptions.show' : 'doctors.prescriptions.show'), $pres->id) }}" class="btn btn-sm btn-icon btn-light-success">
+                                        <a href="{{ route(getRouteNameByRole('prescriptions.show'), $pres->id) }}" class="btn btn-sm btn-icon btn-light-success">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -108,7 +108,7 @@
                                     <td>{{ $inv->name }}</td>
                                     <td>{{ $inv->available_quantity }}</td>
                                     <td class="text-end">
-                                        <a href="{{ route(isRole('clinic_admin') ? 'medicines.index' : (isRole('staff') ? 'staff.medicines.index' : 'doctors.medicines.index'), ['search' => $inv->name]) }}" class="btn btn-sm btn-icon btn-light-warning">
+                                        <a href="{{ route(getRouteNameByRole('medicines.index'), ['search' => $inv->name]) }}" class="btn btn-sm btn-icon btn-light-warning">
                                             <i class="fas fa-search"></i>
                                         </a>
                                     </td>
