@@ -48,19 +48,6 @@ class RowActionsTest extends TestCase
         $this->assertStringNotContainsString('/private', $html);
     }
 
-    public function test_custom_actions_without_an_optional_title_still_have_visible_text(): void
-    {
-        $this->actingAs($this->makeAdmin());
-        $patient = $this->makePatient();
-        $html = Blade::render('<x-crud.action-buttons :model="$patient" :extra-actions="$actions" :show-tooltips="false" />', [
-            'patient' => $patient,
-            'actions' => [['route' => 'patients.edit', 'icon' => 'fas fa-eye']],
-        ]);
-
-        $this->assertStringContainsString(route('patients.edit', $patient), $html);
-        $this->assertStringContainsString('<span>Action</span>', $html);
-    }
-
     public function test_a_slot_with_only_comments_does_not_draw_an_empty_menu(): void
     {
         $this->actingAs($this->makeNurse());

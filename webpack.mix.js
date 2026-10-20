@@ -185,13 +185,11 @@ mix.js(
     [
         "resources/assets/js/custom/helper.js",
         "resources/assets/js/custom/custom.js",
-        "resources/assets/js/custom/input_price_format.js",
+        "resources/assets/js/custom/number-format.js",
         "resources/assets/js/custom/sidebar_menu.js",
         "resources/assets/js/profile/create-edit.js",
         "resources/assets/js/doctors/doctors.js",
         "resources/assets/js/doctors/create-edit.js",
-        "resources/assets/js/doctors/detail.js",
-        "resources/assets/js/patients/detail.js",
         "resources/assets/js/users/user-profile.js",
         "resources/assets/js/patients/patients.js",
         "resources/assets/js/patients/create-edit.js",
@@ -229,7 +227,6 @@ mix.js(
 mix.js(
     [
         "resources/assets/js/custom/helper.js",
-        "resources/assets/js/custom/input_price_format.js",
         "resources/assets/js/fronts/sliders/slider.js",
         "resources/assets/front/js/front-custom.js",
         "resources/assets/js/fronts/sliders/create-edit-slider.js",

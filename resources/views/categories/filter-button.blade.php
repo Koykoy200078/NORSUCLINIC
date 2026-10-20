@@ -1,5 +1,5 @@
 <div class="d-flex float-start">
-    <div class="ms-0 ms-md-2">
+    <div class="ms-0 ms-md-2" wire:ignore>
         <div class="dropdown d-flex align-items-center me-4 me-md-5">
             <button
                     class="btn btn btn-icon btn-primary text-white dropdown-toggle hide-arrow ps-2 pe-0"

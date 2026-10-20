@@ -185,18 +185,6 @@ class PatientController extends AppBaseController
         }
     }
 
-    public function deleteOldPatient()
-    {
-        // Include archived (soft-deleted) patients in the keep-set — Patient::pluck applies
-        // the SoftDeletes scope, which would otherwise treat archived patients as "old" and
-        // wipe their user accounts too. CRUD-DL. (Route is POST-only so CSRF applies.)
-        $patients = Patient::withTrashed()->pluck('user_id')->toArray();
-
-        User::whereType(User::PATIENT)->whereNotIn('id', $patients)->delete();
-
-        return $this->sendSuccess(__('messages.common.deleted_successfully'));
-    }
-
     public function showMyHistory(Patient $patient)
     {
         // The page belongs to the Patients module, but each history part belongs to its own module: a staff member with

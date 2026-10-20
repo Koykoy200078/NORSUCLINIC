@@ -28,7 +28,6 @@ Edit Dispense Record
                 {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
 
                 {{ Form::model($medicineBill, ['route' => [getRouteNameByRole('dispense-records.update'), $medicineBill->id], 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
-                {{-- @include('medicine-history.fields')  --}}
                 <div class="row">
                     @include('medicine-history.medicine-table')
                 </div>
@@ -51,5 +50,4 @@ Edit Dispense Record
     @endsection
     {{-- assets/js/moment.min.js --}}
     {{-- assets/js/bills/edit.js --}}
-    {{-- assets/js/custom/input_price_format.js --}}
     {{-- assets/js/bills/new.js --}}

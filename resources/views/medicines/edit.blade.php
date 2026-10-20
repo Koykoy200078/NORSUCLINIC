@@ -34,6 +34,5 @@
 </div>
 @endsection
 @section('page_js')
-{{-- assets/js/custom/input_price_format.js --}}
 {{-- assets/js/medicines/new.js --}}
 @endsection

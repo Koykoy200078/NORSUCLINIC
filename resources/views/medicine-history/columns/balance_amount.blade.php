@@ -1,1 +1,0 @@
-{{ $row->balance_amount }}

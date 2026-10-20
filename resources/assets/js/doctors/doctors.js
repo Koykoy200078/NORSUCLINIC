@@ -18,12 +18,6 @@ listenChange("#doctorStatus", function () {
     Livewire.dispatch("changeStatusFilter", { value: $(this).val() });
 });
 
-Livewire.hook("element.init", () => {
-    if ($("#doctorStatus").length) {
-        $("#doctorStatus").select2();
-    }
-});
-
 listenClick(".doctor-delete-btn", function () {
     let userId = $(this).attr("data-id");
     let deleteUserUrl = $(this).attr("data-delete-url");
@@ -183,9 +177,4 @@ listenChange(".doctor-email-verified", function (e) {
             displaySuccessMessage(result.message);
         },
     });
-});
-Livewire.hook("element.init", () => {
-    if ($("#enquiriesStatus").length) {
-        $("#enquiriesStatus").select2();
-    }
 });

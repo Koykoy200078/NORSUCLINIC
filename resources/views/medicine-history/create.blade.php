@@ -45,4 +45,3 @@ Add Dispense Record
 @endsection
 {{-- assets/js/moment.min.js  --}}
 {{-- assets/js/bills/new.js --}}
-{{-- assets/js/custom/input_price_format.js --}}

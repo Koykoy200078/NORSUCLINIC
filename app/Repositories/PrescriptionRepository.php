@@ -2,24 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Models\DispenseRecord;
-use App\Models\DispenseRecordItem;
 use App\Models\Doctor;
 use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\Prescription;
-use App\Models\PrescriptionMedicine;
-use App\Models\Setting;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Arr;
 
 /**
  * Class PrescriptionRepository
@@ -73,124 +61,11 @@ class PrescriptionRepository extends BaseRepository
         });
     }
 
-    /**
-     * @param  array  $prescription
-     * @return bool|Builder|Builder[]|Collection|Model
-     */
-    //    public function update($prescription, $input)
-    //    {
-    //        try {
-    //            /** @var Prescription $prescription */
-    //            $prescription->update($input);
-    //
-    //            return true;
-    //        } catch (Exception $e) {
-    //            throw new UnprocessableEntityHttpException($e->getMessage());
-    //        }
-    //    }
-
     public function getMedicines(): array
     {
         $data['medicines'] = Medicine::where('available_quantity', '>', 0)->pluck('name', 'id')->toArray();
 
         return $data;
-    }
-
-    public function getMedicinesQuantity()
-    {
-        $data = Medicine::where('available_quantity', '>', 0)->pluck('quantity')->toArray();
-        return $data;
-    }
-
-    public function createPrescription(array $input, Model $prescription)
-    {
-        try {
-            DB::beginTransaction();
-
-            $qty = 0;
-            if (isset($input['medicine'])) {
-                $medicineBill = DispenseRecord::create([
-                    'history_number' => 'HIS' . generateUniqueHistoryNumber(),
-                    'patient_id' => $input['patient_id'],
-                    'doctor_id' => $input['doctor_id'],
-                    'model_type' => \App\Models\Prescription::class,
-                    'model_id' => $prescription->id,
-                    'bill_date' => Carbon::now(),
-                ]);
-                foreach ($input['medicine'] as $key => $value) {
-                    $PrescriptionItem = [
-                        'prescription_id' => $prescription->id,
-                        'medicine' => $input['medicine'][$key],
-                        'dosage' => $input['dosage'][$key],
-                        'day' => $input['day'][$key],
-                        'time' => $input['time'][$key],
-                        'dose_interval' => $input['dose_interval'][$key],
-                        'comment' => $input['comment'][$key],
-                    ];
-                    $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
-                    $medicine = Medicine::find($input['medicine'][$key]);
-                    $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $dispenseItemArray = [
-                        'dispense_id' => $medicineBill->id,
-                        'medicine_id' => $medicine->id,
-                        'quantity' => $qty,
-                    ];
-                    DispenseRecordItem::create($dispenseItemArray);
-                }
-            }
-            DB::commit();
-        } catch (Exception $e) {
-
-            DB::rollBack();
-            throw new UnprocessableEntityHttpException($e->getMessage());
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function prescriptionUpdate($prescription, $input)
-    {
-        try {
-            DB::beginTransaction();
-            $prescriptionMedicineArr = Arr::only($input, $this->model->getFillable());
-            $prescription->update($prescriptionMedicineArr);
-            $medicineBill = DispenseRecord::with('dispenseItems')->whereModelType(\App\Models\Prescription::class)->whereModelId($prescription->id)->first();
-            $prescription->getMedicine()->delete();
-            $medicineBill->dispenseItems()->delete();
-            $qty = 0;
-
-            if (! empty($input['medicine'])) {
-                foreach ($input['medicine'] as $key => $value) {
-                    $PrescriptionItem = [
-                        'prescription_id' => $prescription->id,
-                        'medicine' => $input['medicine'][$key],
-                        'dosage' => $input['dosage'][$key],
-                        'day' => $input['day'][$key],
-                        'time' => $input['time'][$key],
-                        'dose_interval' => $input['dose_interval'][$key],
-                        'comment' => $input['comment'][$key],
-                    ];
-                    $prescriptionMedcine = PrescriptionMedicine::create($PrescriptionItem);
-
-                    $medicine = Medicine::find($input['medicine'][$key]);
-                    $qty = $input['day'][$key] * $input['dose_interval'][$key];
-                    $dispenseItemArray = [
-                        'dispense_id' => $medicineBill->id,
-                        'medicine_id' => $medicine->id,
-                        'quantity' => $qty,
-                    ];
-                    DispenseRecordItem::create($dispenseItemArray);
-                }
-            }
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            throw new UnprocessableEntityHttpException($e->getMessage());
-        }
-
-        return $prescription;
     }
 
     public function getData($id): array

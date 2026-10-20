@@ -33,6 +33,9 @@ php artisan db:integrity
 | [`inventory:recover-orphan-batches`](#inventoryrecover-orphan-batches) | Finds stock batches whose medicine was deleted. With `--apply` it re-creates the medicine as "Unknown medicine #N" under its old id, **writes its stock off through the ledger**, then adds the foreign key those batches were blocking | **Dry run by default.** With `--apply`: adds medicine rows and ledger rows (`disposal`); deletes nothing | **once** on the clinic copy, after `migrate`, if `db:integrity` reports `medicine_batches_medicine_id_foreign`; take a backup first | Phase 1 follow-up, 2026-10-09 |
 | `cache:warmup` | Refreshes settings and warms the doctor list, excluding archived accounts | Cache only; no database row changes | Optional after deployment/cache clearing; uses this project folder's configured database | Existing command; archive handling verified 2026-10-20 |
 | `user:restore <email>` / `user:restore --id=<id>` | Restores an archived account (and its patient record when present); doctor archives now retain the complete profile, address, photo and specialization links | Yes: clears archive timestamps | When the owner wants an archived account back; run on the server using the intended database | Existing command; complete doctor restore verified 2026-10-20 |
+| `lang:js` | Regenerates the local JavaScript translations | Generated file only; no database changes | Terminal during the asset build; the unused `/lang-js` browser endpoint was retired in Phase 6.6 | Existing vendor command retained, 2026-10-20 |
+| `fix:dashboard-permissions` (retired) | Obsolete repair for per-user dashboard permissions, superseded by role permissions | No longer available | Do not run; manage the five role permissions in Settings › Manage User roles | Removed in Phase 6.6, 2026-10-20 |
+| `performance:monitor` (retired) | Unused legacy diagnostic command | No longer available | Do not run; no application, script or documented operator caller was found | Removed in Phase 6.6, 2026-10-20 |
 
 Run order on the clinic copy: `db:backup` → `migrate` → `inventory:recover-orphan-batches --apply` (once) → `db:integrity`.
 
@@ -225,6 +228,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-20 | 6.6 | Retired `fix:dashboard-permissions` and `performance:monitor`; retained `cache:warmup` and CLI `lang:js`, removed the unused browser translation endpoint |
 | 2026-10-19 | 7 | `reverb:start` (vendor command of laravel/reverb) is now part of the startup scripts; firewall rule for port 8080 documented above |
 | 2026-10-09 | 1 follow-up | `inventory:recover-orphan-batches [--apply]` added (owner decision: keep the history of the 4 orphan batches); rehearsal runner runs it |
 | 2026-10-09 | 1.4 | `db:restore-foreign-keys` added |

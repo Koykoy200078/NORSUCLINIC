@@ -14,7 +14,6 @@
         </div>
     </div>
 @endsection
-    {{--   assets/js/custom/input_price_format.js --}}
     {{--   assets/js/bills/bill.js -}}
     {{--   assets/js/custom/new-edit-modal-form.js -}}
     {{--   assets/js/custom/reset_models.js --}}

@@ -29,7 +29,6 @@ class AuditAdministrativeActions
         '#(^|/)reset-password$#' => ['password_reset', 'password reset'],
         '#^(doctors|staffs)(/|$)|^doctor-status$|^add-qualification$|^email-verified$|^email/verification-notification#' => ['account_changed', 'user account'],
         '#^backups(/|$)#' => ['backup_changed', 'backup'],
-        '#^delete-old-patients$#' => ['patients_purged', 'old patient records'],
         '#^dispense-records(/|$)#' => ['dispense_record_changed', 'manual dispense record'],
         '#^(medicines|categories|generics|specializations|countries|states|cities|barangays|banner|cms)(/|$)#' => ['master_data_changed', 'master data'],
     ];

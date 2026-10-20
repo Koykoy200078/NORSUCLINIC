@@ -1,11 +1,5 @@
 "use strict";
 
-Livewire.hook("element.init", ({ component, el }) => {
-    if ($("#medicineCategoryHead").length) {
-        $("#medicineCategoryHead").select2();
-    }
-});
-
 listenClick(".add-category", function () {
     $("#add_categories_modal").modal("show").appendTo("body");
 });
@@ -139,8 +133,7 @@ function activeDeActiveCategory(id) {
 
 listenChange("#medicineCategoryHead", function () {
     Livewire.dispatch("changeFilter", { value: $(this).val() });
-    hideDropdownManually(
-        $("#medicineCategoryFilterBtn"),
-        $("#medicineCategoryFilter"),
-    );
+    bootstrap.Dropdown.getOrCreateInstance(
+        document.getElementById("medicineCategoryFilterBtn"),
+    ).hide();
 });

@@ -285,84 +285,6 @@ if (! function_exists('getBadgeColor')) {
     }
 }
 
-if (! function_exists('getBadgeStatusColor')) {
-
-    /**
-     * @return string
-     */
-    function getBadgeStatusColor($status)
-    {
-        $colors = [
-            'danger',
-            'primary',
-            'success',
-            'warning',
-            'danger',
-        ];
-
-        return $colors[$status];
-    }
-}
-if (! function_exists('getStatusBadgeColor')) {
-
-    /**
-     * @return string
-     */
-    function getStatusBadgeColor($index)
-    {
-        $colors = [
-            'danger',
-            'primary',
-            'success',
-            'warning',
-        ];
-
-        $index = $index % 4;
-
-        return $colors[$index];
-    }
-}
-
-if (! function_exists('getStatusColor')) {
-
-    /**
-     * @return string
-     */
-    function getStatusColor($index)
-    {
-        $colors = [
-            '#F46387',
-            '#399EF7',
-            '#50CD89',
-            '#FAC702',
-        ];
-
-        $index = $index % 4;
-
-        return $colors[$index];
-    }
-}
-
-if (! function_exists('getStatusClassName')) {
-
-    /**
-     * @return string
-     */
-    function getStatusClassName($status)
-    {
-        $classNames = [
-            'bg-status-canceled',
-            'bg-status-booked',
-            'bg-status-accepted',
-            'bg-status-finished',
-        ];
-
-        $index = $status % 4;
-
-        return $classNames[$index];
-    }
-}
-
 if (! function_exists('getSettingValue')) {
 
     /**
@@ -382,20 +304,6 @@ if (! function_exists('setEmailLowerCase')) {
     function setEmailLowerCase($email)
     {
         return strtolower($email);
-    }
-}
-
-if (! function_exists('getUserLanguages')) {
-
-    /**
-     * @return string[]
-     */
-    function getUserLanguages()
-    {
-        $language = User::LANGUAGES;
-        asort($language);
-
-        return $language;
     }
 }
 
@@ -461,17 +369,6 @@ if (! function_exists('checkLanguageSession')) {
     }
 }
 
-if (! function_exists('getCurrentLanguageName')) {
-
-    /**
-     * @return mixed|null
-     */
-    function getCurrentLanguageName()
-    {
-        return User::LANGUAGES[checkLanguageSession()];
-    }
-}
-
 if (! function_exists('getMonth')) {
 
     function getMonth()
@@ -506,30 +403,6 @@ if (! function_exists('getWeekDate')) {
         $endDate = $endOfWeek->format('Y-m-d');
 
         return $startDate . ' - ' . $endDate;
-    }
-}
-
-if (! function_exists('getYearDate')) {
-
-    function getYearDate(): string
-    {
-        $date = Carbon::now()->year;
-        $startDate = Carbon::createFromDate($date, 1, 1)->startOfDay();
-        $endDate = Carbon::createFromDate($date, 12, 31)->endOfDay();
-
-        return $startDate . ' - ' . $endDate;
-    }
-}
-
-if (! function_exists('filterLangChange')) {
-
-    function filterLangChange($filterArray): array
-    {
-        foreach ($filterArray as $key => $value) {
-            $array[$key] = __('messages.filter.' . strtolower($value));
-        }
-
-        return $array;
     }
 }
 

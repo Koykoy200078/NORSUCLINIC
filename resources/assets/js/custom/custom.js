@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", loadCustomData);
 
 require("./row-actions");
 require("./consultation-medicine-picker");
+require("./select2-widgets");
 
 let source = null;
 let jsrender = require("jsrender");
@@ -16,7 +17,6 @@ $.ajaxSetup({
 document.addEventListener("DOMContentLoaded", initAllComponents);
 
 function initAllComponents() {
-    select2initialize();
     refreshCsrfToken();
     alertInitialize();
     modalInputFocus();
@@ -87,12 +87,6 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings) {
         });
 });
 
-function select2initialize() {
-    $('[data-control="select2"]').each(function () {
-        $(this).select2();
-    });
-}
-
 document.addEventListener("click", function (e) {
     let filterBtnEle = $(e.target).closest(
         '.show[data-ic-dropdown-btn="true"]',
@@ -105,14 +99,6 @@ document.addEventListener("click", function (e) {
         $('[data-ic-dropdown-btn="true"]').removeClass("show");
         $('[data-ic-dropdown="true"]').removeClass("show");
     }
-});
-
-document.addEventListener("livewire:load", function () {
-    window.livewire.hook("message.processed", () => {
-        $('[data-control="select2"]').each(function () {
-            $(this).select2();
-        });
-    });
 });
 
 const inputFocus = () => {

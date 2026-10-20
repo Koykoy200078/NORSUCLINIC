@@ -196,12 +196,6 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
 // Note: Doctor and Staff routes are defined in their respective route files
 // to avoid duplication and maintain role-based separation.
 
-// POST (not GET) so CSRF protection applies — a GET bulk-delete is triggerable via a
-// simple <img> tag on any page the admin visits. CRUD-DL.
-Route::post('delete-old-patients', [PatientController::class, 'deleteOldPatient'])
-    ->name('patients.delete-old')
-    ->middleware(['auth', 'checkUserStatus', 'role:clinic_admin', 'permission:manage_patients']);
-
 require __DIR__ . '/auth.php';
 
 // Patient self-service portal is retired — patients are record-only and no longer log in
@@ -210,4 +204,3 @@ require __DIR__ . '/auth.php';
 // require __DIR__ . '/patient.php';
 require __DIR__ . '/staff.php';
 require __DIR__ . '/doctor.php';
-require __DIR__ . '/upgrade.php';
