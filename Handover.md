@@ -60,16 +60,24 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | `392b931` — Phase 6.2 shared role routing and default password (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
+| Last pushed work | `62877ce` — Phase 6.3 shared row-action menus (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
 | Work in progress (not pushed) | none |
-| Next step | **Phase 6.3 — shared ⋮ row-action menu**, then 6.4–6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
+| Next step | **Phase 6.4 — shared consultation medicine picker**, then 6.5–6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | No new commands in this checkpoint. [docs/commands.md](docs/commands.md) also records the reviewed existing `cache:warmup` and `user:restore` behavior. |
-| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 715 tests / 7,906 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
+| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 727 tests / 7,951 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-20 12:49 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `243bfdd` (Phase 6.2 and handover pushed; working tree clean).
+- **Work:** Phase **6.3** shared `<x-row-actions>` menus: preserve permissions, record rules and JavaScript hooks; menu labels, keyboard navigation, clipping and delete-last order; cover action views, queue rows and patient-history tables; inline/test-first with browser checks, full suite, crawl, route contract and matrix before pushing.
+- **END:** Work commit `62877ce`, followed by this handover commit. Shared accessible/clipping-safe menu across 22 row-action templates/components, queue rows/cards and four patient-history groups; the 23rd inventory entry was a Stock-In header Add button and stays a visible header button. Existing hooks, record rules and permission gates preserved; Delete/archive last; empty/forbidden menus omitted. Medicine Delete shares the server history rule with eager flags and no per-row queries.
+- **Verified:** 12 menu regressions / 45 assertions; five mutations detected and restored byte-for-byte. Full suite with crawl **727 tests / 7,951 assertions**, passing (12:34.011); **1,610 requests / 15 variants**, zero problems. Complete **461 routes** unchanged; **6,288-cell / 393-route / 16-variant** access matrix identical, zero errors/leaks. Chrome **102 recorded action-entry clicks**, plus synthetic patient archive/filter/restore, doctor read-only inventory and keyboard/clipping at 1,100 / 440 pixels; zero browser errors, external network requests or server failures. Build and diff check clean; generated translations restored. Context7 Laravel 10.x and Bootstrap docs used.
+- **Cleanup / observations:** Isolated Apache process, synthetic browser database and access file removed; original clinic database unchanged. A temporary focused test accidentally reset the synthetic browser schema; fixtures were rebuilt and checks rerun. All later tests explicitly selected `norsu_clinic_test`. PHP CLI-server truncated responses were avoided with isolated Apache; matching upstream issue and Phase 9 runtime/LAN follow-up are recorded in the plan. No dependency, schema or Artisan-command change.
+- **Continue:** **6.4** shared consultation medicine picker, then **6.5–6.6**. Existing create/edit picker behavior has a synthetic browser characterization baseline in ignored audit artifacts (saved IDs, stock credit, out-of-stock, removal confirmation, Plan permission and duplicate guard); source extraction has not started. Existing owner decisions remain in STATUS §6.
 
 ### 2026-10-20 11:23 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `943650f` (Phase 6.1 and handover pushed; working tree clean).
