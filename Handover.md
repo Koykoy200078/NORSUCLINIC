@@ -60,16 +60,24 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | `62877ce` — Phase 6.3 shared row-action menus (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
+| Last pushed work | `32411ec` — Phase 6.4 shared consultation medicine picker (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
 | Work in progress (not pushed) | none |
-| Next step | **Phase 6.4 — shared consultation medicine picker**, then 6.5–6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
+| Next step | **Phase 6.5 — DocumentIssuanceController split**, then 6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | No new commands in this checkpoint. [docs/commands.md](docs/commands.md) also records the reviewed existing `cache:warmup` and `user:restore` behavior. |
-| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 727 tests / 7,951 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
+| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 730 tests / 8,004 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-20 14:46 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `0148496` (Phase 6.3 and handover pushed; working tree clean).
+- **Work:** Phase **6.4**, one shared consultation medicine-picker script with safe role-aware configuration, preserving create/edit stock, saved-row, Plan permission and duplicate behavior. Characterization first; assess dispensing/prescription reuse where compatible. Inline implementation, real browser checks, full suite/crawl, unchanged routes and matrix before pushing.
+- **END:** Work commit `32411ec`, followed by this handover commit. Shared bundled picker and safe JSON component replace consultation create/edit copies. Preserved saved IDs, quantity limits/stock credit, out-of-stock rows, removal confirmation, doctor-only Plan and per-section duplicate checks. Other picker contracts differ (Select2/template/category fields), so dispensing/prescriptions keep their existing scripts. Certificate/excuse-slip forms make no catalog request. No dependency, schema or Artisan-command change.
+- **Verified:** Three new integration cases / 53 assertions (RED/GREEN); focused consultation/access/stock **31 / 295**. Standalone browser regression plus committed synthetic pre-refactor DOM fixture covers four create/edit × staff/doctor states; five JavaScript fault copies and three PHP mutations detected, PHP source restored byte-for-byte. Chrome **10 actual forms** as admin/staff/doctor, no JavaScript errors, external network requests or server failures. Full suite with crawl **730 tests / 8,004 assertions**, passing (12:24.721); **1,610 crawl requests / 15 variants**, zero problems. All **461 routes** and **6,288 matrix cells / 393 routes / 16 variants** identical to baseline, zero errors/leaks. Final build and diff check clean; generated translations restored. Context7 Laravel 10.x safe JSON and installed 10.50 encoder checked.
+- **Cleanup / execution:** Isolated Apache, synthetic browser schema and private access file removed; clinic database unchanged. Run page checks after the asset build: their initial overlap briefly exposed missing files, and the complete focused/full checks were rerun after the final build. Tests explicitly use `norsu_clinic_test`.
+- **Continue:** **6.5** controller services, then **6.6** dead/broken-code sweep. Read-only method map and an unrun boundary-test draft are in ignored `storage/framework/testing/phase65-*` artifacts. Proposed boundaries: patient matching/profile, consultation medicines, private-image lifecycle and successful redirects; keep controller transaction/rollback order. Context7 Laravel 10.x constructor-resolution documentation already fetched. Existing owner decisions and Phase 9 runtime/LAN follow-up remain in the records.
 
 ### 2026-10-20 12:49 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `243bfdd` (Phase 6.2 and handover pushed; working tree clean).
