@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–5 and 7 done and verified; Phase 5 rows 5.14–5.22 and the approved doctor archive follow-up completed 2026-10-20. **Next:** Phase 6.1 (shared route definitions). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–5 and 7 done and verified; Phase 6.1 shared route definitions completed 2026-10-20. **Next:** Phase 6.2 (role routing and the shared default-password constant). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -810,9 +810,15 @@ Every defect gets a failing test, then the fix, then both passes again.
     Artisan commands added ([commands.md](commands.md) unchanged). Observed, not changed: the Accomplishment Report PDF took about 35 s on the busy machine
     (DomPDF), inside the clinic PC's 120 s limit. Modules 5.4 / 5.10 still need their remaining passes.
 
+### Phase 6 — progress 2026-10-20: 6.1 shared route definitions (done)
+
+`App\Support\PanelRoutes` holds the common module definitions; `routes/web.php`, `staff.php` and `doctor.php` call them inside their existing panel groups and in their original order. It keeps the doctor patient/inventory restrictions, admin queue PUT-only update and binding names, lookup permissions, extra dispensing permission, report-export paths and legacy redirects explicit. Admin-only settings and shared account/public routes stay in `web.php`.
+
+**Verified:** pre-refactor contract captured from `af66ff0`; four new `SharedPanelRoutesTest` tests pin all **394 panel routes** (including registration order, methods, actions, middleware, constraints and redirect defaults), reusable group registration, stock-out redirect targets and lookup precedence. RED for the missing shared registrar, then GREEN; four deliberate permission/method/constraint/redirect mutations each failed and the source was restored byte-for-byte. Focused access checks: **41 tests / 528 assertions**. Full suite with `LINK_CRAWL=1`: **707 tests / 7,865 assertions**, all passing (06:15.434); crawl **1,610 requests / 15 actor variants**, zero problems. The complete `route:list --json` is byte-identical (**461 routes**). Before/after matrix: **393 routes × 16 account/permission variants = 6,288 requests** each, identical response cells and permission sets, zero server errors or access violations (203 missing-permission, 3,637 other-panel and 1,179 guest/patient/inactive checks). Backup create/import/delete actions are excluded from this disposable-schema matrix; unbound fixture IDs may answer 404 before a role check. Inline review and diff check clean. Context7 Laravel **10.x** route-group/resource documentation used. No database, schema, asset or command change; no browser UI was changed in this step.
+
 ### Phase 6 — Deep DRY refactor + dead-code removal (behaviour unchanged)
 Each step is guarded by: full suite + `route:list --json` diff (identical unless a change is listed) + link crawl + matrix.
-- [ ] 6.1 **Routes:** one shared definition per module with per-panel differences; `web.php`, `staff.php` and `doctor.php` use it. Every URL and route name stays identical.
+- [x] 6.1 **Routes:** one shared definition per module with per-panel differences; `web.php`, `staff.php` and `doctor.php` use it. Every URL and route name stays identical.
 - [ ] 6.2 **Role routing:** the per-controller `getIndexRoute()` / `resolve*Route()` copies and the ~130 view ternaries `isRole(..) ? route(a) : ..` → `getRouteByRole()` / `redirectByRole()`; overlapping helpers merged; default password `123456` in one constant.
 - [ ] 6.3 **⋮ action menu:**
   - one component `<x-row-actions>` (dropdown not clipped by the table, keyboard-usable, delete last);

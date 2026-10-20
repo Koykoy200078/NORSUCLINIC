@@ -1,133 +1,23 @@
 <?php
 
-use App\Http\Controllers\GenericController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\MedicineController;
-use App\Http\Controllers\MedicineDispensingManagementController;
-use App\Http\Controllers\DispenseRecordController;
-use App\Http\Controllers\StockInController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PatientQueueController;
-use App\Http\Controllers\PrescriptionController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\SpecializationController;
-use App\Http\Controllers\DocumentIssuanceController;
-use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\LabRequestController;
+use App\Support\PanelRoutes;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus', 'role:doctor', 'forcePasswordChange')->group(function () {
-
     Route::get('/patients-detail/{patient}', [PatientController::class, 'show'])->name('patient.detail')->middleware('permission:manage_patients');
 
-    //doctor dashboard route
-    Route::get('/dashboard', [DashboardController::class, 'doctorDashboard'])->name('dashboard');
-
-    // Patient Queue (Doctors can view and update queue)
-    Route::get('patient-queue', [PatientQueueController::class, 'doctorQueue'])->name('patient-queue.index')->middleware('permission:manage_patients');
-    Route::get('patient-queue/refresh', [PatientQueueController::class, 'doctorQueuePartial'])->name('patient-queue.refresh')->middleware('permission:manage_patients');
-    Route::post('patient-queue/{patientQueue}/call-next', [PatientQueueController::class, 'callNext'])->name('patient-queue.call-next')->middleware('permission:manage_patients');
-    Route::post('patient-queue/{patientQueue}/complete', [PatientQueueController::class, 'complete'])->name('patient-queue.complete')->middleware('permission:manage_patients');
-    Route::get('patient-queue/{patientQueue}/consultation', [PatientQueueController::class, 'viewConsultation'])->name('patient-queue.view-consultation')->middleware(['permission:manage_patients', 'permission:manage_request_documents']);
-
-    Route::get('doctors/{doctor}', [UserController::class, 'show'])->name('doctors.detail')->middleware('permission:manage_doctors');
-
-    // Route for Prescription
-    Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::resource('prescriptions', PrescriptionController::class)->except(['create', 'edit']);
-        Route::get('patients/{patientId}/prescription-create', [PrescriptionController::class, 'create'])->name('prescriptions.create');
-        Route::get('prescriptions/{prescription}/edit', [PrescriptionController::class, 'edit'])->name('prescriptions.edit');
-        Route::post('prescription-medicine', [PrescriptionController::class, 'prescreptionMedicineStore'])->name('prescription.medicine.store');
-        Route::post('prescriptions/{prescription}/active-deactive', [PrescriptionController::class, 'activeDeactiveStatus'])->name('prescription.status');
-        Route::get('prescription-medicine-show/{id}', [PrescriptionController::class, 'prescriptionMedicineShowFunction'])->name('prescription.medicine.show');
-        Route::get('prescription-pdf/{id}', [PrescriptionController::class, 'convertToPDF'])->name('prescriptions.pdf');
-        Route::post('prescriptions/{prescription}/dispense', [PrescriptionController::class, 'dispense'])->name('prescriptions.dispense')->middleware('permission:manage_medicines');
-    });
-
-    // Patient Management (Doctors view and edit existing patients). Registering, archiving, restoring
-    // and password resets belong to staff/nurse and the clinic admin, so those routes are not exposed here.
-    Route::middleware('permission:manage_patients')->group(function () {
-        Route::resource('patients', PatientController::class)->only(['index', 'show', 'edit', 'update']);
-        Route::get('patients/{patient}/history', [PatientController::class, 'showMyHistory'])->name('patients.showMyHistory');
-        // Email verification for patients
-        Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
-        // Toggle email_verified_at (doctor managing patients)
-        Route::post('/email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
-    });
-
-    // Specializations (Doctors can manage specializations)
-    Route::middleware('permission:manage_specialties')->group(function () {
-        Route::resource('specializations', SpecializationController::class)->except(['create', 'show']);
-    });
-
-    // Document form lookups
-    Route::get('document-issuances/search-users', [DocumentIssuanceController::class, 'searchUsers'])->name('document-issuances.search-users')->middleware('permission:manage_request_documents');
-    Route::get('document-issuances/get-last-consultation', [DocumentIssuanceController::class, 'getLastConsultation'])->name('document-issuances.get-last-consultation')->middleware('permission:manage_request_documents');
-    Route::get('document-issuances/get-last-medical-certificate', [DocumentIssuanceController::class, 'getLastMedicalCertificate'])->name('document-issuances.get-last-medical-certificate')->middleware('permission:manage_request_documents');
-    Route::get('lab-requests/search-users', [LabRequestController::class, 'searchUsers'])->name('lab-requests.search-users')->middleware('permission:manage_request_documents');
-
-    // Request Documents (Doctors can manage)
-    Route::middleware('permission:manage_request_documents')->group(function () {
-        Route::get('document-issuances/{document_issuance}/export-pdf', [DocumentIssuanceController::class, 'exportPdf'])->name('document-issuances.export-pdf');
-        Route::get('document-issuances/{document_issuance}/images/{index}', [DocumentIssuanceController::class, 'showImage'])
-            ->whereNumber('index')->name('document-issuances.image');
-        Route::resource('document-issuances', DocumentIssuanceController::class);
-
-        // Lab Requests
-        Route::post('lab-requests/{lab_request}/status', [LabRequestController::class, 'updateStatus'])->name('lab-requests.update-status');
-        Route::get('lab-requests/{id}/pdf', [LabRequestController::class, 'exportPdf'])->name('lab-requests.pdf');
-        Route::resource('lab-requests', LabRequestController::class);
-    });
-
-    Route::get('medicines-by-category', [MedicineController::class, 'getMedicinesByCategory'])
-        ->name('medicines.by.category')->middleware('permission:manage_request_documents|manage_medicines');
-
-    // Medicine inventory: doctors LOOK, they never change it (owner decision 2026-10-18): the lists and detail pages
-    // only; adding, editing, deleting, stock-in and the category switch are for staff and the clinic admin.
-    Route::middleware('permission:manage_medicines')->group(function () {
-        // Medicine Categories
-        Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category'])->only(['index', 'show']);
-
-        // Medicine Generics
-        Route::resource('generics', GenericController::class)->only(['index', 'show']);
-
-        // Medicines
-        Route::resource('medicines', MedicineController::class)->parameters(['medicines' => 'medicine'])->only(['index']);
-        Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
-        Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
-        Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
-        Route::get('medicine-dispensing-management', [MedicineDispensingManagementController::class, 'index'])->name('medicine-dispensing.index');
-
-        // Stock In (Medicine Purchasing)
-        Route::resource('stock-in', StockInController::class)->only(['index', 'show']);
-        Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
-        Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
-        Route::get('used-medicine', function () {
-            return redirect()->route('doctors.medicine-dispensing.index', ['tab' => 'stock-out']);
-        })->name('used-medicine.index');
-
-        // Dispense Records
-        Route::resource('dispense-records', DispenseRecordController::class)->parameters(['dispense-records' => 'medicine_history']);
-        Route::post('dispense-records/store-patient', [DispenseRecordController::class, 'storePatient'])->name('dispense-records.store-patient');
-        Route::get('dispense-records-pdf/{id}', [DispenseRecordController::class, 'convertToPDF'])->name('dispense-records.pdf');
-        Route::get('dispense-records/by-category/{category}', [DispenseRecordController::class, 'getMedicineCategory'])->name('dispense-records.by-category');
-        Route::get('dispense-records/consultation/{document_issuance}', [DispenseRecordController::class, 'showConsultation'])
-            ->whereNumber('document_issuance')->name('dispense-records.consultation');
-
-        // Medicine History (legacy URLs - redirect to dispense-records for backward compat)
-        Route::redirect('medicine-history', '/doctors/dispense-records')->name('medicine-history.index');
-        Route::redirect('medicine-history/{id}', '/doctors/dispense-records/{id}')->name('medicine-history.show');
-    });
-
-    // Activity Logs (Doctors can view activity logs)
-    Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
-        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
-        Route::get('/export/csv', [ActivityLogController::class, 'export'])->name('export');
-        Route::get('/accomplishment/{format}', [ActivityLogController::class, 'accomplishment'])
-            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('accomplishment');
-        Route::get('/inventory-yearly/{format}', [ActivityLogController::class, 'inventoryYearly'])
-            ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-yearly');
-        Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
-    });
+    PanelRoutes::dashboard('doctor');
+    PanelRoutes::queue('doctor');
+    PanelRoutes::doctors('doctor');
+    PanelRoutes::prescriptions('doctor');
+    PanelRoutes::patients('doctor');
+    PanelRoutes::specializations();
+    PanelRoutes::documentLookups('doctor');
+    PanelRoutes::documents();
+    PanelRoutes::labRequests();
+    PanelRoutes::medicineLookup();
+    PanelRoutes::inventory('doctor');
+    PanelRoutes::dispensing('doctor');
+    PanelRoutes::activityLogs('doctor');
 });
