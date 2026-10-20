@@ -2,36 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Campus;
 use App\Models\College;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Diagnose;
 use App\Models\Doctor;
+use App\Models\DocumentIssuance;
 use App\Models\Illness;
-use App\Models\ServiceType;
-use App\Models\ActivityLog;
 use App\Models\Office;
 use App\Models\Patient;
-use App\Models\DocumentIssuance;
-use App\Models\PatientType;
+use App\Models\ServiceType;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Vaccination;
 use App\Models\YearLevel;
 use App\Repositories\PatientRepository;
-use App\Services\MedicineInventoryService;
+use App\Services\ConsultationImageService;
+use App\Services\ConsultationMedicineService;
+use App\Services\ConsultationPatientService;
+use App\Services\DocumentIssuanceNavigationService;
+use App\Support\ConsultationInput;
 use App\Support\OtherName;
-use App\Support\PhilippinePhone;
 use App\Support\SearchTerm;
 use App\Traits\LogsActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class DocumentIssuanceController extends Controller
@@ -123,17 +122,24 @@ class DocumentIssuanceController extends Controller
         'service_other.*' => 'nullable|string|max:150',
     ];
 
-    private MedicineInventoryService $medicineInventoryService;
+    private ConsultationPatientService $consultationPatients;
 
-    /**
-     * Files written to the private consultation_images disk during this request, so they
-     * can be removed again if the surrounding DB transaction is rolled back.
-     */
-    private array $imagesStoredThisRequest = [];
+    private ConsultationMedicineService $consultationMedicines;
 
-    public function __construct(MedicineInventoryService $medicineInventoryService)
-    {
-        $this->medicineInventoryService = $medicineInventoryService;
+    private ConsultationImageService $consultationImages;
+
+    private DocumentIssuanceNavigationService $navigation;
+
+    public function __construct(
+        ConsultationPatientService $consultationPatients,
+        ConsultationMedicineService $consultationMedicines,
+        ConsultationImageService $consultationImages,
+        DocumentIssuanceNavigationService $navigation
+    ) {
+        $this->consultationPatients = $consultationPatients;
+        $this->consultationMedicines = $consultationMedicines;
+        $this->consultationImages = $consultationImages;
+        $this->navigation = $navigation;
     }
 
     /**
@@ -202,7 +208,7 @@ class DocumentIssuanceController extends Controller
         // document_creator_id is always the signed-in user; never trust it from the form.
         $data = $request->except(['_token', 'document_creator_id', 'consultation_images']);
         $data = $this->forceOwnNursingInCharge($data);
-        $data = $this->normalizePatientContact($data);
+        $data = $this->consultationPatients->normalizeContact($data);
         $documentType = $request->input('document_type');
 
         try {
@@ -215,39 +221,16 @@ class DocumentIssuanceController extends Controller
                 $this->storeMedicalCertificate($data);
             } elseif ($documentType === 'consultation_form') {
                 // If no patient is selected, create one from the consultation form input.
-                $this->prepareConsultationPatient($data);
+                $this->consultationPatients->prepare($data);
                 $this->storeConsultationForm($data);
             }
 
             DB::commit();
 
-            // Check if we should redirect to patient history
-            if ($request->has('redirect_to_patient') && $request->redirect_to_patient) {
-                $user = User::find($data['user_id']);
-                if ($user && $user->patient) {
-                    $patientId = $user->patient->id;
-
-                    // Determine success message based on document type
-                    $successMessage = $data['document_type'] === 'medical_certificate'
-                        ? 'Medical certificate created successfully.'
-                        : ($data['document_type'] === 'excuse_slip' ? 'Excuse slip created successfully.' : 'Consultation form created successfully.');
-
-                    // Role-based patient history redirect
-                    if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
-                        return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
-                            ->with('success', $successMessage);
-                    }
-                }
-            }
-
-            // Default: Return to request documents index with role-based redirect
-            $documentModule = ($data['document_type'] ?? null) === 'consultation_form' ? 'consultation' : 'certificate';
-
-            return redirectByRole('document-issuances.index', ['module' => $documentModule])
-                ->with('success', 'Request document created successfully.');
+            return $this->navigation->created($data, $request);
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->discardImagesStoredThisRequest();
+            $this->consultationImages->discardStoredFiles();
 
             // Log the error for debugging
             Log::error('Error in store method: ' . $e->getMessage());
@@ -304,10 +287,10 @@ class DocumentIssuanceController extends Controller
         $data['campus'] = $data['campus'] ?? ($user ? ($user->campus->campus_name ?? 'Unknown Campus') : 'N/A');
         $data['college'] = $data['college'] ?? ($user ? ($user->college->college_name ?? 'Unknown College') : 'N/A');
 
-        $data['dob'] = $this->normalizeNullableString(
+        $data['dob'] = ConsultationInput::nullableString(
             $data['date_of_birth'] ?? ($data['dob'] ?? ($user?->dob ?? null))
         );
-        $data['age'] = $this->resolveAgeFromDateOfBirth($data['dob']);
+        $data['age'] = $this->consultationPatients->ageFromDateOfBirth($data['dob']);
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
 
@@ -376,10 +359,10 @@ class DocumentIssuanceController extends Controller
         // Handle comorbidities - accept custom input or predefined values
         $data['comorbidities_value'] = $data['comorbidities_custom'] ?? 'None';
 
-        $data['date_of_birth'] = $this->normalizeNullableString(
+        $data['date_of_birth'] = ConsultationInput::nullableString(
             $data['date_of_birth'] ?? ($user?->dob ?? null)
         );
-        $data['age'] = $this->resolveAgeFromDateOfBirth($data['date_of_birth']);
+        $data['age'] = $this->consultationPatients->ageFromDateOfBirth($data['date_of_birth']);
 
         $data['gender'] = $data['gender'] ?? ($user ? ($user->gender == 1 ? 'Male' : 'Female') : 'N/A');
 
@@ -396,9 +379,9 @@ class DocumentIssuanceController extends Controller
             }
         }
 
-        $data['informant'] = $this->resolveConsultationInformantLabel(
+        $data['informant'] = $this->consultationPatients->informantLabel(
             $data['informant'] ?? null,
-            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            ConsultationInput::nullableInt($data['year_level_id'] ?? null),
             $user
         );
 
@@ -449,15 +432,15 @@ class DocumentIssuanceController extends Controller
         // Illness and services picked from the clinic list (ACCOMPLISHMENT REPORT).
         $this->syncClassification($requestDocument, $data);
 
-        // Consultation photos go to the private consultation_images disk (see storeConsultationImages()).
-        $uploadedImages = $this->storeConsultationImages($requestDocument);
+        // Consultation photos go to the private consultation_images disk (see ConsultationImageService::store()).
+        $uploadedImages = $this->consultationImages->store($requestDocument);
         if (! empty($uploadedImages)) {
             $requestDocument->consultation_images = $uploadedImages;
             $requestDocument->save();
         }
 
         // Handle medicine deduction
-        $this->handleMedicineDeduction($requestDocument, $data);
+        $this->consultationMedicines->store($requestDocument, $data);
 
         // A patient already waiting in the queue gets this form attached, so the doctor can open it
         // from the queue screen even when the form was filled in after the patient was queued.
@@ -481,13 +464,13 @@ class DocumentIssuanceController extends Controller
         $ids = [];
 
         foreach (['campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id'] as $column) {
-            $ids[$column] = $this->normalizeNullableInt($data[$column] ?? null)
-                ?? $this->normalizeNullableInt($existing?->{$column})
-                ?? $this->normalizeNullableInt($user?->{$column});
+            $ids[$column] = ConsultationInput::nullableInt($data[$column] ?? null)
+                ?? ConsultationInput::nullableInt($existing?->{$column})
+                ?? ConsultationInput::nullableInt($user?->{$column});
         }
 
-        $ids['patient_type_id'] = $this->resolvePatientTypeId($ids['year_level_id'], $data['informant'] ?? null, true)
-            ?? $this->normalizeNullableInt($existing?->patient_type_id);
+        $ids['patient_type_id'] = $this->consultationPatients->patientTypeId($ids['year_level_id'], $data['informant'] ?? null, true)
+            ?? ConsultationInput::nullableInt($existing?->patient_type_id);
 
         return $ids;
     }
@@ -561,743 +544,6 @@ class DocumentIssuanceController extends Controller
 
         if ($errors !== []) {
             throw ValidationException::withMessages($errors);
-        }
-    }
-
-    /**
-     * Ensure consultation submissions are linked to a patient user.
-     * If no user is selected, create a new patient profile from form input.
-     */
-    private function prepareConsultationPatient(array &$data): void
-    {
-        $data['informant'] = $this->resolveConsultationInformantLabel(
-            $data['informant'] ?? null,
-            $this->normalizeNullableInt($data['year_level_id'] ?? null)
-        );
-
-        $userId = $this->normalizeNullableInt($data['user_id'] ?? null);
-
-        if ($userId !== null) {
-            $user = User::query()
-                ->with('patient.patientType')
-                ->where('id', $userId)
-                ->where('type', User::PATIENT)
-                ->first();
-
-            if (! $user) {
-                throw new \RuntimeException('Selected patient is invalid. Please choose a valid patient from search.');
-            }
-
-            $data['informant'] = $this->resolveConsultationInformantLabel(
-                $data['informant'] ?? null,
-                $this->normalizeNullableInt($data['year_level_id'] ?? null),
-                $user
-            );
-
-            $this->syncPatientProfileFromConsultationData($user, $data);
-            $data['user_id'] = $user->id;
-
-            return;
-        }
-
-        $matchedUser = $this->findMatchingPatientForConsultationData($data);
-        if ($matchedUser) {
-            // Auto-linked (not picked by the user): never rewrite the existing patient's
-            // identity (name, date of birth, sex) from a walk-in form.
-            $this->syncPatientProfileFromConsultationData($matchedUser, $data, false);
-            $data['user_id'] = $matchedUser->id;
-
-            return;
-        }
-
-        $createdUser = $this->createPatientFromConsultationData($data);
-        $data['user_id'] = $createdUser->id;
-    }
-
-    /**
-     * Try to find an existing patient using consultation identity fields
-     * so repeated walk-in entries don't create duplicate patient accounts.
-     */
-    private function findMatchingPatientForConsultationData(array $data): ?User
-    {
-        $incomingName = $this->normalizeNullableString($data['name'] ?? null);
-        $dateOfBirth = $this->normalizeNullableString($data['date_of_birth'] ?? null);
-        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
-
-        if ($dateOfBirth === null || $gender === null) {
-            return null;
-        }
-
-        $incomingAge = $this->normalizeNullableInt($data['age'] ?? null);
-        if ($incomingAge === null) {
-            try {
-                $incomingAge = \Carbon\Carbon::parse($dateOfBirth)->age;
-            } catch (\Exception $e) {
-                return null;
-            }
-        }
-
-        if ($incomingAge === null) {
-            return null;
-        }
-
-        $candidates = User::query()
-            ->where('type', User::PATIENT)
-            ->whereDate('dob', $dateOfBirth)
-            ->where('gender', $gender)
-            ->orderByDesc('updated_at')
-            ->orderByDesc('id')
-            ->get();
-
-        $candidates = $candidates
-            ->filter(function (User $candidate) use ($incomingAge) {
-                if ($candidate->dob === null) {
-                    return false;
-                }
-
-                try {
-                    return \Carbon\Carbon::parse($candidate->dob)->age === $incomingAge;
-                } catch (\Exception $e) {
-                    return false;
-                }
-            })
-            ->values();
-
-        if ($candidates->isEmpty()) {
-            return null;
-        }
-
-        $nameTokens = $this->tokenizeNameForMatching($incomingName);
-        if (! $this->passesNameTokenSafetyThreshold($nameTokens)) {
-            return null;
-        }
-
-        // Automatic linking requires the SAME name, not a similar one: every name word typed
-        // on the form must be one of the patient's name words, and the patient's first and
-        // last name must both be present (only the middle name may be omitted). Fuzzy /
-        // substring matching used to merge different people ("Ana Cruz" -> "Juliana Cruzado").
-        $candidates = $candidates
-            ->filter(function (User $candidate) use ($nameTokens) {
-                return $this->isExactNameMatchForAutoLink($nameTokens, $candidate);
-            })
-            ->values();
-
-        if ($candidates->isEmpty()) {
-            return null;
-        }
-
-        if ($candidates->count() > 1) {
-            throw new \RuntimeException(
-                'More than one existing patient has this name, date of birth and sex. '
-                . 'Please select the correct patient with the patient search box before saving.'
-            );
-        }
-
-        return $candidates->first();
-    }
-
-    private function isExactNameMatchForAutoLink(array $nameTokens, User $candidate): bool
-    {
-        $incomingTokens = $this->filterMeaningfulNameTokens($nameTokens);
-        $candidateTokens = $this->filterMeaningfulNameTokens(
-            $this->tokenizeNameForMatching($this->buildFullNameForMatching($candidate))
-        );
-        $requiredTokens = $this->filterMeaningfulNameTokens(array_merge(
-            $this->tokenizeNameForMatching($candidate->first_name),
-            $this->tokenizeNameForMatching($candidate->last_name)
-        ));
-
-        if (count($incomingTokens) < 2 || empty($requiredTokens)) {
-            return false;
-        }
-
-        return empty(array_diff($incomingTokens, $candidateTokens))
-            && empty(array_diff($requiredTokens, $incomingTokens));
-    }
-
-    private function tokenizeNameForMatching(?string $name): array
-    {
-        $normalizedName = $this->normalizeNullableString($name);
-
-        if ($normalizedName === null) {
-            return [];
-        }
-
-        $normalizedName = mb_strtolower(preg_replace('/\s+/u', ' ', $normalizedName));
-
-        // Dots are separators so a middle initial ("M.") becomes a one-letter token, which
-        // filterMeaningfulNameTokens() ignores.
-        $tokens = preg_split('/[\s,.]+/u', $normalizedName, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-
-        return array_values(array_unique(array_map(function ($token) {
-            return trim((string) $token);
-        }, $tokens)));
-    }
-
-    private function passesNameTokenSafetyThreshold(array $nameTokens): bool
-    {
-        return count($this->filterMeaningfulNameTokens($nameTokens)) >= 2;
-    }
-
-    private function buildFullNameForMatching(User $user): string
-    {
-        $fullName = trim(implode(' ', array_filter([
-            $this->normalizeNullableString($user->first_name),
-            $this->normalizeNullableString($user->middle_name),
-            $this->normalizeNullableString($user->last_name),
-        ])));
-
-        return mb_strtolower(preg_replace('/\s+/u', ' ', $fullName));
-    }
-
-    private function filterMeaningfulNameTokens(array $nameTokens): array
-    {
-        $noiseTokens = ['de', 'del', 'dela', 'la', 'jr', 'sr', 'ii', 'iii', 'iv'];
-
-        $tokens = array_values(array_filter(array_map(function ($token) {
-            return mb_strtolower(trim((string) $token));
-        }, $nameTokens), function ($token) use ($noiseTokens) {
-            if ($token === '') {
-                return false;
-            }
-
-            if (in_array($token, $noiseTokens, true)) {
-                return false;
-            }
-
-            return mb_strlen($token) >= 2;
-        }));
-
-        return array_values(array_unique($tokens));
-    }
-
-    /**
-     * Create a patient account/profile from consultation form data.
-     */
-    private function createPatientFromConsultationData(array $data): User
-    {
-        [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
-
-        if ($firstName === '' || $lastName === '') {
-            throw new \RuntimeException('Patient name is required to create a patient account.');
-        }
-
-        $dateOfBirth = $this->normalizeNullableString($data['date_of_birth'] ?? null);
-        if ($dateOfBirth === null) {
-            throw new \RuntimeException('Date of birth is required to create a patient account.');
-        }
-
-        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
-        if ($gender === null) {
-            throw new \RuntimeException('Gender is required to create a patient account.');
-        }
-
-        [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
-
-        $user = User::create([
-            'first_name' => $firstName,
-            'middle_name' => $middleName,
-            'last_name' => $lastName,
-            ...$this->contactAttributes($this->normalizeNullableString($data['patient_contact'] ?? null)),
-            'emergency_contact_name' => $emergencyName,
-            'emergency_contact_no' => $this->emergencyNumberForUser($emergencyNumber),
-            'emergency_relationship' => $emergencyRelationship,
-            'dob' => $dateOfBirth,
-            'gender' => $gender,
-            'status' => true,
-            'language' => 'en',
-            'type' => User::PATIENT,
-            'password' => Hash::make(User::DEFAULT_PASSWORD),
-            'email_verified_at' => now()->setTimezone('Asia/Manila')->toDateTimeString(),
-            'campus_id' => $this->normalizeNullableInt($data['campus_id'] ?? null),
-            'college_id' => $this->normalizeNullableInt($data['college_id'] ?? null),
-            'course_id' => $this->normalizeNullableInt($data['course_id'] ?? null),
-            'year_level_id' => $this->normalizeNullableInt($data['year_level_id'] ?? null),
-            'department_id' => $this->normalizeNullableInt($data['department_id'] ?? null),
-            'office_id' => $this->normalizeNullableInt($data['office_id'] ?? null),
-            'vaccination_id' => $this->normalizeNullableInt($data['vaccination_id'] ?? null),
-        ]);
-
-        if (! $user->hasRole('patient')) {
-            $user->assignRole('patient');
-        }
-
-        $this->syncPatientProfileFromConsultationData($user, $data);
-
-        return $user;
-    }
-
-    /**
-     * Sync consultation form fields into the linked patient profile.
-     */
-    private function syncPatientProfileFromConsultationData(User $user, array $data, bool $overwriteIdentity = true): void
-    {
-        [$firstName, $middleName, $lastName] = $this->splitFullName($data['name'] ?? null);
-        [$emergencyName, $emergencyNumber, $emergencyRelationship] = $this->extractEmergencyContactParts($data['emergency_contact'] ?? null);
-        $hasIncomingName = $this->normalizeNullableString($data['name'] ?? null) !== null;
-
-        $gender = $this->normalizeGenderForUser($data['gender'] ?? null);
-
-        $userUpdates = [];
-
-        if ($overwriteIdentity && $firstName !== '') {
-            $userUpdates['first_name'] = $firstName;
-        }
-
-        if ($overwriteIdentity && $hasIncomingName) {
-            $userUpdates['middle_name'] = $middleName;
-        }
-
-        if ($overwriteIdentity && $lastName !== '') {
-            $userUpdates['last_name'] = $lastName;
-        }
-
-        if (($contact = $this->normalizeNullableString($data['patient_contact'] ?? null)) !== null) {
-            $userUpdates = array_merge($userUpdates, $this->contactAttributes($contact));
-        }
-
-        if ($overwriteIdentity && ($dob = $this->normalizeNullableString($data['date_of_birth'] ?? null)) !== null) {
-            $userUpdates['dob'] = $dob;
-        }
-
-        if ($overwriteIdentity && $gender !== null) {
-            $userUpdates['gender'] = $gender;
-        }
-
-        if ($emergencyName !== null) {
-            $userUpdates['emergency_contact_name'] = $emergencyName;
-        }
-
-        if ($emergencyNumber !== null) {
-            $userUpdates['emergency_contact_no'] = $this->emergencyNumberForUser($emergencyNumber);
-        }
-
-        if ($emergencyRelationship !== null) {
-            $userUpdates['emergency_relationship'] = $emergencyRelationship;
-        }
-
-        if (($campusId = $this->normalizeNullableInt($data['campus_id'] ?? null)) !== null) {
-            $userUpdates['campus_id'] = $campusId;
-        }
-
-        if (($collegeId = $this->normalizeNullableInt($data['college_id'] ?? null)) !== null) {
-            $userUpdates['college_id'] = $collegeId;
-        }
-
-        if (($courseId = $this->normalizeNullableInt($data['course_id'] ?? null)) !== null) {
-            $userUpdates['course_id'] = $courseId;
-        }
-
-        if (($yearLevelId = $this->normalizeNullableInt($data['year_level_id'] ?? null)) !== null) {
-            $userUpdates['year_level_id'] = $yearLevelId;
-        }
-
-        if (($departmentId = $this->normalizeNullableInt($data['department_id'] ?? null)) !== null) {
-            $userUpdates['department_id'] = $departmentId;
-        }
-
-        if (($officeId = $this->normalizeNullableInt($data['office_id'] ?? null)) !== null) {
-            $userUpdates['office_id'] = $officeId;
-        }
-
-        if (($vaccinationId = $this->normalizeNullableInt($data['vaccination_id'] ?? null)) !== null) {
-            $userUpdates['vaccination_id'] = $vaccinationId;
-        }
-
-        if (! empty($userUpdates)) {
-            $userUpdates['type'] = User::PATIENT;
-            $user->update($userUpdates);
-        }
-
-        $data['informant'] = $this->resolveConsultationInformantLabel(
-            $data['informant'] ?? null,
-            $this->normalizeNullableInt($data['year_level_id'] ?? null),
-            $user
-        );
-
-        $patient = $user->patient;
-        $patientTypeId = $this->resolvePatientTypeId(
-            $this->normalizeNullableInt($data['year_level_id'] ?? null),
-            $data['informant'] ?? null,
-            $patient === null
-        );
-
-        $covidVaccination = null;
-        if (isset($vaccinationId) && $vaccinationId !== null) {
-            $covidVaccination = Vaccination::query()->whereKey($vaccinationId)->value('vaccination_status');
-        }
-
-        // Clinical history on the patient master record (allergies, comorbidities, past
-        // admissions, maintenance medication) is only ever ADDED/CHANGED from a consultation,
-        // never cleared: a blank field on the form means "not re-entered this visit", not
-        // "the patient no longer has this allergy". Clearing it silently removed drug-allergy
-        // information that later prescribers rely on.
-        $patientPayload = array_filter([
-            'allergies' => $this->normalizeNullableString($data['allergies'] ?? null),
-            'comorbidities' => $this->normalizeComorbiditiesValue($data),
-            'admissions_surgeries' => $this->normalizeNullableString($data['admissions_surgeries'] ?? null),
-            'maintenance' => $this->normalizeNullableString($data['maintenance'] ?? null),
-        ], function ($value) {
-            return $value !== null;
-        });
-
-        if ($patientTypeId !== null) {
-            $patientPayload['patient_type_id'] = $patientTypeId;
-        }
-
-        $resolvedCovidVaccination = $covidVaccination ?? $this->normalizeNullableString($data['covid_vaccination'] ?? null);
-        if ($resolvedCovidVaccination !== null) {
-            $patientPayload['covid_vaccination'] = $resolvedCovidVaccination;
-        }
-
-        $syncedImmunizationRecord = $this->buildSyncedImmunizationRecord(
-            $patient?->immunization_record,
-            $resolvedCovidVaccination
-        );
-
-        if ($syncedImmunizationRecord !== null) {
-            $patientPayload['immunization_record'] = $syncedImmunizationRecord;
-        }
-
-        if (! $patient) {
-            $patientUniqueId = $this->normalizeNullableString($data['university_id_number'] ?? null);
-            if ($patientUniqueId !== null) {
-                $patientUniqueId = strtoupper($patientUniqueId);
-            }
-
-            $patient = $user->patient()->create(array_merge($patientPayload, [
-                'patient_unique_id' => $patientUniqueId ?: Patient::generatePatientUniqueId(),
-            ]));
-        } else {
-            $patient->update($patientPayload);
-        }
-
-        if (($addressText = $this->normalizeNullableString($data['address'] ?? null)) !== null) {
-            if ($patient->address) {
-                $patient->address->update(['address1' => $addressText]);
-            } else {
-                $patient->address()->create(['address1' => $addressText]);
-            }
-        }
-
-        if (! $user->hasRole('patient')) {
-            $user->assignRole('patient');
-        }
-    }
-
-    private function resolvePatientTypeId(?int $yearLevelId, ?string $informant = null, bool $defaultToStudent = false): ?int
-    {
-        $patientTypeCode = $this->resolvePatientTypeCode($yearLevelId, $informant, $defaultToStudent);
-
-        if ($patientTypeCode === null) {
-            return null;
-        }
-
-        return PatientType::query()->where('code', $patientTypeCode)->value('id');
-    }
-
-    private function resolvePatientTypeCode(?int $yearLevelId, ?string $informant = null, bool $defaultToStudent = false): ?string
-    {
-        $normalizedInformant = $this->normalizeInformantLabel($informant);
-
-        if ($normalizedInformant !== null) {
-            return strtolower($normalizedInformant);
-        }
-
-        if ($yearLevelId !== null) {
-            if ($yearLevelId === 7) {
-                return 'faculty';
-            }
-
-            if ($yearLevelId === 8) {
-                return 'staff';
-            }
-
-            if ($yearLevelId === 9) {
-                return 'guest';
-            }
-
-            return 'student';
-        }
-
-        return $defaultToStudent ? 'student' : null;
-    }
-
-    private function resolveConsultationInformantLabel(?string $informant, ?int $yearLevelId = null, ?User $user = null): string
-    {
-        $normalizedInformant = $this->normalizeInformantLabel($informant);
-        $resolvedYearLevelId = $yearLevelId ?? $this->normalizeNullableInt($user?->year_level_id ?? null);
-
-        $patientTypeCodeFromProfile = $this->resolvePatientTypeCodeFromUser($user);
-        $informantFromProfile = $this->resolveInformantLabelFromPatientTypeCode($patientTypeCodeFromProfile);
-
-        if ($informantFromProfile !== null) {
-            if ($normalizedInformant === null) {
-                return $informantFromProfile;
-            }
-
-            if (
-                strtolower($normalizedInformant) === 'student'
-                && strtolower($informantFromProfile) !== 'student'
-            ) {
-                return $informantFromProfile;
-            }
-        }
-
-        if ($normalizedInformant !== null) {
-            return $normalizedInformant;
-        }
-
-        $resolvedPatientTypeCode = $this->resolvePatientTypeCode($resolvedYearLevelId, null, true);
-
-        return $this->resolveInformantLabelFromPatientTypeCode($resolvedPatientTypeCode) ?? 'Student';
-    }
-
-    private function resolvePatientTypeCodeFromUser(?User $user): ?string
-    {
-        if (! $user) {
-            return null;
-        }
-
-        $user->loadMissing('patient.patientType');
-
-        $patientTypeCode = $this->normalizeNullableString($user->patient?->patientType?->code);
-        return $patientTypeCode !== null ? strtolower($patientTypeCode) : null;
-    }
-
-    private function resolveInformantLabelFromPatientTypeCode(?string $patientTypeCode): ?string
-    {
-        return $this->normalizeInformantLabel($patientTypeCode);
-    }
-
-    private function normalizeInformantLabel(?string $informant): ?string
-    {
-        $normalizedInformant = $this->normalizeNullableString($informant);
-
-        if ($normalizedInformant === null) {
-            return null;
-        }
-
-        $informantKey = strtolower(trim(preg_replace('/\s+/', ' ', $normalizedInformant)));
-
-        $informantMap = [
-            'student' => 'Student',
-            'staff' => 'Staff',
-            'employee' => 'Staff',
-            'faculty' => 'Faculty',
-            'guest' => 'Guest',
-            'visitor' => 'Guest',
-        ];
-
-        return $informantMap[$informantKey] ?? null;
-    }
-
-    private function splitFullName($fullName): array
-    {
-        $normalized = preg_replace('/\s+/', ' ', trim((string) $fullName));
-
-        if ($normalized === '') {
-            return ['', null, ''];
-        }
-
-        $parts = explode(' ', $normalized);
-
-        if (count($parts) === 1) {
-            return [$parts[0], null, $parts[0]];
-        }
-
-        $firstName = array_shift($parts);
-        $lastName = array_pop($parts);
-        $middleName = ! empty($parts) ? implode(' ', $parts) : null;
-
-        return [$firstName, $middleName, $lastName];
-    }
-
-    /**
-     * A Philippine number typed on the consultation form is tidied to "+63 917 123 4567". Anything else
-     * (a walk-in without a phone, "N/A") is kept exactly as written: this is a clinical record, not an
-     * account form, and the field is read-only for known patients so it could not be corrected there.
-     */
-    private function normalizePatientContact(array $data): array
-    {
-        $contact = $this->normalizeNullableString($data['patient_contact'] ?? null);
-
-        if ($contact !== null && ($formatted = PhilippinePhone::format($contact)) !== null) {
-            $data['patient_contact'] = $formatted;
-        }
-
-        return $data;
-    }
-
-    /**
-     * users.contact / users.country_code for a number entered on the consultation form: canonical digits
-     * with country code 63 when it is a Philippine number, otherwise the text as typed.
-     *
-     * @return array<string, string>
-     */
-    private function contactAttributes(?string $contact): array
-    {
-        if ($contact === null) {
-            return [];
-        }
-
-        $national = PhilippinePhone::national($contact);
-
-        return $national === null
-            ? ['contact' => $contact]
-            : ['contact' => $national, 'country_code' => PhilippinePhone::COUNTRY_CODE];
-    }
-
-    private function emergencyNumberForUser(?string $number): ?string
-    {
-        return $number === null ? null : (PhilippinePhone::e164($number) ?? $number);
-    }
-
-    private function extractEmergencyContactParts($value): array
-    {
-        $normalized = $this->normalizeNullableString($value);
-
-        if ($normalized === null) {
-            return [null, null, null];
-        }
-
-        $name = null;
-        $number = null;
-        $relationship = null;
-
-        if (preg_match('/^(.+?)(?:\s*\/\s*([^\(]+))?(?:\s*\(([^\)]+)\))?$/', $normalized, $matches)) {
-            $name = $this->normalizeNullableString($matches[1] ?? null);
-            $number = $this->normalizeNullableString($matches[2] ?? null);
-            $relationship = $this->normalizeNullableString($matches[3] ?? null);
-        }
-
-        return [$name, $number, $relationship];
-    }
-
-    private function normalizeGenderForUser($gender): ?int
-    {
-        if ($gender === null || $gender === '') {
-            return null;
-        }
-
-        if (is_numeric($gender)) {
-            $normalized = (int) $gender;
-
-            return in_array($normalized, [User::MALE, User::FEMALE], true) ? $normalized : null;
-        }
-
-        $normalized = strtolower(trim((string) $gender));
-
-        if (in_array($normalized, ['male', 'm'], true)) {
-            return User::MALE;
-        }
-
-        if (in_array($normalized, ['female', 'f'], true)) {
-            return User::FEMALE;
-        }
-
-        return null;
-    }
-
-    private function normalizeComorbiditiesValue(array $data): ?string
-    {
-        $value = $data['comorbidities_custom'] ?? ($data['comorbidities'] ?? null);
-
-        if (is_array($value)) {
-            $value = implode(', ', array_filter(array_map(function ($item) {
-                return trim((string) $item);
-            }, $value)));
-        }
-
-        return $this->normalizeNullableString($value);
-    }
-
-    private function buildSyncedImmunizationRecord(?string $currentRecord, ?string $covidVaccination): ?string
-    {
-        $normalizedRecord = $this->normalizeNullableString($currentRecord);
-        $normalizedVaccination = $this->normalizeNullableString($covidVaccination);
-
-        if ($normalizedVaccination === null) {
-            return $normalizedRecord;
-        }
-
-        if (in_array(strtolower($normalizedVaccination), ['unknown vaccination', 'unknown', 'n/a', 'na'], true)) {
-            return $normalizedRecord;
-        }
-
-        $covidLine = 'COVID-19 Vaccination Status: ' . $normalizedVaccination;
-
-        $existingLines = preg_split('/\R+/', (string) ($normalizedRecord ?? '')) ?: [];
-        $existingLines = array_values(array_filter(array_map(function ($line) {
-            return trim((string) $line);
-        }, $existingLines), function ($line) {
-            return $line !== '';
-        }));
-
-        $updatedLines = [];
-        $hasCovidLine = false;
-
-        foreach ($existingLines as $line) {
-            if (preg_match('/^covid(?:-19)?\s+vaccination\s+status\s*:/i', $line)) {
-                if (! $hasCovidLine) {
-                    $updatedLines[] = $covidLine;
-                    $hasCovidLine = true;
-                }
-
-                continue;
-            }
-
-            $updatedLines[] = $line;
-        }
-
-        if (! $hasCovidLine) {
-            $updatedLines[] = $covidLine;
-        }
-
-        return implode(PHP_EOL, $updatedLines);
-    }
-
-    private function normalizeNullableInt($value): ?int
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        if (is_string($value)) {
-            $value = trim($value);
-        }
-
-        if ($value === '') {
-            return null;
-        }
-
-        return is_numeric($value) ? (int) $value : null;
-    }
-
-    private function normalizeNullableString($value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $value = trim((string) $value);
-
-        return $value === '' ? null : $value;
-    }
-
-    private function resolveAgeFromDateOfBirth(?string $dateOfBirth, int $fallbackAge = 0): int
-    {
-        $normalizedDate = $this->normalizeNullableString($dateOfBirth);
-        $resolvedFallbackAge = max(0, $fallbackAge);
-
-        if ($normalizedDate === null) {
-            return $resolvedFallbackAge;
-        }
-
-        try {
-            return \Carbon\Carbon::parse($normalizedDate)->age;
-        } catch (\Exception $e) {
-            return $resolvedFallbackAge;
         }
     }
 
@@ -1384,7 +630,7 @@ class DocumentIssuanceController extends Controller
 
         $data = $request->except(['_token', '_method', 'document_type', 'document_creator_id', 'consultation_images']);
         $data = $this->forceOwnNursingInCharge($data);
-        $data = $this->normalizePatientContact($data);
+        $data = $this->consultationPatients->normalizeContact($data);
 
         // The document type is fixed at creation. Never take it from the request: a submitted
         // type must not be able to route the update to a different handler.
@@ -1404,25 +650,10 @@ class DocumentIssuanceController extends Controller
 
             DB::commit();
 
-            // Check if we have a redirect_patient_id (from patient history page)
-            if ($request->has('redirect_patient_id')) {
-                $patientId = $request->input('redirect_patient_id');
-
-                // Redirect back to patient history
-                if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
-                    return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', 'Request document updated successfully.');
-                }
-            }
-
-            // Default: Redirect to request documents index
-            $documentModule = $request->input('redirect_module', $requestDocument->document_type === 'consultation_form' ? 'consultation' : 'certificate');
-
-            return redirectByRole('document-issuances.index', ['module' => $documentModule])
-                ->with('success', 'Request document updated successfully.');
+            return $this->navigation->changed($requestDocument, $request, 'Request document updated successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->discardImagesStoredThisRequest();
+            $this->consultationImages->discardStoredFiles();
             Log::error('Error in update method: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput($request->except(['_token', '_method', 'consultation_images']))
@@ -1453,7 +684,7 @@ class DocumentIssuanceController extends Controller
                 $data['college'] = $user->college->college_name ?? $requestDocument->college;
                 $data['course'] = $user->course->course_name ?? $requestDocument->course;
                 $data['year_level'] = $user->yearLevel->year_level_name ?? $requestDocument->year_level;
-                $data['date_of_birth'] = $this->normalizeNullableString(
+                $data['date_of_birth'] = ConsultationInput::nullableString(
                     $data['date_of_birth'] ?? ($user->dob ?? $requestDocument->date_of_birth)
                 );
 
@@ -1473,7 +704,7 @@ class DocumentIssuanceController extends Controller
                 $data['college'] = $requestDocument->college;
                 $data['course'] = $requestDocument->course;
                 $data['year_level'] = $requestDocument->year_level;
-                $data['date_of_birth'] = $this->normalizeNullableString(
+                $data['date_of_birth'] = ConsultationInput::nullableString(
                     $data['date_of_birth'] ?? $requestDocument->date_of_birth
                 );
             }
@@ -1482,12 +713,12 @@ class DocumentIssuanceController extends Controller
             $data['college'] = $requestDocument->college;
             $data['course'] = $requestDocument->course;
             $data['year_level'] = $requestDocument->year_level;
-            $data['date_of_birth'] = $this->normalizeNullableString(
+            $data['date_of_birth'] = ConsultationInput::nullableString(
                 $data['date_of_birth'] ?? $requestDocument->date_of_birth
             );
         }
 
-        $data['age'] = $this->resolveAgeFromDateOfBirth(
+        $data['age'] = $this->consultationPatients->ageFromDateOfBirth(
             $data['date_of_birth'] ?? null,
             (int) $requestDocument->age
         );
@@ -1536,16 +767,16 @@ class DocumentIssuanceController extends Controller
         $data['year_level'] = isset($data['year_level_id']) ? (YearLevel::find($data['year_level_id'])->year_level_name ?? $requestDocument->year_level) : $requestDocument->year_level;
         $data['covid_vaccination'] = isset($data['vaccination_id']) ? (Vaccination::find($data['vaccination_id'])->vaccination_status ?? $requestDocument->covid_vaccination) : $requestDocument->covid_vaccination;
 
-        $data['date_of_birth'] = $this->normalizeNullableString(
+        $data['date_of_birth'] = ConsultationInput::nullableString(
             $data['date_of_birth'] ?? ($user?->dob ?? $requestDocument->date_of_birth)
         );
-        $data['age'] = $this->resolveAgeFromDateOfBirth(
+        $data['age'] = $this->consultationPatients->ageFromDateOfBirth(
             $data['date_of_birth'],
             (int) $requestDocument->age
         );
-        $data['informant'] = $this->resolveConsultationInformantLabel(
+        $data['informant'] = $this->consultationPatients->informantLabel(
             $data['informant'] ?? $requestDocument->informant,
-            $this->normalizeNullableInt($data['year_level_id'] ?? null),
+            ConsultationInput::nullableInt($data['year_level_id'] ?? null),
             $user
         );
 
@@ -1556,10 +787,10 @@ class DocumentIssuanceController extends Controller
         $originalPlan = $requestDocument->plan;
 
         $incomingAssessment = array_key_exists('assessment', $data)
-            ? $this->normalizeNullableString($data['assessment'])
+            ? ConsultationInput::nullableString($data['assessment'])
             : $requestDocument->assessment;
         $incomingPlan = array_key_exists('plan', $data)
-            ? $this->normalizeNullableString($data['plan'])
+            ? ConsultationInput::nullableString($data['plan'])
             : $requestDocument->plan;
 
         $resolvedAssessment = ($canEditAssessmentPlanDirectly || $staffOverrideActive)
@@ -1635,10 +866,10 @@ class DocumentIssuanceController extends Controller
         $this->syncClassification($requestDocument, $data);
 
         // Handle image updates
-        $this->handleImageUpdates($requestDocument, $data);
+        $this->consultationImages->update($requestDocument, $data);
 
         // Handle medicine updates (restore removed, deduct newly added)
-        $this->handleMedicineUpdates($requestDocument, $data);
+        $this->consultationMedicines->update($requestDocument, $data);
 
         $freshRequestDocument = $requestDocument->fresh();
 
@@ -1707,7 +938,7 @@ class DocumentIssuanceController extends Controller
         }
 
         $normalize = function ($value): ?string {
-            return $this->normalizeNullableString($value);
+            return ConsultationInput::nullableString($value);
         };
 
         $changedFields = [];
@@ -1755,115 +986,6 @@ class DocumentIssuanceController extends Controller
     }
 
     /**
-     * Handle image uploads and removals for consultation form updates
-     */
-    private function handleImageUpdates(DocumentIssuance $requestDocument, array $data)
-    {
-        $existingImages = $requestDocument->consultationImageList();
-        $removedImages = [];
-
-        // Handle removed images (indices refer to the list rendered on the edit page)
-        if (! empty($data['removed_images'])) {
-            $removedIndices = json_decode((string) $data['removed_images'], true);
-
-            if (is_array($removedIndices)) {
-                foreach ($removedIndices as $index) {
-                    if (is_numeric($index) && isset($existingImages[(int) $index])) {
-                        $removedImages[] = $existingImages[(int) $index];
-                        unset($existingImages[(int) $index]);
-                    }
-                }
-
-                $existingImages = array_values($existingImages);
-            }
-        }
-
-        foreach ($this->storeConsultationImages($requestDocument) as $uploadedImage) {
-            $existingImages[] = $uploadedImage;
-        }
-
-        // Assign the array directly: the model's "array" cast does the JSON encoding.
-        $requestDocument->consultation_images = ! empty($existingImages) ? $existingImages : null;
-        $requestDocument->save();
-
-        // Only delete removed files once the update is committed, so a rollback never leaves
-        // the record pointing at files that no longer exist.
-        if (! empty($removedImages)) {
-            DB::afterCommit(function () use ($requestDocument, $removedImages) {
-                foreach ($removedImages as $removedImage) {
-                    $requestDocument->deleteConsultationImageFile($removedImage);
-                }
-            });
-        }
-    }
-
-    /**
-     * Store the uploaded consultation_images[] files (already validated as real pictures of
-     * at most 5MB) on the private consultation_images disk under a random file name.
-     *
-     * @return array<int, array{disk: string, path: string, name: string, size: int, uploaded_at: string}>
-     */
-    private function storeConsultationImages(DocumentIssuance $requestDocument): array
-    {
-        $files = request()->file('consultation_images');
-        if (empty($files)) {
-            return [];
-        }
-
-        $files = is_array($files) ? $files : [$files];
-        $storedImages = [];
-
-        foreach ($files as $image) {
-            if (! $image instanceof UploadedFile || ! $image->isValid()) {
-                continue;
-            }
-
-            $fileSize = (int) $image->getSize();
-            $storedPath = $image->store((string) $requestDocument->id, 'consultation_images');
-
-            if ($storedPath === false) {
-                throw new \RuntimeException('A consultation image could not be saved. Please try again.');
-            }
-
-            $this->imagesStoredThisRequest[] = $storedPath;
-
-            $storedImages[] = [
-                'disk' => 'consultation_images',
-                'path' => $storedPath,
-                'name' => $this->sanitizeImageDisplayName($image->getClientOriginalName()),
-                'size' => $fileSize,
-                'uploaded_at' => now()->toDateTimeString(),
-            ];
-        }
-
-        return $storedImages;
-    }
-
-    /**
-     * The original file name is only kept as a label; it is never used as a path.
-     */
-    private function sanitizeImageDisplayName(?string $clientName): string
-    {
-        $name = basename(str_replace('\\', '/', (string) $clientName));
-        $name = preg_replace('/[\x00-\x1F\x7F]+/u', '', $name) ?? '';
-        $name = trim($name);
-
-        return $name === '' ? 'image' : mb_substr($name, 0, 150);
-    }
-
-    /**
-     * Remove files stored during a request whose transaction was rolled back.
-     */
-    private function discardImagesStoredThisRequest(): void
-    {
-        foreach ($this->imagesStoredThisRequest as $storedPath) {
-            Storage::disk('consultation_images')->delete($storedPath);
-        }
-
-        $this->imagesStoredThisRequest = [];
-    }
-
-    /**
      * Stream one consultation image. Images are clinical records, so they are only served
      * through this authenticated route (same role / permission checks as viewing the
      * consultation itself), never directly from the web root.
@@ -1886,335 +1008,6 @@ class DocumentIssuanceController extends Controller
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, max-age=3600',
         ]);
-    }
-
-    /**
-     * The medicine rows submitted by the consultation form, validated and normalised.
-     *
-     * Empty rows are skipped, and Plan rows are ignored for anyone who may not manage them. The same
-     * medicine + strength twice in one section is refused: such rows used to collapse into one on the next
-     * edit, so the stock and the record drifted apart. R3-H2.
-     *
-     * @return array<int, array{id: ?int, medicine_id: int, dosage: ?string, quantity: int, used_for: string, dosage_instructions: ?string}>
-     */
-    private function submittedMedicineRows(array $data): array
-    {
-        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
-        $rows = [];
-        $seen = [];
-
-        foreach (($data['medicines'] ?? []) as $usedFor => $medicines) {
-            if (! in_array($usedFor, ['plan', 'nursing'], true)) {
-                continue;
-            }
-
-            if ($usedFor === 'plan' && ! $canManagePlanMedicines) {
-                continue;
-            }
-
-            if (! is_array($medicines)) {
-                continue;
-            }
-
-            foreach ($medicines as $medicineData) {
-                if (! is_array($medicineData) || empty($medicineData['medicine_id']) || empty($medicineData['quantity'])) {
-                    continue;
-                }
-
-                $quantity = (int) $medicineData['quantity'];
-                if ($quantity <= 0) {
-                    continue;
-                }
-
-                $medicineId = (int) $medicineData['medicine_id'];
-                $dosage = $this->normalizeNullableString($medicineData['dosage'] ?? null);
-                $key = $this->medicineRowKey($medicineId, $dosage, (string) $usedFor);
-
-                if (isset($seen[$key])) {
-                    $name = \App\Models\Medicine::find($medicineId)?->display_name ?? 'A medicine';
-
-                    throw new \RuntimeException(
-                        $name . ($dosage !== null ? ' (' . $dosage . ')' : '') . ' is listed more than once under '
-                        . ($usedFor === 'plan' ? 'Plan' : 'Nursing Intervention') . '. Combine the quantities into one row.'
-                    );
-                }
-                $seen[$key] = true;
-
-                $rows[] = [
-                    'id' => ! empty($medicineData['id']) ? (int) $medicineData['id'] : null,
-                    'medicine_id' => $medicineId,
-                    'dosage' => $dosage,
-                    'quantity' => $quantity,
-                    'used_for' => (string) $usedFor,
-                    'dosage_instructions' => $this->normalizeNullableString($medicineData['dosage_instructions'] ?? null),
-                ];
-            }
-        }
-
-        return $rows;
-    }
-
-    /**
-     * Identity of a medicine row inside one consultation: medicine + strength + section.
-     */
-    private function medicineRowKey(int $medicineId, ?string $dosage, string $usedFor): string
-    {
-        return $medicineId . '|' . mb_strtolower(trim((string) $dosage)) . '|' . $usedFor;
-    }
-
-    /**
-     * Handle medicine updates during consultation form edit.
-     *
-     * The submitted list is compared with the saved rows (matched by row id, or by medicine + strength +
-     * section for forms that sent no ids):
-     *  - saved rows that are no longer submitted, or whose medicine / strength changed, give their stock back;
-     *  - rows with a lower quantity give the difference back;
-     *  - rows with a higher quantity, and new rows, take stock out.
-     * Stock is returned first, so replacing one medicine by another never fails for lack of stock.
-     */
-    private function handleMedicineUpdates(DocumentIssuance $requestDocument, array $data)
-    {
-        $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
-
-        // Validate the submitted list before anything is touched: a bad list changes nothing.
-        $rows = $this->submittedMedicineRows($data);
-
-        // A nurse cannot see or change Plan medicines, so those saved rows are left exactly as they are.
-        $existing = $requestDocument->consultationMedicines()->get()
-            ->filter(fn ($saved) => $canManagePlanMedicines || $saved->used_for !== 'plan')
-            ->keyBy('id');
-
-        $paired = []; // submitted row index => saved row
-        $claimed = []; // saved row id => true
-
-        foreach ($rows as $index => $row) {
-            if ($row['id'] !== null && $existing->has($row['id']) && ! isset($claimed[$row['id']])) {
-                $paired[$index] = $existing[$row['id']];
-                $claimed[$row['id']] = true;
-            }
-        }
-
-        $unclaimedByKey = [];
-        foreach ($existing as $saved) {
-            if (! isset($claimed[$saved->id])) {
-                $unclaimedByKey[$this->medicineRowKey((int) $saved->medicine_id, $saved->dosage, (string) $saved->used_for)][] = $saved;
-            }
-        }
-
-        foreach ($rows as $index => $row) {
-            if (isset($paired[$index])) {
-                continue;
-            }
-
-            $key = $this->medicineRowKey($row['medicine_id'], $row['dosage'], $row['used_for']);
-            if (! empty($unclaimedByKey[$key])) {
-                $saved = array_shift($unclaimedByKey[$key]);
-                $paired[$index] = $saved;
-                $claimed[$saved->id] = true;
-            }
-        }
-
-        $toRemove = $existing->reject(fn ($saved) => isset($claimed[$saved->id]))->values();
-        $adjust = [];
-        $add = [];
-
-        foreach ($rows as $index => $row) {
-            $saved = $paired[$index] ?? null;
-
-            if ($saved && $this->medicineRowKey((int) $saved->medicine_id, $saved->dosage, (string) $saved->used_for)
-                === $this->medicineRowKey($row['medicine_id'], $row['dosage'], $row['used_for'])) {
-                $adjust[] = [$saved, $row];
-
-                continue;
-            }
-
-            if ($saved) {
-                // The same row now holds a different medicine / strength / section: replace it.
-                $toRemove->push($saved);
-            }
-
-            $add[] = $row;
-        }
-
-        // STEP 1: stock goes back first - removed rows and lowered quantities.
-        foreach ($toRemove as $saved) {
-            $this->restoreMedicineStock($saved, $requestDocument);
-            $saved->delete();
-
-            Log::info('Medicine removed and stock restored during edit', [
-                'consultation_id' => $requestDocument->id,
-                'medicine_id' => $saved->medicine_id,
-                'dosage' => $saved->dosage,
-                'quantity_restored' => $saved->quantity,
-                'used_for' => $saved->used_for,
-            ]);
-        }
-
-        foreach ($adjust as [$saved, $row]) {
-            $difference = $row['quantity'] - (int) $saved->quantity;
-
-            if ($difference < 0) {
-                $this->restoreMedicineStockAmount($saved->medicine_id, $saved->dosage, abs($difference), $requestDocument);
-            }
-        }
-
-        // STEP 2: stock goes out - raised quantities, then new rows. Instruction-only edits are saved too.
-        foreach ($adjust as [$saved, $row]) {
-            $difference = $row['quantity'] - (int) $saved->quantity;
-
-            if ($difference > 0) {
-                $this->deductMedicineStock($saved->medicine_id, $saved->dosage, $difference, $requestDocument);
-            }
-
-            if ($difference !== 0 || (string) $saved->dosage_instructions !== (string) $row['dosage_instructions']) {
-                $oldQuantity = (int) $saved->quantity;
-                $saved->quantity = $row['quantity'];
-                $saved->dosage_instructions = $row['dosage_instructions'];
-                $saved->save();
-
-                if ($difference !== 0) {
-                    Log::info('Medicine quantity updated during edit', [
-                        'consultation_id' => $requestDocument->id,
-                        'medicine_id' => $saved->medicine_id,
-                        'dosage' => $saved->dosage,
-                        'old_quantity' => $oldQuantity,
-                        'new_quantity' => $row['quantity'],
-                    ]);
-                }
-            }
-        }
-
-        foreach ($add as $row) {
-            $this->deductMedicineStock($row['medicine_id'], $row['dosage'], $row['quantity'], $requestDocument);
-
-            \App\Models\ConsultationMedicine::create([
-                'request_document_id' => $requestDocument->id,
-                'medicine_id' => $row['medicine_id'],
-                'quantity' => $row['quantity'],
-                'dosage' => $row['dosage'],
-                'used_for' => $row['used_for'],
-                'dosage_instructions' => $row['dosage_instructions'],
-            ]);
-
-            Log::info('New medicine added during edit', [
-                'consultation_id' => $requestDocument->id,
-                'medicine_id' => $row['medicine_id'],
-                'dosage' => $row['dosage'],
-                'quantity_deducted' => $row['quantity'],
-                'used_for' => $row['used_for'],
-            ]);
-        }
-    }
-
-    /**
-     * Restore medicine stock when medicine is removed from consultation
-     */
-    private function restoreMedicineStock(\App\Models\ConsultationMedicine $consultationMedicine, DocumentIssuance $requestDocument)
-    {
-        $this->restoreMedicineStockAmount(
-            (int) $consultationMedicine->medicine_id,
-            $consultationMedicine->dosage,
-            (int) $consultationMedicine->quantity,
-            $requestDocument
-        );
-    }
-
-    /**
-     * Give a specific amount of medicine back to the batches this consultation took it from. R3-H1.
-     */
-    private function restoreMedicineStockAmount($medicineId, $dosage, $quantity, DocumentIssuance $requestDocument)
-    {
-        $quantity = (int) $quantity;
-        if ($quantity <= 0) {
-            return;
-        }
-
-        $this->medicineInventoryService->restoreStockToReferencedBatches(
-            (int) $medicineId,
-            $quantity,
-            $requestDocument,
-            $this->normalizeNullableString($dosage),
-            auth()->id(),
-            'Consultation #' . $requestDocument->id . ' medicine returned'
-        );
-
-        cache()->forget('medicine_' . (int) $medicineId);
-        cache()->forget('medicines_list');
-    }
-
-    /**
-     * Deduct medicine stock from inventory
-     */
-    private function deductMedicineStock($medicineId, $dosage, $quantity, DocumentIssuance $requestDocument)
-    {
-        $medicine = \App\Models\Medicine::find($medicineId);
-
-        if (! $medicine) {
-            throw new \Exception("Medicine not found (ID: {$medicineId})");
-        }
-
-        $normalizedDosage = trim((string) ($dosage ?? ''));
-        $dosageFilter = $normalizedDosage !== '' ? $normalizedDosage : null;
-
-        $this->medicineInventoryService->deductStockFefo(
-            (int) $medicineId,
-            (int) $quantity,
-            auth()->id(),
-            $requestDocument,
-            'Consultation #' . $requestDocument->id . ' medicine deduction',
-            \App\Models\MedicineTransaction::TYPE_DISPENSE,
-            $dosageFilter
-        );
-
-        // Clear medicine cache
-        cache()->forget('medicine_' . (int) $medicineId);
-        cache()->forget('medicines_list');
-
-        // Log medicine usage activity
-        self::logMedicineUsage($medicine, $quantity, $requestDocument->name, $requestDocument);
-    }
-
-    /**
-     * Handle medicine deduction from inventory
-     */
-    private function handleMedicineDeduction(DocumentIssuance $requestDocument, array $data)
-    {
-        // Process medicines from both Plan and Nursing Intervention. The list is validated as a whole
-        // (a duplicated row throws) before the first unit leaves stock.
-        foreach ($this->submittedMedicineRows($data) as $row) {
-            // Deduct stock via the current FEFO batch inventory service.
-            $this->deductMedicineStock($row['medicine_id'], $row['dosage'], $row['quantity'], $requestDocument);
-
-            // Record the medicine usage in consultation_medicines table
-            \App\Models\ConsultationMedicine::create([
-                'request_document_id' => $requestDocument->id,
-                'medicine_id' => $row['medicine_id'],
-                'quantity' => $row['quantity'],
-                'dosage' => $row['dosage'],
-                'used_for' => $row['used_for'], // 'plan' or 'nursing'
-                'dosage_instructions' => $row['dosage_instructions'],
-            ]);
-
-            $medicine = \App\Models\Medicine::find($row['medicine_id']);
-
-            Log::info('Medicine deducted from inventory', [
-                'consultation_id' => $requestDocument->id,
-                'medicine_id' => $row['medicine_id'],
-                'medicine_name' => $medicine?->name,
-                'dosage' => $row['dosage'],
-                'quantity_used' => $row['quantity'],
-                'remaining_stock' => $medicine?->available_quantity,
-                'used_for' => $row['used_for'],
-            ]);
-        }
-    }
-
-    /**
-     * Only doctors can add/edit medicines under Plan.
-     */
-    private function canCurrentUserManagePlanMedicines(): bool
-    {
-        return isRole('doctor');
     }
 
     /**
@@ -2246,7 +1039,7 @@ class DocumentIssuanceController extends Controller
             DB::transaction(function () use ($request_document) {
                 if ($request_document->document_type === 'consultation_form') {
                     foreach ($request_document->consultationMedicines()->get() as $consultationMedicine) {
-                        $this->restoreMedicineStock($consultationMedicine, $request_document);
+                        $this->consultationMedicines->restore($consultationMedicine, $request_document);
                     }
                 }
 
@@ -2263,22 +1056,7 @@ class DocumentIssuanceController extends Controller
 
             Log::info('Document deleted successfully', ['document_id' => $request_document->id]);
 
-            // Check if we have a redirect_patient_id (from patient history page)
-            if (request()->has('redirect_patient_id')) {
-                $patientId = request()->input('redirect_patient_id');
-
-                // Redirect back to patient history
-                if (getLogInUser()?->hasAnyRole(['clinic_admin', 'staff', 'doctor'])) {
-                    return redirectByRole('patients.showMyHistory', ['patient' => $patientId])
-                        ->with('success', $deletedLabel . ' deleted successfully.');
-                }
-            }
-
-            // Default: Redirect to request documents index
-            $documentModule = request()->input('redirect_module', $request_document->document_type === 'consultation_form' ? 'consultation' : 'certificate');
-
-            return redirectByRole('document-issuances.index', ['module' => $documentModule])
-                ->with('success', $deletedLabel . ' deleted successfully.');
+            return $this->navigation->changed($request_document, request(), $deletedLabel . ' deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Error deleting request document: ' . $e->getMessage());
 
@@ -2286,7 +1064,6 @@ class DocumentIssuanceController extends Controller
                 ->with('error', 'An error occurred while deleting the document.');
         }
     }
-
 
     public function searchUsers(Request $request)
     {
@@ -2506,9 +1283,9 @@ class DocumentIssuanceController extends Controller
                     'fallback' => true,
                     'message' => 'No previous consultation found. Loaded patient profile values.',
                     'data' => [
-                        'informant' => $this->resolveConsultationInformantLabel(
+                        'informant' => $this->consultationPatients->informantLabel(
                             null,
-                            $this->normalizeNullableInt($userContext?->year_level_id ?? null),
+                            ConsultationInput::nullableInt($userContext?->year_level_id ?? null),
                             $userContext
                         ),
                         'status' => null,
@@ -2542,9 +1319,9 @@ class DocumentIssuanceController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'informant' => $this->resolveConsultationInformantLabel(
+                    'informant' => $this->consultationPatients->informantLabel(
                         $resolvedHistoryData['informant'] ?? null,
-                        $this->normalizeNullableInt($userContext?->year_level_id ?? null),
+                        ConsultationInput::nullableInt($userContext?->year_level_id ?? null),
                         $userContext
                     ),
                     'status' => $resolvedHistoryData['status'],
