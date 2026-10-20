@@ -182,6 +182,14 @@ class User extends Authenticatable implements HasMedia
     ];
 
     /**
+     * The columns of the doctor form (Settings > Doctors). Nothing else of the request reaches the account: the form has no
+     * language, university id, campus, emergency contact ... field, and a crafted request must not be able to set them.
+     */
+    public const DOCTOR_FORM_FIELDS = [
+        'first_name', 'last_name', 'email', 'contact', 'country_code', 'dob', 'gender', 'blood_type', 'employee_id',
+    ];
+
+    /**
      * Columns a signed-in user may change on their OWN profile form. Deliberately excludes
      * status, type, university_id_number, employee_id and password (changed on its own screen).
      */

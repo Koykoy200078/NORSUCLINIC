@@ -132,7 +132,7 @@ class UserRepository extends BaseRepository
             $input['language'] = 'en';
             // Set email as verified with Philippine time
             $input['email_verified_at'] = now()->setTimezone('Asia/Manila')->toDateTimeString();
-            $doctor = User::create($input);
+            $doctor = User::create(Arr::only($input, array_merge(User::DOCTOR_FORM_FIELDS, ['status', 'password', 'type', 'language', 'email_verified_at'])));
             $doctor->assignRole('doctor');
             $doctor->address()->create($addressInputArray);
             $createDoctor = $doctor->doctor()->create($doctorArray);
@@ -173,7 +173,7 @@ class UserRepository extends BaseRepository
             $input['type'] = User::DOCTOR;
             // Only the columns the doctor form has. The whole request used to be mass-assigned, so a crafted request
             // could also set password, email_verified_at, dark_mode ... R3-L1.
-            $doctor->user->update(Arr::only($input, array_merge(User::RECORD_FIELDS, ['status', 'type'])));
+            $doctor->user->update(Arr::only($input, array_merge(User::DOCTOR_FORM_FIELDS, ['status', 'type'])));
             $doctor->user->address()->updateOrCreate([], $addressInputArray);
             $doctor->update($doctorArray);
             $doctor->specializations()->sync($specialization);

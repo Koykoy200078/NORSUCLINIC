@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Concerns\ChecksArchivedAccounts;
+use App\Http\Requests\Concerns\DoctorFormRules;
 use App\Http\Requests\Concerns\NormalizesPhilippinePhone;
 use App\Rules\PhilippinePhoneNumber;
 use App\Models\User;
@@ -11,6 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class CreateUserRequest extends FormRequest
 {
     use ChecksArchivedAccounts;
+    use DoctorFormRules;
     use NormalizesPhilippinePhone;
 
     /**
@@ -31,9 +33,11 @@ class CreateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = User::$rules;
+        $rules = array_merge(User::$rules, $this->doctorFormRules());
 
-        $rules['email'] = ['nullable', 'email', 'max:191', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
+        // A doctor signs in with the e-mail address and the password: the account cannot work without either.
+        $rules['email'] = ['required', 'email', 'max:191', 'regex:/(.*)@(.*)\.(.*)/', $this->uniqueAmongActiveUsers('email')];
+        $rules['password'] = 'required|same:password_confirmation|min:6';
         $rules['contact'] = ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')];
         $rules['employee_id'] = ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')];
         $rules['prc_license_number'] = 'required|string|max:100|unique:doctors,prc_license_number';
