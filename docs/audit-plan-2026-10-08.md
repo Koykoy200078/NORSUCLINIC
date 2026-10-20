@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–5 and 7 done and verified; Phase 6.1–6.3 completed 2026-10-20. **Next:** Phase 6.4 (shared medicine picker). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–5 and 7 done and verified; Phase 6.1–6.4 completed 2026-10-20. **Next:** Phase 6.5 (DocumentIssuanceController split). **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -830,6 +830,12 @@ Every defect gets a failing test, then the fix, then both passes again.
 
 **Runtime observation for Phase 9:** Windows PHP 8.3.31's CLI server intermittently returned a truncated HTTP 200 document (64,256 bytes, ending in the inline route script); isolated Apache on localhost served the complete pages consistently. A [PHP upstream partial-write fix](https://github.com/php/php-src/pull/23969) describes matching behavior; that is a possible explanation, not a verified version diagnosis. No PHP upgrade or application workaround was introduced. Re-check the supported clinic runtime and second-device/LAN access in Phase 9.
 
+### Phase 6 — progress 2026-10-20: 6.4 shared consultation medicine picker (done)
+
+Consultation create/edit use one locally bundled `custom/consultation-medicine-picker.js`, configured by `<x-consultation-medicine-picker>`. Safe JSON configuration keeps the panel-specific catalog URL, doctor-only Plan access, edit mode and saved medicine rows. Preserved field names/IDs, category/dosage choices, quantity limits and warnings, existing-stock credit, out-of-stock fallback, saved-row IDs, edit removal confirmation and duplicate checks per section. Certificate/excuse-slip forms emit no picker configuration and request no medicine catalog. Removed the edit script's unused `allMedicinesData` assignment and no-op fetch wrapper (it made no additional request). Dispensing and prescription pickers retain their separate category/Select2/template contracts and extra fields; forcing this consultation-row structure onto them would change their behavior.
+
+**Verified:** characterization captured from the original scripts before extraction; the standalone `tests/Feature/Regression/consultation-medicine-picker.cjs` compares four browser states against the committed synthetic DOM fixture (`consultation-medicine-picker.json`), including cross-section allowance, duplicate rejection and removal behavior. Run it with an available Playwright module (`PLAYWRIGHT_MODULE` supports a bundled runtime) and installed Chrome. Three new PHPUnit integration cases / **53 assertions** (RED for missing shared configuration, then GREEN) cover all panels, saved/out-of-stock rows, hostile text and forms without a picker. Focused consultation/access/stock checks **31 tests / 295 assertions**. Five isolated JavaScript fault copies and three PHP configuration mutations detected; application JavaScript unchanged by fault checks and PHP source restored byte-for-byte. Build completed before final page checks; generated translations restored. Chrome: **10 actual form pages** across admin/staff/doctor, saved and out-of-stock rows and correct limits, zero browser errors, external network requests or server failures. Isolated Apache, synthetic browser schema and access file removed; working clinic database unchanged. Full suite with crawl **730 tests / 8,004 assertions**, all passing (12:24.721); **1,610 crawl requests / 15 variants**, zero problems. Complete **461 routes** identical; **6,288-cell matrix / 393 routes / 16 variants** identical, zero errors/access violations. Inline review and diff check clean. Context7 Laravel **10.x** safe JSON documentation and the installed Laravel 10.50 encoder checked. No dependency, schema or Artisan-command change.
+
 ### Phase 6 — Deep DRY refactor + dead-code removal (behaviour unchanged)
 Each step is guarded by: full suite + `route:list --json` diff (identical unless a change is listed) + link crawl + matrix.
 - [x] 6.1 **Routes:** one shared definition per module with per-panel differences; `web.php`, `staff.php` and `doctor.php` use it. Every URL and route name stays identical.
@@ -840,7 +846,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - existing JavaScript hooks are kept;
   - it replaces all 23 action views, the queue rows and the patient-history tables;
   - every action is clicked once in the browser.
-- [ ] 6.4 **One medicine picker** script shared by consultation create / edit (and dispense record / prescription forms where it fits).
+- [x] 6.4 **One medicine picker** script shared by consultation create / edit (and dispense record / prescription forms where it fits).
 - [ ] 6.5 Split `DocumentIssuanceController` (2,596 lines) into services (consultation medicines, walk-in patient matching, images, routing); characterization tests first.
 - [ ] 6.6 **Dead / broken code sweep** (each removal backed by a search showing nothing uses it):
   - unreferenced classes, views, routes, JavaScript files and helpers;

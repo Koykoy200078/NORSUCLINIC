@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", loadCustomData);
 
 require("./row-actions");
+require("./consultation-medicine-picker");
 
 let source = null;
 let jsrender = require("jsrender");

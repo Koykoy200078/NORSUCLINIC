@@ -1,0 +1,626 @@
+{
+  "create-staff": [
+    {
+      "type": "nursing",
+      "index": "0",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][medicine_id]",
+          "value": "11",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][dosage]",
+          "value": "500mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "500mg",
+              "500mg (Available: 7)",
+              true
+            ],
+            [
+              "250mg",
+              "250mg (Available: 20)",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][quantity]",
+          "value": "7",
+          "disabled": false,
+          "max": "7",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "⚠️ Low stock: Only 7 units available",
+      "badge": ""
+    }
+  ],
+  "create-doctor": [
+    {
+      "type": "plan",
+      "index": "0",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][0][medicine_id]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              true
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][0][dosage]",
+          "value": "",
+          "disabled": true,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][0][quantity]",
+          "value": "1",
+          "disabled": true,
+          "max": "",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][0][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "",
+      "badge": ""
+    },
+    {
+      "type": "nursing",
+      "index": "0",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][medicine_id]",
+          "value": "11",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][dosage]",
+          "value": "500mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "500mg",
+              "500mg (Available: 7)",
+              true
+            ],
+            [
+              "250mg",
+              "250mg (Available: 20)",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][quantity]",
+          "value": "7",
+          "disabled": false,
+          "max": "7",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "⚠️ Low stock: Only 7 units available",
+      "badge": ""
+    }
+  ],
+  "edit-staff": [
+    {
+      "type": "nursing",
+      "index": "0",
+      "classes": "medicine-row existing-medicine-row",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][id]",
+          "value": "82",
+          "disabled": false,
+          "max": "",
+          "options": null
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][medicine_id]",
+          "value": "99",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "99",
+              "Empty medicine <tag> (Out of Stock)",
+              true
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][dosage]",
+          "value": "20mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "20mg",
+              "20mg (Stock: 0 - You used 4)",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][quantity]",
+          "value": "4",
+          "disabled": false,
+          "max": "4",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][dosage_instructions]",
+          "value": "Before meals",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": " This medicine is completely out of stock. You can only reduce the quantity or remove it to restore 4 units to inventory.",
+      "badge": "Saved"
+    },
+    {
+      "type": "nursing",
+      "index": "1",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][1][medicine_id]",
+          "value": "11",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][1][dosage]",
+          "value": "500mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "500mg",
+              "500mg (Available: 7)",
+              true
+            ],
+            [
+              "250mg",
+              "250mg (Available: 20)",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][1][quantity]",
+          "value": "7",
+          "disabled": false,
+          "max": "7",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][1][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "⚠️ Low stock: Only 7 units available",
+      "badge": ""
+    }
+  ],
+  "edit-doctor": [
+    {
+      "type": "plan",
+      "index": "0",
+      "classes": "medicine-row existing-medicine-row",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][0][id]",
+          "value": "81",
+          "disabled": false,
+          "max": "",
+          "options": null
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][0][medicine_id]",
+          "value": "11",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][0][dosage]",
+          "value": "500mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "500mg",
+              "500mg (Stock: 7 + Your 3 used = 10 available)",
+              true
+            ],
+            [
+              "250mg",
+              "250mg (Available: 20)",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][0][quantity]",
+          "value": "3",
+          "disabled": false,
+          "max": "10",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][0][dosage_instructions]",
+          "value": "Take <tag>",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": " Current Stock: 7 units in inventory + Your 3 already used",
+      "badge": "Saved"
+    },
+    {
+      "type": "plan",
+      "index": "1",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][1][medicine_id]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              true
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[plan][1][dosage]",
+          "value": "",
+          "disabled": true,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][1][quantity]",
+          "value": "1",
+          "disabled": true,
+          "max": "",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[plan][1][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "",
+      "badge": ""
+    },
+    {
+      "type": "nursing",
+      "index": "0",
+      "classes": "medicine-row existing-medicine-row",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][id]",
+          "value": "82",
+          "disabled": false,
+          "max": "",
+          "options": null
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][medicine_id]",
+          "value": "99",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "99",
+              "Empty medicine <tag> (Out of Stock)",
+              true
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][0][dosage]",
+          "value": "20mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "20mg",
+              "20mg (Stock: 0 - You used 4)",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][quantity]",
+          "value": "4",
+          "disabled": false,
+          "max": "4",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][0][dosage_instructions]",
+          "value": "Before meals",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": " This medicine is completely out of stock. You can only reduce the quantity or remove it to restore 4 units to inventory.",
+      "badge": "Saved"
+    },
+    {
+      "type": "nursing",
+      "index": "1",
+      "classes": "medicine-row",
+      "controls": [
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][1][medicine_id]",
+          "value": "11",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Medicine",
+              false
+            ],
+            [
+              "11",
+              "Medicine <tag> & café",
+              true
+            ]
+          ]
+        },
+        {
+          "tag": "SELECT",
+          "name": "medicines[nursing][1][dosage]",
+          "value": "500mg",
+          "disabled": false,
+          "max": "",
+          "options": [
+            [
+              "",
+              "Select Dosage",
+              false
+            ],
+            [
+              "500mg",
+              "500mg (Available: 7)",
+              true
+            ],
+            [
+              "250mg",
+              "250mg (Available: 20)",
+              false
+            ]
+          ]
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][1][quantity]",
+          "value": "7",
+          "disabled": false,
+          "max": "7",
+          "options": null
+        },
+        {
+          "tag": "INPUT",
+          "name": "medicines[nursing][1][dosage_instructions]",
+          "value": "",
+          "disabled": false,
+          "max": "",
+          "options": null
+        }
+      ],
+      "warning": "⚠️ Low stock: Only 7 units available",
+      "badge": ""
+    }
+  ]
+}
