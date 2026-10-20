@@ -71,6 +71,17 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-20 08:10 +08:00 — Claude Code — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `f666007` (row 5.12, the startup-script change and their handovers are pushed; working tree clean).
+- **Work:** Phase 5 row **5.13 Settings › Doctors** of [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md): Pass A test-first (incl. the "archived author" rule found in 5.12), Pass B live per role on a scratch copy of the clinic data (`norsu_clinic` untouched), full suite, records, push.
+- **END:** pushed on the owner's standing go-ahead.
+  - **Commits:** `8864baa` plan row 5.13 (code, tests, records), then this `handover:` commit.
+  - **Done (plan 5.13, Pass A and Pass B):** the doctor create form accepted a doctor with no e-mail and no password; gender, specializations, experience, address, blood type and qualifications were unchecked; and the whole request reached the account (language, university id ...). New shared rule set `App\Http\Requests\Concerns\DoctorFormRules` for create and edit, and `User::DOCTOR_FORM_FIELDS` limits what is saved. The side endpoints' guards, archiving, the trail and the sign-in of a new doctor are pinned (`DoctorsPassATest`). **Rule for new code: a form request validates every field the repository saves, and the repository saves only the form's own columns, never `$request->all()`.**
+  - **Verified:** `LINK_CRAWL=1` full suite **682 tests / 7,241 assertions, all passing** (27 min 58 sec); crawl 1,610 requests, no problems; no route added. 11 new tests; 14 mutations of production code each fail a test. Pass B on a scratch copy of the real clinic data (admin creates a doctor, the doctor signs in, status off sends the doctor to the login page, archive from the list, a nurse opens the list). Scratch schema dropped, `norsu_clinic` untouched.
+  - **Where to continue:** row 5.14 Settings › Manage User roles, then 5.15 to 5.22 of the plan's table.
+  - **No new Artisan commands;** [docs/commands.md](docs/commands.md) unchanged.
+  - **Left open (STATUS §6):** new owner question: restoring an archived doctor (the doctor record is deleted on archive).
+
 ### 2026-10-20 07:40 +08:00 — Claude Code — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `b706ed5` (working tree clean).
 - **Work:** the owner's request to rework `startup-dev-environment.ps1` / `.bat`: one terminal and no extra windows, no scheduler window (the automatic database backup was removed by the owner), and the site must open from `localhost` as well as from the LAN address.
