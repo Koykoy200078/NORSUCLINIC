@@ -60,16 +60,24 @@ Nothing is written while work is in progress, half-done or not started yet.
 | | |
 |---|---|
 | Branch | `changes_v2` (base `develop`) |
-| Last pushed work | `32411ec` — Phase 6.4 shared consultation medicine picker (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
+| Last pushed work | `0638477` — Phase 6.5 consultation controller services (OpenAI Codex, 2026-10-20), then this `handover:` commit. Earlier checkpoints remain in §3. |
 | Work in progress (not pushed) | none |
-| Next step | **Phase 6.5 — DocumentIssuanceController split**, then 6.6. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
+| Next step | **Phase 6.6 — caller-backed dead/broken-code sweep**. Phase 5 code/live passes (5.1–5.23) and Phase 7 are done; the Phase 9 re-checks remain. Other owner decisions stay in STATUS §6. |
 | Pushing | the owner's standing go-ahead (2026-10-09): push `changes_v2` after every verified phase, no need to ask |
 | Commands added so far | No new commands in this checkpoint. [docs/commands.md](docs/commands.md) also records the reviewed existing `cache:warmup` and `user:restore` behavior. |
-| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 730 tests / 8,004 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged; temporary browser fixtures removed. |
+| Project status | [docs/STATUS.md](docs/STATUS.md) and the audit plan show the current checkpoint: 744 tests / 8,066 assertions; link crawl 1,610 requests / 15 actor variants, no problems; 461-source-route manifest and 6,288-cell access matrix identical before/after. Working `norsu_clinic` unchanged. Audit checks isolate configuration and route caches as noted in the latest log. |
 
 ---
 
 ## 3. Log (newest on top)
+
+### 2026-10-20 15:27 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
+- **Branch / from:** `changes_v2` @ `eae6251` (Phase 6.4 and handover pushed; working tree clean).
+- **Work:** Phase **6.5** split DocumentIssuanceController into patient, medicine, image and navigation services. Characterize combined stock/photo/patient rollback and redirects first; preserve transactions, request-scoped image cleanup, matching and permissions. Inline implementation, full suite/crawl, route manifest and matrix before pushing.
+- **END:** Work commit `0638477`, followed by this handover commit. Controller reduced **2,695 → 1,472 lines**; patient/profile, consultation medicines, private-image lifecycle and successful navigation have four services. Two nullable conversions share `ConsultationInput`. Validation/authorization, transactions and error handling remain in the controller; stock still uses the inventory service and existing audit/reference behavior. No dependency, schema, asset or Artisan-command change.
+- **Verified:** Original-controller boundary characterizations **3 / 40**, helper RED/GREEN, final boundary/helper **14 / 62**, broader consultation/certificate/history/PDF **137 / 1,135**. **38 moved method bodies** match baseline after declared substitutions. Seven mutations detected (rollback, new-photo cleanup, deduction, matching, after-commit deletion, module redirect, zero conversion), all sources restored byte-for-byte. Full suite with crawl **744 tests / 8,066 assertions**, passing (04:54.309); **1,610 requests / 15 variants**, zero problems. All **461 source routes** identical; **6,288 matrix cells / 393 routes / 16 variants** identical, zero errors/leaks. Inline review and diff check clean. Context7 Laravel 10.x constructor-resolution and configuration/testing docs used.
+- **Execution / safety:** A generated local config cache pointed at the working DB; the unchanged test guard stopped that run before migrations. Cleared that generated config. A local route cache also supplied random names for unnamed routes. Final suite, manifest and matrix used explicit `DB_DATABASE=norsu_clinic_test`, plus absent ignored `APP_CONFIG_CACHE` and `APP_ROUTES_CACHE` paths (`storage/framework/testing/phase65-test-config.php`, `phase65-test-routes.php`). Use separate cache paths for subsequent tests and synthetic browser servers as well. Original working clinic data was not changed. No browser server or private access file remains from 6.4.
+- **Continue:** **6.6**, with runtime-caller proof for removals, Livewire 3 lifecycle repair/removal, build/browser/full-suite/crawl/intentional route diff/matrix. Read-only first checks found `fullcalendar`/`izitoast` package declarations and embedded FullCalendar in theme vendor JS; old doctor/patient appointment detail scripts and Livewire/Turbolinks bridge have no view include found yet; `lang-js` remains registered; `FixDashboardPermissions` mutates retired per-user dashboard access, while `cache:warmup` has tests and remains useful. Confirm each before removal. Context7 Livewire **3.x** `livewire:init`/`morphed` docs were already fetched; existing owner decisions stay in STATUS §6.
 
 ### 2026-10-20 14:46 +08:00 — OpenAI Codex — START → END (pushed 2026-10-20)
 - **Branch / from:** `changes_v2` @ `0148496` (Phase 6.3 and handover pushed; working tree clean).
