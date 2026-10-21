@@ -25,6 +25,8 @@ class PatientQueue extends Model
     ];
 
     protected $casts = [
+        'ticket_date' => 'date',
+        'ticket_number' => 'integer',
         'is_priority' => 'boolean',
         'called_at' => 'datetime',
         'completed_at' => 'datetime',
@@ -32,6 +34,7 @@ class PatientQueue extends Model
     ];
 
     const STATUS_WAITING = 'waiting';
+
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELLED = 'cancelled';
@@ -42,6 +45,22 @@ class PatientQueue extends Model
         self::STATUS_COMPLETED => 'Completed',
         self::STATUS_CANCELLED => 'Cancelled',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (PatientQueue $queue): void {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('patient_queues', 'ticket_number')) {
+                $queue->created_at = $queue->created_at ?? now();
+                $queue->ticket_date = $queue->created_at->toDateString();
+                $queue->ticket_number = app(\App\Services\QueueTicketService::class)->allocate($queue->ticket_date->toDateString());
+            }
+        });
+        static::updating(function (PatientQueue $queue): void {
+            if ($queue->isDirty(['ticket_date', 'ticket_number'])) {
+                throw new \LogicException('Queue tickets cannot be renumbered.');
+            }
+        });
+    }
 
     /**
      * Get the patient that this queue entry belongs to
@@ -205,20 +224,10 @@ class PatientQueue extends Model
     }
 
     /**
-     * Get queue number based on position
+     * Stable daily ticket; older installations retain a stable record reference until migrated.
      */
-    public function getQueueNumberAttribute()
+    public function getQueueNumberAttribute(): int
     {
-        $position = self::where('status', self::STATUS_WAITING)
-            ->where(function ($query) {
-                $query->where('is_priority', '>', $this->is_priority)
-                    ->orWhere(function ($q) {
-                        $q->where('is_priority', $this->is_priority)
-                            ->where('created_at', '<', $this->created_at);
-                    });
-            })
-            ->count();
-
-        return $position + 1;
+        return (int) ($this->ticket_number ?? $this->id);
     }
 }

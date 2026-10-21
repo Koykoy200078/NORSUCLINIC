@@ -23,7 +23,10 @@
 
     <div class="d-flex justify-content-between align-items-end mb-5">
         <h1>@yield('title')</h1>
-        <div class="d-flex gap-2 align-items-center">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            @if(auth()->user()->hasRole('clinic_admin'))
+                <a class="btn btn-secondary" href="{{ route('queue-board.settings') }}">Waiting-area board</a>
+            @endif
             @if(!isRole('doctor'))
             <a class="btn btn-primary" href="{{ getRouteByRole('patient-queue.create') }}">
                 <i class="fas fa-plus"></i> Add Patient to Queue

@@ -182,6 +182,9 @@ final class Realtime
 
         try {
             event(new ModuleChanged($module));
+            if ($module === 'queue') {
+                app(\App\Services\QueueBoardService::class)->publish();
+            }
         } catch (\Throwable $e) {
             Cache::put(self::DOWN_KEY, now()->getTimestamp(), self::DOWN_FOR);
             Log::warning('Real-time updates are unavailable (Reverb does not answer); saves are not affected.', [

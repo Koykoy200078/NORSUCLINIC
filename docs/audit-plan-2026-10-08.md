@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.5** are complete. **Next:** 8.6 queue board; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.6** are complete. **Next:** Phase 9 final verification, including runtime / second-device LAN checks. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -949,7 +949,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
 - [x] 8.5 **Notification center** (2026-10-21; verification below):
   - bell with per-user read / unread alerts (low stock, expiring / expired stock, new queue entry for doctors, consultation needing assessment), using the existing `notifications` table;
   - pushed live; "mark all read".
-- [ ] 8.6 **Queue display board:**
+- [x] 8.6 **Queue display board** (2026-10-21; verification below):
   - owner approved stable tickets restarting at 1 each clinic day (2026-10-21); queue movement must not renumber a ticket;
   - waiting-area screen on a secret link: now serving / next numbers and rooms, no names;
   - chime on call; live via Reverb.
@@ -1020,6 +1020,20 @@ Nullable alert metadata extends the existing notifications table without changin
 
 **Browser / data:** real Chrome Admin, Staff and Doctor centers receive true Reverb updates while open; individual reads stay private, read history / mark-all / 440px pass, with no JS errors, external HTTP requests or server failures. Synthetic integrity: **52 keys, 0 errors / 0 warnings**, fresh structure parity. Own HTTP / Reverb listeners, schema, QA credentials and browser cache removed; working `norsu_clinic` unchanged. One migration and one documented Artisan command added; apply migrations and run the existing scheduler on deployment. Next: **8.6 secret queue board**, with the approved stable daily tickets.
 
+### Phase 8.6 — Secret queue display board, completed 2026-10-21
+
+Admin **Queue › Waiting-area board** generates an encrypted secret link for the waiting-area browser. Rotating it immediately revokes the old HTTP link and signals connected displays to clear their panels. The standalone page uses local assets and shows today's serving / next ticket numbers and safe room codes only. It loads no authenticated layout, patient names, IDs, notes or clinical fields. Free-text room labels appear publicly as “Clinic room”; codes such as 12 / 203A remain readable. Responses disable caching, referrers and indexing. The public Reverb channel uses a hash of the unguessable link; events carry only changed / revoked signals, and the browser refetches the sanitised state.
+
+Tickets follow the owner's decision: start at 1 each clinic day and remain stable through priority changes, calls, completion, deletion and patient-history moves. A date-keyed InnoDB sequence serializes allocations; a unique date / ticket index guards duplicates. Existing queue rows are backfilled by date, creation time and ID, with no changes to prior columns. Ordinary queue screens show the same ticket. Cancelled / historical / archived-patient entries stay off the public board; reading it never changes clinical rows. A server-timed midnight refresh clears the previous day even without a queue event.
+
+The optional sound button unlocks local WebAudio; a new call plays one two-tone chime. Initial loads and repeated refreshes stay silent. Disconnected boards use the 60-second fallback, reconnect fetches current state, and transient HTTP failures retry. No dependency or Artisan command was added. One migration and a local Mix bundle were added; deployment uses the normal migrate / asset-build steps and existing Reverb server.
+
+**Verification:** seven new PHP cases, initial RED → GREEN; focused **7 / 62**, with an additional daily-accessor assertion included in the final suite. Seven deliberate faults detected (allocation, immutable ticket, historical date, secret validation, room privacy, public scope and post-commit delivery); sources restored exactly. Browser-found hidden-panel CSS regression failed before its fix and passes. **836 tests / 8,727 assertions**, all passing (**15:20.436**, Xdebug off, none skipped); crawl **1,683 requests / 15 variants**, no failures. Routes **472 → 476**, only two admin settings and two public secret-read routes; all previous entries unchanged. Panel contract **407 → 409**, prior order preserved. Matrix **6,528 / 408 routes / 16 variants**, all 6,496 prior cells / permissions identical, zero server errors / access violations. Seventeen PHP syntax checks, build, inline review / diff checks and Context7 Laravel **10.x** public-channel / explicit-payload guidance pass.
+
+**Browser / data:** real Chrome anonymous board, Admin / Staff / Doctor actions, concurrent additions yielding tickets **[1,2,3]**, stable priority order, safe rooms, one chime per call / no initial or repeated chime, second display through `localhost` alongside `127.0.0.1`, 440px board / Admin queue, live revocation and old-link 404 all pass. No patient data in HTML / JSON / WebSocket messages; no JS errors, external HTTP requests or server failures. Actual Reverb stop: clinical completion succeeds; the configured fallback callback fetches correctly while disconnected; restart restores the connection and subsequent live calls. Final tickets / counter / statuses and unchanged stock verified.
+
+Synthetic upgrade rehearsals under normal and session-only MyISAM defaults preserve all prior queue columns; yesterday receives **[1,2]**, today **[1]**, and the new counter stays InnoDB. Both final integrity checks: **52 keys, 0 errors / 0 warnings**, fresh parity. Own HTTP / Reverb listeners, synthetic schemas, access and cache removed; working `norsu_clinic` unchanged. **Phase 8 is complete. Next: Phase 9 final verification, including actual clinic runtime / second-device LAN checks; these local hostname checks do not substitute for that.**
+
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.
 - [ ] 9.2 Fresh rehearsal from the dump on the final code (both engines) · `db:integrity` exit 0.
@@ -1068,7 +1082,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Doctor queue routes not permission-gated | 🆕 Phase 3.5 |
 | Add-to-queue page JavaScript never loads (patient search + latest-consultation preview) | ⏳ → Phase 5.22 |
 | Timer polling → WebSocket | ✅ Phase 7 (2026-10-19) |
-| Queue display board | 🆕 Phase 8.6 |
+| Queue display board | ✅ Phase 8.6 (2026-10-21), stable daily tickets / secret link / safe rooms / chime / Reverb |
 
 ### 4.4 Consultations
 | Item | Status |

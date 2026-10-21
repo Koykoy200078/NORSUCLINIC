@@ -247,3 +247,5 @@ mix.js("resources/js/app.js", "public/js").postCss(
 
 // Custom Auth JS
 mix.js("resources/assets/js/custom/custom-auth.js", "public/js/custom-auth.js");
+
+mix.js("resources/assets/js/realtime/queue-board.js", "public/js/queue-board.js");

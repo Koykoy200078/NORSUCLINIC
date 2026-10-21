@@ -89,6 +89,19 @@ class RealtimeServerTest extends TestCase
 
     // ------------------------------------------------------------------ a notice per committed save
 
+    public function test_public_queue_board_notice_waits_for_commit_and_has_no_clinical_payload(): void
+    {
+        app(\App\Services\QueueBoardService::class)->rotate();
+        $patient = $this->makePatient();
+        $nurse = $this->makeNurse();
+        Event::fake([ModuleChanged::class, \App\Events\QueueBoardChanged::class]);
+        DB::transaction(function () use ($patient, $nurse) {
+            $this->queueEntry($patient->id, $nurse->id);
+            Event::assertNotDispatched(\App\Events\QueueBoardChanged::class);
+        });
+        Event::assertDispatched(\App\Events\QueueBoardChanged::class, fn ($event) => $event->broadcastWith() === ['changed' => true]);
+    }
+
     public function test_a_save_notifies_the_modules_that_show_it_and_nothing_else(): void
     {
         $patient = $this->makePatient();

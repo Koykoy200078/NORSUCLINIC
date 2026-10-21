@@ -17,7 +17,7 @@ $regularQueues = $queues->where('is_priority', false);
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Ticket</th>
                                 <th>Patient Name</th>
                                 <th>Room</th>
                                 <th>Status</th>
@@ -28,7 +28,7 @@ $regularQueues = $queues->where('is_priority', false);
                         <tbody>
                             @foreach($priorityQueues as $index => $queue)
                             <tr class="{{ $queue->status === 'in_progress' ? 'table-warning' : '' }}">
-                                <td><span class="badge bg-danger">{{ $index + 1 }}</span></td>
+                                <td><span class="badge bg-danger">{{ $queue->queue_number }}</span></td>
                                 <td>
                                     <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                     <small class="text-muted">{{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}</small>
@@ -125,7 +125,7 @@ $regularQueues = $queues->where('is_priority', false);
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Ticket</th>
                                 <th>Patient Name</th>
                                 <th>Room</th>
                                 <th>Status</th>
@@ -136,7 +136,7 @@ $regularQueues = $queues->where('is_priority', false);
                         <tbody>
                             @foreach($regularQueues as $index => $queue)
                             <tr class="{{ $queue->status === 'in_progress' ? 'table-warning' : '' }}">
-                                <td><span class="badge bg-primary">{{ $index + 1 }}</span></td>
+                                <td><span class="badge bg-primary">{{ $queue->queue_number }}</span></td>
                                 <td>
                                     <strong>{{ $queue->patient->user->full_name }}</strong><br>
                                     <small class="text-muted">{{ $queue->patient->user->university_id_number ?? $queue->patient->patient_unique_id }}</small>

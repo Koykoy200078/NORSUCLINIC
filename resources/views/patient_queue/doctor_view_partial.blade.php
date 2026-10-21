@@ -53,7 +53,7 @@ return $q->created_at->diffInMinutes(now());
                     <div class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
-                                <span class="badge bg-danger me-2">{{ $index + 1 }}</span>
+                                <span class="badge bg-danger me-2">{{ $queue->queue_number }}</span>
                                 {{ $queue->patient->user->full_name }}
                             </h5>
                             <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>
@@ -138,7 +138,7 @@ return $q->created_at->diffInMinutes(now());
                     <div class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
-                                <span class="badge bg-primary me-2">{{ $index + 1 }}</span>
+                                <span class="badge bg-primary me-2">{{ $queue->queue_number }}</span>
                                 {{ $queue->patient->user->full_name }}
                             </h5>
                             <small class="text-muted">{{ $queue->created_at->diffForHumans() }}</small>

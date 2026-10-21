@@ -54,6 +54,12 @@ Route::middleware('setLanguage')->group(function () {
 //Change language
 Route::post('/change-language', [FrontController::class, 'changeLanguage'])->name('front.change.language');
 
+// The waiting-area display is a bearer link. It renders no authenticated layout or clinical fields.
+Route::get('queue-board/{token}/state', [\App\Http\Controllers\QueueBoardController::class, 'state'])
+    ->where('token', '[A-Za-z0-9]{64}')->name('queue-board.state');
+Route::get('queue-board/{token}', [\App\Http\Controllers\QueueBoardController::class, 'show'])
+    ->where('token', '[A-Za-z0-9]{64}')->name('queue-board.show');
+
 // The sidebar menu alone (its badges are redrawn when a module changes, see resources/assets/js/realtime).
 Route::get('/live/menu', fn () => response(view('layouts.menu')->render().view('layouts.notification-bell')->render()))
     ->middleware(['auth', 'checkUserStatus'])

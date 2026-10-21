@@ -87,6 +87,10 @@ class PanelRoutes
     public static function queue(string $panel): void
     {
         Route::middleware('permission:manage_patients')->group(function () use ($panel) {
+            if ($panel === 'admin') {
+                Route::get('queue-display', [\App\Http\Controllers\QueueBoardController::class, 'settings'])->name('queue-board.settings');
+                Route::post('queue-display', [\App\Http\Controllers\QueueBoardController::class, 'rotate'])->name('queue-board.rotate');
+            }
             if ($panel !== 'staff') {
                 Route::get('patient-queue', [PatientQueueController::class, $panel === 'doctor' ? 'doctorQueue' : 'index'])->name('patient-queue.index');
             }
