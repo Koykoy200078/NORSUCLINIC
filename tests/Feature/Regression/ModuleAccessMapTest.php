@@ -23,6 +23,7 @@ class ModuleAccessMapTest extends TestCase
 
     /** Open to every signed-in staff / doctor on purpose: the dashboards and Reports / Notifications & Alerts. */
     private const OPEN_ROUTES = [
+        'staff.notifications.index', 'doctors.notifications.index',
         'staff.dashboard', 'doctors.dashboard', 'staff.patientData.dashboard',
         'staff.activity-logs.index', 'staff.activity-logs.export', 'staff.activity-logs.accomplishment', 'staff.activity-logs.inventory-yearly', 'staff.activity-logs.show',
         'doctors.activity-logs.index', 'doctors.activity-logs.export', 'doctors.activity-logs.accomplishment', 'doctors.activity-logs.inventory-yearly', 'doctors.activity-logs.show',

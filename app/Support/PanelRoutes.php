@@ -253,6 +253,7 @@ class PanelRoutes
 
     public static function activityLogs(string $panel): void
     {
+        Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
         Route::prefix('activity-logs')->name('activity-logs.')->group(function () use ($panel) {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
             Route::get($panel === 'admin' ? '/export' : '/export/csv', [ActivityLogController::class, 'export'])->name('export');

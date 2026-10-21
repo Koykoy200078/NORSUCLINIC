@@ -97,7 +97,43 @@ function refreshMenu() {
         });
 }
 
-const BADGE_MODULES = ["queue", "consultations", "inventory", "dispensing"];
+const BADGE_MODULES = ["queue", "consultations", "inventory", "dispensing", "notifications"];
+
+let centerBusy = false;
+function refreshNotifications() {
+    if (centerBusy || !document.querySelector('[data-notification-center]')) return;
+    centerBusy = true;
+    fetch(window.location.href, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.ok ? r.text() : '')
+        .then(html => {
+            const fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-notification-center]');
+            const current = document.querySelector('[data-notification-center]');
+            if (fresh && current) current.innerHTML = fresh.innerHTML;
+        }).catch(() => {}).finally(() => { centerBusy = false; });
+}
+
+window.addEventListener('clinic:live-refresh', e => {
+    if (e.detail.module === 'notifications') refreshNotifications();
+});
+
+document.addEventListener('click', async e => {
+    const button = e.target.closest('[data-notification-read]');
+    if (!button) return;
+    e.preventDefault();
+    button.disabled = true;
+    try {
+        const response = await fetch(button.dataset.notificationRead, { method: 'POST', credentials: 'same-origin',
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } });
+        if (response.ok) {
+            refreshMenu();
+            refreshNotifications();
+        } else {
+            button.textContent = 'Could not mark read. Try again.';
+        }
+    } catch (_) {
+        button.textContent = 'Connection lost. Try again.';
+    } finally { button.disabled = false; }
+});
 
 function flush() {
     state.timer = null;

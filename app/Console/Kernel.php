@@ -12,6 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('notifications:refresh')->everyMinute()->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/notifications.log'));
         // Hourly database backup; the command skips saving when nothing changed since the previous
         // backup and thins old files out (every backup for 2 days, then one per day for 30 days).
         // Nothing runs this by itself: `php artisan schedule:work` (started by the startup scripts) or a

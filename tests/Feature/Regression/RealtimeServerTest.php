@@ -62,6 +62,31 @@ class RealtimeServerTest extends TestCase
         ]);
     }
 
+    public function test_queue_alert_is_generated_only_after_commit_and_announced_without_patient_details(): void
+    {
+        $doctor = $this->makeDoctor();
+        $patient = $this->makePatient();
+        $nurse = $this->makeNurse();
+        $modules = $this->modulesNotifiedBy(function () use ($doctor, $patient, $nurse) {
+            DB::transaction(function () use ($doctor, $patient, $nurse) {
+                $this->queueEntry($patient->id, $nurse->id);
+                $this->assertSame(0, \App\Models\Notification::where('user_id', $doctor->id)->count());
+            });
+        });
+        $this->app->terminate();
+        $this->assertContains('queue', $modules);
+        $this->assertSame(1, \App\Models\Notification::where('user_id', $doctor->id)->where('type', 'queue_new')->count());
+        try {
+            DB::transaction(function () use ($patient, $nurse) {
+                $this->queueEntry($patient->id, $nurse->id);
+                throw new \RuntimeException('Rollback fixture');
+            });
+        } catch (\RuntimeException $e) {
+            $this->assertSame('Rollback fixture', $e->getMessage());
+        }
+        $this->assertSame(1, \App\Models\Notification::where('user_id', $doctor->id)->count());
+    }
+
     // ------------------------------------------------------------------ a notice per committed save
 
     public function test_a_save_notifies_the_modules_that_show_it_and_nothing_else(): void

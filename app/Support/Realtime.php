@@ -54,6 +54,7 @@ final class Realtime
         'medicine_transactions' => ['inventory', 'dispensing'],
         'medicine_bills' => ['dispensing'], 'sale_medicines' => ['dispensing'], 'used_medicines' => ['dispensing'],
         'activity_logs' => ['notifications'],
+        'notifications' => ['notifications'],
         'settings' => ['settings'], 'roles' => ['settings'], 'permissions' => ['settings'], 'role_has_permissions' => ['settings'],
         'model_has_roles' => ['settings'], 'model_has_permissions' => ['settings'], 'staff_profiles' => ['settings'],
         'countries' => ['settings'], 'states' => ['settings'], 'cities' => ['settings'], 'barangays' => ['settings'],
@@ -69,6 +70,7 @@ final class Realtime
      * The dashboards and the reports (activity-logs) show figures from many modules.
      */
     public const PAGES = [
+        'notifications' => ['notifications'],
         'stock-control' => ['inventory'],
         'patient-queue' => ['queue'],
         'patients' => ['patients'], 'patients-detail' => ['patients', 'consultations', 'prescriptions', 'lab_requests', 'queue'],
@@ -144,6 +146,29 @@ final class Realtime
 
         DB::afterCommit(function () use ($module) {
             unset(self::$scheduled[$module]);
+            if (in_array($module, ['inventory', 'queue', 'consultations'], true)) {
+                $refresh = function () use ($module) {
+                    try {
+                        app(\App\Services\ClinicNotificationService::class)->refresh($module);
+                    } catch (\Throwable $e) {
+                        Log::warning('Clinic alert refresh deferred to scheduler.', ['error' => class_basename($e)]);
+                    }
+                };
+                // QueryExecuted precedes insertGetId. Never issue alert INSERTs from that listener: even an
+                // autocommit save must finish reading its generated ID first. The commit callback registers
+                // this work for HTTP termination; rolled-back transactions never register it.
+                $key = 'clinic.alerts.pending.'.$module;
+                if (! app()->bound($key)) {
+                    app()->instance($key, true);
+                    app()->terminating(function () use ($key, $refresh) {
+                        if (! app()->bound($key)) {
+                            return;
+                        }
+                        app()->forgetInstance($key);
+                        $refresh();
+                    });
+                }
+            }
             self::publish($module);
         });
     }

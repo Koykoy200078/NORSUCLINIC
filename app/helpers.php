@@ -324,8 +324,7 @@ if (! function_exists('version')) {
 if (! function_exists('getNotification')) {
     function getNotification()
     {
-        return Notification::whereReadAt(null)
-            ->where('user_id', getLogInUserId())
+        return Notification::visibleTo(auth()->user())->whereNull('read_at')->unresolved()
             ->orderByDesc('created_at')
             ->limit(20)
             ->get();

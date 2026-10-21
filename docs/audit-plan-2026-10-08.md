@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.4** are complete. **Next:** 8.5 notification center, then 8.6 queue board; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.5** are complete. **Next:** 8.6 queue board; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -946,7 +946,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - dispose expired / damaged stock per batch with a reason;
   - record a physical count per batch with a preview of the differences;
   - both through the inventory service only (ledger types `disposal` / `adjustment`), so the yearly report (4.5) shows them.
-- [ ] 8.5 **Notification center:**
+- [x] 8.5 **Notification center** (2026-10-21; verification below):
   - bell with per-user read / unread alerts (low stock, expiring / expired stock, new queue entry for doctors, consultation needing assessment), using the existing `notifications` table;
   - pushed live; "mark all read".
 - [ ] 8.6 **Queue display board:**
@@ -1009,6 +1009,16 @@ All stock writes use `MedicineInventoryService::recordBatchCount`, under the sam
 **Verification:** eight new PHP cases, initial missing-route RED → GREEN; stale HTML recovery failed before its fix and passes. Focused **26 tests / 247 assertions** (stock controls, yearly report and route contracts). Six deliberate faults detected: quantity, disposal type, fingerprint, one-time confirmation, expiry boundary and cancelled-audit acceptance; two targets restored byte-for-byte. Ten changed PHP files pass syntax; inline review / diff checks pass. Context7 Laravel **10.x** transaction, locking, retries and authenticated encryption guidance used. No migration, dependency, JS / CSS or Artisan command added.
 
 **Browser / data:** Chrome administrator counts in both directions, expired disposal, Staff damaged disposal, desktop / 440px confirmation, two simultaneous confirmations (**200 + 422**), stale HTML recovery and doctor write denial pass. Zero browser errors, external HTTP requests or server failures. Synthetic stock / expiry totals, four exact audits and the yearly disposal / adjustment equation checked after the writes. Synthetic `db:integrity --compare-fresh`: **52 keys, 0 errors / 0 warnings**, matching fresh. Fresh synthetic data only; server, schema, QA access and browser caches removed; working `norsu_clinic` unchanged. Six new admin / Staff routes preserve all prior entries and the previous 398 panel fixture records / order. **822 tests / 8,616 assertions** passing (**05:03.948**, `XDEBUG_MODE=off`, none skipped); crawl **1,626 requests / 15 variants**, zero failures; routes **463 → 469**, all prior entries unchanged; matrix **6,448 requests / 403 routes / 16 variants**, all prior 6,352 cells and permissions identical, zero server errors or access violations. Next: **8.5 notification center**, then **8.6 queue board** with the owner's approved stable daily tickets; Phase 9 LAN checks remain.
+
+### Phase 8.5 — Notification center, completed 2026-10-21
+
+Every clinic role now has a bell and notification center, with per-user unread / read / full-history filters, individual read actions and mark-all-read. Unread totals include all active alerts, while the bell previews twenty. Alerts reuse the inventory thresholds and 30-day expiry window; doctors also receive waiting-queue and incomplete Assessment / Plan alerts. Titles / details contain stock information or record references, with no patient names or clinical content. Role permissions filter retrieval and actions; another user's alerts cannot be read or marked. Active conditions retain read state; resolved conditions remain in history, and recurrence creates a fresh alert.
+
+Nullable alert metadata extends the existing notifications table without changing legacy rows. Refreshes serialize on each recipient, deduplicate active conditions, preserve read state while updating details and evaluate usable batch stock as of today. Source commits register one refresh at HTTP termination, after insert IDs have been read; rollback registers none. This avoids synchronous notification INSERTs corrupting PDO lastInsertId inside QueryExecuted. Consumed termination work cannot rerun on later requests. Alert failures are contained; `notifications:refresh` runs through the existing scheduler every minute, including expiry boundaries without a new stock write. No dependency or external service was added. The existing Reverb signal refreshes each browser's own bell and center. Earlier installations keep their legacy bell until migrated.
+
+**Verification:** initial RED → GREEN; focused 25 / 211, then browser-found inventory destination regression 5 / 33 (stock links open the actual Inventory route). Five deliberate faults detected, targets restored exactly. Full suite / crawl **828 tests / 8,658 assertions**, all passing (**05:36.674**, Xdebug off, none skipped); crawl **1,682 requests / 15 variants**, no failures. Routes **469 → 472**, three center routes, all prior entries unchanged; panel fixture 404 → 407, prior order preserved. Matrix **6,496 / 406 routes / 16 variants**, all previous 6,448 cells / role permissions identical, zero server errors / access violations. Seventeen changed PHP files pass syntax; inline review, asset build and diff checks pass. Context7 Laravel 10 commit / notification guidance used.
+
+**Browser / data:** real Chrome Admin, Staff and Doctor centers receive true Reverb updates while open; individual reads stay private, read history / mark-all / 440px pass, with no JS errors, external HTTP requests or server failures. Synthetic integrity: **52 keys, 0 errors / 0 warnings**, fresh structure parity. Own HTTP / Reverb listeners, schema, QA credentials and browser cache removed; working `norsu_clinic` unchanged. One migration and one documented Artisan command added; apply migrations and run the existing scheduler on deployment. Next: **8.6 secret queue board**, with the approved stable daily tickets.
 
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.
@@ -1113,7 +1123,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Yearly Medicine Inventory report (left from last year, additional, Q1–Q4 remaining) | ✅ Phase 4.5 |
 | "Prepared by" shows the designation → role | 🆕 Phase 3.2 |
 | `wire:poll.30s` → WebSocket | ✅ Phase 7 (2026-10-19) |
-| Notification center (per-user, read / unread, live) | 🆕 Phase 8.5 |
+| Notification center (per-user, read / unread, live) | ✅ Phase 8.5 (2026-10-21) |
 | Saved report filters / one-click monthly report | 💡 §6 |
 
 ### 4.11 Settings and access
