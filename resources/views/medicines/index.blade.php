@@ -5,6 +5,9 @@ Medicine Inventory Tracking
 @section('content')
 <div class="container-fluid">
     @include('flash::message')
+    @if(!isRole('doctor') && canUseModule('inventory'))
+        <a class="btn btn-light-primary mb-3" href="{{ getRouteByRole('stock-control.index') }}">Stock disposal and physical count</a>
+    @endif
     @if(isRole('clinic_admin'))
         @can('manage_medicines')<div class="mb-3 text-end"><a href="{{ route('inventory-merge.index') }}" class="btn btn-light-primary">Merge duplicates</a></div>@endcan
     @endif

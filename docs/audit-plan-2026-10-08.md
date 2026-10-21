@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.3** are complete. **Next:** 8.4 stock disposal / count, then 8.5–8.6; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.4** are complete. **Next:** 8.5 notification center, then 8.6 queue board; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -942,7 +942,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - candidates by name + birth date + sex, university ID, phone;
   - preview, then move consultations, prescriptions, queue, lab requests, dispense records, addresses and images;
   - archive the merged-away patient with "merged into #…"; audit snapshot.
-- [ ] 8.4 **Stock disposal & count:**
+- [x] 8.4 **Stock disposal & count** (2026-10-21; verification below):
   - dispose expired / damaged stock per batch with a reason;
   - record a physical count per batch with a preview of the differences;
   - both through the inventory service only (ledger types `disposal` / `adjustment`), so the yearly report (4.5) shows them.
@@ -950,6 +950,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - bell with per-user read / unread alerts (low stock, expiring / expired stock, new queue entry for doctors, consultation needing assessment), using the existing `notifications` table;
   - pushed live; "mark all read".
 - [ ] 8.6 **Queue display board:**
+  - owner approved stable tickets restarting at 1 each clinic day (2026-10-21); queue movement must not renumber a ticket;
   - waiting-area screen on a secret link: now serving / next numbers and rooms, no names;
   - chime on call; live via Reverb.
 
@@ -998,6 +999,16 @@ An actor-bound encrypted preview expires after 15 minutes and fingerprints both 
 **Browser / data:** desktop / 440px preview, confirmation, source review, complete original details, archive badge / hidden Restore action, archived binding and stale HTML recovery pass. A changed source rejects an old confirmation with 422; a new preview succeeds. Two admins confirming the same pair produce one 200 and one 422. Staff / doctor valid-CSRF submissions are denied. Zero browser errors, external requests or server failures. Post-merge IDs, summaries, queue attachment, audit count and unchanged stock verified. Synthetic `db:integrity --compare-fresh`: all **52 keys**, **0 errors / 0 warnings**, identical to fresh. Only fresh synthetic data used; temporary server, schema, access file and caches removed. Working `norsu_clinic` unchanged. Migration `2026_10_21_112000_add_patient_merge_archives` adds patient merge metadata, historical-address provenance and two foreign keys; pending on the working database, along with earlier deferred migrations. `user:restore` refuses merged patient archives; commands.md records that behavior and the schema change.
 
 **Final safety nets:** **814 tests / 8,554 assertions**, all passing (**05:52.386**, `XDEBUG_MODE=off`, none skipped); crawl **1,618 requests / 15 variants**, no problems; source routes **461 → 463**, all prior entries unchanged; matrix **6,352 requests / 397 routes / 16 variants**, all 6,320 prior cells and role permissions identical, zero access violations or server errors. The route contract adds exactly two admin / Manage Patients entries while preserving prior 396 panel entries and order. Next: **8.4 stock disposal / physical count**; 8.5–8.6 and Phase 9 second-device LAN checks remain.
+
+### Phase 8 — progress 2026-10-21: 8.4 stock disposal / physical count
+
+Inventory now links **Stock disposal and physical count** for administrators and Staff with Manage Medicines, following existing inventory write access; doctors retain inventory viewing. Select a medicine and enter only the batches being checked. Count mode records actual units remaining (including zero); expired / damaged disposal records units to remove. A reason is mandatory. Preview lists recorded / resulting quantities and signed differences; explicit confirmation follows. Expired disposal requires a past expiry date, including the established rule that stock is still usable on its expiry date. Missing batches, another medicine's batches, fractional / negative / oversized quantities and excessive disposals are rejected. Batch identity, strength and expiry never change. Aggregate-only legacy stock must first have identifiable batches recorded; no batch or quantity is invented by reading the form.
+
+All stock writes use `MedicineInventoryService::recordBatchCount`, under the same medicine / batch locks as dispensing and merges. Changes create `disposal` or signed-direction `adjustment` ledger evidence with positive moved units, correct remaining balance, actor, reason and audit reference; totals / usable stock and lookup caches update. An unchanged count creates an audit without a zero ledger movement. The audit must persist and is atomic with every selected batch, ledger and total. Thrown or cancelled audit / ledger creation rolls back the operation. Actor-bound encrypted previews expire in 15 minutes, fingerprint stock / ledger / date and consume a one-time audit nonce, so even unchanged counts cannot replay. Changed stock requires a fresh preview; stale HTML confirmation returns to the GET form rather than a POST-only URL. Yearly report calculations already account for these ledger types and reproduce the resulting stock equation.
+
+**Verification:** eight new PHP cases, initial missing-route RED → GREEN; stale HTML recovery failed before its fix and passes. Focused **26 tests / 247 assertions** (stock controls, yearly report and route contracts). Six deliberate faults detected: quantity, disposal type, fingerprint, one-time confirmation, expiry boundary and cancelled-audit acceptance; two targets restored byte-for-byte. Ten changed PHP files pass syntax; inline review / diff checks pass. Context7 Laravel **10.x** transaction, locking, retries and authenticated encryption guidance used. No migration, dependency, JS / CSS or Artisan command added.
+
+**Browser / data:** Chrome administrator counts in both directions, expired disposal, Staff damaged disposal, desktop / 440px confirmation, two simultaneous confirmations (**200 + 422**), stale HTML recovery and doctor write denial pass. Zero browser errors, external HTTP requests or server failures. Synthetic stock / expiry totals, four exact audits and the yearly disposal / adjustment equation checked after the writes. Synthetic `db:integrity --compare-fresh`: **52 keys, 0 errors / 0 warnings**, matching fresh. Fresh synthetic data only; server, schema, QA access and browser caches removed; working `norsu_clinic` unchanged. Six new admin / Staff routes preserve all prior entries and the previous 398 panel fixture records / order. **822 tests / 8,616 assertions** passing (**05:03.948**, `XDEBUG_MODE=off`, none skipped); crawl **1,626 requests / 15 variants**, zero failures; routes **463 → 469**, all prior entries unchanged; matrix **6,448 requests / 403 routes / 16 variants**, all prior 6,352 cells and permissions identical, zero server errors or access violations. Next: **8.5 notification center**, then **8.6 queue board** with the owner's approved stable daily tickets; Phase 9 LAN checks remain.
 
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.

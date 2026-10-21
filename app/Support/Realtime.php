@@ -69,6 +69,7 @@ final class Realtime
      * The dashboards and the reports (activity-logs) show figures from many modules.
      */
     public const PAGES = [
+        'stock-control' => ['inventory'],
         'patient-queue' => ['queue'],
         'patients' => ['patients'], 'patients-detail' => ['patients', 'consultations', 'prescriptions', 'lab_requests', 'queue'],
         'document-issuances' => ['consultations', 'certificates', 'patients'],

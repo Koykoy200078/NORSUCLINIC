@@ -169,7 +169,7 @@ If stock really was on the shelf, put it back with a normal Stock-In.
 
 **Where it is used in the plan:** Phase 1 follow-up. Run **once** on the clinic copy right after `php artisan migrate`
 (deployment checklist, [STATUS §7](STATUS.md#7-to-do-on-the-clinic-copy-deployment-checklist) step 3a); the rehearsal runner
-runs it too. It relates to Phase 8.4 (stock disposal), which will add a screen for the same ledger entry.
+runs it too. Phase 8.4 now provides **Inventory › Stock disposal and physical count** for ordinary per-batch disposal / count; both use the inventory service and ledger. The orphan-recovery command remains a separate one-time repair.
 
 **Code:** `app/Console/Commands/RecoverOrphanBatches.php`, `app/Services/OrphanBatchRecovery.php`.
 **Tests:** `tests/Feature/Regression/OrphanBatchRecoveryTest.php`.

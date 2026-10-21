@@ -887,6 +887,40 @@ class MedicineInventoryService
         );
     }
 
+    /** Apply a verified shelf count or disposal to this exact batch; never move expiry or strength. */
+    public function recordBatchCount(int $batchId, int $remaining, int $userId, string $reason, Model $reference, bool $disposal = false): MedicineBatch
+    {
+        if ($remaining < 0 || $remaining > 2147483647 || trim($reason) === '') {
+            throw new RuntimeException('A valid count and reason are required.');
+        }
+
+        return DB::transaction(function () use ($batchId, $remaining, $userId, $reason, $reference, $disposal): MedicineBatch {
+            $identity = MedicineBatch::findOrFail($batchId);
+            $this->lockMedicineForStock($identity->medicine_id);
+            $batch = MedicineBatch::lockForUpdate()->findOrFail($batchId);
+            if ($batch->medicine_id !== $identity->medicine_id) {
+                throw new RuntimeException('This batch moved to another medicine. Preview it again.');
+            }
+            $difference = $remaining - $batch->quantity;
+            if ($disposal && $difference >= 0) {
+                throw new RuntimeException('A disposal must remove available units.');
+            }
+            if ($difference !== 0) {
+                $batch->quantity = $remaining;
+                $batch->save();
+                $movement = $this->createTransaction($batch, $disposal ? MedicineTransaction::TYPE_DISPOSAL : MedicineTransaction::TYPE_ADJUSTMENT,
+                    abs($difference), $remaining, $userId, $reference, $reason);
+                if (! $movement->exists) {
+                    throw new RuntimeException('The stock movement was not recorded.');
+                }
+            }
+            $this->syncMedicineTotals($batch->medicine_id);
+            DB::afterCommit(fn () => \Illuminate\Support\Facades\Cache::forget('medicines_list'));
+
+            return $batch->fresh();
+        }, 5);
+    }
+
     private function createTransaction(
         MedicineBatch $batch,
         string $type,

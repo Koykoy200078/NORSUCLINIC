@@ -200,6 +200,11 @@ class PanelRoutes
             Route::resource('medicines', MedicineController::class, $panel === 'doctor' ? ['only' => ['index']] : [])
                 ->parameters(['medicines' => 'medicine'])->except(['show']);
             Route::get('medicine-inventory-tracking', [MedicineController::class, 'index'])->name('medicine-inventory.index');
+            if ($panel !== 'doctor') {
+                Route::get('stock-control', [\App\Http\Controllers\StockControlController::class, 'index'])->name('stock-control.index');
+                Route::post('stock-control/preview', [\App\Http\Controllers\StockControlController::class, 'preview'])->name('stock-control.preview');
+                Route::post('stock-control', [\App\Http\Controllers\StockControlController::class, 'store'])->name('stock-control.store');
+            }
             Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
             Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
             if ($panel === 'admin') {
