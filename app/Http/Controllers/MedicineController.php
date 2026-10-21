@@ -124,6 +124,7 @@ class MedicineController extends AppBaseController
     {
         DB::beginTransaction();
         try {
+            $medicine = Medicine::whereKey($medicine->id)->lockForUpdate()->firstOrFail();
             $input = $this->prepareMedicineInput($request->validated(), $medicine);
             $this->medicineRepository->update($this->extractPersistableFields($input), $medicine->id);
             $medicine->refresh();
@@ -452,13 +453,15 @@ class MedicineController extends AppBaseController
         }
 
         if ($genericName !== '') {
-            $generic = Generic::firstOrCreate(['name' => $genericName]);
+            $generic = Generic::resolveInventoryLabel($genericName);
             $input['generic_id'] = $generic->id;
+            $input['generic_name'] = $generic->name;
+            $input['name'] = $brandName !== '' ? $brandName : $generic->name;
         }
 
         if ($categoryName !== '') {
-            $category = Category::firstOrCreate(
-                ['name' => $categoryName],
+            $category = Category::resolveInventoryLabel(
+                $categoryName,
                 ['is_active' => Category::ACTIVE]
             );
 
@@ -467,6 +470,8 @@ class MedicineController extends AppBaseController
             }
 
             $input['category_id'] = $category->id;
+            $input['category'] = $category->name;
+            $input['category_name'] = $category->name;
         }
 
         return $input;

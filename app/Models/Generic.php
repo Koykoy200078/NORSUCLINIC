@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ExcludesMergedInventory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,6 +28,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Generic extends Model
 {
+    use ExcludesMergedInventory;
+
     public $table = 'generics';
 
     public $fillable = [
@@ -39,6 +42,9 @@ class Generic extends Model
      * @var array
      */
     protected $casts = [
+        'merged_into_id' => 'integer',
+        'merged_by' => 'integer',
+        'merged_at' => 'datetime',
         'id' => 'integer',
         'name' => 'string',
     ];

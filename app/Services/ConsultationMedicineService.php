@@ -27,11 +27,12 @@ class ConsultationMedicineService
      *
      * @return array<int, array{id: ?int, medicine_id: int, dosage: ?string, quantity: int, used_for: string, dosage_instructions: ?string}>
      */
-    private function submittedMedicineRows(array $data): array
+    private function submittedMedicineRows(array $data, array $savedKeys = []): array
     {
         $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
         $rows = [];
         $seen = [];
+        $seenIds = [];
 
         foreach (($data['medicines'] ?? []) as $usedFor => $medicines) {
             if (! in_array($usedFor, ['plan', 'nursing'], true)) {
@@ -59,8 +60,13 @@ class ConsultationMedicineService
                 $medicineId = (int) $medicineData['medicine_id'];
                 $dosage = ConsultationInput::nullableString($medicineData['dosage'] ?? null);
                 $key = $this->medicineRowKey($medicineId, $dosage, (string) $usedFor);
+                $rowId = ! empty($medicineData['id']) ? (int) $medicineData['id'] : null;
+                if ($rowId !== null && isset($seenIds[$rowId])) {
+                    throw new \RuntimeException('A saved medicine row was submitted more than once.');
+                }
+                $retained = $rowId !== null && ($savedKeys[$rowId] ?? null) === $key;
 
-                if (isset($seen[$key])) {
+                if (isset($seen[$key]) && (! $seen[$key] || ! $retained)) {
                     $name = \App\Models\Medicine::find($medicineId)?->display_name ?? 'A medicine';
 
                     throw new \RuntimeException(
@@ -68,10 +74,13 @@ class ConsultationMedicineService
                         . ($usedFor === 'plan' ? 'Plan' : 'Nursing Intervention') . '. Combine the quantities into one row.'
                     );
                 }
-                $seen[$key] = true;
+                $seen[$key] = ($seen[$key] ?? true) && $retained;
+                if ($rowId !== null) {
+                    $seenIds[$rowId] = true;
+                }
 
                 $rows[] = [
-                    'id' => ! empty($medicineData['id']) ? (int) $medicineData['id'] : null,
+                    'id' => $rowId,
                     'medicine_id' => $medicineId,
                     'dosage' => $dosage,
                     'quantity' => $quantity,
@@ -106,13 +115,13 @@ class ConsultationMedicineService
     {
         $canManagePlanMedicines = $this->canCurrentUserManagePlanMedicines();
 
-        // Validate the submitted list before anything is touched: a bad list changes nothing.
-        $rows = $this->submittedMedicineRows($data);
-
         // A nurse cannot see or change Plan medicines, so those saved rows are left exactly as they are.
         $existing = $requestDocument->consultationMedicines()->get()
             ->filter(fn ($saved) => $canManagePlanMedicines || $saved->used_for !== 'plan')
             ->keyBy('id');
+        $savedKeys = $existing->map(fn ($line) => $this->medicineRowKey($line->medicine_id, $line->dosage, (string) $line->used_for))->all();
+        // A merge may make two saved identities equal. Retain their IDs and instructions; refuse new duplicates.
+        $rows = $this->submittedMedicineRows($data, $savedKeys);
 
         $paired = []; // submitted row index => saved row
         $claimed = []; // saved row id => true

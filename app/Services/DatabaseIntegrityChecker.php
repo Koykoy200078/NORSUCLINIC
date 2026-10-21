@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Medicine;
 use App\Models\User;
 use App\Support\ForeignKeyCatalog;
 use App\Support\LegacySchemaUpgrade;
@@ -316,9 +317,11 @@ final class DatabaseIntegrityChecker
     public function duplicateCandidates(): array
     {
         $warnings = [];
+        $medicineArchiveFilter = Medicine::supportsInventoryMerges() ? 'WHERE merged_into_id IS NULL' : '';
 
         foreach (DB::select(
             "SELECT GROUP_CONCAT(id ORDER BY id) AS ids FROM medicines
+             {$medicineArchiveFilter}
              GROUP BY LOWER(TRIM(name)), LOWER(TRIM(COALESCE(dosage, ''))), COALESCE(generic_id, 0)
              HAVING COUNT(*) > 1 ORDER BY MIN(id)",
             [],

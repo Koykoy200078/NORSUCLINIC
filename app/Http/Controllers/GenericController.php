@@ -110,6 +110,9 @@ class GenericController extends AppBaseController
      */
     public function destroy(Generic $generic): JsonResponse
     {
+        if (Generic::supportsInventoryMerges() && $generic->mergedSources()->exists()) {
+            return $this->sendError('This generic retains a merge archive and cannot be deleted.');
+        }
         // Deleting a generic used to silently null generic_id on every medicine that used it.
         // Refuse instead, like categories and specializations do. P2-M5.
         $usedBy = Medicine::where('generic_id', $generic->id)->count();

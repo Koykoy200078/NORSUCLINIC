@@ -182,7 +182,7 @@ class PrescriptionController extends AppBaseController
             ]);
 
             foreach ($medicineRows as $row) {
-                $medicine = Medicine::findOrFail($row['medicine_id']);
+                $medicine = Medicine::lockForUpdate()->findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
 
                 PrescriptionMedicine::create([
@@ -381,7 +381,7 @@ class PrescriptionController extends AppBaseController
         $input = $this->applyAuthorship($input);
         $medicineRows = $this->normalizeMedicineRows($input['medicines'] ?? []);
 
-        if ($this->hasDuplicateMedicineStrength($medicineRows)) {
+        if ($this->hasDuplicateMedicineStrength($medicineRows, $prescription)) {
             Flash::error(__('messages.prescription.not_add_duplicate_medicines'));
 
             return Redirect::back()->withInput();
@@ -448,7 +448,7 @@ class PrescriptionController extends AppBaseController
             $prescription->getMedicine()->delete();
 
             foreach ($medicineRows as $row) {
-                $medicine = Medicine::findOrFail($row['medicine_id']);
+                $medicine = Medicine::lockForUpdate()->findOrFail($row['medicine_id']);
                 $totalQuantity = $this->resolveTotalQuantity($row);
 
                 PrescriptionMedicine::create([
@@ -552,12 +552,15 @@ class PrescriptionController extends AppBaseController
      * The same medicine may appear twice only in different strengths (e.g. Paracetamol 250 mg and 500 mg);
      * the same medicine in the same strength twice is a typing mistake.
      */
-    private function hasDuplicateMedicineStrength(array $rows): bool
+    private function hasDuplicateMedicineStrength(array $rows, ?Prescription $existing = null): bool
     {
-        return collect($rows)
-            ->map(fn (array $row) => $row['medicine_id'] . '|' . preg_replace('/\s+/', '', mb_strtolower((string) $row['dosage'])))
-            ->duplicates()
-            ->isNotEmpty();
+        $key = fn (int $medicine, ?string $dosage) => $medicine.'|'.preg_replace('/\s+/', '', mb_strtolower((string) $dosage));
+        $counts = collect($rows)->countBy(fn (array $row) => $key($row['medicine_id'], $row['dosage']));
+        // A merge can make distinct saved medicine identities equal. Keep their separate instructions;
+        // new rows may not increase the saved multiplicity for the same medicine and strength.
+        $saved = $existing ? $existing->getMedicine()->get()->countBy(fn ($line) => $key($line->medicine, $line->dosage)) : collect();
+
+        return $counts->contains(fn (int $count, string $identity) => $count > max(1, (int) $saved->get($identity, 0)));
     }
 
     private function resolveTotalQuantity(array $row): int

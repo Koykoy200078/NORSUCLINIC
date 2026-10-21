@@ -40,7 +40,7 @@ class MedicineInventoryService
                 throw new RuntimeException('Valid medicine and quantity are required for stock-in.');
             }
 
-            $medicine = Medicine::find($medicineId);
+            $medicine = $this->lockMedicineForStock($medicineId);
             if (! $medicine) {
                 throw new RuntimeException('Medicine not found for stock-in.');
             }
@@ -253,6 +253,7 @@ class MedicineInventoryService
         }
 
         return DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $transactionType, $dosage) {
+            $this->lockMedicineForStock($medicineId);
             $this->ensureLegacyOpeningBatch($medicineId);
 
             $remaining = $quantity;
@@ -363,7 +364,7 @@ class MedicineInventoryService
         }
 
         DB::transaction(function () use ($medicineId, $quantity, $userId, $reference, $remarks, $dosage, $expirationDate) {
-            $medicine = Medicine::find($medicineId);
+            $medicine = $this->lockMedicineForStock($medicineId);
             if (! $medicine) {
                 return;
             }
@@ -445,7 +446,7 @@ class MedicineInventoryService
         }
 
         DB::transaction(function () use ($medicineId, $quantity, $reference, $dosage, $userId, $remarks) {
-            $medicine = Medicine::find($medicineId);
+            $medicine = $this->lockMedicineForStock($medicineId);
             if (! $medicine) {
                 return;
             }
@@ -615,6 +616,7 @@ class MedicineInventoryService
         }
 
         DB::transaction(function () use ($medicineId, $quantity, $batchId, $dosage, $expirationDate, $userId, $reference, $remarks) {
+            $this->lockMedicineForStock($medicineId);
             $batch = null;
 
             if ($batchId) {
@@ -690,6 +692,8 @@ class MedicineInventoryService
         }
 
         return DB::transaction(function () use ($batchId, $quantity, $userId, $reference, $remarks) {
+            $identity = MedicineBatch::findOrFail($batchId);
+            $this->lockMedicineForStock((int) $identity->medicine_id);
             $batch = MedicineBatch::lockForUpdate()->findOrFail($batchId);
 
             $batch->quantity = (int) $batch->quantity + $quantity;
@@ -730,34 +734,64 @@ class MedicineInventoryService
      */
     public function syncMedicineTotals(int $medicineId): void
     {
-        $total = (int) MedicineBatch::where('medicine_id', $medicineId)->sum('quantity');
+        DB::transaction(function () use ($medicineId): void {
+            $medicine = $this->lockMedicineForStock($medicineId);
+            if (! $medicine) {
+                return;
+            }
+            // Current reads after the parent lock also see a merge committed while this transaction waited.
+            $batches = MedicineBatch::where('medicine_id', $medicineId)->lockForUpdate()->get();
+            $total = (int) $batches->sum('quantity');
+            $today = Carbon::today()->toDateString();
+            $available = (int) $batches->filter(fn (MedicineBatch $batch) => $batch->quantity > 0
+                && ($batch->expiration_date === null || $batch->expiration_date->toDateString() >= $today))->sum('quantity');
+            $medicine->update([
+                'quantity' => $total,
+                'available_quantity' => $available,
+                'baseline_quantity' => max((int) $medicine->baseline_quantity, $total, (int) $medicine->quantity, (int) $medicine->available_quantity),
+            ]);
+        });
+    }
 
-        $available = (int) MedicineBatch::where('medicine_id', $medicineId)
-            ->where('quantity', '>', 0)
-            ->where(function ($query) {
-                $query->whereNull('expiration_date')
-                    ->orWhereDate('expiration_date', '>=', Carbon::today()->toDateString());
-            })
-            ->sum('quantity');
+    /** Move batch identities, never their quantities or ledger dates. The caller owns the merge transaction. */
+    public function mergeMedicineStock(Medicine $source, Medicine $target, array $plan): array
+    {
+        if (DB::transactionLevel() < 1 || $source->id === $target->id) {
+            throw new RuntimeException('An inventory merge requires two records in a transaction.');
+        }
+        $this->ensureLegacyOpeningBatch($source->id);
+        $this->ensureLegacyOpeningBatch($target->id);
+        $renames = [];
+        foreach (MedicineBatch::where('medicine_id', $source->id)->orderBy('id')->lockForUpdate()->get() as $batch) {
+            $item = collect($plan)->firstWhere('id', $batch->id) ?? collect($plan)->firstWhere('id', 0);
+            if ($item === null || $item['before'] !== $batch->batch_number) {
+                throw new RuntimeException('The batch preview changed. Preview the merge again.');
+            }
+            $changes = ['medicine_id' => $target->id, 'dosage' => trim((string) $batch->dosage) ?: (trim((string) $source->dosage) ?: 'N/A')];
+            if ($item['after'] !== $batch->batch_number) {
+                $changes['batch_number'] = $item['after'];
+                $changes['original_batch_number'] = $batch->original_batch_number ?: $batch->batch_number;
+                $renames[] = ['batch_id' => $batch->id, 'before' => $batch->batch_number, 'after' => $item['after']];
+            }
+            DB::table('medicine_batches')->where('id', $batch->id)->update($changes);
+        }
+        $target->baseline_quantity = (int) $target->baseline_quantity + (int) $source->baseline_quantity;
+        $target->save();
+        $this->syncMedicineTotals($source->id);
+        $this->syncMedicineTotals($target->id);
 
-        $medicine = Medicine::find($medicineId);
-        if (! $medicine) {
-            return;
+        return $renames;
+    }
+
+    /** Shared parent lock serializes stock writes with archival, including a stale form opened before a merge. */
+    private function lockMedicineForStock(int $medicineId): ?Medicine
+    {
+        $medicine = Medicine::withMerged()->lockForUpdate()->find($medicineId);
+        if ($medicine && $medicine->merged_into_id !== null) {
+            throw new RuntimeException('This medicine was merged into another record. Reload the form before continuing.');
         }
 
-        $currentBaseline = (int) ($medicine->baseline_quantity ?? 0);
-        $newBaseline = max(
-            $currentBaseline,
-            $total,
-            (int) $medicine->quantity,
-            (int) $medicine->available_quantity
-        );
-
-        $medicine->update([
-            'quantity' => $total,
-            'available_quantity' => $available,
-            'baseline_quantity' => $newBaseline,
-        ]);
+        return $medicine;
     }
 
     /**

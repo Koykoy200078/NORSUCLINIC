@@ -112,7 +112,7 @@ class MedicineAvailabilityRepository extends BaseRepository
             $medicineAvailability = MedicineAvailability::create($purchaseMedicineArray);
 
             foreach ($input['medicine'] as $key => $value) {
-                $medicine = Medicine::findOrFail($input['medicine'][$key]);
+                $medicine = Medicine::lockForUpdate()->findOrFail($input['medicine'][$key]);
                 $previousAvailable = (int) ($medicine->available_quantity ?? 0);
                 // Do NOT manually bump quantity/available_quantity here — recordStockIn()'s
                 // syncMedicineTotals() recomputes them from the batch ledger and is the single
@@ -255,7 +255,7 @@ class MedicineAvailabilityRepository extends BaseRepository
                 $dosage = $input['dosage'][$key] ?? null;
                 $manufacturingDate = $input['manufacturing_date'][$key] ?? null;
                 $expiryDate = $input['expiry_date'][$key] ?? null;
-                $medicine = Medicine::findOrFail($medicineId);
+                $medicine = Medicine::lockForUpdate()->findOrFail($medicineId);
 
                 $existing = $purchasedMedicineId ? ($existingPurchasedMedicines[$purchasedMedicineId] ?? null) : null;
 

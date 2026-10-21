@@ -88,6 +88,9 @@ class CategoryController extends AppBaseController
      */
     public function destroy(Category $category): JsonResponse
     {
+        if (Category::supportsInventoryMerges() && $category->mergedSources()->exists()) {
+            return $this->sendError('This category retains a merge archive and cannot be deleted.');
+        }
         $medicineCategoryModel = [
             Medicine::class,
         ];

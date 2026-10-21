@@ -70,7 +70,7 @@ asks for.
 | Check | Severity | What a problem means / what to do |
 |---|---|---|
 | Every table is InnoDB | error | A table is still MyISAM: foreign keys and transactions do not work for it. Run `php artisan migrate`. |
-| All 47 foreign keys are in place | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). If nothing blocks it: `php artisan db:restore-foreign-keys`. |
+| All 50 foreign keys are in place (47 before the Phase 8.2 merge migration) | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). Run pending migrations first; if nothing else blocks it: `php artisan db:restore-foreign-keys`. |
 | No row points at a record that does not exist | error | A `xxx_id` column (without a foreign key) holds an id that has no parent. Fix the data by hand. |
 | No zero dates | error / warning | A date column still holds `0000-00-00`. Error when the column allows NULL (run `migrate`), warning when it does not (fix by hand). |
 | No duplicate numbers or keys | error | Two records share a number that must be unique (history number, request number, SKU, e-mail, university id, PRC number, settings key, batch number). |
@@ -82,7 +82,9 @@ asks for.
 | No duplicate candidates | warning | Two medicines with the same name and strength, or two patients with the same name and birth date (ids only are printed). Merged later in plan Phase 8. |
 | No pending data repairs | warning | What `text:repair-entities` and `phone:normalize` would still change (their dry runs). |
 
-**Example** (the real clinic data on the development laptop, 2026-10-09, *before* `inventory:recover-orphan-batches --apply`; 1 error, 3 warnings. Afterwards the error is gone: `0 error(s), 3 warning(s).`):
+Phase 8.2 (2026-10-21) adds three self-referencing archive keys on medicines, categories and generics. Apply `2026_10_20_190000_add_inventory_merge_archives` with the normal backed-up deployment before using **Inventory › Merge duplicates**, then run `db:integrity`. The tool previews and confirms individual merges; `migrate` does not merge any records. Its audit snapshots and original batch numbers are retained. Duplicate-candidate warnings exclude merged medicine archives; unmerged duplicates still warn, including on a database awaiting the merge migration. No new Artisan command is added. The working development database was left unchanged during verification, so it still needs the pending migrations; the fresh synthetic merged database passed all 50 keys and `--compare-fresh` with 0 errors / 0 warnings.
+
+**Historical example** (the real clinic data on the development laptop, 2026-10-09, *before* `inventory:recover-orphan-batches --apply`; 1 error, 3 warnings. Afterwards the error is gone: `0 error(s), 3 warning(s).`):
 
 ```text
 Database integrity - norsu_clinic

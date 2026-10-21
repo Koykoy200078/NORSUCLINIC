@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ExcludesMergedInventory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
 class Category extends Model
 {
     use HasFactory;
+    use ExcludesMergedInventory;
 
     public $table = 'categories';
 
@@ -64,6 +66,9 @@ class Category extends Model
      * @var array
      */
     protected $casts = [
+        'merged_into_id' => 'integer',
+        'merged_by' => 'integer',
+        'merged_at' => 'datetime',
         'deleted_at' => 'datetime',
         'id' => 'integer',
         'name' => 'string',

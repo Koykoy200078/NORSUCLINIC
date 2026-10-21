@@ -7,6 +7,9 @@
 @endsection
 @section('content')
 <div class="container-fluid">
+    @if(isRole('clinic_admin'))
+        @can('manage_medicines')<div class="mb-3 text-end"><a href="{{ route('inventory-merge.index', ['kind' => 'generic']) }}" class="btn btn-light-primary">Merge duplicates</a></div>@endcan
+    @endif
     {{Form::hidden('genericUrl',
             getRouteByRole('generics.index'),
         ['id'=>'indexGenericUrl'])}}

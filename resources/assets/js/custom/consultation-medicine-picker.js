@@ -434,6 +434,8 @@ function initConsultationMedicinePicker() {
         // The saved row this line edits. The server matches rows by id, so changing the medicine of
         // a saved line or removing one of two similar lines affects exactly that line.
         if (existingData && existingData.rowId) {
+            row.dataset.savedRowId = existingData.rowId;
+            row.dataset.originalMedicineKey = existingData.medicineId + '|' + String(existingData.dosage || '').trim().toLowerCase();
             const rowIdInput = document.createElement('input');
             rowIdInput.type = 'hidden';
             rowIdInput.name = `medicines[${type}][${index}][id]`;
@@ -520,7 +522,7 @@ function initConsultationMedicinePicker() {
                     return;
                 }
 
-                const seen = new Set();
+                const seen = new Map();
                 container.querySelectorAll('.medicine-row').forEach(function (row) {
                     const medicine = row.querySelector('.medicine-select');
                     const dosage = row.querySelector('.dosage-select');
@@ -528,12 +530,20 @@ function initConsultationMedicinePicker() {
                         return;
                     }
 
-                    const key = medicine.value + '|' + (dosage ? dosage.value : '');
-                    if (seen.has(key)) {
-                        const label = medicine.options[medicine.selectedIndex].textContent;
-                        duplicates.push(label + (dosage && dosage.value ? ' (' + dosage.value + ')' : ''));
+                    const key = medicine.value + '|' + String(dosage ? dosage.value : '').trim().toLowerCase();
+                    seen.set(key, [...(seen.get(key) || []), row]);
+                });
+                seen.forEach(function (rows, key) {
+                    if (rows.length < 2) {
+                        return;
                     }
-                    seen.add(key);
+                    const ids = rows.map(row => row.dataset.savedRowId);
+                    const retained = ids.every(Boolean) && new Set(ids).size === rows.length
+                        && rows.every(row => row.dataset.originalMedicineKey === key);
+                    if (!retained) {
+                        const medicine = rows[0].querySelector('.medicine-select');
+                        duplicates.push(medicine.options[medicine.selectedIndex].textContent);
+                    }
                 });
             });
 

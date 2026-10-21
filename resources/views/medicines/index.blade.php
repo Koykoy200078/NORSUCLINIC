@@ -5,6 +5,9 @@ Medicine Inventory Tracking
 @section('content')
 <div class="container-fluid">
     @include('flash::message')
+    @if(isRole('clinic_admin'))
+        @can('manage_medicines')<div class="mb-3 text-end"><a href="{{ route('inventory-merge.index') }}" class="btn btn-light-primary">Merge duplicates</a></div>@endcan
+    @endif
     <livewire:medicine-screen />
 </div>
 

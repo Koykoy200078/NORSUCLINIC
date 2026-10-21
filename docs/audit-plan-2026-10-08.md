@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7 and the Phase 5.10 report follow-up are complete. The owner resumed Phase 8 on 2026-10-20; **8.1 searchable Add medicines** is implemented and checked (progress below). **Next:** 8.2 duplicate medicine / stock merge; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.2** are complete. **Next:** 8.3 duplicate patient merge, then 8.4–8.6; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -177,6 +177,7 @@ owner's expectation:
 
 - Merges (patients, medicines, categories / generics) are **admin-only**, with preview, confirm and an audit snapshot; the
   merged-away record is archived, never deleted.
+- **Medicine compatibility (owner, 2026-10-20):** require the same recorded generic ingredient and unit (case and surrounding spaces ignored). Different strengths may remain in separate batches. Missing ingredient / unit blocks confirmation until corrected.
 - Queue display board = a kiosk page opened with a secret link set in Settings; queue numbers and rooms only (**no patient
   names**); offline chime.
 - Notifications go to the users who can use the module.
@@ -931,11 +932,12 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - search by brand, generic name, strength, category and SKU;
   - each option shows stock in hand and nearest expiry;
   - out-of-stock / expired options are disabled.
-- [ ] 8.2 **Merge duplicate medicines / stock** (admin; sample: #41 / #42, #50 / #55):
+- [x] 8.2 **Merge duplicate medicines / stock** (admin; sample: #41 / #42, #50 / #55):
   - preview, then move batches, ledger, consultation / prescription / dispense / stock-in lines to the kept medicine;
   - recompute totals; archive the duplicate; audit snapshot;
   - the yearly inventory report (4.5) shows the merged history under the kept medicine;
   - the same tool merges duplicate categories / generics.
+  - Owner approved matching generic ingredient and unit; different strengths stay separate. Completed 2026-10-21; verification below.
 - [ ] 8.3 **Merge duplicate patients** (admin):
   - candidates by name + birth date + sex, university ID, phone;
   - preview, then move consultations, prescriptions, queue, lab requests, dispense records, addresses and images;
@@ -964,6 +966,22 @@ On edit, saved row IDs, sections, strengths and quantity credits remain intact, 
 **Live check:** six real pages, admin / Staff (Nurse) / doctor create and edit, using a fresh synthetic database: each search field returns the correct medicine with **12 usable units** and its nearest expiry; a new 500mg line is capped at **7**, its saved line at **10** including the 3 already used, and a saved empty line at **4**. Expired 100mg stock is absent from strength choices; expired / empty medicines are visible but disabled for new rows. Desktop and 440px search / selection / Escape checks pass; zero JavaScript errors, external requests or server failures. Working `norsu_clinic` unchanged; no clinic data copied. Second-device LAN validation remains Phase 9.
 
 **Final safety nets:** full suite with crawl **777 tests / 8,248 assertions**, passing (**05:30.075**); crawl **1,609 requests / 15 variants**, zero broken / crashed / lazy-table / capped results. All **459 source routes** unchanged; access matrix **6,288 requests / 393 routes / 16 variants** identical to baseline, zero server errors or access violations. Browser search tests reset to a no-match state between fields; reopened keyboard-selected widgets are exercised with actual keystrokes, as advised by Context7 Playwright documentation. Synthetic server, schema, access file and cached configuration removed after checking. No new Artisan command.
+
+### Phase 8 — progress 2026-10-21: 8.2 duplicate medicines / stock
+
+Admin-only **Merge duplicates** links on Inventory, Categories and Generics open a shared preview / confirmation page. The retained record keeps its name and details; the duplicate stays as an archive with `merged_into_id`, `merged_at` and `merged_by`, and leaves ordinary lists, binding and medicine pickers. Integrity duplicate-candidate warnings exclude completed medicine archives while still reporting active duplicates, including on a database awaiting the merge migration. Ordinary unused-record deletion is unchanged; retained records with archive links cannot be deleted. A database without the new columns shows an update-needed message. Migration `2026_10_20_190000_add_inventory_merge_archives` adds the archive columns, three self-referencing foreign keys and `medicine_batches.original_batch_number`; it does not merge records by itself. The current schema catalog is **50 keys** (previously 47). The working `norsu_clinic` has not been migrated or changed.
+
+Medicine previews show recorded ingredient / unit / default strength / SKU, linked-row counts, usable and total stock, and each incoming batch's proposed reference. Both medicines must have the same generic ingredient and unit; missing values or mismatches block confirmation. Different strengths remain distinct. Stock batches retain their IDs, quantities, expiry dates and ledger links / dates; only a colliding batch number gets a distinct previewed reference, with its original retained. Aggregate-only legacy stock receives opening batches through `MedicineInventoryService` on confirmation. Totals are recomputed there. The yearly inventory combines both dated histories under the retained medicine, without inventing a stock movement.
+
+All consultation, prescription, dispense, stock-in and legacy usage references move while retaining their rows and instructions. An unset batch / clinical-line strength is frozen to the source medicine's saved strength (or “N/A”), so moving it to a different default does not change its meaning. Distinct saved consultation / prescription lines that converge to the same medicine and strength remain editable; new duplicates are still refused, and the prescription warning follows the same rule. Returns from a moved consultation still reach the original batch even after expiry. Category / generic merges update IDs and saved text labels, including legacy null-ID rows; preview counts and audit IDs use the transfer's SQL comparison, so accent / case matching follows the database consistently. An old medicine form resolves an archived label to the retained record instead of recreating the duplicate.
+
+Confirmation requires a checkbox and an authenticated encrypted preview bound to the actor, identities, current data and date, expiring after 15 minutes. Missing / changed / expired / tampered / replayed previews are rejected. Reopening an archived HTML preview renders an explanation without a confirm token; it cannot redirect back to itself. JSON preview errors retain their 422 response. Parent and linked rows are locked in a transaction with deadlock retry; stock / clinical writes use the same parent lock and reject an archived ID. Audit creation is part of the transaction, so audit failure rolls back the whole merge. The audit holds inventory identities, moved row IDs and batch renames, with no copied clinical text. Cache clearing runs after commit. Existing SQL-based Reverb notifications cover the changed tables.
+
+**Verification:** 20 new PHP cases. Initial HTTP / browser regressions failed, then passed; review added failing regressions for legacy-label SQL matching, a self-redirecting stale HTML preview and archived duplicate-candidate warnings, all fixed. Final focused **80 tests / 678 assertions**, passing (**02:34.118**); full safety-net results are below. **19 faults detected**, 15 PHP and four script-copy faults (compatibility, stale / actor checks, archive visibility, references, batch collisions, ledger dates, rollback, stock totals, stale labels, label collation, HTML recovery, archived candidate warnings and new / historical duplicate guards). Seven PHP mutation targets restored byte-for-byte; script faults use ignored copies. Original and searchable picker standalone contracts still pass; the new prescription warning contract passes. Context7 Laravel **10.x** transaction, locking, deadlock retry and authenticated encryption guidance checked against installed code. Asset build, PHP syntax and inline review / diff checks pass. Interrupted earlier full runs are discarded; a build/test overlap was corrected and the focused run repeated after the build finished.
+
+**Live checks:** fresh synthetic data only. Desktop / 440px medicine preview and confirmation, category / generic merges, archived options / URLs, Staff and doctor access boundaries, saved consultation rows, and saved prescription instructions / duplicate warning pass. Combined stock is **17 total / 13 usable / 4 expired**. Two admins merging the same source produce one success and one 422; simultaneous merge / stock-in also produces one success and one 422, with quantities, audit and ledger identities checked afterwards. Yearly screen and CSV show one retained row with **20 additions / 17 remaining**, including 4 expired. Zero JavaScript errors, external requests or server failures. Post-merge `db:integrity --compare-fresh`: all **50 keys**, **0 errors / 0 warnings**, structure identical to a fresh install. Second-device LAN checks remain Phase 9.
+
+**Final safety nets:** `XDEBUG_MODE=off LINK_CRAWL=1 php vendor/bin/phpunit`: **797 tests / 8,424 assertions**, all passing (**07:48.118**, none skipped). Crawl **1,614 requests / 15 variants**, zero broken / crashed / lazy-table / capped results. Access matrix **6,320 requests / 395 routes / 16 variants**, zero server errors or access violations; all **6,288 prior cells** and role permission sets are identical, with only the two new admin merge routes added. Source manifest **459 → 461**, every prior entry unchanged. The contract fixture adds exactly those two entries while preserving the prior 394 panel entries and registration order; four contract tests / 30 assertions pass. The first full run exposed the expected stale fixture, which was updated and the complete suite rerun successfully. Final verification used `XDEBUG_MODE=off` to avoid debugger overhead. Synthetic server, schema, access file and cached configuration removed; working `norsu_clinic` unchanged. No new dependency or Artisan command; commands.md records the new integrity-key count and pending deployment migration. Next: **8.3 duplicate patients**.
 
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.
@@ -1036,7 +1054,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 |---|---|
 | FEFO, expired stock not counted, expiry alert, medicine-form stock through Stock-In, reconcile command | ✅ |
 | Medicine create / edit page JavaScript never loads; generics pages too | ⏳ → Phase 5.22 |
-| Duplicate medicine / stock merge | 🆕 Phase 8.2 |
+| Duplicate medicine / stock merge | ✅ Phase 8.2 (2026-10-21): admin preview / confirmation, matching ingredient + unit, preserved batches / history, archive / audit and category / generic merges |
 | Stock disposal & physical count | 🆕 Phase 8.4 |
 
 ### 4.7 Dispensing
@@ -1183,7 +1201,8 @@ None blocking right now. Questions that may come up during the work are asked wh
 3. `php artisan migrate`. It:
    - converts the MyISAM tables to InnoDB, clears zero dates and restores the foreign keys (skipped ones are listed);
    - renames the clinic to "Medical University Clinic" and College of Law to COL;
-   - merges the nurse role into Staff (Nurse).
+   - merges the nurse role into Staff (Nurse);
+   - adds inventory merge archives / original batch references and three archive foreign keys (Phase 8.2); it does not merge medicines, categories or generics automatically. Use the admin preview / confirmation tool after the integrity check.
    It also runs every earlier step in STATUS §7.
    Then, once: `php artisan inventory:recover-orphan-batches` (dry run) and `--apply` (the clinic data has 4 stock batches of
    deleted medicines; this re-creates the medicines as placeholders, writes their stock off through the ledger and adds the

@@ -190,6 +190,10 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     PanelRoutes::prescriptions('admin');
     PanelRoutes::queue('admin');
     PanelRoutes::inventory('admin');
+    Route::middleware('permission:manage_medicines')->group(function () {
+        Route::get('inventory-merge', [\App\Http\Controllers\InventoryMergeController::class, 'index'])->name('inventory-merge.index');
+        Route::post('inventory-merge', [\App\Http\Controllers\InventoryMergeController::class, 'store'])->name('inventory-merge.store');
+    });
     PanelRoutes::dispensing('admin');
 });
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ExcludesMergedInventory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,6 +50,8 @@ use Illuminate\Support\Str;
  */
 class Medicine extends Model
 {
+    use ExcludesMergedInventory;
+
     public const HISTORY_RELATIONS = ['batches', 'stockInItems', 'dispenseItems', 'prescriptionItems', 'consultationItems'];
 
     public $table = 'medicines';
@@ -89,6 +92,9 @@ class Medicine extends Model
      * @var array
      */
     protected $casts = [
+        'merged_into_id' => 'integer',
+        'merged_by' => 'integer',
+        'merged_at' => 'datetime',
         'id' => 'integer',
         'category_id' => 'integer',
         'generic_id' => 'integer',
@@ -224,7 +230,7 @@ class Medicine extends Model
 
     public function hasHistory(): bool
     {
-        foreach (self::HISTORY_RELATIONS as $relation) {
+        foreach (self::historyRelations() as $relation) {
             $flag = Str::snake($relation).'_exists';
             if (array_key_exists($flag, $this->attributes)) {
                 if ((bool) $this->getAttribute($flag)) {
@@ -236,6 +242,11 @@ class Medicine extends Model
         }
 
         return false;
+    }
+
+    public static function historyRelations(): array
+    {
+        return self::supportsInventoryMerges() ? [...self::HISTORY_RELATIONS, 'mergedSources'] : self::HISTORY_RELATIONS;
     }
 
     public function stockInItems(): HasMany

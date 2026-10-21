@@ -18,6 +18,9 @@ $consultationDateSource ? \Carbon\Carbon::parse($consultationDateSource)->format
 );
 
 $initialMedicineRows = old('medicines', $medicineRows ?? []);
+$savedStrengthCounts = $isEdit ? collect($medicineRows ?? [])->countBy(fn (array $row) =>
+    $row['medicine_id'].'|'.preg_replace('/\s+/', '', mb_strtolower((string) $row['dosage']))
+)->all() : [];
 if (empty($initialMedicineRows)) {
 $initialMedicineRows = [[
 'medicine_id' => '',
@@ -70,6 +73,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
         'selectedDoctorId' => (string) $selectedDoctorId,
         'initialDoctorLicense' => (string) $initialDoctorLicense,
         'initialRows' => $initialMedicineRows,
+        'savedStrengthCounts' => $savedStrengthCounts,
         'medicineCatalog' => $medicineCatalog,
         'routeOptions' => $routeOptions,
         'durationOptions' => $durationOptions,
@@ -452,6 +456,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
             routeOptions: config.routeOptions || {},
             durationOptions: config.durationOptions || {},
             medicines: Array.isArray(config.initialRows) ? config.initialRows : [],
+            savedStrengthCounts: config.savedStrengthCounts || {},
 
             init() {
                 if (!this.medicines.length) {
@@ -566,7 +571,9 @@ $formMethod = $isEdit ? 'patch' : 'post';
                     return false;
                 }
 
-                return this.medicines.filter((row) => row.medicine_id && this.strengthKey(row) === this.strengthKey(current)).length > 1;
+                const key = this.strengthKey(current);
+                const count = this.medicines.filter((row) => row.medicine_id && this.strengthKey(row) === key).length;
+                return count > Math.max(1, Number(this.savedStrengthCounts[key] || 0));
             },
         };
     }
