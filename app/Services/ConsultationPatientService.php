@@ -27,6 +27,7 @@ class ConsultationPatientService
         $userId = ConsultationInput::nullableInt($data['user_id'] ?? null);
 
         if ($userId !== null) {
+            Patient::lockForClinicalWrite($userId, true);
             $user = User::query()
                 ->with('patient.patientType')
                 ->where('id', $userId)
@@ -51,6 +52,7 @@ class ConsultationPatientService
 
         $matchedUser = $this->findMatchingPatientForConsultationData($data);
         if ($matchedUser) {
+            Patient::lockForClinicalWrite($matchedUser->id, true);
             // Auto-linked (not picked by the user): never rewrite the existing patient's
             // identity (name, date of birth, sex) from a walk-in form.
             $this->syncPatientProfileFromConsultationData($matchedUser, $data, false);

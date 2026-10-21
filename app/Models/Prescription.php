@@ -70,6 +70,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Prescription extends Model
 {
+    use \App\Traits\ChecksPatientReference;
     public $table = 'prescriptions';
 
     public $fillable = [

@@ -17,7 +17,7 @@ class LabRequest extends Model
 {
     // Deleting a (pending / cancelled) lab request only hides it: the row and its tests stay and the administrator
     // can restore it (Settings > Deleted records). R3-M6.
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Traits\ChecksPatientReference;
 
     protected $table = 'lab_requests';
 

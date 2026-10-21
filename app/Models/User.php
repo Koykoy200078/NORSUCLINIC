@@ -130,6 +130,9 @@ class User extends Authenticatable implements HasMedia
         static::saved(fn () => Patient::flushLookupCaches());
         static::deleted(fn () => Patient::flushLookupCaches());
         static::restored(fn () => Patient::flushLookupCaches());
+        static::restoring(function (User $user): void {
+            Patient::withTrashed()->where('user_id', $user->id)->first()?->ensureNotMerged();
+        });
     }
 
     /**

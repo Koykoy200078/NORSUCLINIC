@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * The foreign keys a correctly installed database has: 50 on the current migrations (47 before inventory merging).
+ * The foreign keys a correctly installed database has: 52 on the current migrations (50 before patient merging).
  * The clinic's old MyISAM tables have none of them. The migration 2026_10_08_120000_restore_missing_foreign_keys adds
  * the missing ones from this list, and `php artisan db:integrity` reports the absent ones from it.
  *
@@ -14,6 +14,8 @@ final class ForeignKeyCatalog
 {
     /** table, constraint name, column, referenced table, referenced column, ON DELETE, ON UPDATE */
     private const KEYS = [
+        ['patients', 'patients_merged_into_id_foreign', 'merged_into_id', 'patients', 'id', 'RESTRICT', 'NO ACTION'],
+        ['addresses', 'addresses_merged_from_patient_id_foreign', 'merged_from_patient_id', 'patients', 'id', 'RESTRICT', 'NO ACTION'],
         ['categories', 'categories_merged_into_id_foreign', 'merged_into_id', 'categories', 'id', 'RESTRICT', 'NO ACTION'],
         ['generics', 'generics_merged_into_id_foreign', 'merged_into_id', 'generics', 'id', 'RESTRICT', 'NO ACTION'],
         ['medicines', 'medicines_merged_into_id_foreign', 'merged_into_id', 'medicines', 'id', 'RESTRICT', 'NO ACTION'],

@@ -322,6 +322,7 @@ class PatientRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+            $patient = Patient::lockForClinicalWrite((int) $patient->id);
 
             $addressInputArray = Arr::only(
                 $input,

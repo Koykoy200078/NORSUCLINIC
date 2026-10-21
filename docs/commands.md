@@ -32,7 +32,7 @@ php artisan db:integrity
 | [`db:restore-foreign-keys`](#dbrestore-foreign-keys) | Adds the foreign keys a correct installation has and this database lacks | Changes the **structure** (adds keys); **never changes a row** | after a foreign key was reported missing and you have fixed its cause by hand | Phase 1.4, 2026-10-09 |
 | [`inventory:recover-orphan-batches`](#inventoryrecover-orphan-batches) | Finds stock batches whose medicine was deleted. With `--apply` it re-creates the medicine as "Unknown medicine #N" under its old id, **writes its stock off through the ledger**, then adds the foreign key those batches were blocking | **Dry run by default.** With `--apply`: adds medicine rows and ledger rows (`disposal`); deletes nothing | **once** on the clinic copy, after `migrate`, if `db:integrity` reports `medicine_batches_medicine_id_foreign`; take a backup first | Phase 1 follow-up, 2026-10-09 |
 | `cache:warmup` | Refreshes settings and warms the doctor list, excluding archived accounts | Cache only; no database row changes | Optional after deployment/cache clearing; uses this project folder's configured database | Existing command; archive handling verified 2026-10-20 |
-| `user:restore <email>` / `user:restore --id=<id>` | Restores an archived account (and its patient record when present); doctor archives now retain the complete profile, address, photo and specialization links | Yes: clears archive timestamps | When the owner wants an archived account back; run on the server using the intended database | Existing command; complete doctor restore verified 2026-10-20 |
+| `user:restore <email>` / `user:restore --id=<id>` | Restores an ordinary archived account (and its patient record when present); merged patient sources are refused with the retained patient ID. Doctor archives retain the complete profile, address, photo and specialization links | Yes: clears archive timestamps | When the owner wants an archived account back; run on the server using the intended database | Existing command; doctor restore verified 2026-10-20; merged-patient refusal verified 2026-10-21 |
 | `lang:js` | Regenerates the local JavaScript translations | Generated file only; no database changes | Terminal during the asset build; the unused `/lang-js` browser endpoint was retired in Phase 6.6 | Existing vendor command retained, 2026-10-20 |
 | `fix:dashboard-permissions` (retired) | Obsolete repair for per-user dashboard permissions, superseded by role permissions | No longer available | Do not run; manage the five role permissions in Settings › Manage User roles | Removed in Phase 6.6, 2026-10-20 |
 | `performance:monitor` (retired) | Unused legacy diagnostic command | No longer available | Do not run; no application, script or documented operator caller was found | Removed in Phase 6.6, 2026-10-20 |
@@ -70,7 +70,7 @@ asks for.
 | Check | Severity | What a problem means / what to do |
 |---|---|---|
 | Every table is InnoDB | error | A table is still MyISAM: foreign keys and transactions do not work for it. Run `php artisan migrate`. |
-| All 50 foreign keys are in place (47 before the Phase 8.2 merge migration) | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). Run pending migrations first; if nothing else blocks it: `php artisan db:restore-foreign-keys`. |
+| All 52 foreign keys are in place (50 before Phase 8.3, 47 before Phase 8.2) | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). Run pending migrations first; if nothing else blocks it: `php artisan db:restore-foreign-keys`. |
 | No row points at a record that does not exist | error | A `xxx_id` column (without a foreign key) holds an id that has no parent. Fix the data by hand. |
 | No zero dates | error / warning | A date column still holds `0000-00-00`. Error when the column allows NULL (run `migrate`), warning when it does not (fix by hand). |
 | No duplicate numbers or keys | error | Two records share a number that must be unique (history number, request number, SKU, e-mail, university id, PRC number, settings key, batch number). |
@@ -111,6 +111,8 @@ step 3b).
 **Tests:** `tests/Feature/Regression/DatabaseIntegrity*Test.php`, `SchemaParityTest.php`, `ForeignKeyCatalogTest.php`.
 
 ---
+
+Phase 8.3 (2026-10-21) adds the patient merge self-key and preserved-address source key (52 total). Apply `2026_10_21_112000_add_patient_merge_archives` in the normal backed-up migration, then `db:integrity`, before using **Patients › Merge duplicates**. This only prepares the schema; an admin previews and confirms each merge. `user:restore` refuses merged patient sources so their transferred history is not split by a restored duplicate. Ordinary account restoration is unchanged. Fresh synthetic merged verification: all 52 keys, 0 errors / 0 warnings and fresh-schema parity. Working database unchanged; migration pending. No new Artisan command.
 
 ## `db:restore-foreign-keys`
 
@@ -230,6 +232,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-21 | 8.3 | `user:restore` refuses merged patient archives; `db:integrity` / foreign-key catalog now expect 52 keys; new patient archive migration remains pending on working DB |
 | 2026-10-20 | 6.6 | Retired `fix:dashboard-permissions` and `performance:monitor`; retained `cache:warmup` and CLI `lang:js`, removed the unused browser translation endpoint |
 | 2026-10-19 | 7 | `reverb:start` (vendor command of laravel/reverb) is now part of the startup scripts; firewall rule for port 8080 documented above |
 | 2026-10-09 | 1 follow-up | `inventory:recover-orphan-batches [--apply]` added (owner decision: keep the history of the 4 orphan batches); rehearsal runner runs it |

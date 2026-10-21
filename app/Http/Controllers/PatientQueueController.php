@@ -92,7 +92,7 @@ class PatientQueueController extends Controller
         // The "already in the queue" check and the insert run under a lock on the patient row, so
         // a double click / two front-desk users cannot queue the same patient twice. L-12.
         DB::transaction(function () use (&$validated, &$latestConsultation, &$alreadyQueued) {
-            Patient::whereKey($validated['patient_id'])->lockForUpdate()->first();
+            Patient::lockForClinicalWrite((int) $validated['patient_id']);
 
             $alreadyQueued = PatientQueue::where('patient_id', $validated['patient_id'])
                 ->whereIn('status', PatientQueue::OPEN_STATUSES)

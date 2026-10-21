@@ -26,11 +26,11 @@ class ForeignKeyCatalogTest extends TestCase
         );
     }
 
-    public function test_the_catalog_has_50_keys_each_with_a_unique_name(): void
+    public function test_the_catalog_has_52_keys_each_with_a_unique_name(): void
     {
         $names = array_column(ForeignKeyCatalog::all(), 'name');
 
-        $this->assertCount(50, $names);
+        $this->assertCount(52, $names);
         $this->assertSame($names, array_values(array_unique($names)));
     }
 

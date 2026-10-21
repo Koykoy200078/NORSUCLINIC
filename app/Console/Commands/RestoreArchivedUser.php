@@ -42,6 +42,13 @@ class RestoreArchivedUser extends Command
             return self::FAILURE;
         }
 
+        $patient = Patient::withTrashed()->where('user_id', $user->id)->first();
+        if ($patient?->merged_into_id) {
+            $this->error('This patient was merged into #'.$patient->merged_into_id.'; its archive cannot be restored independently.');
+
+            return self::FAILURE;
+        }
+
         DB::transaction(function () use ($user) {
             $user->restore();
 

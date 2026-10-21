@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PatientQueue extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\ChecksPatientReference;
 
     protected $fillable = [
         'patient_id',

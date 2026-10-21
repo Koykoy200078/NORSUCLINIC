@@ -71,6 +71,11 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+                                @if(isRole('clinic_admin') && isset($mergeArchives) && $mergeArchives->isNotEmpty())
+                                    <div class="alert alert-info">Merged patient details for review:
+                                        @foreach($mergeArchives as $source)<a class="me-3" href="{{ route('patient-merge.index', ['archive_id' => $source->id]) }}">{{ $source->user?->full_name }} (#{{ $source->id }})</a>@endforeach
+                                    </div>
+                                @endif
                                 {{Form::hidden('patient_role',getLogInUser()->hasRole('patient'),['id' => 'patientRolePatientDetail'])}}
                                 @include('patients.show_fields')
                             </div>

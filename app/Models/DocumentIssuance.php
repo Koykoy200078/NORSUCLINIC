@@ -127,7 +127,7 @@ class DocumentIssuance extends Model implements HasMedia
 {
     // Consultations, medical certificates and excuse slips are clinical records: "deleting" one takes it off every
     // screen and report but keeps the row (deleted_at) and its photos, so it can still be recovered. R3-M6.
-    use HasFactory, InteractsWithMedia, HasRoles, SoftDeletes;
+    use HasFactory, InteractsWithMedia, HasRoles, SoftDeletes, \App\Traits\ChecksPatientReference;
 
     protected $table = 'document_issuances';
 

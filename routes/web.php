@@ -168,6 +168,10 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
     });
 
     PanelRoutes::patients('admin');
+    Route::middleware('permission:manage_patients')->group(function () {
+        Route::get('patient-merge', [\App\Http\Controllers\PatientMergeController::class, 'index'])->name('patient-merge.index');
+        Route::post('patient-merge', [\App\Http\Controllers\PatientMergeController::class, 'store'])->name('patient-merge.store');
+    });
     PanelRoutes::documentLookups('admin');
     PanelRoutes::documents();
     PanelRoutes::labRequests();

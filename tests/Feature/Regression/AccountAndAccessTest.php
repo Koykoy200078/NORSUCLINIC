@@ -170,8 +170,9 @@ class AccountAndAccessTest extends TestCase
         $this->actingAs($this->makeAdmin())->getJson(route('staffs.edit', 999999))->assertNotFound();
 
         // Module access denied for an AJAX request is a 403, not a 500.
+        $patient = $this->makePatient();
         $consultation = \App\Models\DocumentIssuance::create([
-            'document_type' => 'consultation_form', 'document_creator_id' => $frontDesk->id, 'user_id' => $frontDesk->id,
+            'document_type' => 'consultation_form', 'document_creator_id' => $frontDesk->id, 'user_id' => $patient->user_id,
             'name' => 'X', 'age' => 1, 'gender' => 'Male', 'address' => 'N/A',
         ]);
         Role::findByName('staff')->revokePermissionTo('manage_request_documents');

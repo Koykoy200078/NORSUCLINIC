@@ -93,8 +93,11 @@ class PatientController extends AppBaseController
 
         $patient = $this->patientRepository->getPatientData($patient);
         $data = [];
+        $mergeArchives = \App\Repositories\PatientMergeRepository::ready()
+            ? Patient::withTrashed()->where('merged_into_id', $patient->id)->with(['user' => fn ($q) => $q->withTrashed()])->get()
+            : collect();
 
-        return view('patients.show', compact('patient', 'data'));
+        return view('patients.show', compact('patient', 'data', 'mergeArchives'));
     }
 
     /**

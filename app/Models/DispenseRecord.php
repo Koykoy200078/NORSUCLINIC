@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class DispenseRecord extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\ChecksPatientReference;
 
     protected $table = 'medicine_bills';
 

@@ -31,7 +31,7 @@ class DatabaseIntegrityCommandTest extends TestCase
     {
         $this->artisan('db:integrity')
             ->expectsOutputToContain('Every table is InnoDB')
-            ->expectsOutputToContain('All 50 foreign keys are in place')
+            ->expectsOutputToContain('All 52 foreign keys are in place')
             ->expectsOutputToContain('0 error(s), 0 warning(s)')
             ->assertSuccessful();
     }

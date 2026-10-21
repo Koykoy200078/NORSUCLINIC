@@ -346,6 +346,7 @@ class Patient extends Model implements HasMedia
         });
 
         static::restoring(function ($patient) {
+            $patient->ensureNotMerged();
             // Restore user when patient is restored
             if ($patient->user()->withTrashed()->first()) {
                 $patient->user()->withTrashed()->first()->restore();
@@ -385,7 +386,32 @@ class Patient extends Model implements HasMedia
 
     public function address(): MorphOne
     {
-        return $this->morphOne(Address::class, 'owner');
+        $relation = $this->morphOne(Address::class, 'owner');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('addresses', 'merged_from_patient_id')) {
+            $relation->whereNull('merged_from_patient_id');
+        }
+
+        return $relation;
+    }
+
+    public function ensureNotMerged(): void
+    {
+        if ($this->merged_into_id) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['patient_id' => 'This patient was merged into #'.$this->merged_into_id.' and cannot be restored independently.']);
+        }
+    }
+
+    /** Call inside the writer's transaction; merges acquire these same parent locks first. */
+    public static function lockForClinicalWrite(int $id, bool $userId = false): self
+    {
+        $query = static::query();
+        $patient = ($userId ? $query->where('user_id', $id) : $query->whereKey($id))->lockForUpdate()->first();
+        $user = $patient ? User::whereKey($patient->user_id)->lockForUpdate()->first() : null;
+        if (! $patient || ! $user || (int) $user->type !== User::PATIENT) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['patient_id' => 'This patient is archived or merged. Select an active patient and try again.']);
+        }
+
+        return $patient;
     }
 
     public function user(): BelongsTo

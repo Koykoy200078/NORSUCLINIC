@@ -18,7 +18,7 @@ use Spatie\Permission\Models\Role;
 
 class ReportGenerationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, \Tests\Concerns\BuildsClinicData;
 
     protected $admin;
 
@@ -150,12 +150,14 @@ class ReportGenerationTest extends TestCase
     public function it_can_filter_visits_by_search()
     {
         $this->actingAs($this->admin);
+        Role::firstOrCreate(['name' => 'patient', 'guard_name' => 'web']);
+        $patient = $this->makePatient();
 
         DocumentIssuance::create([
             'name' => 'Visit Patient A',
             'document_type' => 'consultation_form',
             'document_creator_id' => $this->admin->id,
-            'user_id' => $this->admin->id, // Just link to existing user
+            'user_id' => $patient->user_id,
             'age' => 20,
             'gender' => 'Male',
             'address' => 'N/A',
@@ -165,7 +167,7 @@ class ReportGenerationTest extends TestCase
             'name' => 'Other Record',
             'document_type' => 'consultation_form',
             'document_creator_id' => $this->admin->id,
-            'user_id' => $this->admin->id,
+            'user_id' => $patient->user_id,
             'age' => 20,
             'gender' => 'Male',
             'address' => 'N/A',

@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class SharedPanelRoutesTest extends TestCase
 {
-    // Captured before Phase 6.1 from af66ff0; Phase 8.2 adds only the two approved admin merge routes.
+    // Captured before Phase 6.1 from af66ff0; Phases 8.2 and 8.3 add only their approved admin merge routes.
     public function test_panel_route_contract_is_unchanged_including_registration_order(): void
     {
         $expected = json_decode(file_get_contents(__DIR__.'/panel-routes.json'), true, 512, JSON_THROW_ON_ERROR);
@@ -27,7 +27,7 @@ class SharedPanelRoutesTest extends TestCase
             ];
         }
 
-        $this->assertCount(396, $expected);
+        $this->assertCount(398, $expected);
         $this->assertSame($expected, $actual);
     }
 

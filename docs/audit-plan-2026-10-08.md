@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.2** are complete. **Next:** 8.3 duplicate patient merge, then 8.4–8.6; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.3** are complete. **Next:** 8.4 stock disposal / count, then 8.5–8.6; Phase 9 final re-checks remain. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -938,7 +938,7 @@ Each step is guarded by: full suite + `route:list --json` diff (identical unless
   - the yearly inventory report (4.5) shows the merged history under the kept medicine;
   - the same tool merges duplicate categories / generics.
   - Owner approved matching generic ingredient and unit; different strengths stay separate. Completed 2026-10-21; verification below.
-- [ ] 8.3 **Merge duplicate patients** (admin):
+- [x] 8.3 **Merge duplicate patients** (admin), completed 2026-10-21 (verification below):
   - candidates by name + birth date + sex, university ID, phone;
   - preview, then move consultations, prescriptions, queue, lab requests, dispense records, addresses and images;
   - archive the merged-away patient with "merged into #…"; audit snapshot.
@@ -983,6 +983,22 @@ Confirmation requires a checkbox and an authenticated encrypted preview bound to
 
 **Final safety nets:** `XDEBUG_MODE=off LINK_CRAWL=1 php vendor/bin/phpunit`: **797 tests / 8,424 assertions**, all passing (**07:48.118**, none skipped). Crawl **1,614 requests / 15 variants**, zero broken / crashed / lazy-table / capped results. Access matrix **6,320 requests / 395 routes / 16 variants**, zero server errors or access violations; all **6,288 prior cells** and role permission sets are identical, with only the two new admin merge routes added. Source manifest **459 → 461**, every prior entry unchanged. The contract fixture adds exactly those two entries while preserving the prior 394 panel entries and registration order; four contract tests / 30 assertions pass. The first full run exposed the expected stale fixture, which was updated and the complete suite rerun successfully. Final verification used `XDEBUG_MODE=off` to avoid debugger overhead. Synthetic server, schema, access file and cached configuration removed; working `norsu_clinic` unchanged. No new dependency or Artisan command; commands.md records the new integrity-key count and pending deployment migration. Next: **8.3 duplicate patients**.
 
+### Phase 8 — progress 2026-10-21: 8.3 duplicate patients
+
+Admin-only **Patients › Merge duplicates** suggests up to 100 pairs by normalized name / birth date / sex, university ID (including the legacy patient identifier) and phone. Suggestions do not merge automatically; the administrator chooses the duplicate and the record to keep, reviews identity / medical summaries and linked-record counts, then confirms. A shared phone is only a suggestion. Only active patient-only accounts can merge; archived, already merged, shared-account or staff / doctor / admin identities are rejected. A database awaiting the migration shows an update-needed message.
+
+**Owner decision:** the selected kept record retains its identity, current address / picture and medical summary. Source identity / contacts / affiliation, medical summary, insurance / primary care details stay in the source archive and are accessible from merge history and the kept patient's page. Addresses move as labelled history without replacing or changing the kept current address; source profile files move to a separate preserved collection, retaining IDs, file paths and bytes even when the kept profile picture is later replaced. Chained merges retain the first source provenance and link all archives to the final kept patient. Archived-list badges say “Merged into #…”. Patient and user restoration refuse merged sources; ordinary archival / restoration remains supported.
+
+Both patient identity paths transfer atomically: `document_issuances.user_id` (consultations, certificates, excuse slips) and `lab_requests.patient_user_id`; `prescriptions.patient_id`, `medicine_bills.patient_id` and `patient_queues.patient_id`. Archived clinical rows are included, keeping their archive state. Document IDs, saved clinical text / demographics, authors, consultation images, child records and stock / ledger links remain intact. Open queue attachment points at the latest live consultation. Multiple open queue entries today block confirmation until resolved through the queue controls; no entry is silently dropped.
+
+An actor-bound encrypted preview expires after 15 minutes and fingerprints both identities and linked rows. Changed / missing / tampered / expired / replayed / other-actor submissions are refused. Parent and linked rows lock in a transaction with deadlock retry; new clinical references and patient edits acquire the same parent locks and reject merged sources. Audit insertion is inside the transaction and must actually persist: both an exception and a silently cancelled insert roll back the transfer / archive. Audit stores source / target IDs, moved IDs and fingerprint, without copying clinical text or credentials. Lookup caches clear after commit; existing SQL-based real-time notifications cover the writes. Old HTML preview URLs render an explanation without a confirmation token.
+
+**Verification:** 17 new PHP cases; initial missing-tool RED, final focused **67 tests / 437 assertions** GREEN. Eight deliberate faults detected (document transfer, account archival, fingerprint, actor binding, queue conflict, media ownership, restore guard and stale clinical references); three mutation targets restored byte-for-byte. Review's cancelled-audit regression failed before the persisted-audit check and passes afterwards. Two older tests now use actual patient fixtures instead of staff / admin accounts; schema output expects 52 keys. Context7 Laravel **10.x** transactions, locking, retries and soft-delete guidance checked against installed code. Thirty changed PHP files pass syntax checks; inline review and diff checks pass. No dependency, JS / CSS, asset-build or new Artisan-command change.
+
+**Browser / data:** desktop / 440px preview, confirmation, source review, complete original details, archive badge / hidden Restore action, archived binding and stale HTML recovery pass. A changed source rejects an old confirmation with 422; a new preview succeeds. Two admins confirming the same pair produce one 200 and one 422. Staff / doctor valid-CSRF submissions are denied. Zero browser errors, external requests or server failures. Post-merge IDs, summaries, queue attachment, audit count and unchanged stock verified. Synthetic `db:integrity --compare-fresh`: all **52 keys**, **0 errors / 0 warnings**, identical to fresh. Only fresh synthetic data used; temporary server, schema, access file and caches removed. Working `norsu_clinic` unchanged. Migration `2026_10_21_112000_add_patient_merge_archives` adds patient merge metadata, historical-address provenance and two foreign keys; pending on the working database, along with earlier deferred migrations. `user:restore` refuses merged patient archives; commands.md records that behavior and the schema change.
+
+**Final safety nets:** **814 tests / 8,554 assertions**, all passing (**05:52.386**, `XDEBUG_MODE=off`, none skipped); crawl **1,618 requests / 15 variants**, no problems; source routes **461 → 463**, all prior entries unchanged; matrix **6,352 requests / 397 routes / 16 variants**, all 6,320 prior cells and role permissions identical, zero access violations or server errors. The route contract adds exactly two admin / Manage Patients entries while preserving prior 396 panel entries and order. Next: **8.4 stock disposal / physical count**; 8.5–8.6 and Phase 9 second-device LAN checks remain.
+
 ### Phase 9 — Final verification, again
 - [ ] 9.1 Full suite · link crawl (incl. users with permissions removed) · route × role matrix · `route:list` diff reviewed.
 - [ ] 9.2 Fresh rehearsal from the dump on the final code (both engines) · `db:integrity` exit 0.
@@ -1021,7 +1037,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Archived-account message on create / edit; name search; CSV with names | ✅ |
 | `storePatient()` crash, role-blind patient links | ✅ |
 | Congested row actions → ⋮ menu | 🆕 Phase 6.3 |
-| Duplicate patient merge | 🆕 Phase 8.3 |
+| Duplicate patient merge | ✅ Phase 8.3: admin preview / confirmation, preserved history / source archive / audit |
 | Pass A / Pass B re-check | 🆕 Phase 5.2 |
 
 ### 4.3 Queue

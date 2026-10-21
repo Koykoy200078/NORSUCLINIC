@@ -31,5 +31,8 @@ $patientEmail = $patientUser->email ?? 'No email available';
             @endif
         </div>
         <span class="fs-6">{{$patientEmail}}</span>
+        @if($row->merged_into_id)
+            <span class="badge bg-secondary text-dark">Merged into #{{ $row->merged_into_id }}</span>
+        @endif
     </div>
 </div>

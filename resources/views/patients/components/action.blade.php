@@ -73,7 +73,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
 
     {{-- Archive / restore belong to staff/nurse and the clinic admin; doctors only view and edit. --}}
     @if(! isRole('doctor') && canUseModule('patients'))
-    @if($row->trashed())
+    @if($row->trashed() && !$row->merged_into_id)
     <a href="javascript:void(0)"
         data-id="{{ $row->id }}"
         data-patient-name="{{ $patientDisplayName }}"
@@ -85,7 +85,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
         <i class="fa-solid fa-trash-can-arrow-up"></i>
         <span>Restore Patient</span>
     </a>
-    @elseif($patientUser)
+    @elseif($patientUser && !$row->trashed())
     <a href="javascript:void(0)"
         data-id="{{ $row->id }}"
         data-patient-name="{{ $patientDisplayName }}"
