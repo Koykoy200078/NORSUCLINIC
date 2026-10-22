@@ -94,6 +94,26 @@ class NotificationCenterTest extends TestCase
         $this->assertSame(0, Notification::where('user_id', $doctor->id)->whereNotNull('read_at')->count());
     }
 
+    public function test_a_refresh_resolves_the_alerts_of_a_user_who_lost_the_module_and_creates_none_for_them(): void
+    {
+        $admin = $this->makeAdmin();
+        $staff = $this->makeNurse();
+        $this->makeMedicine('Guarded alert', ['minimum_stock_alert' => 5, 'baseline_quantity' => 10]);
+        $service = app(ClinicNotificationService::class);
+        $service->refresh('inventory');
+        $this->assertGreaterThan(0, Notification::where('user_id', $staff->id)->whereNull('resolved_at')->count(), 'precondition: with the module the nurse is alerted');
+
+        $staff->roles->first()->revokePermissionTo('manage_medicines');
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $service->refresh('inventory');
+
+        $this->assertSame(0, Notification::where('user_id', $staff->id)->whereNull('resolved_at')->count(), 'the alerts they already had are resolved, not left open');
+        $this->assertGreaterThan(0, Notification::where('user_id', $admin->id)->whereNull('resolved_at')->count(), 'users who still have the module keep theirs');
+
+        $service->refresh('inventory');
+        $this->assertSame(0, Notification::where('user_id', $staff->id)->whereNull('resolved_at')->count(), 'and a later refresh creates none for them');
+    }
+
     public function test_scheduled_refresh_is_idempotent_and_counter_is_not_capped_at_twenty(): void
     {
         $admin = $this->makeAdmin();
