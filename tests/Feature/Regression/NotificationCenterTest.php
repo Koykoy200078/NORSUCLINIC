@@ -114,6 +114,35 @@ class NotificationCenterTest extends TestCase
         $this->assertSame(0, Notification::where('user_id', $staff->id)->whereNull('resolved_at')->count(), 'and a later refresh creates none for them');
     }
 
+    /**
+     * The stock and queue conditions do not depend on who is alerted, only on whether they may see the module; the refresh
+     * used to rebuild them (a full medicine + batch scan, the day's queue) once per recipient, after every write.
+     */
+    public function test_a_refresh_reads_the_stock_and_the_queue_once_however_many_users_it_serves(): void
+    {
+        $this->makeAdmin();
+        $this->makeNurse();
+        $this->makeNurse();
+        $this->makeDoctor();
+        $this->makeDoctor();
+        $medicine = $this->makeMedicine('Counted', ['minimum_stock_alert' => 5, 'baseline_quantity' => 10]);
+        $this->stockIn($medicine, 3, today()->addMonth()->toDateString());
+        $patient = $this->makePatient();
+        PatientQueue::create(['patient_id' => $patient->id, 'added_by' => $this->makeNurse()->id, 'status' => 'waiting']);
+        $reads = ['batches' => 0, 'queue' => 0];
+        \Illuminate\Support\Facades\DB::listen(function ($query) use (&$reads) {
+            $reads['batches'] += str_contains($query->sql, 'from `medicine_batches`') ? 1 : 0;
+            $reads['queue'] += str_contains($query->sql, 'from `patient_queues`') ? 1 : 0;
+        });
+
+        app(ClinicNotificationService::class)->refresh();
+
+        $this->assertSame(1, $reads['batches'], 'stock is scanned once, not once per recipient');
+        $this->assertSame(1, $reads['queue'], 'the day\'s queue is read once, not once per doctor');
+        $this->assertGreaterThan(0, Notification::where('type', 'stock_low')->count(), 'and everyone with the module still gets the alerts');
+        $this->assertSame(2, Notification::where('type', 'queue_new')->count(), 'both doctors, and only doctors, get the queue alert');
+    }
+
     public function test_scheduled_refresh_is_idempotent_and_counter_is_not_capped_at_twenty(): void
     {
         $admin = $this->makeAdmin();

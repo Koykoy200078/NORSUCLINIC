@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 /** Persist conditions after source commits; reading the bell or center never generates notifications. */
 class ClinicNotificationService
 {
+    /** @var array<string, array<string, array>> the conditions of each module, built once per refresh */
+    private array $shared = [];
+
     public function refresh(?string $module = null): void
     {
         // Old working installations remain readable until their next migration.
@@ -23,6 +26,7 @@ class ClinicNotificationService
         if (! array_intersect($modules, ['inventory', 'queue', 'consultations'])) {
             return;
         }
+        $this->shared = [];
         User::where('status', true)->role(['clinic_admin', 'staff', 'doctor'])->select('users.id')->chunkById(100, function ($users) use ($modules) {
             foreach ($users as $recipient) {
                 DB::transaction(function () use ($recipient, $modules) {
@@ -62,6 +66,17 @@ class ClinicNotificationService
         if (! canUseModule($module, $user)) {
             return [];
         }
+        // Only doctors are alerted to the queue and to consultations that need an assessment.
+        if ($module !== 'inventory' && ! $user->hasRole('doctor')) {
+            return [];
+        }
+
+        // The same for everyone who may see the module, so it is read once per refresh, not once per recipient.
+        return $this->shared[$module] ??= $this->build($module);
+    }
+
+    private function build(string $module): array
+    {
         $conditions = [];
         if ($module === 'inventory') {
             foreach (Medicine::with('batches')->get() as $medicine) {
@@ -83,11 +98,11 @@ class ClinicNotificationService
                         'alert_details' => 'Batch #'.$batch->id.' · expiry '.$batch->expiration_date->toDateString(), 'target_id' => $medicine->id];
                 }
             }
-        } elseif ($user->hasRole('doctor') && $module === 'queue') {
+        } elseif ($module === 'queue') {
             foreach (PatientQueue::openToday()->where('status', PatientQueue::STATUS_WAITING)->pluck('id') as $id) {
                 $conditions['queue:'.$id] = ['type' => 'queue_new', 'title' => 'New waiting queue entry', 'alert_details' => 'Open the queue to review entry #'.$id.'.', 'target_id' => $id];
             }
-        } elseif ($user->hasRole('doctor') && $module === 'consultations') {
+        } elseif ($module === 'consultations') {
             foreach (DocumentIssuance::incompleteConsultations()->pluck('id') as $id) {
                 $conditions['assessment:'.$id] = ['type' => 'consultation_incomplete', 'title' => 'Consultation needs assessment', 'alert_details' => 'Assessment or Plan is missing on form #'.$id.'.', 'target_id' => $id];
             }
