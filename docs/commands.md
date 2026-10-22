@@ -233,6 +233,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-22 | 8.5 follow-up | No command. Migrations `2026_10_22_080000_reorder_notifications_alert_unique_index` (alert unique index becomes `(event_key, user_id)`, plain `user_id` index kept, so the user foreign key is enforced for every row) and `2026_10_22_090000_drop_redundant_notifications_user_index` (no-op after it) make `db:integrity --compare-fresh` exit 0 on the real clinic data; neither changes a row, both are pending on the working DB with the other 8.x migrations |
 | 2026-10-21 | 8.3 | `user:restore` refuses merged patient archives; `db:integrity` / foreign-key catalog now expect 52 keys; new patient archive migration remains pending on working DB |
 | 2026-10-20 | 6.6 | Retired `fix:dashboard-permissions` and `performance:monitor`; retained `cache:warmup` and CLI `lang:js`, removed the unused browser translation endpoint |
 | 2026-10-19 | 7 | `reverb:start` (vendor command of laravel/reverb) is now part of the startup scripts; firewall rule for port 8080 documented above |
