@@ -9,6 +9,7 @@ use App\Models\MedicineTransaction;
 use App\Models\User;
 use App\Services\MedicineInventoryService;
 use App\Traits\LogsActivity;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -17,6 +18,11 @@ use Illuminate\Validation\ValidationException;
 class StockControlRepository
 {
     use LogsActivity;
+
+    /** Cache key prefix of a preview a confirmation has used up; it outlives the preview's 15 minutes. */
+    private const CLAIM_PREFIX = 'stock-preview-nonce:';
+
+    private const PREVIEW_USED = 'Stock changed or this preview was already confirmed. Preview again.';
 
     public function __construct(private MedicineInventoryService $inventory)
     {
@@ -49,9 +55,8 @@ class StockControlRepository
                 throw ValidationException::withMessages(['preview_token' => 'This preview is invalid or expired. Preview again.']);
             }
             $state = $this->state($approval['data'], true);
-            if (! hash_equals($state['fingerprint'], $approval['fingerprint'])
-                || ActivityLog::where('properties->stock_preview_nonce', $approval['nonce'])->lockForUpdate()->first()) {
-                throw ValidationException::withMessages(['preview_token' => 'Stock changed or this preview was already confirmed. Preview again.']);
+            if (! hash_equals($state['fingerprint'], $approval['fingerprint']) || $this->wasConfirmed($approval['nonce'])) {
+                throw ValidationException::withMessages(['preview_token' => self::PREVIEW_USED]);
             }
             $data = $approval['data'];
             $audit = self::logActivity($data['mode'] === 'count' ? 'stock_count' : 'stock_disposal', 'Batch '.$data['mode'].' for medicine #'.$state['medicine']->id, [
@@ -66,8 +71,23 @@ class StockControlRepository
                     $data['mode'].': '.$data['reason'], $audit, $data['mode'] !== 'count');
             }
 
+            // Claimed last, so a confirmation that fails midway does not use the preview up. Two confirmations of one preview
+            // are serialized by the medicine lock above, but the second one's transaction may have started before the first
+            // committed, so it cannot be sure to see the first one's audit row; the atomic claim settles it, and throwing here
+            // rolls this whole confirmation back. No lock on the audit table is needed (or wanted: it stalled every audit write).
+            if (! Cache::add(self::CLAIM_PREFIX.$approval['nonce'], true, now()->addMinutes(20))) {
+                throw ValidationException::withMessages(['preview_token' => self::PREVIEW_USED]);
+            }
+
             return $state['medicine']->fresh();
         }, 5);
+    }
+
+    /** Whether a confirmation already wrote this preview's audit row (the stock actions are found through the indexed action column). */
+    private function wasConfirmed(string $nonce): bool
+    {
+        return ActivityLog::whereIn('action', ['stock_count', 'stock_disposal'])
+            ->where('properties->stock_preview_nonce', $nonce)->exists();
     }
 
     private function authorize(User $actor): void

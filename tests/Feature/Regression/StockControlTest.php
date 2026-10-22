@@ -7,7 +7,11 @@ use App\Models\MedicineTransaction;
 use App\Models\User;
 use App\Services\MedicineInventoryService;
 use App\Services\Reports\YearlyInventoryReportBuilder;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -98,6 +102,75 @@ class StockControlTest extends TestCase
         $this->confirm($preview)->assertOk();
         $this->confirm($preview)->assertUnprocessable();
         $this->assertDatabaseCount('medicine_transactions', 1);
+        $this->assertSame(1, ActivityLog::where('action', 'stock_count')->count());
+    }
+
+    /**
+     * The replay check used to be `ActivityLog::where('properties->stock_preview_nonce', ...)->lockForUpdate()`: an
+     * unindexed JSON scan that locked the whole audit table until the confirmation committed, so every other audit
+     * write in the clinic (a sign-in, a patient save, ...) waited on it. The medicine row lock already serializes
+     * confirmations, so the check must not lock the audit table at all.
+     */
+    public function test_confirming_does_not_lock_the_audit_table_against_other_audit_writes(): void
+    {
+        $medicine = $this->makeMedicine();
+        $batch = $this->stockIn($medicine, 3, today()->addYear()->toDateString());
+        $preview = $this->preview($medicine, [$batch->id => 2]);
+        config(['database.connections.audit_probe' => array_merge(DB::connection()->getConfig(), ['name' => 'audit_probe'])]);
+        $other = DB::connection('audit_probe');
+        $other->statement('SET SESSION innodb_lock_wait_timeout = 1');
+        $blocked = null;
+        // Runs while confirm() is inside its transaction, after the replay check: a second connection writes an
+        // unrelated audit row, as another user's request would.
+        ActivityLog::creating(function () use ($other, &$blocked) {
+            try {
+                $other->table('activity_logs')->insert(['action' => 'login', 'description' => 'unrelated audit row']);
+                $other->table('activity_logs')->where('description', 'unrelated audit row')->delete();
+                $blocked = false;
+            } catch (QueryException) {
+                $blocked = true;
+            }
+        });
+        try {
+            $this->confirm($preview)->assertOk();
+        } finally {
+            ActivityLog::flushEventListeners();
+            DB::purge('audit_probe');
+        }
+
+        $this->assertFalse($blocked, 'an unrelated audit write must not wait for a stock confirmation');
+        $this->assertSame(2, $batch->fresh()->quantity);
+    }
+
+    public function test_a_preview_already_claimed_by_a_confirmation_in_flight_is_refused_without_writing_anything(): void
+    {
+        $medicine = $this->makeMedicine();
+        $batch = $this->stockIn($medicine, 3, today()->addYear()->toDateString());
+        $preview = $this->preview($medicine, [$batch->id => 3]);
+        // The other confirmation of this same preview claimed it before this one got the medicine lock. Its audit row is not
+        // visible to this transaction's snapshot yet, so only the claim can tell them apart.
+        $nonce = json_decode(Crypt::decryptString($preview['token']), true)['nonce'];
+        Cache::add('stock-preview-nonce:'.$nonce, true, now()->addMinutes(20));
+
+        $this->confirm($preview)->assertUnprocessable();
+
+        $this->assertSame(0, ActivityLog::where('action', 'stock_count')->count());
+        $this->assertDatabaseCount('medicine_transactions', 1);
+        $this->assertSame(3, $batch->fresh()->quantity);
+    }
+
+    public function test_a_confirmed_preview_stays_used_up_even_if_the_cache_is_cleared(): void
+    {
+        $medicine = $this->makeMedicine();
+        $batch = $this->stockIn($medicine, 3, today()->addYear()->toDateString());
+        $preview = $this->preview($medicine, [$batch->id => 3]);
+        $this->confirm($preview)->assertOk();
+
+        // The claim lives in the cache; the audit row is the durable record. A `cache:clear` within the preview's 15 minutes
+        // must not let the same preview be confirmed (and audited) a second time.
+        Cache::flush();
+        $this->confirm($preview)->assertUnprocessable();
+
         $this->assertSame(1, ActivityLog::where('action', 'stock_count')->count());
     }
 
