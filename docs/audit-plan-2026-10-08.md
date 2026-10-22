@@ -1,6 +1,6 @@
 # Medical University Clinic — Audit & work plan (2026-10-08)
 
-**Status:** Phases 0–7, the Phase 5.10 report follow-up and Phase 8 improvements **8.1–8.6** are complete. **Next:** Phase 9 final verification, including runtime / second-device LAN checks. **Branch:** `changes_v2` (base `develop`). Details and checkpoints are in [Handover.md](../Handover.md).
+**Status:** Phases 0–9 are complete (9.1 to 9.3 verified 2026-10-22) and Phase 10 records are done; what remains is the **clinic-PC deployment** ([§9](#9-clinic-copy--what-will-change-for-deployment-when-the-phases-are-done)), including the runtime / second-device LAN check that cannot be done from the laptop. **Branch:** `changes_v2` (base `develop`).
 **Plan re-audited:** 2026-10-08, corrections listed in [§0](#0-plan-re-audit-2026-10-08)
 
 **Rules for this work:** inline checking only (no agent workflows) · test-first (failing test → fix → re-verify) · ask when
@@ -29,7 +29,7 @@ needs the internet to load**: no CDN, no third-party script / style / font / ima
 Laravel Mix into `public/`, or `public/assets` / `public/vendor`). The real-time server (Reverb) also runs on the LAN.
 
 **Databases on the development laptop (owner, 2026-10-08):** `norsu_clinic` is the **only working database**: its data is
-experimental. It holds the clinic dump, is used for live checks, and upgrade rehearsals re-import the dump **into it**. The
+experimental. It holds the clinic dump (upgraded up to `2026_10_15_110000`; 6 later migrations are pending on purpose). **Since the owner's rule of 2026-10-15 it is left alone**: live checks and upgrade rehearsals run on a throwaway scratch schema built from the dump (recipe in the 2026-10-22 Handover entry). The
 automated tests wipe their database on every run, so they create and use their **own throwaway schema automatically** (no
 manual setup) and never touch `norsu_clinic`.
 
@@ -733,27 +733,29 @@ Every defect gets a failing test, then the fix, then both passes again.
 
 | # | Module / area | Pass A | Pass B | Re-check (Phase 9) | Findings |
 |---|---|---|---|---|---|
-| 5.1 | Dashboard (admin / staff / doctor) | [x] | [x] | [ ] | Done 2026-10-16: fresh figures that match the module lists, real Day / Week / Month ranges, staff tabs and links, clinic-time display (block above); owner question in STATUS §6 |
+| 5.1 | Dashboard (admin / staff / doctor) | [x] | [x] | [x] | Done 2026-10-16: fresh figures that match the module lists, real Day / Week / Month ranges, staff tabs and links, clinic-time display (block above); owner question in STATUS §6 |
 | 5.2 | Patients (list, create, edit, history, archive / restore, reset password, email verification) | [x] | [x] | [ ] | Phase 2 re-check: the history page's dispensing card now lists what the Dispense History tab lists. Sweep A (10-15): field limits fit the columns, unique last sort key. Done 2026-10-16: date-filter last day, welcome mail after commit, resend-verification scope, history-page N+1, value validation of dob / gender / ids, no patient data in the log (block above) |
-| 5.3 | Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) | [x] | [x] | [ ] | Done 2026-10-16: sidebar badge and both dashboards use one fresh count, the doctor's current-patient card no longer crashes (block above); add-queue page script = 5.22 |
-| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [x] | [x] | [ ] | Sweep A (10-15): text limits fit the columns, list sort key, PDF with awkward data. Item 5.23 done (10-16): illness and service "Others" names required when ticked, saved tidied and restored on edit. Done 2026-10-16: the patient's History page shows each clinical part only to roles that may open it, value validation of date / mode / campus / office, one fresh definition of "incomplete", the doctor can save the Assessment and Plan on a nurse's record, today's vitals are not copied from the last visit (block above) |
-| 5.5 | Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) | [x] | [x] | [ ] | Done 2026-10-18: new-medicine endpoint needs the Inventory permission, list buttons follow the rules, visit-date check, View page without a logo setting, 404 for a missing PDF, all-or-nothing and N+1 pinned (block above); owner question: vitals auto-filled on prescriptions; the dispense side is 5.7 |
+| 5.3 | Queue (add, call next, complete, cancel, record form, doctor view, attachment sync) | [x] | [x] | [x] | Done 2026-10-16: sidebar badge and both dashboards use one fresh count, the doctor's current-patient card no longer crashes (block above); add-queue page script = 5.22 |
+| 5.4 | Consultations (create / edit by nurse and doctor, Plan / Nursing medicines, images, PDF, delete / restore, illness & services) | [x] | [x] | [x] | Sweep A (10-15): text limits fit the columns, list sort key, PDF with awkward data. Item 5.23 done (10-16): illness and service "Others" names required when ticked, saved tidied and restored on edit. Done 2026-10-16: the patient's History page shows each clinical part only to roles that may open it, value validation of date / mode / campus / office, one fresh definition of "incomplete", the doctor can save the Assessment and Plan on a nurse's record, today's vitals are not copied from the last visit (block above) |
+| 5.5 | Prescriptions (create / edit, verbal order, strengths, activate / deactivate, PDF, dispense) | [x] | [x] | [x] | Done 2026-10-18: new-medicine endpoint needs the Inventory permission, list buttons follow the rules, visit-date check, View page without a logo setting, 404 for a missing PDF, all-or-nothing and N+1 pinned (block above); owner question: vitals auto-filled on prescriptions; the dispense side is 5.7 |
 | 5.6 | Inventory (medicines, categories, generics, stock-in, batches, expiry, low-stock, reconcile) | [x] | [x] | [ ] | Sweep A (10-15): field limits, stale pick-lists and expiry badge cleared on change, medicine list N+1 removed. Done 2026-10-18: the medicine form is all-or-nothing including its new generic / category, impossible dates refused, the pick-list and Stock-In list run a fixed number of queries, Stock-In search finds a medicine (block above); owner questions: "Unit Cost" field, doctors' buttons |
-| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [x] | [x] | [ ] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by". Sweep A (10-15): note column widened (migration), PDF without a note no longer crashes Done 2026-10-18: the dispense form's quick-patient pop-up needs the Patients permission, the Verify list has a search and no leak to a profile-less doctor, the dispense date is checked, the category pick-list has a fixed number of queries (block above); owner question: doctors and manual dispense records |
-| 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [x] | [x] | [ ] | Sweep A (10-15): text limits, list sort key. Open: the list builder pre-orders, check the header sorts Done 2026-10-18: the header sorts of the list work, the search finds a test name, the request date and the typed results are validated, a status change is re-read under a lock, the new-request form copies only a patient (block above) |
-| 5.9 | Certificates (medical certificate, excuse slip, PDF, edit) | [x] | [x] | [ ] | Done 2026-10-18: the certificate forms' own boxes (`vital_signs_*_2`, pressure parts, `subjects`) and the patient are validated, a blank pressure is saved as nothing (block above) |
-| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [x] | [x] | [ ] | 5.23 done (10-16): typed "Others" sub-rows across all formats. Passes complete 10-18: shared low-stock definition and no inventory-report per-row query. Owner follow-up complete 10-20 (block above): Informant-first Guest / F&S classification, saved-type fallback and consistent Patient Type filters, tested across screen / downloads. Phase 9 re-check remains; owner question: the always-empty Schedules tab |
-| 5.11 | Notifications & Alerts (low stock, expiry, system notifications) | [x] | [x] | [ ] | Done 2026-10-19: the sidebar alerts are counted fresh and only for roles with the inventory, in one class with pinned boundaries (block above) |
+| 5.7 | Dispensing (verify prescriptions, dispense history, stock-out, manual dispense record, PDF) | [x] | [x] | [x] | Dispense History re-checked 2026-10-11 (paging ties fixed); a manual dispense record has no "recorded by". Sweep A (10-15): note column widened (migration), PDF without a note no longer crashes Done 2026-10-18: the dispense form's quick-patient pop-up needs the Patients permission, the Verify list has a search and no leak to a profile-less doctor, the dispense date is checked, the category pick-list has a fixed number of queries (block above); owner question: doctors and manual dispense records |
+| 5.8 | Lab Requests (state machine, items, PDF, soft delete / restore, numbers) | [x] | [x] | [x] | Sweep A (10-15): text limits, list sort key. Open: the list builder pre-orders, check the header sorts Done 2026-10-18: the header sorts of the list work, the search finds a test name, the request date and the typed results are validated, a status change is re-read under a lock, the new-request form copies only a patient (block above) |
+| 5.9 | Certificates (medical certificate, excuse slip, PDF, edit) | [x] | [x] | [x] | Done 2026-10-18: the certificate forms' own boxes (`vital_signs_*_2`, pressure parts, `subjects`) and the patient are validated, a blank pressure is saved as nothing (block above) |
+| 5.10 | Report Generation (Patient Visits filters, Accomplishment Report monthly + yearly, Medicine Inventory current + yearly, dispensing, global search, activity log, all downloads) | [x] | [x] | [x] | 5.23 done (10-16): typed "Others" sub-rows across all formats. Passes complete 10-18: shared low-stock definition and no inventory-report per-row query. Owner follow-up complete 10-20 (block above): Informant-first Guest / F&S classification, saved-type fallback and consistent Patient Type filters, tested across screen / downloads. Phase 9 re-check remains; owner question: the always-empty Schedules tab |
+| 5.11 | Notifications & Alerts (low stock, expiry, system notifications) | [x] | [x] | [x] | Done 2026-10-19: the sidebar alerts are counted fresh and only for roles with the inventory, in one class with pinned boundaries (block above) |
 | 5.12 | Settings › Staff (no designation / station / shift) | [x] | [x] | [ ] | Done 2026-10-19: gender is validated, and records keep the name of the staff member who made them after the account is archived (block above) |
 | 5.13 | Settings › Doctors | [x] | [x] | [ ] | Done 2026-10-20: the doctor forms validate every field the account or its address uses and only the form's own columns reach the account (block above) |
-| 5.14 | Settings › Manage User roles | [x] | [x] | [ ] | Sweep A (10-15): role create is a transaction, name limits  Done 2026-10-20; see the progress block above. |
+| 5.14 | Settings › Manage User roles | [x] | [x] | [x] | Sweep A (10-15): role create is a transaction, name limits  Done 2026-10-20; see the progress block above. |
 | 5.15 | Settings › Specializations | [x] | [x] | [ ] |  Done 2026-10-20; see the progress block above. |
-| 5.16 | Settings › System settings (General incl. clinic name, Report lists, Deleted records) | [x] | [x] | [ ] | Sweep A (10-15): settings save is a transaction, PDF-header settings cache cleared on save  Done 2026-10-20; see the progress block above. |
+| 5.16 | Settings › System settings (General incl. clinic name, Report lists, Deleted records) | [x] | [x] | [x] | Sweep A (10-15): settings save is a transaction, PDF-header settings cache cleared on save  Done 2026-10-20; see the progress block above. |
 | 5.17 | Settings › Front CMS, Backup data, Locations (countries / states / cities / barangays) | [x] | [x] | [ ] | Sweep A (10-15): CMS save is a transaction and clears the settings cache, location name limits  Done 2026-10-20; see the progress block above. |
 | 5.18 | Auth, profile, default-password gate, impersonation, failed sign-ins | [x] | [x] | [ ] |  Done 2026-10-20; see the progress block above. |
 | 5.19 | `app/helpers.php` (every function: used? duplicated? tested?) | [x] | — | [ ] | Sweep A (10-15): 8 helpers unused outside the file (list above), 10 used once; nothing removed yet  Done 2026-10-20; see the progress block above. |
-| 5.20 | `routes/*` (middleware stack per group, dead routes, duplicates) | [x] | — | [ ] |  Done 2026-10-20; see the progress block above. |
+| 5.20 | `routes/*` (middleware stack per group, dead routes, duplicates) | [x] | — | [x] |  Done 2026-10-20; see the progress block above. |
 | 5.21 | `config/*`, `.env` keys actually read, `server.php` (`BuiltInServerRouterTest`), backup command on MySQL 9.7 | [x] | — | [ ] | Sweep A (10-15): `.env.example` keys checked (2 never read), no `env()` outside `config/`  Done 2026-10-20; see the progress block above. |
+
+**Phase 9 re-check coverage (2026-10-22):** the Re-check box is ticked where the Phase 9 live walk-through used the module's real forms or output (5.1 dashboards, 5.3 queue add with live update, 5.4 consultation and the doctor's assessment, 5.5 prescription, 5.7 dispensing, 5.8 lab request, 5.9 certificate, 5.10 report tabs and all downloads, 5.11 notification alerts, 5.14 role revoke / re-grant, 5.16 settings save) or the check is mechanical (5.20 `route:list` identical to the 8.6 manifest). The other rows had their pages loaded in all three roles (no server error, truncated page, console error or external resource) but their interactive flows were last clicked in Pass B and in Phase 8 (patients archive / restore, inventory writes, staff / doctor settings, CMS, backups, locations, sign-in) and are not re-ticked here.
 
 - [x] 5.22 The seven pages whose JavaScript never loads (`@section('scripts')`): Add-to-queue first, then medicines create / edit,
   lab request edit, generics create / edit / index, one page at a time with a browser check.
@@ -1042,18 +1044,18 @@ Synthetic upgrade rehearsals under normal and session-only MyISAM defaults prese
 - [x] 9.3 Second full live walk-through of every module (the "Re-check" column in Phase 5) with two browser sessions for real-time. **Done 2026-10-22** (built-in browser, scratch copy of the real data migrated by the final code, project's `server.php` on loopback, Reverb on loopback, `admin.` / `nurse.` / `doctor.localhost` as three separate sessions, sign-in through a scratch-only loopback route). *Crawl:* every parameter-free GET page of each panel fetched in its own session (69 / 50 / 41), no server error, no truncated page, no console error, no external resource. *Real-time:* the nurse's add-to-queue through the real form appeared on the doctor's open screen with no reload (Reverb connected, ticket 1); the doctor got the scoped queue alert (no patient name), the nurse none. *Workflows clicked through the real forms:* consultation (nurse creates, doctor completes assessment / plan and prescribes 2 units: stock 20 to 18 with a ledger line, verified in the database), prescription (doctor), verify page and PDF, dispensing by the nurse (confirmation accepted: stock 18 to 16, FEFO ledger line, row leaves the pending list), lab request (3 tests, PDF 152 KB), medical certificate (PDF), reports (all 7 tabs render, 5 CSV exports and the Accomplishment PDF / XLSX / CSV valid, Visits screen = CSV = 9 rows), settings (General save persists and shows on the public contact page), Manage User roles (revoking Manage Medicines from Staff (Nurse) gives 403 and hides the Inventory menu at once, re-granting restores it). *Defects found and fixed this phase:* `/admin/logs` loaded seven CDN resources (removed, `LegacyLogViewerRemovedTest`); the consultation EDIT form marked `allergies` and `maintenance` `required` although the server and the create form treat them as optional, so a doctor could not save the assessment of a nurse's record where they were blank (`ConsultationEditOptionalFieldsTest`, red for admin / nurse / doctor first). *Not possible from this PC:* a second LAN device and the actual clinic runtime (the plan keeps them as a clinic-PC step).
 
 ### Phase 10 — Documents, memory, commits
-- [ ] 10.1 This file kept current (boxes ticked, findings filled in per module); [commands.md](commands.md) has every command added by Phases 1–9.
-- [ ] 10.2 [STATUS.md](STATUS.md):
+- [x] 10.1 This file kept current (boxes ticked, findings filled in per module); [commands.md](commands.md) has every command added by Phases 1–9.
+- [x] 10.2 [STATUS.md](STATUS.md):
   - fix the stale "not pushed" lines; counts and timeline;
   - clinic deployment checklist (§9 below).
-- [ ] 10.3 Memory notes: clinic MyISAM upgrade, Reverb real-time, RBAC (`canUseModule`, Staff = Nurse, no designation / station), inventory (dispense history view, yearly report), reports (COL, Guest, yearly), local MySQL 9.7 + test schema.
-- [ ] 10.4 One commit per phase, pushed after it is verified (standing go-ahead of the owner, 2026-10-09). Each push ends with a `handover:` commit that closes the START entry in [Handover.md](../Handover.md) (END part + current checkpoint).
+- [x] 10.3 Memory notes: clinic MyISAM upgrade, Reverb real-time, RBAC (`canUseModule`, Staff = Nurse, no designation / station), inventory (dispense history view, yearly report), reports (COL, Guest, yearly), local MySQL 9.7 + test schema.
+- [x] 10.4 One commit per phase, pushed after it is verified (standing go-ahead of the owner, 2026-10-09). Each push ends with a `handover:` commit that closes the START entry in [Handover.md](../Handover.md) (END part + current checkpoint).
 
 ---
 
 ## 4. Status of everything recorded so far, by workflow
 
-Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are new on 2026-10-08 and are scheduled in §3.
+Compiled from STATUS.md, the audit documents and the memory notes. Rows that were 🆕 / ⏳ on 2026-10-08 and scheduled in §3 are ✅ now (Phases 0–9 done 2026-10-22); the ⏳ rows left are the owner's later choices (STATUS §5).
 
 ### 4.1 Upgrade / migrations / database
 | Item | Status |
@@ -1064,7 +1066,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Illness / services migration on an InnoDB server with clinic data | ✅ Phase 1 (conversion first; migration re-runnable) |
 | Zero date left in `sale_medicines.expiry_date` | ✅ Phase 1 (set to NULL) |
 | Rehearsal on the **real** dump under both engines | ✅ R0 (the problem), R1 / R2 (the fix), each under MyISAM and InnoDB |
-| Test schema missing on MySQL 9.7 → tests create their own automatically | 🆕 Phase 0.2 |
+| Test schema missing on MySQL 9.7 → tests create their own automatically | ✅ Phase 0.2 |
 | Unique stock-in numbers, lab-request soft delete, Stock-out view from the ledger | ✅ |
 
 ### 4.2 Patients
@@ -1073,16 +1075,16 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Doctors view + edit only; staff / admin add / archive / restore / reset | ✅ |
 | Archived-account message on create / edit; name search; CSV with names | ✅ |
 | `storePatient()` crash, role-blind patient links | ✅ |
-| Congested row actions → ⋮ menu | 🆕 Phase 6.3 |
+| Congested row actions → ⋮ menu | ✅ Phase 6.3 |
 | Duplicate patient merge | ✅ Phase 8.3: admin preview / confirmation, preserved history / source archive / audit |
-| Pass A / Pass B re-check | 🆕 Phase 5.2 |
+| Pass A / Pass B re-check | ✅ Phase 5.2 |
 
 ### 4.3 Queue
 | Item | Status |
 |---|---|
 | Call-next race, stale entries, archived patients, attachment sync, New / Previous form labels, Record form button | ✅ |
-| Doctor queue routes not permission-gated | 🆕 Phase 3.5 |
-| Add-to-queue page JavaScript never loads (patient search + latest-consultation preview) | ⏳ → Phase 5.22 |
+| Doctor queue routes not permission-gated | ✅ Phase 3.5 |
+| Add-to-queue page JavaScript never loads (patient search + latest-consultation preview) | ✅ Phase 5.22 |
 | Timer polling → WebSocket | ✅ Phase 7 (2026-10-19) |
 | Queue display board | ✅ Phase 8.6 (2026-10-21), stable daily tickets / secret link / safe rooms / chime / Reverb |
 
@@ -1092,7 +1094,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Stock returned to the right batch, duplicate lines, soft delete + restore, audit snapshot, illness / services | ✅ |
 | Certificate / excuse-slip edit crash (10-08) | ✅ |
 | Searchable "Add medicines" (name / generic / strength / category / SKU) | ✅ Phase 8.1 (2026-10-20): local search, usable stock / nearest expiry, disabled unavailable choices; shared picker from 6.4 |
-| Controller split (2,596 lines) | 🆕 Phase 6.5 |
+| Controller split (2,596 lines) | ✅ Phase 6.5 |
 | Mass "Classify" for old visits | 🔒 later (one-at-a-time exists) |
 | Consultation autosave drafts | 💡 §6 |
 
@@ -1100,15 +1102,15 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Item | Status |
 |---|---|
 | Own-name rule, verbal orders, deactivated not dispensed, two strengths, dispense lock | ✅ |
-| Pass A / Pass B re-check | 🆕 Phase 5.5 |
+| Pass A / Pass B re-check | ✅ Phase 5.5 |
 
 ### 4.6 Inventory
 | Item | Status |
 |---|---|
 | FEFO, expired stock not counted, expiry alert, medicine-form stock through Stock-In, reconcile command | ✅ |
-| Medicine create / edit page JavaScript never loads; generics pages too | ⏳ → Phase 5.22 |
+| Medicine create / edit page JavaScript never loads; generics pages too | ✅ Phase 5.22 |
 | Duplicate medicine / stock merge | ✅ Phase 8.2 (2026-10-21): admin preview / confirmation, matching ingredient + unit, preserved batches / history, archive / audit and category / generic merges |
-| Stock disposal & physical count | 🆕 Phase 8.4 |
+| Stock disposal & physical count | ✅ Phase 8.4 |
 
 ### 4.7 Dispensing
 | Item | Status |
@@ -1120,14 +1122,14 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Item | Status |
 |---|---|
 | State machine, delete rules, soft delete + Deleted records, PDF `/` crash, unique numbers | ✅ |
-| Lab request edit page JavaScript never loads | ⏳ → Phase 5.22 |
+| Lab request edit page JavaScript never loads | ✅ Phase 5.22 |
 
 ### 4.9 Certificates
 | Item | Status |
 |---|---|
 | `?module=certificates` plural, edit crash, certificates-only staff search | ✅ |
 | "NORSU Clinic" on certificate / excuse-slip PDFs and prints → "Medical University Clinic" | ✅ Phase 4.1 (the printed form codes "NORSU-CLINIC-FORM-0x" stay: owner decision, 2026-10-15) |
-| Pass A / Pass B re-check | 🆕 Phase 5.9 |
+| Pass A / Pass B re-check | ✅ Phase 5.9 |
 
 ### 4.10 Report Generation / Notifications & Alerts
 | Item | Status |
@@ -1137,7 +1139,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Guest column always shown | ✅ Phase 4.3 |
 | Yearly Accomplishment Report (Q1–Q4 + Year total) | ✅ Phase 4.4 |
 | Yearly Medicine Inventory report (left from last year, additional, Q1–Q4 remaining) | ✅ Phase 4.5 |
-| "Prepared by" shows the designation → role | 🆕 Phase 3.2 |
+| "Prepared by" shows the designation → role | ✅ Phase 3.2 |
 | `wire:poll.30s` → WebSocket | ✅ Phase 7 (2026-10-19) |
 | Notification center (per-user, read / unread, live) | ✅ Phase 8.5 (2026-10-21) |
 | Saved report filters / one-click monthly report | 💡 §6 |
@@ -1168,7 +1170,7 @@ Compiled from STATUS.md, the audit documents and the memory notes. 🆕 rows are
 | Rotate DB password; Laravel 11/12; rappasoft 3.8; npm advisories; merge to `develop` | 🔒 §2.4 |
 | Hard-coded root-relative URLs in browser code (`/csrf-token`, `/change-language`) | ⏳ low (link audit §3.2) |
 | No CDN / third-party asset on any page (offline rule) | ⏳ re-checked by the crawler and an internet-unplugged browser pass (Phases 5, 9) |
-| Livewire 2 JavaScript leftovers (`livewire:load`, `window.livewire.hook`, `beforePushState`) never run on Livewire 3 → Select2 not re-initialised after Livewire updates (found 2026-10-08 while adapting the skills) | 🆕 Phase 6.6 |
+| Livewire 2 JavaScript leftovers (`livewire:load`, `window.livewire.hook`, `beforePushState`) never run on Livewire 3 → Select2 not re-initialised after Livewire updates (found 2026-10-08 while adapting the skills) | ✅ Phase 6.6 |
 | Every page works from another LAN device (not only on the server PC itself) | ⏳ Pass B is done from a second device / LAN address, Phase 9 |
 | Two plain external reference links in the `/privacy-policy` text | ℹ️ text links, nothing loads from them (link audit §3.4) |
 | Default-password admin redirect by `users.type` instead of role | ℹ️ not reachable with current data (link audit §3.3) |
@@ -1265,6 +1267,8 @@ None blocking right now. Questions that may come up during the work are asked wh
    (duplicate medicines, 8 phone numbers: `php artisan phone:normalize`, then `--apply` after a backup).
 5. `npm ci && npm run prod`; set `APP_NAME="Medical University Clinic"` in the server's own `.env` (it is not in git; it titles the guest pages and names the session cookie, so everybody signs in once more).
 6. Start through the startup script (now also starts Reverb); allow the Reverb port through the Windows firewall (owner).
+6a. **Scheduler (owner, decision 2026-10-22):** the startup script does **not** start `schedule:work`. Create a Windows Task Scheduler task that runs `php artisan schedule:run` every minute (start `php.exe` with `artisan schedule:run`, start in the project folder): it runs `notifications:refresh` every minute, `inventory:sync-expiry` daily and the hourly `db:backup` still defined in `app/Console/Kernel.php`.
+6b. **Runtime check on the clinic PC (Phase 9, not possible on the laptop):** from a second PC on the LAN open the site by the server's LAN address, sign in as a nurse and a doctor, add a patient to the queue on one and watch it appear on the other with no reload (the header must not show "Live updates off"); open the Admin queue board link on a third screen; reload a few long pages (the Windows PHP 8.3 built-in server once returned a truncated page in an earlier test; none was seen in the 160 pages of the 2026-10-22 live check).
 7. Admin: review the **Staff (Nurse)** role in Manage User roles (nurses now get exactly what it allows).
 8. Optional: set `default-storage-engine=InnoDB` in WAMP's `my.ini` (owner).
 9. The remaining STATUS §7 steps (University Physician in Settings, default-password notice, `inventory:reconcile`, …).

@@ -195,10 +195,11 @@ New tables are always InnoDB, whatever the server's default is: `config/database
 
 | Command | What it does | Changes data? |
 |---|---|---|
-| `php artisan db:backup [--force]` | Dumps the database into `storage/app/backups/scheduled` (hourly by itself; skipped when nothing changed; keeps every backup of the last 2 days, then one per day for 30 days) | No |
+| `php artisan db:backup [--force]` | Dumps the database into `storage/app/backups/scheduled` (hourly while the scheduler runs, see "Scheduled?" above; skipped when nothing changed; keeps every backup of the last 2 days, then one per day for 30 days) | No |
 | `php artisan inventory:reconcile` | Read-only stock report: totals vs batches, batches vs ledger, "no expiry" placeholder batches, unlinked stock-in lines. Its stock checks are shared with `db:integrity`. | No |
 | `php artisan text:repair-entities [--apply]` | Decodes `&amp;` / `&lt;` / `&gt;` left in clinical text. **Without `--apply` it only counts.** Take a backup before `--apply`; run `--apply` once. | Only with `--apply` |
 | `php artisan phone:normalize [--apply]` | Stores phone numbers in the Philippine (+63) format. **Without `--apply` it only counts.** Take a backup before `--apply`. | Only with `--apply` |
+| `php artisan consultation-images:secure [--dry-run]` | One-off for consultation photos uploaded before they moved to private storage: moves each legacy picture from `public/uploads/consultation_images` to the private disk under a random name and rewrites the record, quarantines anything that is not a real picture outside the web root, then lists leftover files no record uses. Safe to run more than once; **use `--dry-run` first**. | Yes (files and consultation records); take a backup first |
 
 ## Developer tools outside the repository
 
@@ -233,6 +234,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-22 | 10 | No new command. Final completeness check: every command in `app/Console/Commands` is listed in this file (`consultation-images:secure`, a 2026-09-30 one-off, was missing and is added); `db:backup` and `notifications:refresh` run only while Windows Task Scheduler runs `schedule:run` (the startup script does not start the scheduler) |
 | 2026-10-22 | 8.5 follow-up | No command. Migrations `2026_10_22_080000_reorder_notifications_alert_unique_index` (alert unique index becomes `(event_key, user_id)`, plain `user_id` index kept, so the user foreign key is enforced for every row) and `2026_10_22_090000_drop_redundant_notifications_user_index` (no-op after it) make `db:integrity --compare-fresh` exit 0 on the real clinic data; neither changes a row, both are pending on the working DB with the other 8.x migrations |
 | 2026-10-21 | 8.3 | `user:restore` refuses merged patient archives; `db:integrity` / foreign-key catalog now expect 52 keys; new patient archive migration remains pending on working DB |
 | 2026-10-20 | 6.6 | Retired `fix:dashboard-permissions` and `performance:monitor`; retained `cache:warmup` and CLI `lang:js`, removed the unused browser translation endpoint |
