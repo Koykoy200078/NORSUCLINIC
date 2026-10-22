@@ -387,7 +387,7 @@ class Patient extends Model implements HasMedia
     public function address(): MorphOne
     {
         $relation = $this->morphOne(Address::class, 'owner');
-        if (\Illuminate\Support\Facades\Schema::hasColumn('addresses', 'merged_from_patient_id')) {
+        if (\App\Support\SchemaColumns::has('addresses', 'merged_from_patient_id')) {
             $relation->whereNull('merged_from_patient_id');
         }
 

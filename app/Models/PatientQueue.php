@@ -49,7 +49,7 @@ class PatientQueue extends Model
     protected static function booted(): void
     {
         static::creating(function (PatientQueue $queue): void {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('patient_queues', 'ticket_number')) {
+            if (\App\Support\SchemaColumns::has('patient_queues', 'ticket_number')) {
                 $queue->created_at = $queue->created_at ?? now();
                 $queue->ticket_date = $queue->created_at->toDateString();
                 $queue->ticket_number = app(\App\Services\QueueTicketService::class)->allocate($queue->ticket_date->toDateString());

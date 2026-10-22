@@ -5,11 +5,11 @@ namespace App\Repositories;
 use App\Models\Patient;
 use App\Models\PatientQueue;
 use App\Models\User;
+use App\Support\SchemaColumns;
 use App\Traits\LogsActivity;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class PatientMergeRepository
@@ -21,7 +21,7 @@ class PatientMergeRepository
 
     public static function ready(): bool
     {
-        return Schema::hasColumn('patients', 'merged_into_id') && Schema::hasColumn('addresses', 'merged_from_patient_id');
+        return SchemaColumns::has('patients', 'merged_into_id') && SchemaColumns::has('addresses', 'merged_from_patient_id');
     }
 
     public function candidates(): array
