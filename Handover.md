@@ -71,6 +71,11 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-23 10:00 +08:00 — Claude Code — START → END (pushed 2026-10-23)
+- **Branch / from:** `changes_v2` @ `c2b65d8` (fetched; working tree clean).
+- **Work / END:** the owner's "organize the situation and continue": all plan phases 0 to 10 were already done and pushed (Phase 5 rows 5.14 to 5.22 and Phases 6 and 8 by Codex, reviewed in 2026-10-22), so nothing was left to continue in the plan. Only the stale comment the 2026-10-23 entry listed as open was fixed: `app/Console/Kernel.php` no longer says the startup scripts start `schedule:work` (they do not; Windows Task Scheduler must run `schedule:run`). Comment only, no behaviour change; `php -l` clean, `schedule:list` unchanged.
+- **Continue:** the clinic deployment (STATUS section 7) and the owner's later choices.
+
 ### 2026-10-23 09:00 +08:00 — Claude Code — START → END (pushed 2026-10-23)
 - **Branch / from:** `changes_v2` @ `86bbc6a` (fetched; working tree clean).
 - **Work / END:** the owner's "do Phase 10 (10.1 to 10.4)", docs and memory only, no code, schema or route change. 10.1: plan header and boxes (Phase 5 Re-check column ticked where the Phase 9 walk-through used the module's real forms or output, with the coverage note; §4 "scheduled" markers set to done; the databases paragraph now states the 2026-10-15 scratch-only rule; deployment steps 6a / 6b), `docs/commands.md` (every command in `app/Console/Commands` is listed: `consultation-images:secure` was missing; `db:backup` wording follows the scheduler decision). 10.2: `docs/STATUS.md` counts (868 tests / 8,829 assertions, 475 routes, matrix 407 routes / 6,512 requests), the working database row (132 migrations applied, last `2026_10_15_110000`, 6 pending on purpose), timeline rows for the 2026-10-22 review follow-up, Phase 9 and Phase 10, §7 deployment steps 5a (Task Scheduler) and 5b (clinic-PC runtime check), §8 checkpoint. 10.3: memory notes for Phases 6, 8 and 9 added, inventory / run-deploy / seeding-tests / audit-plan notes brought current, index refreshed (the Claude-side memory is not in the repo).
