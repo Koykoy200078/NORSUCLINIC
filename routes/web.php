@@ -18,7 +18,6 @@ use App\Support\PanelRoutes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminLogViewerController;
 use App\Http\Controllers\BackupController;
 
 /*
@@ -108,9 +107,6 @@ Route::get('get-barangays', [UserController::class, 'getBarangays'])
 Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin', 'forceAdminPasswordChange')->group(function () {
 
     PanelRoutes::dashboard('admin');
-
-    // Logs — gate behind a permission so it isn't reachable purely by role. AUTH-5.
-    Route::get('logs', [AdminLogViewerController::class, 'index'])->middleware('permission:manage_admin_dashboard');
 
     // Impersonate. Starting is a POST (a GET link was CSRF-able: an admin clicking a crafted link
     // silently became another user). Leaving lives OUTSIDE this admin-only group, because while

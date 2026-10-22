@@ -208,7 +208,6 @@ What each fix deliberately does **not** do:
 
 | Item | Why it waits | Suggested |
 |---|---|---|
-| **`/admin/logs` loads seven CDN resources** (found by the Phase 9 live check, 2026-10-22) | the unlinked legacy log viewer (`AdminLogViewerController`, `rap2hpoutre` view) pulls Bootstrap 4, DataTables, jQuery and Font Awesome from public hosts, so on the offline LAN it renders broken; the newer `/log-viewer` is self-contained | remove the legacy route and controller (nothing links to it); re-skinning would need new packages |
 | **Rotate the database password** | the old password is in git history (`auto-backup-database.bat`) | rotate now; purge history with `git filter-repo` if the repo is shared |
 | Laravel 10 advisories (debug-page XSS, signed-URL path, email-rule CRLF) | fixed only in Laravel 12 (PHP 8.2+) | plan a Laravel 11/12 + PHP 8.2 upgrade |
 | `spatie/laravel-medialibrary` 10.x advisories | fixed in 11.23 (PHP 8.2+) | upgrade with the above |
@@ -235,6 +234,7 @@ What each fix deliberately does **not** do:
 * **Doctor archive/restore** (owner, 2026-10-20): retain the doctor profile, licence numbers, specialization links, address and photo on archive; exclude archived users from lists, cached pick-lists and management URLs; keep the licence reserved so a restore is complete. Implemented and verified.
 * **Seven dead page scripts** (owner, 2026-10-20, row 5.22): enable each with a real browser check; completed.
 * **Scheduler** (owner, 2026-10-22): the startup script does **not** start `schedule:work` and stays unchanged. Windows Task Scheduler on the clinic server PC runs `php artisan schedule:run` every minute for the alert refresh (`notifications:refresh`), the daily expiry sync and the hourly backup that `app/Console/Kernel.php` still defines.
+* **Legacy `/admin/logs` removed** (owner, 2026-10-22, Phase 9 finding): the unlinked rap2hpoutre log viewer loaded seven CDN resources (Bootstrap 4, DataTables, jQuery, Font Awesome), which broke the offline rule. The route and `AdminLogViewerController` are gone (475 routes); the administrator reads logs at `/log-viewer`, which is self-contained. `LegacyLogViewerRemovedTest` pins both. The `rap2hpoutre/laravel-log-viewer` package stays in `composer.json` (dropping a dependency needs the owner's approval).
 
 * Doctors may **view and edit** patients only; add / archive / restore / reset password = staff/nurse + admin.
 * **One shared queue.**

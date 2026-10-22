@@ -27,7 +27,7 @@ class SharedPanelRoutesTest extends TestCase
             ];
         }
 
-        $this->assertCount(409, $expected);
+        $this->assertCount(408, $expected);
         $this->assertSame($expected, $actual);
     }
 
