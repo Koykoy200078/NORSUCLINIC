@@ -208,6 +208,7 @@ What each fix deliberately does **not** do:
 
 | Item | Why it waits | Suggested |
 |---|---|---|
+| **`/admin/logs` loads seven CDN resources** (found by the Phase 9 live check, 2026-10-22) | the unlinked legacy log viewer (`AdminLogViewerController`, `rap2hpoutre` view) pulls Bootstrap 4, DataTables, jQuery and Font Awesome from public hosts, so on the offline LAN it renders broken; the newer `/log-viewer` is self-contained | remove the legacy route and controller (nothing links to it); re-skinning would need new packages |
 | **Rotate the database password** | the old password is in git history (`auto-backup-database.bat`) | rotate now; purge history with `git filter-repo` if the repo is shared |
 | Laravel 10 advisories (debug-page XSS, signed-URL path, email-rule CRLF) | fixed only in Laravel 12 (PHP 8.2+) | plan a Laravel 11/12 + PHP 8.2 upgrade |
 | `spatie/laravel-medialibrary` 10.x advisories | fixed in 11.23 (PHP 8.2+) | upgrade with the above |
@@ -227,9 +228,9 @@ What each fix deliberately does **not** do:
 
 ### Decisions already taken (do not re-ask)
 
-* **Medicine merges** (owner, 2026-10-20, Phase 8.2): require matching recorded generic ingredient and unit, ignoring case and surrounding spaces; different strengths stay in separate batches. Missing ingredient / unit blocks confirmation until corrected. Admin-only preview / confirmation, archive the duplicate and retain an audit snapshot; category / generic label merges are included.
+* **Medicine merges** (owner, 2026-10-20, Phase 8.2; confirmed again by the owner 2026-10-22): require matching recorded generic ingredient and unit, ignoring case and surrounding spaces; different strengths stay in separate batches. Missing ingredient / unit blocks confirmation until corrected. Admin-only preview / confirmation, archive the duplicate and retain an audit snapshot; category / generic label merges are included.
 * **Patient merges** (owner, 2026-10-21, Phase 8.3): the selected kept record retains identity and medical summary; preserve the source details for review through the archive / merge history. Move clinical associations without rewriting saved documents or authors; addresses / images remain labelled history. Merge is admin-only with preview / confirmation and an atomic audit. Merged sources cannot be restored independently; resolve conflicting open queue entries first.
-* **Queue board tickets** (owner, 2026-10-21, implemented in Phase 8.6): stable ticket numbers start at 1 each clinic day; queue movement must not change the assigned ticket.
+* **Queue board tickets** (owner, 2026-10-21, implemented in Phase 8.6; confirmed again by the owner 2026-10-22): stable ticket numbers start at 1 each clinic day; queue movement must not change the assigned ticket.
 * **Accomplishment Report Guest / F&S** (owner, 2026-10-20, Phase 5.10 follow-up): an exact Informant label Guest, Faculty or Staff takes priority (case-insensitive, surrounding spaces ignored); otherwise use the consultation's saved Patient Type. Faculty / Staff count in F&S; Guest counts in Guest; one column per consultation per illness / service. The Patient Type filter follows the same rule, including Patient Visits, monthly / yearly reports and downloads; no clinical data is rewritten.
 * **Doctor archive/restore** (owner, 2026-10-20): retain the doctor profile, licence numbers, specialization links, address and photo on archive; exclude archived users from lists, cached pick-lists and management URLs; keep the licence reserved so a restore is complete. Implemented and verified.
 * **Seven dead page scripts** (owner, 2026-10-20, row 5.22): enable each with a real browser check; completed.
