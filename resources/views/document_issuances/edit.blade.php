@@ -244,7 +244,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="allergies">Allergies<span class="text-red-500">*</span></label>
-                            <input type="text" id="allergies" name="allergies" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('allergies', $requestDocument->allergies) }}" required>
+                            <input type="text" id="allergies" name="allergies" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('allergies', $requestDocument->allergies) }}">
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="admissions_surgeries">Pertinent Admissions or Surgeries</label>
@@ -252,7 +252,7 @@ $indexUrlWithModule = $indexRoute . '?module=' . $documentModule;
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="maintenance">Maintenance<span class="text-red-500">*</span></label>
-                            <input type="text" id="maintenance" name="maintenance" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('maintenance', $requestDocument->maintenance) }}" required>
+                            <input type="text" id="maintenance" name="maintenance" class="w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" value="{{ old('maintenance', $requestDocument->maintenance) }}">
                         </div>
                         <div class="col-span-1">
                             <label class="block text-xs" for="pregnancy_status">Pregnant or Not?<span class="text-red-500">*</span></label>
