@@ -215,6 +215,19 @@ Run them with `php <that folder>\<file>`.
 | `inspect-db.php` | Read-only: engines, foreign keys, migrations and row counts of the connected database. |
 | `RouteRoleMatrixTest.php`, `compare-matrix.php`, `analyze-matrix.php` | Route × role matrix (run with phpunit; never together with another phpunit process) and its comparison. |
 
+## The server startup script (`startup-dev-environment.bat` / `.ps1`)
+
+Click it (or run it in a terminal) to open the clinic. Everything runs in that one terminal, no extra window; Ctrl+C stops it all.
+
+| Step | What it does |
+|---|---|
+| php and mysql | Looks for `php.exe` and `mysql.exe` / `mysqld.exe` in the **saved Windows PATH, system and user**. Both found: WampServer is **not** opened. One missing: it finds WampServer (any fixed drive, `wamp64` / `wamp`), adds its active php / mysql folders (from `wampmanager.conf`) to the PATH **of that terminal only**, and starts WampServer's MySQL. With no php anywhere it stops with a message. |
+| Database | Waits (up to 60 s) for MySQL on `DB_PORT`; with WampServer not needed it starts a MySQL / MariaDB Windows service if there is one, and WampServer only as a last resort. |
+| Caches, Reverb, scheduler | Rebuilds the Laravel caches; starts `reverb:start` and `schedule:work` in the background of the same terminal (logs in `storage/logs`). |
+| Web server | `php artisan serve --host=0.0.0.0 --port=8000`: `localhost`, `127.0.0.1` and the current LAN address (detected on every start) all work. |
+| Browser | Opens `http://localhost:8000` in the **default browser** once the server answers. With **no default browser** it lists the installed browsers (Chrome, Edge, Firefox, Brave, Opera, Vivaldi ...) and opens the one you pick (0 = none). `-NoBrowser` skips it. |
+| `-CheckOnly` | Prints what it found (PATH, WampServer, MySQL, browsers, LAN addresses) and starts nothing. |
+
 ## Real-time updates (Laravel Reverb, plan Phase 7)
 
 | Command | What it does | Changes data? | Where / when to run it |
