@@ -12,17 +12,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Nothing here runs by itself. The startup scripts do NOT start the scheduler: on the clinic PC a Windows Task
-        // Scheduler entry must run `php artisan schedule:run` every minute (docs/commands.md, STATUS section 7).
+        // Nothing here runs by itself: the startup script (startup-dev-environment.ps1 / .bat) starts
+        // `php artisan schedule:work` in its own terminal, so the tasks run while the server is up. No Windows Task
+        // Scheduler entry is used. There is no automatic database backup: take one by hand (Settings > Backups or
+        // `php artisan db:backup`).
         $schedule->command('notifications:refresh')->everyMinute()->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/notifications.log'));
-        // Hourly database backup; the command skips saving when nothing changed since the previous
-        // backup and thins old files out (every backup for 2 days, then one per day for 30 days).
-        $schedule->command('db:backup')
-            ->hourly()
-            ->withoutOverlapping()
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/backup.log'));
 
         // Batches expire at midnight: refresh the "available" figure of medicines right after, so expired
         // units stop being offered in forms and reports. (The sidebar also does this once a day when a page

@@ -5,16 +5,18 @@
 #   1. makes sure the database (WAMP MySQL) is running
 #   2. clears and rebuilds the Laravel caches
 #   3. starts Reverb (real-time updates) in the background of this terminal, its output goes to storage\logs\reverb*.log
-#   4. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
+#   4. starts the Laravel scheduler (php artisan schedule:work) the same way: it refreshes the alerts every minute and
+#      syncs the expired stock at night, so NO Windows Task Scheduler entry is needed; output in storage\logs\scheduler*.log
+#   5. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
 #      http://localhost:8000, http://127.0.0.1:8000 and http://<this PC's current LAN address>:8000
 #
 # The LAN address is detected every time the script runs, so DHCP (dynamic) and static addresses both work.
-# Ctrl+C stops the web server and Reverb together.
+# Ctrl+C stops the web server, Reverb and the scheduler together.
 #
 #   .\startup-dev-environment.ps1                 start
 #   .\startup-dev-environment.ps1 -OpenBrowser    also open the page in the default browser
 #
-# There is no scheduler window: the automatic database backup was removed.
+# There is no extra window and no automatic database backup (take one by hand: Settings > Backups or php artisan db:backup).
 # ============================================================
 param(
     [switch]$OpenBrowser
@@ -182,7 +184,30 @@ if (Test-PortInUse -Port $ReverbPort) {
     }
 }
 
-# ------------------------------------------------------------ 4. web server on every address
+# ------------------------------------------------------------ 4. scheduler (alerts, expiry sync), same terminal
+$scheduler = $null
+$schedulerRunning = $false
+try {
+    $schedulerRunning = [bool](Get-CimInstance Win32_Process -Filter "Name = 'php.exe'" -ErrorAction Stop |
+        Where-Object { $_.CommandLine -match 'schedule:(work|run)' } | Select-Object -First 1)
+} catch { }
+if ($schedulerRunning) {
+    Write-Ok 'The scheduler is already running'
+} else {
+    Write-Step 'Scheduler (alerts every minute, expired stock at night)'
+    $scheduler = Start-Process -FilePath 'php' -ArgumentList 'artisan', 'schedule:work' -WorkingDirectory $ProjectPath `
+        -NoNewWindow -PassThru `
+        -RedirectStandardOutput (Join-Path $logDirectory 'scheduler.log') -RedirectStandardError (Join-Path $logDirectory 'scheduler-error.log')
+    Start-Sleep -Seconds 1
+    if ($scheduler.HasExited) {
+        Write-Warn 'The scheduler did not start (see storage\logs\scheduler-error.log). The alerts still refresh after each stock / queue / consultation change.'
+        $scheduler = $null
+    } else {
+        Write-Ok 'Scheduler is running (output: storage\logs\scheduler.log)'
+    }
+}
+
+# ------------------------------------------------------------ 5. web server on every address
 $lanAddresses = Get-LanIPv4
 Write-Host ''
 Write-Host '  Open the clinic from this PC or from any device on the same network:' -ForegroundColor White
@@ -194,7 +219,7 @@ foreach ($lan in $lanAddresses) {
 }
 Write-Host ''
 Write-Host "  Other devices need inbound TCP $AppPort and $ReverbPort allowed in this PC's firewall (docs/commands.md)." -ForegroundColor DarkGray
-Write-Host '  Ctrl+C stops the server and Reverb.' -ForegroundColor DarkGray
+Write-Host '  Ctrl+C stops the server, Reverb and the scheduler.' -ForegroundColor DarkGray
 Write-Host ''
 
 if ($OpenBrowser) {
@@ -205,8 +230,10 @@ try {
     # 0.0.0.0 = every network interface: localhost, 127.0.0.1 and the LAN address all work, whatever the address is today.
     & php artisan serve --host=0.0.0.0 --port=$AppPort
 } finally {
-    if ($reverb -and -not $reverb.HasExited) {
-        Stop-Process -Id $reverb.Id -Force -ErrorAction SilentlyContinue
+    foreach ($background in @($reverb, $scheduler)) {
+        if ($background -and -not $background.HasExited) {
+            Stop-Process -Id $background.Id -Force -ErrorAction SilentlyContinue
+        }
     }
     Write-Host ''
     Write-Host 'Server stopped.' -ForegroundColor Yellow
