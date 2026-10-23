@@ -71,6 +71,11 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-23 13:40 +08:00 — Claude Code — START → END (pushed 2026-10-23)
+- **Branch / from:** `changes_v2` @ `ac75252` (working tree clean).
+- **Work / END:** answer to the automated security review of the previous startup-script commit (binary planting): the script scanned every fixed drive for `wampmanager.exe` and then ran it and put its php / mysql first on the terminal's PATH, so a folder planted on another drive could have been used. `Find-WampRoot` now uses only places an ordinary account cannot make up: the install location WampServer's installer registered in HKLM (needs an administrator to write), the `WAMP_ROOT` variable the owner sets, and `wamp64` / `wamp` on the Windows drive only when ordinary users (Everyone, Users, Authenticated Users) cannot change files in it (a standard install has Authenticated Users "Modify", so that fallback is refused with a warning; the registry entry covers it). No drive scan. Verified with `-CheckOnly`: registry entry found; with the registry skipped the unregistered folder is refused with a warning; with `WAMP_ROOT` set it is accepted. Script and docs only.
+- **Continue:** the clinic deployment (STATUS section 7).
+
 ### 2026-10-23 13:00 +08:00 — Claude Code — START → END (pushed 2026-10-23)
 - **Branch / from:** `changes_v2` @ `73386a1` (fetched; working tree clean).
 - **Work / END:** the owner's request to change `startup-dev-environment.ps1` / `.bat`: (1) WampServer is opened only when `php` or `mysql` is missing from the saved Windows PATH (system and user); when both are there it is not needed and not opened; when one is missing the script finds WampServer on any fixed drive, adds its **active** php / mysql folders (from `wampmanager.conf`, not simply the newest) to that terminal's PATH only, and starts its MySQL; (2) the page opens in the default browser once the server answers, and when Windows has no default browser a numbered list of the installed browsers is shown (0 = none); `-NoBrowser` and the new `-CheckOnly` (report only) flags; `-OpenBrowser` still accepted. Documented in `docs/commands.md` ("The server startup script"). No PHP, test, route or schema change, so the suite was not re-run (last run `73386a1`: 868 / 8,829).

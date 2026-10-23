@@ -110,14 +110,60 @@ function Find-InWindowsPath {
 }
 
 # ------------------------------------------------------------ WampServer
-# Where WampServer is installed (every fixed drive: wamp64 / wamp), or $null.
-function Find-WampRoot {
-    foreach ($drive in [System.IO.DriveInfo]::GetDrives()) {
-        if ($drive.DriveType -ne 'Fixed' -or -not $drive.IsReady) { continue }
-        foreach ($folder in @('wamp64', 'wamp')) {
-            $root = Join-Path $drive.Name $folder
-            if (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe')) { return $root }
+# True when ordinary users (Everyone, Users, Authenticated Users) may change files in the folder: a program there could be
+# swapped by any account of this PC, and the script is about to run wampmanager.exe and put its php / mysql on the PATH.
+function Test-FolderWritableByUsers {
+    param([string]$Folder)
+    try {
+        $broad = 'Everyone', 'BUILTIN\Users', 'NT AUTHORITY\Authenticated Users'
+        foreach ($rule in (Get-Acl -LiteralPath $Folder -ErrorAction Stop).Access) {
+            if ($rule.AccessControlType -ne 'Allow') { continue }
+            if ($broad -notcontains $rule.IdentityReference.Value) { continue }
+            if ($rule.FileSystemRights -band ([System.Security.AccessControl.FileSystemRights]'Write, Modify, FullControl')) { return $true }
         }
+        return $false
+    } catch {
+        return $true   # cannot read the permissions: do not trust it
+    }
+}
+
+# Where WampServer is installed, or $null. No drive scan: only places an ordinary account cannot make up.
+#   1. the install location WampServer's own installer registered (HKLM: writing there needs an administrator);
+#   2. WAMP_ROOT, a folder you set yourself in the Windows environment variables;
+#   3. wamp64 / wamp on the Windows drive, used only when ordinary users cannot change files in it.
+# Returns [pscustomobject]@{ Path; Source }.
+function Find-WampRoot {
+    $uninstallKeys = @(
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+    )
+    foreach ($base in $uninstallKeys) {
+        if (-not (Test-Path $base)) { continue }
+        foreach ($key in (Get-ChildItem $base -ErrorAction SilentlyContinue)) {
+            try {
+                $entry = Get-ItemProperty -Path $key.PSPath -ErrorAction Stop
+                if ($entry.DisplayName -like 'Wampserver*' -and $entry.InstallLocation) {
+                    $root = $entry.InstallLocation.TrimEnd('\')
+                    if (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe')) { return [pscustomobject]@{ Path = $root; Source = 'installer registry entry' } }
+                }
+            } catch { }
+        }
+    }
+
+    $fromEnv = [Environment]::GetEnvironmentVariable('WAMP_ROOT')
+    if ($fromEnv -and (Test-Path -LiteralPath (Join-Path $fromEnv 'wampmanager.exe'))) {
+        return [pscustomobject]@{ Path = $fromEnv.TrimEnd('\'); Source = 'WAMP_ROOT' }
+    }
+
+    $systemDrive = if ($env:SystemDrive) { $env:SystemDrive } else { 'C:' }
+    foreach ($folder in @('wamp64', 'wamp')) {
+        $root = Join-Path "$systemDrive\" $folder
+        if (-not (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe'))) { continue }
+        if (Test-FolderWritableByUsers -Folder $root) {
+            Write-Warn "$root looks like WampServer, but ordinary users can change files in it and it is not registered by an installer: not used (set WAMP_ROOT to use it)."
+            continue
+        }
+        return [pscustomobject]@{ Path = $root; Source = 'system drive' }
     }
     return $null
 }
@@ -319,13 +365,14 @@ Write-Host ''
 $phpInPath = Find-InWindowsPath @('php.exe')
 $mysqlInPath = Find-InWindowsPath @('mysql.exe', 'mysqld.exe')
 $needWamp = -not ($phpInPath -and $mysqlInPath)
-$wampRoot = Find-WampRoot
+$wampFound = Find-WampRoot
+$wampRoot = if ($wampFound) { $wampFound.Path } else { $null }
 
 if ($CheckOnly) {
     Write-Host '  Check only (nothing is started):' -ForegroundColor White
     Write-Host ("     php in the Windows PATH   : " + $(if ($phpInPath) { $phpInPath } else { 'NOT FOUND' }))
     Write-Host ("     mysql in the Windows PATH : " + $(if ($mysqlInPath) { $mysqlInPath } else { 'NOT FOUND' }))
-    Write-Host ("     WampServer                : " + $(if ($wampRoot) { $wampRoot } else { 'not found' }))
+    Write-Host ("     WampServer                : " + $(if ($wampRoot) { $wampRoot + '  (' + $wampFound.Source + ')' } else { 'not found' }))
     Write-Host ("     WampServer needed         : " + $(if ($needWamp) { 'yes' } else { 'no' }))
     Write-Host ("     MySQL answering on port $DbPort : " + $(if (Test-PortInUse -Port $DbPort) { 'yes' } else { 'no' }))
     Write-Host ("     Default browser set       : " + $(if (Test-HasDefaultBrowser) { 'yes' } else { 'no (a list would be shown)' }))
@@ -350,9 +397,9 @@ if ($needWamp) {
             if ($folder) { $extra += $folder }
         }
         if ($extra.Count -gt 0) { $env:Path = (($extra -join ';') + ';' + $env:Path) }
-        Write-Ok "WampServer found: $wampRoot"
+        Write-Ok "WampServer found: $wampRoot ($($wampFound.Source))"
     } else {
-        Write-Warn 'WampServer was not found on any drive (looked for wamp64 and wamp).'
+        Write-Warn 'WampServer was not found (installer registry entry, WAMP_ROOT, wamp64 / wamp on the Windows drive).'
     }
 } else {
     Write-Ok 'php and mysql are in the Windows PATH: WampServer is not needed'
