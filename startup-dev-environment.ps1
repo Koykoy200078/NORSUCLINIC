@@ -110,16 +110,19 @@ function Find-InWindowsPath {
 }
 
 # ------------------------------------------------------------ WampServer
-# True when ordinary users (Everyone, Users, Authenticated Users) may change files in the folder: a program there could be
-# swapped by any account of this PC, and the script is about to run wampmanager.exe and put its php / mysql on the PATH.
-function Test-FolderWritableByUsers {
-    param([string]$Folder)
+# True when ordinary users may change this file or folder: a program there could be swapped by any account of this PC, and
+# the script is about to run it (wampmanager.exe, php, mysql). Compared by SID, so it does not depend on the language of
+# Windows: Everyone S-1-1-0, Users S-1-5-32-545, Authenticated Users S-1-5-11, Interactive S-1-5-4.
+function Test-WritableByUsers {
+    param([string]$Path)
     try {
-        $broad = 'Everyone', 'BUILTIN\Users', 'NT AUTHORITY\Authenticated Users'
-        foreach ($rule in (Get-Acl -LiteralPath $Folder -ErrorAction Stop).Access) {
+        $broad = 'S-1-1-0', 'S-1-5-32-545', 'S-1-5-11', 'S-1-5-4'
+        $writeRights = [System.Security.AccessControl.FileSystemRights]'Write, Modify, FullControl, CreateFiles, AppendData, WriteData, Delete, DeleteSubdirectoriesAndFiles, ChangePermissions, TakeOwnership'
+        foreach ($rule in (Get-Acl -LiteralPath $Path -ErrorAction Stop).Access) {
             if ($rule.AccessControlType -ne 'Allow') { continue }
-            if ($broad -notcontains $rule.IdentityReference.Value) { continue }
-            if ($rule.FileSystemRights -band ([System.Security.AccessControl.FileSystemRights]'Write, Modify, FullControl')) { return $true }
+            $sid = $rule.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
+            if ($broad -notcontains $sid) { continue }
+            if (($rule.FileSystemRights -band $writeRights) -ne 0) { return $true }
         }
         return $false
     } catch {
@@ -144,7 +147,7 @@ function Find-WampRoot {
                 $entry = Get-ItemProperty -Path $key.PSPath -ErrorAction Stop
                 if ($entry.DisplayName -like 'Wampserver*' -and $entry.InstallLocation) {
                     $root = $entry.InstallLocation.TrimEnd('\')
-                    if (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe')) { return [pscustomobject]@{ Path = $root; Source = 'installer registry entry' } }
+                    if (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe')) { return [pscustomobject]@{ Path = $root; Source = 'installer registry entry'; Trusted = $true } }
                 }
             } catch { }
         }
@@ -152,18 +155,18 @@ function Find-WampRoot {
 
     $fromEnv = [Environment]::GetEnvironmentVariable('WAMP_ROOT')
     if ($fromEnv -and (Test-Path -LiteralPath (Join-Path $fromEnv 'wampmanager.exe'))) {
-        return [pscustomobject]@{ Path = $fromEnv.TrimEnd('\'); Source = 'WAMP_ROOT' }
+        return [pscustomobject]@{ Path = $fromEnv.TrimEnd('\'); Source = 'WAMP_ROOT'; Trusted = $true }
     }
 
     $systemDrive = if ($env:SystemDrive) { $env:SystemDrive } else { 'C:' }
     foreach ($folder in @('wamp64', 'wamp')) {
         $root = Join-Path "$systemDrive\" $folder
         if (-not (Test-Path -LiteralPath (Join-Path $root 'wampmanager.exe'))) { continue }
-        if (Test-FolderWritableByUsers -Folder $root) {
+        if ((Test-WritableByUsers -Path $root) -or (Test-WritableByUsers -Path (Join-Path $root 'wampmanager.exe')) -or (Test-WritableByUsers -Path (Join-Path $root 'bin'))) {
             Write-Warn "$root looks like WampServer, but ordinary users can change files in it and it is not registered by an installer: not used (set WAMP_ROOT to use it)."
             continue
         }
-        return [pscustomobject]@{ Path = $root; Source = 'system drive' }
+        return [pscustomobject]@{ Path = $root; Source = 'system drive'; Trusted = $false }
     }
     return $null
 }
@@ -398,6 +401,13 @@ if ($needWamp) {
         }
         if ($extra.Count -gt 0) { $env:Path = (($extra -join ';') + ';' + $env:Path) }
         Write-Ok "WampServer found: $wampRoot ($($wampFound.Source))"
+        # Everything that is about to run: the manager and the php / mysql programs that were put on this terminal's PATH.
+        $toRun = @(Join-Path $wampRoot 'wampmanager.exe') + @($extra | ForEach-Object { $_ })
+        $changeable = @($toRun | Where-Object { $_ -and (Test-WritableByUsers -Path $_) })
+        if ($changeable.Count -gt 0) {
+            Write-Warn ('Any account of this PC can change files in: ' + ($changeable -join ', '))
+            Write-Host '     That is how WampServer is installed by default. On a shared PC, restrict these folders to administrators.' -ForegroundColor DarkYellow
+        }
     } else {
         Write-Warn 'WampServer was not found (installer registry entry, WAMP_ROOT, wamp64 / wamp on the Windows drive).'
     }
