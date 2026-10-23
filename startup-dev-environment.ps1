@@ -11,8 +11,9 @@
 #      syncs the expired stock at night; output in storage\logs\scheduler*.log
 #   5. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
 #      http://localhost:8000, http://127.0.0.1:8000 and http://<this PC's current LAN address>:8000
-#   6. opens the page in the DEFAULT browser once the server answers. When the PC has no default browser, a numbered
-#      list of the installed browsers is shown and the one you pick is used
+#   6. opens the page in the DEFAULT browser once the server answers, at the first address that really answers, in this
+#      order: the LAN (Ethernet) IPv4 address, then the Wi-Fi IPv4 address, then localhost. When the PC has no default
+#      browser, a numbered list of the installed browsers is shown and the one you pick is used
 #
 # The LAN address is detected every time the script runs, so DHCP (dynamic) and static addresses both work.
 # Ctrl+C stops the web server, Reverb and the scheduler together.
@@ -296,11 +297,14 @@ function Select-BrowserToOpen {
     }
 }
 
-# Open the page once the server answers: a quiet background job of this terminal (no extra window).
+# Open the page once the server answers. It runs on a second THREAD of this very PowerShell process (a runspace), not as a
+# job: a job starts another powershell.exe, which would be one more console host. Nothing new is created: one terminal.
+# It waits for the port, then opens the first address of $Urls that answers (LAN, Wi-Fi, ..., localhost).
 function Start-BrowserWhenReady {
-    param([string]$Url, [int]$Port, $BrowserPath)
-    Start-Job -ArgumentList $Url, $Port, $BrowserPath -ScriptBlock {
-        param($Url, $Port, $BrowserPath)
+    param([string[]]$Urls, [int]$Port, $BrowserPath)
+    $work = {
+        param($UrlList, $Port, $BrowserPath)
+        $Urls = @($UrlList -split ' ' | Where-Object { $_ })
         $deadline = (Get-Date).AddSeconds(90)
         while ((Get-Date) -lt $deadline) {
             try {
@@ -310,27 +314,64 @@ function Start-BrowserWhenReady {
                 break
             } catch { Start-Sleep -Milliseconds 500 }
         }
-        if ($BrowserPath) { Start-Process -FilePath $BrowserPath -ArgumentList $Url } else { Start-Process $Url }
-    } | Out-Null
+        $answers = {
+            param($Url, $TimeoutMs, $Attempts)
+            for ($try = 0; $try -lt $Attempts; $try++) {
+                try {
+                    $request = [System.Net.WebRequest]::Create($Url)
+                    $request.Timeout = $TimeoutMs
+                    $response = $request.GetResponse()
+                    $response.Close()
+                    return $true
+                } catch [System.Net.WebException] {
+                    if ($_.Exception.Response) { return $true }
+                } catch { }
+                Start-Sleep -Milliseconds 500
+            }
+            return $false
+        }
+        # The very first request boots Laravel (cold caches) and can take several seconds: wait for it once on the local
+        # address, so a slow first answer is never mistaken for "this address does not work".
+        [void](& $answers "http://127.0.0.1:$Port" 40000 1)
+        $target = $Urls[$Urls.Count - 1]
+        foreach ($url in $Urls) {
+            if (& $answers $url 6000 3) { $target = $url; break }
+        }
+        if ($BrowserPath) { Start-Process -FilePath $BrowserPath -ArgumentList $target } else { Start-Process $target }
+    }
+    $script:browserThread = [powershell]::Create()
+    [void]$script:browserThread.AddScript($work.ToString()).AddArgument(($Urls -join ' ')).AddArgument($Port).AddArgument($BrowserPath)
+    [void]$script:browserThread.BeginInvoke()
 }
 
 # ------------------------------------------------------------ the IPv4 addresses
-# The IPv4 addresses of this PC, best first: the adapter that has the default gateway (the real LAN / Wi-Fi) before
-# virtual adapters (WSL, Hyper-V, VirtualBox, VMware, Docker ...), which are listed last.
+# The IPv4 addresses of this PC, best first. Kind: LAN (a wired Ethernet adapter), Wi-Fi, Other, Virtual (WSL, Hyper-V,
+# VirtualBox, VMware, Docker, VPN ...). Order: LAN, Wi-Fi, Other, Virtual; inside each kind the adapter with a default
+# gateway (the one that really reaches the network) first.
 function Get-LanIPv4 {
-    $virtualPattern = 'vEthernet|WSL|Hyper-V|VirtualBox|VMware|Docker|Loopback|Bluetooth|Tailscale|ZeroTier|TAP-|TUN'
+    $virtualPattern = 'vEthernet|WSL|Hyper-V|VirtualBox|VMware|Docker|Loopback|Bluetooth|Tailscale|ZeroTier|TAP-|TUN|VPN|Virtual'
+    $kindRank = @{ 'LAN' = 0; 'Wi-Fi' = 1; 'Other' = 2; 'Virtual' = 3 }
     $found = @()
     try {
         foreach ($config in (Get-NetIPConfiguration -ErrorAction Stop)) {
             if (-not $config.NetAdapter -or $config.NetAdapter.Status -ne 'Up') { continue }
+            $nic = Get-NetAdapter -InterfaceIndex $config.InterfaceIndex -ErrorAction SilentlyContinue
+            $media = if ($nic) { [string]$nic.PhysicalMediaType } else { '' }
+            $isVirtual = ($config.InterfaceAlias -match $virtualPattern) -or ($config.InterfaceDescription -match $virtualPattern) -or ($nic -and $nic.Virtual)
+            $kind = 'Other'
+            if ($isVirtual) { $kind = 'Virtual' }
+            elseif ($media -match '802\.11' -or ($nic -and $nic.InterfaceType -eq 71)) { $kind = 'Wi-Fi' }
+            elseif ($media -match '802\.3' -or ($nic -and $nic.InterfaceType -eq 6)) { $kind = 'LAN' }
             foreach ($address in $config.IPv4Address) {
                 $ip = $address.IPAddress
                 if (-not $ip -or $ip -like '127.*' -or $ip -like '169.254.*') { continue }
                 $found += [pscustomobject]@{
                     IP      = $ip
                     Alias   = $config.InterfaceAlias
+                    Kind    = $kind
+                    Rank    = $kindRank[$kind]
                     Gateway = [bool]$config.IPv4DefaultGateway
-                    Virtual = ($config.InterfaceAlias -match $virtualPattern) -or ($config.InterfaceDescription -match $virtualPattern)
+                    Virtual = ($kind -eq 'Virtual')
                 }
             }
         }
@@ -341,13 +382,55 @@ function Get-LanIPv4 {
             foreach ($address in [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName())) {
                 $ip = $address.IPAddressToString
                 if ($address.AddressFamily -eq 'InterNetwork' -and $ip -notlike '127.*' -and $ip -notlike '169.254.*') {
-                    $found += [pscustomobject]@{ IP = $ip; Alias = 'network'; Gateway = $false; Virtual = $false }
+                    $found += [pscustomobject]@{ IP = $ip; Alias = 'network'; Kind = 'Other'; Rank = 2; Gateway = $false; Virtual = $false }
                 }
             }
         } catch { }
     }
 
-    return @($found | Sort-Object @{ Expression = { $_.Virtual } }, @{ Expression = { -not $_.Gateway } })
+    return @($found | Sort-Object @{ Expression = { $_.Rank } }, @{ Expression = { -not $_.Gateway } })
+}
+
+# The addresses the browser may open, in order: the LAN IPv4, the Wi-Fi IPv4, any other real adapter, then localhost.
+# Virtual adapters (WSL, VirtualBox ...) are never opened.
+function Get-BrowserUrls {
+    param([int]$Port)
+    $urls = @()
+    foreach ($lan in (Get-LanIPv4)) {
+        if (-not $lan.Virtual) { $urls += "http://$($lan.IP):$Port" }
+    }
+    $urls += "http://localhost:$Port"
+    return $urls
+}
+
+# True when the address answers with ANY HTTP reply (a page, a redirect or an error page): the server is there.
+function Test-UrlAnswers {
+    param([string]$Url, [int]$TimeoutMs = 6000, [int]$Attempts = 3)
+    for ($try = 0; $try -lt $Attempts; $try++) {
+        try {
+            $request = [System.Net.WebRequest]::Create($Url)
+            $request.Timeout = $TimeoutMs
+            $request.Method = 'GET'
+            $response = $request.GetResponse()
+            $response.Close()
+            return $true
+        } catch [System.Net.WebException] {
+            if ($_.Exception.Response) { return $true }
+        } catch { }
+        Start-Sleep -Milliseconds 500
+    }
+    return $false
+}
+
+# Open the first address of the list that answers (the last one, localhost, when none does) in the chosen browser.
+function Open-FirstAnsweringUrl {
+    param([string[]]$Urls, $BrowserPath)
+    $target = $Urls[$Urls.Count - 1]
+    foreach ($url in $Urls) {
+        if (Test-UrlAnswers -Url $url) { $target = $url; break }
+    }
+    if ($BrowserPath) { Start-Process -FilePath $BrowserPath -ArgumentList $target | Out-Null } else { Start-Process $target | Out-Null }
+    return $target
 }
 
 # Run an artisan command quietly; show only a failure.
@@ -381,7 +464,8 @@ if ($CheckOnly) {
     Write-Host ("     Default browser set       : " + $(if (Test-HasDefaultBrowser) { 'yes' } else { 'no (a list would be shown)' }))
     Write-Host '     Installed browsers        :'
     foreach ($browser in (Get-InstalledBrowsers)) { Write-Host ("        {0}  ({1})" -f $browser.Name, $browser.Path) }
-    foreach ($lan in (Get-LanIPv4)) { Write-Host ("     LAN address               : {0}  ({1})" -f $lan.IP, $lan.Alias) }
+    foreach ($lan in (Get-LanIPv4)) { Write-Host ("     {0,-6} address           : {1}  ({2})" -f $lan.Kind, $lan.IP, $lan.Alias) }
+    Write-Host ("     The browser would open    : " + ((Get-BrowserUrls -Port $AppPort) -join '  then  '))
     exit 0
 }
 
@@ -423,12 +507,13 @@ if (-not (Get-Command php -ErrorAction SilentlyContinue)) {
 # ------------------------------------------------------------ guard: already running
 if (Test-PortInUse -Port $AppPort) {
     Write-Warn "A server is already running on port $AppPort, not starting another one."
-    foreach ($lan in (Get-LanIPv4)) { Write-Host "     http://$($lan.IP):$AppPort" }
+    foreach ($lan in (Get-LanIPv4)) { Write-Host "     http://$($lan.IP):$AppPort   ($($lan.Kind): $($lan.Alias))" }
     Write-Host "     http://localhost:$AppPort"
     if (-not $NoBrowser) {
         $browserPath = Select-BrowserToOpen
         if ($browserPath -ne $false) {
-            if ($browserPath) { Start-Process -FilePath $browserPath -ArgumentList "http://localhost:$AppPort" | Out-Null } else { Start-Process "http://localhost:$AppPort" | Out-Null }
+            $opened = Open-FirstAnsweringUrl -Urls (Get-BrowserUrls -Port $AppPort) -BrowserPath $browserPath
+            Write-Ok "Opened $opened"
         }
     }
     exit 0
@@ -521,21 +606,27 @@ if (-not $NoBrowser) { $browserPath = Select-BrowserToOpen }
 
 # ------------------------------------------------------------ 7. web server on every address
 $lanAddresses = Get-LanIPv4
+$browserUrls = Get-BrowserUrls -Port $AppPort
 Write-Host ''
 Write-Host '  Open the clinic from this PC or from any device on the same network:' -ForegroundColor White
+foreach ($lan in ($lanAddresses | Where-Object { -not $_.Virtual })) {
+    Write-Host "     http://$($lan.IP):$AppPort   ($($lan.Kind): $($lan.Alias))" -ForegroundColor Green
+}
 Write-Host "     http://localhost:$AppPort" -ForegroundColor Green
 Write-Host "     http://127.0.0.1:$AppPort" -ForegroundColor Green
-foreach ($lan in $lanAddresses) {
-    $note = if ($lan.Virtual) { "   ($($lan.Alias), virtual adapter)" } else { "   ($($lan.Alias))" }
-    Write-Host "     http://$($lan.IP):$AppPort$note" -ForegroundColor Green
+foreach ($lan in ($lanAddresses | Where-Object { $_.Virtual })) {
+    Write-Host "     http://$($lan.IP):$AppPort   (virtual adapter: $($lan.Alias), only for this PC's own virtual machines)" -ForegroundColor DarkGreen
 }
 Write-Host ''
 Write-Host "  Other devices need inbound TCP $AppPort and $ReverbPort allowed in this PC's firewall (docs/commands.md)." -ForegroundColor DarkGray
+if ($browserPath -ne $false) {
+    Write-Host ("  The browser opens the first of these that answers: " + ($browserUrls -join '  then  ')) -ForegroundColor DarkGray
+}
 Write-Host '  Ctrl+C stops the server, Reverb and the scheduler.' -ForegroundColor DarkGray
 Write-Host ''
 
 if ($browserPath -ne $false) {
-    Start-BrowserWhenReady -Url "http://localhost:$AppPort" -Port $AppPort -BrowserPath $browserPath
+    Start-BrowserWhenReady -Urls $browserUrls -Port $AppPort -BrowserPath $browserPath
 }
 
 try {
@@ -547,7 +638,7 @@ try {
             Stop-Process -Id $background.Id -Force -ErrorAction SilentlyContinue
         }
     }
-    Get-Job -ErrorAction SilentlyContinue | Remove-Job -Force -ErrorAction SilentlyContinue
+    if ($script:browserThread) { $script:browserThread.Dispose() }
     Write-Host ''
     Write-Host 'Server stopped.' -ForegroundColor Yellow
 }
