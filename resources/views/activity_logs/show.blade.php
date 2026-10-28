@@ -17,7 +17,7 @@ Report Details
                 <div class="card-toolbar">
                     <a href="{{ 
                         getRouteByRole('activity-logs.index')
-                    }}" class="btn btn-sm btn-light-primary">
+                    }}" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-arrow-left"></i> Back to List
                     </a>
                 </div>

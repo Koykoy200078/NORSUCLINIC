@@ -6,7 +6,10 @@
 #      is not opened; when one is missing the script uses WampServer (its php and mysql folders are added to the PATH
 #      of this terminal only) and starts it
 #   2. makes sure MySQL answers, clears and rebuilds the Laravel caches
-#   3. starts Reverb (real-time updates) in the background of this terminal, its output goes to storage\logs\reverb*.log
+#   3. starts Reverb (real-time updates) in the background of this terminal, its output goes to storage\logs\reverb*.log;
+#      a Reverb that is already there is checked (php artisan realtime:check): one left over from an earlier run with other
+#      settings is replaced, another program on the port is reported. Then it checks that the Windows Firewall lets the other
+#      devices reach the site and Reverb, and prints the one command to run (as administrator) when it does not
 #   4. starts the Laravel scheduler (php artisan schedule:work) the same way: it refreshes the alerts every minute and
 #      syncs the expired stock at night; output in storage\logs\scheduler*.log
 #   5. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
@@ -79,6 +82,123 @@ function Test-PortInUse {
         }
     } catch { }
     return $false
+}
+
+# The program that listens on a TCP port: [pscustomobject]@{ Pid; Name; Path; CommandLine }, or $null.
+function Get-PortOwner {
+    param([int]$Port)
+    try {
+        $connection = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop | Select-Object -First 1
+        if (-not $connection) { return $null }
+        $process = Get-CimInstance Win32_Process -Filter "ProcessId = $($connection.OwningProcess)" -ErrorAction Stop
+        return [pscustomobject]@{ Pid = [int]$connection.OwningProcess; Name = [string]$process.Name; Path = [string]$process.ExecutablePath; CommandLine = [string]$process.CommandLine }
+    } catch {
+        return $null
+    }
+}
+
+# ------------------------------------------------------------ real-time updates: is the whole chain working?
+# php artisan realtime:check (read-only) walks the chain: BROADCAST_DRIVER and the credentials -> a running Reverb that knows
+# this site's key -> Reverb answering on this PC's network addresses -> the site being able to publish to it. -Show prints
+# its lines. Returns [pscustomobject]@{ Ok; Lines }.
+function Invoke-RealtimeCheck {
+    param([switch]$Show)
+    $lines = @(& php artisan realtime:check 2>&1 | ForEach-Object { "$_" })
+    $ok = ($LASTEXITCODE -eq 0)
+    if ($Show) {
+        foreach ($line in $lines) {
+            if ($line.StartsWith('[ok]')) { Write-Host "     $line" -ForegroundColor Green }
+            elseif ($line.StartsWith('[!!]')) { Write-Host "     $line" -ForegroundColor Yellow }
+            elseif ($line.Trim()) { Write-Host "     $line" -ForegroundColor DarkGray }
+        }
+    }
+    return [pscustomobject]@{ Ok = $ok; Lines = $lines }
+}
+
+# True when the TCP port number is covered by one entry of a firewall rule's port list ("Any", "8080", "8080-8082").
+function Test-PortCovered {
+    param([string[]]$Specs, [int]$Port)
+    foreach ($spec in $Specs) {
+        if ($spec -eq 'Any') { return $true }
+        if ($spec -match '^\d+$' -and [int]$spec -eq $Port) { return $true }
+        if ($spec -match '^(\d+)-(\d+)$' -and $Port -ge [int]$Matches[1] -and $Port -le [int]$Matches[2]) { return $true }
+    }
+    return $false
+}
+
+# Does the Windows Firewall let OTHER devices reach these TCP ports of this PC? (Nothing on this PC can see it from the
+# outside; this reads the firewall's rules, the same way Windows applies them: an enabled inbound Allow rule for the port, or
+# for the php program, on the network profile that is active now.) One result per port:
+# [pscustomobject]@{ Port; State = open | blocked | unknown; Via; Network }
+function Get-FirewallAccess {
+    param([int[]]$Ports, [string]$ProgramPath)
+    try {
+        $categories = @(Get-NetConnectionProfile -ErrorAction Stop | ForEach-Object { if ([string]$_.NetworkCategory -eq 'DomainAuthenticated') { 'Domain' } else { [string]$_.NetworkCategory } } | Select-Object -Unique)
+        if ($categories.Count -eq 0) { throw 'no active network' }
+        $network = $categories -join ', '
+        $profilesOn = @(Get-NetFirewallProfile -ErrorAction Stop | Where-Object { ($categories -contains [string]$_.Name) -and ([string]$_.Enabled -eq 'True') })
+        if ($profilesOn.Count -eq 0) {
+            return @($Ports | ForEach-Object { [pscustomobject]@{ Port = $_; State = 'open'; Via = 'the Windows Firewall is off for this network'; Network = $network } })
+        }
+
+        $rules = @(Get-NetFirewallRule -Direction Inbound -Enabled True -Action Allow -ErrorAction Stop | Where-Object {
+            $profile = [string]$_.Profile
+            ($profile -match 'Any') -or [bool]($categories | Where-Object { $profile -match $_ })
+        })
+        $portFilters = @{}
+        foreach ($filter in @(Get-NetFirewallPortFilter -All -ErrorAction SilentlyContinue)) { $portFilters[[string]$filter.InstanceID] = $filter }
+        $appFilters = @{}
+        foreach ($filter in @(Get-NetFirewallApplicationFilter -All -ErrorAction SilentlyContinue)) { $appFilters[[string]$filter.InstanceID] = $filter }
+
+        $results = @()
+        foreach ($port in $Ports) {
+            $via = $null
+            foreach ($rule in $rules) {
+                $portFilter = $portFilters[[string]$rule.InstanceID]
+                if (-not $portFilter) { continue }
+                if ([string]$portFilter.Protocol -notin @('TCP', '6', 'Any')) { continue }
+                $specs = @($portFilter.LocalPort | ForEach-Object { [string]$_ })
+                if (-not (Test-PortCovered -Specs $specs -Port $port)) { continue }
+                $appFilter = $appFilters[[string]$rule.InstanceID]
+                $program = if ($appFilter) { [string]$appFilter.Program } else { 'Any' }
+                $anyProgram = ($program -eq 'Any' -or $program -eq '*')
+                $isPhp = (-not $anyProgram) -and $ProgramPath -and ([Environment]::ExpandEnvironmentVariables($program) -ieq $ProgramPath)
+                if (-not $anyProgram -and -not $isPhp) { continue }
+                # "any port, any program" is not taken as an answer: Windows' own rules for Store apps (Start, Xbox ...) look like
+                # that here although each one is limited to one app package. A rule that names the port, or the php program, counts.
+                if (($specs -contains 'Any') -and -not $isPhp) { continue }
+                $via = [string]$rule.DisplayName
+                break
+            }
+            $results += [pscustomobject]@{ Port = $port; State = $(if ($via) { 'open' } else { 'blocked' }); Via = $via; Network = $network }
+        }
+        return $results
+    } catch {
+        return @($Ports | ForEach-Object { [pscustomobject]@{ Port = $_; State = 'unknown'; Via = ''; Network = '' } })
+    }
+}
+
+# What to run once, as administrator, so the other devices of the clinic network can reach the site and Reverb.
+function Get-FirewallCommand {
+    param([int[]]$Ports)
+    return 'New-NetFirewallRule -DisplayName "Medical University Clinic" -Direction Inbound -Protocol TCP -LocalPort ' + ($Ports -join ',') + ' -Action Allow -Profile Any -RemoteAddress LocalSubnet'
+}
+
+# Print the firewall result for each port.
+function Write-FirewallAccess {
+    param($Access, [int[]]$Ports)
+    $blocked = @($Access | Where-Object { $_.State -eq 'blocked' } | ForEach-Object { $_.Port })
+    foreach ($item in $Access) {
+        switch ($item.State) {
+            'open'    { Write-Host "     [ok] Windows Firewall lets other devices reach TCP $($item.Port) ($($item.Via))" -ForegroundColor Green }
+            'blocked' { Write-Host "     [!!] Windows Firewall: no rule lets other devices reach TCP $($item.Port) on the current network ($($item.Network))" -ForegroundColor Yellow }
+            default   { Write-Host "     [..] Windows Firewall: could not be read for TCP $($item.Port) (this is not an error)" -ForegroundColor DarkGray }
+        }
+    }
+    if ($blocked.Count -gt 0) {
+        Write-Host '          Other devices would not open the site and would show "Live updates off". Run this once, as administrator:' -ForegroundColor Yellow
+        Write-Host ('          ' + (Get-FirewallCommand -Ports $Ports)) -ForegroundColor White
+    }
 }
 
 # ------------------------------------------------------------ the Windows PATH (system and user)
@@ -466,6 +586,9 @@ if ($CheckOnly) {
     foreach ($browser in (Get-InstalledBrowsers)) { Write-Host ("        {0}  ({1})" -f $browser.Name, $browser.Path) }
     foreach ($lan in (Get-LanIPv4)) { Write-Host ("     {0,-6} address           : {1}  ({2})" -f $lan.Kind, $lan.IP, $lan.Alias) }
     Write-Host ("     The browser would open    : " + ((Get-BrowserUrls -Port $AppPort) -join '  then  '))
+    Write-Host ("     Something on Reverb port $ReverbPort : " + $(if (Test-PortInUse -Port $ReverbPort) { 'yes (php artisan realtime:check says if it is Reverb)' } else { 'no (the script starts Reverb)' }))
+    Write-Host '     Windows Firewall, for the other devices of the network:'
+    Write-FirewallAccess -Access (Get-FirewallAccess -Ports @($AppPort, $ReverbPort) -ProgramPath $phpInPath) -Ports @($AppPort, $ReverbPort)
     exit 0
 }
 
@@ -561,21 +684,51 @@ Write-Ok 'Caches ready'
 # ------------------------------------------------------------ 4. Reverb (real-time updates), same terminal
 $reverb = $null
 $logDirectory = Join-Path $ProjectPath 'storage\logs'
-if (Test-PortInUse -Port $ReverbPort) {
-    Write-Ok "Reverb (real-time updates) is already running on port $ReverbPort"
-} else {
-    Write-Step "Reverb (real-time updates) on port $ReverbPort"
-    $reverb = Start-Process -FilePath 'php' -ArgumentList 'artisan', 'reverb:start' -WorkingDirectory $ProjectPath `
+
+# Start Reverb in the background of this terminal and wait until it listens (it listens on ALL addresses, 0.0.0.0).
+function Start-ReverbServer {
+    $process = Start-Process -FilePath 'php' -ArgumentList 'artisan', 'reverb:start' -WorkingDirectory $ProjectPath `
         -NoNewWindow -PassThru `
         -RedirectStandardOutput (Join-Path $logDirectory 'reverb.log') -RedirectStandardError (Join-Path $logDirectory 'reverb-error.log')
-    Start-Sleep -Seconds 2
-    if ($reverb.HasExited) {
+    $deadline = (Get-Date).AddSeconds(15)
+    while (-not $process.HasExited -and -not (Test-PortInUse -Port $ReverbPort) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 300 }
+    if ($process.HasExited) {
         Write-Warn 'Reverb did not start (see storage\logs\reverb-error.log). The pages still work: they refresh every minute.'
-        $reverb = $null
-    } else {
-        Write-Ok 'Reverb is running (output: storage\logs\reverb.log)'
+        return $null
     }
+    Write-Ok "Reverb is running on all addresses (0.0.0.0:$ReverbPort, output: storage\logs\reverb.log)"
+    return $process
 }
+
+if (Test-PortInUse -Port $ReverbPort) {
+    # Something listens there. It may be a Reverb left over from an earlier run with other settings (its application key no
+    # longer matches this site, so every page says "Live updates off"), or another program that simply uses the port.
+    Write-Step "Something already listens on port ${ReverbPort}: checking that it is Reverb with this site's settings"
+    if ((Invoke-RealtimeCheck).Ok) {
+        Write-Ok "Reverb (real-time updates) is already running on port $ReverbPort and matches this site"
+    } else {
+        $owner = Get-PortOwner -Port $ReverbPort
+        if ($owner -and $owner.Name -ieq 'php.exe' -and $owner.CommandLine -match 'artisan\s+reverb:start') {
+            Write-Warn "An older Reverb (process $($owner.Pid)) runs with other settings than this site: stopping it and starting a fresh one"
+            Stop-Process -Id $owner.Pid -Force -ErrorAction SilentlyContinue
+            $deadline = (Get-Date).AddSeconds(10)
+            while ((Test-PortInUse -Port $ReverbPort) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 300 }
+            $reverb = Start-ReverbServer
+        } else {
+            $who = if ($owner) { "$($owner.Name) (process $($owner.Pid))" } else { 'another program' }
+            Write-Warn "Port $ReverbPort is used by $who, not by Reverb: real-time updates cannot start. Stop that program, or set another REVERB_PORT in .env (and allow it in the firewall). The pages still work: they refresh every minute."
+        }
+    }
+} else {
+    Write-Step "Reverb (real-time updates) on port $ReverbPort"
+    $reverb = Start-ReverbServer
+}
+
+# The whole chain, as the pages will use it: settings, a Reverb that knows this site's key, this PC's addresses, publishing.
+Write-Step 'Checking the real-time updates and the Windows Firewall'
+$realtime = Invoke-RealtimeCheck -Show
+$phpProgram = (Get-Command php -ErrorAction SilentlyContinue | Select-Object -First 1).Source
+Write-FirewallAccess -Access (Get-FirewallAccess -Ports @($AppPort, $ReverbPort) -ProgramPath $phpProgram) -Ports @($AppPort, $ReverbPort)
 
 # ------------------------------------------------------------ 5. scheduler (alerts, expiry sync), same terminal
 $scheduler = $null

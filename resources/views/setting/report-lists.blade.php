@@ -41,7 +41,7 @@
                                             <label class="form-check-label" for="ill_active_{{ $illness->id }}">On the form</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-2"><button type="submit" class="btn btn-sm btn-light-primary w-100">Save</button></div>
+                                    <div class="col-md-2"><button type="submit" class="btn btn-sm btn-outline-primary w-100">Save</button></div>
                                 </form>
                             @endforeach
 
@@ -87,7 +87,7 @@
                                     <label class="form-check-label" for="svc_active_{{ $service->id }}">On the form</label>
                                 </div>
                             </div>
-                            <div class="col-md-2"><button type="submit" class="btn btn-sm btn-light-primary w-100">Save</button></div>
+                            <div class="col-md-2"><button type="submit" class="btn btn-sm btn-outline-primary w-100">Save</button></div>
                         </form>
                     @endforeach
 

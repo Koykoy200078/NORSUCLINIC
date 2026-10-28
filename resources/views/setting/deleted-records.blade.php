@@ -51,7 +51,7 @@
                                     <form method="POST" action="{{ route('deleted-records.restore', ['type' => 'document', 'id' => $document->id]) }}"
                                           onsubmit="return confirm('Restore this {{ strtolower($label) }}?');">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-light-primary"><i class="fas fa-rotate-left"></i> Restore</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-rotate-left"></i> Restore</button>
                                     </form>
                                 </td>
                             </tr>
@@ -95,7 +95,7 @@
                                     <form method="POST" action="{{ route('deleted-records.restore', ['type' => 'lab-request', 'id' => $labRequest->id]) }}"
                                           onsubmit="return confirm('Restore this lab request?');">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-light-primary"><i class="fas fa-rotate-left"></i> Restore</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-rotate-left"></i> Restore</button>
                                     </form>
                                 </td>
                             </tr>

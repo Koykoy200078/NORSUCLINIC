@@ -39,12 +39,12 @@
                 </td>
                 <td>
                     @forelse($report->illnessLabels() as $illnessLabel)
-                        <span class="badge badge-light-primary me-1 mb-1">{{ $illnessLabel }}</span>
+                        <span class="badge bg-primary me-1 mb-1">{{ $illnessLabel }}</span>
                     @empty
                         <span class="text-gray-500 fs-7">Not classified</span>
                     @endforelse
                     @foreach($report->serviceLabels() as $serviceLabel)
-                        <span class="badge badge-light-success me-1 mb-1">{{ $serviceLabel }}</span>
+                        <span class="badge bg-success me-1 mb-1">{{ $serviceLabel }}</span>
                     @endforeach
                 </td>
                 <td>
@@ -64,12 +64,12 @@
                 <td class="text-end text-nowrap">
                     @if(canUseModule('consultations'))
                     <a href="{{ route(getRouteNameByRole('document-issuances.edit'), $report->id) }}"
-                       class="btn btn-sm {{ $report->illnesses->isEmpty() ? 'btn-light-warning' : 'btn-light' }}" target="_blank"
+                       class="btn btn-sm {{ $report->illnesses->isEmpty() ? 'btn-outline-warning' : 'btn-light' }}" target="_blank"
                        title="Open the consultation to pick the illness and services">
                         <i class="fas fa-pen"></i> {{ $report->illnesses->isEmpty() ? 'Classify' : 'Edit' }}
                     </a>
                     <a href="{{ route(getRouteNameByRole('document-issuances.show'), $report->id) }}"
-                       class="btn btn-sm btn-light-primary" target="_blank">
+                       class="btn btn-sm btn-outline-primary" target="_blank">
                         <i class="fas fa-eye"></i> View
                     </a>
                     @endif

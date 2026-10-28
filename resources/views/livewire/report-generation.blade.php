@@ -27,45 +27,45 @@
             <div class="card-body pt-0">
                 <!-- Navigation Tabs -->
                 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'logs' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('logs')">
                            <i class="fas fa-list-ul me-2"></i>Activity Logs
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'visits' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('visits')">
                            <i class="fas fa-user-nurse me-2"></i>Patient Visits
                         </a>
                     </li>
                     @if(canViewActivityLogTab('accomplishment'))
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'accomplishment' ? 'active' : '' }}"
                            href="javascript:void(0)" wire:click="setTab('accomplishment')">
                            <i class="fas fa-clipboard-list me-2"></i>Accomplishment Report
                         </a>
                     </li>
                     @endif
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'inventory' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('inventory')">
                            <i class="fas fa-pills me-2"></i>Medicine Inventory
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'dispensing' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('dispensing')">
                            <i class="fas fa-prescription-bottle-medical me-2"></i>Dispensing Reports
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'appointments' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('appointments')">
                            <i class="fas fa-calendar-check me-2"></i>Schedules
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'global_search' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('global_search')">
                            <i class="fas fa-search-plus me-2"></i>Global Search
@@ -189,7 +189,7 @@
                                 <button type="button" wire:click="setPeriod('last_year')" class="btn btn-sm btn-light">Last year</button>
                                 <input type="month" wire:model.live="month" class="form-control form-control-sm w-auto" title="Pick a month" aria-label="Pick a month">
                                 @endunless
-                                <button type="button" class="btn btn-sm btn-light-primary ms-md-auto" @click="open = !open">
+                                <button type="button" class="btn btn-sm btn-outline-primary ms-md-auto" @click="open = !open">
                                     <i class="fas fa-filter"></i> Filters
                                     @if($activeFilters > 0)<span class="badge bg-primary ms-1">{{ $activeFilters }}</span>@endif
                                 </button>
@@ -343,7 +343,7 @@
                                             </td>
                                             <td class="text-end">
                                                 <a href="{{ getRouteByRole('activity-logs.show', [$log->id]) }}"
-                                                   class="btn btn-sm btn-icon btn-light-primary btn-active-primary shadow-sm" title="View Details">
+                                                   class="btn btn-sm btn-icon btn-outline-primary btn-active-primary shadow-sm" title="View Details">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>

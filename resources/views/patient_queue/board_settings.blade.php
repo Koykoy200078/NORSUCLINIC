@@ -19,7 +19,7 @@
         @csrf
         <p>Generating a new link immediately revokes the previous link. Open the new link on the waiting-area screen afterward.</p>
         <button class="btn btn-warning" type="submit">Generate new board link</button>
-        <a class="btn btn-light" href="{{ getRouteByRole('patient-queue.index') }}">Back to queue</a>
+        <a class="btn btn-secondary" href="{{ getRouteByRole('patient-queue.index') }}">Back to queue</a>
     </form>
 </div>
 @endsection

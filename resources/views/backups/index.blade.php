@@ -70,7 +70,7 @@ Backup & Restore
                                                 <i class="far fa-file-alt fs-2 text-primary me-3"></i>
                                                 <span class="text-gray-800">{{ $backup['name'] }}</span>
                                                 @if($backup['scheduled'])
-                                                    <span class="badge badge-light-info ms-2">Scheduled</span>
+                                                    <span class="badge bg-info text-dark ms-2">Scheduled</span>
                                                 @endif
                                             </div>
                                         </td>

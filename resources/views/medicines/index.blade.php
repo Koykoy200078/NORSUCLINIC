@@ -5,11 +5,19 @@ Medicine Inventory Tracking
 @section('content')
 <div class="container-fluid">
     @include('flash::message')
-    @if(!isRole('doctor') && canUseModule('inventory'))
-        <a class="btn btn-light-primary mb-3" href="{{ getRouteByRole('stock-control.index') }}">Stock disposal and physical count</a>
-    @endif
-    @if(isRole('clinic_admin'))
-        @can('manage_medicines')<div class="mb-3 text-end"><a href="{{ route('inventory-merge.index') }}" class="btn btn-light-primary">Merge duplicates</a></div>@endcan
+    @php
+        $canCountStock = ! isRole('doctor') && canUseModule('inventory');
+        $canMergeDuplicates = isRole('clinic_admin') && auth()->user()->can('manage_medicines');
+    @endphp
+    @if($canCountStock || $canMergeDuplicates)
+        <div class="d-flex flex-wrap justify-content-end gap-2 mb-3" id="inventory-tools">
+            @if($canCountStock)
+                <a class="btn btn-outline-primary" href="{{ getRouteByRole('stock-control.index') }}"><i class="fas fa-clipboard-check me-2"></i>Stock disposal and physical count</a>
+            @endif
+            @if($canMergeDuplicates)
+                <a class="btn btn-outline-primary" href="{{ route('inventory-merge.index') }}"><i class="fas fa-code-merge me-2"></i>Merge duplicates</a>
+            @endif
+        </div>
     @endif
     <livewire:medicine-screen />
 </div>

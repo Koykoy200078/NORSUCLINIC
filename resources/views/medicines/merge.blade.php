@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <h1 class="fs-3 mb-0">Merge duplicate inventory records</h1>
-        <a href="{{ route('medicine-inventory.index') }}" class="btn btn-light">Back to inventory</a>
+        <a href="{{ route('medicine-inventory.index') }}" class="btn btn-secondary">Back to inventory</a>
     </div>
     @include('flash::message')
     @include('layouts.errors')

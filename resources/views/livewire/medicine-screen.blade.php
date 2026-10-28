@@ -34,13 +34,13 @@
          MAIN TABS — Alpine handles active state, no Livewire re-render
     ================================================================ --}}
     <ul class="nav nav-tabs mb-3" role="tablist">
-        <li class="nav-item">
+        <li class="nav-item position-relative">
             <button class="nav-link" :class="{ active: tab === 'medicines' }"
                 @click="setTab('medicines')" type="button" role="tab">
                 <i class="fas fa-pills me-1"></i> {{ __('messages.medicine.medicines') }}
             </button>
         </li>
-        <li class="nav-item">
+        <li class="nav-item position-relative">
             <button class="nav-link" :class="{ active: tab === 'stock-in' }"
                 @click="setTab('stock-in')" type="button" role="tab">
                 <i class="fas fa-arrow-circle-down me-1"></i> Stock In

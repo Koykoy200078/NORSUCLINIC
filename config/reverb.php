@@ -32,7 +32,9 @@ return [
             'host' => env('REVERB_SERVER_HOST', '0.0.0.0'),
             'port' => env('REVERB_SERVER_PORT', 8080),
             'path' => env('REVERB_SERVER_PATH', ''),
-            'hostname' => env('REVERB_HOST'),
+            // Only printed after the address ("Starting server on 0.0.0.0:8080 (hostname)") and used to find a TLS certificate. It is NOT
+            // REVERB_HOST: that is where the application reaches Reverb (127.0.0.1) and showing it here read "Reverb runs on 127.0.0.1".
+            'hostname' => env('REVERB_SERVER_HOSTNAME'),
             'options' => [
                 'tls' => [],
             ],
@@ -73,9 +75,10 @@ return [
 
         'apps' => [
             [
-                'key' => env('REVERB_APP_KEY'),
-                'secret' => env('REVERB_APP_SECRET'),
-                'app_id' => env('REVERB_APP_ID'),
+                // Blank in .env = derived from this server's APP_KEY (App\Support\RealtimeCredentials), the same as config/broadcasting.php.
+                'key' => \App\Support\RealtimeCredentials::key(env('REVERB_APP_KEY'), env('APP_KEY')),
+                'secret' => \App\Support\RealtimeCredentials::secret(env('REVERB_APP_SECRET'), env('APP_KEY')),
+                'app_id' => \App\Support\RealtimeCredentials::appId(env('REVERB_APP_ID')),
                 'options' => [
                     'host' => env('REVERB_HOST'),
                     'port' => env('REVERB_PORT', 443),

@@ -39,9 +39,10 @@ return [
         // App\Support\Realtime).
         'reverb' => [
             'driver' => 'reverb',
-            'key' => env('REVERB_APP_KEY'),
-            'secret' => env('REVERB_APP_SECRET'),
-            'app_id' => env('REVERB_APP_ID'),
+            // Blank in .env = derived from this server's APP_KEY (App\Support\RealtimeCredentials), the same as config/reverb.php.
+            'key' => \App\Support\RealtimeCredentials::key(env('REVERB_APP_KEY'), env('APP_KEY')),
+            'secret' => \App\Support\RealtimeCredentials::secret(env('REVERB_APP_SECRET'), env('APP_KEY')),
+            'app_id' => \App\Support\RealtimeCredentials::appId(env('REVERB_APP_ID')),
             'options' => [
                 'host' => env('REVERB_HOST', '127.0.0.1'),
                 'port' => env('REVERB_PORT', 8080),

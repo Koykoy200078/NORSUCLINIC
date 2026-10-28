@@ -14,7 +14,13 @@
     </nav>
     <ul class="nav align-items-center">
         {{-- shown by resources/assets/js/realtime while the live connection is down; the page then refreshes every minute --}}
-        <li class="px-2 d-none" id="live-updates-badge" title="Real-time updates are not connected. This page refreshes itself every minute until they are back.">
+        @php
+            $liveSwitchedOff = config('broadcasting.default') !== 'reverb' || ! config('broadcasting.connections.reverb.key');
+            $livePort = config('broadcasting.connections.reverb.options.port');
+        @endphp
+        <li class="px-2 d-none" id="live-updates-badge" title="{{ $liveSwitchedOff
+            ? 'Real-time updates are switched off on the server (BROADCAST_DRIVER in its .env file). This page refreshes itself every minute.'
+            : 'This device cannot reach the real-time service of the server (port '.$livePort.'). Ask whoever runs the clinic PC to look at its startup window, and to check that port '.$livePort.' is allowed in the Windows Firewall. This page refreshes itself every minute until it is back.' }}">
             <span class="badge bg-warning text-dark d-flex align-items-center"><i class="fas fa-plug me-1"></i> Live updates off</span>
         </li>
         @impersonating

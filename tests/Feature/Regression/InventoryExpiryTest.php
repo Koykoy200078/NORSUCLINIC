@@ -4,7 +4,10 @@ namespace Tests\Feature\Regression;
 
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
+use App\Models\MedicineTransaction;
+use App\Services\MedicineInventoryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -57,6 +60,35 @@ class InventoryExpiryTest extends TestCase
             ->assertSuccessful();
 
         $this->assertSame(5, (int) $expired->fresh()->available_quantity);
+    }
+
+    public function test_a_dispense_never_takes_from_an_expired_batch_even_though_it_expires_first(): void
+    {
+        $medicine = $this->makeMedicine('Cetirizine');
+        $old = $this->stockIn($medicine, 5, now()->subDay()->toDateString(), '500mg', 'OLD');
+        $new = $this->stockIn($medicine, 10, now()->addMonths(3)->toDateString(), '500mg', 'NEW');
+        $inventory = app(MedicineInventoryService::class);
+
+        $allocations = $inventory->deductStockFefo($medicine->id, 3);
+
+        $this->assertSame([$new->id], array_column($allocations, 'batch_id'));
+        $this->assertSame(5, $old->fresh()->quantity, 'the expired batch stays untouched');
+        $this->assertSame(7, $new->fresh()->quantity);
+
+        // Only the 7 unexpired units can be handed out; the 5 expired ones do not make up the difference.
+        try {
+            $inventory->deductStockFefo($medicine->id, 8);
+            $this->fail('Eight units were dispensed although only seven have not expired.');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('only 7 available (unexpired)', $error->getMessage());
+        }
+        $this->assertSame(5, $old->fresh()->quantity);
+        $this->assertSame(7, $new->fresh()->quantity);
+
+        // A write-off is not a dispense: expired units can still be disposed of, nearest expiry first.
+        $inventory->deductStockFefo($medicine->id, 5, null, null, 'Expired stock removed', MedicineTransaction::TYPE_DISPOSAL);
+        $this->assertSame(0, $old->fresh()->quantity);
+        $this->assertSame(7, $new->fresh()->quantity);
     }
 
     public function test_the_command_is_scheduled_every_day(): void

@@ -198,6 +198,61 @@ class StockControlTest extends TestCase
         $this->postJson(route('stock-control.store'), [])->assertForbidden();
     }
 
+    public function test_the_repository_refuses_an_actor_who_may_not_change_stock_even_when_it_is_called_directly(): void
+    {
+        $medicine = $this->makeMedicine();
+        $batch = $this->stockIn($medicine, 10, today()->addYear()->toDateString());
+        $data = ['medicine_id' => $medicine->id, 'mode' => 'count', 'entries' => [$batch->id => 7], 'reason' => 'Physical shelf count'];
+        $repository = app(\App\Repositories\StockControlRepository::class);
+        $preview = $repository->preview($data, $this->admin);
+        // The routes already check the role and the permission; this is the second layer, so it is called without them.
+        $refuses = function (User $actor) use ($repository, $data, $preview): void {
+            foreach ([fn () => $repository->preview($data, $actor), fn () => $repository->confirm($preview['token'], $actor)] as $call) {
+                try {
+                    $call();
+                    $this->fail('The repository accepted '.$actor->email);
+                } catch (\Symfony\Component\HttpKernel\Exception\HttpException $error) {
+                    $this->assertSame(403, $error->getStatusCode());
+                }
+            }
+        };
+
+        $staff = $this->makeNurse();
+        $this->assertArrayHasKey('token', $repository->preview($data, $staff));
+
+        $refuses($this->makeDoctor());
+        $refuses($this->makeNurse(['status' => false]));
+        $archived = $this->makeNurse();
+        $archived->delete();
+        $refuses($archived);
+        \App\Models\Role::findByName('staff')->revokePermissionTo('manage_medicines');
+        $refuses($staff->fresh());
+
+        $this->assertSame(10, $batch->fresh()->quantity);
+        $this->assertDatabaseMissing('activity_logs', ['action' => 'stock_count']);
+    }
+
+    public function test_the_inventory_page_offers_its_tools_as_real_buttons_in_one_row_only_to_the_roles_that_may_use_them(): void
+    {
+        // 2026-10-28 owner report: both links were drawn as plain text (btn-light-primary is in no stylesheet), one above the other.
+        $this->get(route('medicine-inventory.index'))->assertOk()
+            ->assertSee('id="inventory-tools"', false)
+            ->assertSee('<a class="btn btn-outline-primary" href="'.route('stock-control.index').'">', false)
+            ->assertSee('<a class="btn btn-outline-primary" href="'.route('inventory-merge.index').'">', false)
+            ->assertSee('Stock disposal and physical count')
+            ->assertSee('Merge duplicates')
+            ->assertDontSee('btn-light-primary');
+
+        $this->actingAs($this->makeNurse())->get(route('staff.medicine-inventory.index'))->assertOk()
+            ->assertSee('<a class="btn btn-outline-primary" href="'.route('staff.stock-control.index').'">', false)
+            ->assertDontSee('Merge duplicates');
+
+        $this->actingAs($this->makeDoctor())->get(route('doctors.medicine-inventory.index'))->assertOk()
+            ->assertDontSee('id="inventory-tools"', false)
+            ->assertDontSee('Stock disposal and physical count')
+            ->assertDontSee('Merge duplicates');
+    }
+
     public function test_cancelled_audit_or_ledger_failure_rolls_back_the_stock_change(): void
     {
         $medicine = $this->makeMedicine();

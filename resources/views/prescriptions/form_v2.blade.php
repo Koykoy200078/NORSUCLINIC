@@ -376,7 +376,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
                                 <td>
                                     <button
                                         type="button"
-                                        class="btn btn-sm btn-light-danger"
+                                        class="btn btn-sm btn-outline-danger"
                                         @click="removeRow(index)"
                                         :disabled="medicines.length === 1">
                                         Remove

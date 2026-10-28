@@ -265,6 +265,22 @@ class RealtimeServerTest extends TestCase
         $this->assertStringContainsString('data-live-badge="queue"', $html, 'the sidebar badge can be redrawn');
     }
 
+    public function test_the_live_updates_badge_says_why_it_is_off_instead_of_only_that_it_is(): void
+    {
+        $this->actingAs($this->makeAdmin());
+
+        config(['broadcasting.default' => 'null']);
+        $switchedOff = $this->get(route('medicine-inventory.index'))->assertOk()->getContent();
+        $this->assertMatchesRegularExpression('/id="live-updates-badge" title="[^"]*switched off on the server \(BROADCAST_DRIVER/', $switchedOff);
+        $this->assertStringContainsString('data-enabled="0"', $switchedOff);
+
+        config(['broadcasting.default' => 'reverb', 'broadcasting.connections.reverb.options.port' => 8099]);
+        $unreachable = $this->get(route('medicine-inventory.index'))->assertOk()->getContent();
+        $this->assertMatchesRegularExpression('/id="live-updates-badge" title="[^"]*cannot reach the real-time service[^"]*port 8099[^"]*Windows Firewall/', $unreachable);
+        $this->assertStringContainsString('data-enabled="1"', $unreachable);
+        $this->assertStringContainsString('data-port="8099"', $unreachable, 'the browser connects to the same port the title names');
+    }
+
     public function test_the_pages_map_to_the_modules_they_show(): void
     {
         $admin = $this->makeAdmin();
