@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * The foreign keys a correctly installed database has: 52 on the current migrations (50 before patient merging).
+ * The foreign keys a correctly installed database has: 57 on the current migrations (52 before the count sheets, 50 before patient merging).
  * The clinic's old MyISAM tables have none of them. The migration 2026_10_08_120000_restore_missing_foreign_keys adds
  * the missing ones from this list, and `php artisan db:integrity` reports the absent ones from it.
  *
@@ -66,6 +66,11 @@ final class ForeignKeyCatalog
         ['staff_profiles', 'staff_profiles_user_id_foreign', 'user_id', 'users', 'id', 'CASCADE', 'CASCADE'],
         ['states', 'states_country_id_foreign', 'country_id', 'countries', 'id', 'CASCADE', 'CASCADE'],
         ['used_medicines', 'used_medicines_medicine_id_foreign', 'medicine_id', 'medicines', 'id', 'RESTRICT', 'CASCADE'],
+        ['inventory_counts', 'inventory_counts_created_by_foreign', 'created_by', 'users', 'id', 'SET NULL', 'NO ACTION'],
+        ['inventory_counts', 'inventory_counts_finalized_by_foreign', 'finalized_by', 'users', 'id', 'SET NULL', 'NO ACTION'],
+        ['inventory_count_lines', 'inventory_count_lines_inventory_count_id_foreign', 'inventory_count_id', 'inventory_counts', 'id', 'CASCADE', 'NO ACTION'],
+        ['inventory_count_lines', 'inventory_count_lines_medicine_id_foreign', 'medicine_id', 'medicines', 'id', 'RESTRICT', 'NO ACTION'],
+        ['inventory_count_lines', 'inventory_count_lines_adjusted_by_foreign', 'adjusted_by', 'users', 'id', 'SET NULL', 'NO ACTION'],
     ];
 
     /**

@@ -12,9 +12,12 @@ use App\Models\Prescription;
 use App\Models\PatientQueue;
 use App\Models\UsedMedicine;
 use App\Exports\AccomplishmentReportExport;
+use App\Exports\InventoryDiscrepancyReportExport;
 use App\Exports\YearlyInventoryReportExport;
 use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\AccomplishmentReportCsv;
+use App\Services\Reports\InventoryDiscrepancyReportBuilder;
+use App\Services\Reports\InventoryDiscrepancyReportCsv;
 use App\Services\Reports\ReportCsv;
 use App\Services\Reports\ReportFilters;
 use App\Services\Reports\YearlyInventoryReportBuilder;
@@ -104,6 +107,30 @@ class ActivityLogController extends Controller
             'xlsx' => Excel::download(new YearlyInventoryReportExport($report), $name . '.xlsx'),
             'pdf' => Pdf::loadView('activity_logs.reports.inventory_yearly_pdf', ['report' => $report])
                 ->setPaper([0, 0, 612, 936], 'portrait')
+                ->setWarnings(false)
+                ->stream($name . '.pdf'),
+        };
+    }
+
+    /**
+     * The MEDICINES WITH NOTES report (what the finalized count sheets found) as a PDF, an Excel sheet or a CSV, all built from the
+     * same InventoryDiscrepancyReportBuilder result. A year, period or view that is not valid means "no narrowing" / the default.
+     */
+    public function inventoryDiscrepancies(Request $request, string $format)
+    {
+        abort_unless(canViewActivityLogTab('inventory'), 403, 'You are not allowed to export this report.');
+        abort_unless(in_array($format, ['pdf', 'xlsx', 'csv'], true), 404, 'Unknown format.');
+
+        $text = fn (string $key) => is_string($request->query($key)) ? $request->query($key) : null;
+        $report = app(InventoryDiscrepancyReportBuilder::class)->build(ReportFilters::year($request->query('year')), $text('period'), (string) $text('show'), $request->user());
+        $name = InventoryDiscrepancyReportCsv::fileName($report, '');
+
+        return match ($format) {
+            'csv' => InventoryDiscrepancyReportCsv::response($report),
+            'xlsx' => Excel::download(new InventoryDiscrepancyReportExport($report), $name . '.xlsx'),
+            // Eleven columns, so the long bond sheet lies on its side.
+            'pdf' => Pdf::loadView('activity_logs.reports.inventory_discrepancies_pdf', ['report' => $report])
+                ->setPaper([0, 0, 936, 612], 'landscape')
                 ->setWarnings(false)
                 ->stream($name . '.pdf'),
         };

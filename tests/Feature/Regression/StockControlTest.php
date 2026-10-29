@@ -247,8 +247,9 @@ class StockControlTest extends TestCase
             ->assertSee('<a class="btn btn-outline-primary" href="'.route('staff.stock-control.index').'">', false)
             ->assertDontSee('Merge duplicates');
 
+        // A doctor is read-only in the inventory: no count or merge tool, only the read-only list of the count sheets (Phase 11 D).
         $this->actingAs($this->makeDoctor())->get(route('doctors.medicine-inventory.index'))->assertOk()
-            ->assertDontSee('id="inventory-tools"', false)
+            ->assertSee('<a class="btn btn-outline-primary" href="'.route('doctors.inventory-counts.index').'">', false)
             ->assertDontSee('Stock disposal and physical count')
             ->assertDontSee('Merge duplicates');
     }

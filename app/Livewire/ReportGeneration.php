@@ -21,6 +21,7 @@ use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\ReportFilters;
 use App\Services\Reports\ReportQueries;
 use App\Services\Reports\ServiceRules;
+use App\Services\Reports\InventoryDiscrepancyReportBuilder;
 use App\Services\Reports\YearlyInventoryReportBuilder;
 use App\Support\SearchTerm;
 use Carbon\Carbon;
@@ -51,8 +52,12 @@ class ReportGeneration extends Component
     public $month = '';
     /** The yearly Accomplishment Report (Q1-Q4 and the year total) for this year; '' = the by-college report. */
     public $year = '';
-    /** The yearly Medicine Inventory (left, additional, Q1-Q4 remaining) for this year; '' = the current stock list. */
+    /** The Medicine Inventory report: '' = the current stock list, a year = the yearly report (left, additional, Q1-Q4 remaining), 'discrepancies' = Medicines with notes. */
     public $inventory_year = '';
+    /** Medicines with notes: the year ('' = every year), the period ('' = any, 1-4 = a quarter, 'day' = counts of everything) and 'notes' / 'all'. */
+    public $discrepancy_year = '';
+    public $discrepancy_period = '';
+    public $discrepancy_show = 'notes';
     public $campus_id = '';
     public $college_id = '';
     public $course_id = '';
@@ -85,6 +90,9 @@ class ReportGeneration extends Component
         'date_to' => ['except' => ''],
         'year' => ['except' => ''],
         'inventory_year' => ['except' => ''],
+        'discrepancy_year' => ['except' => ''],
+        'discrepancy_period' => ['except' => ''],
+        'discrepancy_show' => ['except' => 'notes'],
         'campus_id' => ['except' => ''],
         'college_id' => ['except' => ''],
         'course_id' => ['except' => ''],
@@ -299,8 +307,13 @@ class ReportGeneration extends Component
                 break;
 
             case 'inventory':
-                // A year makes it the yearly report (left, additional, Q1-Q4 remaining); without one it is the stock list.
-                if (($inventoryYear = ReportFilters::year($this->inventory_year)) !== null) {
+                // 'discrepancies' is Medicines with notes (the finalized count sheets); a year makes it the yearly report
+                // (left, additional, Q1-Q4 remaining); without either it is the stock list.
+                if ($this->inventory_year === 'discrepancies') {
+                    $data['inventoryDiscrepancies'] = app(InventoryDiscrepancyReportBuilder::class)->build(
+                        ReportFilters::year($this->discrepancy_year), $this->discrepancy_period === '' ? null : (string) $this->discrepancy_period, (string) $this->discrepancy_show, auth()->user()
+                    );
+                } elseif (($inventoryYear = ReportFilters::year($this->inventory_year)) !== null) {
                     $data['inventoryYearly'] = app(YearlyInventoryReportBuilder::class)->build($inventoryYear, auth()->user());
                 } else {
                     $data['reports'] = ReportQueries::forTab('inventory', $filters)->paginate(20);
@@ -355,7 +368,10 @@ class ReportGeneration extends Component
             'choices' => in_array($this->tab, self::CONSULTATION_TABS, true) ? $this->filterChoices() : [],
             // What the two yearly reports need to know: is one on, and which years can be picked.
             'yearlyAccomplishment' => $this->tab === 'accomplishment' && $filters->year !== null,
-            'yearlyInventory' => isset($data['inventoryYearly']),
+            // Both inventory reports (a year, or the count sheets) replace the stock list: its search, status and date filters do not apply.
+            'yearlyInventory' => isset($data['inventoryYearly']) || isset($data['inventoryDiscrepancies']),
+            'discrepancyMode' => isset($data['inventoryDiscrepancies']),
+            'discrepancyYears' => isset($data['inventoryDiscrepancies']) ? InventoryDiscrepancyReportBuilder::years() : [],
             'inventoryYears' => $this->tab === 'inventory' ? YearlyInventoryReportBuilder::years() : [],
             'activeFilters' => $filters->activeConsultationFilters(),
             // Query-string values of the Export CSV link: the same filters the table above is using.

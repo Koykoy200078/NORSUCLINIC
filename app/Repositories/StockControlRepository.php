@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\ActivityLog;
+use App\Models\InventoryCountLine;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
 use App\Models\MedicineTransaction;
 use App\Models\User;
+use App\Services\InventoryCountService;
 use App\Services\MedicineInventoryService;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\Cache;
@@ -61,7 +63,8 @@ class StockControlRepository
             $data = $approval['data'];
             $audit = self::logActivity($data['mode'] === 'count' ? 'stock_count' : 'stock_disposal', 'Batch '.$data['mode'].' for medicine #'.$state['medicine']->id, [
                 'subject_type' => Medicine::class, 'subject_id' => $state['medicine']->id,
-                'properties' => ['mode' => $data['mode'], 'reason' => $data['reason'], 'changes' => $state['changes'], 'stock_preview_nonce' => $approval['nonce']],
+                'properties' => ['mode' => $data['mode'], 'reason' => $data['reason'], 'changes' => $state['changes'], 'stock_preview_nonce' => $approval['nonce']]
+                    + ($state['line'] ? ['count_line_id' => $state['line']->id, 'count_sheet' => $state['line']->sheet->label()] : []),
             ]);
             if (! $audit || ! $audit->exists) {
                 throw new \RuntimeException('The audit could not be recorded.');
@@ -70,6 +73,9 @@ class StockControlRepository
                 $this->inventory->recordBatchCount($change['batch_id'], $change['after'], $actor->id,
                     $data['mode'].': '.$data['reason'], $audit, $data['mode'] !== 'count');
             }
+
+            // The count sheet's line is corrected once: the line says when, by whom and through which audit row.
+            $state['line']?->forceFill(['adjusted_at' => now(), 'adjusted_by' => $actor->id, 'adjusted_audit_id' => $audit->id])->save();
 
             // Claimed last, so a confirmation that fails midway does not use the preview up. Two confirmations of one preview
             // are serialized by the medicine lock above, but the second one's transaction may have started before the first
@@ -118,10 +124,48 @@ class StockControlRepository
             $changes[] = ['batch_id' => $batch->id, 'batch' => $batch->batch_number, 'dosage' => $batch->dosage,
                 'expiry' => $batch->expiration_date?->toDateString(), 'before' => $batch->quantity, 'after' => $after, 'difference' => $after - $batch->quantity];
         }
+        $line = $this->countLine($data, $medicine, $lock);
+        if ($line !== null) {
+            // The sheet's count is the truth: the batches, the ones entered and the ones left as they are, must add up to it.
+            $units = $batches->map->quantity->all();
+            foreach ($changes as $change) {
+                $units[$change['batch_id']] = $change['after'];
+            }
+            if (array_sum($units) !== $line->counted_quantity) {
+                throw ValidationException::withMessages(['entries' => 'The batch counts add up to '.array_sum($units).' but the count sheet counted '.$line->counted_quantity
+                    .'. Enter the batches so that together they add up to '.$line->counted_quantity.'.']);
+            }
+        }
         $latestLedger = MedicineTransaction::whereIn('batch_id', $batches->keys())->orderByDesc('id');
         $lastId = ($lock ? $latestLedger->lockForUpdate() : $latestLedger)->value('id');
 
-        return ['medicine' => $medicine, 'changes' => $changes, 'mode' => $data['mode'], 'reason' => $data['reason'],
-            'fingerprint' => hash('sha256', json_encode([$medicine->getAttributes(), $batches->map->getAttributes()->all(), $lastId, today()->toDateString()], JSON_THROW_ON_ERROR))];
+        return ['medicine' => $medicine, 'changes' => $changes, 'mode' => $data['mode'], 'reason' => $data['reason'], 'line' => $line,
+            'fingerprint' => hash('sha256', json_encode([$medicine->getAttributes(), $batches->map->getAttributes()->all(), $lastId, today()->toDateString(), $line?->getAttributes()], JSON_THROW_ON_ERROR))];
+    }
+
+    /**
+     * The count sheet line this count corrects the shelf for, or null for an ordinary count. It must be a line of this medicine
+     * on a finalized sheet, with a difference, not corrected yet, and the shelf must still hold the system amount it was
+     * measured against; and it is corrected with a count, never a disposal.
+     */
+    private function countLine(array $data, Medicine $medicine, bool $lock): ?InventoryCountLine
+    {
+        if (empty($data['count_line_id'])) {
+            return null;
+        }
+
+        $query = InventoryCountLine::with('sheet')->whereKey($data['count_line_id']);
+        $line = ($lock ? $query->lockForUpdate() : $query)->first();
+        if (! $line || (int) $line->medicine_id !== (int) $medicine->id) {
+            throw ValidationException::withMessages(['count_line_id' => 'That count sheet line is not for this medicine.']);
+        }
+        if ($data['mode'] !== 'count') {
+            throw ValidationException::withMessages(['count_line_id' => 'A count sheet line is corrected with a physical count, not a disposal.']);
+        }
+        if ($blocked = app(InventoryCountService::class)->correctionBlockedReason($line)) {
+            throw ValidationException::withMessages(['count_line_id' => $blocked]);
+        }
+
+        return $line;
     }
 }

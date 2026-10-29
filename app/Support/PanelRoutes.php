@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DispenseRecordController;
 use App\Http\Controllers\DocumentIssuanceController;
 use App\Http\Controllers\GenericController;
+use App\Http\Controllers\InventoryCountController;
 use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\MedicineDispensingManagementController;
@@ -210,6 +211,7 @@ class PanelRoutes
                 Route::post('stock-control/preview', [\App\Http\Controllers\StockControlController::class, 'preview'])->name('stock-control.preview');
                 Route::post('stock-control', [\App\Http\Controllers\StockControlController::class, 'store'])->name('stock-control.store');
             }
+            self::inventoryCounts($panel);
             Route::get('medicines-show-modal/{medicine}', [MedicineController::class, 'showModal'])->name('medicines.show.modal');
             Route::get('medicines-uses-check/{medicine}', [MedicineController::class, 'checkUseOfMedicine'])->name('check.use.medicine');
             if ($panel === 'admin') {
@@ -222,6 +224,24 @@ class PanelRoutes
             Route::get('export-stock-in', [StockInController::class, 'purchaseMedicineExport'])->name('stock-in.excel');
             Route::get('get-medicine/{medicine}', [StockInController::class, 'getMedicine'])->name('get-medicine');
         });
+    }
+
+    /**
+     * Quarterly count sheets (Phase 11 D, 2026-10-29): the final remaining count of each medicine typed by hand, with a reason and a note.
+     * Inside the inventory group, so Manage Medicines decides; staff and admin work with sheets, a doctor only reads them.
+     */
+    private static function inventoryCounts(string $panel): void
+    {
+        Route::get('inventory-counts', [InventoryCountController::class, 'index'])->name('inventory-counts.index');
+        Route::get('inventory-counts/{count}', [InventoryCountController::class, 'show'])->name('inventory-counts.show');
+        if ($panel === 'doctor') {
+            return;
+        }
+        Route::post('inventory-counts', [InventoryCountController::class, 'store'])->name('inventory-counts.store');
+        Route::put('inventory-counts/{count}', [InventoryCountController::class, 'update'])->name('inventory-counts.update');
+        Route::post('inventory-counts/{count}/refresh', [InventoryCountController::class, 'refresh'])->name('inventory-counts.refresh');
+        Route::post('inventory-counts/{count}/finalize', [InventoryCountController::class, 'finalize'])->name('inventory-counts.finalize');
+        Route::delete('inventory-counts/{count}', [InventoryCountController::class, 'destroy'])->name('inventory-counts.destroy');
     }
 
     private static function dispensingIndex(): void
@@ -284,6 +304,8 @@ class PanelRoutes
                 ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('accomplishment');
             Route::get('/inventory-yearly/{format}', [ActivityLogController::class, 'inventoryYearly'])
                 ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-yearly');
+            Route::get('/inventory-discrepancies/{format}', [ActivityLogController::class, 'inventoryDiscrepancies'])
+                ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-discrepancies');
             Route::get($panel === 'admin' ? '/{id}' : '/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
         });
     }

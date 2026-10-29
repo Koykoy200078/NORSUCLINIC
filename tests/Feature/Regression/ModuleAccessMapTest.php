@@ -25,8 +25,8 @@ class ModuleAccessMapTest extends TestCase
     private const OPEN_ROUTES = [
         'staff.notifications.index', 'doctors.notifications.index',
         'staff.dashboard', 'doctors.dashboard', 'staff.patientData.dashboard',
-        'staff.activity-logs.index', 'staff.activity-logs.export', 'staff.activity-logs.accomplishment', 'staff.activity-logs.inventory-yearly', 'staff.activity-logs.show',
-        'doctors.activity-logs.index', 'doctors.activity-logs.export', 'doctors.activity-logs.accomplishment', 'doctors.activity-logs.inventory-yearly', 'doctors.activity-logs.show',
+        'staff.activity-logs.index', 'staff.activity-logs.export', 'staff.activity-logs.accomplishment', 'staff.activity-logs.inventory-yearly', 'staff.activity-logs.inventory-discrepancies', 'staff.activity-logs.show',
+        'doctors.activity-logs.index', 'doctors.activity-logs.export', 'doctors.activity-logs.accomplishment', 'doctors.activity-logs.inventory-yearly', 'doctors.activity-logs.inventory-discrepancies', 'doctors.activity-logs.show',
     ];
 
     /** @return array<string, array<int, string>> route name => permission middleware arguments ("a|b" kept as one entry) */

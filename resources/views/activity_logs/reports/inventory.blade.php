@@ -1,4 +1,6 @@
-@if(isset($inventoryYearly))
+@if(isset($inventoryDiscrepancies))
+    @include('activity_logs.reports.inventory_discrepancies', ['report' => $inventoryDiscrepancies])
+@elseif(isset($inventoryYearly))
     @include('activity_logs.reports.inventory_yearly', ['report' => $inventoryYearly])
 @else
 <div class="table-responsive">

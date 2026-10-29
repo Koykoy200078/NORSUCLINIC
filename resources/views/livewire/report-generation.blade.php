@@ -96,6 +96,32 @@
                                 @foreach($inventoryYears as $reportYear)
                                 <option value="{{ $reportYear }}">Yearly {{ $reportYear }}: left, added and remaining per quarter</option>
                                 @endforeach
+                                <option value="discrepancies">Medicines with notes (count sheets)</option>
+                            </select>
+                        </div>
+                        @endif
+
+                        @if($tab === 'inventory' && $discrepancyMode)
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Year</label>
+                            <select wire:model.live="discrepancy_year" class="form-select form-select-sm">
+                                <option value="">Every year</option>
+                                @foreach($discrepancyYears as $countYear)<option value="{{ $countYear }}">{{ $countYear }}</option>@endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Count</label>
+                            <select wire:model.live="discrepancy_period" class="form-select form-select-sm">
+                                <option value="">Every count</option>
+                                <option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option>
+                                <option value="day">Counts of everything on a day</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Show</label>
+                            <select wire:model.live="discrepancy_show" class="form-select form-select-sm">
+                                <option value="notes">A difference or a note</option>
+                                <option value="all">Every counted medicine</option>
                             </select>
                         </div>
                         @endif

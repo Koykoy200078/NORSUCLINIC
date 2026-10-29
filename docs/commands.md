@@ -71,7 +71,7 @@ asks for.
 | Check | Severity | What a problem means / what to do |
 |---|---|---|
 | Every table is InnoDB | error | A table is still MyISAM: foreign keys and transactions do not work for it. Run `php artisan migrate`. |
-| All 52 foreign keys are in place (50 before Phase 8.3, 47 before Phase 8.2) | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). Run pending migrations first; if nothing else blocks it: `php artisan db:restore-foreign-keys`. |
+| All 57 foreign keys are in place (52 before the Phase 11 D count sheets, 50 before Phase 8.3, 47 before Phase 8.2) | error | A key is missing; the line says why (a table is missing, the column types differ, or rows point at a record that no longer exists, with their values). Run pending migrations first; if nothing else blocks it: `php artisan db:restore-foreign-keys`. |
 | No row points at a record that does not exist | error | A `xxx_id` column (without a foreign key) holds an id that has no parent. Fix the data by hand. |
 | No zero dates | error / warning | A date column still holds `0000-00-00`. Error when the column allows NULL (run `migrate`), warning when it does not (fix by hand). |
 | No duplicate numbers or keys | error | Two records share a number that must be unique (history number, request number, SKU, e-mail, university id, PRC number, settings key, batch number). |
@@ -250,6 +250,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-10-29 | 11 D | No new command. `db:integrity` and the foreign-key catalog now expect **57** keys (the five keys of the count-sheet tables). Migration `2026_10_29_150000_create_inventory_counts_tables` makes the two count-sheet tables (InnoDB, only when missing; its rollback refuses while any sheet exists); pending on the working database |
 | 2026-10-28 | 7 follow-up | New command `php artisan realtime:check` (read-only diagnosis of the real-time chain, see "Real-time updates"). The startup script runs it, replaces a stale Reverb, names another program on the Reverb port and checks the Windows Firewall for ports 8000 / 8080. `REVERB_APP_ID` / `KEY` / `SECRET` left empty in `.env` are now derived from `APP_KEY`; the firewall command in this file now covers both ports and every network profile |
 | 2026-10-22 | 10 | No new command. Final completeness check: every command in `app/Console/Commands` is listed in this file (`consultation-images:secure`, a 2026-09-30 one-off, was missing and is added); `db:backup` and `notifications:refresh` run only while Windows Task Scheduler runs `schedule:run` (the startup script does not start the scheduler) |
 | 2026-10-22 | 8.5 follow-up | No command. Migrations `2026_10_22_080000_reorder_notifications_alert_unique_index` (alert unique index becomes `(event_key, user_id)`, plain `user_id` index kept, so the user foreign key is enforced for every row) and `2026_10_22_090000_drop_redundant_notifications_user_index` (no-op after it) make `db:integrity --compare-fresh` exit 0 on the real clinic data; neither changes a row, both are pending on the working DB with the other 8.x migrations |

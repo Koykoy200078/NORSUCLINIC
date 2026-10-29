@@ -2,6 +2,8 @@
 
 namespace App\Services\Reports;
 
+use App\Models\InventoryCount;
+use App\Models\InventoryCountLine;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
 use App\Models\MedicineTransaction;
@@ -61,7 +63,7 @@ final class YearlyInventoryReportBuilder
         $window = [Carbon::create($year, 1, 1, 0, 0, 0), min($now->copy(), Carbon::create($year, 12, 31, 23, 59, 59))];
         [$snapshots, $movement] = $this->readLedger($cuts, $window);
 
-        $rows = $this->rows($snapshots, $movement, $quarters, $year === (int) $now->year ? $this->stockToday() : null);
+        $rows = $this->rows($snapshots, $movement, $quarters, $year === (int) $now->year ? $this->stockToday() : null, $this->quarterCounts($year));
 
         return [
             'year' => $year,
@@ -210,6 +212,34 @@ final class YearlyInventoryReportBuilder
         return ['total' => $total, 'expired' => $expired];
     }
 
+    /**
+     * What the finalized count sheets of this year's quarters found, by medicine and quarter: the latest finalized count of a quarter
+     * is the one that counts. A draft sheet, a count of everything on a day and a medicine that was not counted are left out.
+     *
+     * @return array<int, array<int, array{counted: int, system: int, difference: int, reason: ?string, note: ?string}>>
+     */
+    private function quarterCounts(int $year): array
+    {
+        $counts = [];
+
+        $lines = InventoryCountLine::query()
+            ->join('inventory_counts as s', 's.id', '=', 'inventory_count_lines.inventory_count_id')
+            ->where('s.status', InventoryCount::STATUS_FINALIZED)->where('s.year', $year)->whereNotNull('s.quarter')
+            ->whereNotNull('inventory_count_lines.counted_quantity')
+            ->orderBy('s.finalized_at')->orderBy('s.id')
+            ->select('inventory_count_lines.*', 's.quarter as sheet_quarter')
+            ->get();
+
+        foreach ($lines as $line) {
+            $counts[(int) $line->medicine_id][(int) $line->sheet_quarter] = [
+                'counted' => (int) $line->counted_quantity, 'system' => (int) $line->system_quantity, 'difference' => (int) $line->difference,
+                'reason' => $line->reasonLabel(), 'note' => $line->note,
+            ];
+        }
+
+        return $counts;
+    }
+
     /** @return array<int, int> medicine id => units on the shelf now, from the batches */
     private function stockToday(): array
     {
@@ -222,9 +252,10 @@ final class YearlyInventoryReportBuilder
      * @param  array<int, array<string, int>>  $movement
      * @param  array<int, array<string, mixed>>  $quarters
      * @param  array<int, int>|null  $today  only for the current year
+     * @param  array<int, array<int, array<string, mixed>>>  $counts  what the finalized count sheets found (see quarterCounts())
      * @return array<int, array<string, mixed>>
      */
-    private function rows(array $snapshots, array $movement, array $quarters, ?array $today): array
+    private function rows(array $snapshots, array $movement, array $quarters, ?array $today, array $counts = []): array
     {
         $ids = collect($snapshots)->flatMap(fn ($snapshot) => array_keys($snapshot['total']))->merge(array_keys($movement))->unique()->values();
         $medicines = Medicine::with('generic:id,name')->whereIn('id', $ids)->get()->keyBy('id');
@@ -275,7 +306,7 @@ final class YearlyInventoryReportBuilder
                 'consistent' => $consistent,
                 'stock_today' => $stockToday,
                 'matches_today' => $stockToday === null || $stockToday === $ending,
-                'notes' => $this->notes($cells, $consistent, $stockToday, $ending),
+                'notes' => $this->notes($cells, $consistent, $stockToday, $ending, $counts[$id] ?? []),
             ];
         }
 
@@ -285,9 +316,19 @@ final class YearlyInventoryReportBuilder
     }
 
     /** One line of words about what a reader should look at; empty when there is nothing to say. */
-    private function notes(array $cells, bool $consistent, ?int $stockToday, int $ending): string
+    private function notes(array $cells, bool $consistent, ?int $stockToday, int $ending, array $counts = []): string
     {
         $notes = [];
+
+        // What a finalized count sheet found for a quarter, when it differs from the ledger ("Q2 counted 118 (system 120, -2, Damaged: wet)").
+        foreach ($counts as $quarter => $count) {
+            if ($count['difference'] === 0) {
+                continue;
+            }
+            $detail = 'system ' . $count['system'] . ', ' . ($count['difference'] > 0 ? '+' : '') . $count['difference'] . ($count['reason'] ? ', ' . $count['reason'] : '')
+                . ($count['note'] ? ': ' . $count['note'] : '');
+            $notes[] = "Q{$quarter} counted {$count['counted']} ({$detail})";
+        }
 
         $expired = [];
         foreach ($cells as $key => $cell) {

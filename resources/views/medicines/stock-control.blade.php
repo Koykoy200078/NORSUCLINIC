@@ -14,18 +14,31 @@
             </form>
         </div></div>
         @if($medicine)
+            @if($countLine)
+                @if($countBlocked)
+                    <div class="alert alert-warning" role="alert"><strong>Count sheet {{ $countLine->sheet->label() }}:</strong> {{ $countBlocked }}</div>
+                @else
+                    <div class="alert alert-info" role="status"><strong>Count sheet {{ $countLine->sheet->label() }}:</strong> {{ $countLine->medicine_name }} was counted {{ $countLine->counted_quantity }}, system {{ $countLine->system_quantity }}@if($countLine->reasonLabel()) ({{ $countLine->reasonLabel() }})@endif.
+                        Enter the units of each batch so that the batches together add up to {{ $countLine->counted_quantity }}; a batch you leave blank keeps its units.</div>
+                @endif
+            @endif
             <section class="card"><div class="card-body"><h2 class="fs-4">{{ $medicine->name }} — batch quantities</h2>
                 @if($medicine->batches->isEmpty())
                     <p>No batches are recorded. Record identifiable stock batches before taking a per-batch count.</p>
                 @else
                     <form method="post" action="{{ getRouteByRole('stock-control.preview') }}">
                         @csrf<input type="hidden" name="medicine_id" value="{{ $medicine->id }}">
+                        @if($countLine && ! $countBlocked)
+                            <input type="hidden" name="count_line_id" value="{{ $countLine->id }}"><input type="hidden" name="mode" value="count">
+                            <p class="form-label">Operation: Physical count (enter units remaining)</p>
+                        @else
                         <label for="mode" class="form-label">Operation</label><select name="mode" id="mode" class="form-select mb-3"><option value="count">Physical count (enter units remaining)</option><option value="expired">Dispose expired stock (enter units to remove)</option><option value="damaged">Dispose damaged stock (enter units to remove)</option></select>
+                        @endif
                         <p>Fill only the batches being checked. Enter 0 for an empty shelf count; leave a batch blank to keep it unchanged. Expiry dates and strengths remain as recorded. A batch expires the day after its expiry date.</p>
                         <div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Batch</th><th>Strength</th><th>Expiry</th><th>Recorded units</th><th>Count / disposal units</th></tr></thead><tbody>
-                            @foreach($medicine->batches as $batch)<tr><td>{{ $batch->batch_number }}</td><td>{{ $batch->dosage }}</td><td>{{ $batch->expiration_date?->toDateString() === '2099-12-31' ? 'Not recorded' : $batch->expiration_date?->toDateString() }}</td><td>{{ $batch->quantity }}</td><td><label class="visually-hidden" for="batch-{{ $batch->id }}">Units for batch {{ $batch->batch_number }}</label><input class="form-control" id="batch-{{ $batch->id }}" name="entries[{{ $batch->id }}]" type="number" min="0" max="2147483647" step="1" inputmode="numeric"></td></tr>@endforeach
+                            @foreach($medicine->batches as $batch)<tr><td>{{ $batch->batch_number }}</td><td>{{ $batch->dosage }}</td><td>{{ $batch->expiration_date?->toDateString() === '2099-12-31' ? 'Not recorded' : $batch->expiration_date?->toDateString() }}</td><td>{{ $batch->quantity }}</td><td><label class="visually-hidden" for="batch-{{ $batch->id }}">Units for batch {{ $batch->batch_number }}</label><input class="form-control" id="batch-{{ $batch->id }}" name="entries[{{ $batch->id }}]" type="number" min="0" max="2147483647" step="1" inputmode="numeric" value="{{ $prefill[$batch->id] ?? '' }}"></td></tr>@endforeach
                         </tbody></table></div>
-                        <label for="reason" class="form-label">Reason / count notes</label><textarea class="form-control mb-3" id="reason" name="reason" required minlength="3" maxlength="500"></textarea>
+                        <label for="reason" class="form-label">Reason / count notes</label><textarea class="form-control mb-3" id="reason" name="reason" required minlength="3" maxlength="500">{{ $countLine && ! $countBlocked ? trim('Count sheet '.$countLine->sheet->label().': '.($countLine->reasonLabel() ?? '').' '.($countLine->note ?? '')) : '' }}</textarea>
                         <button type="submit" class="btn btn-primary">Preview stock changes</button>
                     </form>
                 @endif

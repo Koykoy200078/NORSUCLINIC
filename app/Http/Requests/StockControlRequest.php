@@ -18,6 +18,8 @@ class StockControlRequest extends FormRequest
         }
 
         return ['medicine_id' => ['required', 'integer', 'min:1'], 'mode' => ['required', 'in:count,expired,damaged'],
+            // The line of a finalized count sheet this count corrects the shelf for (Phase 11 D); the repository checks it.
+            'count_line_id' => ['nullable', 'integer', 'min:1'],
             'reason' => ['required', 'string', 'min:3', 'max:500'], 'entries' => ['required', 'array', 'min:1', 'max:1000'],
             'entries.*' => ['nullable', 'integer', 'between:0,2147483647']];
     }
