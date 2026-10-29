@@ -118,17 +118,42 @@ final class ReportQueries
             $query->whereDate('created_at', '<=', $filters->dateTo);
         }
 
+        // Every word must be found in at least one of these: the medicine (see medicineSearchColumns()), the batch, the person
+        // the stock was issued to, who handed it out, and the kind of record.
         return SearchTerm::whereAllWords($query, $filters->search, [
-            fn ($inner, $word) => $inner->whereHas('batch.medicine', fn ($q) => $q->where('name', 'like', SearchTerm::like($word))),
-            fn ($inner, $word) => $inner->whereHas('batch', fn ($q) => $q->where('batch_number', 'like', SearchTerm::like($word))),
-            // The patient the stock was issued to (consultation, prescription or dispense record): the Stock-out
-            // view already resolves it for every ledger row.
+            fn ($inner, $word) => $inner->whereHas('batch.medicine', fn ($medicine) => $medicine->where(
+                fn ($group) => SearchTerm::wordInColumns($group, $word, self::medicineSearchColumns())
+            )),
+            // Strength and batch number of the batch that was handed out (a medicine can have several strengths).
+            fn ($inner, $word) => $inner->whereHas('batch', fn ($q) => $q->where('batch_number', 'like', SearchTerm::like($word))
+                ->orWhere('dosage', 'like', SearchTerm::like($word))),
+            fn ($inner, $word) => $inner->whereHas('user', fn ($user) => $user->where(
+                fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)
+            )),
+            // The patient the stock was issued to and the kind of record ("Consultation", "Prescription", "Dispense Record"):
+            // the Stock-out view already resolves both for every ledger row.
             fn ($inner, $word) => $inner->whereExists(
                 fn ($sub) => $sub->selectRaw('1')->from('used_medicines_view')
                     ->whereRaw("used_medicines_view.id = CONCAT('T', medicine_transactions.id)")
-                    ->where('used_medicines_view.patient_name', 'like', SearchTerm::like($word))
+                    ->where(fn ($view) => $view->where('used_medicines_view.patient_name', 'like', SearchTerm::like($word))
+                        ->orWhere('used_medicines_view.source', 'like', SearchTerm::like($word)))
             ),
         ]);
+    }
+
+    /**
+     * What a word can match on a medicine: its own text columns, and the name of its generic and of its category (both are
+     * lists; the plain `generic_name` / `category` / `category_name` columns hold the older free text).
+     *
+     * @return array<int, string|\Closure>
+     */
+    public static function medicineSearchColumns(): array
+    {
+        return [
+            'name', 'generic_name', 'brand_name', 'category', 'category_name', 'dosage', 'salt_composition', 'sku',
+            fn ($inner, $word) => $inner->whereHas('generic', fn ($q) => $q->where('name', 'like', SearchTerm::like($word))),
+            fn ($inner, $word) => $inner->whereHas('category', fn ($q) => $q->where('name', 'like', SearchTerm::like($word))),
+        ];
     }
 
     public static function appointments(ReportFilters $filters): Builder
@@ -160,7 +185,7 @@ final class ReportQueries
         $label = match ($transaction->reference_type) {
             DocumentIssuance::class, RequestDocuments::class => 'Consultation',
             Prescription::class => 'Prescription',
-            DispenseRecord::class => 'Dispense record',
+            DispenseRecord::class => $transaction->reference?->meds_only ? 'Meds only' : 'Dispense record',
             default => $transaction->reference_type ? class_basename($transaction->reference_type) : 'Manual entry',
         };
 
@@ -178,8 +203,13 @@ final class ReportQueries
             return $reference->name ?: null;
         }
 
-        if ($reference instanceof Prescription || $reference instanceof DispenseRecord) {
+        if ($reference instanceof Prescription) {
             return $reference->patient?->user?->full_name;
+        }
+
+        // A Meds Only record of a person who is not registered has only the typed name.
+        if ($reference instanceof DispenseRecord) {
+            return $reference->patient?->user?->full_name ?? ($reference->patient_name ?: null);
         }
 
         return null;

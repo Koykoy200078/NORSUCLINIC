@@ -79,7 +79,7 @@ final class Realtime
         'lab-requests' => ['lab_requests'],
         'medicines' => ['inventory'], 'medicine-inventory-tracking' => ['inventory'], 'categories' => ['inventory'], 'generics' => ['inventory'],
         'stock-in' => ['inventory'], 'medicine-history' => ['inventory', 'dispensing'], 'used-medicine' => ['inventory', 'dispensing'],
-        'medicine-dispensing-management' => ['dispensing', 'prescriptions', 'inventory'], 'dispense-records' => ['dispensing', 'inventory'],
+        'medicine-dispensing-management' => ['dispensing', 'prescriptions', 'inventory'], 'dispense-records' => ['dispensing', 'inventory'], 'meds-only' => ['dispensing', 'inventory'],
         'doctors' => ['doctors'], 'specializations' => ['specializations', 'doctors'],
         'dashboard' => ['queue', 'patients', 'consultations', 'certificates', 'prescriptions', 'lab_requests', 'inventory', 'dispensing', 'doctors'],
         'dashboard-patients' => ['patients', 'queue', 'consultations'],

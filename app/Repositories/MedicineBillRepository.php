@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Category;
 use App\Models\DispenseRecord;
-use App\Models\DispenseRecordItem;
 use App\Models\Doctor;
 use App\Models\Medicine;
 use App\Models\Patient;
@@ -115,7 +114,7 @@ class MedicineBillRepository extends BaseRepository
                         $dosage
                     );
 
-                    $this->storeDispenseItemsFromAllocations(
+                    \App\Services\DispenseRecordLines::fromAllocations(
                         $dispenseRecord->id,
                         $medicine->id,
                         $dosage,
@@ -133,62 +132,6 @@ class MedicineBillRepository extends BaseRepository
         }
 
         return true;
-    }
-
-    /**
-     * Persist one or more dispense rows from FEFO allocation payload.
-     */
-    private function storeDispenseItemsFromAllocations(
-        int $dispenseRecordId,
-        int $medicineId,
-        string $requestedDosage,
-        ?string $requestedExpiry,
-        int $requestedQuantity,
-        array $allocations
-    ): void {
-        if (empty($allocations)) {
-            DispenseRecordItem::create([
-                'dispense_id' => $dispenseRecordId,
-                'medicine_id' => $medicineId,
-                'dosage' => $requestedDosage,
-                'expires_at' => $requestedExpiry,
-                'quantity' => $requestedQuantity,
-            ]);
-
-            return;
-        }
-
-        $groupedAllocations = collect($allocations)
-            ->filter(function (array $allocation) {
-                return (int) ($allocation['deducted'] ?? 0) > 0;
-            })
-            ->groupBy(function (array $allocation) use ($requestedDosage) {
-                $allocationDosage = trim((string) ($allocation['dosage'] ?? $requestedDosage));
-                $allocationExpiry = $allocation['expiration_date'] ?? '';
-
-                return $allocationDosage . '|' . (string) $allocationExpiry;
-            });
-
-        foreach ($groupedAllocations as $rows) {
-            $firstRow = $rows->first();
-            $allocationDosage = trim((string) ($firstRow['dosage'] ?? $requestedDosage));
-            $allocationExpiry = $firstRow['expiration_date'] ?? $requestedExpiry;
-            $deductedQuantity = (int) collect($rows)->sum(function (array $allocation) {
-                return (int) ($allocation['deducted'] ?? 0);
-            });
-
-            if ($deductedQuantity <= 0) {
-                continue;
-            }
-
-            DispenseRecordItem::create([
-                'dispense_id' => $dispenseRecordId,
-                'medicine_id' => $medicineId,
-                'dosage' => $allocationDosage !== '' ? $allocationDosage : $requestedDosage,
-                'expires_at' => $allocationExpiry,
-                'quantity' => $deductedQuantity,
-            ]);
-        }
     }
 
     public function getPatients(): Collection

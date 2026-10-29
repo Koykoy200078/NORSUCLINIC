@@ -104,7 +104,7 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Search Keywords</label>
                             <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm"
-                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : ($tab === 'visits' ? 'Patient name, complaint, illness...' : 'Name, Description, Keywords...') }}">
+                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : ($tab === 'visits' ? 'Patient name, complaint, illness...' : ($tab === 'dispensing' ? 'Medicine, generic, brand, category, batch, patient...' : 'Name, Description, Keywords...')) }}">
                         </div>
                         @endif
 

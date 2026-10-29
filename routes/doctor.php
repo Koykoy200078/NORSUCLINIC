@@ -19,5 +19,6 @@ Route::prefix('doctors')->name('doctors.')->middleware('auth', 'checkUserStatus'
     PanelRoutes::medicineLookup();
     PanelRoutes::inventory('doctor');
     PanelRoutes::dispensing('doctor');
+    PanelRoutes::medsOnly('doctor');
     PanelRoutes::activityLogs('doctor');
 });

@@ -16,5 +16,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth', 'checkUserStatus', 'r
     PanelRoutes::prescriptions('staff');
     PanelRoutes::inventory('staff');
     PanelRoutes::dispensing('staff');
+    PanelRoutes::medsOnly('staff');
     PanelRoutes::activityLogs('staff');
 });

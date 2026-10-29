@@ -13,7 +13,7 @@ class ModuleAccess
         'consultations' => 'manage_request_documents', 'certificates' => 'manage_request_documents',
         'prescriptions' => 'manage_request_documents', 'lab_requests' => 'manage_request_documents',
         'document_issuances' => 'manage_request_documents',
-        'inventory' => 'manage_medicines', 'dispensing' => 'manage_medicines',
+        'inventory' => 'manage_medicines', 'dispensing' => 'manage_medicines', 'meds_only' => 'manage_medicines',
         'doctors' => 'manage_doctors', 'specializations' => 'manage_specialties',
         'settings' => 'manage_settings', 'roles' => 'manage_roles', 'cms' => 'manage_front_cms',
         'countries' => 'manage_countries', 'states' => 'manage_states', 'cities' => 'manage_cities',

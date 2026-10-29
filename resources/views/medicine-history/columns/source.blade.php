@@ -2,6 +2,7 @@
 $badge = match ($row->source) {
     \App\Models\DispenseHistoryEntry::SOURCE_CONSULTATION => 'bg-light-success',
     \App\Models\DispenseHistoryEntry::SOURCE_PRESCRIPTION => 'bg-light-warning',
+    \App\Models\DispenseHistoryEntry::SOURCE_MEDS_ONLY => 'bg-light-info',
     default => 'bg-light-primary',
 };
 @endphp

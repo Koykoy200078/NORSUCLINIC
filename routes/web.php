@@ -201,6 +201,7 @@ Route::prefix('admin')->middleware('auth', 'checkUserStatus', 'role:clinic_admin
         Route::post('inventory-merge', [\App\Http\Controllers\InventoryMergeController::class, 'store'])->name('inventory-merge.store');
     });
     PanelRoutes::dispensing('admin');
+    PanelRoutes::medsOnly('admin');
 });
 
 // Note: Doctor and Staff routes are defined in their respective route files

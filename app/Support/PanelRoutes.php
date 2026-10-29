@@ -11,6 +11,7 @@ use App\Http\Controllers\GenericController;
 use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\MedicineDispensingManagementController;
+use App\Http\Controllers\MedsOnlyController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientQueueController;
 use App\Http\Controllers\PrescriptionController;
@@ -226,6 +227,24 @@ class PanelRoutes
     private static function dispensingIndex(): void
     {
         Route::get('medicine-dispensing-management', [MedicineDispensingManagementController::class, 'index'])->name('medicine-dispensing.index');
+    }
+
+    /**
+     * Meds Only (2026-10-29): patients who only come for medicine. Same permission as Dispensing, which it feeds; a doctor
+     * reads the list and a record, and cannot record, change or delete one.
+     */
+    public static function medsOnly(string $panel): void
+    {
+        Route::middleware('permission:manage_medicines')->group(function () use ($panel) {
+            if ($panel === 'doctor') {
+                Route::resource('meds-only', MedsOnlyController::class)->parameters(['meds-only' => 'record'])->only(['index', 'show']);
+
+                return;
+            }
+            // Before the resource: "patients" would otherwise be read as a record id.
+            Route::get('meds-only/patients', [MedsOnlyController::class, 'searchPatients'])->name('meds-only.patients');
+            Route::resource('meds-only', MedsOnlyController::class)->parameters(['meds-only' => 'record']);
+        });
     }
 
     public static function dispensing(string $panel): void

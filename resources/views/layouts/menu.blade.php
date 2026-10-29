@@ -190,6 +190,16 @@ $_menuMedicineBadge = [
                     </a>
                 </li>
                 @endif
+
+                {{-- [ORDER 7b] Meds Only: patients who only come for medicine (no consultation) --}}
+                @if(canUseModule('meds_only'))
+                <li class="nav-item {{ isModuleActive('meds-only') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-4" aria-current="page" href="{{ getRouteByRole('meds-only.index') }}">
+                        <span class="aside-menu-icon me-3"><i class="fas fa-hand-holding-medical"></i></span>
+                        <span class="aside-menu-title">Meds Only</span>
+                    </a>
+                </li>
+                @endif
                 @endcan
 
                 {{-- [ORDER 8] Laboratory & Medical Request Management --}}

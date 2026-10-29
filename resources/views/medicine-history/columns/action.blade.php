@@ -1,6 +1,19 @@
 {{-- Full access for all roles that can see the history. A consultation / prescription row belongs to its own record: View only. --}}
 <x-row-actions module="dispensing">
-    @if ($row->isConsultation())
+    @if ($row->isMedsOnly())
+    {{-- A Meds Only record is recorded, changed and deleted in the Meds Only module. --}}
+    <a href="{{ getRouteByRole('meds-only.show', [$row->record_id]) }}"
+        title="{{ __('messages.common.view') }}" class='dropdown-item px-2 text-primary fs-3 ps-0' role="menuitem" tabindex="-1"> <i class="fas fa-eye text-success"></i>
+        <span>{{ __('messages.common.view') }}</span>
+    </a>
+    @unless (isRole('doctor'))
+    <a href="{{ getRouteByRole('meds-only.edit', [$row->record_id]) }}"
+        title="{{ __('messages.common.edit') }}" class="dropdown-item px-2 text-primary fs-3 py-2" role="menuitem" tabindex="-1">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>{{ __('messages.common.edit') }}</span>
+    </a>
+    @endunless
+    @elseif ($row->isConsultation())
     <a href="{{ getRouteByRole('dispense-records.consultation', [$row->record_id]) }}"
         title="{{ __('messages.common.view') }}" class='dropdown-item px-2 text-primary fs-3 ps-0' role="menuitem" tabindex="-1"> <i class="fas fa-eye text-success"></i>
         <span>{{ __('messages.common.view') }}</span>

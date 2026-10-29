@@ -7,7 +7,6 @@ use App\Http\Requests\CreatePatientRequest;
 use App\Http\Requests\UpdateDispenseRecordRequest;
 use App\Models\Category;
 use App\Models\DispenseRecord;
-use App\Models\DispenseRecordItem;
 use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
@@ -140,7 +139,7 @@ class DispenseRecordController extends AppBaseController
                     $dosage
                 );
 
-                $this->storeDispenseItemsFromAllocations(
+                \App\Services\DispenseRecordLines::fromAllocations(
                     $dispenseRecord->id,
                     $medicine->id,
                     $dosage,
@@ -176,8 +175,12 @@ class DispenseRecordController extends AppBaseController
         }
     }
 
-    public function show(DispenseRecord $medicine_history): View
+    public function show(DispenseRecord $medicine_history): View|RedirectResponse
     {
+        if ($medicine_history->meds_only) {
+            return redirectByRole('meds-only.show', [$medicine_history->id]);
+        }
+
         $dispenseRecord = $medicine_history;
         $dispenseRecord->load([
             'dispenseItems.medicine',
@@ -236,12 +239,27 @@ class DispenseRecordController extends AppBaseController
             . 'Manage it from the prescription instead.';
     }
 
+    /**
+     * A Meds Only record (no registered patient, a college / course / year of its own, its own validation and audit trail)
+     * is recorded, changed and deleted in the Meds Only module. This form would give it a patient and skip its audit line.
+     */
+    private function medsOnlyMessage(): string
+    {
+        return 'This is a Meds Only record and cannot be changed here. Open it in Meds Only instead.';
+    }
+
     public function edit(DispenseRecord $medicine_history): View|RedirectResponse
     {
         if ($this->isPrescriptionOwned($medicine_history)) {
             Flash::error($this->prescriptionOwnedMessage());
 
             return redirectByRole('medicine-dispensing.index', ['tab' => 'dispense-history']);
+        }
+
+        if ($medicine_history->meds_only) {
+            Flash::error($this->medsOnlyMessage());
+
+            return redirectByRole('meds-only.show', [$medicine_history->id]);
         }
 
         $dispenseRecord = $medicine_history;
@@ -276,6 +294,10 @@ class DispenseRecordController extends AppBaseController
             return $this->sendError($this->prescriptionOwnedMessage());
         }
 
+        if ($medicine_history->meds_only) {
+            return $this->sendError($this->medsOnlyMessage());
+        }
+
         $dispenseRecord = $medicine_history;
         $input        = $request->all();
         if (empty($input['medicine'])) {
@@ -290,6 +312,10 @@ class DispenseRecordController extends AppBaseController
     {
         if ($this->isPrescriptionOwned($medicine_history)) {
             return $this->sendError($this->prescriptionOwnedMessage());
+        }
+
+        if ($medicine_history->meds_only) {
+            return $this->sendError($this->medsOnlyMessage());
         }
 
         DB::transaction(function () use ($medicine_history) {
@@ -342,7 +368,8 @@ class DispenseRecordController extends AppBaseController
             'history_number',
             'bill_date',
             'patient_id',
-            'doctor_id'
+            'doctor_id',
+            'meds_only'
         )->with([
             'dispenseItems' => fn($q) => $q->select('id', 'medicine_bill_id', 'medicine_id', 'dosage', 'expiry_date', 'sale_quantity'),
             'dispenseItems.medicine' => fn($q) => $q->select('id', 'name'),
@@ -350,65 +377,11 @@ class DispenseRecordController extends AppBaseController
             'doctor.user:id,first_name,last_name',
         ])->findOrFail($id);
 
+        // No per-record print for Meds Only (it may have no registered patient for the template to name).
+        abort_if($medicineBill->meds_only, 404);
+
         // View still uses $medicineBill variable name for backward compat with PDF template
         return view('medicine-history.medicine_bill_pdf', compact('medicineBill', 'data'));
-    }
-
-    /**
-     * Persist one or more dispense lines based on FEFO allocations.
-     * Falls back to the requested quantity/expiry when no allocation payload is returned.
-     */
-    private function storeDispenseItemsFromAllocations(
-        int $dispenseRecordId,
-        int $medicineId,
-        string $requestedDosage,
-        ?string $requestedExpiry,
-        int $requestedQuantity,
-        array $allocations
-    ): void {
-        if (empty($allocations)) {
-            DispenseRecordItem::create([
-                'dispense_id' => $dispenseRecordId,
-                'medicine_id' => $medicineId,
-                'dosage' => $requestedDosage,
-                'expires_at' => $requestedExpiry,
-                'quantity' => $requestedQuantity,
-            ]);
-
-            return;
-        }
-
-        $groupedAllocations = collect($allocations)
-            ->filter(function (array $allocation) {
-                return (int) ($allocation['deducted'] ?? 0) > 0;
-            })
-            ->groupBy(function (array $allocation) use ($requestedDosage) {
-                $allocationDosage = trim((string) ($allocation['dosage'] ?? $requestedDosage));
-                $allocationExpiry = $allocation['expiration_date'] ?? '';
-
-                return $allocationDosage . '|' . (string) $allocationExpiry;
-            });
-
-        foreach ($groupedAllocations as $rows) {
-            $firstRow = $rows->first();
-            $allocationDosage = trim((string) ($firstRow['dosage'] ?? $requestedDosage));
-            $allocationExpiry = $firstRow['expiration_date'] ?? $requestedExpiry;
-            $deductedQuantity = (int) collect($rows)->sum(function (array $allocation) {
-                return (int) ($allocation['deducted'] ?? 0);
-            });
-
-            if ($deductedQuantity <= 0) {
-                continue;
-            }
-
-            DispenseRecordItem::create([
-                'dispense_id' => $dispenseRecordId,
-                'medicine_id' => $medicineId,
-                'dosage' => $allocationDosage !== '' ? $allocationDosage : $requestedDosage,
-                'expires_at' => $allocationExpiry,
-                'quantity' => $deductedQuantity,
-            ]);
-        }
     }
 
     public function getMedicineCategory(Category $category): JsonResponse

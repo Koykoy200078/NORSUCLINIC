@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * (see the migration for the exact rules). Nothing is written through this model.
  *
  * @property string $id 'B<medicine_bills.id>' or 'C<document_issuances.id>'
- * @property string $source Dispense Record | Prescription | Consultation
+ * @property string $source Dispense Record | Prescription | Consultation | Meds Only
  * @property int $record_id id of the row in its own table (medicine_bills or document_issuances)
  * @property string $history_number
  * @property \Illuminate\Support\Carbon|null $dispensed_at
@@ -32,10 +32,14 @@ class DispenseHistoryEntry extends Model
 
     public const SOURCE_CONSULTATION = 'Consultation';
 
+    /** A patient who only came for medicine (the Meds Only module); stored as a dispense record. */
+    public const SOURCE_MEDS_ONLY = 'Meds Only';
+
     public const SOURCES = [
         self::SOURCE_DISPENSE_RECORD,
         self::SOURCE_PRESCRIPTION,
         self::SOURCE_CONSULTATION,
+        self::SOURCE_MEDS_ONLY,
     ];
 
     protected $table = 'dispense_history_view';
@@ -66,7 +70,12 @@ class DispenseHistoryEntry extends Model
         return $this->source === self::SOURCE_CONSULTATION;
     }
 
-    /** Only a manual dispense record can be edited or deleted from the history; the other two belong to their own record. */
+    public function isMedsOnly(): bool
+    {
+        return $this->source === self::SOURCE_MEDS_ONLY;
+    }
+
+    /** Only a manual dispense record can be edited or deleted from the history; the others belong to their own record or module. */
     public function isManualDispenseRecord(): bool
     {
         return $this->source === self::SOURCE_DISPENSE_RECORD;
