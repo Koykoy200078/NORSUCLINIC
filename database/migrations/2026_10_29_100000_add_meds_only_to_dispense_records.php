@@ -61,13 +61,12 @@ return new class extends Migration
             return;
         }
 
-        // A record without a patient cannot go back to a column that requires one: those records leave with their columns.
-        $meds = Schema::hasColumn('medicine_bills', 'meds_only') ? DB::table('medicine_bills')->where('meds_only', 1)->pluck('id') : collect();
-        foreach ($meds as $id) {
-            DB::table('sale_medicines')->where('medicine_bill_id', $id)->delete();
-        }
-        if ($meds->isNotEmpty()) {
-            DB::table('medicine_bills')->whereIn('id', $meds)->delete();
+        // A record without a patient cannot go back to a column that requires one, and deleting it here would leave its
+        // stock taken out of the shelf with nothing to explain it (the units only come back through MedsOnlyService::delete).
+        // So the rollback refuses while any Meds Only record exists, as the count-sheet migration does, before it changes anything.
+        if (Schema::hasColumn('medicine_bills', 'meds_only') && DB::table('medicine_bills')->where('meds_only', 1)->exists()) {
+            throw new RuntimeException('Meds Only records exist; this rollback would delete them without returning their stock. '
+                . 'Delete them in Meds Only first (that puts the units back), or keep the migration.');
         }
 
         if ($this->indexExists('idx_medicine_bills_meds_only_date')) {

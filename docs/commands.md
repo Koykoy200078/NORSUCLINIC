@@ -195,7 +195,7 @@ New tables are always InnoDB, whatever the server's default is: `config/database
 
 | Command | What it does | Changes data? |
 |---|---|---|
-| `php artisan db:backup [--force]` | Dumps the database into `storage/app/backups/scheduled` **when you run it** (no longer scheduled; the Backups screen does the same by hand; skipped when nothing changed; keeps every backup of the last 2 days, then one per day for 30 days) | No |
+| `php artisan db:backup [--force]` | Dumps the database into `storage/app/backups/scheduled` **when you run it** (nothing runs it for you: copy the file to another disk; no longer scheduled; the Backups screen does the same by hand; skipped when nothing changed; keeps every backup of the last 2 days, then one per day for 30 days) | No |
 | `php artisan inventory:reconcile` | Read-only stock report: totals vs batches, batches vs ledger, "no expiry" placeholder batches, unlinked stock-in lines. Its stock checks are shared with `db:integrity`. | No |
 | `php artisan text:repair-entities [--apply]` | Decodes `&amp;` / `&lt;` / `&gt;` left in clinical text. **Without `--apply` it only counts.** Take a backup before `--apply`; run `--apply` once. | Only with `--apply` |
 | `php artisan phone:normalize [--apply]` | Stores phone numbers in the Philippine (+63) format. **Without `--apply` it only counts.** Take a backup before `--apply`. | Only with `--apply` |

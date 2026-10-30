@@ -23,7 +23,8 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
   - patients, queue, consultations (`document_issuances`), prescriptions, medicine inventory (FEFO batches + stock ledger), dispensing;
   - lab requests, medical certificates / excuse slips;
   - Report Generation (Accomplishment Report, inventory), Settings.
-- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, scheduled backups, Reverb for real-time updates).
+- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, Reverb for real-time updates). **There is no automatic backup**: it is taken by hand
+  (`php artisan db:backup` or Settings > Backups) before every `migrate` or data change, and a copy belongs on another disk.
   Staff, nurses and doctors use it from **their own devices on the same local network** through a browser.
   - Every link and asset must work from any LAN address (never only `localhost`).
   - The database stays on the server PC.

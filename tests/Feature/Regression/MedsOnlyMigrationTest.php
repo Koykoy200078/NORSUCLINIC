@@ -97,18 +97,42 @@ class MedsOnlyMigrationTest extends TestCase
         $this->assertCount(2, DB::table('medicine_bills')->get());
     }
 
-    public function test_rolling_it_back_removes_only_the_meds_only_records_and_the_new_columns(): void
+    public function test_rolling_it_back_refuses_while_a_meds_only_record_exists_and_changes_nothing(): void
     {
         $migration = $this->loadMigration(self::FILE);
         $migration->up();
         DB::table('medicine_bills')->insert(['history_number' => 'HIS3', 'patient_id' => null, 'model_type' => 'App\\Models\\DispenseRecord',
             'bill_date' => '2026-03-03 00:00:00', 'meds_only' => 1, 'patient_name' => 'Typed Name']);
         DB::table('sale_medicines')->insert([['medicine_bill_id' => 1], ['medicine_bill_id' => 3]]);
+        $columns = $this->columns();
+
+        $refused = false;
+        try {
+            $migration->down();
+        } catch (\RuntimeException $e) {
+            $refused = true;
+            $this->assertStringContainsString('Meds Only records exist', $e->getMessage());
+        }
+        $this->assertTrue($refused, 'the rollback must refuse: it would delete dispense records whose stock was already taken out');
+
+        // Nothing was removed, not a record, not a line, not a column, not the index.
+        $this->assertSame(['HIS1', 'HIS2', 'HIS3'], DB::table('medicine_bills')->orderBy('id')->pluck('history_number')->all());
+        $this->assertSame([1, 3], DB::table('sale_medicines')->orderBy('id')->pluck('medicine_bill_id')->map(fn ($id) => (int) $id)->all());
+        $this->assertSame($columns, $this->columns());
+        $this->assertSame(1, $this->indexCount());
+        $this->assertSame('Typed Name', DB::table('medicine_bills')->where('history_number', 'HIS3')->value('patient_name'));
+    }
+
+    public function test_rolling_it_back_without_any_meds_only_record_removes_only_the_new_columns(): void
+    {
+        $migration = $this->loadMigration(self::FILE);
+        $migration->up();
+        DB::table('sale_medicines')->insert([['medicine_bill_id' => 1], ['medicine_bill_id' => 2]]);
 
         $migration->down();
 
-        $this->assertSame(['HIS1', 'HIS2'], DB::table('medicine_bills')->orderBy('id')->pluck('history_number')->all());
-        $this->assertSame([1], DB::table('sale_medicines')->pluck('medicine_bill_id')->map(fn ($id) => (int) $id)->all(), 'the lines of the removed record go with it');
+        $this->assertSame(['HIS1', 'HIS2'], DB::table('medicine_bills')->orderBy('id')->pluck('history_number')->all(), 'the older records are untouched');
+        $this->assertSame([1, 2], DB::table('sale_medicines')->orderBy('id')->pluck('medicine_bill_id')->map(fn ($id) => (int) $id)->all());
         foreach (['meds_only', 'patient_name', 'college', 'recorded_by'] as $column) {
             $this->assertFalse(Schema::hasColumn('medicine_bills', $column), $column);
         }
