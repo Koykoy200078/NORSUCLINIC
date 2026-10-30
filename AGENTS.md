@@ -23,8 +23,10 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
   - patients, queue, consultations (`document_issuances`), prescriptions, medicine inventory (FEFO batches + stock ledger), dispensing;
   - lab requests, medical certificates / excuse slips;
   - Report Generation (Accomplishment Report, inventory), Settings.
-- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, Reverb for real-time updates). **There is no automatic backup**: it is taken by hand
-  (`php artisan db:backup` or Settings > Backups) before every `migrate` or data change, and a copy belongs on another disk.
+- **Production = one clinic server PC** (WAMP: Apache or `php artisan serve`, MySQL, Reverb for real-time updates). **The database is backed up every day at 6:00 PM Philippine time** by the scheduler that the startup script runs
+  in the server's one terminal (`db:backup --force` into `storage/app/backups/scheduled`; the startup script takes a missed one at the next start). Take one
+  by hand too (`php artisan db:backup` or Settings > Backups) before every `migrate` or data change, and copy the folder to another disk.
+  **Time zone: Philippine time** (Laravel `Asia/Manila`; the database connection is pinned to `+08:00`, an offset on purpose: WAMP's MySQL has no named zones).
   Staff, nurses and doctors use it from **their own devices on the same local network** through a browser.
   - Every link and asset must work from any LAN address (never only `localhost`).
   - The database stays on the server PC.

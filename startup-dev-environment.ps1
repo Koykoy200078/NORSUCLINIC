@@ -5,13 +5,16 @@
 #   1. looks for php and mysql in the Windows PATH (system AND user). When both are there WampServer is NOT needed and
 #      is not opened; when one is missing the script uses WampServer (its php and mysql folders are added to the PATH
 #      of this terminal only) and starts it
-#   2. makes sure MySQL answers, clears and rebuilds the Laravel caches
+#   2. makes sure MySQL answers, clears and rebuilds the Laravel caches, and takes the database backup that was due at 6:00 PM
+#      when the PC was off (or the server was not running) at that hour
 #   3. starts Reverb (real-time updates) in the background of this terminal, its output goes to storage\logs\reverb*.log;
 #      a Reverb that is already there is checked (php artisan realtime:check): one left over from an earlier run with other
 #      settings is replaced, another program on the port is reported. Then it checks that the Windows Firewall lets the other
 #      devices reach the site and Reverb, and prints the one command to run (as administrator) when it does not
-#   4. starts the Laravel scheduler (php artisan schedule:work) the same way: it refreshes the alerts every minute and
-#      syncs the expired stock at night; output in storage\logs\scheduler*.log
+#   4. starts the Laravel scheduler (php artisan schedule:work) the same way: it refreshes the alerts every minute, syncs
+#      the expired stock at midnight and BACKS UP THE DATABASE EVERY DAY AT 6:00 PM PHILIPPINE TIME (Asia/Manila, UTC+8) into
+#      storage\app\backups\scheduled; output in storage\logs\scheduler*.log and backup.log. It lives in this same terminal,
+#      so the backup only runs while this window is open
 #   5. starts the web server on ALL network addresses (0.0.0.0), so the page opens from
 #      http://localhost:8000, http://127.0.0.1:8000 and http://<this PC's current LAN address>:8000
 #   6. opens the page in the DEFAULT browser once the server answers, at the first address that really answers, in this
@@ -23,13 +26,16 @@
 #
 #   .\startup-dev-environment.ps1                start
 #   .\startup-dev-environment.ps1 -NoBrowser     do not open a browser
-#   .\startup-dev-environment.ps1 -CheckOnly     only report what was found (PATH, WampServer, browsers), start nothing
+#   .\startup-dev-environment.ps1 -CheckOnly     only report what was found (PATH, WampServer, browsers, last backup), start nothing
+#   .\startup-dev-environment.ps1 -NoBackup      do not take the missed 6:00 PM backup at the start (the daily one still runs)
 #
-# There is no extra window and no automatic database backup (take one by hand: Settings > Backups or php artisan db:backup).
+# There is no extra window: the web server, Reverb, the scheduler and the backup all live in this one terminal. A backup is
+# also available by hand: Settings > Backups or php artisan db:backup. Copy the backup folder to another disk now and then.
 # ============================================================
 param(
     [switch]$NoBrowser,
     [switch]$CheckOnly,
+    [switch]$NoBackup,     # do not take the 6:00 PM backup that was missed because the PC was off
     [switch]$OpenBrowser   # kept so old shortcuts keep working: the browser opens by default now
 )
 
@@ -40,6 +46,7 @@ $ProjectPath = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $M
 Set-Location $ProjectPath
 
 $AppPort = 8000
+$BackupFolder = Join-Path $ProjectPath 'storage\app\backups\scheduled'
 
 function Write-Step {
     param([string]$Message)
@@ -563,6 +570,64 @@ function Invoke-ArtisanQuiet {
     }
 }
 
+# ------------------------------------------------------------ the daily database backup (6:00 PM Philippine time)
+# The scheduler (app/Console/Kernel.php) takes it while this terminal is open. Philippine time is UTC+8 all year (no daylight
+# saving), so it is worked out from UTC and does not depend on the time zone the Windows clock of this PC is set to.
+function Get-ManilaTime {
+    param([datetime]$Utc = [datetime]::UtcNow)
+    return $Utc.AddHours(8)
+}
+
+# The newest backup of the scheduled folder: [pscustomobject]@{ Name; Manila (its time in Manila); SizeKb }, or $null.
+function Get-LatestBackup {
+    if (-not (Test-Path -LiteralPath $BackupFolder)) { return $null }
+    $file = Get-ChildItem -LiteralPath $BackupFolder -Filter '*.sql' -File -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+    if (-not $file) { return $null }
+    return [pscustomobject]@{ Name = $file.Name; Manila = (Get-ManilaTime -Utc $file.LastWriteTimeUtc); SizeKb = [math]::Round($file.Length / 1KB, 1) }
+}
+
+# The last 6:00 PM (Manila clock) that has passed: today's when it is 6 PM or later, yesterday's before that.
+function Get-LastBackupSlot {
+    param([datetime]$NowManila = (Get-ManilaTime))
+    $slot = $NowManila.Date.AddHours(18)
+    if ($NowManila -lt $slot) { $slot = $slot.AddDays(-1) }
+    return $slot
+}
+
+# True when the 6:00 PM backup that was due has not been taken: there is no backup yet, or the newest one is older than the last 6 PM.
+function Test-BackupMissed {
+    param($Latest, [datetime]$NowManila = (Get-ManilaTime))
+    return (-not $Latest) -or ($Latest.Manila -lt (Get-LastBackupSlot -NowManila $NowManila))
+}
+
+# One line: the newest backup, when it was taken (Philippine time) and how long ago.
+function Write-BackupStatus {
+    $latest = Get-LatestBackup
+    if (-not $latest) {
+        Write-Host '     No backup yet in storage\app\backups\scheduled' -ForegroundColor Yellow
+        return
+    }
+    $age = (Get-ManilaTime) - $latest.Manila
+    $ago = if ($age.TotalHours -lt 48) { '{0} hours ago' -f [math]::Max(0, [math]::Floor($age.TotalHours)) } else { '{0} days ago' -f [math]::Floor($age.TotalDays) }
+    Write-Host ("     Last backup: {0}  ({1:yyyy-MM-dd HH:mm} Philippine time, {2}, {3} KB)" -f $latest.Name, $latest.Manila, $ago, $latest.SizeKb) -ForegroundColor DarkGray
+}
+
+# Take the backup that was due at 6:00 PM when the PC was off (or the server was not running) at that hour. The scheduler never
+# catches up on its own: a PC that is switched off every evening would otherwise never be backed up.
+function Invoke-MissedBackup {
+    if (-not (Test-BackupMissed -Latest (Get-LatestBackup))) { return }
+    Write-Step 'The 6:00 PM database backup was missed (the PC was off, or the server was not running): taking it now'
+    $output = @(& php artisan db:backup --force 2>&1 | ForEach-Object { "$_" })
+    if ($LASTEXITCODE -eq 0) {
+        $created = $output | Where-Object { $_ -match 'Backup created' } | Select-Object -First 1
+        Write-Ok $(if ($created) { $created.Trim() } else { 'Backup taken' })
+    } else {
+        Write-Warn 'The backup could not be taken (is MySQL running?). Try by hand: php artisan db:backup'
+        $output | Select-Object -First 4 | ForEach-Object { Write-Host "     $_" -ForegroundColor DarkYellow }
+    }
+}
+
 Write-Host ''
 Write-Host '  Medical University Clinic - starting the server' -ForegroundColor White
 Write-Host ''
@@ -587,6 +652,9 @@ if ($CheckOnly) {
     foreach ($lan in (Get-LanIPv4)) { Write-Host ("     {0,-6} address           : {1}  ({2})" -f $lan.Kind, $lan.IP, $lan.Alias) }
     Write-Host ("     The browser would open    : " + ((Get-BrowserUrls -Port $AppPort) -join '  then  '))
     Write-Host ("     Something on Reverb port $ReverbPort : " + $(if (Test-PortInUse -Port $ReverbPort) { 'yes (php artisan realtime:check says if it is Reverb)' } else { 'no (the script starts Reverb)' }))
+    Write-Host ("     Philippine time now       : {0:yyyy-MM-dd HH:mm}  (the daily database backup is at 6:00 PM, by the scheduler of this terminal)" -f (Get-ManilaTime))
+    Write-BackupStatus
+    Write-Host ("     6:00 PM backup missed     : " + $(if (Test-BackupMissed -Latest (Get-LatestBackup)) { 'yes (the start would take it now; -NoBackup skips that)' } else { 'no' }))
     Write-Host '     Windows Firewall, for the other devices of the network:'
     Write-FirewallAccess -Access (Get-FirewallAccess -Ports @($AppPort, $ReverbPort) -ProgramPath $phpInPath) -Ports @($AppPort, $ReverbPort)
     exit 0
@@ -681,6 +749,9 @@ foreach ($command in @('cache:clear', 'config:clear', 'route:clear', 'view:clear
 }
 Write-Ok 'Caches ready'
 
+# ------------------------------------------------------------ 3b. the backup that was due at 6:00 PM
+if (-not $NoBackup -and (Test-PortInUse -Port $DbPort)) { Invoke-MissedBackup }
+
 # ------------------------------------------------------------ 4. Reverb (real-time updates), same terminal
 $reverb = $null
 $logDirectory = Join-Path $ProjectPath 'storage\logs'
@@ -740,7 +811,7 @@ try {
 if ($schedulerRunning) {
     Write-Ok 'The scheduler is already running'
 } else {
-    Write-Step 'Scheduler (alerts every minute, expired stock at night)'
+    Write-Step 'Scheduler (alerts every minute, expired stock at midnight, database backup every day at 6:00 PM Philippine time)'
     $scheduler = Start-Process -FilePath 'php' -ArgumentList 'artisan', 'schedule:work' -WorkingDirectory $ProjectPath `
         -NoNewWindow -PassThru `
         -RedirectStandardOutput (Join-Path $logDirectory 'scheduler.log') -RedirectStandardError (Join-Path $logDirectory 'scheduler-error.log')
@@ -752,6 +823,7 @@ if ($schedulerRunning) {
         Write-Ok 'Scheduler is running (output: storage\logs\scheduler.log)'
     }
 }
+Write-BackupStatus
 
 # ------------------------------------------------------------ 6. browser (asked before the server takes over the terminal)
 $browserPath = $false
@@ -775,6 +847,7 @@ Write-Host "  Other devices need inbound TCP $AppPort and $ReverbPort allowed in
 if ($browserPath -ne $false) {
     Write-Host ("  The browser opens the first of these that answers: " + ($browserUrls -join '  then  ')) -ForegroundColor DarkGray
 }
+Write-Host '  The database is backed up every day at 6:00 PM Philippine time while this window is open (storage\app\backups\scheduled).' -ForegroundColor DarkGray
 Write-Host '  Ctrl+C stops the server, Reverb and the scheduler.' -ForegroundColor DarkGray
 Write-Host ''
 

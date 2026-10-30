@@ -21,6 +21,12 @@ Backup & Restore
                         </form>
                     </div>
                     <div class="card-body">
+                        <p class="text-muted small mb-6">
+                            <i class="fas fa-clock me-1 text-primary"></i>
+                            A backup is taken automatically every day at 6:00 PM Philippine time while the server window is open
+                            (marked <span class="badge bg-info text-dark">Scheduled</span> below; a day's backup missed because the PC was off is taken
+                            when the server is started). The files are on this PC: copy them to another disk or USB stick now and then.
+                        </p>
                         <div class="row mb-10">
                             <div class="col-md-6">
                                 <div class="p-5 border rounded bg-light">

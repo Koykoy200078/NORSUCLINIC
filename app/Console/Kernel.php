@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,9 +14,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // Nothing here runs by itself: the startup script (startup-dev-environment.ps1 / .bat) starts
-        // `php artisan schedule:work` in its own terminal, so the tasks run while the server is up. No Windows Task
-        // Scheduler entry is used. There is no automatic database backup: take one by hand (Settings > Backups or
-        // `php artisan db:backup`).
+        // `php artisan schedule:work` in the SAME terminal as the server, so the tasks run while the server is up. No Windows
+        // Task Scheduler entry and no extra window is used. Times are Philippine time (config/app.php: Asia/Manila).
         $schedule->command('notifications:refresh')->everyMinute()->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/notifications.log'));
 
@@ -26,6 +26,19 @@ class Kernel extends ConsoleKernel
             ->dailyAt('00:05')
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/inventory.log'));
+
+        // The daily backup of the database, every day at 6:00 PM Philippine time (the time is named here on purpose, so it
+        // stays 6 PM in Manila whatever the application's own zone is). --force: a dump every day even when nothing changed,
+        // so there is always one of the day and the startup script can tell how old the last one is. It goes to
+        // storage/app/backups/scheduled (the Backups screen lists it); db:backup keeps every dump of the last 2 days and one per
+        // day for 30 days. It only runs while the server is running: when the PC is off at 6 PM the startup script takes the
+        // missed one at the next start. Copy the folder to another disk now and then: the dump is on the same PC as the data.
+        $schedule->command('db:backup', ['--force'])
+            ->dailyAt('18:00')
+            ->timezone('Asia/Manila')
+            ->withoutOverlapping(30)
+            ->appendOutputTo(storage_path('logs/backup.log'))
+            ->onFailure(fn () => Log::error('The scheduled database backup failed: see storage/logs/backup.log. Take one by hand: php artisan db:backup'));
     }
 
     /**

@@ -24,7 +24,7 @@ class DatabaseBackup extends Command
      *
      * @var string
      */
-    protected $description = 'Create a consistent MySQL/MariaDB backup in storage/app/backups/scheduled (skipped when nothing changed)';
+    protected $description = 'Create a consistent MySQL/MariaDB backup in storage/app/backups/scheduled (the scheduler runs it with --force every day at 6:00 PM Philippine time; without --force it is skipped when nothing changed)';
 
     public function handle(DatabaseBackupService $backups): int
     {

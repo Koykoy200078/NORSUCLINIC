@@ -11,6 +11,9 @@ REM
 REM   startup-dev-environment.bat              start
 REM   startup-dev-environment.bat -NoBrowser   do not open a browser
 REM   startup-dev-environment.bat -CheckOnly   only report what was found, start nothing
+REM   startup-dev-environment.bat -NoBackup    do not take the missed 6:00 PM backup at the start
+REM
+REM The scheduler (alerts, expired stock) and the DATABASE BACKUP at 6:00 PM Philippine time live in this same window too.
 REM ============================================================
 
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0startup-dev-environment.ps1" %*

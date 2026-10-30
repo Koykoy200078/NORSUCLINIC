@@ -75,6 +75,11 @@ return [
             // Every new table is InnoDB (foreign keys, transactions, row locks) whatever the server's default engine
             // is: the clinic's WAMP server defaulted to MyISAM, so its tables had none of those.
             'engine' => env('DB_ENGINE', 'InnoDB'),
+            // The database speaks Philippine time, as Laravel does (config/app.php: Asia/Manila, UTC+8 all year, no daylight
+            // saving), whatever time zone the Windows clock of the server PC is set to: NOW(), CURRENT_TIMESTAMP and every
+            // TIMESTAMP column are converted by it. An OFFSET, not the name "Asia/Manila": WAMP's MySQL has no named time zone
+            // tables loaded, so the name would make every connection fail ("Unknown or incorrect time zone").
+            'timezone' => env('DB_TIMEZONE', '+08:00'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
