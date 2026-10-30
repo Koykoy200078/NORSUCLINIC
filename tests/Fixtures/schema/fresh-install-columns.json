@@ -1,0 +1,5618 @@
+{
+    "activity_logs.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.user_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.user_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.action": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.subject_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.subject_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.description": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.date": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.patient_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.patient_age": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.patient_gender": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.college": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.address": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.contact_number": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.complaints": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.diagnosis": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.informant": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.consult_mode": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.course_section": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.properties": {
+        "type": "json",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.ip_address": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.user_agent": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "activity_logs.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "activity_logs.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.owner_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.owner_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "addresses.address1": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "addresses.address2": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "addresses.country_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.state_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.city_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.barangay_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.postal_code": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "addresses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "addresses.merged_from_patient_id": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "barangays.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "barangays.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "barangays.city_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "barangays.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "barangays.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "campuses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "campuses.campus_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "campuses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "campuses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.name": {
+        "type": "varchar(160)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "categories.is_active": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.merged_into_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.merged_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "categories.merged_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "cities.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "cities.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "cities.type": {
+        "type": "enum('city','municipality')",
+        "nullable": "NO",
+        "default": "city",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "cities.state_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "cities.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "cities.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "clinic_stations.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "clinic_stations.code": {
+        "type": "varchar(60)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "clinic_stations.name": {
+        "type": "varchar(120)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "clinic_stations.description": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "clinic_stations.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "clinic_stations.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "colleges.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "colleges.college_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "colleges.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "colleges.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_illnesses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_illnesses.document_issuance_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_illnesses.illness_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_illnesses.other_text": {
+        "type": "varchar(150)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "consultation_illnesses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_illnesses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.request_document_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.dosage": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "consultation_medicines.quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.used_for": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "consultation_medicines.dosage_instructions": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "consultation_medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_services.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_services.document_issuance_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_services.service_type_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_services.other_text": {
+        "type": "varchar(150)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "consultation_services.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "consultation_services.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "countries.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "countries.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "countries.short_code": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "countries.phone_code": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "countries.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "countries.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "courses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "courses.course_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "courses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "courses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "departments.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "departments.department_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "departments.college_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "departments.description": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "departments.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "departments.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "diagnoses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "diagnoses.diagnoses": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "diagnoses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "diagnoses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.id": {
+        "type": "varchar(21)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.source": {
+        "type": "varchar(15)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.record_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.history_number": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.dispensed_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.patient_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.patient_name": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.patient_email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.doctor_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.given_by": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.given_by_email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "dispense_history_view.quantity": {
+        "type": "bigint",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "dispense_history_view.used_for": {
+        "type": "mediumtext",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "doctor_specialization.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "doctor_specialization.doctor_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctor_specialization.specialization_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctor_specialization.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctor_specialization.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctors.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "doctors.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctors.experience": {
+        "type": "double",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctors.prc_license_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "doctors.ptr_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "doctors.s2_license_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "doctors.consultation_hours": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "doctors.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "doctors.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.document_creator_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.age": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.gender": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.status": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.date_of_birth": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.address": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.religion": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.patient_contact": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.campus": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.college": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.course": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.year_level": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.patient_type_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.office_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.department_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.year_level_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.course_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.college_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.campus_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.informant": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.emergency_contact": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.requested_at": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.complaints": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.note": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.covid_vaccination": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.comorbidities": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.allergies": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.admissions_surgeries": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.maintenance": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.pregnancy_status": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.lmp_aog": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_bp": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_pr": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_temp": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_rr": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_o2_sat": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_height": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.vital_signs_weight": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.pertinent_exam": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.assessment": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.plan": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.document_type": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.consult_mode": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.nursing_intervention": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.nursing_incharged_id": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.examined_on": {
+        "type": "varchar(255)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.request_of": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.complaints_diagnosis": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.medical_cert_remarks": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.subjects": {
+        "type": "json",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.doc_lic_no": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.doc_prt_no": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "document_issuances.consultation_images": {
+        "type": "json",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "document_issuances.deleted_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "enquiries.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "enquiries.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "enquiries.email": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "enquiries.phone": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "enquiries.subject": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "enquiries.message": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "enquiries.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "enquiries.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "enquiries.view": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "enquiries.country_code": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "failed_jobs.uuid": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.connection": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.queue": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.payload": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.exception": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "failed_jobs.failed_at": {
+        "type": "timestamp",
+        "nullable": "NO",
+        "default": "CURRENT_TIMESTAMP",
+        "extra": "DEFAULT_GENERATED",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.name": {
+        "type": "varchar(160)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "generics.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.merged_into_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.merged_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "generics.merged_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "guests.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "guests.first_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.last_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.contact": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.purpose": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.address": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "guests.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "guests.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illness_systems.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "illness_systems.name": {
+        "type": "varchar(100)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "illness_systems.sort_order": {
+        "type": "smallint unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illness_systems.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illness_systems.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.illness_system_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.group_label": {
+        "type": "varchar(120)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "illnesses.name": {
+        "type": "varchar(150)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "illnesses.is_other": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.sort_order": {
+        "type": "smallint unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.is_active": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "illnesses.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "insurance_providers.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "insurance_providers.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "insurance_providers.contact_no": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "insurance_providers.email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "insurance_providers.website": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "insurance_providers.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "insurance_providers.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.inventory_count_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.medicine_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_count_lines.strength": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_count_lines.unit": {
+        "type": "varchar(50)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_count_lines.system_quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.counted_quantity": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.difference": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.reason": {
+        "type": "varchar(30)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_count_lines.note": {
+        "type": "varchar(500)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_count_lines.adjusted_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.adjusted_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.adjusted_audit_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_count_lines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.year": {
+        "type": "smallint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.quarter": {
+        "type": "tinyint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.scope": {
+        "type": "varchar(10)",
+        "nullable": "NO",
+        "default": "all",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_counts.counted_on": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.status": {
+        "type": "varchar(12)",
+        "nullable": "NO",
+        "default": "draft",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_counts.notes": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "inventory_counts.created_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.finalized_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.finalized_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "inventory_counts.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_request_items.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_request_items.lab_request_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_request_items.lab_test_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_request_items.test_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.test_category": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.unit": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.normal_range": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.result_value": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.result_status": {
+        "type": "enum('pending','normal','abnormal','critical')",
+        "nullable": "NO",
+        "default": "pending",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.notes": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_request_items.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_request_items.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.request_number": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.document_creator_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.patient_user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.patient_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.patient_age": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.patient_gender": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.patient_dob": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.patient_contact": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.address": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.campus": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.college": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.course": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.year_level": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.department": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.office": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.status_affiliation": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.requested_at": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.clinical_indication": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.remarks": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.status": {
+        "type": "enum('pending','collected','processing','completed','cancelled','referred','rejected')",
+        "nullable": "NO",
+        "default": "pending",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.collected_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.processed_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.completed_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.cancelled_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.referred_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.rejected_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.status_note": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.requesting_physician": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.physician_license_no": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_requests.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_requests.deleted_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_tests.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_tests.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_tests.category": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": "Laboratory",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_tests.unit": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_tests.normal_range": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "lab_tests.is_active": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_tests.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "lab_tests.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "media.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "media.model_type": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.model_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "media.uuid": {
+        "type": "char(36)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.collection_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.file_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.mime_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.disk": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.conversions_disk": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.size": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "media.manipulations": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.custom_properties": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.generated_conversions": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.responsive_images": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "media.order_column": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "media.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "media.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_availabilities.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_availabilities.availability_no": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_availabilities.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_availabilities.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.batch_number": {
+        "type": "varchar(100)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_batches.dosage": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_batches.quantity": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.manufacturing_date": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.expiration_date": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.supplier_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_batches.unit_cost": {
+        "type": "decimal(8,2)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.date_received": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_batches.original_batch_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.history_number": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.patient_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.doctor_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.model_type": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.model_id": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.note": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.bill_date": {
+        "type": "datetime",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.meds_only": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.patient_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.campus_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.college_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.course_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.year_level_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.patient_type_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.recorded_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_bills.campus": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.college": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.course": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_bills.year_level": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_transactions.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.batch_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.transaction_type": {
+        "type": "enum('stock_in','dispense','adjustment','disposal')",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_transactions.quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.balance_after": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.reference_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_transactions.reference_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.remarks": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicine_transactions.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicine_transactions.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.category_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.generic_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.generic_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.brand_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.category": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.category_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.dosage": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.uom": {
+        "type": "varchar(50)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.sku": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.reorder_level": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.baseline_quantity": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.available_quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.minimum_stock_alert": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": "Minimum quantity threshold for stock alert"
+    },
+    "medicines.stock_alert_percentage": {
+        "type": "decimal(5,2)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": "Percentage threshold for stock alert (e.g., 20 for 20%)"
+    },
+    "medicines.salt_composition": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.description": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.side_effects": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.merged_into_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.merged_at": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "medicines.merged_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "migrations.id": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "migrations.migration": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "migrations.batch": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "model_has_permissions.permission_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "model_has_permissions.model_type": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "model_has_permissions.model_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "model_has_roles.role_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "model_has_roles.model_type": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "model_has_roles.model_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.title": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "notifications.type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "notifications.read_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.event_key": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "notifications.module": {
+        "type": "varchar(40)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "notifications.alert_details": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "notifications.target_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "notifications.resolved_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "offices.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "offices.office_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "offices.description": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "offices.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "offices.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "password_reset_tokens.email": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "password_reset_tokens.token": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "password_reset_tokens.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.patient_id": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.added_by": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.room_number": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patient_queues.is_priority": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.status": {
+        "type": "enum('waiting','in_progress','completed','cancelled')",
+        "nullable": "NO",
+        "default": "waiting",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patient_queues.notes": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patient_queues.latest_consultation_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.has_consultation_attachment": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.called_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.completed_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.scheduled_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.ticket_date": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_queues.ticket_number": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_types.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_types.code": {
+        "type": "varchar(50)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patient_types.name": {
+        "type": "varchar(100)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patient_types.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patient_types.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.id": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.patient_unique_id": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.patient_type_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.allergies": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.comorbidities": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.admissions_surgeries": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.maintenance": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.covid_vaccination": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.immunization_record": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.insurance_provider_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.insurance_policy_number": {
+        "type": "varchar(120)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.primary_care_physician_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.primary_care_physician_contact": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.primary_care_physician_email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "patients.archived_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.merged_into_id": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.merged_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "patients.merged_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "permissions.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "permissions.name": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "permissions.display_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "permissions.guard_name": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "permissions.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "permissions.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.patient_id": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.doctor_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.doctor_license_s2_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.consultation_date": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.icd10_diagnosis_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.food_allergies": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.tendency_bleed": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.heart_disease": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.high_blood_pressure": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.diabetic": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.current_medication": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.female_pregnancy": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.breast_feeding": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.health_insurance": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.low_income": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.reference": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.is_active": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.status": {
+        "type": "enum('pending','dispensed','cancelled')",
+        "nullable": "NO",
+        "default": "pending",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.dispensed_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.dispensed_by": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.plus_rate": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.temperature": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.problem_description": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.test": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.advice": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.next_visit_days": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.weight_kg": {
+        "type": "decimal(8,2)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.pulse_rate": {
+        "type": "varchar(50)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.body_temperature": {
+        "type": "decimal(4,1)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.blood_pressure": {
+        "type": "varchar(50)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions.height_cm": {
+        "type": "decimal(8,2)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.prescription_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.medicine": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.dosage": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.route_of_administration": {
+        "type": "varchar(50)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.frequency": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.duration_value": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.duration_unit": {
+        "type": "varchar(20)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.total_quantity": {
+        "type": "int unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.instructions": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.day": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.dose_interval": {
+        "type": "int",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.time": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.comment": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "prescriptions_medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "prescriptions_medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.medicine_availabilities_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.batch_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.dosage": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "purchased_medicines.expiry_date": {
+        "type": "varchar(20)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "purchased_medicines.manufacturing_date": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "purchased_medicines.quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "purchased_medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "qualifications.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "qualifications.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "qualifications.degree": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "qualifications.university": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "qualifications.year": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "qualifications.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "qualifications.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "queue_ticket_sequences.ticket_date": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "queue_ticket_sequences.last_number": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "role_has_permissions.permission_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "role_has_permissions.role_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "roles.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "roles.name": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "roles.display_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "roles.is_default": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "roles.guard_name": {
+        "type": "varchar(125)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "roles.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "roles.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.medicine_bill_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.dosage": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sale_medicines.sale_quantity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.expiry_date": {
+        "type": "datetime",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sale_medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.category": {
+        "type": "varchar(30)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "service_types.name": {
+        "type": "varchar(150)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "service_types.auto_rule": {
+        "type": "varchar(40)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "service_types.is_other": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.sort_order": {
+        "type": "smallint unsigned",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.is_active": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "service_types.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sessions.id": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sessions.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sessions.ip_address": {
+        "type": "varchar(45)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sessions.user_agent": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sessions.payload": {
+        "type": "longtext",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sessions.last_activity": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "settings.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "settings.key": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "settings.value": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "settings.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "settings.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sliders.id": {
+        "type": "int unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "sliders.title": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sliders.short_description": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "sliders.is_default": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sliders.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "sliders.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "specializations.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "specializations.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "specializations.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "specializations.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_designations.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_designations.code": {
+        "type": "varchar(60)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "staff_designations.name": {
+        "type": "varchar(120)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "staff_designations.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_designations.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.user_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.role_designation_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.assigned_station_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.shift_schedule": {
+        "type": "text",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "staff_profiles.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "staff_profiles.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "states.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "states.name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "states.country_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "states.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "states.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "subscribes.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "subscribes.email": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "subscribes.subscribe": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "subscribes.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "subscribes.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.stock_used": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.model_id": {
+        "type": "int",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.model_type": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines_view.id": {
+        "type": "varchar(21)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.medicine_id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines_view.medicine_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.dosage": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.quantity": {
+        "type": "bigint",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines_view.source": {
+        "type": "varchar(26)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.patient_name": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.nurse_incharged": {
+        "type": "text",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.used_for": {
+        "type": "varchar(3)",
+        "nullable": "NO",
+        "default": "",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "used_medicines_view.expiry_date": {
+        "type": "date",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "used_medicines_view.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "users.first_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.middle_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.last_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.email": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.contact": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.emergency_contact_name": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.emergency_contact_no": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.emergency_relationship": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.dob": {
+        "type": "date",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.gender": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.nationality_citizenship": {
+        "type": "varchar(120)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.status": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.language": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": "en",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.email_verified_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.password": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.type": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.blood_type": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.country_code": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.university_id_number": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.employee_id": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.campus_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.college_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.course_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.year_level_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.vaccination_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.office_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.department_id": {
+        "type": "int",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.remember_token": {
+        "type": "varchar(100)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.email_notification": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "1",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.time_zone": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": "Asia/Manila",
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "users.dark_mode": {
+        "type": "tinyint(1)",
+        "nullable": "NO",
+        "default": "0",
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "users.archived_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "vaccinations.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "vaccinations.vaccination_status": {
+        "type": "varchar(191)",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "vaccinations.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "vaccinations.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "year_levels.id": {
+        "type": "bigint unsigned",
+        "nullable": "NO",
+        "default": null,
+        "extra": "auto_increment",
+        "collation": null,
+        "comment": ""
+    },
+    "year_levels.year_level_name": {
+        "type": "varchar(191)",
+        "nullable": "NO",
+        "default": null,
+        "extra": "",
+        "collation": "utf8mb4_unicode_ci",
+        "comment": ""
+    },
+    "year_levels.created_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    },
+    "year_levels.updated_at": {
+        "type": "timestamp",
+        "nullable": "YES",
+        "default": null,
+        "extra": "",
+        "collation": null,
+        "comment": ""
+    }
+}
