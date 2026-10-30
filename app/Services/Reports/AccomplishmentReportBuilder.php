@@ -35,6 +35,12 @@ use Illuminate\Support\Collection;
  * column; names that differ only by case, extra spaces or end punctuation are one sub-row (OtherName). The sub-rows add
  * up to the "Others" row, which is what the section and grand totals count, so they are never counted twice.
  *
+ * Under the services comes one more line of its own, "Medicine only (no consultation)": the patients who only came for medicine
+ * (Meds Only records). It counts one per visit, in the same columns (by the college, F&S, Guest, Unspecified or quarter of the
+ * record, by its date), follows the filters that fit such a record (ReportQueries::medsOnlyFiltered), is left out when a filter
+ * that cannot match it is on or when nobody took medicine only in the selection, and is never part of the consultation, illness
+ * or service totals.
+ *
  * The result is plain arrays so the screen, the PDF, the Excel file and the CSV all render the same data.
  */
 final class AccomplishmentReportBuilder
@@ -47,6 +53,9 @@ final class AccomplishmentReportBuilder
 
     /** The sub-row of an "Others" line for consultations saved without a name (saved before the name was required). */
     public const NO_NAME = '(no name given)';
+
+    /** The name of the extra line for the patients who only took medicine. */
+    public const MEDICINE_ONLY = 'Medicine only (no consultation)';
 
     /**
      * @return array<string, mixed>
@@ -76,6 +85,7 @@ final class AccomplishmentReportBuilder
 
         $illnessTotals = $this->sumRows(collect($illnessSections)->pluck('counts'));
         $serviceTotals = $this->sumRows(collect($serviceSections)->pluck('counts'));
+        $medicineOnly = $this->medicineOnly($filters, $known, $yearly);
 
         if (! $yearly) {
             $columns[] = ['key' => self::FACULTY_STAFF, 'label' => 'F&S', 'name' => 'Faculty and staff'];
@@ -84,7 +94,7 @@ final class AccomplishmentReportBuilder
             $columns[] = ['key' => self::GUEST, 'label' => 'Guest', 'name' => 'Guests and others'];
 
             // Visits whose college was not recorded only get a column when the report has someone in it.
-            if (($illnessTotals[self::UNSPECIFIED] ?? 0) + ($serviceTotals[self::UNSPECIFIED] ?? 0) > 0) {
+            if (($illnessTotals[self::UNSPECIFIED] ?? 0) + ($serviceTotals[self::UNSPECIFIED] ?? 0) + ($medicineOnly['counts'][self::UNSPECIFIED] ?? 0) > 0) {
                 $columns[] = ['key' => self::UNSPECIFIED, 'label' => 'Unspecified', 'name' => 'College not recorded'];
             }
         }
@@ -100,6 +110,7 @@ final class AccomplishmentReportBuilder
             'illness_total' => $this->total($illnessTotals),
             'service_sections' => $serviceSections,
             'service_total' => $this->total($serviceTotals),
+            'medicine_only' => $medicineOnly,
             'consultations' => $consultations,
             'unclassified' => $this->base($filters)->whereRaw('NOT ' . ServiceRules::hasIllness())->count(),
             'period' => $yearly ? 'for the year ' . $filters->year : $this->periodLabel($filters),
@@ -224,6 +235,67 @@ final class AccomplishmentReportBuilder
         }
 
         return $counts;
+    }
+
+    /**
+     * The "Medicine only (no consultation)" line: how many Meds Only visits there were per column, or null when the line is not
+     * shown (a filter that cannot match such a visit is on, or nobody took medicine only in the selection).
+     *
+     * @param  array<string, true>  $known  column keys that exist
+     * @return array{name: string, counts: array<string, int>, total: int}|null
+     */
+    private function medicineOnly(ReportFilters $filters, array $known, bool $yearly): ?array
+    {
+        if ($this->medicineOnlyCannotMatch($filters)) {
+            return null;
+        }
+
+        $rows = ReportQueries::medsOnlyFiltered($filters)->toBase()
+            ->selectRaw($this->medicineOnlyBucketSql($yearly) . ' as bucket, COUNT(*) as total')
+            ->groupBy('bucket')
+            ->get();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            // A college that is no longer in the list is shown under Unspecified rather than disappearing.
+            $bucket = isset($known[$row->bucket]) ? $row->bucket : self::UNSPECIFIED;
+            $counts[$bucket] = ($counts[$bucket] ?? 0) + (int) $row->total;
+        }
+
+        if ($counts === []) {
+            return null;
+        }
+
+        return ['name' => self::MEDICINE_ONLY, 'counts' => $counts, 'total' => array_sum($counts)];
+    }
+
+    /**
+     * Filters on something a Meds Only record does not have (an illness, a service, pregnancy, a chronic condition, age, gender,
+     * a department or office, the nurse, a virtual consultation): the line is left out rather than shown for people it does not describe.
+     */
+    private function medicineOnlyCannotMatch(ReportFilters $filters): bool
+    {
+        return $filters->illnessSystemId !== null || $filters->illnessId !== null || $filters->unclassified
+            || $filters->serviceId !== null || $filters->staffId !== null || $filters->ageGroup !== null || $filters->gender !== null
+            || $filters->departmentId !== null || $filters->officeId !== null
+            || $filters->pregnancy !== 'all' || $filters->chronic !== 'all' || $filters->chronicText !== null
+            // Somebody who comes for medicine is seen at the clinic; walk-in and all are the same for this line.
+            || $filters->consultMode === 'virtual';
+    }
+
+    /** The column of a Meds Only visit: the same rule as a consultation, from the patient type and college of the record. */
+    private function medicineOnlyBucketSql(bool $yearly): string
+    {
+        if ($yearly) {
+            return "CONCAT('q', QUARTER(medicine_bills.bill_date))";
+        }
+
+        $type = '(SELECT LOWER(TRIM(meds_only_type.code)) FROM patient_types AS meds_only_type WHERE meds_only_type.id = medicine_bills.patient_type_id)';
+
+        return "CASE WHEN {$type} IN ('faculty', 'staff') THEN '" . self::FACULTY_STAFF . "'"
+            . " WHEN {$type} = 'guest' THEN '" . self::GUEST . "'"
+            . " WHEN medicine_bills.college_id IS NOT NULL THEN CONCAT('c', medicine_bills.college_id)"
+            . " ELSE '" . self::UNSPECIFIED . "' END";
     }
 
     /**

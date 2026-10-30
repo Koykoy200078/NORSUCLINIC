@@ -60,6 +60,12 @@
                         </a>
                     </li>
                     <li class="nav-item position-relative">
+                        <a class="nav-link text-active-primary py-4 {{ $tab === 'meds_only' ? 'active' : '' }}"
+                           href="javascript:void(0)" wire:click="setTab('meds_only')">
+                           <i class="fas fa-hand-holding-medical me-2"></i>Meds Only
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'appointments' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('appointments')">
                            <i class="fas fa-calendar-check me-2"></i>Schedules
@@ -130,7 +136,7 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Search Keywords</label>
                             <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm"
-                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : ($tab === 'visits' ? 'Patient name, complaint, illness...' : ($tab === 'dispensing' ? 'Medicine, generic, brand, category, batch, patient...' : 'Name, Description, Keywords...')) }}">
+                                placeholder="{{ $tab === 'inventory' ? 'Medicine name, Category...' : ($tab === 'visits' ? ($mixedVisits ? 'Patient name, complaint, illness, drug...' : 'Patient name, complaint, illness...') : ($tab === 'dispensing' ? 'Medicine, generic, brand, category, batch, patient...' : ($tab === 'meds_only' ? 'Name, college, course, drug (name, generic, brand)...' : 'Name, Description, Keywords...'))) }}">
                         </div>
                         @endif
 
@@ -191,6 +197,43 @@
                             </button>
                         </div>
 
+                        @if($tab === 'meds_only')
+                        <div class="col-12" x-data="{ open: false }">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <span class="fw-bold me-1">Period:</span>
+                                <button type="button" wire:click="setPeriod('this_month')" class="btn btn-sm btn-light">This month</button>
+                                <button type="button" wire:click="setPeriod('last_month')" class="btn btn-sm btn-light">Last month</button>
+                                <button type="button" wire:click="setPeriod('this_year')" class="btn btn-sm btn-light">This year</button>
+                                <button type="button" wire:click="setPeriod('last_year')" class="btn btn-sm btn-light">Last year</button>
+                                <input type="month" wire:model.live="month" class="form-control form-control-sm w-auto" title="Pick a month" aria-label="Pick a month">
+                                <button type="button" class="btn btn-sm btn-outline-primary ms-md-auto" @click="open = !open">
+                                    <i class="fas fa-filter"></i> Filters
+                                    @if($activeFilters > 0)<span class="badge bg-primary ms-1">{{ $activeFilters }}</span>@endif
+                                </button>
+                            </div>
+                            <div x-show="open" x-cloak class="row g-3 mt-1">
+                                @foreach([
+                                    ['campus_id', 'Campus', $choices['campuses'], 'All campuses'],
+                                    ['college_id', 'College', $choices['colleges'], 'All colleges'],
+                                    ['course_id', 'Course', $choices['courses'], 'All courses'],
+                                    ['year_level_id', 'Year level', $choices['yearLevels'], 'All year levels'],
+                                    ['patient_type_id', 'Patient type', $choices['patientTypes'], 'All types'],
+                                    ['medicine_id', 'Medicine given', $choices['medicines'], 'Any medicine'],
+                                ] as [$model, $label, $options, $any])
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">{{ $label }}</label>
+                                    <select wire:model.live="{{ $model }}" class="form-select form-select-sm">
+                                        <option value="">{{ $any }}</option>
+                                        @foreach($options as $optionId => $optionName)
+                                        <option value="{{ $optionId }}">{{ $optionName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
                         @if(in_array($tab, ['visits', 'accomplishment'], true))
                         @php
                             $selects = [
@@ -204,6 +247,10 @@
                                 ['medicine_id', 'Medicine given', $choices['medicines'], 'Any medicine'],
                                 ['staff_id', 'Nurse in charge / encoder', $choices['staffMembers'], 'Anyone'],
                             ];
+                            // Meds only and All list both kinds of visit: only the filters both have stay (the rest describe a consultation).
+                            if ($mixedVisits) {
+                                $selects = array_values(array_filter($selects, fn ($select) => ! in_array($select[0], ['department_id', 'office_id', 'staff_id'], true)));
+                            }
                         @endphp
                         <div class="col-12" x-data="{ open: false }">
                             <div class="d-flex flex-wrap gap-2 align-items-center">
@@ -222,6 +269,16 @@
                             </div>
 
                             <div x-show="open" x-cloak class="row g-3 mt-1">
+                                @if($tab === 'visits')
+                                <div class="col-md-3 col-lg-2">
+                                    <label class="form-label fw-bold fs-7">Visit type</label>
+                                    <select wire:model.live="visit_type" class="form-select form-select-sm">
+                                        <option value="consultations">Consultations</option>
+                                        <option value="meds_only">Meds only</option>
+                                        <option value="all">All visits</option>
+                                    </select>
+                                </div>
+                                @endif
                                 @foreach($selects as [$model, $label, $options, $any])
                                 <div class="col-md-3 col-lg-2">
                                     <label class="form-label fw-bold fs-7">{{ $label }}</label>
@@ -234,6 +291,7 @@
                                 </div>
                                 @endforeach
 
+                                @unless($mixedVisits)
                                 <div class="col-md-3 col-lg-2">
                                     <label class="form-label fw-bold fs-7">Gender</label>
                                     <select wire:model.live="gender" class="form-select form-select-sm">
@@ -315,6 +373,7 @@
                                     <label class="form-label fw-bold fs-7">Chronic condition contains</label>
                                     <input type="text" wire:model.live.debounce.400ms="chronic_text" class="form-control form-control-sm" placeholder="e.g. hypertension" maxlength="100">
                                 </div>
+                                @endunless
                             </div>
                         </div>
                         @endif

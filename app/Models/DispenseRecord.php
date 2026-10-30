@@ -72,6 +72,12 @@ class DispenseRecord extends Model
         return $this->belongsTo(User::class, 'recorded_by')->withTrashed();
     }
 
+    /** The patient type (Student, Faculty ...) a Meds Only record was made for. */
+    public function patientType(): BelongsTo
+    {
+        return $this->belongsTo(PatientType::class, 'patient_type_id');
+    }
+
     /** Null for a Meds Only record of a person who is not registered. */
     public function patient(): BelongsTo
     {

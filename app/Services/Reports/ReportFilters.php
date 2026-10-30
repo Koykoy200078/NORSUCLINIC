@@ -21,6 +21,9 @@ final class ReportFilters
 
     public const GENDERS = ['Male', 'Female'];
 
+    /** The "Visit type" of the Patient Visits tab; the first one is the default. */
+    public const VISIT_TYPES = ['consultations', 'meds_only', 'all'];
+
     /** key => [label, youngest, oldest] (an age is whole years on the day of the visit) */
     public const AGE_GROUPS = [
         'child' => ['Child (0-12)', 0, 12],
@@ -76,6 +79,8 @@ final class ReportFilters
         public ?string $chronicText = null,
         /** The yearly Accomplishment Report (Q1-Q4 and the year total) for this year; null = the by-college report. */
         public ?int $year = null,
+        /** Patient Visits: consultations (the default), the patients who only took medicine, or both in one list. */
+        public string $visitType = 'consultations',
     ) {
     }
 
@@ -122,6 +127,7 @@ final class ReportFilters
             chronic: self::choice($input['chronic'] ?? null, self::CHRONIC),
             chronicText: self::text($input['chronic_text'] ?? null),
             year: self::year($input['year'] ?? null),
+            visitType: self::choice($input['visit_type'] ?? null, self::VISIT_TYPES),
         );
     }
 
@@ -145,6 +151,7 @@ final class ReportFilters
             'action' => $this->action !== 'all' ? $this->action : null,
             'status' => $this->status !== 'all' ? $this->status : null,
             'year' => $this->year,
+            'visit_type' => $this->visitType !== self::VISIT_TYPES[0] ? $this->visitType : null,
         ];
 
         foreach (self::ID_FILTERS as $key => $property) {
@@ -170,11 +177,35 @@ final class ReportFilters
     /** How many of the patient / visit filters are switched on (the Filters button shows this number). */
     public function activeConsultationFilters(): int
     {
-        $query = $this->toQuery();
+        // Outside Consultations the clinical filters are switched off, so they are not counted either.
+        $query = $this->forVisitType()->toQuery();
 
         return count(array_intersect_key($query, array_flip([
-            ...array_keys(self::ID_FILTERS), 'gender', 'consult_mode', 'age_group', 'pregnancy', 'chronic', 'chronic_text',
+            ...array_keys(self::ID_FILTERS), 'gender', 'consult_mode', 'age_group', 'pregnancy', 'chronic', 'chronic_text', 'visit_type',
         ])));
+    }
+
+    /**
+     * The filters as the Patient Visits list applies them: for Consultations all of them; for Meds only and All the ones both kinds of
+     * visit have (dates, campus, college, course, year level, patient type, medicine, the word search) - the illness, service, nurse,
+     * pregnancy, chronic, age, gender, department, office and walk-in / virtual filters describe a consultation and are cleared.
+     */
+    public function forVisitType(): self
+    {
+        if ($this->visitType === self::VISIT_TYPES[0]) {
+            return $this;
+        }
+
+        $common = clone $this;
+        foreach (['illnessSystemId', 'illnessId', 'serviceId', 'staffId', 'ageGroup', 'gender', 'departmentId', 'officeId', 'chronicText'] as $property) {
+            $common->{$property} = null;
+        }
+        $common->unclassified = false;
+        $common->consultMode = 'all';
+        $common->pregnancy = 'all';
+        $common->chronic = 'all';
+
+        return $common;
     }
 
     private static function text(mixed $value): ?string

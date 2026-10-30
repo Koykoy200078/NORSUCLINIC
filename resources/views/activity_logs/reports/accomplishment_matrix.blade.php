@@ -1,6 +1,7 @@
 {{--
-    The two tables of the ACCOMPLISHMENT REPORT: illness by body system, then the other services, one column per
-    college. Used as it is by the screen, the PDF and the Excel sheet (each supplies its own styling for .acc-table).
+    The tables of the ACCOMPLISHMENT REPORT: illness by body system, then the other services, one column per
+    college, and (when there are such visits) the patients who only took medicine. Used as it is by the screen, the PDF
+    and the Excel sheet (each supplies its own styling for .acc-table).
 --}}
 @php
     $zero = $zeroAs ?? '0';
@@ -117,3 +118,27 @@
         </tr>
     </tbody>
 </table>
+
+@if(! empty($report['medicine_only']))
+    <table class="acc-table acc-medicine-only">
+        <thead>
+            <tr>
+                <th class="item">MEDICINE ONLY</th>
+                @foreach($columns as $column)
+                    <th class="num" title="{{ $column['name'] }}">{{ $column['label'] }}</th>
+                @endforeach
+                <th class="num">{{ $report['total_label'] ?? 'TOTAL' }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="item">{{ $report['medicine_only']['name'] }}</td>
+                @foreach($cells($report['medicine_only']['counts']) as $count)
+                    <td class="num {{ $count === 0 ? 'zero' : '' }}">{{ $count === 0 ? $zero : $count }}</td>
+                @endforeach
+                <td class="num total">{{ $report['medicine_only']['total'] }}</td>
+            </tr>
+            <tr><td colspan="{{ $span }}" class="empty" style="text-align: left;">Patients who only came for medicine, counted once per visit. They are not part of the consultation, illness or service totals above.</td></tr>
+        </tbody>
+    </table>
+@endif

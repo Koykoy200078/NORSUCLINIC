@@ -306,6 +306,8 @@ class PanelRoutes
                 ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-yearly');
             Route::get('/inventory-discrepancies/{format}', [ActivityLogController::class, 'inventoryDiscrepancies'])
                 ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('inventory-discrepancies');
+            Route::get('/meds-only/{format}', [ActivityLogController::class, 'medsOnly'])
+                ->whereIn('format', ['pdf', 'xlsx', 'csv'])->name('meds-only');
             Route::get($panel === 'admin' ? '/{id}' : '/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
         });
     }

@@ -20,8 +20,10 @@ use App\Models\YearLevel;
 use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\ReportFilters;
 use App\Services\Reports\ReportQueries;
+use App\Services\Reports\VisitFeed;
 use App\Services\Reports\ServiceRules;
 use App\Services\Reports\InventoryDiscrepancyReportBuilder;
+use App\Services\Reports\MedsOnlyReportBuilder;
 use App\Services\Reports\YearlyInventoryReportBuilder;
 use App\Support\SearchTerm;
 use Carbon\Carbon;
@@ -76,6 +78,8 @@ class ReportGeneration extends Component
     public $pregnancy = 'all';
     public $chronic = 'all';
     public $chronic_text = '';
+    /** Patient Visits: 'consultations' (the default), 'meds_only' (the patients who only took medicine) or 'all'. */
+    public $visit_type = 'consultations';
 
     /** True while "Walk-in" is only the Accomplishment Report's own default (not something the user picked). */
     public bool $consult_mode_auto = false;
@@ -111,13 +115,14 @@ class ReportGeneration extends Component
         'pregnancy' => ['except' => 'all'],
         'chronic' => ['except' => 'all'],
         'chronic_text' => ['except' => ''],
+        'visit_type' => ['except' => 'consultations'],
     ];
 
     /** The property names of the patient / visit filters. */
     private const CONSULTATION_FILTERS = [
         'campus_id', 'college_id', 'course_id', 'year_level_id', 'department_id', 'office_id', 'patient_type_id', 'gender',
         'consult_mode', 'illness_system_id', 'illness_id', 'service_id', 'medicine_id', 'age_group', 'staff_id',
-        'pregnancy', 'chronic', 'chronic_text',
+        'pregnancy', 'chronic', 'chronic_text', 'visit_type',
     ];
 
     public function mount()
@@ -177,7 +182,7 @@ class ReportGeneration extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to', 'month', 'year', 'inventory_year', ...self::CONSULTATION_FILTERS]);
+        $this->reset(['search', 'user_type', 'action', 'status', 'date_from', 'date_to', 'month', 'year', 'inventory_year', 'discrepancy_year', 'discrepancy_period', 'discrepancy_show', ...self::CONSULTATION_FILTERS]);
 
         $this->consult_mode_auto = false;
         if ($this->tab === 'accomplishment') {
@@ -250,6 +255,8 @@ class ReportGeneration extends Component
             'status' => $this->status,
             // The year makes the Accomplishment Report yearly; the other tabs have no use for it.
             'year' => $this->tab === 'accomplishment' ? $this->year : '',
+            // The visit type only belongs to the Patient Visits list.
+            'visit_type' => $this->tab === 'visits' ? $this->visit_type : '',
         ] + collect(self::CONSULTATION_FILTERS)->mapWithKeys(fn ($property) => [$property => $this->{$property}])->all());
     }
 
@@ -279,6 +286,19 @@ class ReportGeneration extends Component
                 ->mapWithKeys(fn (User $user) => [$user->id => $user->full_name]),
             'ageGroups' => ReportFilters::AGE_GROUPS,
             'years' => $this->reportYears(),
+        ];
+    }
+
+    /** The lists behind the filter boxes of the Meds Only tab. */
+    private function medsOnlyChoices(): array
+    {
+        return [
+            'campuses' => Campus::orderBy('campus_name')->pluck('campus_name', 'id'),
+            'colleges' => College::orderBy('college_name')->pluck('college_name', 'id'),
+            'courses' => Course::orderBy('course_name')->pluck('course_name', 'id'),
+            'yearLevels' => YearLevel::orderBy('id')->pluck('year_level_name', 'id'),
+            'patientTypes' => PatientType::orderBy('id')->pluck('name', 'id'),
+            'medicines' => Medicine::orderBy('name')->pluck('name', 'id'),
         ];
     }
 
@@ -323,7 +343,16 @@ class ReportGeneration extends Component
             case 'visits':
             case 'dispensing':
             case 'appointments':
+            case 'meds_only':
                 $data['reports'] = ReportQueries::forTab($this->tab, $filters)->paginate(20);
+                if ($this->tab === 'visits' && $filters->visitType !== ReportFilters::VISIT_TYPES[0]) {
+                    // The page holds (kind, id, date) only; the rows are filled in for the 20 of the page.
+                    $data['reports']->setCollection(VisitFeed::hydrate($data['reports']->getCollection()));
+                }
+                if ($this->tab === 'meds_only') {
+                    // The units given of each medicine cover every record of the view, not only the page.
+                    $data['medsOnlyMedicines'] = app(MedsOnlyReportBuilder::class)->medicines($filters);
+                }
                 break;
 
             case 'accomplishment':
@@ -365,7 +394,7 @@ class ReportGeneration extends Component
 
         return view('livewire.report-generation', array_merge($data, [
             'actions' => $actions,
-            'choices' => in_array($this->tab, self::CONSULTATION_TABS, true) ? $this->filterChoices() : [],
+            'choices' => in_array($this->tab, self::CONSULTATION_TABS, true) ? $this->filterChoices() : ($this->tab === 'meds_only' ? $this->medsOnlyChoices() : []),
             // What the two yearly reports need to know: is one on, and which years can be picked.
             'yearlyAccomplishment' => $this->tab === 'accomplishment' && $filters->year !== null,
             // Both inventory reports (a year, or the count sheets) replace the stock list: its search, status and date filters do not apply.
@@ -374,6 +403,8 @@ class ReportGeneration extends Component
             'discrepancyYears' => isset($data['inventoryDiscrepancies']) ? InventoryDiscrepancyReportBuilder::years() : [],
             'inventoryYears' => $this->tab === 'inventory' ? YearlyInventoryReportBuilder::years() : [],
             'activeFilters' => $filters->activeConsultationFilters(),
+            // Patient Visits listing Meds only (or both kinds): its own columns, and the clinical filters are off.
+            'mixedVisits' => $this->tab === 'visits' && $filters->visitType !== ReportFilters::VISIT_TYPES[0],
             // Query-string values of the Export CSV link: the same filters the table above is using.
             'exportQuery' => $filters->toQuery() + ['tab' => $this->tab],
         ]));

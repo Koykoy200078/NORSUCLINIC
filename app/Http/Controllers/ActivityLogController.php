@@ -13,11 +13,13 @@ use App\Models\PatientQueue;
 use App\Models\UsedMedicine;
 use App\Exports\AccomplishmentReportExport;
 use App\Exports\InventoryDiscrepancyReportExport;
+use App\Exports\MedsOnlyReportExport;
 use App\Exports\YearlyInventoryReportExport;
 use App\Services\Reports\AccomplishmentReportBuilder;
 use App\Services\Reports\AccomplishmentReportCsv;
 use App\Services\Reports\InventoryDiscrepancyReportBuilder;
 use App\Services\Reports\InventoryDiscrepancyReportCsv;
+use App\Services\Reports\MedsOnlyReportBuilder;
 use App\Services\Reports\ReportCsv;
 use App\Services\Reports\ReportFilters;
 use App\Services\Reports\YearlyInventoryReportBuilder;
@@ -107,6 +109,34 @@ class ActivityLogController extends Controller
             'xlsx' => Excel::download(new YearlyInventoryReportExport($report), $name . '.xlsx'),
             'pdf' => Pdf::loadView('activity_logs.reports.inventory_yearly_pdf', ['report' => $report])
                 ->setPaper([0, 0, 612, 936], 'portrait')
+                ->setWarnings(false)
+                ->stream($name . '.pdf'),
+        };
+    }
+
+    /**
+     * The MEDS ONLY report (the patients who only came for medicine) as a PDF, an Excel sheet or a CSV, with the filters of the screen.
+     * The CSV is the one of the tab (every record, the same query the screen pages); the PDF and the Excel sheet are built from
+     * MedsOnlyReportBuilder, which takes the same rows and adds the units given of each medicine.
+     */
+    public function medsOnly(Request $request, string $format)
+    {
+        abort_unless(canViewActivityLogTab('meds_only'), 403, 'You are not allowed to export this report.');
+        abort_unless(in_array($format, ['pdf', 'xlsx', 'csv'], true), 404, 'Unknown format.');
+
+        $filters = ReportFilters::fromRequest($request);
+        if ($format === 'csv') {
+            return ReportCsv::response('meds_only', $filters);
+        }
+
+        $report = app(MedsOnlyReportBuilder::class)->build($filters, $request->user());
+        $name = 'meds_only_' . now()->format('Y-m-d_His');
+
+        return match ($format) {
+            'xlsx' => Excel::download(new MedsOnlyReportExport($report), $name . '.xlsx'),
+            // Ten columns, so the long bond sheet lies on its side.
+            'pdf' => Pdf::loadView('activity_logs.reports.meds_only_pdf', ['report' => $report])
+                ->setPaper([0, 0, 936, 612], 'landscape')
                 ->setWarnings(false)
                 ->stream($name . '.pdf'),
         };

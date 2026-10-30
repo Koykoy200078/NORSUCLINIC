@@ -202,6 +202,15 @@ class InventoryDiscrepancyReportTest extends TestCase
         $this->get(route('activity-logs.inventory-discrepancies', ['format' => 'csv']))->assertRedirect();
     }
 
+    /** The route's role middleware already keeps a patient out, so only a direct call shows that the action checks the Reports access itself. */
+    public function test_the_download_action_refuses_a_user_without_reports_access_even_when_called_directly(): void
+    {
+        $this->actingAs($this->makePatient()->user);
+
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        app(\App\Http\Controllers\ActivityLogController::class)->inventoryDiscrepancies(\Illuminate\Http\Request::create('/probe'), 'csv');
+    }
+
     public function test_a_name_or_note_that_looks_like_a_formula_is_not_run_by_excel_or_the_csv(): void
     {
         $this->actingAs($this->admin);

@@ -1,3 +1,6 @@
+@if($mixedVisits ?? false)
+    @include('activity_logs.reports.visits_mixed')
+@else
 <div class="table-responsive">
     <div class="text-muted fs-7 mb-2">
         {{ $reports->total() }} visit{{ $reports->total() === 1 ? '' : 's' }} found
@@ -83,3 +86,4 @@
         </tbody>
     </table>
 </div>
+@endif

@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /**
  * The ACCOMPLISHMENT REPORT as a flat CSV: one line per illness and per service, one column per college, so it can
  * be filtered and totalled in a spreadsheet. The names typed on an "Others" line follow it, one line each, as
- * "Others: <name>" (they add up to the "Others" line, so a spreadsheet total must skip them, or skip the Others line). Same numbers as the screen, PDF and Excel (all from the builder).
+ * "Others: <name>" (they add up to the "Others" line, so a spreadsheet total must skip them, or skip the Others line). The
+ * "Medicine only (no consultation)" line, when there is one, follows the services and is not in their totals. Same numbers as the
+ * screen, PDF and Excel (all from the builder).
  */
 final class AccomplishmentReportCsv
 {
@@ -43,6 +45,11 @@ final class AccomplishmentReportCsv
             }
         }
         $rows[] = array_merge(['Other services', 'TOTAL', '', ''], $counts($report['service_total']['counts']), [$report['service_total']['total']]);
+
+        // The patients who only took medicine: a line of its own, not part of the totals above.
+        if (! empty($report['medicine_only'])) {
+            $rows[] = array_merge(['Medicine only', 'No consultation', '', $report['medicine_only']['name']], $counts($report['medicine_only']['counts']), [$report['medicine_only']['total']]);
+        }
 
         $blank = array_fill(0, count($keys), '');
         $rows[] = array_merge(['Summary', 'Consultations in this report', '', ''], $blank, [$report['consultations']]);

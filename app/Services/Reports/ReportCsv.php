@@ -23,12 +23,23 @@ final class ReportCsv
 
         $filename = 'report_' . $tab . '_' . now()->format('Y-m-d_His') . '.csv';
 
-        return response()->streamDownload(function () use ($tab, $query) {
+        // Patient Visits with a Visit type other than Consultations lists both kinds of visit: its own columns and rows.
+        $mixed = $tab === 'visits' && $filters->visitType !== ReportFilters::VISIT_TYPES[0];
+
+        return response()->streamDownload(function () use ($tab, $query, $mixed) {
             $file = fopen('php://output', 'w');
             fwrite($file, "\xEF\xBB\xBF");
-            self::put($file, self::headings($tab));
+            self::put($file, $mixed ? VisitFeed::HEADINGS : self::headings($tab));
 
-            $query->chunk(200, function ($records) use ($file, $tab) {
+            $query->chunk(200, function ($records) use ($file, $tab, $mixed) {
+                if ($mixed) {
+                    foreach (VisitFeed::hydrate($records) as $visit) {
+                        self::put($file, VisitFeed::csvRow($visit));
+                    }
+
+                    return;
+                }
+
                 foreach ($records as $record) {
                     self::put($file, self::row($tab, $record));
                 }
@@ -50,6 +61,7 @@ final class ReportCsv
             'inventory' => ['Medicine Name', 'Category', 'Generic', 'Current Quantity', 'Reorder At', 'Nearest Expiry', 'Status'],
             'dispensing' => ['Date', 'Medicine', 'Dosage', 'Batch', 'Quantity', 'Associated Record', 'Patient Name', 'Dispensed By'],
             'appointments' => ['Scheduled At', 'Patient Name', 'Added By', 'Status', 'Notes'],
+            'meds_only' => ['Date', 'Name', 'Patient Type', 'Campus', 'College', 'Course', 'Year Level', 'Drugs', 'Recorded By', 'Note'],
             default => [],
         };
     }
@@ -65,6 +77,7 @@ final class ReportCsv
             'inventory' => self::inventoryRow($record),
             'dispensing' => self::dispensingRow($record),
             'appointments' => self::appointmentRow($record),
+            'meds_only' => array_values(array_diff_key(MedsOnlyReportBuilder::row($record), ['id' => 1])),
             default => [],
         };
     }

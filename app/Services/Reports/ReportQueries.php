@@ -13,6 +13,7 @@ use App\Models\RequestDocuments;
 use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * One query per report tab. The Report Generation screen pages these queries and the CSV export streams the very
@@ -20,16 +21,18 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 final class ReportQueries
 {
-    public const TABS = ['logs', 'visits', 'inventory', 'dispensing', 'appointments'];
+    public const TABS = ['logs', 'visits', 'inventory', 'dispensing', 'appointments', 'meds_only'];
 
-    public static function forTab(string $tab, ReportFilters $filters): ?Builder
+    /** The Patient Visits tab with a "Visit type" other than Consultations is a plain query on both kinds (VisitFeed), not a model query. */
+    public static function forTab(string $tab, ReportFilters $filters): Builder|QueryBuilder|null
     {
         return match ($tab) {
             'logs' => self::logs($filters),
-            'visits' => self::visits($filters),
+            'visits' => $filters->visitType === ReportFilters::VISIT_TYPES[0] ? self::visits($filters) : VisitFeed::query($filters),
             'inventory' => self::inventory($filters),
             'dispensing' => self::dispensing($filters),
             'appointments' => self::appointments($filters),
+            'meds_only' => self::medsOnly($filters),
             default => null,
         };
     }
@@ -56,12 +59,16 @@ final class ReportQueries
 
     public static function visits(ReportFilters $filters): Builder
     {
-        $query = ConsultationFilter::apply(
-            DocumentIssuance::query()->with(['creator', 'nursingInCharge', 'consultationMedicines.medicine', 'illnesses.system', 'services']),
-            $filters
-        )
+        return self::visitsSearched($filters)
+            ->with(['creator', 'nursingInCharge', 'consultationMedicines.medicine', 'illnesses.system', 'services'])
             ->orderByRaw(ServiceRules::visitDate() . ' DESC')
             ->orderBy('document_issuances.id', 'desc');
+    }
+
+    /** The consultations of the filters and the word search, without the relations or the order (the mixed visit list builds on it too). */
+    public static function visitsSearched(ReportFilters $filters): Builder
+    {
+        $query = ConsultationFilter::apply(DocumentIssuance::query(), $filters);
 
         return SearchTerm::whereAllWords($query, $filters->search, [
             'document_issuances.name',
@@ -154,6 +161,63 @@ final class ReportQueries
             fn ($inner, $word) => $inner->whereHas('generic', fn ($q) => $q->where('name', 'like', SearchTerm::like($word))),
             fn ($inner, $word) => $inner->whereHas('category', fn ($q) => $q->where('name', 'like', SearchTerm::like($word))),
         ];
+    }
+
+    /**
+     * Meds Only: the patients who only came for medicine, newest first. The date range is on the day of the record; the id filters
+     * (campus, college, course, year level, patient type) are the ones saved with the record; the medicine filter keeps the records
+     * that include that drug; a word is found in the person, the college / course / year / campus text, the note, who recorded it and
+     * a drug (see medicineSearchColumns()). A manual dispense record or a prescription's record is never in it.
+     */
+    public static function medsOnly(ReportFilters $filters): Builder
+    {
+        return self::medsOnlySearched($filters)
+            ->with(['dispenseItems.medicine:id,name,dosage,uom', 'recorder', 'patientType'])
+            ->orderByDesc('medicine_bills.bill_date')->orderByDesc('medicine_bills.id');
+    }
+
+    /** The Meds Only records of the filters and the word search, without the relations or the order (the mixed visit list builds on it too). */
+    public static function medsOnlySearched(ReportFilters $filters): Builder
+    {
+        $query = self::medsOnlyFiltered($filters);
+
+        return SearchTerm::whereAllWords($query, $filters->search, [
+            'medicine_bills.patient_name', 'medicine_bills.campus', 'medicine_bills.college', 'medicine_bills.course', 'medicine_bills.year_level', 'medicine_bills.note',
+            fn ($inner, $word) => $inner->whereHas('dispenseItems.medicine', fn ($medicine) => $medicine->where(
+                fn ($group) => SearchTerm::wordInColumns($group, $word, self::medicineSearchColumns())
+            )),
+            fn ($inner, $word) => $inner->whereHas('recorder', fn ($user) => $user->where(
+                fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS)
+            )),
+        ]);
+    }
+
+    /**
+     * The Meds Only records of the dates, campus, college, course, year level, patient type and medicine filters - without the word
+     * search, the order and the relations. The Meds Only tab builds on it, and so does the "Medicine only (no consultation)" line of
+     * the Accomplishment Report, so both always count the same records.
+     */
+    public static function medsOnlyFiltered(ReportFilters $filters): Builder
+    {
+        $query = DispenseRecord::query()->medsOnly();
+
+        if ($filters->dateFrom) {
+            $query->whereDate('medicine_bills.bill_date', '>=', $filters->dateFrom);
+        }
+        if ($filters->dateTo) {
+            $query->whereDate('medicine_bills.bill_date', '<=', $filters->dateTo);
+        }
+        foreach (['campus_id' => $filters->campusId, 'college_id' => $filters->collegeId, 'course_id' => $filters->courseId,
+            'year_level_id' => $filters->yearLevelId, 'patient_type_id' => $filters->patientTypeId] as $column => $value) {
+            if ($value) {
+                $query->where('medicine_bills.' . $column, $value);
+            }
+        }
+        if ($filters->medicineId) {
+            $query->whereHas('dispenseItems', fn ($items) => $items->where('medicine_id', $filters->medicineId));
+        }
+
+        return $query;
     }
 
     public static function appointments(ReportFilters $filters): Builder
