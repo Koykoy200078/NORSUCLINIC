@@ -12,6 +12,7 @@ use App\Models\DispenseRecord;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -224,7 +225,7 @@ class PatientMergeTest extends TestCase
         $this->get('/admin/patients/'.$target->id)->assertOk()->assertSee('Merged patient details for review');
     }
 
-    /** @dataProvider clinicalTables */
+    #[DataProvider('clinicalTables')]
     public function test_stale_forms_cannot_attach_new_history_to_a_merged_source(string $model, string $column, bool $userId): void
     {
         $source = $this->makePatient();

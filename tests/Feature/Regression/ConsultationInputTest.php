@@ -3,11 +3,12 @@
 namespace Tests\Feature\Regression;
 
 use App\Support\ConsultationInput;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConsultationInputTest extends TestCase
 {
-    /** @dataProvider inputs */
+    #[DataProvider('inputs')]
     public function test_nullable_inputs_keep_the_existing_conversion(mixed $value, ?int $integer, ?string $string): void
     {
         $this->assertSame($integer, ConsultationInput::nullableInt($value));

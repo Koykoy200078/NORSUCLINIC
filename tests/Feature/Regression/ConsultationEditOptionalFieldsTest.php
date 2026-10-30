@@ -5,6 +5,7 @@ namespace Tests\Feature\Regression;
 use App\Models\DocumentIssuance;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -41,7 +42,7 @@ class ConsultationEditOptionalFieldsTest extends TestCase
         return ['clinic admin' => ['makeAdmin'], 'staff (nurse)' => ['makeNurse'], 'doctor' => ['makeDoctor']];
     }
 
-    /** @dataProvider roles */
+    #[DataProvider('roles')]
     public function test_allergies_and_maintenance_are_optional_on_the_edit_form(string $maker): void
     {
         $dom = new \DOMDocument();

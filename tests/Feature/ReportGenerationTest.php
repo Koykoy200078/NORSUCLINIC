@@ -13,6 +13,7 @@ use App\Models\PatientQueue;
 use App\Models\DocumentIssuance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Spatie\Permission\Models\Role;
 
@@ -43,7 +44,7 @@ class ReportGenerationTest extends TestCase
         $this->admin->assignRole('clinic_admin');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_render_the_component()
     {
         $this->actingAs($this->admin);
@@ -53,7 +54,7 @@ class ReportGenerationTest extends TestCase
             ->assertSee('Report Generation');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_switch_tabs()
     {
         $this->actingAs($this->admin);
@@ -75,7 +76,7 @@ class ReportGenerationTest extends TestCase
             ->assertSee('Schedules');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_logs_by_search()
     {
         $this->actingAs($this->admin);
@@ -103,7 +104,7 @@ class ReportGenerationTest extends TestCase
             ->assertDontSee('Jane Smith');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_logs_by_user_type()
     {
         $this->actingAs($this->admin);
@@ -131,7 +132,7 @@ class ReportGenerationTest extends TestCase
             ->assertDontSee('Staff User');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_reset_filters()
     {
         $this->actingAs($this->admin);
@@ -146,7 +147,7 @@ class ReportGenerationTest extends TestCase
             ->assertSet('action', 'all');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_visits_by_search()
     {
         $this->actingAs($this->admin);
@@ -180,7 +181,7 @@ class ReportGenerationTest extends TestCase
             ->assertDontSee('Other Record');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_inventory_by_low_stock()
     {
         $this->actingAs($this->admin);
@@ -215,7 +216,7 @@ class ReportGenerationTest extends TestCase
             ->assertDontSee('Healthy Pill');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_appointments_by_date()
     {
         $this->actingAs($this->admin);
@@ -251,7 +252,7 @@ class ReportGenerationTest extends TestCase
             ->assertDontSee('Jun 01, 2026');
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_access_to_unauthenticated_users()
     {
         $this->get('/admin/activity-logs')

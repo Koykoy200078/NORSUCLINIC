@@ -18,6 +18,7 @@ use App\Livewire\ReportGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Carbon\Carbon;
 
@@ -53,7 +54,7 @@ class ReportCrudIntegrationTest extends TestCase
         Doctor::create(['user_id' => $this->doctor->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_patient_visits_reporting_after_crud()
     {
         $this->actingAs($this->admin);
@@ -91,7 +92,7 @@ class ReportCrudIntegrationTest extends TestCase
             ->assertSee('Fever and chills');
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_medicine_inventory_reporting_after_crud()
     {
         $this->actingAs($this->admin);
@@ -117,7 +118,7 @@ class ReportCrudIntegrationTest extends TestCase
             ->assertSee('100');
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_dispensing_reports_after_crud()
     {
         $this->actingAs($this->admin);
@@ -158,7 +159,7 @@ class ReportCrudIntegrationTest extends TestCase
             ->assertSee('TEST-BATCH-1');
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_schedules_reporting_after_crud()
     {
         $this->actingAs($this->admin);
@@ -181,7 +182,7 @@ class ReportCrudIntegrationTest extends TestCase
             ->assertSee('Bob Builder');
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_global_search_across_all_modules()
     {
         // The global search only returns what the signed-in role may use, so this administrator must be a real one

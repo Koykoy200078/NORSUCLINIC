@@ -4,6 +4,7 @@ namespace Tests\Feature\Regression;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -42,9 +43,7 @@ class StaffProfileTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider staffAccounts
-     */
+    #[DataProvider('staffAccounts')]
     public function test_a_staff_member_can_change_their_own_profile(string $designation, string $station): void
     {
         $staff = $this->makeStaff($designation, $station);

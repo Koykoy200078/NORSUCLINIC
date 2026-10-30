@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Rules\PhilippinePhoneNumber;
 use App\Support\PhilippinePhone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,9 +45,7 @@ class PhilippinePhoneTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider spellings
-     */
+    #[DataProvider('spellings')]
     public function test_any_common_spelling_reduces_to_the_national_number(mixed $input, ?string $expected): void
     {
         $this->assertSame($expected, PhilippinePhone::national($input));

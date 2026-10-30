@@ -6,6 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
@@ -30,7 +31,7 @@ class RoleModuleAccessTest extends TestCase
         parent::tearDown();
     }
 
-    /** @dataProvider modulePermissions */
+    #[DataProvider('modulePermissions')]
     public function test_roles_screen_revocation_and_grant_take_effect_on_the_next_page(string $roleName, string $permission, string $module, array $routeNames): void
     {
         $admin = $this->makeAdmin();
@@ -388,7 +389,7 @@ class RoleModuleAccessTest extends TestCase
         }
     }
 
-    /** @dataProvider clinicalRoles */
+    #[DataProvider('clinicalRoles')]
     public function test_prescription_dispensing_requires_the_medicine_permission(string $roleName): void
     {
         $doctor = $this->makeDoctor();

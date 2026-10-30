@@ -1,42 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         colors="true"
->
-    <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-    </testsuites>
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./app</directory>
-        </include>
-    </coverage>
-    <php>
-        <!-- The whole suite runs in one process; at 128M (the CLI default) it ran out of memory in the countries
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
+  <testsuites>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <!-- The whole suite runs in one process; at 128M (the CLI default) it ran out of memory in the countries
              seeder once it passed ~230 tests. -->
-        <ini name="memory_limit" value="512M"/>
-        <env name="APP_ENV" value="testing"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <!-- The suite runs on a DEDICATED MySQL/MariaDB schema. Several migrations use MySQL-only SQL
+    <ini name="memory_limit" value="512M"/>
+    <env name="APP_ENV" value="testing"/>
+    <env name="BCRYPT_ROUNDS" value="4"/>
+    <env name="CACHE_DRIVER" value="array"/>
+    <!-- The suite runs on a DEDICATED MySQL/MariaDB schema. Several migrations use MySQL-only SQL
              (CREATE OR REPLACE VIEW, ALTER ... MODIFY), so SQLite cannot build the schema. It uses the
              host / user / password from .env. tests/CreatesApplication.php creates the schema when it is
              missing (no manual CREATE DATABASE) and aborts unless the database name ends in "_test", so
              RefreshDatabase can never wipe the real clinic database. -->
-        <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_DATABASE" value="norsu_clinic_test"/>
-        <env name="DB_STRICT" value="true"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <!-- Real-time updates (Phase 7): the suite never talks to a Reverb server; the tests that look at the notices fake the event. -->
-        <env name="BROADCAST_DRIVER" value="null"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
-    </php>
+    <env name="DB_CONNECTION" value="mysql"/>
+    <env name="DB_DATABASE" value="norsu_clinic_test"/>
+    <env name="DB_STRICT" value="true"/>
+    <env name="MAIL_MAILER" value="array"/>
+    <env name="QUEUE_CONNECTION" value="sync"/>
+    <!-- Real-time updates (Phase 7): the suite never talks to a Reverb server; the tests that look at the notices fake the event. -->
+    <env name="BROADCAST_DRIVER" value="null"/>
+    <env name="SESSION_DRIVER" value="array"/>
+    <env name="TELESCOPE_ENABLED" value="false"/>
+  </php>
+  <source>
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+  </source>
 </phpunit>

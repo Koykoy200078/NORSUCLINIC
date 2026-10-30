@@ -17,6 +17,7 @@ use App\Services\Reports\ReportQueries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -154,7 +155,7 @@ class AccomplishmentReportTest extends TestCase
         $this->assertSame(7, $respiratory['total']);
     }
 
-    /** @dataProvider classificationCases */
+    #[DataProvider('classificationCases')]
     public function test_informant_and_saved_patient_type_assign_one_report_column(?string $informant, ?string $savedType, string $bucket): void
     {
         $this->visit(['informant' => $informant, 'patient_type_id' => $savedType === null ? null : $this->type($savedType)],

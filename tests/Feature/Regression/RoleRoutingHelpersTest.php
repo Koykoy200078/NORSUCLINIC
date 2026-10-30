@@ -6,11 +6,12 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class RoleRoutingHelpersTest extends TestCase
 {
-    /** @dataProvider panels */
+    #[DataProvider('panels')]
     public function test_names_urls_and_redirects_share_the_existing_role_route_contract(?string $role, string $prefix): void
     {
         if ($role !== null) {

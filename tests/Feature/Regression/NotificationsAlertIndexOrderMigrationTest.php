@@ -4,6 +4,7 @@ namespace Tests\Feature\Regression;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsLegacyNotificationsTable;
 use Tests\Concerns\UsesFixtureDatabase;
 use Tests\TestCase;
@@ -65,10 +66,9 @@ class NotificationsAlertIndexOrderMigrationTest extends TestCase
     }
 
     /**
-     * @dataProvider pathsToTheSameStructure
-     *
      * @param  list<string>  $migrations
      */
+    #[DataProvider('pathsToTheSameStructure')]
     public function test_every_path_ends_with_the_same_structure_and_a_fully_enforced_foreign_key(bool $explicitUserKey, array $migrations): void
     {
         $this->notificationsTable($explicitUserKey);

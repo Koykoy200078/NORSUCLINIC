@@ -8,6 +8,7 @@ use App\Models\LabRequestItem;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -65,9 +66,7 @@ class LabRequestDeleteTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider finishedStatuses
-     */
+    #[DataProvider('finishedStatuses')]
     public function test_a_finished_lab_request_can_never_be_deleted_not_even_by_the_admin(string $status): void
     {
         $doctor = $this->makeDoctor();
@@ -81,9 +80,7 @@ class LabRequestDeleteTest extends TestCase
         $this->assertSame(1, LabRequestItem::where('lab_request_id', $request->id)->count());
     }
 
-    /**
-     * @dataProvider unfinishedButInProgress
-     */
+    #[DataProvider('unfinishedButInProgress')]
     public function test_a_request_in_progress_must_be_cancelled_before_it_can_be_deleted(string $status): void
     {
         $doctor = $this->makeDoctor();

@@ -22,6 +22,7 @@ use App\Services\MedicineInventoryService;
 use App\Services\Reports\YearlyInventoryReportBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -138,7 +139,7 @@ class InventoryMergeTest extends TestCase
         $this->assertDatabaseCount('activity_logs', 0);
     }
 
-    /** @dataProvider incompatiblePairs */
+    #[DataProvider('incompatiblePairs')]
     public function test_incompatible_ingredients_or_units_block_medicine_merges(array $change): void
     {
         [$source, $target] = $this->pair();

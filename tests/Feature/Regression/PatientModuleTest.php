@@ -14,6 +14,7 @@ use App\Models\YearLevel;
 use App\Repositories\PrescriptionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -61,9 +62,7 @@ class PatientModuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider staffWhoMayRegisterPatients
-     */
+    #[DataProvider('staffWhoMayRegisterPatients')]
     public function test_staff_and_nurses_can_register_a_patient_and_it_is_audited(string $designation, string $station): void
     {
         $staff = $this->makeStaff($designation, $station);

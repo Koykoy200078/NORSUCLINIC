@@ -3,6 +3,7 @@
 namespace Tests\Feature\Regression;
 
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -53,9 +54,7 @@ class TestDatabaseBootstrapTest extends TestCase
         $this->assertNotNull($this->probeSchema());
     }
 
-    /**
-     * @dataProvider databases
-     */
+    #[DataProvider('databases')]
     public function test_only_dedicated_test_databases_pass_the_destructive_test_guard(string $driver, string $database, bool $safe): void
     {
         $this->assertSame($safe, $this->bootstrap()->isSafeTestDatabase($driver, $database));
