@@ -71,6 +71,11 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-10-30 15:00 +08:00 — Claude Code — START (Laravel upgrade on a separate branch)
+- **Branch / from:** work happens on **`upgrade/laravel-13`**, created from `changes_v2` @ `70d1899` (the clinic's line is not used for upgrade work). This entry is on `changes_v2` so every assistant sees where the work is.
+- **Work:** the owner approved the plan ([docs/laravel-13-upgrade-plan.md](docs/laravel-13-upgrade-plan.md)) on 2026-10-30: target Laravel 13 (12 as the fallback if PHP 8.3 is delayed), all dependency changes, a new pushed branch, **the 83 form views rewritten for `spatie/laravel-html` (no fork)**, PHP 8.3 installable on the clinic PC, scope fence confirmed (no slim structure, Vite, Livewire 4 or Pest). Freeze / maintenance windows: the owner asked for recommendations (plan section 9).
+- **Protocol for the branch:** stages U0 to U3 of the plan, each with its gates and its own commits; progress in the plan's stage table and in this file's entries **on the branch**; `git merge changes_v2` into the branch at the start of every stage; a finished, approved stage is merged into `changes_v2` only on the owner's go-ahead. Do not continue or overwrite this work from another assistant without asking the owner.
+
 ### 2026-10-30 14:00 +08:00 — Claude Code — START → END (pushed 2026-10-30)
 - **Branch / from:** `changes_v2` @ `c36d5bd` (fetched; working tree clean).
 - **Work:** the owner's request: "plan to upgrade Laravel 10 into Laravel 13". Read-only research and a written plan; **no code, dependency or configuration was changed**. Inline only.

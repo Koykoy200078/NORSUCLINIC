@@ -1,8 +1,9 @@
 # Upgrade plan: Laravel 10.50 → Laravel 13
 
-**Status:** PLAN FOR THE OWNER'S APPROVAL. Nothing in this plan has been started; no dependency, code or configuration was changed
-while it was written (read-only research, 2026-10-30). Rules that apply (AGENTS.md): new or changed dependencies need the owner's
-approval; `changes_v2` only unless told otherwise; test-first; real-browser check; `norsu_clinic` left alone (rehearse on scratch copies).
+**Status: APPROVED by the owner on 2026-10-30** (answers in section 9). The work happens on the branch **`upgrade/laravel-13`** (created and pushed
+with the owner's approval); `changes_v2` stays the clinic's line and is only touched for urgent fixes and for merging a finished, approved stage. Rules
+that still apply (AGENTS.md): test-first; real-browser check; `norsu_clinic` left alone (rehearse on scratch copies); no force-push; no merge into `develop`.
+Progress is recorded in the plan's stage table (section 5) and in Handover.md.
 
 ---
 
@@ -18,7 +19,8 @@ approval; `changes_v2` only unless told otherwise; test-first; real-browser chec
   block 13 (12 direct dependencies plus `laravel/prompts` through them), one of them **abandoned** (`laravelcollective/html`), and every skipped
   version's breaking changes would land in one commit that the 1,039-test suite could only report as "everything is red".
 - **The work is dominated by four things, not by Laravel itself** (Laravel 13 is documented as a "minimal breaking changes" release):
-  1. the abandoned form builder (`laravelcollective/html`, **832 lines in 83 view files**) → a drop-in fork, no view edits;
+  1. the abandoned form builder (`laravelcollective/html`, **832 lines in 83 view files**) → **rewritten for the official `spatie/laravel-html`** (owner's decision: no
+     third-party fork), done on Laravel 10 with an equivalence test that renders old and new side by side;
   2. the table package `rappasoft/laravel-livewire-tables` 3.2 → 3.9/3.10 (**24 customised views to port**, 24 table components);
   3. `spatie/laravel-permission` 5 → 6 (middleware namespace rename, in the Kernel, the Livewire persistent middleware and one test)
      and `spatie/laravel-medialibrary` 10 → 11;
@@ -47,7 +49,7 @@ approval; `changes_v2` only unless told otherwise; test-first; real-browser chec
 
 | Package | Installed | Supports up to | Needed for 13 | Size |
 |---|---|---|---|---|
-| `laravelcollective/html` | 6.4.1, **abandoned** (replacement named: `spatie/laravel-html`) | Laravel 10 | a maintained **drop-in fork** keeping `Collective\Html` and the `Form` / `Html` facades: `prabowosd/laravel-collective-html` v1.1.2 (L10–13, 2026-05) or `rdx/laravelcollective-html` 6.10 (L11–13, `replace`s the original, 2026-03) | S (no view edits) |
+| `laravelcollective/html` | 6.4.1, **abandoned** (replacement named: `spatie/laravel-html`) | Laravel 10 | **`spatie/laravel-html` ^3.13** (L10–13, PHP ^8.2): the 83 view files are rewritten (owner's decision); no fork, no `Collective\Html` left | **L** (832 lines, mechanical but wide) |
 | `rappasoft/laravel-livewire-tables` | 3.2.8 | Laravel 11 | **3.9 / 3.10** (L10–13, Livewire ^3, PHP 8.1+; 3.10 released 2026-10-20, 3.9 2026-10-09) | **L** |
 | `spatie/laravel-permission` | 5.11.1 | Laravel 10 | **6.25** (L8–13, PHP ^8.0): one jump covers every hop; 7.x / 8.x need PHP 8.4 / 8.3 | M |
 | `spatie/laravel-medialibrary` | 10.15.0 | Laravel 10 | **11.20** for 11 and 12, **11.23+** for 12 and 13 (PHP ^8.2) | M |
@@ -100,7 +102,7 @@ and (for U1 – U3) when the owner says so.
 |---|---|---|
 | U0.1 | Baseline and safety: `db:backup`, copy the whole project folder (with `vendor/`) off the PC, git tag, snapshots (`route:list --json`, link crawl, permission matrix, `db:integrity --compare-fresh` on a scratch copy of the dump), record the 1,039 / 10,089 numbers | the rollback point of the whole upgrade |
 | U0.2 | `laravel/framework` 10.50.3 → ^10.50.4 | patch release; proves the toolchain |
-| U0.3 | Replace `laravelcollective/html` by the fork that supports 10 – 13 (`prabowosd/laravel-collective-html` ^1.1; **read its diff against 6.4.1 before adopting**; pin the exact version) | same namespace and facades: no view edits; all 83 files exercised by the link crawl and the screens |
+| U0.3 | **Forms: rewrite the 83 view files from `Form::` / `Html::` (Collective) to `spatie/laravel-html`** (`html()->…`), then `composer remove laravelcollective/html`. How: (1) an **equivalence harness** that renders every distinct `Form::` call found in the views (264 label, 157 text, 108 hidden, 88 select, 48 close, 40 open, 31 submit, 24 textarea, 24 button, 15 number, 9 password, 8 model, 7 email, 4 checkbox) through both builders while Collective is still installed and compares the normalised HTML (attributes, `id` rules, old-input and model binding, select placeholders and selected values, `files`, method spoofing, CSRF); (2) a script converts the calls file by file, every file reviewed; (3) differences the harness finds are fixed or documented (for example Collective only adds an `id` to a field that has a label of the same name; spatie adds `id` = name) and every JavaScript / CSS selector that relied on an id is checked; (4) link crawl + browser pass of every converted form; (5) the Collective package is removed in the same stage | no fork to trust; the framework-independent work is done before any hop (spatie 3.13 runs on Laravel 10 – 13) |
 | U0.4 | Delete the 35 identical published rappasoft views; upgrade `rappasoft/laravel-livewire-tables` ~3.2.0 → ^3.9 / 3.10; port the 24 customised views and the base class (`LivewireTableComponent`, `SearchesByWords`, `SortsByUniqueKey`) | the long pole; framework independent (3.9 / 3.10 run on Laravel 10); lazy tabs, filters, bulk actions, pagination, per-page, search debounce, Bootstrap 5 look; `ListPagingTest`, the link crawl (loads lazy tables) and a browser pass of every table as admin / staff / doctor |
 | U0.5 | PHPUnit 9.6 → 10.5: `phpunit.xml` migrated, 15 `@dataProvider` → `#[DataProvider]`, `nunomaduro/collision` / `mockery` as needed | test-only change; Laravel 10 supports PHPUnit ^10.0.7 |
 | U0.6 | Dev cleanup: remove `laravel/breeze`, unused `laravel/sail` / `ide-helper` / `query-detector` if nobody uses them, keep one log viewer | fewer packages to carry through three majors |
@@ -123,8 +125,22 @@ Prerequisite: PHP 8.3 (or 8.4) installed on the clinic PC with the same extensio
 CSRF rename (C6), cache prefix / cookie names pinned (C7), `serializable_classes` decision (C5), MySQL `DELETE JOIN` check (C11), the container now injects `null` for a nullable class parameter with a default (scanned: 3 such parameters, all in private helper methods that are called directly, so no expected effect), Bootstrap-3 pagination view names if referenced.
 
 ### U4 (optional, separate decisions, not part of this upgrade)
-slim `bootstrap/app.php` structure; Vite instead of Mix; Livewire 4; moving the 83 form files to `spatie/laravel-html` (the maintained replacement, removes the fork);
-Pest. Each one only on the owner's request.
+slim `bootstrap/app.php` structure; Vite instead of Mix; Livewire 4; Pest. The owner confirmed on 2026-10-30 that these stay **out** of this upgrade; each one only on his request.
+
+### Progress
+
+| Stage | State |
+|---|---|
+| U0.1 baseline | not started |
+| U0.2 Laravel 10.50.4 | not started |
+| U0.5 PHPUnit 10.5 | not started |
+| U0.6 dev cleanup | not started |
+| U0.7 readiness tests | not started |
+| U0.4 rappasoft 3.9 / 3.10 | not started |
+| U0.3 forms → spatie/laravel-html | not started |
+| U1 Laravel 11 | not started |
+| U2 Laravel 12 | not started |
+| U3 Laravel 13 | not started |
 
 ## 6. Gates (every stage, in this order)
 
@@ -145,7 +161,7 @@ Pest. Each one only on the owner's request.
 | # | Risk | Likelihood / impact | Mitigation |
 |---|---|---|---|
 | R1 | PHP 8.3 cannot be installed on the clinic PC | medium / blocks U3 only | U1 and U2 run on 8.2; stop at 12.70 (secure until 2027-02-24); ask now |
-| R2 | The form-builder fork is one person's project (supply chain, future breakage) | medium / medium | pin the exact version, review its diff against 6.4.1 once, keep the move to `spatie/laravel-html` as a planned U4 item |
+| R2 | The forms rewrite changes markup or behaviour somewhere among 83 files (ids, old-input, model binding, selected values, file uploads, hidden fields, JavaScript selectors) | medium / **high** (a form that does not save) | the equivalence harness before conversion; every converted file reviewed; link crawl; browser pass of every form as every role; the existing form-posting tests stay green; no fork is introduced |
 | R3 | rappasoft 3.9 / 3.10 changes markup or behaviour of the 24 customised views (this is why 3.2 was held) | **high** / high (every list screen) | do it first and alone (U0.4), on Laravel 10; delete the 35 identical copies; link crawl + browser pass per table and role; screenshots before / after |
 | R4 | Permission v6 cache / contract changes alter who may open what | low / **critical** | permission matrix + `RoleMatrixP3`-style oracle + the existing access tests; roles are read from the DB, tables unchanged |
 | R5 | Carbon 3 sign / float changes (expiry warnings, dashboard "expiring soon", queue refresh) | medium / medium | U0.7 characterization tests before U2 |
@@ -165,20 +181,28 @@ Pest. Each one only on the owner's request.
 - **Deployment of a stage on the clinic PC (owner or with help):** stop the server window → `php artisan db:backup` and copy the file off the PC → copy the project folder → pull the tagged commit → (U3 only: switch the PC to PHP 8.3 first) → `composer install --no-dev --optimize-autoloader` (needs internet once, or ship `vendor/` from the laptop) → `php artisan optimize:clear` → start with `startup-dev-environment.bat` → a short checklist: sign in, a list, a form, a PDF, the Reports tab, "Live updates" on, one backup. Users will have to sign in again if the cache / session store is cleared; the session cookie name is kept.
 - **Windows startup script:** runs unchanged (it only uses `php artisan …`); re-checked in gate 8.
 
-## 9. Decisions needed from the owner
+## 9. The owner's decisions (2026-10-30)
 
-1. **Target and stop points:** go to **Laravel 13** (recommended), with Laravel 12 on PHP 8.2 as a stable resting point if PHP 8.3 is delayed?
-2. **Dependency approval** (AGENTS.md requires it): the list in section 3 / 5, in particular the form-builder fork, rappasoft 3.9 / 3.10, permission 6, medialibrary 11, PHPUnit 10.5 → 11 / 12.
-3. **Branch strategy:** (a) a long-lived branch `upgrade/laravel-13` pushed to origin, merged into `changes_v2` when a stage is complete and approved (needs your approval, the rules forbid pushing other branches); or (b) directly on `changes_v2` with each verified step pushed (the standing go-ahead), accepting R10.
-4. **Forms:** drop-in fork now and `spatie/laravel-html` later (recommended), or rewrite the 83 files for `spatie/laravel-html` now (about 832 lines, no fork risk, much more work)?
-5. **PHP on the clinic PC:** can PHP 8.3 (or 8.4) be installed there (WAMP add-on), by whom and when; does the PC have internet for `composer install`, or do we ship `vendor/`?
-6. **Window and freeze:** a feature freeze on `changes_v2` during U0 – U3 (only the upgrade and urgent fixes), and a maintenance window for each deployment (about an hour each)?
-7. **Scope fence:** confirm that U4 items stay out of this upgrade.
+| # | Question | Answer |
+|---|---|---|
+| 1 | Target and stop points | **Laravel 13**, with **Laravel 12 (PHP 8.2) as the stopping point** if PHP 8.3 is delayed |
+| 2 | Dependency changes (section 3 and 5) | **Approved** |
+| 3 | Branch strategy | **A new branch for the upgrade: `upgrade/laravel-13`**, pushed to origin. `changes_v2` is not used for upgrade work until a finished stage is approved for merging |
+| 4 | Forms | **Rewrite the 83 view files for the official `spatie/laravel-html`** (no fork) |
+| 5 | PHP 8.3 on the clinic PC | **Yes**, it can be installed (and the PC can reach the internet for `composer install`); who and when is agreed before U3 |
+| 6 | Feature freeze and maintenance windows | **Not decided: the owner asked for recommendations (below)** |
+| 7 | Scope fence (slim structure, Vite, Livewire 4, Pest stay out) | **Confirmed** |
 
-## 10. Order of work if approved
+### Recommendation for question 6 (freeze and windows)
 
-U0.1 → U0.2 → U0.3 → U0.7 → U0.5 → U0.6 → **U0.4** (alone, longest) → *deploy U0 if wanted* → U1 → U2 → *PHP 8.3 on the clinic PC* → U3.
-U0.7 comes before U0.4 and U0.5 so that every later red test is attributable. A realistic size: U0 is the biggest block (rappasoft), U1 medium, U2 small to medium, U3 medium plus the
+- **Freeze:** no hard freeze of `changes_v2`. The upgrade lives on its own branch, so the clinic's line keeps working. Ask for a **soft freeze only on the files the upgrade rewrites**: no new feature work on the **form views** (while U0.3 runs) and on the **table components / table views** (while U0.4 runs). Urgent fixes are always fine; they are merged from `changes_v2` into `upgrade/laravel-13` at the start of every stage (`git merge changes_v2`), so conflicts are small and found early. A full freeze is only worth it for the last day before a deployment.
+- **Windows:** deploy at stage boundaries, **not** after every commit: **(a) U0** (forms and tables are visible changes, no framework change), **(b) U1 + U2 together** (Laravel 12 on PHP 8.2, the quiet middle), **(c) U3** (Laravel 13 plus the PHP 8.3 switch, the longest). Plan about **30 – 60 minutes for (a) and (b)** and **1 – 2 hours for (c)** (PHP install, `composer install`, smoke test), always **right after the 6:00 PM backup** has run (so a fresh dump exists; take another by hand and copy it off the PC) and outside clinic hours. Do (c) first as a **dry run on a copy of the clinic folder** (same PC, other port) before the real switch. Each window ends with the short smoke checklist of section 8 and a decision to keep or roll back within the window.
+- **Who:** the owner (or whoever manages the clinic PC) for the PHP 8.3 install and the deployments; the preparation, the stages and the rehearsals stay on the laptop.
+
+## 10. Order of work
+
+U0.1 → U0.2 → U0.5 → U0.6 → U0.7 → **U0.4** (rappasoft, alone) → **U0.3** (forms) → *deploy U0 (owner's window)* → U1 → U2 → *PHP 8.3 on the clinic PC* → U3.
+U0.7 comes before U0.4 and U0.3 so that every later red test is attributable; U0.4 and U0.3 touch different views and are kept as separate commits. A realistic size: U0 is the biggest block (rappasoft), U1 medium, U2 small to medium, U3 medium plus the
 clinic's PHP work; calendar time is set by the 10 – 19 minute full-suite runs (two PHP versions per stage) and by the owner's availability for the clinic PC, not by typing.
 
 ## 11. Evidence (reproducible, read-only)
