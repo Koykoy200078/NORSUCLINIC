@@ -161,10 +161,10 @@ slim `bootstrap/app.php` structure; Vite instead of Mix; Livewire 4; Pest. The o
 | Stage | State |
 |---|---|
 | U0.1 baseline | **done 2026-10-30** (tag `pre-laravel-13-upgrade` local; `route:list`, matrix, lock-file copies; `db:integrity --compare-fresh` exit 0) |
-| U0.2 Laravel 10.50.4 | not started |
-| U0.5 PHPUnit 10.5 | not started |
-| U0.6 unused packages (part A) | not started |
-| U0.7 readiness tests | not started |
+| U0.2 Laravel 10.50.4 | **done 2026-10-30** (`b8fe202`): suite 1039 / 10,089 on PHP 8.3 with the link crawl; live tour of 3 roles on a scratch schema |
+| U0.5 PHPUnit 10.5 | **done** (`f741279`): PHPUnit 10.5.66, Collision 7.12; 15 `@dataProvider` + 14 `@test` → attributes |
+| U0.6 unused packages (part A) | **in progress: checkpoint commit, NOT yet verified** (2026-11-01). Composer side done (old log viewer + provider line, S3 adapter + `s3` disk, breeze, sail, ide-helper + its 2 tracked stubs, query-detector, redundant guzzle / htmlpurifier requirements, tinker → dev, template `version` key), `turbo.js` and the datatables copy removed. **To do:** `npm uninstall` of turbo / handlebars / flatpickr / bootstrap-daterangepicker / datatables, clean `npm ci && npm run prod`, suite on PHP 8.3 and 8.2, live browser check |
+| U0.7 readiness tests | **done** (`b3bf48c`): 12 tests (Carbon, 702-column fresh-install shape, password hash), 7 mutations killed; suite with them 1051 / 10,125 on PHP 8.3 |
 | U0.4 in-house tables (replaces rappasoft) | not started |
 | U0.3 forms → spatie/laravel-html | not started |
 | U0.8 sweep and legacy → new (part B) | not started |

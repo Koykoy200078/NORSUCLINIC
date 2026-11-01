@@ -68,7 +68,6 @@ mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
         "node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
         "public/assets/js/bootstrap-datepicker/bootstrap-datepicker.js",
     )
-    .copy("node_modules/datatables/media/images", "public/assets/images")
     .copy("resources/messages.js", "public/messages.js")
     .copy(
         "resources/assets/front/vendor/bootstrap.bundle.min.js",

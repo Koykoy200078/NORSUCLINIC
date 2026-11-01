@@ -175,7 +175,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         Mariuzzo\LaravelJsLocalization\LaravelJsLocalizationServiceProvider::class,
-        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ])->toArray(),
 
     /*
