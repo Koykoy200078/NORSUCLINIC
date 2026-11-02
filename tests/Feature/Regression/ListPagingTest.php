@@ -169,6 +169,6 @@ class ListPagingTest extends TestCase
         $this->assertGreaterThan(20, $tables, 'the scan found the lists');
         // The Dispense History view has no single unique column, so it orders by the record number and then the row id.
         $this->assertSame([MedicineDispenseTable::class], $others, 'a list that orders rows its own way must end with a unique key too');
-        $this->assertTrue(is_subclass_of(DocumentIssuanceTable::class, DataTableComponent::class) && ! is_subclass_of(DocumentIssuanceTable::class, LivewireTableComponent::class), 'the consultation list extends the library table directly and still gets the key');
+        $this->assertTrue(is_subclass_of(DocumentIssuanceTable::class, TableComponent::class), 'the consultation list is a list of the shared base and so gets the key');
     }
 }

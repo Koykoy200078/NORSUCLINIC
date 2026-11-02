@@ -2,19 +2,20 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\DispenseRecord;
 use App\Services\Reports\ReportQueries;
 use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 
 /**
  * Meds Only: the patients who only came for medicine. Date, name, course, year, college and the drugs, as the clinic keeps
  * them on paper; the search finds a person, a college or course, or a drug by its name / generic / brand.
  */
 #[Lazy]
-class MedsOnlyTable extends LivewireTableComponent
+class MedsOnlyTable extends TableComponent
 {
     protected $model = DispenseRecord::class;
 
@@ -25,7 +26,7 @@ class MedsOnlyTable extends LivewireTableComponent
         $this->setPrimaryKey('id')
             ->setDefaultSort('medicine_bills.bill_date', 'desc')
             ->setTableAttributes(['class' => 'table table-striped table-bordered'])
-            // Rappasoft only SELECTs the mapped columns; the label columns need these to load their relations.
+            // The list selects only the mapped columns; the label columns need these to load their relations.
             ->setAdditionalSelects(['medicine_bills.id', 'medicine_bills.recorded_by', 'medicine_bills.patient_id']);
     }
 

@@ -2,22 +2,21 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Concerns\SearchesByWords;
-use App\Livewire\Concerns\SortsByUniqueKey;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Livewire\Tables\TableComponent;
+use App\Support\Tables\Column;
 use App\Models\DocumentIssuance;
 use App\Models\User;
 use App\Support\SearchTerm;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 
-class DocumentIssuanceTable extends DataTableComponent
+class DocumentIssuanceTable extends TableComponent
 {
-    use SearchesByWords;
-    use SortsByUniqueKey;
 
     protected $model = DocumentIssuance::class;
+    // what this list has always said when nothing matches (the other lists say "No data available in table")
+    public string $emptyMessage = 'No items found. Try to broaden your search.';
+
     public bool $showFilterOnHeader = false;
     public bool $showButtonOnHeader = false;
     public string $buttonComponent = 'document_issuances.components.table-buttons';
@@ -37,8 +36,7 @@ class DocumentIssuanceTable extends DataTableComponent
         $this->setTableAttributes([
             'class' => 'table table-striped table-bordered',
         ]);
-        $this->setColumnSelectStatus(false);
-        // Required so ->label() callbacks can access these fields (Rappasoft v3 only
+        // Required so ->label() callbacks can access these fields (the list only
         // SELECTs columns mapped in Column::make(), label columns are excluded)
         $this->setAdditionalSelects(['document_issuances.assessment', 'document_issuances.plan']);
     }

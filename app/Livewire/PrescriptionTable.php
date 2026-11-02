@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\Prescription;
 use App\Support\SearchTerm;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 
-class PrescriptionTable extends LivewireTableComponent
+class PrescriptionTable extends TableComponent
 {
     protected $model = Prescription::class;
 
@@ -34,8 +35,7 @@ class PrescriptionTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
-        $this->setDefaultSort('prescriptions.created_at', 'desc')
-            ->setQueryStringStatus(false);
+        $this->setDefaultSort('prescriptions.created_at', 'desc');
     }
 
     public function columns(): array

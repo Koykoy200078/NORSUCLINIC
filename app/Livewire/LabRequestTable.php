@@ -2,21 +2,19 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Concerns\SearchesByWords;
-use App\Livewire\Concerns\SortsByUniqueKey;
+use App\Livewire\Tables\TableComponent;
 use App\Models\LabRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Url;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 
-class LabRequestTable extends DataTableComponent
+class LabRequestTable extends TableComponent
 {
-    use SearchesByWords;
-    use SortsByUniqueKey;
-
     protected $model = LabRequest::class;
+
+    // what this list has always said when nothing matches (the other lists say "No data available in table")
+    public string $emptyMessage = 'No items found. Try to broaden your search.';
 
     public bool $showFilterOnHeader = false;
     public bool $showButtonOnHeader = false;
@@ -35,7 +33,6 @@ class LabRequestTable extends DataTableComponent
         $this->setTableAttributes([
             'class' => 'table table-striped table-bordered',
         ]);
-        $this->setColumnSelectStatus(false);
         $this->setAdditionalSelects([
             'lab_requests.id',
             'lab_requests.status',
@@ -71,11 +68,6 @@ class LabRequestTable extends DataTableComponent
         }
 
         return $query;
-    }
-
-    public function filters(): array
-    {
-        return [];
     }
 
     public function columns(): array
