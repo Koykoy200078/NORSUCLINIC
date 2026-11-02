@@ -9,6 +9,7 @@ use App\Livewire\MedicineDispenseTable;
 use App\Livewire\MedicineTable;
 use App\Livewire\RoleTable;
 use App\Livewire\SpecializationTable;
+use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\DocumentIssuance;
 use App\Models\Role;
@@ -152,14 +153,15 @@ class ListPagingTest extends TestCase
         $tables = 0;
         foreach (glob(app_path('Livewire') . '/*.php') as $file) {
             $class = 'App\\Livewire\\' . basename($file, '.php');
-            if (! is_subclass_of($class, DataTableComponent::class)) {
+            if (! is_subclass_of($class, DataTableComponent::class) && ! is_subclass_of($class, TableComponent::class)) {
                 continue;
             }
             $tables++;
 
-            // A trait's method reports the trait's file: this is how a list that brings its own ordering shows up.
+            // The shared method reports its own file (the old library's trait, or the in-house base): this is how a list
+            // that brings its own ordering shows up.
             $declaredIn = basename((new ReflectionClass($class))->getMethod('applySorting')->getFileName());
-            if ($declaredIn !== 'SortsByUniqueKey.php') {
+            if (! in_array($declaredIn, ['SortsByUniqueKey.php', 'TableComponent.php'], true)) {
                 $others[] = $class;
             }
         }

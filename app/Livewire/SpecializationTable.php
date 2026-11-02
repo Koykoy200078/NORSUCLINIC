@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Specialization;
+use App\Support\Tables\Column;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class SpecializationTable extends LivewireTableComponent
+class SpecializationTable extends TableComponent
 {
     protected $model = Specialization::class;
 
@@ -21,8 +22,7 @@ class SpecializationTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {

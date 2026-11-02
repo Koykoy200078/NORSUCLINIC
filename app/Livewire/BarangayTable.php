@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Barangay;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class BarangayTable extends LivewireTableComponent
+class BarangayTable extends TableComponent
 {
     protected $model = Barangay::class;
 
@@ -21,8 +22,7 @@ class BarangayTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {
