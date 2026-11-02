@@ -2,18 +2,25 @@
 
 namespace Tests\Feature\Audit;
 
+use App\Models\Category;
 use App\Models\ConsultationMedicine;
 use App\Models\DispenseRecord;
 use App\Models\DispenseRecordItem;
 use App\Models\DocumentIssuance;
+use App\Models\Generic;
 use App\Models\PatientQueue;
 use App\Models\Prescription;
+use App\Models\PurchasedMedicine;
+use App\Models\StockIn;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Tests\Concerns\BuildsClinicData;
+use Tests\Concerns\ReadsFormControls;
 use Tests\TestCase;
 
 /**
@@ -33,6 +40,10 @@ use Tests\TestCase;
  *
  * Optional: CRAWL_OUT=<file.json> also writes the full per-user report (pages visited, external links, ...).
  *
+ * Optional, for the form-builder swap (upgrade plan U0.3): FORMS_BASELINE=<file.json> records every form control of every page
+ * every kind of user is shown (ReadsFormControls) and the view files that were drawn; FORMS_COMPARE=<file.json> crawls again
+ * and fails on any page whose controls differ from that recording. The clock is frozen for these two runs so dates match.
+ *
  * What it cannot see: links created by JavaScript after load (JsRender templates, wire:click handlers), POST-only
  * buttons, rows that no fixture creates (add a fixture below when a new screen gets row-level links), and pages that
  * need a parameter nobody links to. Run it after touching any menu, list, or "back / cancel / view / edit" link.
@@ -41,11 +52,23 @@ class LinkCrawlTest extends TestCase
 {
     use RefreshDatabase;
     use BuildsClinicData;
+    use ReadsFormControls;
 
     /** Pages followed per user - a safety stop, reported when it is reached. */
     private const PAGE_CAP = 700;
 
     private int $requests = 0;
+
+    private string $actorLabel = '';
+
+    /** The manual dispense record of the fixtures: its edit page is a start page of every panel that has one. */
+    private ?int $manualRecordId = null;
+
+    /** @var array<string, array<string, array<int, string>>> actor => page => form controls (FORMS_BASELINE / FORMS_COMPARE) */
+    private array $formControlsSeen = [];
+
+    /** @var array<string, true> */
+    private array $viewsDrawn = [];
 
     public function test_every_link_shown_to_every_kind_of_user_opens(): void
     {
@@ -55,6 +78,14 @@ class LinkCrawlTest extends TestCase
 
         set_time_limit(0);
         ini_set('memory_limit', '3G');
+
+        $recordForms = getenv('FORMS_BASELINE') ?: (getenv('FORMS_COMPARE') ?: null);
+        if ($recordForms) {
+            Carbon::setTestNow('2026-03-01 10:00:00');
+            View::composer('*', function ($view) {
+                $this->viewsDrawn[$view->name()] = true;
+            });
+        }
 
         // The REAL seed set, so settings / CMS / illness lists exist like in production.
         $this->seed(\Database\Seeders\DatabaseSeeder::class);
@@ -80,6 +111,7 @@ class LinkCrawlTest extends TestCase
                 }
                 \App\Models\Role::findByName($roleName)->syncPermissions($permissions);
             }
+            $this->actorLabel = $label;
             $result = $this->crawl($user?->fresh());
             $report[$label] = $result;
 
@@ -105,6 +137,26 @@ class LinkCrawlTest extends TestCase
         }
         if ($out = getenv('CRAWL_OUT')) {
             file_put_contents($out, json_encode(['requests' => $this->requests, 'actors' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+
+        if ($file = getenv('FORMS_BASELINE')) {
+            ksort($this->viewsDrawn);
+            file_put_contents($file, json_encode(['views' => array_keys($this->viewsDrawn), 'controls' => $this->formControlsSeen], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        }
+        if ($file = getenv('FORMS_COMPARE')) {
+            $baseline = json_decode(file_get_contents($file), true);
+            foreach ($baseline['controls'] as $actor => $pages) {
+                foreach ($pages as $page => $controls) {
+                    $now = $this->formControlsSeen[$actor][$page] ?? null;
+                    if ($now === null) {
+                        $problems[] = "[{$actor}] {$page}: recorded before, not crawled this time";
+                    } elseif ($now !== $controls) {
+                        $gone = array_values(array_diff($controls, $now));
+                        $new = array_values(array_diff($now, $controls));
+                        $problems[] = "[{$actor}] {$page}: forms differ (" . count($controls) . ' -> ' . count($now) . " controls)\n    was: " . ($gone[0] ?? '(order only)') . "\n    now: " . ($new[0] ?? '(order only)');
+                    }
+                }
+            }
         }
 
         $this->assertSame([], $problems, "Links that do not open for the user they are shown to:\n" . implode("\n", $problems));
@@ -164,6 +216,19 @@ class LinkCrawlTest extends TestCase
         PatientQueue::create(['patient_id' => $queuedWithForm->id, 'added_by' => $admin->id, 'status' => PatientQueue::STATUS_WAITING, 'scheduled_at' => now()]);
         PatientQueue::syncAttachment((int) $queuedWithForm->user_id);
 
+        // Rows behind the generic / category pages, the stock-in edit page and the edit page of a manual dispense record.
+        $generic = Generic::create(['name' => 'Crawl generic']);
+        $category = Category::create(['name' => 'Crawl category', 'is_active' => 1]);
+        $medicine->update(['generic_id' => $generic->id, 'category_id' => $category->id]);
+        $stockIn = StockIn::create(['availability_no' => 'AV-CRAWL']);
+        PurchasedMedicine::create(['medicine_availabilities_id' => $stockIn->id, 'medicine_id' => $medicine->id, 'dosage' => '500mg', 'quantity' => 5, 'expiry_date' => now()->addYear()->toDateString()]);
+        $manual = DispenseRecord::create([
+            'history_number' => 'HIS-CRAWL-MANUAL', 'patient_id' => $patient->id, 'doctor_id' => $doctor->doctor->id,
+            'model_type' => DispenseRecord::class, 'model_id' => (string) $patient->id, 'bill_date' => now(),
+        ]);
+        DispenseRecordItem::create(['medicine_bill_id' => $manual->id, 'medicine_id' => $medicine->id, 'dosage' => '500mg', 'sale_quantity' => 1]);
+        $this->manualRecordId = $manual->id;
+
         $actors = ['guest' => null, 'admin' => $admin, 'doctor' => $doctor];
         // The doctor as the administrator can leave the role: the default, one more permission, each default one removed.
         $actors['doctor with manage_doctors'] = $this->makeDoctor();
@@ -218,6 +283,12 @@ class LinkCrawlTest extends TestCase
             $r = $this->fetch($user, $url);
             $seen[$url] = $r['status'];
             $result['pages']++;
+            if ((getenv('FORMS_BASELINE') || getenv('FORMS_COMPARE')) && $r['status'] === 200 && $r['body'] !== '') {
+                $controls = $this->formControls($r['body']);
+                if ($controls !== []) {
+                    $this->formControlsSeen[$this->actorLabel][$r['final']] = $controls;
+                }
+            }
             if (str_contains($r['body'], 'LAZY-FAILED')) {
                 $result['lazy_failed'][] = $url;
             }
@@ -274,6 +345,11 @@ class LinkCrawlTest extends TestCase
             }
             $dashboard = getDashboardRouteName($user);
             $seeds[] = $dashboard ? (string) parse_url(route($dashboard), PHP_URL_PATH) : '/';
+            foreach ($prefixes as $prefix) {
+                if ($this->manualRecordId) {
+                    $seeds[] = '/' . $prefix . 'dispense-records/' . $this->manualRecordId . '/edit';
+                }
+            }
         } else {
             $seeds[] = '/login';
         }
@@ -310,7 +386,8 @@ class LinkCrawlTest extends TestCase
             return true;
         }
 
-        return (bool) preg_match('#(logout|impersonate|update-dark-mode|change-language|csrf-token|backups?(/|$))#i', $path);
+        // (export-stock-in streams an Excel download; once a stock-in row exists it closes an output buffer of the test run itself)
+        return (bool) preg_match('#(logout|impersonate|update-dark-mode|change-language|csrf-token|backups?(/|$)|export-stock-in)#i', $path);
     }
 
     private function normalise(string $href, string $basePath): ?string

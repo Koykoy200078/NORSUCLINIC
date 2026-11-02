@@ -11,7 +11,7 @@
 <a class="btn btn-primary category-edit-btn"
                    href="javascript:void(0)" data-id="{{ $category->id }}">{{ __('messages.common.edit') }}</a>
 @endunless
-                <a href="{{ route('categories.index') }}"
+                <a href="{{ getRouteByRole('categories.index') }}"
                    class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
             </div>
         </div>
