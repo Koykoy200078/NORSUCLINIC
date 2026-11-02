@@ -73,18 +73,6 @@ mix.copy("resources/css/montserrat.css", "public/css/montserrat.css")
         "resources/assets/front/vendor/bootstrap.bundle.min.js",
         "public/assets/front/vendor/bootstrap.bundle.min.js",
     )
-    .copy(
-        "vendor/rappasoft/laravel-livewire-tables/resources/imports",
-        "public/vendor",
-    )
-    .copy(
-        "vendor/rappasoft/laravel-livewire-tables/resources/css",
-        "public/vendor",
-    )
-    .copy(
-        "vendor/rappasoft/laravel-livewire-tables/resources/js",
-        "public/vendor",
-    )
     .copy("resources/css/ajax-loader.gif", "public/css");
 
 // Compile and bundle CSS

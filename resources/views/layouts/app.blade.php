@@ -29,8 +29,6 @@
 
     <!-- Livewire Styles -->
     @livewireStyles
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/laravel-livewire-tables.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/laravel-livewire-tables-thirdparty.min.css') }}">
 
     <!-- Inline Styles -->
     <style>
@@ -148,8 +146,6 @@
         data-modules="{{ implode(',', \App\Support\Realtime::modulesFor($liveUser)) }}"
         data-page-modules="{{ implode(',', \App\Support\Realtime::pageModules(null, $liveUser)) }}"></div>
     <script data-turbo-eval="false" src="{{ mix('js/realtime.js') }}"></script>
-    <script src="{{ asset('vendor/laravel-livewire-tables.min.js') }}"></script>
-    <script src="{{ asset('vendor/laravel-livewire-tables-thirdparty.min.js') }}"></script>
 
     <!-- JavaScript Variables -->
     @php

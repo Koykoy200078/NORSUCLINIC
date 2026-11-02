@@ -77,7 +77,7 @@ class MedsOnlyScreensTest extends TestCase
         Livewire::withoutLazyLoading()->test(MedsOnlyTable::class)->assertSee('Juan Typed')->assertDontSee('Manual Person');
     }
 
-    /** The shared last sort key (`SortsByUniqueKey`) makes records of one date list newest first and stay put between pages. */
+    /** The shared last sort key (`TableComponent::applySorting()`) makes records of one date list newest first and stay put between pages. */
     public function test_records_with_the_same_date_list_the_newest_first(): void
     {
         foreach (['Alpha Same Day', 'Beta Same Day'] as $name) {

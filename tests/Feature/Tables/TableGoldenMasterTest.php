@@ -15,9 +15,9 @@ use Tests\Concerns\SeedsTableLists;
 use Tests\TestCase;
 
 /**
- * Upgrade plan U0.4a: the golden master of every list screen, recorded on the table library we use today
- * (rappasoft/laravel-livewire-tables) so that the in-house tables which replace it can be proved to behave and to look
- * the same, list by list.
+ * Upgrade plan U0.4a: the golden master of every list screen. It was recorded on the old table library
+ * (rappasoft/laravel-livewire-tables) so that the in-house tables which replaced it could be proved to behave and to look
+ * the same, list by list: the fixtures are that library's screens, and TableComponent has to keep matching them.
  *
  * For each list a fixed set of 35 rows is shown and the screen is read the way a person sees it (ReadsRenderedTables):
  * the first page, pages 2 and 4, sorted by the first and the last sortable header (up, down, cleared), searched for a word
@@ -71,11 +71,10 @@ class TableGoldenMasterTest extends TestCase
 
     public function test_every_list_screen_has_a_golden_master(): void
     {
-        // A list screen is a Livewire class that declares columns() (the base class aside). This does not depend on the table
-        // library, so it keeps holding after the library is replaced.
+        // A list screen is a Livewire class that declares columns().
         $screens = [];
         foreach (glob(app_path('Livewire') . '/*.php') as $file) {
-            if (basename($file) !== 'LivewireTableComponent.php' && str_contains(file_get_contents($file), 'function columns(')) {
+            if (str_contains(file_get_contents($file), 'function columns(')) {
                 $screens[] = basename($file, '.php');
             }
         }

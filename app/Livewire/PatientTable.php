@@ -168,7 +168,7 @@ class PatientTable extends TableComponent
             Column::make(__('messages.patient.name'), 'user.first_name')
                 ->view('patients.components.name')
                 ->sortable()
-                // One typed word at a time (see SearchesByWords): name parts, e-mail and ID numbers of the patient's
+                // One typed word at a time (see TableComponent::applySearch()): name parts, e-mail and ID numbers of the patient's
                 // account (archived accounts too, for the Archived list) or the patient's own ID.
                 ->searchable(function (Builder $query, $word) {
                     $query->whereHas('user', function (Builder $q) use ($word) {

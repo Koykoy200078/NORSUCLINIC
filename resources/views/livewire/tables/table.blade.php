@@ -89,7 +89,7 @@
                             @php($rowKey = $row->{$this->getPrimaryKey()})
                             <tr rowpk='{{ $rowKey }}' wire:loading.class.delay="opacity-50 dark:bg-gray-900 dark:opacity-60"
                                 id="{{ $tableName }}-row-{{ $rowKey }}" wire:key="{{ $tableName }}-tablerow-tr-{{ $rowKey }}"
-                                class="bg-light rappasoft-striped-row">
+                                class="bg-light">
                                 @foreach ($columns as $colIndex => $column)
                                     @continue($column->isHidden())
                                     <td wire:key="{{ $tableName }}-table-td-{{ $rowKey }}-{{ $column->getSlug() }}"

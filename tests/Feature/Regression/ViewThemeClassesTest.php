@@ -19,16 +19,12 @@ use Tests\TestCase;
  */
 class ViewThemeClassesTest extends TestCase
 {
-    /** @return array<string, string> view path (relative) => contents, without the Livewire tables vendor views (Bootstrap 4 / 5 variants of the package) */
+    /** @return array<string, string> view path (relative) => contents */
     private function views(): array
     {
         $views = [];
         foreach (File::allFiles(resource_path('views')) as $file) {
-            $path = str_replace('\\', '/', $file->getRelativePathname());
-            if (str_starts_with($path, 'vendor/livewire-tables/')) {
-                continue;
-            }
-            $views[$path] = $file->getContents();
+            $views[str_replace('\\', '/', $file->getRelativePathname())] = $file->getContents();
         }
 
         return $views;

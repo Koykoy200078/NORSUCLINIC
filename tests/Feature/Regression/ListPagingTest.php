@@ -4,7 +4,6 @@ namespace Tests\Feature\Regression;
 
 use App\Livewire\DoctorTable;
 use App\Livewire\DocumentIssuanceTable;
-use App\Livewire\LivewireTableComponent;
 use App\Livewire\MedicineDispenseTable;
 use App\Livewire\MedicineTable;
 use App\Livewire\RoleTable;
@@ -18,7 +17,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use ReflectionClass;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
@@ -27,7 +25,7 @@ use Tests\TestCase;
  * Plan Phase 5, Pass A item 4: a list sorted by a value that repeats (a date, a name, a status) needs a unique LAST sort
  * key. Without one MySQL orders the tied rows differently for each page query, so one page repeats rows that another page
  * never shows (found on Dispense History in the Phase 2 re-check: 60 same-day records listed 48 different rows).
- * Every list now ends its ORDER BY with the row's own key (LivewireTableComponent::applySorting()).
+ * Every list now ends its ORDER BY with the row's own key (TableComponent::applySorting()).
  */
 class ListPagingTest extends TestCase
 {
@@ -153,15 +151,13 @@ class ListPagingTest extends TestCase
         $tables = 0;
         foreach (glob(app_path('Livewire') . '/*.php') as $file) {
             $class = 'App\\Livewire\\' . basename($file, '.php');
-            if (! is_subclass_of($class, DataTableComponent::class) && ! is_subclass_of($class, TableComponent::class)) {
+            if (! is_subclass_of($class, TableComponent::class)) {
                 continue;
             }
             $tables++;
 
-            // The shared method reports its own file (the old library's trait, or the in-house base): this is how a list
-            // that brings its own ordering shows up.
-            $declaredIn = basename((new ReflectionClass($class))->getMethod('applySorting')->getFileName());
-            if (! in_array($declaredIn, ['SortsByUniqueKey.php', 'TableComponent.php'], true)) {
+            // The shared method reports the base's own file: this is how a list that brings its own ordering shows up.
+            if (basename((new ReflectionClass($class))->getMethod('applySorting')->getFileName()) !== 'TableComponent.php') {
                 $others[] = $class;
             }
         }

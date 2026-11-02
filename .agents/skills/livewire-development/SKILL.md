@@ -1,6 +1,6 @@
 ---
 name: livewire-development
-description: "Use for any task or question involving Livewire in this project (Livewire 3.8 on Laravel 10, with rappasoft/laravel-livewire-tables 3.2). Activate if the user mentions Livewire, wire: directives (wire:model, wire:click, wire:poll), Livewire tables, lazy components, or a screen built from app/Livewire classes. Covers building and debugging class-based components, tables, tabbed screens, authorization inside actions, loading states and tests. Do not use for the jQuery / AJAX pages (e.g. patient queue) or standard Laravel forms without Livewire."
+description: "Use for any task or question involving Livewire in this project (Livewire 3.8 on Laravel 10, with the project's own list base App\\Livewire\\Tables\\TableComponent). Activate if the user mentions Livewire, wire: directives (wire:model, wire:click, wire:poll), Livewire tables, lazy components, or a screen built from app/Livewire classes. Covers building and debugging class-based components, tables, tabbed screens, authorization inside actions, loading states and tests. Do not use for the jQuery / AJAX pages (e.g. patient queue) or standard Laravel forms without Livewire."
 license: MIT
 metadata:
   author: laravel (adapted for Medical University Clinic / NORSUCLINIC, Livewire 3)
@@ -14,14 +14,20 @@ no islands, no `Route::livewire()`, no `wire:sort`. Look up the **Livewire 3.x**
 
 ## Project conventions
 
-- **Class-based components only**: class in `app/Livewire/` (42 flat files, no sub-folders), view in
+- **Class-based components only**: class in `app/Livewire/` (flat files; the list base is in `app/Livewire/Tables/`), view in
   `resources/views/livewire/<kebab-name>.blade.php`. Create with `php artisan make:livewire CreatePost` and follow sibling files.
-- **Data tables** use rappasoft/laravel-livewire-tables **3.2** (held back: 3.8 breaks the customised table views).
-  Every table extends **`App\Livewire\LivewireTableComponent`**, never `DataTableComponent` directly. That base:
-  - is `#[Lazy]`;
-  - sets search debounce 500 ms and per-page 10 / 25 / 50;
-  - uses `Concerns\SearchesByWords` (word search through `App\Support\SearchTerm`).
-  Implement `configure()`, `columns()` and `builder()`. Rappasoft 3 only selects mapped columns, so label-only columns need `setAdditionalSelects()`.
+- **List screens** (searchable, sortable, paged tables) extend **`App\Livewire\Tables\TableComponent`**, the project's own base on
+  plain Livewire 3 (the old rappasoft table package was removed in the Laravel upgrade: never add a table package). Implement
+  `configure()`, `columns()` (`App\Support\Tables\Column`) and `builder()` (or name a `$model` to show all its rows). The base:
+  - searches word by word (`App\Support\SearchTerm`: every word must be found in some searchable column), pages 10 / 25 / 50,
+    and always ends the sort with the row's own key, so a page never repeats or loses a row;
+  - selects only the mapped columns plus `setAdditionalSelects()`, so a label-only column that reads other fields needs them added;
+  - left-joins related columns (`'city.name'`) under their relation names; `->sortable(fn ($query, $direction))` and
+    `->searchable(fn ($query, $word))` take a callback; `->hideIf()` hides a column but keeps it in the query;
+  - is **not** lazy by itself: put `#[Lazy]` on the list class (Livewire reads the class's own attributes, not its parent's);
+  - has its configuration setters `protected` (a browser can call public methods): keep new helpers protected too.
+  Every list has a recorded screen in `tests/Fixtures/tables/*.json` (`TableGoldenMasterTest`): a new list gets its own, and a change
+  to the base must keep all of them passing.
 - **Tabbed screens** (e.g. `MedicineScreen`, `MedicineDispensingScreen`): mount child tables with `:lazy="false"` and a
   `key`, otherwise lazy children are destroyed on tab switch. Report Generation keeps `$tab` as state with `setTab()`.
 - Layout `resources/views/layouts/app.blade.php`: `@livewireStyles` / `@livewireScripts` (assets not auto-injected:
