@@ -10,6 +10,7 @@ use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\Concerns\ReadsRenderedTables;
+use Tests\Concerns\SeedsClinicTableLists;
 use Tests\Concerns\SeedsTableLists;
 use Tests\TestCase;
 
@@ -32,6 +33,7 @@ class TableGoldenMasterTest extends TestCase
     use BuildsClinicData;
     use ReadsRenderedTables;
     use SeedsTableLists;
+    use SeedsClinicTableLists;
 
     protected function setUp(): void
     {
@@ -56,9 +58,32 @@ class TableGoldenMasterTest extends TestCase
             // lookups
             'BarangayTable', 'CityTable', 'CountriesTable', 'ProvinceTable', 'StateTable', 'SpecializationTable', 'SliderTable', 'RoleTable',
             'MedicineCategoryTable', 'MedicineCategoryDetailsTable', 'MedicineGenericTable', 'MedicineGenericDetailsTable',
+            // inventory
+            'MedicineTable', 'StockInTable', 'StockOutTable', 'UsedMedicineTable', 'MedicineAvailabilityTable', 'MedicineDispenseTable',
+            // people
+            'StaffTable', 'DoctorTable', 'PatientTable',
+            // clinical
+            'PrescriptionTable', 'PrescriptionVerificationTable', 'DocumentIssuanceTable', 'LabRequestTable', 'MedsOnlyTable',
         ];
 
         return array_combine($names, array_map(fn ($name) => [$name], $names));
+    }
+
+    public function test_every_list_screen_has_a_golden_master(): void
+    {
+        // A list screen is a Livewire class that declares columns() (the base class aside). This does not depend on the table
+        // library, so it keeps holding after the library is replaced.
+        $screens = [];
+        foreach (glob(app_path('Livewire') . '/*.php') as $file) {
+            if (basename($file) !== 'LivewireTableComponent.php' && str_contains(file_get_contents($file), 'function columns(')) {
+                $screens[] = basename($file, '.php');
+            }
+        }
+
+        $this->assertEqualsCanonicalizing($screens, array_keys(self::lists()), 'a list screen has no golden master (or a recorded one no longer exists)');
+        foreach ($screens as $screen) {
+            $this->assertFileExists(base_path("tests/Fixtures/tables/{$screen}.json"), "{$screen} has no recorded fixture");
+        }
     }
 
     #[DataProvider('lists')]
@@ -68,7 +93,7 @@ class TableGoldenMasterTest extends TestCase
         $seed = $this->{'seed' . $list}();
 
         $snapshots = [];
-        $open = fn () => Livewire::withoutLazyLoading()->test($class, $seed['params']);
+        $open = fn (array $more = []) => Livewire::withoutLazyLoading()->test($class, $more + $seed['params']);
         $read = fn (Testable $component) => $this->snapshotOf($component->html());
 
         $component = $open();
@@ -102,6 +127,18 @@ class TableGoldenMasterTest extends TestCase
 
         $component = $open()->set('perPage', 7);
         $snapshots['7 per page (not offered)'] = $read($component);
+
+        // the filters a list has in its header (status, source ...), each on a fresh screen
+        // (an array is a set of mount parameters, for a property the screen locks after it is mounted)
+        foreach ($seed['extras'] ?? [] as $name => $apply) {
+            if (is_array($apply)) {
+                $component = $open($apply);
+            } else {
+                $component = $open();
+                $apply($component);
+            }
+            $snapshots[$name] = $read($component);
+        }
 
         $this->assertMatchesRecordedList($list, $snapshots);
     }

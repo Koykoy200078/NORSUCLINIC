@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Slider;
 use App\Models\State;
 use Carbon\Carbon;
+use Livewire\Features\SupportTesting\Testable;
 
 /**
  * The fixed data behind the list-screen golden master (TableGoldenMasterTest): 35 rows per list, so the lists have four
@@ -126,7 +127,11 @@ trait SeedsTableLists
             Category::create(['name' => $this->label('Category', $i), 'is_active' => $i % 4 === 0 ? 0 : 1] + $this->stamps($i));
         }
 
-        return $this->seeded();
+        return $this->seeded() + ['extras' => [
+            // the header filter dispatches this event (resources/assets/js/category/category.js)
+            'status: active' => fn (Testable $component) => $component->dispatch('changeFilter', value: 1),
+            'status: inactive' => fn (Testable $component) => $component->dispatch('changeFilter', value: 2),
+        ]];
     }
 
     protected function seedMedicineGenericTable(): array

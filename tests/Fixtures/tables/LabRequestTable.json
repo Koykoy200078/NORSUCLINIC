@@ -1,0 +1,2805 @@
+{
+    "first page": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100025",
+                    "Zeta Lab Patient 25",
+                    "Test 1, Test 2",
+                    "Feb 26, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100024",
+                    "Alpha Lab Patient 24",
+                    "Test 1",
+                    "Feb 25, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100023",
+                    "Alpha Lab Patient 23",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 24, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100022",
+                    "Alpha Lab Patient 22",
+                    "Test 1, Test 2",
+                    "Feb 23, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100021",
+                    "Alpha Lab Patient 21",
+                    "Test 1",
+                    "Feb 22, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100020",
+                    "Alpha Lab Patient 20",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 21, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100019",
+                    "Alpha Lab Patient 19",
+                    "Test 1, Test 2",
+                    "Feb 20, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100018",
+                    "Alpha Lab Patient 18",
+                    "Test 1",
+                    "Feb 19, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100017",
+                    "Alpha Lab Patient 17",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 18, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100016",
+                    "Alpha Lab Patient 16",
+                    "Test 1, Test 2",
+                    "Feb 17, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100005",
+                    "Zeta Lab Patient 05",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 06, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100004",
+                    "Alpha Lab Patient 04",
+                    "Test 1, Test 2",
+                    "Feb 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100003",
+                    "Alpha Lab Patient 03",
+                    "Test 1",
+                    "Feb 04, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100002",
+                    "Alpha Lab Patient 02",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 03, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100001",
+                    "Alpha Lab Patient 01",
+                    "Test 1, Test 2",
+                    "Feb 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by request_number, ascending": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100001",
+                    "Alpha Lab Patient 01",
+                    "Test 1, Test 2",
+                    "Feb 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100002",
+                    "Alpha Lab Patient 02",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 03, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100003",
+                    "Alpha Lab Patient 03",
+                    "Test 1",
+                    "Feb 04, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100004",
+                    "Alpha Lab Patient 04",
+                    "Test 1, Test 2",
+                    "Feb 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100005",
+                    "Zeta Lab Patient 05",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 06, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100006",
+                    "Alpha Lab Patient 06",
+                    "Test 1",
+                    "Feb 07, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100007",
+                    "Alpha Lab Patient 07",
+                    "Test 1, Test 2",
+                    "Feb 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100008",
+                    "Alpha Lab Patient 08",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 09, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100009",
+                    "Alpha Lab Patient 09",
+                    "Test 1",
+                    "Feb 10, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100010",
+                    "Alpha Lab Patient 10",
+                    "Test 1, Test 2",
+                    "Feb 11, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by request_number, descending": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by request_number, cleared": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, ascending": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100001",
+                    "Alpha Lab Patient 01",
+                    "Test 1, Test 2",
+                    "Feb 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100002",
+                    "Alpha Lab Patient 02",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 03, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100003",
+                    "Alpha Lab Patient 03",
+                    "Test 1",
+                    "Feb 04, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100004",
+                    "Alpha Lab Patient 04",
+                    "Test 1, Test 2",
+                    "Feb 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100005",
+                    "Zeta Lab Patient 05",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 06, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100006",
+                    "Alpha Lab Patient 06",
+                    "Test 1",
+                    "Feb 07, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100007",
+                    "Alpha Lab Patient 07",
+                    "Test 1, Test 2",
+                    "Feb 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100008",
+                    "Alpha Lab Patient 08",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 09, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100009",
+                    "Alpha Lab Patient 09",
+                    "Test 1",
+                    "Feb 10, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100010",
+                    "Alpha Lab Patient 10",
+                    "Test 1, Test 2",
+                    "Feb 11, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, descending": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, cleared": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100025",
+                    "Zeta Lab Patient 25",
+                    "Test 1, Test 2",
+                    "Feb 26, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100015",
+                    "Zeta Lab Patient 15",
+                    "Test 1",
+                    "Feb 16, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100005",
+                    "Zeta Lab Patient 05",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 06, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No items found. Try to broaden your search.",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100025",
+                    "Zeta Lab Patient 25",
+                    "Test 1, Test 2",
+                    "Feb 26, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100024",
+                    "Alpha Lab Patient 24",
+                    "Test 1",
+                    "Feb 25, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100023",
+                    "Alpha Lab Patient 23",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 24, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100022",
+                    "Alpha Lab Patient 22",
+                    "Test 1, Test 2",
+                    "Feb 23, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100021",
+                    "Alpha Lab Patient 21",
+                    "Test 1",
+                    "Feb 22, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100020",
+                    "Alpha Lab Patient 20",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 21, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100019",
+                    "Alpha Lab Patient 19",
+                    "Test 1, Test 2",
+                    "Feb 20, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100018",
+                    "Alpha Lab Patient 18",
+                    "Test 1",
+                    "Feb 19, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100017",
+                    "Alpha Lab Patient 17",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 18, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100016",
+                    "Alpha Lab Patient 16",
+                    "Test 1, Test 2",
+                    "Feb 17, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100015",
+                    "Zeta Lab Patient 15",
+                    "Test 1",
+                    "Feb 16, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100014",
+                    "Alpha Lab Patient 14",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 15, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100013",
+                    "Alpha Lab Patient 13",
+                    "Test 1, Test 2",
+                    "Feb 14, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100012",
+                    "Alpha Lab Patient 12",
+                    "Test 1",
+                    "Feb 13, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100011",
+                    "Alpha Lab Patient 11",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 12, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "status: completed": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100030",
+                    "Alpha Lab Patient 30",
+                    "Test 1",
+                    "Mar 03, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100027",
+                    "Alpha Lab Patient 27",
+                    "Test 1",
+                    "Feb 28, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100024",
+                    "Alpha Lab Patient 24",
+                    "Test 1",
+                    "Feb 25, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100021",
+                    "Alpha Lab Patient 21",
+                    "Test 1",
+                    "Feb 22, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100018",
+                    "Alpha Lab Patient 18",
+                    "Test 1",
+                    "Feb 19, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100015",
+                    "Zeta Lab Patient 15",
+                    "Test 1",
+                    "Feb 16, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100012",
+                    "Alpha Lab Patient 12",
+                    "Test 1",
+                    "Feb 13, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100009",
+                    "Alpha Lab Patient 09",
+                    "Test 1",
+                    "Feb 10, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100006",
+                    "Alpha Lab Patient 06",
+                    "Test 1",
+                    "Feb 07, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 11 results"
+    },
+    "status: pending": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100035",
+                    "Zeta Lab Patient 35",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 08, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100034",
+                    "Alpha Lab Patient 34",
+                    "Test 1, Test 2",
+                    "Mar 07, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100032",
+                    "Alpha Lab Patient 32",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 05, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100031",
+                    "Alpha Lab Patient 31",
+                    "Test 1, Test 2",
+                    "Mar 04, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100029",
+                    "Alpha Lab Patient 29",
+                    "Test 1, Test 2, Test 3",
+                    "Mar 02, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100028",
+                    "Alpha Lab Patient 28",
+                    "Test 1, Test 2",
+                    "Mar 01, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100026",
+                    "Alpha Lab Patient 26",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 27, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100025",
+                    "Zeta Lab Patient 25",
+                    "Test 1, Test 2",
+                    "Feb 26, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100023",
+                    "Alpha Lab Patient 23",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 24, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100022",
+                    "Alpha Lab Patient 22",
+                    "Test 1, Test 2",
+                    "Feb 23, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 24 results"
+    },
+    "one patient only": {
+        "headers": [
+            "Request #",
+            "Patient Name",
+            "Tests Requested",
+            "Date Requested",
+            "Status",
+            "Actions"
+        ],
+        "sortable": [
+            "request_number",
+            "patient_name",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "LR100033",
+                    "Alpha Lab Patient 33",
+                    "Test 1",
+                    "Mar 06, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100023",
+                    "Alpha Lab Patient 23",
+                    "Test 1, Test 2, Test 3",
+                    "Feb 24, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100013",
+                    "Alpha Lab Patient 13",
+                    "Test 1, Test 2",
+                    "Feb 14, 2026",
+                    "Pending",
+                    "View Request Edit Request Print Request Form Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/edit",
+                    "href=http://localhost/admin/lab-requests/N/pdf",
+                    "action=http://localhost/admin/lab-requests/N"
+                ]
+            },
+            {
+                "cells": [
+                    "LR100003",
+                    "Alpha Lab Patient 03",
+                    "Test 1",
+                    "Feb 04, 2026",
+                    "Completed",
+                    "View Request Print Request Form"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/lab-requests/N",
+                    "href=http://localhost/admin/lab-requests/N/pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    }
+}

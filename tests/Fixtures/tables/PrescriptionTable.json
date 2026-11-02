@@ -1,0 +1,2884 @@
+{
+    "first page": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-26",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-25",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-24",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-23",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-22",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-21",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-20",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-19",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-18",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-17",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-06",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-04",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-03",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by patient.user.first_name, ascending": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-21",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-11",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-22",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-12",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-23",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-13",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by patient.user.first_name, descending": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-25",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-15",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-20",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-10",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-19",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-09",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by patient.user.first_name, cleared": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by diagnosis.diagnoses, ascending": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-26",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-24",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-23",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by diagnosis.diagnoses, descending": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-25",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-22",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-19",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-16",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-13",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-10",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-07",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by diagnosis.diagnoses, cleared": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-25",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-15",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-26",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-25",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-24",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-23",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-22",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-21",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-20",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-19",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-18",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-17",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-16",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-15",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-14",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-13",
+                    "Dispensed",
+                    "J00 Acute nasopharyngitis",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-12",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Patients",
+            "Doctors",
+            "Consultation Date",
+            "Dispense Status",
+            "ICD-10",
+            "Action"
+        ],
+        "sortable": [
+            "patient.user.first_name",
+            "doctor.user.first_name",
+            "consultation_date",
+            "status",
+            "diagnosis.diagnoses"
+        ],
+        "search": "Search",
+        "toolbar": "New Prescription",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-08",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-07",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-06",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-05",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-04",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-03",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-02",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-03-01",
+                    "Dispensed",
+                    "",
+                    "View Download PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescription-pdf/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-28",
+                    "Pending",
+                    "J00 Acute nasopharyngitis",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2026-02-27",
+                    "Pending",
+                    "",
+                    "View Edit Download PDF Cancel prescription Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "href=http://localhost/admin/prescriptions/N/edit",
+                    "href=http://localhost/admin/prescription-pdf/N",
+                    "action=http://localhost/admin/prescriptions/N/active-deactive"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

@@ -1,0 +1,2326 @@
+{
+    "first page": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "25",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-02-26",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "24",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-25",
+                    "24",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "23",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-02-24",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "22",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-02-23",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "21",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-02-22",
+                    "21",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "20",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-02-21",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "19",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-02-20",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "18",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-02-19",
+                    "18",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "17",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-18",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "16",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-17",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "5",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-02-06",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "4",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "3",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-02-04",
+                    "3",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "2",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-02-03",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "1",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-02-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by id, ascending": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "1",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-02-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "2",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-02-03",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "3",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-02-04",
+                    "3",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "4",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "5",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-02-06",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "6",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-07",
+                    "6",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "7",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "8",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-02-09",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "9",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-02-10",
+                    "9",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "10",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-02-11",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by id, descending": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by id, cleared": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by status, ascending": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by status, descending": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by status, cleared": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "24",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-25",
+                    "24",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "14",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-15",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "4",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "25",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-02-26",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "24",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-25",
+                    "24",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "23",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-02-24",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "22",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-02-23",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "21",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-02-22",
+                    "21",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "20",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-02-21",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "19",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-02-20",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "18",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-02-19",
+                    "18",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "17",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-18",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "16",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-17",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "15",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-02-16",
+                    "15",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "14",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-02-15",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "13",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-02-14",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "12",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-02-13",
+                    "12",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "11",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-02-12",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "RX #",
+            "Patient",
+            "Doctor",
+            "Consultation Date",
+            "Requested Qty",
+            "Dispense Status",
+            "Action"
+        ],
+        "sortable": [
+            "id",
+            "consultation_date",
+            "requested-qty",
+            "status"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Alpha Pat 06 Cruz",
+                    "Dora Doctor",
+                    "2026-03-08",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Zeta Pat 05 Cruz",
+                    "Dora Doctor",
+                    "2026-03-07",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Pat 04 Cruz",
+                    "Dora Doctor",
+                    "2026-03-06",
+                    "33",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Pat 03 Cruz",
+                    "Dora Doctor",
+                    "2026-03-05",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Pat 02 Cruz",
+                    "Dora Doctor",
+                    "2026-03-04",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Pat 01 Cruz",
+                    "Dora Doctor",
+                    "2026-03-03",
+                    "30",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Pat 10 Cruz",
+                    "Dora Doctor",
+                    "2026-03-02",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Pat 09 Cruz",
+                    "Dora Doctor",
+                    "2026-03-01",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Pat 08 Cruz",
+                    "Dora Doctor",
+                    "2026-02-28",
+                    "27",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Pat 07 Cruz",
+                    "Dora Doctor",
+                    "2026-02-27",
+                    "0",
+                    "Pending",
+                    "Verify Prescription Dispense Medicine"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/prescription-medicine-show/N",
+                    "action=http://localhost/admin/prescriptions/N/dispense"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

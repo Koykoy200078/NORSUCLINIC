@@ -1,0 +1,2445 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 25 Cruz patient25@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:25 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 23 Cruz patient23@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:23 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 22 Cruz patient22@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:22 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 21 Cruz patient21@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:21 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 20 Cruz patient20@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:20 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 19 Cruz patient19@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:19 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 18 Cruz patient18@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:18 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 17 Cruz patient17@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:17 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 16 Cruz patient16@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:16 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 15 Cruz patient15@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:15 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 33 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:03 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:02 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:01 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 33 of 33 results"
+    },
+    "sorted by user.first_name, ascending": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:01 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:02 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:03 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:04 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:06 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:07 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:08 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:09 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:10 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 11 Cruz patient11@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:11 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "sorted by user.first_name, descending": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 25 Cruz patient25@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:25 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 15 Cruz patient15@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:15 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:05 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "sorted by user.first_name, cleared": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "sorted by created_at, ascending": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:01 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:02 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:03 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:04 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:05 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:06 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:07 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:08 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:09 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:10 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "sorted by created_at, descending": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "sorted by created_at, cleared": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 25 Cruz patient25@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:25 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 15 Cruz patient15@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:15 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:05 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [],
+        "empty": "No active patients found",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 25 Cruz patient25@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:25 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 23 Cruz patient23@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:23 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 22 Cruz patient22@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:22 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 21 Cruz patient21@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:21 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 20 Cruz patient20@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:20 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 19 Cruz patient19@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:19 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 18 Cruz patient18@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:18 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 17 Cruz patient17@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:17 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 16 Cruz patient16@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:16 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Pat 15 Cruz patient15@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:15 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 14 Cruz patient14@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:14 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 13 Cruz patient13@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:13 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 11 Cruz patient11@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:11 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:10 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:09 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 33 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Pat 35 Cruz patient35@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:35 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 34 Cruz patient34@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:34 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 33 Cruz patient33@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:33 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 32 Cruz patient32@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:32 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 31 Cruz patient31@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:31 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 30 Cruz patient30@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:30 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 29 Cruz patient29@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:29 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 28 Cruz patient28@golden.test",
+                    "Faculty",
+                    "1",
+                    "01 Feb 2026 08:28 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/document-issuances?patient_id=N&module=consultation",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 27 Cruz patient27@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:27 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Pat 26 Cruz patient26@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:26 AM",
+                    "View Patient Edit Create Prescription Reset Password Archive Patient"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N/history",
+                    "href=http://localhost/admin/patients/N/edit",
+                    "href=http://localhost/admin/patients/N/prescription-create"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 33 results"
+    },
+    "status: archived": {
+        "headers": [
+            "Name",
+            "Patient Type",
+            "Total Consultations",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "patient_type_id",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Active Patients Archived Patients Add Patient",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Pat 24 Cruz patient24@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:24 AM",
+                    "Restore Patient"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Pat 12 Cruz patient12@golden.test",
+                    "Faculty",
+                    "0",
+                    "01 Feb 2026 08:12 AM",
+                    "Restore Patient"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    }
+}

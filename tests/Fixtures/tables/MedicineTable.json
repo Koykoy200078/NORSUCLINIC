@@ -1,0 +1,2065 @@
+{
+    "first page": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 1",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 0",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 1",
+                    "15",
+                    "May 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 0",
+                    "19",
+                    "Apr 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 3",
+                    "13",
+                    "Mar 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 2",
+                    "17",
+                    "Feb 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 1",
+                    "11",
+                    "Jan 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 1",
+                    "11",
+                    "Jan 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 2",
+                    "17",
+                    "Feb 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 3",
+                    "13",
+                    "Mar 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 0",
+                    "19",
+                    "Apr 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 0",
+                    "Category 2",
+                    "21",
+                    "Jun 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 1",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 1",
+                    "15",
+                    "May 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by available_quantity, ascending": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by available_quantity, descending": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 0",
+                    "Category 2",
+                    "21",
+                    "Jun 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 0",
+                    "19",
+                    "Apr 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 2",
+                    "17",
+                    "Feb 15, 2027 2 batches",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 1",
+                    "15",
+                    "May 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 3",
+                    "13",
+                    "Mar 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 1",
+                    "11",
+                    "Jan 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by available_quantity, cleared": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 1",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 1",
+                    "15",
+                    "May 15, 2027",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 1",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 0",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Medicine",
+            "Generic Name",
+            "Category",
+            "Available Quantity",
+            "Expiration",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "generic_name",
+            "category_name",
+            "available_quantity"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine",
+        "rows": [
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 2",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 1",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 0",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 2",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 1",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 0",
+                    "Generic 0",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 4",
+                    "Generic 2",
+                    "Category 1",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 3",
+                    "Generic 1",
+                    "Category 0",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 2",
+                    "Generic 0",
+                    "Category 3",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Brand 1",
+                    "Generic 2",
+                    "Category 2",
+                    "0",
+                    "No expiry data",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/medicines/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

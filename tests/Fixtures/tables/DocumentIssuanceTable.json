@@ -1,0 +1,2596 @@
+{
+    "first page": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "25",
+                    "Zeta Visitor 25",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "24",
+                    "Alpha Visitor 24",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "23",
+                    "Alpha Visitor 23",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "22",
+                    "Alpha Visitor 22",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "21",
+                    "Alpha Visitor 21",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "20",
+                    "Alpha Visitor 20",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "19",
+                    "Alpha Visitor 19",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "18",
+                    "Alpha Visitor 18",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "17",
+                    "Alpha Visitor 17",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "16",
+                    "Alpha Visitor 16",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "5",
+                    "Zeta Visitor 05",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "4",
+                    "Alpha Visitor 04",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "3",
+                    "Alpha Visitor 03",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "2",
+                    "Alpha Visitor 02",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "1",
+                    "Alpha Visitor 01",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by id, ascending": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "1",
+                    "Alpha Visitor 01",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "2",
+                    "Alpha Visitor 02",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "3",
+                    "Alpha Visitor 03",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "4",
+                    "Alpha Visitor 04",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "5",
+                    "Zeta Visitor 05",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "6",
+                    "Alpha Visitor 06",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "7",
+                    "Alpha Visitor 07",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "8",
+                    "Alpha Visitor 08",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "9",
+                    "Alpha Visitor 09",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "10",
+                    "Alpha Visitor 10",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by id, descending": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by id, cleared": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, ascending": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, descending": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by requested_at, cleared": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "25",
+                    "Zeta Visitor 25",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "15",
+                    "Zeta Visitor 15",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "5",
+                    "Zeta Visitor 05",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No items found. Try to broaden your search.",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "25",
+                    "Zeta Visitor 25",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "24",
+                    "Alpha Visitor 24",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "23",
+                    "Alpha Visitor 23",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "22",
+                    "Alpha Visitor 22",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "21",
+                    "Alpha Visitor 21",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "20",
+                    "Alpha Visitor 20",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "19",
+                    "Alpha Visitor 19",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "18",
+                    "Alpha Visitor 18",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "17",
+                    "Alpha Visitor 17",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "16",
+                    "Alpha Visitor 16",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "15",
+                    "Zeta Visitor 15",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "14",
+                    "Alpha Visitor 14",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "13",
+                    "Alpha Visitor 13",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "12",
+                    "Alpha Visitor 12",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "11",
+                    "Alpha Visitor 11",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "35",
+                    "Zeta Visitor 35",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "34",
+                    "Alpha Visitor 34",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "32",
+                    "Alpha Visitor 32",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "31",
+                    "Alpha Visitor 31",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "30",
+                    "Alpha Visitor 30",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "29",
+                    "Alpha Visitor 29",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "28",
+                    "Alpha Visitor 28",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "27",
+                    "Alpha Visitor 27",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "26",
+                    "Alpha Visitor 26",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "one patient only": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "33",
+                    "Alpha Visitor 33",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "23",
+                    "Alpha Visitor 23",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "13",
+                    "Alpha Visitor 13",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            },
+            {
+                "cells": [
+                    "3",
+                    "Alpha Visitor 03",
+                    "Consultation Form",
+                    "N/A",
+                    "Incomplete",
+                    "View Edit Export PDF"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "certificates module": {
+        "headers": [
+            "ID",
+            "Patient Name",
+            "Document Type",
+            "Requested At",
+            "Completion Status",
+            "Actions"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "document_type",
+            "requested_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "112",
+                    "Alpha Certificate 12",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "111",
+                    "Alpha Certificate 11",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "110",
+                    "Alpha Certificate 10",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "109",
+                    "Alpha Certificate 09",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "108",
+                    "Alpha Certificate 08",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "107",
+                    "Alpha Certificate 07",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "106",
+                    "Alpha Certificate 06",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "105",
+                    "Zeta Certificate 05",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "104",
+                    "Alpha Certificate 04",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            },
+            {
+                "cells": [
+                    "103",
+                    "Alpha Certificate 03",
+                    "Medical Certificate",
+                    "N/A",
+                    "Completed",
+                    "View Edit Export PDF Direct Print (Fast)"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/document-issuances/N",
+                    "href=http://localhost/admin/document-issuances/N/edit",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf",
+                    "href=http://localhost/admin/document-issuances/N/export-pdf?action=print"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 12 results"
+    }
+}

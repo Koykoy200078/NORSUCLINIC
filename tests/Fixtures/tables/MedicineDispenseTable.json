@@ -1,0 +1,2974 @@
+{
+    "first page": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0025",
+                    "Dispense Record",
+                    "12:00 AM 26th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0024",
+                    "Dispense Record",
+                    "12:00 AM 25th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0023",
+                    "Dispense Record",
+                    "12:00 AM 24th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0022",
+                    "Dispense Record",
+                    "12:00 AM 23rd Feb, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0021",
+                    "Dispense Record",
+                    "12:00 AM 22nd Feb, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0020",
+                    "Dispense Record",
+                    "12:00 AM 21st Feb, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0019",
+                    "Dispense Record",
+                    "12:00 AM 20th Feb, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0018",
+                    "Dispense Record",
+                    "12:00 AM 19th Feb, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0017",
+                    "Dispense Record",
+                    "12:00 AM 18th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0016",
+                    "Dispense Record",
+                    "12:00 AM 17th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0005",
+                    "Dispense Record",
+                    "12:00 AM 6th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0004",
+                    "Dispense Record",
+                    "12:00 AM 5th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0003",
+                    "Dispense Record",
+                    "12:00 AM 4th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0002",
+                    "Dispense Record",
+                    "12:00 AM 3rd Feb, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0001",
+                    "Dispense Record",
+                    "12:00 AM 2nd Feb, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by history_number, ascending": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0001",
+                    "Dispense Record",
+                    "12:00 AM 2nd Feb, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0002",
+                    "Dispense Record",
+                    "12:00 AM 3rd Feb, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0003",
+                    "Dispense Record",
+                    "12:00 AM 4th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0004",
+                    "Dispense Record",
+                    "12:00 AM 5th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0005",
+                    "Dispense Record",
+                    "12:00 AM 6th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0006",
+                    "Dispense Record",
+                    "12:00 AM 7th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0007",
+                    "Dispense Record",
+                    "12:00 AM 8th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0008",
+                    "Dispense Record",
+                    "12:00 AM 9th Feb, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0009",
+                    "Dispense Record",
+                    "12:00 AM 10th Feb, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0010",
+                    "Dispense Record",
+                    "12:00 AM 11th Feb, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by history_number, descending": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by history_number, cleared": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by quantity, ascending": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0020",
+                    "Dispense Record",
+                    "12:00 AM 21st Feb, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0010",
+                    "Dispense Record",
+                    "12:00 AM 11th Feb, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0025",
+                    "Dispense Record",
+                    "12:00 AM 26th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0016",
+                    "Dispense Record",
+                    "12:00 AM 17th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0015",
+                    "Dispense Record",
+                    "12:00 AM 16th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0006",
+                    "Dispense Record",
+                    "12:00 AM 7th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0005",
+                    "Dispense Record",
+                    "12:00 AM 6th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by quantity, descending": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0019",
+                    "Dispense Record",
+                    "12:00 AM 20th Feb, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0009",
+                    "Dispense Record",
+                    "12:00 AM 10th Feb, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0023",
+                    "Dispense Record",
+                    "12:00 AM 24th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0013",
+                    "Dispense Record",
+                    "12:00 AM 14th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0003",
+                    "Dispense Record",
+                    "12:00 AM 4th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0017",
+                    "Dispense Record",
+                    "12:00 AM 18th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0007",
+                    "Dispense Record",
+                    "12:00 AM 8th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by quantity, cleared": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0024",
+                    "Dispense Record",
+                    "12:00 AM 25th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0014",
+                    "Dispense Record",
+                    "12:00 AM 15th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0004",
+                    "Dispense Record",
+                    "12:00 AM 5th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0025",
+                    "Dispense Record",
+                    "12:00 AM 26th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0024",
+                    "Dispense Record",
+                    "12:00 AM 25th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0023",
+                    "Dispense Record",
+                    "12:00 AM 24th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0022",
+                    "Dispense Record",
+                    "12:00 AM 23rd Feb, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0021",
+                    "Dispense Record",
+                    "12:00 AM 22nd Feb, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0020",
+                    "Dispense Record",
+                    "12:00 AM 21st Feb, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0019",
+                    "Dispense Record",
+                    "12:00 AM 20th Feb, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0018",
+                    "Dispense Record",
+                    "12:00 AM 19th Feb, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0017",
+                    "Dispense Record",
+                    "12:00 AM 18th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0016",
+                    "Dispense Record",
+                    "12:00 AM 17th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0015",
+                    "Dispense Record",
+                    "12:00 AM 16th Feb, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0014",
+                    "Dispense Record",
+                    "12:00 AM 15th Feb, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0013",
+                    "Dispense Record",
+                    "12:00 AM 14th Feb, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0012",
+                    "Dispense Record",
+                    "12:00 AM 13th Feb, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0011",
+                    "Dispense Record",
+                    "12:00 AM 12th Feb, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "source: dispense records only": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [
+            {
+                "cells": [
+                    "#HIS0035",
+                    "Dispense Record",
+                    "12:00 AM 8th Mar, 2026",
+                    "Alpha Pat 06 Cruz patient6@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0034",
+                    "Dispense Record",
+                    "12:00 AM 7th Mar, 2026",
+                    "Zeta Pat 05 Cruz patient5@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "5",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0033",
+                    "Dispense Record",
+                    "12:00 AM 6th Mar, 2026",
+                    "Alpha Pat 04 Cruz patient4@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "8",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0032",
+                    "Dispense Record",
+                    "12:00 AM 5th Mar, 2026",
+                    "Alpha Pat 03 Cruz patient3@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "3",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0031",
+                    "Dispense Record",
+                    "12:00 AM 4th Mar, 2026",
+                    "Alpha Pat 02 Cruz patient2@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0030",
+                    "Dispense Record",
+                    "12:00 AM 3rd Mar, 2026",
+                    "Alpha Pat 01 Cruz patient1@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "1",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0029",
+                    "Dispense Record",
+                    "12:00 AM 2nd Mar, 2026",
+                    "Alpha Pat 10 Cruz patient10@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "10",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0028",
+                    "Dispense Record",
+                    "12:00 AM 1st Mar, 2026",
+                    "Alpha Pat 09 Cruz patient9@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "4",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0027",
+                    "Dispense Record",
+                    "12:00 AM 28th Feb, 2026",
+                    "Alpha Pat 08 Cruz patient8@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "6",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "#HIS0026",
+                    "Dispense Record",
+                    "12:00 AM 27th Feb, 2026",
+                    "Alpha Pat 07 Cruz patient7@golden.test",
+                    "Dora Doctor doctor@golden.test",
+                    "2",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/patients/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/dispense-records/N",
+                    "href=http://localhost/admin/dispense-records/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "source: consultations only": {
+        "headers": [
+            "Dispense ID",
+            "Source",
+            "Dispensed At",
+            "Patient",
+            "Doctor / Recorded by",
+            "Quantity Dispensed",
+            "Action"
+        ],
+        "sortable": [
+            "history_number",
+            "source",
+            "dispensed_at",
+            "patient_name",
+            "given_by",
+            "quantity"
+        ],
+        "search": "Search",
+        "toolbar": "All sources Dispense Record Prescription Consultation Meds Only Add Meds Only record",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    }
+}

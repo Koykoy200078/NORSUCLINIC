@@ -1,0 +1,2279 @@
+{
+    "first page": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 25 Physician doc25@golden.test",
+                    "",
+                    "01 Feb 2026 08:25 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 24 Physician doc24@golden.test",
+                    "",
+                    "01 Feb 2026 08:24 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 23 Physician doc23@golden.test",
+                    "",
+                    "01 Feb 2026 08:23 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 22 Physician doc22@golden.test",
+                    "",
+                    "01 Feb 2026 08:22 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 21 Physician doc21@golden.test",
+                    "",
+                    "01 Feb 2026 08:21 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 20 Physician doc20@golden.test",
+                    "",
+                    "01 Feb 2026 08:20 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 19 Physician doc19@golden.test",
+                    "",
+                    "01 Feb 2026 08:19 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 18 Physician doc18@golden.test",
+                    "",
+                    "01 Feb 2026 08:18 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 17 Physician doc17@golden.test",
+                    "",
+                    "01 Feb 2026 08:17 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 16 Physician doc16@golden.test",
+                    "",
+                    "01 Feb 2026 08:16 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 05 Physician doc5@golden.test",
+                    "",
+                    "01 Feb 2026 08:05 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 04 Physician doc4@golden.test",
+                    "",
+                    "01 Feb 2026 08:04 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 03 Physician doc3@golden.test",
+                    "",
+                    "01 Feb 2026 08:03 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 02 Physician doc2@golden.test",
+                    "",
+                    "01 Feb 2026 08:02 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 01 Physician doc1@golden.test",
+                    "",
+                    "01 Feb 2026 08:01 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by user.first_name, ascending": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Doc 01 Physician doc1@golden.test",
+                    "",
+                    "01 Feb 2026 08:01 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 02 Physician doc2@golden.test",
+                    "",
+                    "01 Feb 2026 08:02 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 03 Physician doc3@golden.test",
+                    "",
+                    "01 Feb 2026 08:03 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 04 Physician doc4@golden.test",
+                    "",
+                    "01 Feb 2026 08:04 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 06 Physician doc6@golden.test",
+                    "",
+                    "01 Feb 2026 08:06 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 07 Physician doc7@golden.test",
+                    "",
+                    "01 Feb 2026 08:07 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 08 Physician doc8@golden.test",
+                    "",
+                    "01 Feb 2026 08:08 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 09 Physician doc9@golden.test",
+                    "",
+                    "01 Feb 2026 08:09 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 10 Physician doc10@golden.test",
+                    "",
+                    "01 Feb 2026 08:10 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 11 Physician doc11@golden.test",
+                    "",
+                    "01 Feb 2026 08:11 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by user.first_name, descending": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 25 Physician doc25@golden.test",
+                    "",
+                    "01 Feb 2026 08:25 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 15 Physician doc15@golden.test",
+                    "",
+                    "01 Feb 2026 08:15 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 05 Physician doc5@golden.test",
+                    "",
+                    "01 Feb 2026 08:05 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by user.first_name, cleared": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by created_at, ascending": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Doc 01 Physician doc1@golden.test",
+                    "",
+                    "01 Feb 2026 08:01 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 02 Physician doc2@golden.test",
+                    "",
+                    "01 Feb 2026 08:02 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 03 Physician doc3@golden.test",
+                    "",
+                    "01 Feb 2026 08:03 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 04 Physician doc4@golden.test",
+                    "",
+                    "01 Feb 2026 08:04 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 05 Physician doc5@golden.test",
+                    "",
+                    "01 Feb 2026 08:05 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 06 Physician doc6@golden.test",
+                    "",
+                    "01 Feb 2026 08:06 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 07 Physician doc7@golden.test",
+                    "",
+                    "01 Feb 2026 08:07 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 08 Physician doc8@golden.test",
+                    "",
+                    "01 Feb 2026 08:08 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 09 Physician doc9@golden.test",
+                    "",
+                    "01 Feb 2026 08:09 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 10 Physician doc10@golden.test",
+                    "",
+                    "01 Feb 2026 08:10 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by created_at, descending": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by created_at, cleared": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 25 Physician doc25@golden.test",
+                    "",
+                    "01 Feb 2026 08:25 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 15 Physician doc15@golden.test",
+                    "",
+                    "01 Feb 2026 08:15 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 05 Physician doc5@golden.test",
+                    "",
+                    "01 Feb 2026 08:05 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 25 Physician doc25@golden.test",
+                    "",
+                    "01 Feb 2026 08:25 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 24 Physician doc24@golden.test",
+                    "",
+                    "01 Feb 2026 08:24 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 23 Physician doc23@golden.test",
+                    "",
+                    "01 Feb 2026 08:23 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 22 Physician doc22@golden.test",
+                    "",
+                    "01 Feb 2026 08:22 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 21 Physician doc21@golden.test",
+                    "",
+                    "01 Feb 2026 08:21 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 20 Physician doc20@golden.test",
+                    "",
+                    "01 Feb 2026 08:20 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 19 Physician doc19@golden.test",
+                    "",
+                    "01 Feb 2026 08:19 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 18 Physician doc18@golden.test",
+                    "",
+                    "01 Feb 2026 08:18 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 17 Physician doc17@golden.test",
+                    "",
+                    "01 Feb 2026 08:17 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 16 Physician doc16@golden.test",
+                    "",
+                    "01 Feb 2026 08:16 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 15 Physician doc15@golden.test",
+                    "",
+                    "01 Feb 2026 08:15 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 14 Physician doc14@golden.test",
+                    "",
+                    "01 Feb 2026 08:14 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 13 Physician doc13@golden.test",
+                    "",
+                    "01 Feb 2026 08:13 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 12 Physician doc12@golden.test",
+                    "",
+                    "01 Feb 2026 08:12 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 11 Physician doc11@golden.test",
+                    "",
+                    "01 Feb 2026 08:11 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "status: active": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Doc 35 Physician doc35@golden.test",
+                    "",
+                    "01 Feb 2026 08:35 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 34 Physician doc34@golden.test",
+                    "",
+                    "01 Feb 2026 08:34 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 33 Physician doc33@golden.test",
+                    "",
+                    "01 Feb 2026 08:33 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 32 Physician doc32@golden.test",
+                    "",
+                    "01 Feb 2026 08:32 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 31 Physician doc31@golden.test",
+                    "",
+                    "01 Feb 2026 08:31 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 29 Physician doc29@golden.test",
+                    "",
+                    "01 Feb 2026 08:29 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 28 Physician doc28@golden.test",
+                    "",
+                    "01 Feb 2026 08:28 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 27 Physician doc27@golden.test",
+                    "",
+                    "01 Feb 2026 08:27 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 26 Physician doc26@golden.test",
+                    "",
+                    "01 Feb 2026 08:26 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Doc 25 Physician doc25@golden.test",
+                    "",
+                    "01 Feb 2026 08:25 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 30 results"
+    },
+    "status: inactive": {
+        "headers": [
+            "Doctor",
+            "Status",
+            "Registered On",
+            "Action"
+        ],
+        "sortable": [
+            "user.first_name",
+            "user.status",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Option Status: AllActiveDeactivate Reset Add Doctor",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Doc 30 Physician doc30@golden.test",
+                    "",
+                    "01 Feb 2026 08:30 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 24 Physician doc24@golden.test",
+                    "",
+                    "01 Feb 2026 08:24 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 18 Physician doc18@golden.test",
+                    "",
+                    "01 Feb 2026 08:18 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 12 Physician doc12@golden.test",
+                    "",
+                    "01 Feb 2026 08:12 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Doc 06 Physician doc6@golden.test",
+                    "",
+                    "01 Feb 2026 08:06 AM",
+                    "Add Qualification Edit Reset Password Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N",
+                    "href=http://localhost/admin/doctors/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    }
+}

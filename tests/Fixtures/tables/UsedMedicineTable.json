@@ -1,0 +1,1919 @@
+{
+    "first page": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "page 2": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 09 Cruz",
+                    "",
+                    "2026-02-01 08:28:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:27:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:27:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 07 Cruz",
+                    "",
+                    "2026-02-01 08:26:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:24:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:23:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:23:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 53 results"
+    },
+    "page 4": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Neozep",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:15:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:15:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:14:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:13:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:13:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:12:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:11:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:11:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:10:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:09:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 31 to 40 of 53 results"
+    },
+    "sorted by medicine_name, ascending": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 07 Cruz",
+                    "",
+                    "2026-02-01 08:26:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:23:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:20:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:19:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:17:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "sorted by medicine_name, descending": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 09 Cruz",
+                    "",
+                    "2026-02-01 08:28:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:27:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:22:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:21:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:19:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 07 Cruz",
+                    "",
+                    "2026-02-01 08:16:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "sorted by medicine_name, cleared": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "sorted by created_at, ascending": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:01:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:01:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:02:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:03:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:03:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:04:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:05:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:05:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 07 Cruz",
+                    "",
+                    "2026-02-01 08:06:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:07:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "sorted by created_at, descending": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "sorted by created_at, cleared": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:24:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:14:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:04:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 09 Cruz",
+                    "",
+                    "2026-02-01 08:28:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:27:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 08 Cruz",
+                    "",
+                    "2026-02-01 08:27:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 07 Cruz",
+                    "",
+                    "2026-02-01 08:26:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:25:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:24:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:23:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:23:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:22:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:21:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:21:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:20:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:19:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 53 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Medicines",
+            "Used Quantity",
+            "Used At",
+            "Patient",
+            "Nurse In Charge",
+            "Date"
+        ],
+        "sortable": [
+            "medicine_name",
+            "quantity",
+            "source",
+            "patient_name",
+            "nurse_incharged",
+            "created_at"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 06 Cruz",
+                    "",
+                    "2026-02-01 08:35:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "5",
+                    "Dispense Record",
+                    "Zeta Pat 05 Cruz",
+                    "",
+                    "2026-02-01 08:34:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "4",
+                    "Dispense Record",
+                    "Alpha Pat 04 Cruz",
+                    "",
+                    "2026-02-01 08:33:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "3",
+                    "Dispense Record",
+                    "Alpha Pat 03 Cruz",
+                    "",
+                    "2026-02-01 08:32:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Amoxil",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Neozep",
+                    "2",
+                    "Dispense Record",
+                    "Alpha Pat 02 Cruz",
+                    "",
+                    "2026-02-01 08:31:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "1",
+                    "Dispense Record",
+                    "Alpha Pat 01 Cruz",
+                    "",
+                    "2026-02-01 08:30:00"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Biogesic",
+                    "5",
+                    "Dispense Record",
+                    "Alpha Pat 10 Cruz",
+                    "",
+                    "2026-02-01 08:29:00"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 53 results"
+    }
+}

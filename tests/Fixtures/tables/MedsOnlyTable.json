@@ -1,0 +1,2600 @@
+{
+    "first page": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Jan 26, 2026",
+                    "Zeta Visitor 25",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 25, 2026",
+                    "Alpha Visitor 24",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 24, 2026",
+                    "Alpha Visitor 23",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 23, 2026",
+                    "Alpha Visitor 22",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 22, 2026",
+                    "Alpha Visitor 21",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 21, 2026",
+                    "Alpha Visitor 20",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 20, 2026",
+                    "Alpha Visitor 19",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 19, 2026",
+                    "Alpha Visitor 18",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 18, 2026",
+                    "Alpha Visitor 17",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 17, 2026",
+                    "Alpha Visitor 16",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Jan 06, 2026",
+                    "Zeta Visitor 05",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 05, 2026",
+                    "Alpha Visitor 04",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 04, 2026",
+                    "Alpha Visitor 03",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 03, 2026",
+                    "Alpha Visitor 02",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 02, 2026",
+                    "Alpha Visitor 01",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by bill_date, ascending": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Jan 02, 2026",
+                    "Alpha Visitor 01",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 03, 2026",
+                    "Alpha Visitor 02",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 04, 2026",
+                    "Alpha Visitor 03",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 05, 2026",
+                    "Alpha Visitor 04",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 06, 2026",
+                    "Zeta Visitor 05",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 07, 2026",
+                    "Alpha Visitor 06",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 08, 2026",
+                    "Alpha Visitor 07",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 09, 2026",
+                    "Alpha Visitor 08",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 10, 2026",
+                    "Alpha Visitor 09",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 11, 2026",
+                    "Alpha Visitor 10",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by bill_date, descending": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by bill_date, cleared": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by college, ascending": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by college, descending": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by college, cleared": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 26, 2026",
+                    "Zeta Visitor 25",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 16, 2026",
+                    "Zeta Visitor 15",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 06, 2026",
+                    "Zeta Visitor 05",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 26, 2026",
+                    "Zeta Visitor 25",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 25, 2026",
+                    "Alpha Visitor 24",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 24, 2026",
+                    "Alpha Visitor 23",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 23, 2026",
+                    "Alpha Visitor 22",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 22, 2026",
+                    "Alpha Visitor 21",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 21, 2026",
+                    "Alpha Visitor 20",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 20, 2026",
+                    "Alpha Visitor 19",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 19, 2026",
+                    "Alpha Visitor 18",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 18, 2026",
+                    "Alpha Visitor 17",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 17, 2026",
+                    "Alpha Visitor 16",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 16, 2026",
+                    "Zeta Visitor 15",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 15, 2026",
+                    "Alpha Visitor 14",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 14, 2026",
+                    "Alpha Visitor 13",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 13, 2026",
+                    "Alpha Visitor 12",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 12, 2026",
+                    "Alpha Visitor 11",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Date",
+            "Name",
+            "Course",
+            "Year",
+            "College",
+            "Drugs",
+            "Recorded by",
+            "Action"
+        ],
+        "sortable": [
+            "bill_date",
+            "patient_name",
+            "course",
+            "year_level",
+            "college"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Feb 05, 2026",
+                    "Zeta Visitor 35",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 04, 2026",
+                    "Alpha Visitor 34",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 03, 2026",
+                    "Alpha Visitor 33",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 02, 2026",
+                    "Alpha Visitor 32",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Feb 01, 2026",
+                    "Alpha Visitor 31",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 31, 2026",
+                    "Alpha Visitor 30",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 30, 2026",
+                    "Alpha Visitor 29",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 29, 2026",
+                    "Alpha Visitor 28",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 2",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 28, 2026",
+                    "Alpha Visitor 27",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 1",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Jan 27, 2026",
+                    "Alpha Visitor 26",
+                    "BS Biology",
+                    "2nd Year",
+                    "College of Arts",
+                    "Biogesic 500mg x 3",
+                    "Nora Nurse",
+                    "View Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/meds-only/N",
+                    "href=http://localhost/admin/meds-only/N/edit",
+                    "action=http://localhost/admin/meds-only/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}
