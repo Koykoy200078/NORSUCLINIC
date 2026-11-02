@@ -147,7 +147,8 @@
             "4",
             "›"
         ],
-        "summary": "Showing 1 to 10 of 35 results"
+        "summary": "Showing 1 to 10 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 1 to 10 of 35 results"
     },
     "page 2": {
         "headers": [
@@ -297,7 +298,8 @@
             "4",
             "›"
         ],
-        "summary": "Showing 11 to 20 of 35 results"
+        "summary": "Showing 11 to 20 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 11 to 20 of 35 results"
     },
     "page 4": {
         "headers": [
@@ -387,7 +389,8 @@
             "*4",
             "!›"
         ],
-        "summary": "Showing 31 to 35 of 35 results"
+        "summary": "Showing 31 to 35 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 31 to 35 of 35 results"
     },
     "sorted by first_name, ascending": {
         "headers": [
@@ -537,7 +540,8 @@
             "4",
             "›"
         ],
-        "summary": "Showing 1 to 10 of 35 results"
+        "summary": "Showing 1 to 10 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 1 to 10 of 35 results"
     },
     "sorted by first_name, descending": {
         "headers": [
@@ -687,7 +691,8 @@
             "4",
             "›"
         ],
-        "summary": "Showing 1 to 10 of 35 results"
+        "summary": "Showing 1 to 10 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 1 to 10 of 35 results"
     },
     "sorted by first_name, cleared": {
         "headers": [
@@ -837,7 +842,8 @@
             "4",
             "›"
         ],
-        "summary": "Showing 1 to 10 of 35 results"
+        "summary": "Showing 1 to 10 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 1 to 10 of 35 results"
     },
     "searched for the word": {
         "headers": [
@@ -908,7 +914,8 @@
         ],
         "perPageSelected": null,
         "pages": [],
-        "summary": null
+        "summary": null,
+        "footer": "Show 10 25 50 Showing 4 results"
     },
     "searched for nothing": {
         "headers": [
@@ -930,7 +937,8 @@
         ],
         "perPageSelected": null,
         "pages": [],
-        "summary": null
+        "summary": null,
+        "footer": "Show 10 25 50 Showing 0 results"
     },
     "25 per page": {
         "headers": [
@@ -1258,7 +1266,8 @@
             "2",
             "›"
         ],
-        "summary": "Showing 1 to 25 of 35 results"
+        "summary": "Showing 1 to 25 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 › Showing 1 to 25 of 35 results"
     },
     "7 per page (not offered)": {
         "headers": [
@@ -1408,6 +1417,7 @@
             "4",
             "›"
         ],
-        "summary": "Showing 1 to 10 of 35 results"
+        "summary": "Showing 1 to 10 of 35 results",
+        "footer": "Show 10 25 50 ‹ 1 2 3 4 › Showing 1 to 10 of 35 results"
     }
 }

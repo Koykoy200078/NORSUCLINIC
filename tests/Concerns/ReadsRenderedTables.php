@@ -86,6 +86,16 @@ trait ReadsRenderedTables
             }
         }
 
+        // Everything the bar under the table says: the "Show 10 25 50" choice, the page links and the count line, which is
+        // "Showing 1 to 10 of 35 results" on a list of several pages and "Showing 4 results" on a list of one.
+        $footer = null;
+        for ($node = $xpath->query('//select[@id="perPage"]')->item(0); $node instanceof DOMNode; $node = $node->parentNode) {
+            if (str_contains((string) $node->attributes?->getNamedItem('class')?->nodeValue, 'flex-xxl-row')) {
+                $footer = $this->tidy($node->textContent);
+                break;
+            }
+        }
+
         $sortable = [];
         foreach ($xpath->query('//table//thead//*[@*[name()="wire:click"]]') as $element) {
             if (preg_match("/^sortBy\('([^']+)'\)$/", (string) $element->attributes->getNamedItem('wire:click')->nodeValue, $found)) {
@@ -104,6 +114,7 @@ trait ReadsRenderedTables
             'perPageSelected' => $selected->length ? $this->tidy($selected->item(0)->textContent) : null,
             'pages' => $pages,
             'summary' => $summary,
+            'footer' => $footer,
         ];
     }
 
