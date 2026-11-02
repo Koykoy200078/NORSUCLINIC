@@ -44,7 +44,8 @@ abstract class TableComponent extends Component
 
     public int $perPage = 10;
 
-    public string $tableName = 'table';
+    /** a list may widen this to public (DoctorTable does); it is protected here, as it was on the old library */
+    protected string $tableName = 'table';
 
     public string $emptyMessage = 'No data available in table';
 

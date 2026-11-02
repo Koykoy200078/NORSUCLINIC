@@ -2,17 +2,18 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\StockIn;
 use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 
 /**
  * Renamed from MedicineAvailabilityTable → StockInTable.
  * NO #[Lazy] — this component is mounted inside the tabbed MedicineScreen
  * which uses x-show, so eager loading is correct here.
  */
-class StockInTable extends LivewireTableComponent
+class StockInTable extends TableComponent
 {
     protected $model = StockIn::class;
 
@@ -30,7 +31,6 @@ class StockInTable extends LivewireTableComponent
 
     public function configure(): void
     {
-        $this->setQueryStringStatus(false);
         $this->setDefaultSort('medicine_availabilities.created_at', 'desc');
 
         // Doctors are read-only in the inventory: no "new stock-in" button.

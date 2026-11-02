@@ -2,10 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\DispenseHistoryEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 
 /**
  * Renamed from MedicineBillTable → MedicineDispenseTable.
@@ -15,7 +16,7 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
  * recorded inside consultations, told apart by the Source column and the Source filter in the header.
  */
 #[Lazy]
-class MedicineDispenseTable extends LivewireTableComponent
+class MedicineDispenseTable extends TableComponent
 {
     public bool $showButtonOnHeader = true;
 

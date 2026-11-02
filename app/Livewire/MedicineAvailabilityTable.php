@@ -2,12 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\MedicineAvailability;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class MedicineAvailabilityTable extends LivewireTableComponent
+class MedicineAvailabilityTable extends TableComponent
 {
     protected $model = MedicineAvailability::class;
 
@@ -23,7 +24,6 @@ class MedicineAvailabilityTable extends LivewireTableComponent
 
     public function configure(): void
     {
-        $this->setQueryStringStatus(false);
         $this->setDefaultSort('medicine_availabilities.created_at', 'desc');
         $this->setPrimaryKey('id');
 

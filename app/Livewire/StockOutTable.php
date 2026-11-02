@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\StockOutView;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  * Displays stock-out records from the used_medicines_view DB view.
  */
 #[Lazy]
-class StockOutTable extends LivewireTableComponent
+class StockOutTable extends TableComponent
 {
     protected $model = StockOutView::class;
 
@@ -25,8 +26,7 @@ class StockOutTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
     }
 
     public function placeholder(): string

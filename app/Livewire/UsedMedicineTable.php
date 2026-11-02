@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\UsedMedicineView;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 
 #[Lazy]
-class UsedMedicineTable extends LivewireTableComponent
+class UsedMedicineTable extends TableComponent
 {
     protected $model = UsedMedicineView::class;
 
@@ -22,8 +23,7 @@ class UsedMedicineTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
     }
 
     public function placeholder(): string
