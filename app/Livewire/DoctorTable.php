@@ -2,15 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class DoctorTable extends LivewireTableComponent
+class DoctorTable extends TableComponent
 {
     protected $model = Doctor::class;
 
@@ -31,8 +32,7 @@ class DoctorTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {

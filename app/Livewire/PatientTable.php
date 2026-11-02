@@ -2,15 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use Carbon\Carbon;
 use App\Models\Patient;
 use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class PatientTable extends LivewireTableComponent
+class PatientTable extends TableComponent
 {
     protected $model = Patient::class;
 
@@ -48,8 +49,7 @@ class PatientTable extends LivewireTableComponent
         $this->showButtonOnHeader = ! $this->isPrescriptionModule();
 
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
 
         $this->syncEmptyMessage();
 

@@ -98,6 +98,9 @@ class DispensingPassATest extends TestCase
         $medicine = $this->makeMedicine('Verifymed');
         $mine = $this->pendingPrescription($doctor, $patient, $medicine);
         $this->pendingPrescription($other, $this->makePatient(['first_name' => 'Someoneelse']), $medicine);
+        // The consultation date is searched too, and today's date ("2026-11-02") contains the digits of a small prescription
+        // number, so searching "6" would find the other prescription as well. Take the date out of the picture.
+        Prescription::query()->update(['consultation_date' => null]);
 
         $admin = $this->makeAdmin();
         $rows = fn (string $search, ?User $as = null) => Livewire::actingAs($as ?? $admin)->withoutLazyLoading()->test(PrescriptionVerificationTable::class)->set('search', $search)->instance()->getRows();
