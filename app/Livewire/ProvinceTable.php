@@ -2,9 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Province;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 /**
@@ -13,7 +14,7 @@ use Livewire\Attributes\Lazy;
  * Views still reference `states.*` components (view folder not yet migrated).
  */
 #[Lazy]
-class ProvinceTable extends LivewireTableComponent
+class ProvinceTable extends TableComponent
 {
     protected $model = Province::class;
 
@@ -26,8 +27,7 @@ class ProvinceTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('id')) {

@@ -11,6 +11,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\Concerns\BuildsClinicData;
 use Tests\Concerns\ReadsRenderedTables;
+use Tests\Support\Tables\DemoModelOnlyTable;
+use Tests\Support\Tables\DemoNoQueryTable;
 use Tests\Support\Tables\DemoStateTable;
 use Tests\TestCase;
 
@@ -337,6 +339,32 @@ class TableComponentTest extends TestCase
         $this->assertCount(2, $selects, 'one select per call (the count is a different query)');
         $this->assertSame($selects[0]['query'], $selects[1]['query'], 'the second call asked exactly what the first one did');
         $this->assertSame(2, substr_count($selects[0]['query'], ' like '), 'one like per searchable column, once');
+    }
+
+    public function test_a_list_that_only_names_its_model_shows_all_of_its_rows_and_one_that_names_nothing_refuses(): void
+    {
+        $this->state('Cebu');
+        $this->state('Davao');
+
+        $this->assertSame(['Cebu', 'Davao'], array_map(fn ($row) => $row['cells'][0], $this->snapshotOf(Livewire::withoutLazyLoading()->test(DemoModelOnlyTable::class)->html())['rows']));
+
+        // (the page's view reports it, so it arrives wrapped in a view exception)
+        $this->expectExceptionMessage('must name its $model or declare builder()');
+        Livewire::withoutLazyLoading()->test(DemoNoQueryTable::class);
+    }
+
+    public function test_a_list_can_switch_its_search_off_and_then_neither_draws_the_box_nor_filters(): void
+    {
+        $this->state('Cebu');
+        $this->state('Davao');
+
+        $html = Livewire::withoutLazyLoading()->test(DemoModelOnlyTable::class)->html();
+        $this->assertStringNotContainsString('search-box', $html);
+
+        $searched = Livewire::withoutLazyLoading()->test(DemoModelOnlyTable::class)->set('search', 'cebu');
+        $this->assertCount(2, $this->snapshotOf($searched->html())['rows'], 'a search nobody can type is not applied');
+
+        $this->assertStringContainsString('search-box', $this->open()->html(), 'every other list keeps its search box');
     }
 
     public function test_the_columns_the_list_asked_for_are_selected_under_their_own_name_and_extra_selects_are_added(): void

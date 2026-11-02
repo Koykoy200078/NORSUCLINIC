@@ -2,12 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Generic;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class MedicineGenericTable extends LivewireTableComponent
+class MedicineGenericTable extends TableComponent
 {
     protected $model = Generic::class;
 
@@ -20,8 +21,7 @@ class MedicineGenericTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('generics.created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('generics.created_at', 'desc');
 
         // Hide add button for doctor users
         if (isRole('doctor')) {

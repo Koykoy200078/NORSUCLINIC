@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class MedicineGenericDetailsTable extends LivewireTableComponent
+class MedicineGenericDetailsTable extends TableComponent
 {
     protected $model = Medicine::class;
 
@@ -23,8 +24,7 @@ class MedicineGenericDetailsTable extends LivewireTableComponent
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id')
-            ->setQueryStringStatus(false);
+        $this->setPrimaryKey('id');
         $this->setThAttributes(function (Column $column) {
             return [];
         });

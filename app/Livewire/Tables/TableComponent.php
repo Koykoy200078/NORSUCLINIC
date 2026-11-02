@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component;
 use Livewire\WithPagination;
+use LogicException;
 
 /**
  * The base of every list screen: a searchable, sortable, paged table of the rows of one Eloquent query.
@@ -57,12 +58,17 @@ abstract class TableComponent extends Component
 
     protected $listeners = ['refresh' => '$refresh'];
 
+    /** @var class-string<Model>|null */
+    protected $model = null;
+
     protected string $paginationTheme = 'bootstrap';
 
     /** @var array<int, int> */
     protected array $perPageAccepted = [10, 25, 50];
 
     protected string $primaryKey = 'id';
+
+    protected bool $searchEnabled = true;
 
     protected ?string $defaultSortColumn = null;
 
@@ -92,13 +98,34 @@ abstract class TableComponent extends Component
     /** @return array<int, Column> */
     abstract public function columns(): array;
 
-    abstract public function builder(): Builder;
+    /** The rows of the list. A list with nothing special to say names its model ($model) and gets all of its rows. */
+    public function builder(): Builder
+    {
+        if ($this->model === null) {
+            throw new LogicException(static::class . ' must name its $model or declare builder().');
+        }
+
+        return $this->model::query();
+    }
 
     protected function setPrimaryKey(string $key): static
     {
         $this->primaryKey = $key;
 
         return $this;
+    }
+
+    /** A list nobody needs to search (the home page sliders): no search box, and a typed search finds nothing to filter. */
+    protected function setSearchDisabled(): static
+    {
+        $this->searchEnabled = false;
+
+        return $this;
+    }
+
+    public function searchIsEnabled(): bool
+    {
+        return $this->searchEnabled;
     }
 
     public function getPrimaryKey(): string
@@ -229,11 +256,6 @@ abstract class TableComponent extends Component
         $this->resetPage($this->getComputedPageName());
     }
 
-    protected function resetPagination(): void
-    {
-        $this->resetComputedPage();
-    }
-
     public function getEmptyMessage(): string
     {
         return __($this->emptyMessage);
@@ -340,7 +362,7 @@ abstract class TableComponent extends Component
         $words = SearchTerm::words(trim($this->search));
         $columns = $this->columns->filter(fn (Column $column) => $column->isSearchable() || $column->hasSearchCallback())->values();
 
-        if ($columns->isNotEmpty() && $words !== []) {
+        if ($this->searchEnabled && $columns->isNotEmpty() && $words !== []) {
             $this->setBuilder($this->getBuilder()->where(function ($query) use ($columns, $words) {
                 foreach ($words as $word) {
                     $query->where(function ($group) use ($columns, $word) {

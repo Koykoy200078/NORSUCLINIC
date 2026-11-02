@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class RoleTable extends LivewireTableComponent
+class RoleTable extends TableComponent
 {
     protected $model = Role::class;
 
@@ -23,7 +24,6 @@ class RoleTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id')
             ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false)
             ->setTableAttributes([
                 'class' => 'table table-striped table-row-bordered gy-5 gs-7 align-middle',
             ]);

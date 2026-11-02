@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class SliderTable extends LivewireTableComponent
+class SliderTable extends TableComponent
 {
     public bool $showSearch = false;
 
@@ -20,7 +21,6 @@ class SliderTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id')
             ->setDefaultSort('created_at', 'desc')
-            ->setQueryStringStatus(false)
             ->setSearchDisabled();
 
         $this->setThAttributes(function (Column $column) {

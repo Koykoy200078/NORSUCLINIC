@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\TableComponent;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class MedicineCategoryTable extends LivewireTableComponent
+class MedicineCategoryTable extends TableComponent
 {
     protected $model = Category::class;
 
@@ -29,8 +30,7 @@ class MedicineCategoryTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id')
-            ->setDefaultSort('categories.created_at', 'desc')
-            ->setQueryStringStatus(false);
+            ->setDefaultSort('categories.created_at', 'desc');
 
         // Hide add button for doctor users
         if (isRole('doctor')) {

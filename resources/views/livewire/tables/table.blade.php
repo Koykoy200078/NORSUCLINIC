@@ -20,6 +20,7 @@
             </div>
 
             <div class="d-flex justify-content-between mb-5">
+                @if ($this->searchIsEnabled())
                 <div class="mb-3 mb-sm-0">
                     <form class="d-flex position-relative">
                         <div class="position-relative d-flex width-320">
@@ -31,6 +32,7 @@
                         </div>
                     </form>
                 </div>
+                @endif
                 <div>
                     @if ($this->showFilterOnHeader == true)
                         @include($this->FilterComponent[0], [
