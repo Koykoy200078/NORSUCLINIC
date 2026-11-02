@@ -1,0 +1,1215 @@
+{
+    "first page": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 34",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 33",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 32",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 31",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 30",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 29",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 28",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 27",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 26",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 25",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 24",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 23",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 22",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 21",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 20",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 19",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 18",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 17",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 16",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 05",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 04",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 03",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 02",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 01",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Generic 01",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 02",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 03",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 04",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 06",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 07",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 08",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 09",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 10",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 11",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 25",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 15",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 05",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 34",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 33",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 32",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 31",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 30",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 29",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 34",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 33",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 32",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 31",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 30",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 29",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 28",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 27",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 26",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 25",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 15",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 05",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 34",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 33",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 32",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 31",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 30",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 29",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 28",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 27",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 26",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 25",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 24",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 23",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 22",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 21",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 20",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 19",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 18",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 17",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 16",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Generic 15",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 14",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 13",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 12",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 11",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Generic",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "New Medicine Generic",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Generic 35",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 34",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 33",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 32",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 31",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 30",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 29",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 28",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 27",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Generic 26",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/generics/N",
+                    "href=http://localhost/admin/generics/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

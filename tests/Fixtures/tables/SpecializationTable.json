@@ -1,0 +1,933 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 34",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 33",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 32",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 31",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 30",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 29",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 28",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 27",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 26",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 25",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 24",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 23",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 22",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 21",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 20",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 19",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 18",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 17",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 16",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 05",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 04",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 03",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 02",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 01",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Specialty 01",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 02",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 03",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 04",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 06",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 07",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 08",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 09",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 10",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 11",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 25",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 15",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 05",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 34",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 33",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 32",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 31",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 30",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 29",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 34",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 33",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 32",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 31",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 30",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 29",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 28",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 27",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 26",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 25",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 15",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 05",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 34",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 33",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 32",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 31",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 30",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 29",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 28",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 27",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 26",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 25",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 24",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 23",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 22",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 21",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 20",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 19",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 18",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 17",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 16",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Specialty 15",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 14",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 13",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 12",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 11",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "Action"
+        ],
+        "sortable": [
+            "name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Specialization",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Specialty 35",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 34",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 33",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 32",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 31",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 30",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 29",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 28",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 27",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Specialty 26",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

@@ -1,0 +1,1628 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 25",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 24",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 23",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 22",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 21",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 20",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 19",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 18",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 17",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 16",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 05",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 04",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 03",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 02",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 01",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Category 01",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 02",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 03",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 04",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 06",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 07",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 08",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 09",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 10",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 11",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 25",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 15",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 05",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by is_active, ascending": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 24",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 20",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 16",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 12",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 08",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 04",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by is_active, descending": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 25",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 23",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by is_active, cleared": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 25",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 15",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 05",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 25",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 24",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 23",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 22",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 21",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 20",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 19",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 18",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 17",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 16",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Category 15",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 14",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 13",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 12",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 11",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "Active",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "is_active"
+        ],
+        "search": "Search",
+        "toolbar": "Filter Options Status: AllActiveDeactive Reset New Medicine Category",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Category 35",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 34",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 33",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 32",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 31",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 30",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 29",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 28",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 27",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Category 26",
+                    "",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/categories/N"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

@@ -1,0 +1,1380 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 25",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 24",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 23",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 22",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 21",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 20",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 19",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 18",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 17",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 16",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 05",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 04",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 03",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 02",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 01",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Brgy 01",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 02",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 03",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 04",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 06",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 07",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 08",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 09",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 10",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 11",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 25",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 15",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 05",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by city.name, ascending": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 25",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 23",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 21",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 19",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 17",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by city.name, descending": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 24",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 22",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 20",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 18",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 16",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by city.name, cleared": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 25",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 15",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 05",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 25",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 24",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 23",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 22",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 21",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 20",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 19",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 18",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 17",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 16",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Brgy 15",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 14",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 13",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 12",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 11",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "City/Municipality",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "city.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Barangay",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Brgy 35",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 34",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 33",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 32",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 31",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 30",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 29",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 28",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 27",
+                    "Bacong",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Brgy 26",
+                    "Dumaguete",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

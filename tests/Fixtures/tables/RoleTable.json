@@ -1,0 +1,1265 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Patient",
+                    "N/A Patients do not sign in",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Doctor",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Staff (Nurse)",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Clinic Admin",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Staff Manage Settings Manage Specialties Manage Countries Manage States Manage Cities Manage Roles Manage Front CMS Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 34",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 33",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 32",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 31",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 30",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 39 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Role 29",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 28",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 27",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 26",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 25",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 24",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 23",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 22",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 21",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 20",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 39 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Role 09",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 08",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 07",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 06",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 05",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 04",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 03",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 02",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 01",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 39 of 39 results"
+    },
+    "sorted by display_name, ascending": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Role 01",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 02",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 03",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 04",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 06",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 07",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 08",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 09",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 10",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 11",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 39 results"
+    },
+    "sorted by display_name, descending": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 25",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 15",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 05",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Staff (Nurse)",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Patient",
+                    "N/A Patients do not sign in",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Doctor",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Clinic Admin",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Staff Manage Settings Manage Specialties Manage Countries Manage States Manage Cities Manage Roles Manage Front CMS Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 34",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 33",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 39 results"
+    },
+    "sorted by display_name, cleared": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Patient",
+                    "N/A Patients do not sign in",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Doctor",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Staff (Nurse)",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Clinic Admin",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Staff Manage Settings Manage Specialties Manage Countries Manage States Manage Cities Manage Roles Manage Front CMS Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 34",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 33",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 32",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 31",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 30",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 39 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 25",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 15",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 05",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Patient",
+                    "N/A Patients do not sign in",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Doctor",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Staff (Nurse)",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Clinic Admin",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Staff Manage Settings Manage Specialties Manage Countries Manage States Manage Cities Manage Roles Manage Front CMS Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 34",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 33",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 32",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 31",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 30",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 29",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 28",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 27",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 26",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 25",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 24",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 23",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 22",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 21",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 20",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 19",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 18",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 17",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 16",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 15",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 39 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "Permissions",
+            "Action"
+        ],
+        "sortable": [
+            "display_name"
+        ],
+        "search": "Search",
+        "toolbar": "Add Role",
+        "rows": [
+            {
+                "cells": [
+                    "Patient",
+                    "N/A Patients do not sign in",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Doctor",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Staff (Nurse)",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Specialties Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Clinic Admin",
+                    "Manage Medicines Manage Patients Manage Request Documents Manage Doctors Manage Staff Manage Settings Manage Specialties Manage Countries Manage States Manage Cities Manage Roles Manage Front CMS Dashboard, Reports & Notifications always available",
+                    "Edit"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Zeta Role 35",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 34",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 33",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 32",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 31",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            },
+            {
+                "cells": [
+                    "Alpha Role 30",
+                    "N/A",
+                    "Edit Delete"
+                ],
+                "targets": [
+                    "href=http://localhost/admin/roles/N/edit"
+                ]
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 39 results"
+    }
+}

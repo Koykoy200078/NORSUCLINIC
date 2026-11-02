@@ -1,0 +1,1393 @@
+{
+    "first page": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 25",
+                    "Paracetamol",
+                    "For case 25"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 24",
+                    "Paracetamol",
+                    "For case 24"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 23",
+                    "Paracetamol",
+                    "For case 23"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 22",
+                    "Paracetamol",
+                    "For case 22"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 21",
+                    "Paracetamol",
+                    "For case 21"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 20",
+                    "Paracetamol",
+                    "For case 20"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 19",
+                    "Paracetamol",
+                    "For case 19"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 18",
+                    "Paracetamol",
+                    "For case 18"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 17",
+                    "Paracetamol",
+                    "For case 17"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 16",
+                    "Paracetamol",
+                    "For case 16"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 05",
+                    "Paracetamol",
+                    "For case 05"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 04",
+                    "Paracetamol",
+                    "For case 04"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 03",
+                    "Paracetamol",
+                    "For case 03"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 02",
+                    "Paracetamol",
+                    "For case 02"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 01",
+                    "Paracetamol",
+                    "For case 01"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Med 01",
+                    "Paracetamol",
+                    "For case 01"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 02",
+                    "Paracetamol",
+                    "For case 02"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 03",
+                    "Paracetamol",
+                    "For case 03"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 04",
+                    "Paracetamol",
+                    "For case 04"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 06",
+                    "Paracetamol",
+                    "For case 06"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 07",
+                    "Paracetamol",
+                    "For case 07"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 08",
+                    "Paracetamol",
+                    "For case 08"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 09",
+                    "Paracetamol",
+                    "For case 09"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 10",
+                    "Paracetamol",
+                    "For case 10"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 11",
+                    "Paracetamol",
+                    "For case 11"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 25",
+                    "Paracetamol",
+                    "For case 25"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 15",
+                    "Paracetamol",
+                    "For case 15"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 05",
+                    "Paracetamol",
+                    "For case 05"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by description, ascending": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha Med 01",
+                    "Paracetamol",
+                    "For case 01"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 02",
+                    "Paracetamol",
+                    "For case 02"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 03",
+                    "Paracetamol",
+                    "For case 03"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 04",
+                    "Paracetamol",
+                    "For case 04"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 05",
+                    "Paracetamol",
+                    "For case 05"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 06",
+                    "Paracetamol",
+                    "For case 06"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 07",
+                    "Paracetamol",
+                    "For case 07"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 08",
+                    "Paracetamol",
+                    "For case 08"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 09",
+                    "Paracetamol",
+                    "For case 09"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 10",
+                    "Paracetamol",
+                    "For case 10"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by description, descending": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by description, cleared": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 25",
+                    "Paracetamol",
+                    "For case 25"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 15",
+                    "Paracetamol",
+                    "For case 15"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 05",
+                    "Paracetamol",
+                    "For case 05"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 25",
+                    "Paracetamol",
+                    "For case 25"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 24",
+                    "Paracetamol",
+                    "For case 24"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 23",
+                    "Paracetamol",
+                    "For case 23"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 22",
+                    "Paracetamol",
+                    "For case 22"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 21",
+                    "Paracetamol",
+                    "For case 21"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 20",
+                    "Paracetamol",
+                    "For case 20"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 19",
+                    "Paracetamol",
+                    "For case 19"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 18",
+                    "Paracetamol",
+                    "For case 18"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 17",
+                    "Paracetamol",
+                    "For case 17"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 16",
+                    "Paracetamol",
+                    "For case 16"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta Med 15",
+                    "Paracetamol",
+                    "For case 15"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 14",
+                    "Paracetamol",
+                    "For case 14"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 13",
+                    "Paracetamol",
+                    "For case 13"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 12",
+                    "Paracetamol",
+                    "For case 12"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 11",
+                    "Paracetamol",
+                    "For case 11"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Medicine",
+            "Generic",
+            "Description"
+        ],
+        "sortable": [
+            "name",
+            "generic.name",
+            "description"
+        ],
+        "search": "Search",
+        "toolbar": "",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta Med 35",
+                    "Paracetamol",
+                    "For case 35"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 34",
+                    "Paracetamol",
+                    "For case 34"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 33",
+                    "Paracetamol",
+                    "For case 33"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 32",
+                    "Paracetamol",
+                    "For case 32"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 31",
+                    "Paracetamol",
+                    "For case 31"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 30",
+                    "Paracetamol",
+                    "For case 30"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 29",
+                    "Paracetamol",
+                    "For case 29"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 28",
+                    "Paracetamol",
+                    "For case 28"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 27",
+                    "Paracetamol",
+                    "For case 27"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha Med 26",
+                    "Paracetamol",
+                    "For case 26"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}

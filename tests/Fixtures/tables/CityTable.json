@@ -1,0 +1,1530 @@
+{
+    "first page": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "page 2": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 25",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 24",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 23",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 22",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 21",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 20",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 19",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 18",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 17",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 16",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "*2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 11 to 20 of 35 results"
+    },
+    "page 4": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 05",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 04",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 03",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 02",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 01",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "‹",
+            "1",
+            "2",
+            "3",
+            "*4",
+            "!›"
+        ],
+        "summary": "Showing 31 to 35 of 35 results"
+    },
+    "sorted by name, ascending": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha City 01",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 02",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 03",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 04",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 06",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 07",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 08",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 09",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 10",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 11",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, descending": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 25",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 15",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 05",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by name, cleared": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by state.name, ascending": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 25",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 23",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 21",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 19",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 17",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by state.name, descending": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 24",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 22",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 20",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 18",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 16",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "sorted by state.name, cleared": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    },
+    "searched for the word": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 25",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 15",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 05",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "searched for nothing": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [],
+        "empty": "No data available in table",
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [],
+        "summary": null
+    },
+    "25 per page": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 25",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 24",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 23",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 22",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 21",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 20",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 19",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 18",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 17",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 16",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Zeta City 15",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 14",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 13",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 12",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 11",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "›"
+        ],
+        "summary": "Showing 1 to 25 of 35 results"
+    },
+    "7 per page (not offered)": {
+        "headers": [
+            "Name",
+            "Type",
+            "Province",
+            "Action"
+        ],
+        "sortable": [
+            "name",
+            "type",
+            "state.name"
+        ],
+        "search": "Search",
+        "toolbar": "Add City/Municipalities",
+        "rows": [
+            {
+                "cells": [
+                    "Zeta City 35",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 34",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 33",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 32",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 31",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 30",
+                    "Municipality",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 29",
+                    "City",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 28",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 27",
+                    "Municipality",
+                    "Cebu",
+                    "Edit Delete"
+                ],
+                "targets": []
+            },
+            {
+                "cells": [
+                    "Alpha City 26",
+                    "City",
+                    "Negros Oriental",
+                    "Edit Delete"
+                ],
+                "targets": []
+            }
+        ],
+        "empty": null,
+        "perPage": [
+            "10",
+            "25",
+            "50"
+        ],
+        "perPageSelected": null,
+        "pages": [
+            "!‹",
+            "*1",
+            "2",
+            "3",
+            "4",
+            "›"
+        ],
+        "summary": "Showing 1 to 10 of 35 results"
+    }
+}
