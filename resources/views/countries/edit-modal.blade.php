@@ -6,23 +6,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'editCountryForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'editCountryForm'])->open() }}
             <div class="modal-body">
-                {{ Form::hidden('countryId',null,['id'=>'editCountryId']) }}
+                {{ html()->hidden('countryId', null)->attributes(['id'=>'editCountryId']) }}
                 <div class="mb-5">
-                    {{ Form::label('name', __('messages.common.name').':', ['class' => 'form-label required']) }}
-                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' =>  __('messages.common.name'), 'required','id' => 'editCountryName']) }}
+                    {{ html()->label()->for('name')->text(__('messages.common.name').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->text('name', null)->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.common.name'), 'required', 'id' => 'editCountryName']) }}
                 </div>
                 <div>
-                    {{ Form::label('short_code', __('messages.country.short_code').':', ['class' => 'form-label']) }}
-                    {{ Form::text('short_code', null, ['class' => 'form-control', 'placeholder' => __('messages.country.short_code'), 'tabindex' => 1,'id' => 'editShortCodeName']) }}
+                    {{ html()->label()->for('short_code')->text(__('messages.country.short_code').':')->attributes(['class' => 'form-label']) }}
+                    {{ html()->text('short_code', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.country.short_code'), 'tabindex' => 1, 'id' => 'editShortCodeName']) }}
                 </div>
             </div>
                 <div class="modal-footer pt-0">
-                    {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary m-0']) }}
-                    {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss'=>'modal']) }}
+                    {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0']) }}
+                    {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
                 </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

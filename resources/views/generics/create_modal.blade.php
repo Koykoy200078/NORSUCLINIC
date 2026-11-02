@@ -5,20 +5,20 @@
                 <h5 class="modal-title" id="addGenericModalLabel">{{ __('messages.medicine_generics') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'addGenericForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'addGenericForm'])->open() }}
             <div class="modal-body">
                 <div class="alert alert-danger d-none" id="genericErrorsBox"></div>
                 <div class="form-group mb-4">
-                    {{ Form::label('name', __('messages.common.name') . ':', ['class' => 'form-label']) }}
+                    {{ html()->label()->for('name')->text(__('messages.common.name') . ':')->attributes(['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('messages.common.name'), 'required', 'id' => 'genericName']) }}
+                    {{ html()->text('name', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.common.name'), 'required', 'id' => 'genericName']) }}
                 </div>
                 <div class="modal-footer p-0 pt-3">
-                    {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'genericSaveBtn']) }}
+                    {{ html()->button(__('messages.common.save'), 'button')->attributes(['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'genericSaveBtn']) }}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
                 </div>
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

@@ -6,26 +6,26 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'createCityForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'createCityForm'])->open() }}
             <div class="modal-body">
                 <div class="mb-5">
-                    {{ Form::label('name', __('messages.common.name').':', ['class' => 'required form-label']) }}
-                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' =>  __('messages.common.name'),'required']) }}
+                    {{ html()->label()->for('name')->text(__('messages.common.name').':')->attributes(['class' => 'required form-label']) }}
+                    {{ html()->text('name', null)->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.common.name'), 'required']) }}
                 </div>
                 <div class="mb-5">
-                    {{ Form::label('type', 'Type:', ['class' => 'required form-label']) }}
-                    {{ Form::select('type', $cityTypes, null, ['id' => 'cityType','required','data-control'=>"select2", 'placeholder' => 'Select Type']) }}
+                    {{ html()->label()->for('type')->text('Type:')->attributes(['class' => 'required form-label']) }}
+                    {{ html()->select('type', $cityTypes, null)->placeholder('Select Type')->attributes(['id' => 'cityType', 'required', 'data-control'=>"select2"]) }}
                 </div>
                 <div>
-                    {{ Form::label('state_id', __('messages.city.province').':', ['class' => 'required form-label ']) }}
-                    {{ Form::select('state_id', $states, null, ['id' => 'stateCity','required','data-control'=>"select2", 'placeholder' => __('messages.city.province')]) }}
+                    {{ html()->label()->for('state_id')->text(__('messages.city.province').':')->attributes(['class' => 'required form-label ']) }}
+                    {{ html()->select('state_id', $states, null)->placeholder(__('messages.city.province'))->attributes(['id' => 'stateCity', 'required', 'data-control'=>"select2"]) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">
-                {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary m-0','data-turbo' => 'false']) }}
-                {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss'=>'modal']) }}
+                {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0', 'data-turbo' => 'false']) }}
+                {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

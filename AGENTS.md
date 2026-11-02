@@ -44,6 +44,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 | Tables | the project's own list base `App\Livewire\Tables\TableComponent` on plain Livewire 3 (no table package; see the `livewire-development` skill) |
 | Permissions | spatie/laravel-permission **5.11** (middleware namespace `Spatie\Permission\Middlewares`, plural) |
 | Tests | **PHPUnit 10.5** (not Pest; data providers and `#[Test]` are attributes, not doc-comment annotations) |
+| Forms | spatie/laravel-html **3.13**: `html()->text('name', $value)->forgetAttribute('id')->attributes([...])` in Blade (no `Form::` / `Html::`; `laravelcollective/html` is gone and a test keeps it gone). spatie draws `id` = name by default; the views add `->forgetAttribute('id')` where the old builder drew none, so check an id before relying on it in JS |
 | Frontend | Bootstrap 5 (Metronic theme), jQuery, Select2, Laravel **Mix** (not Vite) |
 | PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel 3.1 |
 | Database | MySQL (strict mode, InnoDB) |

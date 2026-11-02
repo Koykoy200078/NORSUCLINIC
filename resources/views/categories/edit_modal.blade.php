@@ -7,20 +7,20 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            {{ Form::open(['id'=>'editMedicineCategoryForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id'=>'editMedicineCategoryForm'])->open() }}
             <div class="modal-body">
                 <div class="alert alert-danger d-none hide" id="editMedicineCategoryErrorsBox"></div>
-                {{ Form::hidden('category_id',null,['id'=>'editMedicineCategoryId']) }}
+                {{ html()->hidden('category_id', null)->attributes(['id'=>'editMedicineCategoryId']) }}
                 <div class="row">
                     <div class="form-group col-sm-12 mb-5">
-                        {{ Form::label('name',__('messages.medicine.category').':', ['class' => 'form-label']) }}
+                        {{ html()->label()->for('name')->text(__('messages.medicine.category').':')->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('name', '', ['id'=>'editCategoryName','class' => 'form-control','required','placeholder'=>__('messages.medicine.category')]) }}
+                        {{ html()->text('name', '')->attributes(['id'=>'editCategoryName', 'class' => 'form-control', 'required', 'placeholder'=>__('messages.medicine.category')]) }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-12">
-                        {{ Form::label('active', __('messages.web.status').':', ['class' => 'form-label']) }}
+                        {{ html()->label()->for('active')->text(__('messages.web.status').':')->attributes(['class' => 'form-label']) }}
                         <div class="form-check form-switch">
                             <input class="form-check-input w-35px h-20px is-active" name="is_active" type="checkbox"
                                    value="1"
@@ -29,13 +29,13 @@
                     </div>
                 </div>
                 <div class="modal-footer p-0">
-                    {{ Form::button(__('messages.common.save'), ['type'=>'submit','class' => 'btn btn-primary m-0','id'=>'editCategorySave','data-loading-text'=>"<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
+                    {{ html()->button(__('messages.common.save'), 'button')->attributes(['type'=>'submit', 'class' => 'btn btn-primary m-0', 'id'=>'editCategorySave', 'data-loading-text'=>"<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
                     <button type="button" aria-label="Close" class="btn btn-secondary"
                             data-bs-dismiss="modal">{!! __('messages.common.cancel') !!}
                     </button>
                 </div>
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

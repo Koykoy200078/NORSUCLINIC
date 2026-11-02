@@ -2,56 +2,56 @@
 $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
 @endphp
 
-{{ Form::hidden('quantity', isset($medicine) ? $medicine->quantity : 0, ['id' => 'quantityId']) }}
-{{ Form::hidden('available_quantity', isset($medicine) ? $medicine->available_quantity : 0, ['id' => 'AvailableQuantityId']) }}
+{{ html()->hidden('quantity', isset($medicine) ? $medicine->quantity : 0)->attributes(['id' => 'quantityId']) }}
+{{ html()->hidden('available_quantity', isset($medicine) ? $medicine->available_quantity : 0)->attributes(['id' => 'AvailableQuantityId']) }}
 
 <div class="form-group col-md-6 mb-5">
-    {{ Form::label('generic_name', 'Generic Name:', ['class' => 'form-label']) }}
+    {{ html()->label()->for('generic_name')->text('Generic Name:')->attributes(['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('generic_name', old('generic_name', isset($medicine) ? $medicine->generic_name : null), ['class' => 'form-control', 'placeholder' => 'e.g., Paracetamol', 'required']) }}
+    {{ html()->text('generic_name', old('generic_name', isset($medicine) ? $medicine->generic_name : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., Paracetamol', 'required']) }}
 </div>
 
 <div class="form-group col-md-6 mb-5">
-    {{ Form::label('brand_name', 'Brand Name:', ['class' => 'form-label']) }}
-    {{ Form::text('brand_name', old('brand_name', isset($medicine) ? $medicine->brand_name : null), ['class' => 'form-control', 'placeholder' => 'e.g., Biogesic']) }}
+    {{ html()->label()->for('brand_name')->text('Brand Name:')->attributes(['class' => 'form-label']) }}
+    {{ html()->text('brand_name', old('brand_name', isset($medicine) ? $medicine->brand_name : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., Biogesic']) }}
 </div>
 
 <div class="form-group col-md-6 mb-5">
-    {{ Form::label('category', __('messages.medicine.category').(':'), ['class' => 'form-label']) }}
+    {{ html()->label()->for('category')->text(__('messages.medicine.category').(':'))->attributes(['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('category', old('category', isset($medicine) ? ($medicine->category ?? $medicine->category_name) : null), ['class' => 'form-control', 'placeholder' => 'e.g., Analgesic', 'required']) }}
+    {{ html()->text('category', old('category', isset($medicine) ? ($medicine->category ?? $medicine->category_name) : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., Analgesic', 'required']) }}
 </div>
 
 <div class="form-group col-md-3 mb-5">
-    {{ Form::label('dosage', 'Dosage:', ['class' => 'form-label']) }}
+    {{ html()->label()->for('dosage')->text('Dosage:')->attributes(['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('dosage', old('dosage', isset($medicine) ? $medicine->dosage : null), ['class' => 'form-control', 'placeholder' => 'e.g., 500 mg', 'required']) }}
+    {{ html()->text('dosage', old('dosage', isset($medicine) ? $medicine->dosage : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., 500 mg', 'required']) }}
 </div>
 
 <div class="form-group col-md-3 mb-5">
-    {{ Form::label('uom', 'Unit of Measure:', ['class' => 'form-label']) }}
+    {{ html()->label()->for('uom')->text('Unit of Measure:')->attributes(['class' => 'form-label']) }}
     <span class="required"></span>
-    {{ Form::text('uom', old('uom', isset($medicine) ? $medicine->uom : null), ['class' => 'form-control', 'placeholder' => 'tablet, capsule, vial', 'required']) }}
+    {{ html()->text('uom', old('uom', isset($medicine) ? $medicine->uom : null))->attributes(['class' => 'form-control', 'placeholder' => 'tablet, capsule, vial', 'required']) }}
 </div>
 
 <div class="form-group col-md-4 mb-5">
-    {{ Form::label('sku', 'SKU:', ['class' => 'form-label']) }}
-    {{ Form::text('sku', old('sku', isset($medicine) ? $medicine->sku : null), ['class' => 'form-control', 'placeholder' => 'Optional stock code']) }}
+    {{ html()->label()->for('sku')->text('SKU:')->attributes(['class' => 'form-label']) }}
+    {{ html()->text('sku', old('sku', isset($medicine) ? $medicine->sku : null))->attributes(['class' => 'form-control', 'placeholder' => 'Optional stock code']) }}
 </div>
 
 <div class="form-group col-md-4 mb-5">
-    {{ Form::label('reorder_level', 'Reorder Level:', ['class' => 'form-label']) }}
-    {{ Form::number('reorder_level', old('reorder_level', isset($medicine) ? $medicine->reorder_level : null), ['class' => 'form-control', 'placeholder' => 'e.g., 10', 'min' => 0]) }}
+    {{ html()->label()->for('reorder_level')->text('Reorder Level:')->attributes(['class' => 'form-label']) }}
+    {{ html()->number('reorder_level', old('reorder_level', isset($medicine) ? $medicine->reorder_level : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., 10', 'min' => 0]) }}
 </div>
 
 <div class="form-group col-md-4 mb-5">
-    {{ Form::label('stock_alert_percentage', __('Stock Alert Percentage').(':'), ['class' => 'form-label']) }}
-    {{ Form::number('stock_alert_percentage', old('stock_alert_percentage', isset($medicine) ? $medicine->stock_alert_percentage : null), ['class' => 'form-control', 'placeholder' => 'e.g., 20', 'min' => 0, 'max' => 100, 'step' => '0.01']) }}
+    {{ html()->label()->for('stock_alert_percentage')->text(__('Stock Alert Percentage').(':'))->attributes(['class' => 'form-label']) }}
+    {{ html()->number('stock_alert_percentage', old('stock_alert_percentage', isset($medicine) ? $medicine->stock_alert_percentage : null))->attributes(['class' => 'form-control', 'placeholder' => 'e.g., 20', 'min' => 0, 'max' => 100, 'step' => '0.01']) }}
 </div>
 
 <div class="form-group col-md-12 mb-5">
-    {{ Form::label('description', __('messages.medicine.description').(':'), ['class' => 'form-label']) }}
-    {{ Form::textarea('description', old('description', isset($medicine) ? $medicine->description : null), ['class' => 'form-control', 'placeholder' => __('messages.medicine.description'), 'rows' => 3]) }}
+    {{ html()->label()->for('description')->text(__('messages.medicine.description').(':'))->attributes(['class' => 'form-label']) }}
+    {{ html()->textarea('description')->text(html()->value('description', old('description', isset($medicine) ? $medicine->description : null)))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder' => __('messages.medicine.description'), 'rows' => 3]) }}
 </div>
 
 <div class="col-12 mb-5">
@@ -59,25 +59,25 @@ $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
         <h5 class="mb-4">Initial / Additional Batch Stock</h5>
         <div class="row">
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('initial_stock_quantity', 'Stock Quantity:', ['class' => 'form-label']) }}
-                {{ Form::number('initial_stock_quantity', old('initial_stock_quantity', 0), ['class' => 'form-control', 'min' => 0, 'placeholder' => '0']) }}
+                {{ html()->label()->for('initial_stock_quantity')->text('Stock Quantity:')->attributes(['class' => 'form-label']) }}
+                {{ html()->number('initial_stock_quantity', old('initial_stock_quantity', 0))->attributes(['class' => 'form-control', 'min' => 0, 'placeholder' => '0']) }}
                 <small class="text-muted">Set to zero if no stock movement is needed.</small>
             </div>
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('batch_number', 'Batch Number:', ['class' => 'form-label']) }}
-                {{ Form::text('batch_number', old('batch_number'), ['class' => 'form-control', 'placeholder' => 'Required if stock quantity > 0']) }}
+                {{ html()->label()->for('batch_number')->text('Batch Number:')->attributes(['class' => 'form-label']) }}
+                {{ html()->text('batch_number', old('batch_number'))->attributes(['class' => 'form-control', 'placeholder' => 'Required if stock quantity > 0']) }}
             </div>
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('manufacturing_date', 'Manufacturing Date:', ['class' => 'form-label']) }}
-                {{ Form::date('manufacturing_date', old('manufacturing_date'), ['class' => 'form-control']) }}
+                {{ html()->label()->for('manufacturing_date')->text('Manufacturing Date:')->attributes(['class' => 'form-label']) }}
+                {{ html()->date('manufacturing_date', old('manufacturing_date'))->attributes(['class' => 'form-control']) }}
             </div>
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('expiration_date', 'Expiration Date:', ['class' => 'form-label']) }}
-                {{ Form::date('expiration_date', old('expiration_date', $prefillExpiryDate), ['class' => 'form-control']) }}
+                {{ html()->label()->for('expiration_date')->text('Expiration Date:')->attributes(['class' => 'form-label']) }}
+                {{ html()->date('expiration_date', old('expiration_date', $prefillExpiryDate))->attributes(['class' => 'form-control']) }}
             </div>
             <div class="form-group col-md-4 mb-4">
-                {{ Form::label('supplier_name', 'Supplier Name:', ['class' => 'form-label']) }}
-                {{ Form::text('supplier_name', old('supplier_name'), ['class' => 'form-control', 'placeholder' => 'Optional']) }}
+                {{ html()->label()->for('supplier_name')->text('Supplier Name:')->attributes(['class' => 'form-label']) }}
+                {{ html()->text('supplier_name', old('supplier_name'))->attributes(['class' => 'form-control', 'placeholder' => 'Optional']) }}
             </div>
         </div>
     </div>
@@ -85,7 +85,7 @@ $prefillExpiryDate = isset($medicine) ? $medicine->earliest_expiry_date : null;
 
 <!-- Submit Field -->
 <div class="d-flex justify-content-end">
-    {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'id' => 'medicineSave']) }}
+    {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2', 'id' => 'medicineSave']) }}
     <a href="{{ getRouteByRole('medicine-inventory.index') }}"
         class="btn btn-secondary">{{ __('messages.common.cancel') }}</a>
 </div>

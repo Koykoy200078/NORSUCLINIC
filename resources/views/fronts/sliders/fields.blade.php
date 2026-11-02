@@ -1,14 +1,14 @@
 <div class="row gx-10 mb-5">
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('title', __('messages.slider.title').':', ['class' => 'form-label required fs-6 fw-bolder text-gray-700 mb-3']) }}
-            {{ Form::text('title', null, ['class' => 'form-control form-control-solid', 'placeholder' => __('messages.slider.title'), 'required']) }}
+            {{ html()->label()->for('title')->text(__('messages.slider.title').':')->attributes(['class' => 'form-label required fs-6 fw-bolder text-gray-700 mb-3']) }}
+            {{ html()->text('title', null)->attributes(['class' => 'form-control form-control-solid', 'placeholder' => __('messages.slider.title'), 'required']) }}
         </div>
     </div>
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('short_description', __('messages.slider.short_description').':', ['class' => 'form-label required fs-6 fw-bolder text-gray-700 mb-3']) }}
-            {{ Form::textarea('short_description', null, ['class' => 'form-control form-control-solid', 'placeholder' =>__('messages.slider.short_description'), 'required', 'rows'=> 5,'id'=>'sliderShortDescription']) }}
+            {{ html()->label()->for('short_description')->text(__('messages.slider.short_description').':')->attributes(['class' => 'form-label required fs-6 fw-bolder text-gray-700 mb-3']) }}
+            {{ html()->textarea('short_description')->text(html()->value('short_description', null))->attributes(['cols' => 50])->attributes(['class' => 'form-control form-control-solid', 'placeholder' =>__('messages.slider.short_description'), 'required', 'rows'=> 5, 'id'=>'sliderShortDescription']) }}
         </div>
     </div>  
     <div class="col-lg-6 mb-7">
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div class="d-flex">
-        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
+        {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2']) }}
         <a href="{{ route('sliders.index') }}" type="reset"
            class="btn btn-light btn-active-light-primary">{{__('messages.common.discard')}}</a>
     </div>

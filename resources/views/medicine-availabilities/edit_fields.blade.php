@@ -69,11 +69,11 @@
                         @endphp
                         <tr>
                             <td>
-                                {{ Form::hidden('purchased_medicine_id[]', $purchasedMedicine->id, ['id' => 'purchased_medicine_id'.$uniqueId]) }}
-                                {{ Form::select('medicine[]', $medicines['medicines'], $purchasedMedicine->medicine_id, ['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId'.$uniqueId,'data-control'=>'select2','data-id'=>$uniqueId,'required']) }}
+                                {{ html()->hidden('purchased_medicine_id[]', $purchasedMedicine->id)->attributes(['id' => 'purchased_medicine_id'.$uniqueId]) }}
+                                {{ html()->select('medicine[]', $medicines['medicines'], $purchasedMedicine->medicine_id)->placeholder(__('messages.medicine_bills.select_medicine'))->attributes(['class' => 'form-select purchaseMedicineId', 'id'=>'medicineChooseId'.$uniqueId, 'data-control'=>'select2', 'data-id'=>$uniqueId, 'required']) }}
                             </td>
                             <td>
-                                {{ Form::text('dosage[]', $purchasedMedicine->dosage, ['class' => 'form-control', 'id' => 'dosage'.$uniqueId,'placeholder'=>'e.g. 500mg, 200mg']) }}
+                                {{ html()->text('dosage[]', $purchasedMedicine->dosage)->attributes(['class' => 'form-control', 'id' => 'dosage'.$uniqueId, 'placeholder'=>'e.g. 500mg, 200mg']) }}
                             </td>
                             <td>
                                 {{-- 
@@ -86,7 +86,7 @@
                                     $isManufacturingMonthOnly = ($manufacturingDateFormat === 'Y-m');
                                 @endphp
                                 <div class="d-flex gap-2 align-items-center">
-                                    {{ Form::text('manufacturing_date[]', $purchasedMedicine->manufacturing_date, ['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date'.$uniqueId,'required','placeholder'=>__('messages.medicine_availability.manufacturing_date')]) }}
+                                    {{ html()->text('manufacturing_date[]', $purchasedMedicine->manufacturing_date)->attributes(['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date'.$uniqueId, 'required', 'placeholder'=>__('messages.medicine_availability.manufacturing_date')]) }}
                                     <div class="form-check form-switch mb-0">
                                         <input class="form-check-input manufacturing-format-toggle" 
                                                type="checkbox" 
@@ -120,7 +120,7 @@
                                     $isExpiryMonthOnly = ($expiryDateFormat === 'Y-m');
                                 @endphp
                                 <div class="d-flex gap-2 align-items-center">
-                                    {{ Form::text('expiry_date[]', $purchasedMedicine->expiry_date, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date'.$uniqueId,'required','placeholder'=>__('messages.medicine_availability.expiry_date')]) }}
+                                    {{ html()->text('expiry_date[]', $purchasedMedicine->expiry_date)->attributes(['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date'.$uniqueId, 'required', 'placeholder'=>__('messages.medicine_availability.expiry_date')]) }}
                                     <div class="form-check form-switch mb-0">
                                         <input class="form-check-input expiry-format-toggle" 
                                                type="checkbox" 
@@ -138,7 +138,7 @@
                                 </div>
                             </td>
                             <td>
-                                {{ Form::number('quantity[]', $purchasedMedicine->quantity, ['class' => 'form-control purchase-quantity' ,'id'=>'quantity'.$uniqueId,'required','min'=>'1']) }}
+                                {{ html()->number('quantity[]', $purchasedMedicine->quantity)->attributes(['class' => 'form-control purchase-quantity', 'id'=>'quantity'.$uniqueId, 'required', 'min'=>'1']) }}
                             </td>
 
                             <td class="text-center">
@@ -156,7 +156,7 @@
             <div class="row mt-5 justify-content-between">
 
                 <div class="float-end mt-5">
-                    {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2','saveBtnPurchaseMedicne' ]) !!}
+                    {!! html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
                     <a href="{!! 
                             getRouteByRole('stock-in.index')
                         !!}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>

@@ -1,31 +1,31 @@
 <div class="row mb-5">
-    {{ Form::hidden('patient_id', $prescription->patient_id) }}
+    {{ html()->hidden('patient_id', $prescription->patient_id)->forgetAttribute('id') }}
     @if(Auth::user() && Auth::user()->hasRole('Doctor'))
     <input type="hidden" name="doctor_id" value="{{ Auth::user()->owner_id }}">
     @else
-    {{ Form::hidden('doctor_id', $prescription->doctor_id) }}
+    {{ html()->hidden('doctor_id', $prescription->doctor_id)->forgetAttribute('id') }}
     @endif
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('health_insurance', __('messages.prescription.health_insurance').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('health_insurance', null, ['class' => 'form-control','placeholder' => __('messages.prescription.health_insurance') ]) }}
+            {{ html()->label()->for('health_insurance')->text(__('messages.prescription.health_insurance').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('health_insurance', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.health_insurance')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('low_income', __('messages.prescription.low_income').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('low_income', null, ['class' => 'form-control','placeholder' => __('messages.prescription.low_income') ]) }}
+            {{ html()->label()->for('low_income')->text(__('messages.prescription.low_income').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('low_income', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.low_income')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('reference', __('messages.prescription.reference').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('reference', null, ['class' => 'form-control','placeholder' => __('messages.prescription.reference')]) }}
+            {{ html()->label()->for('reference')->text(__('messages.prescription.reference').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('reference', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.reference')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('is_active', __('messages.web.status').(':'), ['class' => 'form-label']) }}
+            {{ html()->label()->for('is_active')->text(__('messages.web.status').(':'))->attributes(['class' => 'form-label']) }}
             <br>
             <div class="form-check form-check-solid form-switch fv-row">
                 <input name="is_active" class="form-check-input is-active cursor-pointer" value="1"

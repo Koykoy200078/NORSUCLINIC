@@ -14,61 +14,56 @@
                 </div>
             </div>
             <div>
-                {{ Form::open(['route' => 'setting.update', 'files' => true]) }}
-                {{ Form::hidden('sectionName', $sectionName) }}
+                {{ html()->form('POST', route('setting.update'))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->open() }}
+                {{ html()->hidden('sectionName', $sectionName)->forgetAttribute('id') }}
                 <div class="card-body">
                     <div class="row mb-6">
-                        {{ Form::label('address_one',__('messages.setting.address').' 1:',['class'=>'col-lg-4 required form-label']) }}
+                        {{ html()->label()->for('address_one')->text(__('messages.setting.address').' 1:')->attributes(['class'=>'col-lg-4 required form-label']) }}
                         <div class="col-lg-8">
-                            {{ Form::text('address_one', ($setting['address_one'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 1','required']) }}
+                            {{ html()->text('address_one', ($setting['address_one'] ?? null))->attributes(['class' => 'form-control', 'placeholder'=>__('messages.setting.address').' 1', 'required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
-                        {{ Form::label('address_two',__('messages.setting.address').' 2:',['class'=>'col-lg-4 required form-label']) }}
+                        {{ html()->label()->for('address_two')->text(__('messages.setting.address').' 2:')->attributes(['class'=>'col-lg-4 required form-label']) }}
                         <div class="col-lg-8">
-                            {{ Form::text('address_two', ($setting['address_two'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.address').' 2','required']) }}
-                        </div>
-                    </div>
-                    <div class="row mb-6">
-                        <label class="col-lg-4 form-label">
-                            {{ Form::label('country_id',__('messages.country.country').':',['class'=>'col-lg-4 form-label required']) }}
-                        </label>
-                        <div class="col-lg-8">
-                            {{ Form::select('country_id', $countries, ($setting['country_id'] ?? null), ['id' => 'settingCountryId',
-                                        'class' => 'form-select', 'aria-label'=>"Select a Country",
-                                        'data-control'=>'select2','placeholder' => __('messages.country.country'),'required']) }}
+                            {{ html()->text('address_two', ($setting['address_two'] ?? null))->attributes(['class' => 'form-control', 'placeholder'=>__('messages.setting.address').' 2', 'required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
                         <label class="col-lg-4 form-label">
-                            {{ Form::label('state_id',__('messages.common.province').':',['class'=>'col-lg-4 required form-label']) }}
+                            {{ html()->label()->for('country_id')->text(__('messages.country.country').':')->attributes(['class'=>'col-lg-4 form-label required']) }}
                         </label>
                         <div class="col-lg-8">
-                            {{ Form::select('state_id', (isset($states) && $states!=null ? $states : []),
-            isset($setting['state_id']) ? ($setting['state_id'] ?? null) : null,
-            ['id' => 'settingStateId','class' => 'form-select','data-control'=>'select2','required', 'placeholder' => __('messages.common.province')]) }}
+                            {{ html()->select('country_id', $countries, ($setting['country_id'] ?? null))->placeholder(__('messages.country.country'))->attributes(['id' => 'settingCountryId', 'class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2', 'required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
                         <label class="col-lg-4 form-label">
-                            {{ Form::label('city_id',__('messages.city.city').':',['class'=>'col-lg-4 required form-label']) }}
+                            {{ html()->label()->for('state_id')->text(__('messages.common.province').':')->attributes(['class'=>'col-lg-4 required form-label']) }}
                         </label>
                         <div class="col-lg-8">
-                            {{ Form::select('city_id',$cities?? [],
-               $setting['city_id'] ?? null,['id' => 'settingCityId','class' => 'form-select','data-control'=>'select2','required']) }}
+                            {{ html()->select('state_id', (isset($states) && $states!=null ? $states : []), isset($setting['state_id']) ? ($setting['state_id'] ?? null) : null)->placeholder(__('messages.common.province'))->attributes(['id' => 'settingStateId', 'class' => 'form-select', 'data-control'=>'select2', 'required']) }}
                         </div>
                     </div>
                     <div class="row mb-6">
-                        {{ Form::label('postal_code',__('messages.setting.postal_code').':',['class'=>'col-lg-4 required form-label']) }}
+                        <label class="col-lg-4 form-label">
+                            {{ html()->label()->for('city_id')->text(__('messages.city.city').':')->attributes(['class'=>'col-lg-4 required form-label']) }}
+                        </label>
                         <div class="col-lg-8">
-                            {{ Form::text('postal_code', ($setting['postal_code'] ?? null), ['class' => 'form-control','placeholder'=>__('messages.setting.postal_code'),'required']) }}
+                            {{ html()->select('city_id', $cities?? [], $setting['city_id'] ?? null)->attributes(['id' => 'settingCityId', 'class' => 'form-select', 'data-control'=>'select2', 'required']) }}
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        {{ html()->label()->for('postal_code')->text(__('messages.setting.postal_code').':')->attributes(['class'=>'col-lg-4 required form-label']) }}
+                        <div class="col-lg-8">
+                            {{ html()->text('postal_code', ($setting['postal_code'] ?? null))->attributes(['class' => 'form-control', 'placeholder'=>__('messages.setting.postal_code'), 'required']) }}
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    {{ Form::submit(__('messages.user.save_changes'),['class' => 'btn btn-primary']) }}
+                    {{ html()->input('submit', null, __('messages.user.save_changes'))->attributes(['class' => 'btn btn-primary']) }}
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

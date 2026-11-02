@@ -119,7 +119,7 @@
         </div>
 
         <!-- Hidden Inputs -->
-        {{ Form::hidden('currentLanguage', getLoginUser()->language ?? checkLanguageSession(), ['class' => 'currentLanguage']) }}
+        {{ html()->hidden('currentLanguage', getLoginUser()->language ?? checkLanguageSession())->forgetAttribute('id')->attributes(['class' => 'currentLanguage']) }}
     </div>
 
     <!-- Modals -->

@@ -17,13 +17,11 @@
     </div>
     <div class="card">
         <div class="card-body">
-            {{ Form::open(['route' => 
-                getRouteNameByRole('patients.store'),
-                'files' => 'true','id' => 'createPatientForm']) }}
-            {{ Form::hidden('is_edit', false,['id' => 'patientIsEdit']) }}
-            {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'patientBackgroundImg']) }}
+            {{ html()->form('POST', route(getRouteNameByRole('patients.store')))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id' => 'createPatientForm'])->open() }}
+            {{ html()->hidden('is_edit', false)->attributes(['id' => 'patientIsEdit']) }}
+            {{ html()->hidden('backgroundImg', asset('web/media/avatars/male.png'))->attributes(['id' => 'patientBackgroundImg']) }}
             @include('patients.fields')
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

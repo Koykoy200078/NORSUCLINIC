@@ -1,19 +1,19 @@
 <div class="row">
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('title', __('messages.slider.title').':', ['class' => 'form-label required']) }}
-            {{ Form::text('title', !empty($banner) ? $banner->title : null, ['class' => 'form-control', 'placeholder' => __('messages.slider.title'), 'required']) }}
+            {{ html()->label()->for('title')->text(__('messages.slider.title').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('title', !empty($banner) ? $banner->title : null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.slider.title'), 'required']) }}
         </div>
     </div>
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('short_description', __('messages.slider.short_description').':', ['class' => 'form-label required']) }}
+            {{ html()->label()->for('short_description')->text(__('messages.slider.short_description').':')->attributes(['class' => 'form-label required']) }}
             <span data-bs-toggle="tooltip"
                   data-placement="top"
                   data-bs-original-title={{ __('messages.common.maximum_55') }}>
                                 <i class="fas fa-question-circle ml-1 mt-1 general-question-mark"></i>
                         </span>
-            {{ Form::textarea('short_description', !empty($banner) ? $banner->short_description : null, ['class' => 'form-control', 'placeholder' => __('messages.slider.short_description'), 'required', 'rows'=> 5,'id'=>'shortDescription','maxlength'=>55]) }}
+            {{ html()->textarea('short_description')->text(html()->value('short_description', !empty($banner) ? $banner->short_description : null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder' => __('messages.slider.short_description'), 'required', 'rows'=> 5, 'id'=>'shortDescription', 'maxlength'=>55]) }}
         </div>
     </div>
     <div class="col-lg-6 mb-5">
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="d-flex">
-        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
+        {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2']) }}
         <a href="{{ route('banner.index') }}" type="reset"
            class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

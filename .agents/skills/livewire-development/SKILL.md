@@ -33,7 +33,7 @@ no islands, no `Route::livewire()`, no `wire:sort`. Look up the **Livewire 3.x**
 - Layout `resources/views/layouts/app.blade.php`: `@livewireStyles` / `@livewireScripts` (assets not auto-injected:
   `inject_assets => false`); full-page layout `components.layouts.app`. Page JavaScript must be in `@push('scripts')` or
   `@section('page_js')` — `@section('scripts')` is never output.
-- **jQuery ↔ Livewire bridge:** older pages read hidden `Form::hidden(...)` inputs from compiled `resources/assets/js/*`
+- **jQuery ↔ Livewire bridge:** older pages read hidden `html()->hidden(...)` inputs from compiled `resources/assets/js/*`
   files. Before removing a hidden input, search `resources/assets/js/<module>` for its id.
 
 ## Security inside components

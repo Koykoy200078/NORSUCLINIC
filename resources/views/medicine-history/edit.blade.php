@@ -23,30 +23,30 @@ Edit Dispense Record
         </div>
         <div class="card">
             <div class="card-body">
-                {{Form::hidden('uniqueId',count($medicineBill->dispenseItems)+1,['id'=>'medicineUniqueId'])}}
-                {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
-                {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
+                {{html()->hidden('uniqueId', count($medicineBill->dispenseItems)+1)->attributes(['id'=>'medicineUniqueId'])}}
+                {{html()->hidden('associateMedicines', json_encode($medicineList))->forgetAttribute('id')->attributes(['class'=>'associatePurchaseMedicines'])}}
+                {{html()->hidden('medicineCategories', json_encode($medicineCategoriesList))->attributes(['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::model($medicineBill, ['route' => [getRouteNameByRole('dispense-records.update'), $medicineBill->id], 'method' => 'patch', 'id' => 'MedicinebillForm']) }}
+                {{ html()->modelForm($medicineBill, 'patch', route(getRouteNameByRole('dispense-records.update'), [$medicineBill->id]))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'MedicinebillForm'])->open() }}
                 <div class="row">
                     @include('medicine-history.medicine-table')
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
             @include('medicine-history.templates.templates')
         </div>
     </div>
     {{-- </div>
     @include('bills.templates.templates')
-    {{Form::hidden('billSaveUrl',route('bills.update', $bill->id),['id'=>'editBillSaveUrl','class'=>'billSaveUrl'])}}
-    {{Form::hidden('billUrl',route('bills.index'),['id'=>'editBillUrl','class'=>'billUrl'])}}
-    {{Form::hidden('associateMedicines',json_encode($associateMedicines),['id'=>'editBillAssociateMedicines','class'=>'associateMedicines'])}}
-    {{Form::hidden('uniqueId',$bill->billItems->count() + 1,['id'=>'editBillUniqueId','class'=>'uniqueId'])}}
-    {{Form::hidden('billDate',$bill->bill_date->format('Y-m-d h:i A'),['id'=>'editBillDate','class'=>'billDate'])}}
-    {{Form::hidden('patientAdmissionDetailUrl',url('patient-admission-details'),['id'=>'editBillPatientAdmissionDetailUrl','class'=>'patientAdmissionDetailUrl'])}}
-    {{Form::hidden('patientAdmissionId',$bill->patient_admission_id,['id'=>'editBillPatientAdmissionId','class'=>'patientAdmissionId'])}}
-    {{Form::hidden('billId',$bill->id,['id'=>'editBillId','class'=>'billId'])}}
-    {{Form::hidden('isEdit',true,['id'=>'editBillIsEdit','class'=>'isEdit'])}} --}}
+    {{html()->hidden('billSaveUrl', route('bills.update', $bill->id))->attributes(['id'=>'editBillSaveUrl', 'class'=>'billSaveUrl'])}}
+    {{html()->hidden('billUrl', route('bills.index'))->attributes(['id'=>'editBillUrl', 'class'=>'billUrl'])}}
+    {{html()->hidden('associateMedicines', json_encode($associateMedicines))->attributes(['id'=>'editBillAssociateMedicines', 'class'=>'associateMedicines'])}}
+    {{html()->hidden('uniqueId', $bill->billItems->count() + 1)->attributes(['id'=>'editBillUniqueId', 'class'=>'uniqueId'])}}
+    {{html()->hidden('billDate', $bill->bill_date->format('Y-m-d h:i A'))->attributes(['id'=>'editBillDate', 'class'=>'billDate'])}}
+    {{html()->hidden('patientAdmissionDetailUrl', url('patient-admission-details'))->attributes(['id'=>'editBillPatientAdmissionDetailUrl', 'class'=>'patientAdmissionDetailUrl'])}}
+    {{html()->hidden('patientAdmissionId', $bill->patient_admission_id)->attributes(['id'=>'editBillPatientAdmissionId', 'class'=>'patientAdmissionId'])}}
+    {{html()->hidden('billId', $bill->id)->attributes(['id'=>'editBillId', 'class'=>'billId'])}}
+    {{html()->hidden('isEdit', true)->attributes(['id'=>'editBillIsEdit', 'class'=>'isEdit'])}} --}}
     @endsection
     {{-- assets/js/moment.min.js --}}
     {{-- assets/js/bills/edit.js --}}

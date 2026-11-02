@@ -11,15 +11,17 @@ use Tests\Concerns\ReadsFormControls;
 use Tests\TestCase;
 
 /**
- * Upgrade plan U0.3: every way the views call the old form builder (Collective, `Form::`) next to its spatie/laravel-html
- * equivalent (`html()->`), drawn with the same variables, session and model, and compared control by control.
+ * Upgrade plan U0.3: every way the views called the old form builder (Collective, `Form::`) next to its spatie/laravel-html
+ * equivalent (`html()->`). The first column of each case is the old call, kept as the record of what the 832 call sites were;
+ * the second is the rule the converter applied (a field gets an `id` only where Collective wrote one; `placeholder` and
+ * `multiple` of a select become method calls; Form::submit is an <input>; Form::textarea keeps cols 50 / rows 10; labels escape
+ * their text; old input fills a field the same way).
  *
- * The right-hand column of each case IS the conversion rule: the converter used on the 83 views produces exactly these
- * shapes (a field gets an `id` only where Collective wrote one; `placeholder` and `multiple` of a select become method calls;
- * Form::submit is an <input>; Form::textarea keeps cols 50 / rows 10; labels escape their text). A rule that is wrong shows
- * up here as a difference. This test needs both packages: it goes away in the same stage that removes Collective.
+ * `tests/Fixtures/forms/rules.json` holds the controls Collective drew for each case, recorded while both packages were
+ * installed (the two drew the same, control by control, for all 56 cases). The package is gone, so this test draws only the
+ * html() call and compares it with that recording: it keeps the rules true when spatie/laravel-html is upgraded.
  */
-class FormBuilderEquivalenceTest extends TestCase
+class FormBuilderRulesTest extends TestCase
 {
     use RefreshDatabase;
     use ReadsFormControls;
@@ -36,17 +38,21 @@ class FormBuilderEquivalenceTest extends TestCase
         return Blade::render($template, $vars);
     }
 
+    /** what Collective drew for each case: recorded once, while the old package was still installed */
+    private const RECORDED = 'tests/Fixtures/forms/rules.json';
+
     /**
      * @param array<string, mixed> $vars
      * @param array<string, mixed> $old
      */
-    private function assertSameControls(string $collective, string $spatie, array $vars = [], array $old = []): void
+    #[DataProvider('cases')]
+    public function test_the_html_calls_still_draw_what_the_old_builder_drew(string $collective, string $spatie, array $vars = [], array $old = []): void
     {
-        $was = $this->formControls($this->draw($collective, $vars, $old));
-        $now = $this->formControls($this->draw($spatie, $vars, $old));
+        $recorded = json_decode(file_get_contents(base_path(self::RECORDED)), true);
 
-        $this->assertNotSame([], $was, 'the old call drew nothing');
-        $this->assertSame($was, $now, "the conversion draws something else\n  Collective: {$collective}\n  spatie:     {$spatie}");
+        $this->assertArrayHasKey($this->dataName(), $recorded, 'this case has no recording: add it to tests/Fixtures/forms/rules.json');
+        $this->assertNotSame([], $recorded[$this->dataName()], 'the recording is empty');
+        $this->assertSame($recorded[$this->dataName()], $this->formControls($this->draw($spatie, $vars, $old)), 'the html() call draws something else than the old builder did: ' . $spatie);
     }
 
     /** @param array<string, mixed> $attributes */
@@ -344,15 +350,5 @@ class FormBuilderEquivalenceTest extends TestCase
                 ['password' => 'secret'],
             ],
         ];
-    }
-
-    /**
-     * @param array<string, mixed> $vars
-     * @param array<string, mixed> $old
-     */
-    #[DataProvider('cases')]
-    public function test_the_conversion_draws_the_same_controls(string $collective, string $spatie, array $vars = [], array $old = []): void
-    {
-        $this->assertSameControls($collective, $spatie, $vars, $old);
     }
 }

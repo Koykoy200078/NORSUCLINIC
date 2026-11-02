@@ -14,7 +14,7 @@
             <div class="p-5">
                 <div class="mb-5">
                     <label for="prescriptionHead" class="form-label">{{ __('messages.web.status').':' }}</label>
-{{--                    {{ Form::select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(),null, ['id' => 'prescriptionHead', 'data-control' =>'select2', 'class' => 'form-select status-selector select2-hidden-accessible data-allow-clear="true"']) }}--}}
+{{--                    {{ html()->select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(), null)->attributes(['id' => 'prescriptionHead', 'data-control' =>'select2', 'class' => 'form-select status-selector select2-hidden-accessible data-allow-clear="true"']) }}--}}
                     <select class="form-select status-selector" id="prescriptionHead" data-control="select2" name="status">
                        <option value="2">{{ __('messages.filter.all') }}</option>
                        <option value="1">{{ __('messages.filter.active') }}</option>

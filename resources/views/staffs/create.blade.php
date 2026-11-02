@@ -15,9 +15,9 @@
     </div>
     <div class="card">
         <div class="card-body">
-            {{ Form::open(['route' => ['staffs.store'], 'method' => 'POST', 'files' => true,'id'=> 'createStaffForm']) }}
+            {{ html()->form('POST', route('staffs.store'))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id'=> 'createStaffForm'])->open() }}
             @include('staffs.fields')
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

@@ -16,24 +16,19 @@
         @include('layouts.errors')
     </div>
     <div class="card">
-        {{Form::hidden('qualification',$qualifications,['id' => 'qualificationData'])}}
+        {{html()->hidden('qualification', $qualifications)->attributes(['id' => 'qualificationData'])}}
         <div class="card-body">
-            {{ Form::open(['route' => [
-                    getRouteNameByRole('doctors.update'),
-                    $user->doctor->id
-                ], 'method' => 'Patch', 'files' => true,'id'=> 'editDoctorForm']) }}
-            {{ Form::hidden('user_id', $doctor->id,['id' => 'editDoctorId']) }}
-            {{ Form::hidden('is_edit', true,['id' => 'doctorIsEdit']) }}
-            {{ Form::hidden('edit_country_id', isset($user->address->country_id) ? $user->address->country_id:null,['id' => 'doctorCountryId']) }}
-            {{ Form::hidden('edit_state_id', isset($user->address->state_id) ? $user->address->state_id:null,['id' => 'doctorStateId']) }}
-            {{ Form::hidden('edit_city_id', isset($user->address->city_id) ? $user->address->city_id:null,['id' => 'doctorCityId']) }}
-            {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'doctorBackgroundImg']) }}
+            {{ html()->form('Patch', route(getRouteNameByRole('doctors.update'), [$user->doctor->id]))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id'=> 'editDoctorForm'])->open() }}
+            {{ html()->hidden('user_id', $doctor->id)->attributes(['id' => 'editDoctorId']) }}
+            {{ html()->hidden('is_edit', true)->attributes(['id' => 'doctorIsEdit']) }}
+            {{ html()->hidden('edit_country_id', isset($user->address->country_id) ? $user->address->country_id:null)->attributes(['id' => 'doctorCountryId']) }}
+            {{ html()->hidden('edit_state_id', isset($user->address->state_id) ? $user->address->state_id:null)->attributes(['id' => 'doctorStateId']) }}
+            {{ html()->hidden('edit_city_id', isset($user->address->city_id) ? $user->address->city_id:null)->attributes(['id' => 'doctorCityId']) }}
+            {{ html()->hidden('backgroundImg', asset('web/media/avatars/male.png'))->attributes(['id' => 'doctorBackgroundImg']) }}
             {{-- Add redirect URL based on user role --}}
-            {{ Form::hidden('doctorIndexRedirectUrl', 
-                   getRouteByRole('doctors.index'),
-                   ['id' => 'doctorIndexRedirectUrl']) }}
+            {{ html()->hidden('doctorIndexRedirectUrl', getRouteByRole('doctors.index'))->attributes(['id' => 'doctorIndexRedirectUrl']) }}
             @include('doctors.edit-fields')
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
             @include('doctors.templates.templates')
         </div>
     </div>

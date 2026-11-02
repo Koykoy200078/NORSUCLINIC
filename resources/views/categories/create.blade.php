@@ -18,11 +18,11 @@
                                 <strong>Create Category</strong>
                             </div>
                             <div class="card-body">
-                                {{ Form::open(['route' => 'categories.store']) }}
+                                {{ html()->form('POST', route('categories.store'))->attribute('accept-charset', 'UTF-8')->open() }}
 
                                    @include('categories.fields')
 
-                                {{ Form::close() }}
+                                {{ html()->closeModelForm() }}
                             </div>
                         </div>
                     </div>

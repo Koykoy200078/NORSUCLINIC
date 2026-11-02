@@ -15,10 +15,10 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{ Form::open(['route' => ['staffs.update', $staff->id], 'method' => 'put','files' => 'true','id' => 'editStaffForm']) }}
-                {{ Form::hidden('is_edit', true,['id' => 'staffIsEdit']) }}
+                {{ html()->form('put', route('staffs.update', [$staff->id]))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id' => 'editStaffForm'])->open() }}
+                {{ html()->hidden('is_edit', true)->attributes(['id' => 'staffIsEdit']) }}
                     @include('staffs.fields')
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

@@ -4,13 +4,13 @@
 @endsection
 @section('content')
 <div class="container-fluid">
-    {{ Form::open(['route' => 'setting.update', 'files' => true,'id' => 'generalSettingForm']) }}
+    {{ html()->form('POST', route('setting.update'))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id' => 'generalSettingForm'])->open() }}
     <div class="d-flex flex-column">
         @include('setting.setting_menu')
-        {{ Form::hidden('sectionName', $sectionName) }}
-        {{ Form::hidden('setting_country_id', false,['id' => 'settingCountryId']) }}
-        {{ Form::hidden('setting_state_id', false,['id' => 'settingStateId']) }}
-        {{ Form::hidden('setting_city_id', false,['id' => 'settingCityId']) }}
+        {{ html()->hidden('sectionName', $sectionName)->forgetAttribute('id') }}
+        {{ html()->hidden('setting_country_id', false)->attributes(['id' => 'settingCountryId']) }}
+        {{ html()->hidden('setting_state_id', false)->attributes(['id' => 'settingStateId']) }}
+        {{ html()->hidden('setting_city_id', false)->attributes(['id' => 'settingCityId']) }}
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center justify-content-center">
@@ -20,56 +20,55 @@
             </div>
             <div class="card-body">
                 <div class="row mb-6">
-                    {{ Form::label('clinic_name',__('messages.setting.clinic_name').':',
-                                     ['class'=>'col-lg-4 form-label required']) }}
+                    {{ html()->label()->for('clinic_name')->text(__('messages.setting.clinic_name').':')->attributes(['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('clinic_name', $setting['clinic_name'] ?? null, ['class' => 'form-control','placeholder'=>__('messages.setting.clinic_name'),'required']) }}
+                        {{ html()->text('clinic_name', $setting['clinic_name'] ?? null)->attributes(['class' => 'form-control', 'placeholder'=>__('messages.setting.clinic_name'), 'required']) }}
                     </div>
                 </div>
                 <!-- Landline Number -->
                 <div class="row mb-6">
-                    {{ Form::label('landline_no', __('Landline No').':', ['class' => 'col-lg-4 form-label']) }}
+                    {{ html()->label()->for('landline_no')->text(__('Landline No').':')->attributes(['class' => 'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('landline_no', $setting['landline_no'] ?? null, ['class' => 'form-control', 'placeholder' => __('Input Landline Number'), 'id' => 'landlineNumber']) }}
+                        {{ html()->text('landline_no', $setting['landline_no'] ?? null)->attributes(['class' => 'form-control', 'placeholder' => __('Input Landline Number'), 'id' => 'landlineNumber']) }}
                     </div>
                 </div>
                 <!-- End of landline number -->
                 <div class="row mb-6">
-                    {{ Form::label('contact_no', __('messages.patient.contact_no').':', ['class' => 'col-lg-4 form-label required']) }}
+                    {{ html()->label()->for('contact_no')->text(__('messages.patient.contact_no').':')->attributes(['class' => 'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('contact_no', $setting['contact_no'] ?? null, ['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no'), 'id'=>'phoneNumber']) }}
+                        {{ html()->text('contact_no', $setting['contact_no'] ?? null)->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no'), 'id'=>'phoneNumber']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('default_country_code', __('messages.setting.default_country_code').':', ['class' => 'col-lg-4 form-label']) }}
+                    {{ html()->label()->for('default_country_code')->text(__('messages.setting.default_country_code').':')->attributes(['class' => 'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
                         {{-- The clinic works with Philippine numbers only, so the country is fixed. --}}
                         <input type="text" class="form-control" value="{{ __('Philippines') }} (+63)" readonly disabled>
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('email',__('messages.user.email').':',['class'=>'col-lg-4 form-label required']) }}
+                    {{ html()->label()->for('email')->text(__('messages.user.email').':')->attributes(['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::email('email', $setting['email'] ?? null, ['class' => 'form-control ','placeholder'=>__('messages.user.email'),'required']) }}
+                        {{ html()->email('email', $setting['email'] ?? null)->attributes(['class' => 'form-control ', 'placeholder'=>__('messages.user.email'), 'required']) }}
                     </div>
                 </div>
                 {{-- Signs the ACCOMPLISHMENT REPORT as "Noted by". --}}
                 <div class="row mb-6">
-                    {{ Form::label('university_physician_name', __('University Physician').':', ['class' => 'col-lg-4 form-label']) }}
+                    {{ html()->label()->for('university_physician_name')->text(__('University Physician').':')->attributes(['class' => 'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('university_physician_name', $setting['university_physician_name'] ?? null, ['class' => 'form-control', 'maxlength' => 150, 'placeholder' => __('Full name, e.g. Dr. Juan Dela Cruz')]) }}
+                        {{ html()->text('university_physician_name', $setting['university_physician_name'] ?? null)->attributes(['class' => 'form-control', 'maxlength' => 150, 'placeholder' => __('Full name, e.g. Dr. Juan Dela Cruz')]) }}
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('university_physician_title', __('University Physician title').':', ['class' => 'col-lg-4 form-label']) }}
+                    {{ html()->label()->for('university_physician_title')->text(__('University Physician title').':')->attributes(['class' => 'col-lg-4 form-label']) }}
                     <div class="col-lg-8">
-                        {{ Form::text('university_physician_title', $setting['university_physician_title'] ?? 'University Physician', ['class' => 'form-control', 'maxlength' => 100, 'placeholder' => __('University Physician')]) }}
+                        {{ html()->text('university_physician_title', $setting['university_physician_title'] ?? 'University Physician')->attributes(['class' => 'form-control', 'maxlength' => 100, 'placeholder' => __('University Physician')]) }}
                     </div>
                 </div>
                 <div class="row mb-6">
-                    {{ Form::label('specialties',__('messages.setting.specialties').':', ['class'=>'col-lg-4 form-label required']) }}
+                    {{ html()->label()->for('specialties')->text(__('messages.setting.specialties').':')->attributes(['class'=>'col-lg-4 form-label required']) }}
                     <div class="col-lg-8">
-                        {{ Form::select('specialties[]', $specialties, json_decode($setting['specialties'] ?? '[]'), ['multiple', 'class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2','required']) }}
+                        {{ html()->select('specialties[]', $specialties, old('specialties', json_decode($setting['specialties'] ?? '[]')))->multiple()->forgetAttribute('id')->attributes(['class' => 'form-select', 'aria-label'=>"Select a Country", 'data-control'=>'select2', 'required']) }}
                     </div>
                 </div>
                 <div class="row mb-6">
@@ -126,19 +125,19 @@
                         </span>
                     </label>
                     <div class="col-lg-8">
-                        {{ Form::checkbox('email_verified', 1, $setting['email_verified'] ?? 1, ['class' => 'form-check-input m-0']) }}
+                        {{ html()->checkbox('email_verified', $setting['email_verified'] ?? 1, 1)->forgetAttribute('id')->attributes(['class' => 'form-check-input m-0']) }}
                     </div>
                 </div>
 
         <div class="row">
             <!-- Submit Field -->
             <div class="form-group col-sm-12">
-                {{ Form::submit(__('messages.user.save_changes'),['class' => 'btn btn-primary','id'=>'settingSubmitBtn']) }}
+                {{ html()->input('submit', null, __('messages.user.save_changes'))->attributes(['class' => 'btn btn-primary', 'id'=>'settingSubmitBtn']) }}
             </div>
         </div>
     </div>
 </div>
-{{ Form::close() }}
+{{ html()->closeModelForm() }}
 </div>
 </div>
 @endsection

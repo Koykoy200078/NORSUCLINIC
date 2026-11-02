@@ -12,73 +12,73 @@ $generics = $generics ?? [];
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'createMedicineFromPrescription', 'method' => 'POST']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'createMedicineFromPrescription'])->open() }}
             @csrf
             <div class="modal-body">
                 <div class="alert alert-danger d-none hide" id="medicinePrescriptionErrorBox"></div>
                 <div class="row">
                     <!-- Name Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('name', __('messages.medicine.medicine').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('name')->text(__('messages.medicine.medicine').(':'))->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('name', null, ['class' => 'form-control','minlength' => 2, 'id' => 'medicineNameId','placeholder'=>__('messages.medicine.medicine')]) }}
+                        {{ html()->text('name', null)->attributes(['class' => 'form-control', 'minlength' => 2, 'id' => 'medicineNameId', 'placeholder'=>__('messages.medicine.medicine')]) }}
                     </div>
 
                     <!-- Category Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('category_id', __('messages.medicine.category').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('category_id')->text(__('messages.medicine.category').(':'))->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::select('category_id', $categories, (isset($medicine)) ? $medicine->category_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_category'), 'id' => 'prescriptionMedicineCategoryId']) }}
+                        {{ html()->select('category_id', $categories, (isset($medicine)) ? $medicine->category_id : null)->placeholder(__('messages.common.select_category'))->attributes(['class' => 'form-select', 'id' => 'prescriptionMedicineCategoryId']) }}
                     </div>
 
                     <!-- Generic Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('generic_id', __('messages.medicine.generic').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('generic_id')->text(__('messages.medicine.generic').(':'))->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::select('generic_id', $generics,  (isset($medicine)) ? $medicine->generic_id : null, ['class' => 'form-select', 'placeholder' => __('messages.common.select_generic'), 'id' => 'prescriptionMedicineGenericId']) }}
+                        {{ html()->select('generic_id', $generics, (isset($medicine)) ? $medicine->generic_id : null)->placeholder(__('messages.common.select_generic'))->attributes(['class' => 'form-select', 'id' => 'prescriptionMedicineGenericId']) }}
                     </div>
 
                     <!-- Salt Composition Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('salt_composition', __('messages.medicine.salt_composition').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('salt_composition')->text(__('messages.medicine.salt_composition').(':'))->attributes(['class' => 'form-label']) }}
                         <span
                             class="required"></span>
-                        {{ Form::text('salt_composition', null, ['class' => 'form-control','required','placeholder'=>__('messages.medicine.salt_composition')]) }}
+                        {{ html()->text('salt_composition', null)->attributes(['class' => 'form-control', 'required', 'placeholder'=>__('messages.medicine.salt_composition')]) }}
                     </div>
 
                     <!-- Buying Price Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('buying_price', __('messages.medicine.buying_price').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('buying_price')->text(__('messages.medicine.buying_price').(':'))->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('buying_price', null, ['class' => 'form-control price-input','placeholder'=>__('messages.medicine.buying_price')]) }}
+                        {{ html()->text('buying_price', null)->attributes(['class' => 'form-control price-input', 'placeholder'=>__('messages.medicine.buying_price')]) }}
                     </div>
 
                     <!-- Selling Price Field -->
                     <div class="form-group col-md-6 mb-5">
-                        {{ Form::label('selling_price', __('messages.medicine.selling_price').(':'), ['class' => 'form-label']) }}
+                        {{ html()->label()->for('selling_price')->text(__('messages.medicine.selling_price').(':'))->attributes(['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('selling_price', null, ['class' => 'form-control price-input','placeholder'=>__('messages.medicine.selling_price')]) }}
+                        {{ html()->text('selling_price', null)->attributes(['class' => 'form-control price-input', 'placeholder'=>__('messages.medicine.selling_price')]) }}
                     </div>
 
                     <!-- Effect Field -->
                     <div class="form-group col-md-12 mb-5">
-                        {{ Form::label('side_effects', __('messages.medicine.side_effects').(':'), ['class' => 'form-label']) }}
-                        {{ Form::textarea('side_effects', null, ['class' => 'form-control', 'rows'=>4,'placeholder'=>__('messages.medicine.side_effects')]) }}
+                        {{ html()->label()->for('side_effects')->text(__('messages.medicine.side_effects').(':'))->attributes(['class' => 'form-label']) }}
+                        {{ html()->textarea('side_effects')->text(html()->value('side_effects', null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows'=>4, 'placeholder'=>__('messages.medicine.side_effects')]) }}
                     </div>
 
                     <!-- Effect Field -->
                     <div class="form-group col-md-12 mb-5">
-                        {{ Form::label('description', __('messages.medicine.description').(':'), ['class' => 'form-label']) }}
-                        {{ Form::textarea('description', null, ['class' => 'form-control', 'rows'=>4,'placeholder'=>__('messages.medicine.side_effects')]) }}
+                        {{ html()->label()->for('description')->text(__('messages.medicine.description').(':'))->attributes(['class' => 'form-label']) }}
+                        {{ html()->textarea('description')->text(html()->value('description', null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows'=>4, 'placeholder'=>__('messages.medicine.side_effects')]) }}
                     </div>
                 </div>
             </div>
             <div class="modal-footer pt-0">
-                {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary m-0','id' => 'prescriptionMedicineSave','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
+                {{ html()->button(__('messages.common.save'), 'button')->attributes(['type' => 'submit', 'class' => 'btn btn-primary m-0', 'id' => 'prescriptionMedicineSave', 'data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> Processing..."]) }}
                 <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

@@ -24,10 +24,10 @@
                         <tbody class="prescription-medicine-container">
                             <tr>
                                 <td>
-                                    {{ Form::select('medicine[]', $medicines['medicines'], null,['class' => 'form-select purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'medicineChooseId1','data-control'=>'select2','data-id'=>1,'required']) }}
+                                    {{ html()->select('medicine[]', $medicines['medicines'], null)->placeholder(__('messages.medicine_bills.select_medicine'))->attributes(['class' => 'form-select purchaseMedicineId', 'id'=>'medicineChooseId1', 'data-control'=>'select2', 'data-id'=>1, 'required']) }}
                                 </td>
                                 <td>
-                                    {{ Form::text('dosage[]', null, ['class' => 'form-control', 'id' => 'dosage1','placeholder'=>'e.g. 500mg, 200mg']) }}
+                                    {{ html()->text('dosage[]', null)->attributes(['class' => 'form-control', 'id' => 'dosage1', 'placeholder'=>'e.g. 500mg, 200mg']) }}
                                 </td>
                                 <td>
                                     @php
@@ -44,7 +44,7 @@
                                     $isManufacturingMonthOnly = ($defaultManufacturingFormat === 'Y-m');
                                     @endphp
                                     <div class="d-flex gap-2 align-items-center">
-                                        {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date1','required','placeholder'=>__('messages.medicine_availability.manufacturing_date')]) }}
+                                        {{ html()->text('manufacturing_date[]', null)->attributes(['class' => 'form-control purchaseMedicineManufacturingDate', 'id' => 'manufacturing_date1', 'required', 'placeholder'=>__('messages.medicine_availability.manufacturing_date')]) }}
                                         <div class="form-check form-switch mb-0" title="{{ $isManufacturingMonthOnly ? 'Month Only (Y-M)' : 'Full Date (Y-M-D)' }}">
                                             <input class="form-check-input manufacturing-format-toggle"
                                                 type="checkbox"
@@ -75,7 +75,7 @@
                                     $isMonthOnly = ($defaultFormat === 'Y-m');
                                     @endphp
                                     <div class="d-flex gap-2 align-items-center">
-                                        {{ Form::text('expiry_date[]', null, ['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date1','required','placeholder'=>__('messages.medicine_availability.expiry_date')]) }}
+                                        {{ html()->text('expiry_date[]', null)->attributes(['class' => 'form-control purchaseMedicineExpiryDate', 'id' => 'expiry_date1', 'required', 'placeholder'=>__('messages.medicine_availability.expiry_date')]) }}
                                         <div class="form-check form-switch mb-0" title="{{ $isMonthOnly ? 'Month Only (Y-M)' : 'Full Date (Y-M-D)' }}">
                                             <input class="form-check-input expiry-format-toggle"
                                                 type="checkbox"
@@ -92,7 +92,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ Form::number('quantity[]', 0, ['class' => 'form-control purchase-quantity' ,'id'=>'quantity1','required','min'=>'0']) }}
+                                    {{ html()->number('quantity[]', 0)->attributes(['class' => 'form-control purchase-quantity', 'id'=>'quantity1', 'required', 'min'=>'0']) }}
                                 </td>
 
                                 <td class="text-center">
@@ -117,7 +117,7 @@
                 !!}" class="btn btn-secondary me-2">
                 {{__('messages.common.cancel')}}
             </a>
-            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary']) }}
+            {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary']) }}
         </div>
         @endif
     </div>

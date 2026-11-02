@@ -15,7 +15,6 @@
         "laracasts/flash": "^3.2",
         "laravel/framework": "^10.21",
         "laravel/reverb": "^1.12",
-        "laravelcollective/html": "^6.4",
         "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1",
         "mariuzzo/laravel-js-localization": "^1.10",

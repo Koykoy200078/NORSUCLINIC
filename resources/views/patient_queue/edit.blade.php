@@ -17,7 +17,7 @@
 
     <div class="card">
         <div class="card-body">
-            {{ Form::model($patientQueue, ['route' => [getRouteNameByRole('patient-queue.update'), $patientQueue], 'method' => 'PUT']) }}
+            {{ html()->modelForm($patientQueue, 'PUT', route(getRouteNameByRole('patient-queue.update'), [$patientQueue]))->attribute('accept-charset', 'UTF-8')->open() }}
 
             <div class="row">
                 <!-- Patient Info (Read-only) -->
@@ -32,19 +32,19 @@
             <div class="row">
                 <!-- Room Number -->
                 <div class="col-md-6 mb-3">
-                    {{ Form::label('room_number', __('Room Number').':', ['class' => 'form-label']) }}
-                    {{ Form::text('room_number', null, ['class' => 'form-control', 'placeholder' => 'e.g., Room 101']) }}
+                    {{ html()->label()->for('room_number')->text(__('Room Number').':')->attributes(['class' => 'form-label']) }}
+                    {{ html()->text('room_number', null)->attributes(['class' => 'form-control', 'placeholder' => 'e.g., Room 101']) }}
                 </div>
 
                 <!-- Status -->
                 <div class="col-md-6 mb-3">
-                    {{ Form::label('status', __('Status').':', ['class' => 'form-label required']) }}
-                    {{ Form::select('status', [
+                    {{ html()->label()->for('status')->text(__('Status').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->select('status', [
                             'waiting' => 'Waiting',
                             'in_progress' => 'In Progress',
                             'completed' => 'Completed',
                             'cancelled' => 'Cancelled'
-                        ], null, ['class' => 'form-select', 'required']) }}
+                        ], null)->attributes(['class' => 'form-select', 'required']) }}
                 </div>
             </div>
 
@@ -52,8 +52,8 @@
                 <!-- Priority Checkbox -->
                 <div class="col-md-6 mb-3">
                     <div class="form-check form-switch">
-                        {{ Form::checkbox('is_priority', 1, null, ['class' => 'form-check-input', 'id' => 'isPriority']) }}
-                        {{ Form::label('is_priority', __('Mark as Priority'), ['class' => 'form-check-label']) }}
+                        {{ html()->checkbox('is_priority', null, 1)->attributes(['class' => 'form-check-input', 'id' => 'isPriority']) }}
+                        {{ html()->label()->for('is_priority')->text(__('Mark as Priority'))->attributes(['class' => 'form-check-label']) }}
                         <small class="d-block text-muted">Check this if patient needs immediate attention</small>
                     </div>
                 </div>
@@ -62,8 +62,8 @@
             <div class="row">
                 <!-- Notes -->
                 <div class="col-md-12 mb-3">
-                    {{ Form::label('notes', __('Notes').':', ['class' => 'form-label']) }}
-                    {{ Form::textarea('notes', null, ['class' => 'form-control', 'rows' => 3, 'placeholder' => 'Any special notes or instructions...']) }}
+                    {{ html()->label()->for('notes')->text(__('Notes').':')->attributes(['class' => 'form-label']) }}
+                    {{ html()->textarea('notes')->text(html()->value('notes', null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => 'Any special notes or instructions...']) }}
                 </div>
             </div>
 
@@ -90,10 +90,10 @@
                 <a href="{{ getRouteByRole('patient-queue.index') }}" class="btn btn-secondary me-2">
                     {{ __('messages.common.cancel') }}
                 </a>
-                {{ Form::submit(__('Update'), ['class' => 'btn btn-primary']) }}
+                {{ html()->input('submit', null, __('Update'))->attributes(['class' => 'btn btn-primary']) }}
             </div>
 
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

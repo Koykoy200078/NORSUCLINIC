@@ -1,0 +1,265 @@
+{
+    "text with value, flags and data attributes, no label": [
+        "input[class=form-control data-ph-phone=true name=first_name placeholder=First required type=text value=Ana \"A\" <b>]"
+    ],
+    "text without value": [
+        "input[class=form-control name=first_name type=text]"
+    ],
+    "text with only a name": [
+        "input[name=first_name type=text]"
+    ],
+    "text after a label of the same name takes the name as its id": [
+        "label[for=first_name] First:",
+        "input[class=c id=first_name name=first_name type=text value=x]"
+    ],
+    "text with an id of its own wins over the label rule": [
+        "label[for=first_name] First:",
+        "input[id=mine name=first_name type=text value=x]"
+    ],
+    "a label of another name gives no id": [
+        "label[for=other] Other",
+        "input[name=first_name type=text value=x]"
+    ],
+    "hidden": [
+        "input[name=patient_id type=hidden value=5]",
+        "input[id=noteId name=note type=hidden]"
+    ],
+    "email": [
+        "input[class=form-control name=email required type=email value=a@b.test]"
+    ],
+    "number with min max": [
+        "input[class=q max=10 min=1 name=qty step=any type=number value=3]"
+    ],
+    "password has no value": [
+        "input[autocomplete=new-password class=form-control name=password type=password]"
+    ],
+    "date from a date string": [
+        "input[class=x name=d type=date value=2026-03-04]"
+    ],
+    "date from a Carbon value": [
+        "input[class=x name=d type=date value=2026-03-04]"
+    ],
+    "date with no value": [
+        "input[class=x name=d type=date]"
+    ],
+    "textarea keeps Collective's default size": [
+        "textarea[class=form-control cols=50 name=notes rows=10] line one line <two> & three"
+    ],
+    "textarea with its own rows": [
+        "textarea[class=c cols=50 name=notes rows=3]"
+    ],
+    "textarea with its own rows and cols": [
+        "textarea[cols=20 name=notes rows=3]"
+    ],
+    "select with a selected value": [
+        "select[class=form-select data-control=select2 name=type]",
+        "option[value=1] Alpha",
+        "option[selected value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "select with an integer selected against string keys": [
+        "select[name=type]",
+        "option[value=1] Alpha",
+        "option[selected value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "select with nothing selected": [
+        "select[class=form-select name=type]",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "select with a placeholder and nothing selected": [
+        "select[class=form-select name=type]",
+        "option[selected value] Pick one",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "select with a placeholder and a value selected": [
+        "select[name=type]",
+        "option[value] Pick & choose",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>"
+    ],
+    "select with a placeholder and an empty-string selection": [
+        "select[name=type]",
+        "option[selected value] Pick",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "select with an id and a placeholder": [
+        "select[id=editStateId name=state_id required]",
+        "option[selected value] Province",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "multiple select with selected values": [
+        "select[class=io-select2 data-placeholder=Tags multiple name=tags[]]",
+        "option[selected value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>"
+    ],
+    "multiple select with nothing selected": [
+        "select[multiple name=tags[]]",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "multiple select given a Collection of selected ids": [
+        "select[multiple name=tags[]]",
+        "option[value=1] Alpha",
+        "option[selected value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>"
+    ],
+    "select options as a Collection": [
+        "select[name=type]",
+        "option[value=a] Aye",
+        "option[selected value=b] Bee"
+    ],
+    "select with groups of options": [
+        "select[name=grp]",
+        "optgroup[label=Group A]",
+        "option[value=a1] One",
+        "option[value=a2] Two",
+        "optgroup[label=Group B]",
+        "option[selected value=b1] Three"
+    ],
+    "select with no options": [
+        "select[name=city_id]",
+        "option[selected value] City"
+    ],
+    "select after a label of the same name takes the name as its id": [
+        "label[for=type] Type",
+        "select[class=x id=type name=type]",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[value=3] Gamma <3>"
+    ],
+    "checkbox unchecked": [
+        "input[class=form-check-input name=is_active type=checkbox value=1]"
+    ],
+    "checkbox checked": [
+        "input[checked name=is_active type=checkbox value=yes]"
+    ],
+    "checkbox from a model attribute value": [
+        "input[checked name=is_active type=checkbox value=1]"
+    ],
+    "radio unchecked and checked": [
+        "input[id=m name=gender type=radio value=male]",
+        "input[checked id=f name=gender type=radio value=female]"
+    ],
+    "label with text and class": [
+        "label[class=form-label required for=first_name] First name:"
+    ],
+    "label text is escaped": [
+        "label[for=x] Fish & <i>Chips</i>"
+    ],
+    "label for a human-readable name": [
+        "label[for=First Name] First name:"
+    ],
+    "label with no text shows the name in words": [
+        "label[for=first_name] First Name"
+    ],
+    "submit": [
+        "input[class=btn btn-primary id=saveBtn type=submit value=Save]"
+    ],
+    "button with markup inside": [
+        "button[class=btn data-bs-dismiss=modal type=button] Cancel"
+    ],
+    "button of another type": [
+        "button[class=btn type=submit] Go"
+    ],
+    "open with an id (no route)": [
+        "form[accept-charset=UTF-8 action=http://localhost id=createForm method=POST]",
+        "input[name=_token type=hidden]"
+    ],
+    "open with a route": [
+        "form[accept-charset=UTF-8 action=http://localhost/login method=POST]",
+        "input[name=_token type=hidden]"
+    ],
+    "open with a route and a parameter, a spoofed method and files": [
+        "form[accept-charset=UTF-8 action=http://localhost/login?5 class=f enctype=multipart/form-data method=POST]",
+        "input[name=_method type=hidden value=PUT]",
+        "input[name=_token type=hidden]"
+    ],
+    "open with a string for files": [
+        "form[accept-charset=UTF-8 action=http://localhost/login enctype=multipart/form-data method=POST]",
+        "input[name=_token type=hidden]"
+    ],
+    "open as delete with data attributes": [
+        "form[accept-charset=UTF-8 action=http://localhost/login data-turbo=false id=del method=POST]",
+        "input[name=_method type=hidden value=DELETE]",
+        "input[name=_token type=hidden]"
+    ],
+    "open as GET has no token": [
+        "form[accept-charset=UTF-8 action=http://localhost/login method=GET]"
+    ],
+    "open with a url": [
+        "form[accept-charset=UTF-8 action=http://localhost/somewhere method=POST]",
+        "input[name=_token type=hidden]"
+    ],
+    "model form fills fields from the model": [
+        "form[accept-charset=UTF-8 action=http://localhost/login?7 id=edit method=POST]",
+        "input[name=_method type=hidden value=PATCH]",
+        "input[name=_token type=hidden]",
+        "label[for=first_name] First",
+        "input[class=a id=first_name name=first_name type=text value=Ana]",
+        "textarea[class=b cols=50 name=notes rows=10] line one line <two>",
+        "select[class=c name=type]",
+        "option[value=1] Alpha",
+        "option[selected value=2] Beta & Co",
+        "option[value=3] Gamma <3>",
+        "input[checked name=is_active type=checkbox value=1]",
+        "select[multiple name=tags[]]",
+        "option[selected value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>"
+    ],
+    "the model is forgotten after the form is closed": [
+        "form[accept-charset=UTF-8 action=http://localhost/x method=POST]",
+        "input[name=_token type=hidden]",
+        "input[name=first_name type=text]"
+    ],
+    "a value given in the call wins over the model": [
+        "form[accept-charset=UTF-8 action=http://localhost/x method=POST]",
+        "input[name=_token type=hidden]",
+        "input[name=first_name type=text value=Given]"
+    ],
+    "a nested model value (dot notation)": [
+        "form[accept-charset=UTF-8 action=http://localhost/x method=POST]",
+        "input[name=_token type=hidden]",
+        "input[name=address[city] type=text value=Dumaguete]"
+    ],
+    "old input beats the given value": [
+        "input[name=first_name type=text value=Typed]",
+        "textarea[cols=50 name=notes rows=10] Typed note",
+        "select[name=type]",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>",
+        "input[name=email type=email value=typed@x.test]"
+    ],
+    "old input beats the model": [
+        "form[accept-charset=UTF-8 action=http://localhost/x method=POST]",
+        "input[name=_token type=hidden]",
+        "input[name=first_name type=text value=Typed]",
+        "select[name=type]",
+        "option[value=1] Alpha",
+        "option[value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>"
+    ],
+    "old input for a multiple select and a checkbox": [
+        "select[multiple name=tags[]]",
+        "option[value=1] Alpha",
+        "option[selected value=2] Beta & Co",
+        "option[selected value=3] Gamma <3>",
+        "input[checked name=is_active type=checkbox value=1]"
+    ],
+    "old input leaves a password empty": [
+        "input[name=password type=password]"
+    ]
+}

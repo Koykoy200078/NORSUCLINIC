@@ -34,18 +34,18 @@ $data = null;
                     @endphp
                     <tr>
                         <td>
-                            {{ Form::select('medicine[]', $medicines['medicines'], $prescription->medicine, ['class' => 'form-select prescriptionMedicineId quantityget','data-control' => 'select2', 'data-id' => $dataID]) }}
+                            {{ html()->select('medicine[]', $medicines['medicines'], $prescription->medicine)->forgetAttribute('id')->attributes(['class' => 'form-select prescriptionMedicineId quantityget', 'data-control' => 'select2', 'data-id' => $dataID]) }}
                         </td>
                         <td>
-                            {{ Form::text('dosage[]', $prescription->dosage, ['class' => 'form-control prescription-dose', 'id' => 'prescriptionMedicineNameId','placeholder' => __('messages.medicine.dosage') ]) }}
+                            {{ html()->text('dosage[]', $prescription->dosage)->attributes(['class' => 'form-control prescription-dose', 'id' => 'prescriptionMedicineNameId', 'placeholder' => __('messages.medicine.dosage')]) }}
                             <small class="text-danger avalable-amount"></small>
                         </td>
                         <td>
-                            {{ Form::select('day[]', \App\Models\Prescription::DOSE_DURATION, $prescription->day, ['class' => 'form-control prescription-dose', 'data-control' => 'select2']) }}
+                            {{ html()->select('day[]', \App\Models\Prescription::DOSE_DURATION, $prescription->day)->forgetAttribute('id')->attributes(['class' => 'form-control prescription-dose', 'data-control' => 'select2']) }}
                         </td>
                         <td>
                             <div class="extrm mt-5">
-                                {{ Form::select('time[]', \App\Models\Prescription::MEAL_ARR, $prescription->time, ['class' => 'form-select extra-margin-tr prescriptionMedicineMealId' ,'data-control' => 'select2']) }}
+                                {{ html()->select('time[]', \App\Models\Prescription::MEAL_ARR, $prescription->time)->forgetAttribute('id')->attributes(['class' => 'form-select extra-margin-tr prescriptionMedicineMealId', 'data-control' => 'select2']) }}
 
                                 <div class="">
                                     <small class="text-success totalqty extra-margin" id=" ">{{ __('messages.prescription.total_quantity') }}</small>
@@ -54,10 +54,10 @@ $data = null;
                             </div>
                         </td>
                         <td>
-                            {{ Form::select('dose_interval[]', \App\Models\Prescription::DOSE_INTERVAL, $prescription->dose_interval, ['class' => 'form-select prescriptionMedicineMealId','data-control' => 'select2']) }}
+                            {{ html()->select('dose_interval[]', \App\Models\Prescription::DOSE_INTERVAL, $prescription->dose_interval)->forgetAttribute('id')->attributes(['class' => 'form-select prescriptionMedicineMealId', 'data-control' => 'select2']) }}
                         </td>
                         <td>
-                            {{ Form::textarea('comment[]', $prescription->comment, ['class' => 'form-control','placeholder'=> __('messages.prescription.comment'), 'rows' => 1]) }}
+                            {{ html()->textarea('comment[]')->text(html()->value('comment[]', $prescription->comment))->forgetAttribute('id')->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder'=> __('messages.prescription.comment'), 'rows' => 1]) }}
                         </td>
                         <td class="text-center">
                             <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
@@ -70,19 +70,19 @@ $data = null;
                     @else
                     <tr>
                         <td>
-                            {{ Form::select('medicine[]', $medicines['medicines'], null, ['class' => 'form-select  prescriptionMedicineId quantityget', 'placeholder' => __('messages.prescription.selectMedicine'), 'data-control' => 'select2', 'data-id' => 1]) }}
+                            {{ html()->select('medicine[]', $medicines['medicines'], null)->placeholder(__('messages.prescription.selectMedicine'))->forgetAttribute('id')->attributes(['class' => 'form-select  prescriptionMedicineId quantityget', 'data-control' => 'select2', 'data-id' => 1]) }}
 
                         </td>
                         <td>
-                            {{ Form::text('dosage[]', null, ['class' => 'form-control prescription-dose', 'id' => 'prescriptionMedicineNameId','placeholder' => __('messages.medicine.dosage')]) }}
+                            {{ html()->text('dosage[]', null)->attributes(['class' => 'form-control prescription-dose', 'id' => 'prescriptionMedicineNameId', 'placeholder' => __('messages.medicine.dosage')]) }}
                         </td>
                         <td>
-                            {{ Form::select('day[]', \App\Models\Prescription::DOSE_DURATION, null, ['class' => 'form-control prescriptionMedicineMealId','data-control' => 'select2']) }}
+                            {{ html()->select('day[]', \App\Models\Prescription::DOSE_DURATION, null)->forgetAttribute('id')->attributes(['class' => 'form-control prescriptionMedicineMealId', 'data-control' => 'select2']) }}
                         </td>
 
                         <td>
                             <div class="extrm">
-                                {{ Form::select('time[]', \App\Models\Prescription::MEAL_ARR, null, ['class' => 'form-select extra-margin-tr  prescriptionMedicineMealId','data-control' => 'select2']) }}
+                                {{ html()->select('time[]', \App\Models\Prescription::MEAL_ARR, null)->forgetAttribute('id')->attributes(['class' => 'form-select extra-margin-tr  prescriptionMedicineMealId', 'data-control' => 'select2']) }}
                                 <div class="">
                                     <small class="totalqty extra-margin d-none" id="totalqty1">{{ __('messages.prescription.total_quantity') }}:</small>
                                     <small class="text-success" id="quantityshow1"></small>
@@ -91,10 +91,10 @@ $data = null;
 
                         </td>
                         <td>
-                            {{ Form::select('dose_interval[]', \App\Models\Prescription::DOSE_INTERVAL, null, ['class' => 'form-select prescriptionMedicineMealId','data-control' => 'select2']) }}
+                            {{ html()->select('dose_interval[]', \App\Models\Prescription::DOSE_INTERVAL, null)->forgetAttribute('id')->attributes(['class' => 'form-select prescriptionMedicineMealId', 'data-control' => 'select2']) }}
                         </td>
                         <td>
-                            {{ Form::textarea('comment[]', null, ['class' => 'form-control','placeholder'=> __('messages.prescription.comment'), 'rows' => 1]) }}
+                            {{ html()->textarea('comment[]')->text(html()->value('comment[]', null))->forgetAttribute('id')->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder'=> __('messages.prescription.comment'), 'rows' => 1]) }}
                         </td>
                         <td class="text-center">
                             <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"

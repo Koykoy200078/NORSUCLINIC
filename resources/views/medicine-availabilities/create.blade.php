@@ -26,13 +26,13 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{Form::hidden('uniqueId',2,['id'=>'purchaseUniqueId'])}}
-                {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
-                {{ Form::open(['route' => getRouteNameByRole('stock-in.store'),'data-turbo'=>'false','id'=>'purchaseMedicineFormId']) }}
+                {{html()->hidden('uniqueId', 2)->attributes(['id'=>'purchaseUniqueId'])}}
+                {{html()->hidden('associateMedicines', json_encode($medicineList))->forgetAttribute('id')->attributes(['class'=>'associatePurchaseMedicines'])}}
+                {{ html()->form('POST', route(getRouteNameByRole('stock-in.store')))->attribute('accept-charset', 'UTF-8')->attributes(['data-turbo'=>'false', 'id'=>'purchaseMedicineFormId'])->open() }}
                 <div class="row">
                     @include('medicine-availabilities.fields')
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
             @include('medicine-availabilities.templates.templates')
         </div>

@@ -79,7 +79,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
         'durationOptions' => $durationOptions,
     ]))"
     x-init="init()">
-    {{ Form::model($isEdit ? $prescription : null, ['route' => $formRoute, 'method' => $formMethod, 'id' => $isEdit ? 'editPrescription' : 'createPrescription']) }}
+    {{ html()->modelForm($isEdit ? $prescription : null, $formMethod, route(...(array) $formRoute))->attribute('accept-charset', 'UTF-8')->attributes(['id' => $isEdit ? 'editPrescription' : 'createPrescription'])->open() }}
 
     <input type="hidden" name="patient_id" value="{{ $patient->id }}">
 
@@ -443,7 +443,7 @@ $formMethod = $isEdit ? 'patch' : 'post';
         <button type="submit" class="btn btn-primary btnPrescriptionSave">{{ $isEdit ? __('messages.common.save') : __('messages.common.save') }}</button>
     </div>
 
-    {{ Form::close() }}
+    {{ html()->closeModelForm() }}
 </div>
 
 <script>

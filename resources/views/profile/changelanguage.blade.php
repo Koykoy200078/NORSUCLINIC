@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            {{ Form::open(['id'=>'changeLanguageForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id'=>'changeLanguageForm'])->open() }}
                 @csrf
                 @method('POST')
                 <div class="modal-body">
@@ -15,15 +15,15 @@
                             @php
                                 $user = Auth::user()
                             @endphp
-                            {{ Form::label('Language', __('messages.user.language').':',['class' => 'form-label']) }}
-                            {{ Form::select('language', \App\Models\User::LANGUAGES, isset($user) ? $user->language : null, ['class' => 'form-control form-select', 'required', 'data-control' => 'select2','id' => 'selectLanguage','data-dropdown-parent'=>'#changeLanguageModal']) }}
+                            {{ html()->label()->for('Language')->text(__('messages.user.language').':')->attributes(['class' => 'form-label']) }}
+                            {{ html()->select('language', \App\Models\User::LANGUAGES, isset($user) ? $user->language : null)->attributes(['class' => 'form-control form-select', 'required', 'data-control' => 'select2', 'id' => 'selectLanguage', 'data-dropdown-parent'=>'#changeLanguageModal']) }}
                     </div>
                 </div>
                 <div class="modal-footer pt-0">
-                {{ Form::button(__('messages.common.save'),['class' => 'btn btn-primary m-0','id' => 'languageChangeBtn']) }}
-                {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss' => 'modal']) }}
+                {{ html()->button(__('messages.common.save'), 'button')->attributes(['class' => 'btn btn-primary m-0', 'id' => 'languageChangeBtn']) }}
+                {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss' => 'modal']) }}
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

@@ -27,10 +27,10 @@
                     </div>
                     <div class="card">
                         <div class="card-body p-0">
-                            {{ Form::open(['route' => 'roles.store']) }}
+                            {{ html()->form('POST', route('roles.store'))->attribute('accept-charset', 'UTF-8')->open() }}
                             <div class="card-body p-9">
                                 @include('roles.fields')
-                                {{ Form::close() }}
+                                {{ html()->closeModelForm() }}
                             </div>
                         </div>
                     </div>

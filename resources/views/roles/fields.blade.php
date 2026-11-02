@@ -26,8 +26,8 @@
     </div>
 @else
     <div class="mb-5">
-        {{ Form::label('display_name', __('messages.common.name').':', ['class' => 'required form-label']) }}
-        {{ Form::text('display_name', isset($role) ? $role->display_name : '', ['class' => 'form-control', 'required']) }}
+        {{ html()->label()->for('display_name')->text(__('messages.common.name').':')->attributes(['class' => 'required form-label']) }}
+        {{ html()->text('display_name', isset($role) ? $role->display_name : '')->attributes(['class' => 'form-control', 'required']) }}
     </div>
     <div class="alert alert-info no-auto-hide">
         Only permissions available in this role's panel are shown. Dashboard, Report Generation and Notifications &amp; Alerts are always available to Staff (Nurse), Doctor and Clinic Admin.
@@ -47,6 +47,6 @@
         </div>
     @endforeach
     <p class="text-muted">Clearing every permission leaves only Dashboard, Report Generation and Notifications &amp; Alerts.</p>
-    {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2']) }}
+    {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2']) }}
 @endif
 <a href="{{ getRouteByRole('roles.index') }}" class="btn btn-secondary">{{ __('messages.common.discard') }}</a>

@@ -2,48 +2,48 @@
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('first_name', __('messages.staff.first_name').':', ['class' => 'form-label required']) }}
-            {{ Form::text('first_name', old('first_name', isset($staff) ? $staff->first_name : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.first_name'), 'required']) }}
+            {{ html()->label()->for('first_name')->text(__('messages.staff.first_name').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('first_name', old('first_name', isset($staff) ? $staff->first_name : null))->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.first_name'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('last_name', __('messages.staff.last_name').':', ['class' => 'form-label required']) }}
-            {{ Form::text('last_name', old('last_name', isset($staff) ? $staff->last_name : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.last_name'), 'required']) }}
+            {{ html()->label()->for('last_name')->text(__('messages.staff.last_name').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('last_name', old('last_name', isset($staff) ? $staff->last_name : null))->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.last_name'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('email', __('messages.staff.email').':', ['class' => 'form-label required']) }}
-            {{ Form::email('email', old('email', isset($staff) ? $staff->email : null), ['class' => 'form-control', 'placeholder' => __('messages.patient.email'), 'required']) }}
+            {{ html()->label()->for('email')->text(__('messages.staff.email').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->email('email', old('email', isset($staff) ? $staff->email : null))->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.email'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('employee_id', __('Employee ID').':', ['class' => 'form-label required']) }}
-            {{ Form::text('employee_id', old('employee_id', isset($staff) ? $staff->employee_id : null), ['class' => 'form-control', 'placeholder' => __('Employee ID'), 'required']) }}
+            {{ html()->label()->for('employee_id')->text(__('Employee ID').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('employee_id', old('employee_id', isset($staff) ? $staff->employee_id : null))->attributes(['class' => 'form-control', 'placeholder' => __('Employee ID'), 'required']) }}
         </div>
     </div>
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('contact', __('messages.staff.contact_no').':', ['class' => 'form-label']) }}
+            {{ html()->label()->for('contact')->text(__('messages.staff.contact_no').':')->attributes(['class' => 'form-label']) }}
             <br>
-            {{ Form::text('contact', old('contact', isset($staff) ? $staff->contact : null), ['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
+            {{ html()->text('contact', old('contact', isset($staff) ? $staff->contact : null))->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
         </div>
     </div>
 
     <div class="col-md-6 mb-5">
         <div class="mb-1">
-            {{ Form::label('password',__('messages.staff.password').':' ,['class' => 'form-label']) }}
+            {{ html()->label()->for('password')->text(__('messages.staff.password').':')->attributes(['class' => 'form-label']) }}
             <span class="text-danger">{{isset($staff) ? null : '*' }}</span>
             <span data-bs-toggle="tooltip" title="{{ __('messages.flash.user_8_or') }}">
                 <i class="fa fa-question-circle"></i></span>
             <div class="mb-3 position-relative">
-                {{Form::password('password',['class' => 'form-control','placeholder' => __('messages.patient.password'),'autocomplete' => 'off','aria-label'=>"Password",'data-toggle'=>"password"])}}
+                {{html()->password('password')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.password'), 'autocomplete' => 'off', 'aria-label'=>"Password", 'data-toggle'=>"password"])}}
                 <span class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4 input-icon input-password-hide cursor-pointer text-gray-600"> <i class="bi bi-eye-slash-fill"></i> </span>
             </div>
         </div>
@@ -52,13 +52,13 @@
     <div class="col-md-6 mb-5">
         <div class="fv-row">
             <div class="mb-1">
-                {{ Form::label('confirmPassword',__('messages.staff.confirm_password').':' ,['class' => 'form-label']) }}
+                {{ html()->label()->for('confirmPassword')->text(__('messages.staff.confirm_password').':')->attributes(['class' => 'form-label']) }}
                 <span class="text-danger">{{isset($staff) ? null : '*' }}</span>
                 <span data-bs-toggle="tooltip"
                     title="{{ __('messages.flash.user_8_or') }}">
                     <i class="fa fa-question-circle"></i></span>
                 <div class="mb-3 position-relative">
-                    {{Form::password('password_confirmation',['class' => 'form-control','placeholder' => __('messages.user.confirm_password'),'autocomplete' => 'off','aria-label'=>"Password",'data-toggle'=>"password"])}}
+                    {{html()->password('password_confirmation')->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.user.confirm_password'), 'autocomplete' => 'off', 'aria-label'=>"Password", 'data-toggle'=>"password"])}}
                     <span class="position-absolute d-flex align-items-center top-0 bottom-0 end-0 me-4 input-icon input-password-hide cursor-pointer text-gray-600"> <i class="bi bi-eye-slash-fill"></i> </span>
                 </div>
             </div>
@@ -69,7 +69,7 @@
 
     <div class="col-lg-6">
         <div class="mb-5">
-            {{ Form::label('gender', __('messages.staff.gender').':', ['class' => 'form-label required']) }}
+            {{ html()->label()->for('gender')->text(__('messages.staff.gender').':')->attributes(['class' => 'form-label required']) }}
             <span class="is-valid">
                 <div class="mt-2">
                     <input class="form-check-input" type="radio" name="gender" value="1"
@@ -103,7 +103,7 @@
         </div>
     </div>
     <div class="d-flex">
-        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
+        {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2']) }}
         <a href="{{ route('staffs.index') }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

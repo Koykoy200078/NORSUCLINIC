@@ -6,19 +6,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'editSpecializationForm']) }}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'editSpecializationForm'])->open() }}
             <div class="modal-body">
-                {{ Form::hidden('id',null,['id' => 'specializationID']) }}
+                {{ html()->hidden('id', null)->attributes(['id' => 'specializationID']) }}
                 <div>
-                    {{ Form::label('name', __('messages.common.name').':', ['class' => 'required form-label']) }}
-                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('messages.common.name'),'required','id'=>'editName']) }}
+                    {{ html()->label()->for('name')->text(__('messages.common.name').':')->attributes(['class' => 'required form-label']) }}
+                    {{ html()->text('name', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.common.name'), 'required', 'id'=>'editName']) }}
                 </div>
             </div>  
             <div class="modal-footer pt-0">
-                {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary m-0']) }}
-                {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss'=>'modal']) }}
+                {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0']) }}
+                {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

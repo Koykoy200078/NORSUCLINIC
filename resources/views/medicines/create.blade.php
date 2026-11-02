@@ -21,13 +21,11 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{ Form::open(['route' => 
-                    getRouteNameByRole('medicines.store'),
-                    'id' => 'createMedicine']) }}
+                {{ html()->form('POST', route(getRouteNameByRole('medicines.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'createMedicine'])->open() }}
                 <div class="row">
                     @include('medicines.fields')
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

@@ -22,26 +22,26 @@ Add Dispense Record
         </div>
         <div class="card">
             <div class="card-body">
-                {{Form::hidden('uniqueId',2,['id'=>'medicineUniqueId'])}}
-                {{Form::hidden('associateMedicines',json_encode($medicineList),['class'=>'associatePurchaseMedicines'])}}
-                {{Form::hidden('medicineCategories',json_encode($medicineCategoriesList),['id'=>'showMedicineCategoriesMedicineBill'])}}
+                {{html()->hidden('uniqueId', 2)->attributes(['id'=>'medicineUniqueId'])}}
+                {{html()->hidden('associateMedicines', json_encode($medicineList))->forgetAttribute('id')->attributes(['class'=>'associatePurchaseMedicines'])}}
+                {{html()->hidden('medicineCategories', json_encode($medicineCategoriesList))->attributes(['id'=>'showMedicineCategoriesMedicineBill'])}}
 
-                {{ Form::open(['route' => getRouteNameByRole('dispense-records.store'), 'id' => 'CreateMedicineBillForm']) }}
+                {{ html()->form('POST', route(getRouteNameByRole('dispense-records.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'CreateMedicineBillForm'])->open() }}
                 @include('medicine-history.medicine-table')
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>
 </div>
 @include('medicine-history.templates.templates')
 @include('medicine-history.add_patient_modal')
-{{-- {{Form::hidden('billSaveUrl',route('bills.store'),['id'=>'createBillSaveUrl','class'=>'billSaveUrl'])}}
-{{Form::hidden('billUrl',route('bills.index'),['id'=>'createBillUrl','class'=>'billUrl'])}}
-{{Form::hidden('associateMedicines',json_encode($associateMedicines),['id'=>'createBillAssociateMedicines','class'=>'associateMedicines'])}}
-{{Form::hidden('uniqueId',2,['id'=>'createBillUniqueId','class'=>'uniqueId'])}}
-{{Form::hidden('patientAdmissionDetailUrl',url('patient-admission-details'),['id'=>'createBillPatientAdmissionDetailUrl','class'=>'patientAdmissionDetailUrl'])}}
-{{Form::hidden('isCreate',true,['id'=>'createBillIsCreate','class'=>'isCreate'])}}
-{{Form::hidden('isEdit',false,['id'=>'createBillIsEdit','class'=>'isEdit'])}} --}}
+{{-- {{html()->hidden('billSaveUrl', route('bills.store'))->attributes(['id'=>'createBillSaveUrl', 'class'=>'billSaveUrl'])}}
+{{html()->hidden('billUrl', route('bills.index'))->attributes(['id'=>'createBillUrl', 'class'=>'billUrl'])}}
+{{html()->hidden('associateMedicines', json_encode($associateMedicines))->attributes(['id'=>'createBillAssociateMedicines', 'class'=>'associateMedicines'])}}
+{{html()->hidden('uniqueId', 2)->attributes(['id'=>'createBillUniqueId', 'class'=>'uniqueId'])}}
+{{html()->hidden('patientAdmissionDetailUrl', url('patient-admission-details'))->attributes(['id'=>'createBillPatientAdmissionDetailUrl', 'class'=>'patientAdmissionDetailUrl'])}}
+{{html()->hidden('isCreate', true)->attributes(['id'=>'createBillIsCreate', 'class'=>'isCreate'])}}
+{{html()->hidden('isEdit', false)->attributes(['id'=>'createBillIsEdit', 'class'=>'isEdit'])}} --}}
 @endsection
 {{-- assets/js/moment.min.js  --}}
 {{-- assets/js/bills/new.js --}}

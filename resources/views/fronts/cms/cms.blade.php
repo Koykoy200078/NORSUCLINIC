@@ -11,13 +11,13 @@
                     @include('layouts.errors')
                 </div>
             </div>
-            {{Form::hidden('term_conditionData',$cmsData['terms_conditions'],['id'=>'cmsTermConditionData'])}}
-            {{Form::hidden('privacy_policyData',$cmsData['terms_conditions'],['id'=>'cmsPrivacyPolicyData'])}}
+            {{html()->hidden('term_conditionData', $cmsData['terms_conditions'])->attributes(['id'=>'cmsTermConditionData'])}}
+            {{html()->hidden('privacy_policyData', $cmsData['terms_conditions'])->attributes(['id'=>'cmsPrivacyPolicyData'])}}
             <div class="card">
                 <div class="card-body p-12">
-                    {{ Form::open(['route' => 'cms.update', 'id' => 'addCMSForm','files' => true]) }}
+                    {{ html()->form('POST', route('cms.update'))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id' => 'addCMSForm'])->open() }}
                         @include('fronts.cms.fields')
-                    {{ Form::close() }}
+                    {{ html()->closeModelForm() }}
                 </div>
             </div>
         </div>

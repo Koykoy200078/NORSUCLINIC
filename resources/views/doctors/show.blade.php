@@ -66,7 +66,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                {{Form::hidden('patient_role',getLogInUser()->hasRole('patient'),['id' => 'patientRoleDoctorDetail'])}}
+                                {{html()->hidden('patient_role', getLogInUser()->hasRole('patient'))->attributes(['id' => 'patientRoleDoctorDetail'])}}
                                 @include('doctors.show_fields')
                             </div>
                         </div>

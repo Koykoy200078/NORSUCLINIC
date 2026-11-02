@@ -61,21 +61,21 @@
             <!-- Campus Field (for Students only) - Auto-filled if available -->
             <div class="col-span-1" id="campus_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="campus">CAMPUS</label>
-                {{ Form::select('campus_id', $data['campuses'], $user->type == 4 ? $user->campus_id : null, ['id' => 'campus_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Campus']) }}
+                {{ html()->select('campus_id', $data['campuses'], $user->type == 4 ? $user->campus_id : null)->placeholder('Select Campus')->attributes(['id' => 'campus_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
             </div>
 
             <!-- College Field (for Students and Faculty) - Auto-filled if available -->
             <div class="col-span-1" id="college_field" style="display: {{ (isset($user->year_level_id) && (($user->year_level_id >= 1 && $user->year_level_id <= 6) || $user->year_level_id == 7)) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="college">COLLEGE</label>
-                {{ Form::select('college_id', $data['colleges'], $user->type == 4 ? $user->college_id : null, ['id' => 'college_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select College']) }}
+                {{ html()->select('college_id', $data['colleges'], $user->type == 4 ? $user->college_id : null)->placeholder('Select College')->attributes(['id' => 'college_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
             </div>
 
             <!-- Course & Year Field (for Students only) - Auto-filled if available -->
             <div class="col-span-1" id="course_year_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id >= 1 && $user->year_level_id <= 6) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="course_year">COURSE & YEAR</label>
                 <div class="grid grid-cols-2 gap-2">
-                    {{ Form::select('course_id', $data['courses'], $user->type == 4 ? $user->course_id : null, ['id' => 'course_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Course']) }}
-                    {{ Form::select('year_level_id', $data['year_levels'], $user->type == 4 ? $user->year_level_id : null, ['id' => 'year_level_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Year Level']) }}
+                    {{ html()->select('course_id', $data['courses'], $user->type == 4 ? $user->course_id : null)->placeholder('Select Course')->attributes(['id' => 'course_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
+                    {{ html()->select('year_level_id', $data['year_levels'], $user->type == 4 ? $user->year_level_id : null)->placeholder('Select Year Level')->attributes(['id' => 'year_level_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
                 </div>
             </div>
 
@@ -83,13 +83,13 @@
 
             <div class="col-span-1" id="department_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 7) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="department">DEPARTMENT</label>
-                {{ Form::select('department_id', $data['departments'] ?? [], $user->type == 4 ? $user->department_id : null, ['id' => 'department_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Department']) }}
+                {{ html()->select('department_id', $data['departments'] ?? [], $user->type == 4 ? $user->department_id : null)->placeholder('Select Department')->attributes(['id' => 'department_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
             </div>
 
             <!-- Office Field (for Staff only) - Auto-filled if available -->
             <div class="col-span-1" id="office_field" style="display: {{ (isset($user->year_level_id) && $user->year_level_id == 8) ? 'block' : 'none' }};">
                 <label class="block text-xs" for="office">OFFICE</label>
-                {{ Form::select('office_id', $data['offices'] ?? [], $user->type == 4 ? $user->office_id : null, ['id' => 'office_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Office']) }}
+                {{ html()->select('office_id', $data['offices'] ?? [], $user->type == 4 ? $user->office_id : null)->placeholder('Select Office')->attributes(['id' => 'office_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
             </div>
 
             <div class="col-span-1">
@@ -180,7 +180,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-1">
                         <label class="block text-xs" for="covid_vaccination">COVID Vaccination<span class="text-red-500">*</span></label>
-                        {{ Form::select('vaccination_id', $data['vaccination_data'], $user->type == 4 ? $user->vaccination_id : null, ['id' => 'vaccination_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all', 'placeholder' => 'Select Vaccination Status']) }}
+                        {{ html()->select('vaccination_id', $data['vaccination_data'], $user->type == 4 ? $user->vaccination_id : null)->placeholder('Select Vaccination Status')->attributes(['id' => 'vaccination_id', 'class' => 'w-full border border-gray-300 rounded px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all']) }}
                     </div>
                     <div class="col-span-1">
                         <label class="block text-xs" for="comorbidities">Comorbidities</label>

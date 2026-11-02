@@ -11,9 +11,9 @@
         @if(isRole('clinic_admin'))
             @can('manage_medicines')<div class="mb-3 text-end"><a href="{{ route('inventory-merge.index', ['kind' => 'category']) }}" class="btn btn-outline-primary">Merge duplicates</a></div>@endcan
         @endif
-        {{Form::hidden('categoryCreateUrl',route('categories.store'),['id'=>'indexCategoryCreateUrl'])}}
-        {{Form::hidden('categoriesUrl',url('categories'),['id'=>'indexCategoriesUrl'])}}
-        {{ Form::hidden('category', __('messages.charge.charge_category'), ['id' => 'Category']) }}
+        {{html()->hidden('categoryCreateUrl', route('categories.store'))->attributes(['id'=>'indexCategoryCreateUrl'])}}
+        {{html()->hidden('categoriesUrl', url('categories'))->attributes(['id'=>'indexCategoriesUrl'])}}
+        {{ html()->hidden('category', __('messages.charge.charge_category'))->attributes(['id' => 'Category']) }}
 
         <div class="d-flex flex-column">
             <livewire:medicine-category-table/>

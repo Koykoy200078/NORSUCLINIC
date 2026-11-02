@@ -20,16 +20,16 @@
     </div>
     <div class="row">
         <div class="col-md-6 mb-5">
-            {{ Form::label('patient_type_id',__('Patient Type').':' ,['class' => 'form-label required']) }}
-            {{ Form::select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'), ['placeholder' => __('Select Patient Type'),'class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
+            {{ html()->label()->for('patient_type_id')->text(__('Patient Type').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->select('patient_type_id', $data['patient_types'] ?? [], !empty($patient) ? $patient->patient_type_id : old('patient_type_id'))->placeholder(__('Select Patient Type'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>'Select Patient Type', 'data-control'=>'select2', 'id' => 'patientTypeSelect', 'required']) }}
         </div>
         <div class="col-md-6 mb-5 d-none" id="universityIdWrapper">
-            {{ Form::label('university_id_number',__('University ID Number').':' ,['class' => 'form-label required', 'id' => 'universityIdLabel']) }}
-            {{ Form::text('university_id_number', !empty($patient->user) ? $patient->user->university_id_number : old('university_id_number'), ['class' => 'form-control','placeholder' => __('Student/Staff ID Number'), 'id' => 'universityIdInput']) }}
+            {{ html()->label()->for('university_id_number')->text(__('University ID Number').':')->attributes(['class' => 'form-label required', 'id' => 'universityIdLabel']) }}
+            {{ html()->text('university_id_number', !empty($patient->user) ? $patient->user->university_id_number : old('university_id_number'))->attributes(['class' => 'form-control', 'placeholder' => __('Student/Staff ID Number'), 'id' => 'universityIdInput']) }}
         </div>
         <div class="col-md-6 mb-5 d-none" id="emailWrapper">
-            {{ Form::label('email',__('Email Address:') ,['class' => 'form-label']) }}
-            {{ Form::email('email',!empty($patient->user) ? $patient->user->email : null,['class' => 'form-control','placeholder' => __('Email Address'), 'id' => 'emailInput']) }}
+            {{ html()->label()->for('email')->text(__('Email Address:'))->attributes(['class' => 'form-label']) }}
+            {{ html()->email('email', !empty($patient->user) ? $patient->user->email : null)->attributes(['class' => 'form-control', 'placeholder' => __('Email Address'), 'id' => 'emailInput']) }}
         </div>
     </div>
 
@@ -37,42 +37,40 @@
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.personal_information') }}</div>
     <div class="row">
         <div class="col-md-6 mb-5">
-            {{ Form::label('firstName',__('messages.patient.first_name').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('first_name',!empty($patient->user) ? $patient->user->first_name : null,['class' => 'form-control','placeholder' => __('messages.patient.first_name'),'required']) }}
+            {{ html()->label()->for('firstName')->text(__('messages.patient.first_name').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('first_name', !empty($patient->user) ? $patient->user->first_name : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.first_name'), 'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('middleName',__('messages.patient.middle_name').':' ,['class' => 'form-label']) }}
-            {{ Form::text('middle_name',!empty($patient->user) ? $patient->user->middle_name : null,['class' => 'form-control','placeholder' => __('messages.patient.middle_name')]) }}
+            {{ html()->label()->for('middleName')->text(__('messages.patient.middle_name').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('middle_name', !empty($patient->user) ? $patient->user->middle_name : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.middle_name')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('lastName',__('messages.patient.last_name').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('last_name',!empty($patient->user) ? $patient->user->last_name : null,['class' => 'form-control','placeholder' => __('messages.patient.last_name'),'required']) }}
+            {{ html()->label()->for('lastName')->text(__('messages.patient.last_name').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('last_name', !empty($patient->user) ? $patient->user->last_name : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.last_name'), 'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('contact', __('messages.patient.contact_no').':', ['class' => 'form-label']) }}
+            {{ html()->label()->for('contact')->text(__('messages.patient.contact_no').':')->attributes(['class' => 'form-label']) }}
             @if (isset($patient))
-            {{ Form::text('contact', !empty($patient->user) ? $patient->user->contact : null, ['class' => 'form-control', 'data-ph-phone' => 'true',
-                'placeholder' => __('messages.patient.contact_no')]) }}
+            {{ html()->text('contact', !empty($patient->user) ? $patient->user->contact : null)->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
             @else
-            {{ Form::text('contact', old('contact'), ['class' => 'form-control', 'data-ph-phone' => 'true',
-                'placeholder' => __('messages.patient.contact_no')]) }}
+            {{ html()->text('contact', old('contact'))->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.contact_no')]) }}
             @endif
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('emergencyName',__('messages.patient.emergency_contact_name').':' ,['class' => 'form-label']) }}
-            {{ Form::text('emergency_contact_name',!empty($patient->user) ? $patient->user->emergency_contact_name : null,['class' => 'form-control','placeholder' => __('messages.patient.emergency_contact_name'),'required']) }}
+            {{ html()->label()->for('emergencyName')->text(__('messages.patient.emergency_contact_name').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('emergency_contact_name', !empty($patient->user) ? $patient->user->emergency_contact_name : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.emergency_contact_name'), 'required']) }}
         </div>
 
         <div class="col-md-6 mb-5">
-            {{ Form::label('emergencyNo',__('messages.patient.emergency_contact_no').':' ,['class' => 'form-label']) }}
-            {{ Form::text('emergency_contact_no',!empty($patient->user) ? $patient->user->emergency_contact_no : null,['class' => 'form-control','data-ph-phone' => 'true','placeholder' => __('messages.patient.emergency_contact_no'),'required']) }}
+            {{ html()->label()->for('emergencyNo')->text(__('messages.patient.emergency_contact_no').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('emergency_contact_no', !empty($patient->user) ? $patient->user->emergency_contact_no : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' => __('messages.patient.emergency_contact_no'), 'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('emergency_relationship', __('Emergency Contact Relationship').':', ['class' => 'form-label']) }}
-            {{ Form::text('emergency_relationship', !empty($patient->user) ? $patient->user->emergency_relationship : old('emergency_relationship'), ['class' => 'form-control', 'placeholder' => __('e.g. Mother, Father, Spouse, Guardian')]) }}
+            {{ html()->label()->for('emergency_relationship')->text(__('Emergency Contact Relationship').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('emergency_relationship', !empty($patient->user) ? $patient->user->emergency_relationship : old('emergency_relationship'))->attributes(['class' => 'form-control', 'placeholder' => __('e.g. Mother, Father, Spouse, Guardian')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('gender', __('messages.staff.gender').':', ['class' => 'form-label required']) }}
+            {{ html()->label()->for('gender')->text(__('messages.staff.gender').':')->attributes(['class' => 'form-label required']) }}
             <span class="is-valid">
                 <div class="mt-2">
                     <input class="form-check-input" type="radio" name="gender" value="1" checked
@@ -85,20 +83,20 @@
             </span>
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('dob',__('messages.patient.dob').':' ,['class' => 'form-label']) }}
-            {{ Form::text('dob',!empty($patient->user) ? $patient->user->dob : null,['class' => 'form-control patient-dob','id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.select_dob')]) }}
+            {{ html()->label()->for('dob')->text(__('messages.patient.dob').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('dob', !empty($patient->user) ? $patient->user->dob : null)->attributes(['class' => 'form-control patient-dob', 'id' => __('messages.patient.dob'), 'placeholder' => __('messages.doctor.select_dob')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('nationality_citizenship',__('Nationality/Citizenship').':' ,['class' => 'form-label required']) }}
-            {{ Form::text('nationality_citizenship', !empty($patient->user) ? $patient->user->nationality_citizenship : old('nationality_citizenship'), ['class' => 'form-control','placeholder' => __('Nationality/Citizenship'),'required']) }}
+            {{ html()->label()->for('nationality_citizenship')->text(__('Nationality/Citizenship').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('nationality_citizenship', !empty($patient->user) ? $patient->user->nationality_citizenship : old('nationality_citizenship'))->attributes(['class' => 'form-control', 'placeholder' => __('Nationality/Citizenship'), 'required']) }}
         </div>
         <div class="col-md-6 mb-5">
             <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
-            {{ Form::select('blood_type', $data['bloodGroupList'] ,!empty($patient->user) ? $patient->user->blood_type : null, ['placeholder' => __('messages.patient.select_blood_type'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type",'data-control'=>'select2']) }}
+            {{ html()->select('blood_type', $data['bloodGroupList'], !empty($patient->user) ? $patient->user->blood_type : null)->placeholder(__('messages.patient.select_blood_type'))->forgetAttribute('id')->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a Blood Type", 'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('vaccination_id',__('messages.patient.vaccination_status').':',['class'=>'form-label']) }}
-            {{ Form::select('vaccination_id', $data['vaccination_data'] ,!empty($patient->user) ? $patient->user->vaccination_id : null, ['placeholder' => __('messages.patient.vaccination_status'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status",'data-control'=>'select2']) }}
+            {{ html()->label()->for('vaccination_id')->text(__('messages.patient.vaccination_status').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('vaccination_id', $data['vaccination_data'], !empty($patient->user) ? $patient->user->vaccination_id : null)->placeholder(__('messages.patient.vaccination_status'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a Vaccination Status", 'data-control'=>'select2']) }}
         </div>
     </div>
 
@@ -107,33 +105,32 @@
         <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('messages.patient.address_information') }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('address1',__('messages.patient.address1').':' ,['class' => 'form-label']) }}
-            {{ Form::text('address1',!empty($patient->address) ? $patient->address->address1 : null,['class' => 'form-control','placeholder' => __('messages.patient.address1')]) }}
+            {{ html()->label()->for('address1')->text(__('messages.patient.address1').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('address1', !empty($patient->address) ? $patient->address->address1 : null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.address1')]) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('address2',__('messages.patient.address2').':' ,['class' => 'form-label']) }}
-            {{ Form::text('address2',!empty($patient->address) ? $patient->address->address2 : null,['class' => 'form-control','placeholder' => __('messages.patient.address2')]) }}
+            {{ html()->label()->for('address2')->text(__('messages.patient.address2').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('address2', !empty($patient->address) ? $patient->address->address2 : null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.address2')]) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('country_id',__('messages.country.country').':',['class'=>'form-label']) }}
-            {{ Form::select('country_id', $data['countries'] ,null, ['id' => 'patientCountryId','data-placeholder' => __('messages.country.country'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Country",
-        'data-control'=>'select2']) }}
+            {{ html()->label()->for('country_id')->text(__('messages.country.country').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('country_id', $data['countries'], null)->attributes(['id' => 'patientCountryId', 'data-placeholder' => __('messages.country.country'), 'class' => 'form-select io-select2', 'aria-label'=>"Select a Country", 'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('state_id',__('messages.province.province').':',['class'=>'form-label']) }}
-            {{ Form::select('state_id', $data['provinces'] ,!empty($patient->address) ? $patient->address->state_id : null, ['id' => 'patientStateId', 'placeholder' => __('messages.province.select_province'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Province",'data-control'=>'select2']) }}
+            {{ html()->label()->for('state_id')->text(__('messages.province.province').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('state_id', $data['provinces'], !empty($patient->address) ? $patient->address->state_id : null)->placeholder(__('messages.province.select_province'))->attributes(['id' => 'patientStateId', 'class' => 'form-select io-select2', 'aria-label'=>"Select a Province", 'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('city_id',__('City/Municipality').':',['class'=>'form-label']) }}
-            {{ Form::select('city_id', isset($patient) && !empty($patient->address) ? $data['cities'] : [] ,!empty($patient->address) ? $patient->address->city_id : null, ['id' => 'patientCityId', 'placeholder' => __('City/Municipality'),'class' => 'form-select io-select2', 'aria-label'=>"Select a City",'data-control'=>'select2']) }}
+            {{ html()->label()->for('city_id')->text(__('City/Municipality').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('city_id', isset($patient) && !empty($patient->address) ? $data['cities'] : [], !empty($patient->address) ? $patient->address->city_id : null)->placeholder(__('City/Municipality'))->attributes(['id' => 'patientCityId', 'class' => 'form-select io-select2', 'aria-label'=>"Select a City", 'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('barangay_id',__('Barangay').':',['class'=>'form-label']) }}
-            {{ Form::select('barangay_id', isset($patient) && !empty($patient->address) ? ($data['barangays'] ?? []) : [] ,!empty($patient->address) ? $patient->address->barangay_id : null, ['id' => 'patientBarangayId', 'placeholder' => __('Select Barangay'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Barangay",'data-control'=>'select2']) }}
+            {{ html()->label()->for('barangay_id')->text(__('Barangay').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('barangay_id', isset($patient) && !empty($patient->address) ? ($data['barangays'] ?? []) : [], !empty($patient->address) ? $patient->address->barangay_id : null)->placeholder(__('Select Barangay'))->attributes(['id' => 'patientBarangayId', 'class' => 'form-select io-select2', 'aria-label'=>"Select a Barangay", 'data-control'=>'select2']) }}
         </div>
         <div class="col-md-6 mb-7">
-            {{ Form::label('postalCode',__('messages.patient.postal_code').':' ,['class' => 'form-label']) }}
-            {{ Form::number('postal_code',!empty($patient->address) ? $patient->address->postal_code : null,['class' => 'form-control','placeholder' => __('messages.patient.postal_code'), 'inputmode' => 'numeric', 'pattern' => '[0-9]*', 'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')"]) }}
+            {{ html()->label()->for('postalCode')->text(__('messages.patient.postal_code').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->number('postal_code', !empty($patient->address) ? $patient->address->postal_code : null)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.patient.postal_code'), 'inputmode' => 'numeric', 'pattern' => '[0-9]*', 'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')"]) }}
         </div>
     </div>
 
@@ -143,61 +140,61 @@
     </div>
     <div class="row">
         <div class="col-md-6 mb-7" id="campusFieldContainer">
-            {{ Form::label('campus_id',__('messages.student.campus').':',['class'=>'form-label']) }}
-            {{ Form::select('campus_id', $data['campuses'] ,!empty($patient->user) ? $patient->user->campus_id : null, ['placeholder' => __('messages.student.select_campus'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Campus",'data-control'=>'select2', 'id' => 'campusSelect']) }}
+            {{ html()->label()->for('campus_id')->text(__('messages.student.campus').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('campus_id', $data['campuses'], !empty($patient->user) ? $patient->user->campus_id : null)->placeholder(__('messages.student.select_campus'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a Campus", 'data-control'=>'select2', 'id' => 'campusSelect']) }}
         </div>
 
         <div class="col-md-6 mb-7" id="collegeFieldContainer">
-            {{ Form::label('college_id',__('messages.student.college').':',['class'=>'form-label']) }}
-            {{ Form::select('college_id', $data['colleges'] ,!empty($patient->user) ? $patient->user->college_id : null, ['placeholder' => __('messages.student.select_college'),'class' => 'form-select io-select2', 'aria-label'=>"Select a College",'data-control'=>'select2', 'id' => 'collegeSelect']) }}
+            {{ html()->label()->for('college_id')->text(__('messages.student.college').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('college_id', $data['colleges'], !empty($patient->user) ? $patient->user->college_id : null)->placeholder(__('messages.student.select_college'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a College", 'data-control'=>'select2', 'id' => 'collegeSelect']) }}
         </div>
 
         <div class="col-md-6 mb-7" id="courseFieldContainer">
-            {{ Form::label('course_id',__('messages.student.course').':',['class'=>'form-label']) }}
-            {{ Form::select('course_id', $data['courses'] ,!empty($patient->user) ? $patient->user->course_id : null, ['placeholder' => __('messages.student.select_course'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Course",'data-control'=>'select2', 'id' => 'courseSelect']) }}
+            {{ html()->label()->for('course_id')->text(__('messages.student.course').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('course_id', $data['courses'], !empty($patient->user) ? $patient->user->course_id : null)->placeholder(__('messages.student.select_course'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a Course", 'data-control'=>'select2', 'id' => 'courseSelect']) }}
         </div>
 
         <div class="col-md-6 mb-7" id="departmentFieldContainer" style="display: none;">
-            {{ Form::label('department_id',__('Department').':',['class'=>'form-label']) }}
-            {{ Form::select('department_id', $data['departments'] ?? [], !empty($patient->user) ? $patient->user->department_id : null, ['placeholder' => 'Select Department','class' => 'form-select io-select2', 'aria-label'=>"Select Department",'data-control'=>'select2', 'id' => 'departmentSelect']) }}
+            {{ html()->label()->for('department_id')->text(__('Department').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('department_id', $data['departments'] ?? [], !empty($patient->user) ? $patient->user->department_id : null)->placeholder('Select Department')->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select Department", 'data-control'=>'select2', 'id' => 'departmentSelect']) }}
         </div>
 
         <div class="col-md-6 mb-7" id="officeFieldContainer" style="display: none;">
-            {{ Form::label('office_id',__('Office').':',['class'=>'form-label']) }}
-            {{ Form::select('office_id', $data['offices'] ?? [], !empty($patient->user) ? $patient->user->office_id : null, ['placeholder' => 'Select Office','class' => 'form-select io-select2', 'aria-label'=>"Select Office",'data-control'=>'select2', 'id' => 'officeSelect']) }}
+            {{ html()->label()->for('office_id')->text(__('Office').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('office_id', $data['offices'] ?? [], !empty($patient->user) ? $patient->user->office_id : null)->placeholder('Select Office')->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select Office", 'data-control'=>'select2', 'id' => 'officeSelect']) }}
         </div>
 
         <div class="col-md-6 mb-7" id="yearLevelFieldContainer">
-            {{ Form::label('year_level_id', __('messages.student.year_level').':',['class'=>'form-label']) }}
-            {{ Form::select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null, ['placeholder' => __('messages.student.select_year_level'),'class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level",'data-control'=>'select2', 'id' => 'yearLevelSelect']) }}
+            {{ html()->label()->for('year_level_id')->text(__('messages.student.year_level').':')->attributes(['class'=>'form-label']) }}
+            {{ html()->select('year_level_id', $data['year_levels'], !empty($patient->user) ? $patient->user->year_level_id : null)->placeholder(__('messages.student.select_year_level'))->attributes(['class' => 'form-select io-select2', 'aria-label'=>"Select a Year Level", 'data-control'=>'select2', 'id' => 'yearLevelSelect']) }}
         </div>
     </div>
 
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Patient Record Details') }}</div>
     <div class="row">
         <div class="col-md-12 mb-5">
-            {{ Form::label('immunization_record', __('Immunization Record').':', ['class' => 'form-label required']) }}
-            {{ Form::textarea('immunization_record', !empty($patient) ? $patient->immunization_record : old('immunization_record'), ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('Include required vaccines (Hepatitis B, MMR, COVID-19, etc.)'), 'required']) }}
+            {{ html()->label()->for('immunization_record')->text(__('Immunization Record').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->textarea('immunization_record')->text(html()->value('immunization_record', !empty($patient) ? $patient->immunization_record : old('immunization_record')))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => __('Include required vaccines (Hepatitis B, MMR, COVID-19, etc.)'), 'required']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('insurance_provider_id', __('Health Insurance Provider').':', ['class' => 'form-label']) }}
-            {{ Form::select('insurance_provider_id', $data['insurance_providers'] ?? [], !empty($patient) ? $patient->insurance_provider_id : old('insurance_provider_id'), ['placeholder' => __('Select Insurance Provider'),'class' => 'form-select io-select2', 'aria-label' => 'Select Insurance Provider', 'data-control' => 'select2']) }}
+            {{ html()->label()->for('insurance_provider_id')->text(__('Health Insurance Provider').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->select('insurance_provider_id', $data['insurance_providers'] ?? [], !empty($patient) ? $patient->insurance_provider_id : old('insurance_provider_id'))->placeholder(__('Select Insurance Provider'))->attributes(['class' => 'form-select io-select2', 'aria-label' => 'Select Insurance Provider', 'data-control' => 'select2']) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('insurance_policy_number', __('Insurance Policy Number').':', ['class' => 'form-label']) }}
-            {{ Form::text('insurance_policy_number', !empty($patient) ? $patient->insurance_policy_number : old('insurance_policy_number'), ['class' => 'form-control', 'placeholder' => __('Policy Number')]) }}
+            {{ html()->label()->for('insurance_policy_number')->text(__('Insurance Policy Number').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('insurance_policy_number', !empty($patient) ? $patient->insurance_policy_number : old('insurance_policy_number'))->attributes(['class' => 'form-control', 'placeholder' => __('Policy Number')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('primary_care_physician_name', __('Primary Care Physician (PCP)').':', ['class' => 'form-label']) }}
-            {{ Form::text('primary_care_physician_name', !empty($patient) ? $patient->primary_care_physician_name : old('primary_care_physician_name'), ['class' => 'form-control', 'placeholder' => __('Primary Care Physician Name')]) }}
+            {{ html()->label()->for('primary_care_physician_name')->text(__('Primary Care Physician (PCP)').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('primary_care_physician_name', !empty($patient) ? $patient->primary_care_physician_name : old('primary_care_physician_name'))->attributes(['class' => 'form-control', 'placeholder' => __('Primary Care Physician Name')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('primary_care_physician_contact', __('PCP Contact Number').':', ['class' => 'form-label']) }}
-            {{ Form::text('primary_care_physician_contact', !empty($patient) ? $patient->primary_care_physician_contact : old('primary_care_physician_contact'), ['class' => 'form-control', 'placeholder' => __('PCP Contact Number')]) }}
+            {{ html()->label()->for('primary_care_physician_contact')->text(__('PCP Contact Number').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->text('primary_care_physician_contact', !empty($patient) ? $patient->primary_care_physician_contact : old('primary_care_physician_contact'))->attributes(['class' => 'form-control', 'placeholder' => __('PCP Contact Number')]) }}
         </div>
         <div class="col-md-6 mb-5">
-            {{ Form::label('primary_care_physician_email', __('PCP Email').':', ['class' => 'form-label']) }}
-            {{ Form::email('primary_care_physician_email', !empty($patient) ? $patient->primary_care_physician_email : old('primary_care_physician_email'), ['class' => 'form-control', 'placeholder' => __('PCP Email Address')]) }}
+            {{ html()->label()->for('primary_care_physician_email')->text(__('PCP Email').':')->attributes(['class' => 'form-label']) }}
+            {{ html()->email('primary_care_physician_email', !empty($patient) ? $patient->primary_care_physician_email : old('primary_care_physician_email'))->attributes(['class' => 'form-control', 'placeholder' => __('PCP Email Address')]) }}
         </div>
     </div>
 
@@ -212,8 +209,8 @@
     })->toArray();
     @endphp
 
-    {{ Form::hidden('all_year_levels', json_encode($data['year_levels']), ['id' => 'allYearLevels']) }}
-    {{ Form::hidden('patient_type_lookup', json_encode($patientTypeLookup), ['id' => 'patientTypeLookup']) }}
+    {{ html()->hidden('all_year_levels', json_encode($data['year_levels']))->attributes(['id' => 'allYearLevels']) }}
+    {{ html()->hidden('patient_type_lookup', json_encode($patientTypeLookup))->attributes(['id' => 'patientTypeLookup']) }}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -449,11 +446,11 @@
     <div class="fw-bolder fs-3 mb-7 mt-5">{{ __('Medical History & Allergies') }}</div>
     <div class="row">
         <div class="col-md-12 mb-5">
-            {{ Form::label('allergies','Allergies:' ,['class' => 'form-label']) }}
-            {{ Form::textarea('allergies',!empty($patient) ? $patient->allergies : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List any allergies (Drug, Food, etc.)']) }}
+            {{ html()->label()->for('allergies')->text('Allergies:')->attributes(['class' => 'form-label']) }}
+            {{ html()->textarea('allergies')->text(html()->value('allergies', !empty($patient) ? $patient->allergies : null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List any allergies (Drug, Food, etc.)']) }}
         </div>
         <div class="col-md-12 mb-5">
-            {{ Form::label('comorbidities','Comorbidities/Underlying Conditions:' ,['class' => 'form-label']) }}
+            {{ html()->label()->for('comorbidities')->text('Comorbidities/Underlying Conditions:')->attributes(['class' => 'form-label']) }}
             @php
             $comorbidityOptions = collect($data['comorbidities'] ?? [])->mapWithKeys(function ($value) {
             return [$value => $value];
@@ -478,20 +475,20 @@
             }
             }
             @endphp
-            {{ Form::select('comorbidities[]', $comorbidityOptions, $selectedComorbidities, ['class' => 'form-select io-select2', 'data-control' => 'select2', 'data-placeholder' => 'Select comorbidities', 'multiple' => 'multiple', 'id' => 'patientComorbidities']) }}
+            {{ html()->select('comorbidities[]', $comorbidityOptions, old('comorbidities', $selectedComorbidities))->multiple()->attributes(['class' => 'form-select io-select2', 'data-control' => 'select2', 'data-placeholder' => 'Select comorbidities', 'id' => 'patientComorbidities']) }}
         </div>
         <div class="col-md-12 mb-5">
-            {{ Form::label('admissions_surgeries','Hospital Admissions / Surgeries:' ,['class' => 'form-label']) }}
-            {{ Form::textarea('admissions_surgeries',!empty($patient) ? $patient->admissions_surgeries : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List previous admissions or surgeries if any']) }}
+            {{ html()->label()->for('admissions_surgeries')->text('Hospital Admissions / Surgeries:')->attributes(['class' => 'form-label']) }}
+            {{ html()->textarea('admissions_surgeries')->text(html()->value('admissions_surgeries', !empty($patient) ? $patient->admissions_surgeries : null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List previous admissions or surgeries if any']) }}
         </div>
         <div class="col-md-12 mb-5">
-            {{ Form::label('maintenance','Maintenance/Current Medications:' ,['class' => 'form-label']) }}
-            {{ Form::textarea('maintenance',!empty($patient) ? $patient->maintenance : null,['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List current maintenance medications']) }}
+            {{ html()->label()->for('maintenance')->text('Maintenance/Current Medications:')->attributes(['class' => 'form-label']) }}
+            {{ html()->textarea('maintenance')->text(html()->value('maintenance', !empty($patient) ? $patient->maintenance : null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => 'List current maintenance medications']) }}
         </div>
     </div>
 
     <div>
-        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary me-2']) }}
+        {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2']) }}
         <a href="{{ getRouteByRole('patients.index') }}" type="reset"
             class="btn btn-secondary">{{__('messages.common.discard')}}</a>
     </div>

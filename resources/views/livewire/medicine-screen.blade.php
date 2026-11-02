@@ -22,13 +22,11 @@
     ============================================================ --}}
 
     {{-- Hidden URL helpers expected by JS in child views --}}
-    {{ Form::hidden('medicineUrl',
-        getRouteByRole('medicines.index'),
-        ['id' => 'indexMedicineUrl']) }}
-    {{ Form::hidden('medicines-show-modal', url('medicines-show-modal'), ['id' => 'medicinesShowModal']) }}
-    {{ Form::hidden('medicine-language', getCurrentLoginUserLanguageName(), ['id' => 'medicineLanguage']) }}
-    {{ Form::hidden('medicine', __('messages.medicine.medicine'), ['id' => 'Medicine']) }}
-    {{ Form::hidden('medicineLang', __('messages.delete.medicine'), ['id' => 'medicineLang']) }}
+    {{ html()->hidden('medicineUrl', getRouteByRole('medicines.index'))->attributes(['id' => 'indexMedicineUrl']) }}
+    {{ html()->hidden('medicines-show-modal', url('medicines-show-modal'))->attributes(['id' => 'medicinesShowModal']) }}
+    {{ html()->hidden('medicine-language', getCurrentLoginUserLanguageName())->attributes(['id' => 'medicineLanguage']) }}
+    {{ html()->hidden('medicine', __('messages.medicine.medicine'))->attributes(['id' => 'Medicine']) }}
+    {{ html()->hidden('medicineLang', __('messages.delete.medicine'))->attributes(['id' => 'medicineLang']) }}
 
     {{-- ================================================================
          MAIN TABS — Alpine handles active state, no Livewire re-render

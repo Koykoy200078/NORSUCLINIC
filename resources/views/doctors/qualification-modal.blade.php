@@ -13,27 +13,26 @@
                 <div class="alert alert-danger fs-4 text-white d-flex align-items-center d-none" role="alert" id="createCityValidationErrorsBox">
                     <i class="fa-solid fa-face-frown me-5"></i>
                 </div>
-                {{ Form::open(['id' => 'qualificationForm']) }}
-                {{ Form::hidden('id',null,['id' => 'qualificationID']) }}
+                {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'qualificationForm'])->open() }}
+                {{ html()->hidden('id', null)->attributes(['id' => 'qualificationID']) }}
                 <div class="mb-5">
-                    {{ Form::label('Degree', __('messages.doctor.degree').':', ['class' => 'form-label required']) }}
-                    {{ Form::text('degree', null, ['class' => 'form-control', 'placeholder' => __('messages.doctor.degree'), 'id'=>'degree']) }}
+                    {{ html()->label()->for('Degree')->text(__('messages.doctor.degree').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->text('degree', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.degree'), 'id'=>'degree']) }}
                 </div>
                 <div class="mb-5">
-                    {{ Form::label('university', __('messages.doctor.university').':', ['class' => 'form-label required']) }}
-                    {{ Form::text('university', null, ['class' => 'form-control', 'placeholder' =>  __('messages.doctor.university'), 'id'=>'university']) }}
+                    {{ html()->label()->for('university')->text(__('messages.doctor.university').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->text('university', null)->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.doctor.university'), 'id'=>'university']) }}
                 </div>
                 <div>
-                    {{ Form::label('Degree', __('messages.doctor.year').':', ['class' => 'form-label required']) }}
-                    {{ Form::select('year', $years,!empty($qualifications->year) ? $qualifications->year : null, 
-        ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'year', 'placeholder' =>  __('messages.doctor.select_year'),'data-dropdown-parent'=>'#qualificationModal']) }}
+                    {{ html()->label()->for('Degree')->text(__('messages.doctor.year').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->select('year', $years, !empty($qualifications->year) ? $qualifications->year : null)->placeholder(__('messages.doctor.select_year'))->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'year', 'data-dropdown-parent'=>'#qualificationModal']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">
-                {{ Form::button(__('messages.common.save'),['class' => 'btn btn-primary m-0','id'=>'qualificationSaveBtn']) }}
-                {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss'=>'modal']) }}
+                {{ html()->button(__('messages.common.save'), 'button')->attributes(['class' => 'btn btn-primary m-0', 'id'=>'qualificationSaveBtn']) }}
+                {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

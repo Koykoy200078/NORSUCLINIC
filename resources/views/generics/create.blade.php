@@ -24,16 +24,14 @@
             </div>
         </div>
         <div class="card">
-            {{Form::hidden('isEdit',false,['class'=>'isEdit'])}}
+            {{html()->hidden('isEdit', false)->forgetAttribute('id')->attributes(['class'=>'isEdit'])}}
 
             <div class="card-body">
-                {{ Form::open(['route' => 
-                        getRouteNameByRole('generics.store'),
-                        'id' => 'createGenericForm']) }}
+                {{ html()->form('POST', route(getRouteNameByRole('generics.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'createGenericForm'])->open() }}
 
                 @include('generics.fields')
 
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

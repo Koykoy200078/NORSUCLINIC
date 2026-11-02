@@ -13,7 +13,7 @@
                 <div class="p-5">
                     <div class="mb-5">
                         <label for="filterBtn" class="form-label">{{__('messages.doctor.status')}}:</label>
-                        {{ Form::select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(),null,['class' => 'form-select io-select2', 'data-control'=>"select2", 'id' => 'doctorStatus']) }}
+                        {{ html()->select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(), null)->attributes(['class' => 'form-select io-select2', 'data-control'=>"select2", 'id' => 'doctorStatus']) }}
                     </div>
                     <div class="d-flex justify-content-end">
                         <button type="reset" class="btn btn-secondary" id="doctorResetFilter">{{__('messages.common.reset')}}</button>

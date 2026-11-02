@@ -11,20 +11,20 @@
             </div>
 
             <div class="modal-body">
-                {{ Form::open(['id'=>'emailNotificationForm']) }}
+                {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id'=>'emailNotificationForm'])->open() }}
                 <div class="form-check form-check-custom form-check-solid d-flex">
                     <div class="fv-row d-flex align-items-center">
-                        {{ Form::checkbox('email_notification', 1, getLogInUser()->email_notification,['class' => 'form-check-input  me-5']) }}
+                        {{ html()->checkbox('email_notification', getLogInUser()->email_notification, 1)->forgetAttribute('id')->attributes(['class' => 'form-check-input  me-5']) }}
                     </div>
                     <label class="col-form-label fw-bold fs-6">
                         <span> {{__('messages.user.email_notification')}}</span>
                     </label>
                 </div>
                 <div class="pt-5">
-                    {{ Form::button(__('messages.common.save'),['class' => 'btn btn-primary mr-2','id'=>'emailNotificationChange']) }}
-                    {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary ms-3','data-bs-dismiss' => 'modal']) }}
+                    {{ html()->button(__('messages.common.save'), 'button')->attributes(['class' => 'btn btn-primary mr-2', 'id'=>'emailNotificationChange']) }}
+                    {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary ms-3', 'data-bs-dismiss' => 'modal']) }}
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
 
         </div>

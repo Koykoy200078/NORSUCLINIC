@@ -15,17 +15,17 @@ $modalMedicineList[] = ['key' => $id, 'value' => $name];
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger d-none" id="stockInErrorsBox"></div>
-                {{ Form::hidden('uniqueId', 2, ['id' => 'purchaseUniqueId']) }}
-                {{ Form::hidden('associateMedicines', json_encode($modalMedicineList), ['class' => 'associatePurchaseMedicines']) }}
-                {{ Form::open(['route' => getRouteNameByRole('stock-in.store'), 'data-turbo' => 'false', 'id' => 'purchaseMedicineFormId']) }}
+                {{ html()->hidden('uniqueId', 2)->attributes(['id' => 'purchaseUniqueId']) }}
+                {{ html()->hidden('associateMedicines', json_encode($modalMedicineList))->forgetAttribute('id')->attributes(['class' => 'associatePurchaseMedicines']) }}
+                {{ html()->form('POST', route(getRouteNameByRole('stock-in.store')))->attribute('accept-charset', 'UTF-8')->attributes(['data-turbo' => 'false', 'id' => 'purchaseMedicineFormId'])->open() }}
                 <div class="row">
                     @include('medicine-availabilities.fields', ['medicines' => $modalMedicines, 'hideFormButtons' => true])
                 </div>
                 <div class="modal-footer px-0 mt-3">
-                    {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'id' => 'stockInSaveBtn']) }}
+                    {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary', 'id' => 'stockInSaveBtn']) }}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

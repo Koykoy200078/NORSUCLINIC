@@ -21,8 +21,8 @@
     <div class="container-fluid">
         <div class="d-flex flex-column livewire-table">
             <div class="row">
-                {{Form::hidden('categoriesShowUrl',Request::fullUrl(),['id'=>'categoriesShowUrl'])}}
-                {{Form::hidden('indexCategoriesUrl',url('categories'),['id'=>'indexCategoriesUrl'])}}
+                {{html()->hidden('categoriesShowUrl', Request::fullUrl())->attributes(['id'=>'categoriesShowUrl'])}}
+                {{html()->hidden('indexCategoriesUrl', url('categories'))->attributes(['id'=>'indexCategoriesUrl'])}}
                 <div class="col-12">
                     @include('flash::message')
                 </div>

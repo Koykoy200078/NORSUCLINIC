@@ -15,9 +15,9 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{ Form::open(['route' => ['roles.update', $role->id], 'method' => 'put']) }}
+                {{ html()->form('put', route('roles.update', [$role->id]))->attribute('accept-charset', 'UTF-8')->open() }}
                     @include('roles.fields')
-                    {{ Form::close() }}
+                    {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

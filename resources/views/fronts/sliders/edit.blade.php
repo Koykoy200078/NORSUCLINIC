@@ -16,9 +16,9 @@
         </div>
         <div class="card">
             <div class="card-body">
-                {{ Form::open(['route' => ['banner.update', $banner->id], 'method' => 'put','files' => 'true']) }}
+                {{ html()->form('put', route('banner.update', [$banner->id]))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->open() }}
                     @include('fronts.sliders.edit_fields')
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

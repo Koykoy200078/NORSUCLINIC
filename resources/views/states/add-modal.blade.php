@@ -6,22 +6,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
-            {{ Form::open(['id' => 'addStateForm'])}}
+            {{ html()->form('POST', url()->current())->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'addStateForm'])->open()}}
             <div class="modal-body">
                 <div class="mb-5">
-                    {{ Form::label('name', __('messages.common.name').':', ['class' => 'form-label required']) }}
-                    {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('messages.common.name'),'required']) }}
+                    {{ html()->label()->for('name')->text(__('messages.common.name').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->text('name', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.common.name'), 'required']) }}
                 </div>
                 <div>
-                    {{ Form::label('country_id', __('messages.country.country').':', ['class' => 'form-label required']) }}
-                    {{ Form::select('country_id', $countries, null, ['id' => 'countryState','class' => 'form-select','required','data-turbo' => 'false','data-control'=>'select2', 'placeholder' => __('messages.country.country')]) }}
+                    {{ html()->label()->for('country_id')->text(__('messages.country.country').':')->attributes(['class' => 'form-label required']) }}
+                    {{ html()->select('country_id', $countries, null)->placeholder(__('messages.country.country'))->attributes(['id' => 'countryState', 'class' => 'form-select', 'required', 'data-turbo' => 'false', 'data-control'=>'select2']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">
-                {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary m-0','data-turbo' => 'false']) }}
-                {{ Form::button(__('messages.common.discard'),['class' => 'btn btn-secondary my-0 ms-5 me-0','data-bs-dismiss'=>'modal']) }}
+                {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0', 'data-turbo' => 'false']) }}
+                {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
             </div>
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

@@ -60,37 +60,37 @@
     </div>
     <div class="col-lg-12">
         <div class="mb-5">
-            {{ Form::label('about_title', __('messages.web.about_title').':', ['class' => 'form-label required']) }}
-            {{ Form::text('about_title', $cmsData['about_title'], ['class' => 'form-control', 'placeholder' => __('messages.web.about_title'), 'required', 'id' => 'aboutTitleId']) }}
+            {{ html()->label()->for('about_title')->text(__('messages.web.about_title').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('about_title', $cmsData['about_title'])->attributes(['class' => 'form-control', 'placeholder' => __('messages.web.about_title'), 'required', 'id' => 'aboutTitleId']) }}
         </div>
     </div>
     <div class="col-lg-12">
         <div class="mb-5">
-            {{ Form::label('about_experience', __('messages.web.about_experience').':', ['class' => 'form-label required']) }}
-            {{ Form::text('about_experience', $cmsData['about_experience'], ['class' => 'form-control', 'placeholder' => __('messages.doctor.experience'), 'required','onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'id' => 'aboutExperienceId']) }}
+            {{ html()->label()->for('about_experience')->text(__('messages.web.about_experience').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->text('about_experience', $cmsData['about_experience'])->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.experience'), 'required', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'id' => 'aboutExperienceId']) }}
         </div>
     </div>
     <div class="col-lg-12">
         <div class="mb-5">
-            {{ Form::label('about_short_description', __('messages.web.about_short_description').':', ['class' => 'form-label required']) }}
-            {{ Form::textarea('about_short_description', $cmsData['about_short_description'], ['class' => 'form-control', 'placeholder' => __('messages.web.about_short_description'),'id' => 'cmsShortDescription', 'required', 'rows'=> 5]) }}
+            {{ html()->label()->for('about_short_description')->text(__('messages.web.about_short_description').':')->attributes(['class' => 'form-label required']) }}
+            {{ html()->textarea('about_short_description')->text(html()->value('about_short_description', $cmsData['about_short_description']))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder' => __('messages.web.about_short_description'), 'id' => 'cmsShortDescription', 'required', 'rows'=> 5]) }}
         </div>
     </div>
     <div class="col-lg-12">
         <div class="mb-5">
-            {{ Form::label('term_condition', __('messages.cms.terms_conditions').':', ['class' => 'form-label required']) }}
+            {{ html()->label()->for('term_condition')->text(__('messages.cms.terms_conditions').':')->attributes(['class' => 'form-label required']) }}
             <div id="cmsTermConditionId" class="editor-height" style="height: 200px"></div>
-            {{ Form::hidden('terms_conditions', null, ['id' => 'termData']) }}
+            {{ html()->hidden('terms_conditions', null)->attributes(['id' => 'termData']) }}
         </div>
     </div>
     <div class="col-lg-12">
         <div class="mb-5">
-            {{ Form::label('privacy_policy', __('messages.cms.privacy_policy').':', ['class' => 'form-label required']) }}
+            {{ html()->label()->for('privacy_policy')->text(__('messages.cms.privacy_policy').':')->attributes(['class' => 'form-label required']) }}
             <div id="cmsPrivacyPolicyId" class="editor-height" style="height: 200px"></div>
-            {{ Form::hidden('privacy_policy', null, ['id' => 'privacyData']) }}
+            {{ html()->hidden('privacy_policy', null)->attributes(['id' => 'privacyData']) }}
         </div>
     </div>
     <div class="d-flex">
-        {{ Form::submit(__('messages.common.save'),['class' => 'btn btn-primary']) }}
+        {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary']) }}
     </div>
 </div>

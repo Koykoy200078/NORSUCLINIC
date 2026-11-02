@@ -64,6 +64,9 @@ class LinkCrawlTest extends TestCase
     /** The manual dispense record of the fixtures: its edit page is a start page of every panel that has one. */
     private ?int $manualRecordId = null;
 
+    /** @var array<string, float> "actor page" => milliseconds the page took (CRAWL_TIMES=<file.json>) */
+    private array $pageMilliseconds = [];
+
     /** @var array<string, array<string, array<int, string>>> actor => page => form controls (FORMS_BASELINE / FORMS_COMPARE) */
     private array $formControlsSeen = [];
 
@@ -137,6 +140,11 @@ class LinkCrawlTest extends TestCase
         }
         if ($out = getenv('CRAWL_OUT')) {
             file_put_contents($out, json_encode(['requests' => $this->requests, 'actors' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+
+        if ($file = getenv('CRAWL_TIMES')) {
+            arsort($this->pageMilliseconds);
+            file_put_contents($file, json_encode(array_map(fn ($ms) => round($ms), $this->pageMilliseconds), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
         if ($file = getenv('FORMS_BASELINE')) {
@@ -433,7 +441,9 @@ class LinkCrawlTest extends TestCase
                 Auth::guard()->forgetUser();
             }
 
+            $started = hrtime(true);
             $response = $this->get($current);
+            $this->pageMilliseconds[$this->actorLabel . ' ' . $current] = (hrtime(true) - $started) / 1e6;
             $status = $response->getStatusCode();
 
             $error = null;

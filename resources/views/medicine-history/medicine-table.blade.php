@@ -1,22 +1,22 @@
-{{ Form::hidden('medicine_bill', isset($medicineBill) ? $medicineBill->id : null, ['id' => 'medicineBillId']) }}
+{{ html()->hidden('medicine_bill', isset($medicineBill) ? $medicineBill->id : null)->attributes(['id' => 'medicineBillId']) }}
 
 <div>
     <div class="row">
         <div class="form-group col-md-3 mb-5">
-            {{ Form::label('patient_id', __('Patient Name') . ':', ['class' => 'form-label']) }}
+            {{ html()->label()->for('patient_id')->text(__('Patient Name') . ':')->attributes(['class' => 'form-label']) }}
             <span class="required"></span>
-            {{ Form::select('patient_id', $patients, isset($medicineBill) ? $medicineBill->patient_id : null, ['class' => 'form-select w-80', 'required', 'id' => 'prescriptionPatientId', 'placeholder' => __('messages.medicine_bills.select_patient')]) }}
+            {{ html()->select('patient_id', $patients, isset($medicineBill) ? $medicineBill->patient_id : null)->placeholder(__('messages.medicine_bills.select_patient'))->attributes(['class' => 'form-select w-80', 'required', 'id' => 'prescriptionPatientId']) }}
         </div>
         <div class="col-lg-3 col-md-4 col-sm-12 mb-5">
-            {{ Form::label('bill_date', __('messages.medicine_bills.bill_date') . ':', ['class' => 'form-label']) }}
+            {{ html()->label()->for('bill_date')->text(__('messages.medicine_bills.bill_date') . ':')->attributes(['class' => 'form-label']) }}
             <span class="required"></span>
-            {{ Form::text('bill_date', null, ['class' => getLogInUser()->thememode ? 'bg-light form-control medicine_bill_date' : 'bg-white form-control medicine_bill_date', 'id' => 'medicine_bill_date', 'autocomplete' => 'off']) }}
+            {{ html()->text('bill_date', null)->attributes(['class' => getLogInUser()->thememode ? 'bg-light form-control medicine_bill_date' : 'bg-white form-control medicine_bill_date', 'id' => 'medicine_bill_date', 'autocomplete' => 'off']) }}
         </div>
     </div>
 
     <div class="mb-md-0 mb-5 w-full">
         <label class="fw-bold text-muted py-3">{{ __('Notes') }}</label>
-        {{ Form::textarea('note', null, ['class' => 'form-control w-100', 'rows' => 2, 'placeholder'=> __('Notes (Optional)')]) }}
+        {{ html()->textarea('note')->text(html()->value('note', null))->forgetAttribute('id')->attributes(['cols' => 50])->attributes(['class' => 'form-control w-100', 'rows' => 2, 'placeholder'=> __('Notes (Optional)')]) }}
     </div>
 </div>
 
@@ -48,27 +48,27 @@
                         @foreach ($medicineBill->saleMedicine as $key => $saleMedicine)
                         <tr>
                             <td>
-                                {{ Form::select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->medicineCategory->id) ? $saleMedicine->medicine->medicineCategory->id : null   , ['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'placeholder' => __('messages.common.select_category'), 'data-id' => '1', 'data-control' => 'select2']) }}
+                                {{ html()->select('category_id[]', $medicineCategories, isset($saleMedicine->medicine->medicineCategory->id) ? $saleMedicine->medicine->medicineCategory->id : null)->placeholder(__('messages.common.select_category'))->forgetAttribute('id')->attributes(['class' => 'form-select  select2Selector medicineBillCategoriesId', 'required', 'data-id' => '1', 'data-control' => 'select2']) }}
                             </td>
                             <td>
-                                {{ Form::select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null, ['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'placeholder' => __('messages.medicine_bills.select_medicine'), 'data-id' => 1, 'required']) }}
+                                {{ html()->select('medicine[]', $medicines['medicines'], isset($saleMedicine->medicine->id) ? $saleMedicine->medicine->id:null)->placeholder(__('messages.medicine_bills.select_medicine'))->forgetAttribute('id')->attributes(['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'data-id' => 1, 'required']) }}
                             </td>
                             <td>
                                 @php
                                 $selectedDosage = old('dosage.' . $key, $saleMedicine->dosage ?? optional($saleMedicine->medicine)->dosage);
                                 @endphp
-                                {{ Form::select('dosage[]', !empty($selectedDosage) ? [$selectedDosage => $selectedDosage] : [], $selectedDosage, ['class' => 'form-select medicineBillDosage', 'placeholder' => 'Select Dosage/Strength', 'data-selected-dosage' => $selectedDosage, 'required']) }}
+                                {{ html()->select('dosage[]', !empty($selectedDosage) ? [$selectedDosage => $selectedDosage] : [], $selectedDosage)->placeholder('Select Dosage/Strength')->forgetAttribute('id')->attributes(['class' => 'form-select medicineBillDosage', 'data-selected-dosage' => $selectedDosage, 'required']) }}
                             </td>
                             <td>
                                 @php
                                 $existingExpiryDate = old('expiry_date.' . $key, !empty($saleMedicine->expires_at) ? \Carbon\Carbon::parse($saleMedicine->expires_at)->format('Y-m-d') : null);
                                 @endphp
-                                {{ Form::text('expiry_date[]', $existingExpiryDate, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('Expiry Date'), 'readonly']) }}
+                                {{ html()->text('expiry_date[]', $existingExpiryDate)->attributes(['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' => __('Expiry Date'), 'readonly']) }}
                             </td>
 
-                            {{ Form::hidden('quantity1[]', $saleMedicine->sale_quantity, ['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
+                            {{ html()->hidden('quantity1[]', $saleMedicine->sale_quantity)->attributes(['class' => 'previous-quantity', 'id' => 'previous-sale-qty' . $key + 1]) }}
                             <td>
-                                {{ Form::number('quantity[]', $saleMedicine->sale_quantity, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'min' => 1, 'required']) }}
+                                {{ html()->number('quantity[]', $saleMedicine->sale_quantity)->attributes(['class' => 'form-control medicineBill-quantity', 'id' => 'quantity' . $key + 1, 'min' => 1, 'required']) }}
                             </td>
                             <td class="text-center">
                                 <a href="javascript:void(0)" title="{{ __('messages.common.delete') }}"
@@ -81,25 +81,25 @@
                         @else
                         <tr>
                             <td>
-                                {{ Form::select('category_id[]', $medicineCategories, null, ['class' => 'form-select medicineBillCategoriesId select2Selector','required','placeholder'=>__('messages.common.select_category'), 'data-id' => 1,'data-control'=>'select2']) }}
+                                {{ html()->select('category_id[]', $medicineCategories, null)->placeholder(__('messages.common.select_category'))->forgetAttribute('id')->attributes(['class' => 'form-select medicineBillCategoriesId select2Selector', 'required', 'data-id' => 1, 'data-control'=>'select2']) }}
                             </td>
                             <td>
-                                {{ Form::select('medicine[]', [], null,['class' => 'form-select medicinePurchaseId purchaseMedicineId','placeholder'=>__('messages.medicine_bills.select_medicine'),'id'=>'c1','data-control'=>'select2','data-id'=>1,'required']) }}
+                                {{ html()->select('medicine[]', [], null)->placeholder(__('messages.medicine_bills.select_medicine'))->attributes(['class' => 'form-select medicinePurchaseId purchaseMedicineId', 'id'=>'c1', 'data-control'=>'select2', 'data-id'=>1, 'required']) }}
                             </td>
                             <td>
-                                {{ Form::select('dosage[]', [], null, ['class' => 'form-select medicineBillDosage', 'placeholder' => 'Select Dosage/Strength', 'data-selected-dosage' => '', 'required']) }}
-                            </td>
-                            {{-- <td>
-                        {{ Form::text('manufacturing_date[]', null, ['class' => 'form-control', 'id' => 'manufacturing_date1','required','placeholder'=>'Manufacturing Date']) }}
-                            </td> --}}
-                            <td>
-                                {{ Form::text('expiry_date[]', null, ['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('Expiry Date'), 'readonly']) }}
+                                {{ html()->select('dosage[]', [], null)->placeholder('Select Dosage/Strength')->forgetAttribute('id')->attributes(['class' => 'form-select medicineBillDosage', 'data-selected-dosage' => '', 'required']) }}
                             </td>
                             {{-- <td>
-                        {{ Form::number('purchase_price[]', '0.00', ['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1','required' ]) }}
+                        {{ html()->text('manufacturing_date[]', null)->attributes(['class' => 'form-control', 'id' => 'manufacturing_date1', 'required', 'placeholder'=>'Manufacturing Date']) }}
                             </td> --}}
                             <td>
-                                {{ Form::number('quantity[]', 1, ['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'min' => 1, 'required']) }}
+                                {{ html()->text('expiry_date[]', null)->attributes(['class' => 'form-control medicineBillExpiryDate', 'id' => 'expiry_date1', 'placeholder' =>  __('Expiry Date'), 'readonly']) }}
+                            </td>
+                            {{-- <td>
+                        {{ html()->number('purchase_price[]', '0.00')->attributes(['class' => 'form-control purchase-price', 'readonly', 'rows'=>1, 'id' => 'purchase_price1', 'required']) }}
+                            </td> --}}
+                            <td>
+                                {{ html()->number('quantity[]', 1)->attributes(['class' => 'form-control medicineBill-quantity', 'id' => 'quantity1', 'min' => 1, 'required']) }}
                             </td>
                             <td class="text-center">
 
@@ -117,7 +117,7 @@
             <div class="row mt-5 justify-content-between">
 
                 <div class="float-end mt-5">
-                    {!! Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
+                    {!! html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary me-2', 'saveBtnPurchaseMedicne']) !!}
                     <a href="{{ getRouteByRole('medicine-dispensing.index') }}" class="btn btn-secondary">{!! __('messages.common.cancel') !!}</a>
                 </div>
             </div>

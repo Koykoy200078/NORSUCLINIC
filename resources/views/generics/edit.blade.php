@@ -24,13 +24,13 @@
             </div>
         </div>
         <div class="card">
-            {{Form::hidden('isEdit',true,['class'=>'isEdit'])}}
+            {{html()->hidden('isEdit', true)->forgetAttribute('id')->attributes(['class'=>'isEdit'])}}
             <div class="card-body">
-                {{ Form::model($generic, ['route' => ['generics.update', $generic->id], 'method' => 'patch', 'id' => 'editGenericForm']) }}
+                {{ html()->modelForm($generic, 'patch', route('generics.update', [$generic->id]))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'editGenericForm'])->open() }}
 
                 @include('generics.fields')
 
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

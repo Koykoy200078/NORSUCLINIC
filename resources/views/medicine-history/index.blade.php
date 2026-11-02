@@ -6,9 +6,9 @@
 @section('content')
     <div class="container-fluid">
         @include('flash::message')
-        {{-- {{Form::hidden('billUrl',route('bills.index'),['id'=>'indexBillUrl','class'=>'billUrl'])}}
-        {{Form::hidden('patientUrl',url('patients'),['id'=>'indexPatientUrl','class'=>'patientUrl'])}}
-        {{ Form::hidden('billLang', __('messages.delete.bill'), ['id' => 'billLang']) }} --}}
+        {{-- {{html()->hidden('billUrl', route('bills.index'))->attributes(['id'=>'indexBillUrl', 'class'=>'billUrl'])}}
+        {{html()->hidden('patientUrl', url('patients'))->attributes(['id'=>'indexPatientUrl', 'class'=>'patientUrl'])}}
+        {{ html()->hidden('billLang', __('messages.delete.bill'))->attributes(['id' => 'billLang']) }} --}}
         <div class="d-flex flex-column">
             <livewire:medicine-bill-table/>
         </div>

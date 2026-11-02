@@ -76,7 +76,7 @@
                                         @foreach($mergeArchives as $source)<a class="me-3" href="{{ route('patient-merge.index', ['archive_id' => $source->id]) }}">{{ $source->user?->full_name }} (#{{ $source->id }})</a>@endforeach
                                     </div>
                                 @endif
-                                {{Form::hidden('patient_role',getLogInUser()->hasRole('patient'),['id' => 'patientRolePatientDetail'])}}
+                                {{html()->hidden('patient_role', getLogInUser()->hasRole('patient'))->attributes(['id' => 'patientRolePatientDetail'])}}
                                 @include('patients.show_fields')
                             </div>
                         </div>

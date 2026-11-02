@@ -1,92 +1,92 @@
 <div class="row gx-10 mb-5">
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('food_allergies', __('messages.prescription.food_allergies').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('food_allergies', null, ['class' => 'form-control','placeholder' => __('messages.prescription.food_allergies') ]) }}
+            {{ html()->label()->for('food_allergies')->text(__('messages.prescription.food_allergies').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('food_allergies', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.food_allergies')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('tendency_bleed', __('messages.prescription.tendency_bleed').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('tendency_bleed', null, ['class' => 'form-control','placeholder' => __('messages.prescription.tendency_bleed')]) }}
+            {{ html()->label()->for('tendency_bleed')->text(__('messages.prescription.tendency_bleed').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('tendency_bleed', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.tendency_bleed')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('heart_disease', __('messages.prescription.heart_disease').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('heart_disease', null, ['class' => 'form-control','placeholder' => __('messages.prescription.heart_disease')]) }}
+            {{ html()->label()->for('heart_disease')->text(__('messages.prescription.heart_disease').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('heart_disease', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.heart_disease')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('high_blood_pressure', __('messages.prescription.high_blood_pressure').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('high_blood_pressure', null, ['class' => 'form-control','placeholder' => __('messages.prescription.high_blood_pressure')]) }}
+            {{ html()->label()->for('high_blood_pressure')->text(__('messages.prescription.high_blood_pressure').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('high_blood_pressure', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.high_blood_pressure')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('diabetic', __('messages.prescription.diabetic').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('diabetic', null, ['class' => 'form-control','placeholder' => __('messages.prescription.diabetic') ]) }}
+            {{ html()->label()->for('diabetic')->text(__('messages.prescription.diabetic').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('diabetic', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.diabetic')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('surgery', __('messages.prescription.surgery').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('surgery', null, ['class' => 'form-control','placeholder' => __('messages.prescription.surgery')]) }}
+            {{ html()->label()->for('surgery')->text(__('messages.prescription.surgery').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('surgery', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.surgery')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('accident', __('messages.prescription.accident').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('accident', null, ['class' => 'form-control','placeholder' => __('messages.prescription.accident')]) }}
+            {{ html()->label()->for('accident')->text(__('messages.prescription.accident').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('accident', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.accident')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('others', __('messages.prescription.others').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('others', null, ['class' => 'form-control','placeholder' => __('messages.prescription.others')]) }}
+            {{ html()->label()->for('others')->text(__('messages.prescription.others').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('others', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.others')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('medical_history', __('messages.prescription.medical_history').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('medical_history', null, ['class' => 'form-control','placeholder' => __('messages.prescription.medical_history')]) }}
+            {{ html()->label()->for('medical_history')->text(__('messages.prescription.medical_history').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('medical_history', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.medical_history')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('current_medication', __('messages.prescription.current_medication').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('current_medication', null, ['class' => 'form-control','placeholder' => __('messages.prescription.current_medication')]) }}
+            {{ html()->label()->for('current_medication')->text(__('messages.prescription.current_medication').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('current_medication', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.current_medication')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('female_pregnancy', __('messages.prescription.female_pregnancy').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('female_pregnancy', null, ['class' => 'form-control','placeholder' => __('messages.prescription.female_pregnancy')]) }}
+            {{ html()->label()->for('female_pregnancy')->text(__('messages.prescription.female_pregnancy').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('female_pregnancy', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.female_pregnancy')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('breast_feeding', __('messages.prescription.breast_feeding').(':'), ['class' => 'form-label mb-3']) }}
-            {{ Form::text('breast_feeding', null, ['class' => 'form-control','placeholder' => __('messages.prescription.breast_feeding')]) }}
+            {{ html()->label()->for('breast_feeding')->text(__('messages.prescription.breast_feeding').(':'))->attributes(['class' => 'form-label mb-3']) }}
+            {{ html()->text('breast_feeding', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.breast_feeding')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('plus_rate', __('messages.prescription.plus_rate').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('plus_rate', null, ['class' => 'form-control','placeholder' => __('messages.prescription.plus_rate')]) }}
+            {{ html()->label()->for('plus_rate')->text(__('messages.prescription.plus_rate').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('plus_rate', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.plus_rate')]) }}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group mb-5">
-            {{ Form::label('temperature', __('messages.prescription.temperature').(':'), ['class' => 'form-label']) }}
-            {{ Form::text('temperature', null, ['class' => 'form-control','placeholder' => __('messages.prescription.temperature')]) }}
+            {{ html()->label()->for('temperature')->text(__('messages.prescription.temperature').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->text('temperature', null)->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.temperature')]) }}
         </div>
     </div>
     <div class="col-md-12">
         <div class="form-group mb-5">
-            {{ Form::label('problem_description', __('messages.prescription.problem_description').(':'), ['class' => 'form-label']) }}
-            {{ Form::textarea('problem_description', null, ['class' => 'form-control','placeholder' => __('messages.prescription.problem_description'), 'rows' => 5]) }}
+            {{ html()->label()->for('problem_description')->text(__('messages.prescription.problem_description').(':'))->attributes(['class' => 'form-label']) }}
+            {{ html()->textarea('problem_description')->text(html()->value('problem_description', null))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'placeholder' => __('messages.prescription.problem_description'), 'rows' => 5]) }}
         </div>
     </div>
 </div>

@@ -18,11 +18,11 @@
                               <strong>Edit Category</strong>
                           </div>
                           <div class="card-body">
-                              {{ Form::model($category, ['route' => ['categories.update', $category->id], 'method' => 'patch']) }}
+                              {{ html()->modelForm($category, 'patch', route('categories.update', [$category->id]))->attribute('accept-charset', 'UTF-8')->open() }}
 
                               @include('categories.fields')
 
-                              {{ Form::close() }}
+                              {{ html()->closeModelForm() }}
                             </div>
                         </div>
                     </div>

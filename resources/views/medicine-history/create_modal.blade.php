@@ -24,10 +24,10 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger d-none" id="dispenseErrorsBox"></div>
-                {{ Form::hidden('uniqueId', 2, ['id' => 'medicineUniqueId']) }}
-                {{ Form::hidden('associateMedicines', json_encode($modalMedicineList), ['class' => 'associatePurchaseMedicines']) }}
-                {{ Form::hidden('medicineCategories', json_encode($modalMedicineCategoriesList), ['id' => 'showMedicineCategoriesMedicineBill']) }}
-                {{ Form::open(['route' => getRouteNameByRole('dispense-records.store'), 'id' => 'CreateMedicineBillForm']) }}
+                {{ html()->hidden('uniqueId', 2)->attributes(['id' => 'medicineUniqueId']) }}
+                {{ html()->hidden('associateMedicines', json_encode($modalMedicineList))->forgetAttribute('id')->attributes(['class' => 'associatePurchaseMedicines']) }}
+                {{ html()->hidden('medicineCategories', json_encode($modalMedicineCategoriesList))->attributes(['id' => 'showMedicineCategoriesMedicineBill']) }}
+                {{ html()->form('POST', route(getRouteNameByRole('dispense-records.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'CreateMedicineBillForm'])->open() }}
                 @include('medicine-history.medicine-table', [
                 'patients' => $modalPatients,
                 'medicines' => $modalMedicines,
@@ -35,10 +35,10 @@ $modalMedicineCategoriesList[] = ['key' => $id, 'value' => $name];
                 'hideFormButtons' => true,
                 ])
                 <div class="modal-footer px-0 mt-3">
-                    {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'id' => 'dispenseSaveBtn']) }}
+                    {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary', 'id' => 'dispenseSaveBtn']) }}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
                 </div>
-                {{ Form::close() }}
+                {{ html()->closeModelForm() }}
             </div>
         </div>
     </div>

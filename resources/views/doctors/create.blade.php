@@ -17,11 +17,9 @@
     </div>
     <div class="card">
         <div class="card-body">
-            {{ Form::open(['route' => [
-                    getRouteNameByRole('doctors.store')
-                ], 'method' => 'POST', 'files' => true,'id'=> 'createDoctorForm']) }}
+            {{ html()->form('POST', route(getRouteNameByRole('doctors.store')))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id'=> 'createDoctorForm'])->open() }}
             @include('doctors.fields')
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

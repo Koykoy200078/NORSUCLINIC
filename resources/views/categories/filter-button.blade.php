@@ -15,7 +15,7 @@
                 <div class="p-5">
                     <div class="mb-5">
                         <label for="exampleInputSelect2" class="form-label">{{ __('messages.web.status').':' }}</label>
-                        {{ Form::select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(),null, ['id' => 'medicineCategoryHead', 'data-control' =>'select2', 'class' => 'form-select status-selector  data-allow-clear="true"']) }}
+                        {{ html()->select('status', collect($filterHeads[0])->sortBy('key')->reverse()->toArray(), null)->attributes(['id' => 'medicineCategoryHead', 'data-control' =>'select2', 'class' => 'form-select status-selector  data-allow-clear="true"']) }}
                     </div>
                     <div class="d-flex justify-content-end">
                         <button type="reset" id="categoryResetFilter" class="btn btn-secondary">{{ __('messages.common.reset') }}</button>

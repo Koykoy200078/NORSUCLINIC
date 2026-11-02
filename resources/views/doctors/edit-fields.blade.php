@@ -1,51 +1,51 @@
 <div class="row">
     <div class="col-md-6 mb-5">
-        {{ Form::label('First Name',__('messages.doctor.first_name').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('first_name', $user->first_name,['class' => 'form-control','placeholder' => __('messages.doctor.first_name'),'required']) }}
+        {{ html()->label()->for('First Name')->text(__('messages.doctor.first_name').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('first_name', $user->first_name)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.first_name'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Last Name',__('messages.doctor.last_name').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('last_name', $user->last_name,['class' => 'form-control','placeholder' => __('messages.doctor.last_name'),'required']) }}
+        {{ html()->label()->for('Last Name')->text(__('messages.doctor.last_name').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('last_name', $user->last_name)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.last_name'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Email',__('messages.user.email').':' ,['class' => 'form-label required']) }}
-        {{ Form::email('email', $user->email,['class' => 'form-control','placeholder' =>  __('messages.web.email')]) }}
+        {{ html()->label()->for('Email')->text(__('messages.user.email').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->email('email', $user->email)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.web.email')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('employee_id', __('Employee ID').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('employee_id', $user->employee_id,['class' => 'form-control','placeholder' => __('Employee ID'),'required']) }}
+        {{ html()->label()->for('employee_id')->text(__('Employee ID').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('employee_id', $user->employee_id)->attributes(['class' => 'form-control', 'placeholder' => __('Employee ID'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Contact',__('messages.user.contact_number').':' ,['class' => 'form-label']) }}
-        {{ Form::text('contact', $user->contact,['class' => 'form-control','data-ph-phone' => 'true','placeholder' =>  __('messages.patient.contact_no')]) }}
+        {{ html()->label()->for('Contact')->text(__('messages.user.contact_number').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('contact', $user->contact)->forgetAttribute('id')->attributes(['class' => 'form-control', 'data-ph-phone' => 'true', 'placeholder' =>  __('messages.patient.contact_no')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('DOB',__('messages.doctor.dob').':' ,['class' => 'form-label']) }}
-        {{ Form::text('dob', $user->dob,['class' => 'form-control doctor-dob','placeholder' => __('messages.doctor.dob'), 'id'=>'dob']) }}
+        {{ html()->label()->for('DOB')->text(__('messages.doctor.dob').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('dob', $user->dob)->attributes(['class' => 'form-control doctor-dob', 'placeholder' => __('messages.doctor.dob'), 'id'=>'dob']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Specialization',__('messages.doctor.specialization').':' ,['class' => 'form-label required']) }}
-        {{ Form::select('specializations[]',$data['specializations'], $data['doctorSpecializations'],['class' => 'io-select2 form-select', 'data-control'=>"select2", 'multiple']) }}
+        {{ html()->label()->for('Specialization')->text(__('messages.doctor.specialization').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->select('specializations[]', $data['specializations'], old('specializations', $data['doctorSpecializations']))->multiple()->forgetAttribute('id')->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2"]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Experience', __('messages.doctor.experience').':', ['class' => 'form-label']) }}
-        {{ Form::number('experience', $doctor->experience, ['class' => 'form-control', 'placeholder' => __('messages.doctor.experience'),'step'=>'any','min'=>'0']) }}
+        {{ html()->label()->for('Experience')->text(__('messages.doctor.experience').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->number('experience', $doctor->experience)->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.experience'), 'step'=>'any', 'min'=>'0']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('prc_license_number', __('PRC/Medical License Number').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('prc_license_number', $doctor->prc_license_number, ['class' => 'form-control', 'placeholder' => __('PRC/Medical License Number'), 'required']) }}
+        {{ html()->label()->for('prc_license_number')->text(__('PRC/Medical License Number').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('prc_license_number', $doctor->prc_license_number)->attributes(['class' => 'form-control', 'placeholder' => __('PRC/Medical License Number'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('ptr_number', __('PTR Number').':' ,['class' => 'form-label required']) }}
-        {{ Form::text('ptr_number', $doctor->ptr_number, ['class' => 'form-control', 'placeholder' => __('Professional Tax Receipt Number'), 'required']) }}
+        {{ html()->label()->for('ptr_number')->text(__('PTR Number').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('ptr_number', $doctor->ptr_number)->attributes(['class' => 'form-control', 'placeholder' => __('Professional Tax Receipt Number'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('s2_license_number', __('S2 License Number').':' ,['class' => 'form-label']) }}
-        {{ Form::text('s2_license_number', $doctor->s2_license_number, ['class' => 'form-control', 'placeholder' => __('S2 License Number (if applicable)')]) }}
+        {{ html()->label()->for('s2_license_number')->text(__('S2 License Number').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('s2_license_number', $doctor->s2_license_number)->attributes(['class' => 'form-control', 'placeholder' => __('S2 License Number (if applicable)')]) }}
     </div>
     <div class="col-md-12 mb-5">
-        {{ Form::label('consultation_hours', __('Consultation Hours').':' ,['class' => 'form-label required']) }}
-        {{ Form::textarea('consultation_hours', $doctor->consultation_hours, ['class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Mon-Wed 8:00AM-12:00PM, Thu-Fri 1:00PM-5:00PM'), 'required']) }}
+        {{ html()->label()->for('consultation_hours')->text(__('Consultation Hours').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->textarea('consultation_hours')->text(html()->value('consultation_hours', $doctor->consultation_hours))->attributes(['cols' => 50])->attributes(['class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Mon-Wed 8:00AM-12:00PM, Thu-Fri 1:00PM-5:00PM'), 'required']) }}
     </div>
     <div class="col-md-6 mb-5">
         <label class="form-label required">
@@ -63,7 +63,7 @@
     </div>
     <div class="col-md-6 mb-5">
         <label class="form-label">{{ __('messages.patient.blood_type').':' }}</label>
-        {{ Form::select('blood_type', $bloodGroup , $user->blood_type, ['class' => 'io-select2 form-select', 'data-control'=>"select2",'placeholder' => __('messages.doctor.select_blood_type')]) }}
+        {{ html()->select('blood_type', $bloodGroup, $user->blood_type)->placeholder(__('messages.doctor.select_blood_type'))->forgetAttribute('id')->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2"]) }}
     </div>
     <div class="col-md-6 mb-5 d-none">
         <div class="mb-3" io-image-input="true">
@@ -97,29 +97,28 @@
 
 <div class="row gx-10 mb-5">
     <div class="col-md-6 mb-5">
-        {{ Form::label('Address 1', __('messages.doctor.address1').':', ['class' => 'form-label']) }}
-        {{ Form::text('address1', isset($user->address->address1) ? $user->address->address1 : '', ['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address1')]) }}
+        {{ html()->label()->for('Address 1')->text(__('messages.doctor.address1').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('address1', isset($user->address->address1) ? $user->address->address1 : '')->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address1')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Permanent Address', __('messages.doctor.address2').':', ['class' => 'form-label']) }}
-        {{ Form::text('address2', isset($user->address->address2) ? $user->address->address2 : '', ['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address2')]) }}
+        {{ html()->label()->for('Permanent Address')->text(__('messages.doctor.address2').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('address2', isset($user->address->address2) ? $user->address->address2 : '')->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' =>  __('messages.doctor.address2')]) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('Country',__('messages.doctor.country').':' ,['class' => 'form-label']) }}
-        {{ Form::select('country_id', $countries, isset($user->address->country_id) ? $user->address->country_id:null,
-['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=>'editDoctorCountryId','placeholder' => __('messages.common.select_country')]) }}
+        {{ html()->label()->for('Country')->text(__('messages.doctor.country').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->select('country_id', $countries, isset($user->address->country_id) ? $user->address->country_id:null)->placeholder(__('messages.common.select_country'))->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=>'editDoctorCountryId']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('State',__('messages.doctor.province').':' ,['class' => 'form-label']) }}
-        {{ Form::select('state_id', (isset($state) && $state!=null) ? $state:[], isset($user->address->state_id) ? $user->address->state_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId','placeholder' => __('messages.common.province')]) }}
+        {{ html()->label()->for('State')->text(__('messages.doctor.province').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->select('state_id', (isset($state) && $state!=null) ? $state:[], isset($user->address->state_id) ? $user->address->state_id:null)->placeholder(__('messages.common.province'))->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorStateId']) }}
     </div>
     <div class="col-md-6 mb-5">
-        {{ Form::label('City',__('City/Municipality').':' ,['class' => 'form-label']) }}
-        {{ Form::select('city_id', (isset($cities) && $cities!=null) ? $cities:[], isset($user->address->city_id) ? $user->address->city_id:null, ['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorCityId','placeholder' => __('City/Municipality')]) }}
+        {{ html()->label()->for('City')->text(__('City/Municipality').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->select('city_id', (isset($cities) && $cities!=null) ? $cities:[], isset($user->address->city_id) ? $user->address->city_id:null)->placeholder(__('City/Municipality'))->attributes(['class' => 'io-select2 form-select', 'data-control'=>"select2", 'id'=> 'editDoctorCityId']) }}
     </div>
     <div class="col-md-6">
-        {{ Form::label('Postal Code', __('messages.doctor.postal_code').':', ['class' => 'form-label']) }}
-        {{ Form::text('postal_code', isset($user->address->postal_code) ? $user->address->postal_code : '', ['class' => 'form-control', 'placeholder' => __('messages.doctor.postal_code')]) }}
+        {{ html()->label()->for('Postal Code')->text(__('messages.doctor.postal_code').':')->attributes(['class' => 'form-label']) }}
+        {{ html()->text('postal_code', isset($user->address->postal_code) ? $user->address->postal_code : '')->forgetAttribute('id')->attributes(['class' => 'form-control', 'placeholder' => __('messages.doctor.postal_code')]) }}
     </div>
 </div>
 <div>
@@ -130,16 +129,16 @@
 <input type="hidden" name="deletedQualifications" value="" id="deletedQualifications">
 <div class="row showQualification w-100">
     <div class="col-md-4 mb-5">
-        {{ Form::label('Degree', __('messages.doctor.degree').':', ['class' => 'form-label required']) }}
-        {{ Form::text('degree', null, ['class' => 'form-control degree', 'placeholder' => __('messages.doctor.degree'), 'id'=>'degree']) }}
+        {{ html()->label()->for('Degree')->text(__('messages.doctor.degree').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('degree', null)->attributes(['class' => 'form-control degree', 'placeholder' => __('messages.doctor.degree'), 'id'=>'degree']) }}
     </div>
     <div class="col-md-4 mb-5">
-        {{ Form::label('university', __('messages.doctor.university').':', ['class' => 'form-label required']) }}
-        {{ Form::text('university', null, ['class' => 'form-control university', 'placeholder' => __('messages.doctor.university'), 'id'=>'university']) }}
+        {{ html()->label()->for('university')->text(__('messages.doctor.university').':')->attributes(['class' => 'form-label required']) }}
+        {{ html()->text('university', null)->attributes(['class' => 'form-control university', 'placeholder' => __('messages.doctor.university'), 'id'=>'university']) }}
     </div>
     <div class="col-md-4 mb-5">
         <label class="form-label required">{{__('messages.doctor.year')}}:</label>
-        {{ Form::select('year', $years,!empty($qualifications->year) ? $qualifications->year : null, ['class' => 'io-select2 form-select year', 'data-control'=>"select2", 'id'=> 'year', 'placeholder' =>  __('messages.doctor.select_year')]) }}
+        {{ html()->select('year', $years, !empty($qualifications->year) ? $qualifications->year : null)->placeholder(__('messages.doctor.select_year'))->attributes(['class' => 'io-select2 form-select year', 'data-control'=>"select2", 'id'=> 'year']) }}
     </div>
     <div class="mb-5 col-md-4">
         <button type="button" class="btn btn-primary me-3"

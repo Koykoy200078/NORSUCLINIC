@@ -17,24 +17,18 @@
     </div>
     <div class="card">
         <div class="card-body">
-            {{ Form::model($patient, ['route' => [
-                getRouteNameByRole('patients.update'),
-                $patient->id], 'method' => 'patch', 'files' => 'true','id'=>'editPatientForm']) }}
-            {{ Form::hidden('is_edit', true,['id' => 'staffIsEdit']) }}
-            {{ Form::hidden('is_edit', true,['id' => 'patientIsEdit']) }}
-            {{ Form::hidden('edit_patient_country_id', isset($patient->address->country_id) ? $patient->address->country_id:null,
-                            ['id' => 'editPatientCountryId']) }}
-            {{ Form::hidden('edit_patient_state_id', isset($patient->address->state_id) ? $patient->address->state_id:null,
-                            ['id' => 'editPatientStateId']) }}
-            {{ Form::hidden('edit_patient_city_id', isset($patient->address->city_id) ? $patient->address->city_id:null,
-                            ['id' => 'editPatientCityId']) }}
-            {{ Form::hidden('edit_patient_barangay_id', isset($patient->address->barangay_id) ? $patient->address->barangay_id:null,
-                            ['id' => 'editPatientBarangayId']) }}
-            {{ Form::hidden('backgroundImg',asset('web/media/avatars/male.png'),['id' => 'patientBackgroundImg']) }}
+            {{ html()->modelForm($patient, 'patch', route(getRouteNameByRole('patients.update'), [$patient->id]))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->attributes(['id'=>'editPatientForm'])->open() }}
+            {{ html()->hidden('is_edit', true)->attributes(['id' => 'staffIsEdit']) }}
+            {{ html()->hidden('is_edit', true)->attributes(['id' => 'patientIsEdit']) }}
+            {{ html()->hidden('edit_patient_country_id', isset($patient->address->country_id) ? $patient->address->country_id:null)->attributes(['id' => 'editPatientCountryId']) }}
+            {{ html()->hidden('edit_patient_state_id', isset($patient->address->state_id) ? $patient->address->state_id:null)->attributes(['id' => 'editPatientStateId']) }}
+            {{ html()->hidden('edit_patient_city_id', isset($patient->address->city_id) ? $patient->address->city_id:null)->attributes(['id' => 'editPatientCityId']) }}
+            {{ html()->hidden('edit_patient_barangay_id', isset($patient->address->barangay_id) ? $patient->address->barangay_id:null)->attributes(['id' => 'editPatientBarangayId']) }}
+            {{ html()->hidden('backgroundImg', asset('web/media/avatars/male.png'))->attributes(['id' => 'patientBackgroundImg']) }}
             <input type="hidden" id="existingYearLevelId" value="{{ !empty($patient->user) ? $patient->user->year_level_id : '' }}">
             <input type="hidden" id="existingPositionType" value="{{ !empty($patient->user) ? $patient->user->position_type : '' }}">
             @include('patients.fields')
-            {{ Form::close() }}
+            {{ html()->closeModelForm() }}
         </div>
     </div>
 </div>

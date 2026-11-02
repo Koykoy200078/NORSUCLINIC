@@ -27,9 +27,9 @@
                     </div>
                     <div class="card">
                         <div class="card-body p-12">
-                            {{ Form::open(['route' => 'banner.store','files' => 'true']) }}
+                            {{ html()->form('POST', route('banner.store'))->attribute('accept-charset', 'UTF-8')->acceptsFiles()->open() }}
                                 @include('fronts.sliders.fields')
-                                {{ Form::close() }}
+                                {{ html()->closeModelForm() }}
                         </div>
                     </div>
                 </div>

@@ -6,9 +6,9 @@
 <div class="container-fluid">
     <div class="d-flex flex-column">
         @include('flash::message')
-        {{Form::hidden('medicineUrl',route('medicines.index'),['id'=>'indexMedicineUrl'])}}
-        {{ Form::hidden('medicines-show-modal', url('medicines-show-modal'), ['id'=>'medicinesShowModal']) }}
-        {{ Form::hidden('medicineLang',__('messages.delete.medicine'), ['id' => 'medicineLang']) }}
+        {{html()->hidden('medicineUrl', route('medicines.index'))->attributes(['id'=>'indexMedicineUrl'])}}
+        {{ html()->hidden('medicines-show-modal', url('medicines-show-modal'))->attributes(['id'=>'medicinesShowModal']) }}
+        {{ html()->hidden('medicineLang', __('messages.delete.medicine'))->attributes(['id' => 'medicineLang']) }}
         <livewire:stock-in-table :lazy="false" />
         @include('medicines.show_modal')
     </div>
