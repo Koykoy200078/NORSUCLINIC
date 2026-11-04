@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\On;
 
 #[Lazy]
 class DoctorTable extends TableComponent
@@ -25,7 +27,7 @@ class DoctorTable extends TableComponent
 
     public array $FilterComponent = ['doctors.components.status_filter', User::STATUS];
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage', 'changeStatusFilter'];
+    use ResetsPageOnEvent;
 
     public string $statusFilter = '';
 
@@ -93,6 +95,7 @@ class DoctorTable extends TableComponent
         return view('livewire.listing_skeleton')->render();
     }
 
+    #[On('changeStatusFilter')]
     public function changeStatusFilter($value): void
     {
         $this->statusFilter = $value;

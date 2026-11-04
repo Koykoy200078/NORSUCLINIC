@@ -5,12 +5,10 @@ namespace Tests\Feature\Regression;
 use App\Livewire\BarangayTable;
 use App\Livewire\CityTable;
 use App\Livewire\CountriesTable;
-use App\Livewire\MedicineAvailabilityTable;
 use App\Livewire\MedicineCategoryDetailsTable;
 use App\Livewire\MedicineCategoryTable;
 use App\Livewire\MedicineGenericDetailsTable;
 use App\Livewire\MedicineGenericTable;
-use App\Livewire\ProvinceTable;
 use App\Livewire\RoleTable;
 use App\Livewire\SpecializationTable;
 use App\Livewire\StateTable;
@@ -324,13 +322,11 @@ class SearchBehaviourTest extends TestCase
             [CityTable::class, []],
             [BarangayTable::class, []],
             [CountriesTable::class, []],
-            [ProvinceTable::class, []],
             [StateTable::class, []],
             [RoleTable::class, []],
             [SpecializationTable::class, []],
             [MedicineCategoryTable::class, []],
             [MedicineGenericTable::class, []],
-            [MedicineAvailabilityTable::class, []],
             [StockInTable::class, []],
             [UsedMedicineTable::class, []],
             [MedicineCategoryDetailsTable::class, ['categoryDetails' => '1']],

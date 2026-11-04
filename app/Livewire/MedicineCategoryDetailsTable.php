@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +12,7 @@ class MedicineCategoryDetailsTable extends TableComponent
 {
     protected $model = Medicine::class;
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public $categoryDetails;
 

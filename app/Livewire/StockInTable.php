@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\StockIn;
 use App\Support\SearchTerm;
@@ -27,7 +28,7 @@ class StockInTable extends TableComponent
 
     public string $buttonComponent = 'medicine-availabilities.action';
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'clearSearch', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

@@ -236,9 +236,6 @@
     document.addEventListener("DOMContentLoaded", function () {
         init(document);
     });
-    document.addEventListener("turbo:load", function () {
-        init(document);
-    });
 
     // Inputs added later (modals/partials loaded over AJAX).
     if (typeof MutationObserver === "function") {

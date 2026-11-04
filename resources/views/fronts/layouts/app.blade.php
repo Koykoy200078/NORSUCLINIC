@@ -35,13 +35,13 @@
     <script src="{{ asset('assets/js/bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
 
     <!-- JavaScript Variables -->
-    <script data-turbo-eval="false">
+    <script>
         let isSetFirstFocus = false;
         let csrfToken = "{{ csrf_token() }}";
     </script>
 
     <!-- Language Configuration -->
-    <script data-turbo-eval="false">
+    <script>
         let checkLanguageSession = '{{ checkLanguageSession() }}';
         Lang.setLocale(checkLanguageSession);
     </script>

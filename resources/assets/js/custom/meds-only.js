@@ -1,7 +1,6 @@
 // Meds Only form (patients who only come for medicine): the registered-patient search, and one or many drug rows.
 // The server decides everything that matters (stock, duplicates, validation); this only makes the form easy to fill.
 document.addEventListener('DOMContentLoaded', initMedsOnlyForm);
-document.addEventListener('turbo:load', initMedsOnlyForm);
 
 function initMedsOnlyForm() {
     const form = document.getElementById('meds-only-form');

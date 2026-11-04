@@ -145,14 +145,14 @@
         data-menu-url="{{ route('live.menu') }}"
         data-modules="{{ implode(',', \App\Support\Realtime::modulesFor($liveUser)) }}"
         data-page-modules="{{ implode(',', \App\Support\Realtime::pageModules(null, $liveUser)) }}"></div>
-    <script data-turbo-eval="false" src="{{ mix('js/realtime.js') }}"></script>
+    <script src="{{ mix('js/realtime.js') }}"></script>
 
     <!-- JavaScript Variables -->
     @php
     $bloodGroupArr = json_encode(App\Models\Doctor::BLOOD_TYPE_ARRAY);
     $bloodGroupArr = html_entity_decode($bloodGroupArr);
     @endphp
-    <script data-turbo-eval="false">
+    <script>
         let usersRole = "{{ !empty(getLogInUser()->roles->first()) ? getLogInUser()->roles->first()->name : '' }}";
         window.currentPanel = @json(strtok(getDashboardRouteName() ?? 'patients.dashboard', '.'));
         window.defaultPassword = @json(\App\Models\User::DEFAULT_PASSWORD);

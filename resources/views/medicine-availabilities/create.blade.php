@@ -28,7 +28,7 @@
             <div class="card-body">
                 {{html()->hidden('uniqueId', 2)->attributes(['id'=>'purchaseUniqueId'])}}
                 {{html()->hidden('associateMedicines', json_encode($medicineList))->forgetAttribute('id')->attributes(['class'=>'associatePurchaseMedicines'])}}
-                {{ html()->form('POST', route(getRouteNameByRole('stock-in.store')))->attribute('accept-charset', 'UTF-8')->attributes(['data-turbo'=>'false', 'id'=>'purchaseMedicineFormId'])->open() }}
+                {{ html()->form('POST', route(getRouteNameByRole('stock-in.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id'=>'purchaseMedicineFormId'])->open() }}
                 <div class="row">
                     @include('medicine-availabilities.fields')
                 </div>

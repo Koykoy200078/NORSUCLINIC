@@ -22,9 +22,7 @@ listenChange('#checkAllPermission', function (event) {
 })
 listenChange('.role-permission', updateRoleSelectAll)
 
-// Set the box right away: the page is a normal full page load (Turbo is not part of this bundle, so "turbo:load" never
-// fires) and the form is already in the page when this script runs. The two events cover an early script and a Turbo
-// visit if Turbo is ever added.
+// Set the box right away: the page is a normal full page load and the form is already in the page when this script runs.
+// The event covers a script that runs before the form is drawn.
 updateRoleSelectAll()
 document.addEventListener('DOMContentLoaded', updateRoleSelectAll)
-document.addEventListener('turbo:load', updateRoleSelectAll)

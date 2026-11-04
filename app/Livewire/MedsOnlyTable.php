@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\DispenseRecord;
 use App\Services\Reports\ReportQueries;
@@ -19,7 +20,7 @@ class MedsOnlyTable extends TableComponent
 {
     protected $model = DispenseRecord::class;
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

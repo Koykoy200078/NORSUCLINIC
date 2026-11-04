@@ -16,10 +16,6 @@ use App\Models\RequestDocuments;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Patient Queue Related API Routes
 // These live in the stateless "api" group, where `auth:web` never sees the login session, so the
 // queue-creation preview always got "Unauthenticated". Run them through the session ("web")

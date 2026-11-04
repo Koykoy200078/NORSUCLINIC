@@ -66,11 +66,6 @@ trait SeedsClinicTableLists
         return $this->seeded();
     }
 
-    protected function seedMedicineAvailabilityTable(): array
-    {
-        return $this->seedStockInTable();
-    }
-
     /** @return array{0: array<int, Patient>, 1: User, 2: array<int, Medicine>} */
     private function peopleAndMedicines(): array
     {

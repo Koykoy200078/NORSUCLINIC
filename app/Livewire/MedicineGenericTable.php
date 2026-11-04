@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Generic;
 use App\Support\Tables\Column;
@@ -16,7 +17,7 @@ class MedicineGenericTable extends TableComponent
 
     public string $buttonComponent = 'generics.add-button';
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

@@ -63,7 +63,6 @@ listenClick('#languageChangeBtn', function () {
             $('#changeLanguageModal').modal('hide');
             displaySuccessMessage(result.message);
             window.location.reload();
-            // Turbo.visit(window.location.href);
         },
         error: function error(result) {
             displayErrorMessage(result.responseJSON.message);

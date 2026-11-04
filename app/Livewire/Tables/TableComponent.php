@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Collection;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use LogicException;
@@ -32,7 +33,12 @@ use LogicException;
  *
  * A list that should load after the page (a skeleton first) declares #[Lazy] on its own class: Livewire reads the
  * attributes of the class itself, not of its parents.
+ *
+ * Every list redraws on the "refresh" event the page's scripts dispatch (a class-level #[On] is Livewire's `$refresh`, and
+ * it is inherited). A list that also goes back to its first page on "resetPage" uses ResetsPageOnEvent; one that has
+ * filters names its handler methods with #[On] as well.
  */
+#[On('refresh')]
 abstract class TableComponent extends Component
 {
     use WithPagination;
@@ -56,8 +62,6 @@ abstract class TableComponent extends Component
     public bool $showButtonOnHeader = false;
 
     public string $buttonComponent = '';
-
-    protected $listeners = ['refresh' => '$refresh'];
 
     /** @var class-string<Model>|null */
     protected $model = null;

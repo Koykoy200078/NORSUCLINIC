@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,7 @@ class MedicineGenericDetailsTable extends TableComponent
 
     public $genericDetails;
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function mount(string $genericDetails): void
     {

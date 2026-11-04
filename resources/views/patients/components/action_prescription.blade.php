@@ -9,7 +9,7 @@ $patientUser = $row->user;
         getRouteByRole('prescriptions.create', ['patientId' => $row->id])
     }}" title="Create Prescription" data-bs-toggle="tooltip"
         data-bs-original-title="Create Prescription"
-        class="dropdown-item px-2 text-success fs-2" data-turbolinks="false" role="menuitem" tabindex="-1">
+        class="dropdown-item px-2 text-success fs-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-file-prescription"></i>
         <span>Create Prescription</span>
     </a>

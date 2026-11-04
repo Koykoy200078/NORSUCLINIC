@@ -200,48 +200,6 @@ listenSubmit("#editDoctorForm", function (e) {
     // so the server never receives the request without the AJAX-appended fields
     e.preventDefault();
 
-    let twitterUrl = $("#twitterUrl").val() || "";
-    let linkedinUrl = $("#linkedinUrl").val() || "";
-    let instagramUrl = $("#instagramUrl").val() || "";
-    let twitterExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i,
-    );
-    let linkedinExp = new RegExp(
-        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i,
-    );
-    let instagramExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i,
-    );
-
-    let twitterCheck =
-        twitterUrl == "" ? true : twitterUrl.match(twitterExp) ? true : false;
-    if (!twitterCheck) {
-        displayErrorMessage(Lang.get("js.valid_twitter"));
-        return;
-    }
-
-    let linkedInCheck =
-        linkedinUrl == ""
-            ? true
-            : linkedinUrl.match(linkedinExp)
-              ? true
-              : false;
-    if (!linkedInCheck) {
-        displayErrorMessage(Lang.get("js.valid_linkedin"));
-        return;
-    }
-
-    let instagramCheck =
-        instagramUrl == ""
-            ? true
-            : instagramUrl.match(instagramExp)
-              ? true
-              : false;
-    if (!instagramCheck) {
-        displayErrorMessage(Lang.get("js.valid_instagram"));
-        return;
-    }
-
     let doctorFormData = new FormData($(this)[0]);
     let editDoctorId = $("#editDoctorId").val();
 
@@ -356,63 +314,6 @@ listenChange("#editDoctorStateId", function () {
 });
 
 // Edit form: state/city dropdowns are server-rendered — no need to re-trigger AJAX on page load
-
-listenKeyup("#twitterUrl", function () {
-    this.value = this.value.toLowerCase();
-});
-
-listenKeyup("#linkedinUrl", function () {
-    this.value = this.value.toLowerCase();
-});
-
-listenKeyup("#instagramUrl", function () {
-    this.value = this.value.toLowerCase();
-});
-
-listenSubmit("#createDoctorForm", function () {
-    let twitterUrl = $("#twitterUrl").val();
-    let linkedinUrl = $("#linkedinUrl").val();
-    let instagramUrl = $("#instagramUrl").val();
-    let twitterExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter.[a-z]{2,3}\/?.*/i,
-    );
-    let linkedinExp = new RegExp(
-        /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i,
-    );
-    let instagramExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)instagram.[a-z]{2,3}\/?.*/i,
-    );
-
-    let twitterCheck =
-        twitterUrl == "" ? true : twitterUrl.match(twitterExp) ? true : false;
-    if (!twitterCheck) {
-        displayErrorMessage(Lang.get("js.valid_twitter"));
-        return false;
-    }
-
-    let linkedInCheck =
-        linkedinUrl == ""
-            ? true
-            : linkedinUrl.match(linkedinExp)
-              ? true
-              : false;
-    if (!linkedInCheck) {
-        displayErrorMessage(Lang.get("js.valid_linkedin"));
-        return false;
-    }
-
-    let instagramCheck =
-        instagramUrl == ""
-            ? true
-            : instagramUrl.match(instagramExp)
-              ? true
-              : false;
-    if (!instagramCheck) {
-        displayErrorMessage(Lang.get("js.valid_instagram"));
-        return false;
-    }
-
-});
 
 listenClick(".removeAvatarIcon", function () {
     $("#bgImage").css("background-image", "");

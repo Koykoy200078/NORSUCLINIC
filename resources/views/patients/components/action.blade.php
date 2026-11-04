@@ -11,7 +11,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     @if($patientUser && !$row->trashed() && (isRole('clinic_admin') || isRole('staff') || isRole('doctor')) && canUseModule('prescriptions'))
     <a href="{{ getRouteByRole('prescriptions.create', ['patientId' => $row->id]) }}" title="Create Prescription" data-bs-toggle="tooltip"
         data-bs-original-title="Create Prescription"
-        class="dropdown-item px-2 text-success fs-2" data-turbolinks="false" role="menuitem" tabindex="-1">
+        class="dropdown-item px-2 text-success fs-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-file-prescription"></i>
         <span>Create Prescription</span>
     </a>
@@ -34,7 +34,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     <!-- View Select Patient -->
     <a href="{{ getRouteByRole('patients.showMyHistory', ['patient' => $row->id]) }}" title="View Patient" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.edit') }}"
-        class="dropdown-item px-2 text-primary fs-2" data-turbolinks="false" role="menuitem" tabindex="-1">
+        class="dropdown-item px-2 text-primary fs-2" role="menuitem" tabindex="-1">
         <i class="fa fa-eye" aria-hidden="true"></i>
         <span>View Patient</span>
     </a>
@@ -42,7 +42,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     <!-- End View Select Patient -->
     <a href="{{ getRouteByRole('patients.edit', ['patient' => $row->id]) }}" title="{{ __('messages.common.edit') }}" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('messages.common.edit') }}"
-        class="dropdown-item px-2 text-primary fs-2" data-turbolinks="false" role="menuitem" tabindex="-1">
+        class="dropdown-item px-2 text-primary fs-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i>
         <span>{{ __('messages.common.edit') }}</span>
     </a>
@@ -51,7 +51,7 @@ $isPrescriptionModule = request()->query('module') === 'prescription';
     @if((isRole('clinic_admin') || isRole('staff') || isRole('doctor')) && canUseModule('prescriptions'))
     <a href="{{ getRouteByRole('prescriptions.create', ['patientId' => $row->id]) }}" title="Create Prescription" data-bs-toggle="tooltip"
         data-bs-original-title="Create Prescription"
-        class="dropdown-item px-2 text-success fs-2" data-turbolinks="false" role="menuitem" tabindex="-1">
+        class="dropdown-item px-2 text-success fs-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-file-prescription"></i>
         <span>Create Prescription</span>
     </a>

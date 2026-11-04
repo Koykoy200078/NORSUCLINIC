@@ -520,7 +520,6 @@ listenSubmit("#MedicinebillForm", function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    // Turbo.visit(route("medicine-history.index")); // true
                     window.location.href = panelRoute(
                         "medicine-dispensing.index",
                     );

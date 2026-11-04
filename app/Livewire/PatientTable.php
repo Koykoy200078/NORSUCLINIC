@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use Carbon\Carbon;
 use App\Models\Patient;
@@ -9,6 +10,7 @@ use App\Support\SearchTerm;
 use Illuminate\Database\Eloquent\Builder;
 use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\On;
 
 #[Lazy]
 class PatientTable extends TableComponent
@@ -27,7 +29,7 @@ class PatientTable extends TableComponent
 
     public array $FilterComponent = ['patients.components.filter', Patient::PATIENT_FILTER];
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage', 'changeDateFilter', 'changeStatusFilter'];
+    use ResetsPageOnEvent;
 
     public string $dateFilter = '';
 
@@ -125,6 +127,7 @@ class PatientTable extends TableComponent
     /**
      * Handle the date filter change.
      */
+    #[On('changeDateFilter')]
     public function changeDateFilter($date)
     {
         $this->dateFilter = $date;
@@ -132,6 +135,7 @@ class PatientTable extends TableComponent
         $this->resetPagination();
     }
 
+    #[On('changeStatusFilter')]
     public function changeStatusFilter($payload = null): void
     {
         $value = $this->statusFilter ?: 'active';

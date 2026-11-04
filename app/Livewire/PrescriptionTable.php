@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\Prescription;
@@ -20,7 +21,7 @@ class PrescriptionTable extends TableComponent
 
     public string $buttonComponent = 'prescriptions.add-button';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public $doctor;
 

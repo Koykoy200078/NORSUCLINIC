@@ -72,11 +72,11 @@ class Counter extends Component
 
 - `wire:key` on every element rendered in a loop.
 - `wire:loading` / `wire:target` for loading states; `wire:model.live` only where instant updates are needed (default is deferred in v3).
-- Events: `$this->dispatch('name')` (v3) and `#[On('name')]` listeners; tables listen for `refresh`.
+- Events: `$this->dispatch('name')` (v3) and `#[On('name')]` listeners, never the `$listeners` property (a class-level `#[On('refresh')]` is the `$refresh` action and is inherited; a list that resets its page on `resetPage` uses the `ResetsPageOnEvent` trait; every list's events are pinned by `LivewireListenersTest`).
 - `#[Url]` for state kept in the query string (validate it in `mount()`; see `MedicineDispensingScreen`).
 - Real-time (Phase 7, done): no `wire:poll` and no `setInterval` reloads. A committed write to a clinic table is announced
   (`App\Support\Realtime`, table -> module) and the open screens redraw: tables and components listen for `refresh`
-  (`protected $listeners = ['refresh' => '$refresh']` on a non-table component), plain pages listen for the window event
+  (a class-level `#[On('refresh')]` on a non-table component), plain pages listen for the window event
   `clinic:live-refresh`. A new table needs a row in `Realtime::TABLES`; a new page a row in `Realtime::PAGES`. Never make a page
   write on read (it would refresh itself for ever: `test_opening_a_screen_announces_nothing`). Do not add `wire:poll` timers.
 

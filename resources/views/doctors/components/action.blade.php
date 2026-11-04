@@ -19,7 +19,7 @@
     <a href="{{ 
         getRouteByRole('doctors.edit', [$row->id])
     }}" title="{{ __('messages.common.edit') }}" class="dropdown-item px-2 text-primary fs-2 doctor-edit-btn" data-bs-toggle="tooltip"
-        data-bs-original-title="Edit" data-turbolinks="false" role="menuitem" tabindex="-1">
+        data-bs-original-title="Edit" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i>
         <span>{{ __('messages.common.edit') }}</span>
     </a>

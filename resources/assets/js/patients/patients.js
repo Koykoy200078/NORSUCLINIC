@@ -284,7 +284,6 @@ listenClick(".patient-email-verification", function (event) {
             displaySuccessMessage(result.message);
             setTimeout(function () {
                 window.location.reload();
-                // Turbo.visit(window.location.href);
             }, 5000);
         },
         error: function (result) {

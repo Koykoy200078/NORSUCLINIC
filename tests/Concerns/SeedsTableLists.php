@@ -66,11 +66,6 @@ trait SeedsTableLists
         return $this->seeded();
     }
 
-    protected function seedProvinceTable(): array
-    {
-        return $this->seedStateTable();
-    }
-
     protected function seedCityTable(): array
     {
         $country = Country::create(['name' => 'Philippines', 'short_code' => 'PH']);

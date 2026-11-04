@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\User;
 use App\Support\SearchTerm;
@@ -18,7 +19,7 @@ class StaffTable extends TableComponent
 
     public string $buttonComponent = 'staffs.components.add_button';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

@@ -4,13 +4,13 @@ namespace App\Livewire;
 
 use App\Repositories\DashboardRepository;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
+/** Redraws on the real-time notice of a module this page shows (resources/assets/js/realtime), and every minute while it is down. */
+#[On('refresh')]
 class StaffDashboard extends Component
 {
-    /** Redraws on the real-time notice of a module this page shows (resources/assets/js/realtime), and every minute while it is down. */
-    protected $listeners = ['refresh' => '$refresh'];
-
     public $totalDoctorCount;
 
     public $totalPatientCount;

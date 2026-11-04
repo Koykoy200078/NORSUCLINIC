@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Barangay;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ class BarangayTable extends TableComponent
 
     public string $buttonComponent = 'barangays.components.add_button';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

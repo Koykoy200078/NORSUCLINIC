@@ -27,14 +27,14 @@ use App\Services\Reports\MedsOnlyReportBuilder;
 use App\Services\Reports\YearlyInventoryReportBuilder;
 use App\Support\SearchTerm;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/** Redraws on the real-time notice of a module this page shows (resources/assets/js/realtime), and every minute while it is down. */
+#[On('refresh')]
 class ReportGeneration extends Component
 {
-    /** Redraws on the real-time notice of a module this page shows (resources/assets/js/realtime), and every minute while it is down. */
-    protected $listeners = ['refresh' => '$refresh'];
-
     use WithPagination;
 
     protected $paginationTheme = 'bootstrap';

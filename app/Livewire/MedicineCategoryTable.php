@@ -2,11 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
 use App\Support\Tables\Column;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\On;
 
 #[Lazy]
 class MedicineCategoryTable extends TableComponent
@@ -23,7 +25,7 @@ class MedicineCategoryTable extends TableComponent
 
     public array $FilterComponent = ['categories.filter-button', Category::STATUS_ARR];
 
-    protected $listeners = ['refresh' => '$refresh', 'changeFilter', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public string $statusFilter = '';
 
@@ -56,6 +58,7 @@ class MedicineCategoryTable extends TableComponent
         return view('livewire.medicine_category_skeleton')->render();
     }
 
+    #[On('changeFilter')]
     public function changeFilter($value)
     {
         $this->resetPage($this->getComputedPageName());

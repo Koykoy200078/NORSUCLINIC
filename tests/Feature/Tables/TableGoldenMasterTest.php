@@ -56,10 +56,10 @@ class TableGoldenMasterTest extends TestCase
     {
         $names = [
             // lookups
-            'BarangayTable', 'CityTable', 'CountriesTable', 'ProvinceTable', 'StateTable', 'SpecializationTable', 'SliderTable', 'RoleTable',
+            'BarangayTable', 'CityTable', 'CountriesTable', 'StateTable', 'SpecializationTable', 'SliderTable', 'RoleTable',
             'MedicineCategoryTable', 'MedicineCategoryDetailsTable', 'MedicineGenericTable', 'MedicineGenericDetailsTable',
             // inventory
-            'MedicineTable', 'StockInTable', 'StockOutTable', 'UsedMedicineTable', 'MedicineAvailabilityTable', 'MedicineDispenseTable',
+            'MedicineTable', 'StockInTable', 'StockOutTable', 'UsedMedicineTable', 'MedicineDispenseTable',
             // people
             'StaffTable', 'DoctorTable', 'PatientTable',
             // clinical

@@ -244,7 +244,7 @@ function start() {
     showBadge();
 
     if (state.started) {
-        // a new page in the same window (Turbo): the connection stays, the channels of this page are added
+        // start() already ran in this window: the connection stays, the channels of this page are added
         if (state.echo) {
             subscribeAll(cfg);
         }
@@ -277,7 +277,6 @@ window.clinicRealtime = {
 };
 
 document.addEventListener("DOMContentLoaded", start);
-document.addEventListener("turbo:load", start);
 if (document.readyState !== "loading") {
     start();
 }

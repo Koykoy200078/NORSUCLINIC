@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="modal-footer pt-0">
-                {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0', 'data-turbo' => 'false']) }}
+                {{ html()->input('submit', null, __('messages.common.save'))->attributes(['class' => 'btn btn-primary m-0']) }}
                 {{ html()->button(__('messages.common.discard'), 'button')->attributes(['class' => 'btn btn-secondary my-0 ms-5 me-0', 'data-bs-dismiss'=>'modal']) }}
             </div>
             {{ html()->closeModelForm() }}

@@ -672,18 +672,6 @@ function togglePassword() {
     });
 }
 
-document.addEventListener("turbo:before-cache", function () {
-    let currentSelect2 = ".select2-hidden-accessible";
-    $(currentSelect2).each(function () {
-        $(this).select2("destroy");
-    });
-
-    $(currentSelect2).each(function () {
-        $(this).select2();
-    });
-
-    $(".toast").addClass("d-none");
-});
 function setLoginUserLanguage() {
     let checkLanguageSession = $(".currentLanguage").val();
     Lang.setLocale(checkLanguageSession);

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\DispenseHistoryEntry;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +29,7 @@ class MedicineDispenseTable extends TableComponent
 
     public string $sourceFilter = '';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     protected $model = DispenseHistoryEntry::class;
 

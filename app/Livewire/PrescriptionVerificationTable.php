@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Doctor;
 use App\Models\Prescription;
@@ -17,7 +18,7 @@ class PrescriptionVerificationTable extends TableComponent
 
     public bool $showButtonOnHeader = false;
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

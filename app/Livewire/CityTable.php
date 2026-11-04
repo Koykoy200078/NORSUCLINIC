@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\City;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ class CityTable extends TableComponent
 
     public string $buttonComponent = 'cities.components.add_button';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

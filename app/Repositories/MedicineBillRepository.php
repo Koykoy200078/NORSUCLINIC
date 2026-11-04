@@ -7,7 +7,6 @@ use App\Models\DispenseRecord;
 use App\Models\Doctor;
 use App\Models\Medicine;
 use App\Models\Patient;
-// MedicineBill / SaleMedicine kept for backward compat — use DispenseRecord/DispenseRecordItem instead
 use App\Models\Setting;
 use App\Services\MedicineInventoryService;
 use Exception;

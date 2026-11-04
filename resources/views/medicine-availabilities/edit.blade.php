@@ -28,7 +28,7 @@
             <div class="card-body">
                 {{html()->hidden('uniqueId', count($medicineAvailability->purchasedMedcines) + 1)->attributes(['id'=>'purchaseUniqueId'])}}
                 {{html()->hidden('associateMedicines', json_encode($medicineList))->forgetAttribute('id')->attributes(['class'=>'associatePurchaseMedicines'])}}
-                {{ html()->modelForm($medicineAvailability, 'PUT', route(getRouteNameByRole('stock-in.update'), [$medicineAvailability->id]))->attribute('accept-charset', 'UTF-8')->attributes(['data-turbo'=>'false', 'id'=>'purchaseMedicineFormId'])->open() }}
+                {{ html()->modelForm($medicineAvailability, 'PUT', route(getRouteNameByRole('stock-in.update'), [$medicineAvailability->id]))->attribute('accept-charset', 'UTF-8')->attributes(['id'=>'purchaseMedicineFormId'])->open() }}
                 <div class="row">
                     @include('medicine-availabilities.edit_fields')
                 </div>

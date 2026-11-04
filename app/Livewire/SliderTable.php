@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,7 @@ class SliderTable extends TableComponent
 
     protected $model = Slider::class;
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

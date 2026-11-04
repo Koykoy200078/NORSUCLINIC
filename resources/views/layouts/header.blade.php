@@ -26,7 +26,7 @@
         @impersonating
         <li class="px-xxl-3 px-2">
             <span class="text-primary">
-                <a data-turbo-eval="false" href="{{ route('impersonate.leave') }}">
+                <a href="{{ route('impersonate.leave') }}">
                     <i class="fas fa-user-check fs-2"></i>
                 </a>
             </span>

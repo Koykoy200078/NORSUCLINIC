@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Tables\ResetsPageOnEvent;
 use App\Livewire\Tables\TableComponent;
 use App\Models\Specialization;
 use App\Support\Tables\Column;
@@ -17,7 +18,7 @@ class SpecializationTable extends TableComponent
 
     public string $buttonComponent = 'specializations.components.add_button';
 
-    protected $listeners = ['refresh' => '$refresh', 'resetPage'];
+    use ResetsPageOnEvent;
 
     public function configure(): void
     {

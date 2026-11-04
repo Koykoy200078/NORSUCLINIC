@@ -157,12 +157,9 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-        Spatie\Permission\PermissionServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-
         /*
-         * Package Service Providers...
+         * Package Service Providers: every package of this application registers itself through Composer's package
+         * discovery (bootstrap/cache/packages.php), so none is listed here.
          */
 
         /*
@@ -173,8 +170,6 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Lab404\Impersonate\ImpersonateServiceProvider::class,
-        Mariuzzo\LaravelJsLocalization\LaravelJsLocalizationServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -188,10 +183,7 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-        'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
-    ])->toArray(),
+    'aliases' => Facade::defaultAliases()->toArray(),
     'is_version' => env('IS_VERSION', true),
 
 ];
