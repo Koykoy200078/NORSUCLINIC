@@ -36,11 +36,11 @@ clinic PC.** Everything below was checked on the development laptop only.
 | 2 | Window: date, start time, who runs it, who is on the phone | After the 6:00 PM backup has run and the clinic is closed; Case B on a Friday evening or a weekend, so Monday is not the first test. |
 | 3 | How the code reaches the PC | Once the rehearsal passes, the owner approves: `git merge --ff-only upgrade/laravel-13` into `changes_v2` (it is 0 behind, so nothing is rewritten), push it, and tag `laravel-12-ready`. The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
 | 4 | Does the clinic PC have internet and Node 22 for the window? | Do not depend on it: build on the laptop and carry a bundle on a USB stick (section 2.2). |
-| 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | Recommended even in Case A: no migration runs, but it is the only way to see Laravel 12 working on the clinic's real records before the window (section 2.1). It is patient data: it goes into the laptop's `norsu_clinic` only, never into the repository or a document. If you skip it, the first run on real data is the window itself, so keep the rollback copy and the cut-off time strict. |
+| 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | **Answered 2026-11-05: the owner skips the rehearsal.** The first run of Laravel 12 on the clinic's real records is therefore the window itself: keep the rollback copy (step 4) and the cut-off time (step 13) strict, and run the whole smoke checklist. Section 2.1 stays as the optional procedure if this changes. |
 
 ## 2. Before the window (on the laptop)
 
-### 2.1 Rehearsal on a copy of the real data
+### 2.1 Rehearsal on a copy of the real data (optional: the owner skipped it on 2026-11-05)
 
 The laptop has no `norsu_clinic` database since the reformat, and the real-dump rehearsal of the upgrade is still **not done**. Do it with a
 backup taken on the clinic PC (`php artisan db:backup`, or Settings > Backups > Download):
@@ -75,7 +75,19 @@ npm ci ; npm run prod
 git checkout -- public/messages.js     # the build rewrites this tracked file
 ```
 
-Carry on the USB stick: `vendor\` and the build output `public\assets, backend, css, fonts, js, vendor, web, mix-manifest.json`. **Never**
+**Built 2026-11-05, nothing left to do here unless the branch changes:** `storage\app\deploy-bundle\laravel-12-37f5a62.zip` on the laptop
+(47 MB, 9,111 files; git ignores that folder), with `laravel-12-37f5a62.zip.sha256` beside it (SHA-256
+`A47BC0CFFB30621A10E3563739661CCA078B4AC1D838035050360DC5DF6716F5`). It was made from a clean clone of `37f5a62` with PHP 8.2.35
+(`composer install --no-dev --optimize-autoloader`) and Node 22.23.4 (`npm ci`, `npm run prod`). **Checked:** the zip hash matches; the 9,111
+unpacked files match the manifest inside the zip; laid over a fresh clone of `37f5a62` it boots Laravel 12.71.0 on PHP 8.2.35 with 505 routes,
+all views compile, `composer check-platform-reqs` and `composer audit --locked` are clean, and every one of the 799 files named in
+`mix-manifest.json` exists. **Copy both files to the USB stick, and after copying check the hash on the PC:**
+`Get-FileHash <zip> -Algorithm SHA256`. It stays valid for any later commit that leaves `composer.lock`, `package-lock.json`, `webpack.mix.js`
+and `resources\` alone: `git diff --stat 37f5a62..<tag> -- composer.lock package-lock.json webpack.mix.js resources` must print nothing,
+otherwise rebuild it (the commands are below).
+
+Carry on the USB stick: `vendor\` and the build output `public\assets, backend, css, fonts, js, web, mix-manifest.json` (the build does not
+make `public\vendor`; step 7 publishes the log-viewer assets there). **Never**
 carry or overwrite `public\uploads` (the patients' photos and logos live there) or `.env`.
 
 ### 2.3 Look at the clinic PC (5 minutes, nothing is changed)
@@ -101,7 +113,7 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 | 3 | `php artisan db:backup`, then **copy that `.sql` to a USB stick / another disk**. | size is not 0; copied |
 | 4 | Copy the whole project folder (with `vendor`, `.env`, `storage`) to `<folder>-before-laravel-12`. | the copy opens |
 | 5 | Code: `git fetch` ; `git status` (must be clean) ; `git checkout changes_v2` ; `git pull --ff-only` (or `git checkout <tag>`). | `git log -1` shows the tagged commit |
-| 6 | Vendor: copy `vendor\` from the bundle over a deleted old `vendor\` (or `composer install --no-dev --optimize-autoloader` with internet; **never `--no-scripts`**). Delete `bootstrap\cache\packages.php` and `services.php`, then `php artisan package:discover`. | no "Class ... not found" |
+| 6 | Vendor: check the zip hash, unzip it next to the project, then copy `vendor\` from the bundle over a deleted old `vendor\` (or `composer install --no-dev --optimize-autoloader` with internet; **never `--no-scripts`**). Delete `bootstrap\cache\packages.php` and `services.php`, then `php artisan package:discover`. | no "Class ... not found" |
 | 7 | Front end: copy the build folders of the bundle into `public\` (not `uploads`), then `php artisan vendor:publish --tag=log-viewer-assets --force`. | `public\mix-manifest.json` exists |
 | 8 | `.env`: Case A nothing. Case B: STATUS section 7 steps 3d and 4 (`BROADCAST_DRIVER=reverb`, `REVERB_HOST=127.0.0.1`, `REVERB_PORT=8080`, `REVERB_SCHEME=http`, `APP_NAME="Medical University Clinic"`; leave `REVERB_APP_ID/KEY/SECRET` empty). | |
 | 9 | Case B only: `php artisan migrate --force` and watch every line; then STATUS 3a (`inventory:recover-orphan-batches`, dry run, then `--apply`). Case A: `php artisan migrate --force` must print "Nothing to migrate". **Never run `migrate:rollback`, `migrate:fresh`, `migrate:refresh`, `migrate:reset` or `db:wipe`.** | |
