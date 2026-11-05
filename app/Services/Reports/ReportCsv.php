@@ -189,6 +189,6 @@ final class ReportCsv
             }
 
             return $cell;
-        }, $row));
+        }, $row), ',', '"', '\\');
     }
 }

@@ -317,7 +317,7 @@ class UserController extends AppBaseController
 
     public function updateLanguage(Request $request): JsonResponse
     {
-        $language = $request->get('language');
+        $language = $request->input('language');
 
         $user = getLogInUser();
         $user->update(['language' => $language]);

@@ -42,7 +42,7 @@ class SettingController extends AppBaseController
     public function index(Request $request): \Illuminate\View\View
     {
         $setting = SettingsService::get();
-        $sectionName = ($request->get('section') === null) ? 'general' : $request->get('section');
+        $sectionName = ($request->input('section') === null) ? 'general' : $request->input('section');
         // Only the real pages (the value goes into a view name). R3-L16.
         abort_unless(in_array($sectionName, ['general', 'contact-information'], true), 404);
         $states = $cities = [];
@@ -93,7 +93,7 @@ class SettingController extends AppBaseController
      */
     public function getStates(Request $request)
     {
-        $countryId = $request->get('settingCountryId');
+        $countryId = $request->input('settingCountryId');
         $data['state_id'] = getSettingValue('state_id');
         $data['states'] = State::where('country_id', $countryId)->toBase()->pluck('name', 'id')->toArray();
 
@@ -105,7 +105,7 @@ class SettingController extends AppBaseController
      */
     public function getCities(Request $request)
     {
-        $state_id = $request->get('stateId');
+        $state_id = $request->input('stateId');
         $data['city_id'] = getSettingValue('city_id');
         $data['cities'] = City::where('state_id', $state_id)->toBase()->pluck('name', 'id')->toArray();
 

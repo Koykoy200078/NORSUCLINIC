@@ -135,14 +135,15 @@ class MedicineBillRepository extends BaseRepository
 
     public function getPatients(): Collection
     {
+        // The cache holds a plain array (Laravel 13 does not turn a stored Collection back into one).
         $patients = Cache::remember('active_patients_medicine_bill', 600, function () {
             return Patient::with('patientUser:id,first_name,last_name,status')
                 ->whereHas('patientUser', function (Builder $query) {
                     $query->where('status', 1);
-                })->get()->pluck('patientUser.full_name', 'id')->sort();
+                })->get()->pluck('patientUser.full_name', 'id')->sort()->all();
         });
 
-        return $patients;
+        return collect($patients);
     }
 
     public function getMedicines()
@@ -161,24 +162,23 @@ class MedicineBillRepository extends BaseRepository
         return \App\Services\SettingsService::get();
     }
 
-    public function getDoctors(): Doctor
+    public function getDoctors(): Collection
     {
-        /** @var Doctor $doctors */
         $doctors = Cache::remember('active_doctors_medicine_bill', 600, function () {
             return Doctor::with('doctorUser:id,first_name,last_name,status')
                 ->whereHas('doctorUser', function (Builder $query) {
                     $query->where('status', 1);
-                })->get()->pluck('doctorUser.full_name', 'id')->sort();
+                })->get()->pluck('doctorUser.full_name', 'id')->sort()->all();
         });
 
-        return $doctors;
+        return collect($doctors);
     }
 
     public function getMedicinesCategoriesData(): Collection
     {
-        return Cache::remember('active_medicine_categories', 600, function () {
-            return Category::where('is_active', '=', 1)->pluck('name', 'id');
-        });
+        return collect(Cache::remember('active_medicine_categories', 600, function () {
+            return Category::where('is_active', '=', 1)->pluck('name', 'id')->all();
+        }));
     }
 
     public function getMedicineCategoriesList(): array

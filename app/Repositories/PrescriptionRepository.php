@@ -53,12 +53,13 @@ class PrescriptionRepository extends BaseRepository
 
     public function getPatients(): \Illuminate\Support\Collection
     {
-        return Cache::remember('active_patients_prescription', 600, function () {
+        // The cache holds a plain array (Laravel 13 does not turn a stored Collection back into one).
+        return collect(Cache::remember('active_patients_prescription', 600, function () {
             return Patient::with('user:id,first_name,last_name,status')
                 ->whereHas('user', function (Builder $query) {
                     $query->where('status', 1);
-                })->get()->pluck('user.full_name', 'id')->sort();
-        });
+                })->get()->pluck('user.full_name', 'id')->sort()->all();
+        }));
     }
 
     public function getMedicines(): array
@@ -108,14 +109,13 @@ class PrescriptionRepository extends BaseRepository
 
     public function getDoctors()
     {
-        /** @var Doctor $doctors */
         $doctors = Cache::remember('active_doctors_prescription', 600, function () {
             return Doctor::with('doctorUser:id,first_name,last_name,status')
                 ->whereHas('doctorUser', function (Builder $query) {
                     $query->where('status', 1);
-                })->get()->pluck('doctorUser.full_name', 'id')->sort();
+                })->get()->pluck('doctorUser.full_name', 'id')->sort()->all();
         });
 
-        return $doctors;
+        return collect($doctors);
     }
 }

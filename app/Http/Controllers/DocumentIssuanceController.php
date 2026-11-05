@@ -165,7 +165,7 @@ class DocumentIssuanceController extends Controller
 
         // If user_id is provided (from patient history), get that patient's data
         if ($request->has('user_id')) {
-            $userId = $request->get('user_id');
+            $userId = $request->input('user_id');
             $user = \App\Models\User::with(['patient.address', 'patient.patientType'])->find($userId);
 
             if (!$user) {
@@ -1176,7 +1176,7 @@ class DocumentIssuanceController extends Controller
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
 
                 // Direct HTML Print optimization for Medical Certificate
-                if (request()->has('action') && request()->get('action') === 'print') {
+                if (request()->has('action') && request()->input('action') === 'print') {
                     return view('document_issuances.print_medical_certificate', compact('requestDocument', 'medicalCertificateDoctorName'));
                 }
 
@@ -1194,7 +1194,7 @@ class DocumentIssuanceController extends Controller
                 $medicalCertificateDoctorName = $this->resolveMedicalCertificateDoctorName($requestDocument);
 
                 // Direct HTML Print optimization for Excuse Slip (No PDF generation, very fast)
-                if (request()->has('action') && request()->get('action') === 'print') {
+                if (request()->has('action') && request()->input('action') === 'print') {
                     return view('document_issuances.print_excuse_slip', compact('requestDocument', 'medicalCertificateDoctorName'));
                 }
 
@@ -1216,7 +1216,7 @@ class DocumentIssuanceController extends Controller
             }
 
             // Check if request wants to stream (for printing) or download
-            if (request()->has('action') && request()->get('action') === 'print') {
+            if (request()->has('action') && request()->input('action') === 'print') {
                 // Stream PDF for printing (opens in browser)
                 return $pdf->stream('request_document_' . $id . '.pdf');
             }

@@ -60,7 +60,7 @@ class ActivityLogController extends Controller
      */
     public function export(Request $request)
     {
-        $tab = (string) $request->get('tab', 'logs');
+        $tab = (string) $request->input('tab', 'logs');
         abort_unless(canViewActivityLogTab($tab), 403, 'You are not allowed to export this report.');
 
         return ReportCsv::response($tab, ReportFilters::fromRequest($request));

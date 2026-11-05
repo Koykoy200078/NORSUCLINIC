@@ -68,7 +68,7 @@ final class AccomplishmentReportCsv
             fwrite($file, "\xEF\xBB\xBF");
 
             foreach (self::rows($report) as $row) {
-                fputcsv($file, array_map(fn ($cell) => self::safe($cell), $row));
+                fputcsv($file, array_map(fn ($cell) => self::safe($cell), $row), ',', '"', '\\');
             }
 
             fclose($file);

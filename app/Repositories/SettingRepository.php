@@ -93,6 +93,7 @@ class SettingRepository extends BaseRepository
         // Invalidate only the settings cache. Cache::flush() ignores its argument and wipes
         // the ENTIRE cache store (dashboards, medicine/doctor lists, etc.). CONFIG-3.
         \App\Services\SettingsService::clearCache();
-        Cache::put('settings', Setting::all()->keyBy('key'));
+        // (This used to put the whole Eloquent collection into the cache under 'settings'. Nothing reads that key, and Laravel 13
+        // does not turn a stored model back into one.)
     }
 }

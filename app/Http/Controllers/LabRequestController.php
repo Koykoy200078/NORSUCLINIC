@@ -83,7 +83,7 @@ class LabRequestController extends Controller
                 $patient = $user->patient;
             }
         } elseif ($request->has('user_id')) {
-            $userId = $request->get('user_id');
+            $userId = $request->input('user_id');
             $user   = User::with(['patient', 'campus', 'college', 'course', 'yearLevel', 'patient.address', 'address.barangay', 'address.city', 'address.state'])
                 ->find($userId);
 
@@ -601,7 +601,7 @@ class LabRequestController extends Controller
 
     public function searchUsers(Request $request)
     {
-        $query = trim((string) $request->get('query', ''));
+        $query = trim((string) $request->input('query', ''));
 
         // Require two characters and cap the list (an empty query used to return every patient with
         // many eager loads). M-11.
