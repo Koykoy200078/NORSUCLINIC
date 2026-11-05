@@ -71,7 +71,7 @@ worse than a suboptimal pattern. Check sibling files, related controllers, repos
 - `env()` only inside config files (this project's `.env` uses `CACHE_DRIVER`, not `CACHE_STORE`)
 
 ### 8. Testing Patterns → `rules/testing.md`
-- **PHPUnit 11 classes** (attributes, static data providers), not Pest; fixtures in `tests/Concerns/BuildsClinicData.php`; one regression test per fixed bug
+- **PHPUnit 12 classes** (attributes, static data providers), not Pest; fixtures in `tests/Concerns/BuildsClinicData.php`; one regression test per fixed bug
 - Write the failing test first; see it fail; then fix
 
 ### 9. Queue & Job Patterns → `rules/queue-jobs.md`
