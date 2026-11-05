@@ -37,7 +37,7 @@
 
 ## Use Laravel String & Array Helpers
 
-Laravel provides `Str`, `Arr` and `Number` helper classes that are more readable, chainable, and UTF-8 safe than raw PHP functions. Always prefer them. (`Uri` is Laravel 12 and does not exist here.)
+Laravel provides `Str`, `Arr` and `Number` helper classes that are more readable, chainable, and UTF-8 safe than raw PHP functions. Always prefer them. (`Uri` exists since Laravel 12; this project does not use it.)
 
 Strings — use `Str` and fluent `Str::of()` over raw PHP:
 ```php

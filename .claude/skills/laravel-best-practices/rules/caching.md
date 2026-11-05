@@ -20,7 +20,7 @@ $val = Cache::remember('stats', 60, fn () => $this->computeStats());
 
 ## Stale-While-Revalidate and Request Memoization (Laravel 10)
 
-`Cache::flexible()` (Laravel 11) and `Cache::memo()` (Laravel 12) **do not exist in this project**. Use
+`Cache::flexible()` (Laravel 11) and `Cache::memo()` (Laravel 12) exist in the framework, but **this project does not use them**. Use
 `Cache::remember()` with a short TTL, and keep a value read many times in one request in a local variable or a
 property of the service (for example `SettingsService` already caches all settings in one array).
 
@@ -53,4 +53,8 @@ public function roles(): Collection
 
 ## No Failover Cache Store
 
-The `failover` cache driver is Laravel 12. This project runs one `file` store on a single clinic PC; nothing to fail over to.
+The `failover` cache driver exists in the framework. This project runs one `file` store on a single clinic PC; nothing to fail over to.
+
+## Cache Only Arrays and Scalars (Laravel 13)
+
+`config/cache.php` sets `serializable_classes` to `false`: the cache does not turn a stored object back into an object (a Collection, a model, a Carbon date comes back unusable). Put `->all()` / `->toArray()` into the cache and rebuild the Collection after reading (`collect(Cache::remember(...))`). `Laravel13ReadinessTest` fails if a list cache holds an object.

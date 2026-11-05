@@ -1,6 +1,6 @@
 ---
 name: laravel-permission-development
-description: Work with roles, permissions and access control in this project (spatie/laravel-permission 6.25 on Laravel 12) — role/permission middleware, the Manage User roles screen, RolePermissionsSeeder, Blade @can checks, role-aware routes and dashboards, and the Staff (Nurse) / Doctor / Clinic Admin model.
+description: Work with roles, permissions and access control in this project (spatie/laravel-permission 6.25 on Laravel 13) — role/permission middleware, the Manage User roles screen, RolePermissionsSeeder, Blade @can checks, role-aware routes and dashboards, and the Staff (Nurse) / Doctor / Clinic Admin model.
 ---
 
 # Laravel Permission Development (spatie 6.25 — this project)

@@ -38,8 +38,8 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 
 | | |
 |---|---|
-| PHP | 8.2 at the clinic, 8.3 on the dev laptop (`composer.json` requires `^8.2`, platform pin 8.2.0, since Reverb) |
-| Laravel | **12.71**, kept in the classic structure (`app/Http/Kernel.php`, `app/Exceptions/Handler.php`, `config/*.php`; no slim `bootstrap/app.php`). Carbon **3**. No Laravel 13 APIs: stage U3 (Laravel 13, needs PHP 8.3 on the clinic PC) waits for the owner. Work is on the branch `upgrade/laravel-13` (see `docs/laravel-13-upgrade-plan.md`) |
+| PHP | **8.3** (`composer.json` requires `^8.3`, platform pin 8.3.0, because Laravel 13 needs it). The clinic PC still runs 8.2 until the owner installs 8.3 there: `changes_v2` and the Laravel 12 checkpoint (`3c8c434` on `upgrade/laravel-13`) run on 8.2, the Laravel 13 commits do not |
+| Laravel | **13.40**, kept in the classic structure (`app/Http/Kernel.php`, `app/Exceptions/Handler.php`, `config/*.php`; no slim `bootstrap/app.php`). Carbon **3**, Symfony **7.4** (Symfony 8 needs PHP 8.4). The forgery check is `App\Http\Middleware\PreventRequestForgery` (Laravel 13's name for `VerifyCsrfToken`). `config/cache.php` sets `serializable_classes` to `false`: cache only arrays and scalars, never a Collection or model. Work is on the branch `upgrade/laravel-13` (see `docs/laravel-13-upgrade-plan.md`) |
 | Livewire | **3.8** (class-based components; no Livewire 4 features) |
 | Tables | the project's own list base `App\Livewire\Tables\TableComponent` on plain Livewire 3 (no table package; see the `livewire-development` skill) |
 | Permissions | spatie/laravel-permission **6.25** (middleware namespace `Spatie\Permission\Middleware`, singular) |
@@ -49,7 +49,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 | PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel 3.1 |
 | Database | MySQL (strict mode, InnoDB) |
 
-Look up docs for **these** versions (Laravel 12.x, Livewire 3.x), e.g. through Context7 (`/laravel/docs` branch 12.x,
+Look up docs for **these** versions (Laravel 13.x, Livewire 3.x), e.g. through Context7 (`/laravel/docs` branch 13.x,
 `/livewire/livewire` branch 3.x).
 
 ## 4. Skills
@@ -59,7 +59,7 @@ Domain skills live in **`.agents/skills/`** (Codex) and **`.claude/skills/`** (C
 
 | Skill | Use for |
 |---|---|
-| `laravel-best-practices` | any Laravel PHP code (adapted to this project: Laravel 12 in the classic structure) |
+| `laravel-best-practices` | any Laravel PHP code (adapted to this project: Laravel 13 in the classic structure) |
 | `livewire-development` | Livewire components and the list base `TableComponent` (adapted to Livewire 3) |
 | `laravel-permission-development` | roles, permissions, menus / routes / buttons access (adapted to spatie 6.25 + this project's access model) |
 | `laravel-specialist`, `php-pro` | general Laravel / PHP work (their Laravel 11+/Pest examples do not apply — follow §3) |

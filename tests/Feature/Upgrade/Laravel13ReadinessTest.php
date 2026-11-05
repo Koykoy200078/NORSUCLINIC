@@ -167,6 +167,26 @@ class Laravel13ReadinessTest extends TestCase
         $this->assertMatchesRegularExpression('/_cache_$/', (string) config('cache.prefix'));
     }
 
+    public function test_the_cache_may_not_turn_anything_back_into_an_object(): void
+    {
+        // Nothing in this application caches an object (test above), so none is allowed. Checked on the real file store, as the clinic runs it:
+        // an array comes back, a stored object does not.
+        $this->assertFalse(config('cache.serializable_classes'));
+
+        $path = sys_get_temp_dir().DIRECTORY_SEPARATOR.'serializable-'.bin2hex(random_bytes(4));
+        config(['cache.stores.probe' => ['driver' => 'file', 'path' => $path]]);
+        $store = Cache::store('probe');
+        try {
+            $store->put('list', [3 => 'Three'], 60);
+            $store->put('object', collect([1, 2]), 60);
+
+            $this->assertSame([3 => 'Three'], $store->get('list'));
+            $this->assertNotInstanceOf(\Illuminate\Support\Collection::class, $store->get('object'));
+        } finally {
+            File::deleteDirectory($path);
+        }
+    }
+
     public function test_the_forgery_check_still_refuses_a_post_without_a_token_and_accepts_one_with_it(): void
     {
         // Laravel skips the check while the environment is "testing"; switch it on for this request.
@@ -181,6 +201,31 @@ class Laravel13ReadinessTest extends TestCase
         $this->withSession(['_token' => 'known-token'])
             ->post('/login', ['email' => 'nobody@example.test', 'password' => 'wrong'], ['X-CSRF-TOKEN' => 'known-token'])
             ->assertRedirect()->assertSessionHasErrors();
+    }
+
+    public function test_the_web_group_uses_laravels_new_forgery_middleware_not_the_deprecated_alias(): void
+    {
+        $ours = \App\Http\Middleware\PreventRequestForgery::class;
+        $web = app(\App\Http\Kernel::class)->getMiddlewareGroups()['web'];
+
+        $this->assertContains($ours, $web);
+        $this->assertNotContains(\App\Http\Middleware\VerifyCsrfToken::class, $web, 'the old class name is gone from the group');
+        $this->assertContains(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class, class_parents($ours));
+        $this->assertNotContains(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class, class_parents($ours), 'it does not hang on the deprecated alias');
+    }
+
+    public function test_the_origin_header_only_ever_says_yes_and_a_missing_one_changes_nothing(): void
+    {
+        $this->app['env'] = 'local';
+        $post = fn (array $headers) => $this->post('/login', ['email' => 'nobody@example.test', 'password' => 'wrong'], $headers);
+
+        // Pages opened by an http:// LAN address carry no Sec-Fetch-Site header at all: the token decides, exactly as before.
+        $post([])->assertStatus(419);
+        // A browser that says "same origin" is let through without a token (new in Laravel 13); anything else still needs the token.
+        $post(['Sec-Fetch-Site' => 'same-origin'])->assertRedirect();
+        $post(['Sec-Fetch-Site' => 'cross-site'])->assertStatus(419);
+        $post(['Sec-Fetch-Site' => 'same-site'])->assertStatus(419);
+        $post(['Sec-Fetch-Site' => 'none'])->assertStatus(419);
     }
 
     /** @param mixed $value */

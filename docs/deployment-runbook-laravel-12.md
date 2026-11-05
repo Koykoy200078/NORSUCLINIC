@@ -149,7 +149,7 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 - Keep `<folder>-before-laravel-12` and the USB backup for 7 days, then tidy up.
 - Records: a Handover entry (what ran, times, warnings), STATUS section 7 ticked, then the pull request into `develop`.
 - Optional, **not part of the window**: older month-only stock sits on the 1st of its month. When the owner wants it corrected: `php artisan db:backup`, `php artisan inventory:month-only-expiry` (dry run: read the table and the units that "would be usable again"), then `--apply`, then `php artisan db:integrity`. See [commands.md](commands.md#inventorymonth-only-expiry).
-- **U3 (Laravel 13) is a separate window** and needs PHP 8.3 on the clinic PC first.
+- **U3 (Laravel 13) is a separate window** and needs PHP 8.3 on the clinic PC first: section 8.
 
 ## 7. Not verified, and why
 
@@ -157,3 +157,40 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 - Nothing has been tested from a real second LAN device; the runtime check of STATUS section 7 step 5b is part of the smoke checklist. On the laptop, a page opened at the laptop's own LAN address could not open the live-updates connection in the embedded browser (it opens from `localhost`, and a direct protocol test of Reverb on the LAN address connects), so **smoke step 3 on the real second device is the deciding test**; if "Live updates off" shows there, check the firewall rule for TCP 8080 first. Phone and tablet widths were checked on the laptop (the wide lists overflow a phone screen exactly as before).
 - The clinic PC itself (PHP extensions, free disk, Windows firewall, Node, internet) has not been looked at: section 2.3.
 - Report exports were not compared file by file with the pre-upgrade output; their numbers are pinned by tests and the live check proved the files open.
+
+## 8. The U3 window: Laravel 13 on PHP 8.3 (written 2026-11-06; nothing here has been run on the clinic PC)
+
+Laravel 13 (13.40) needs **PHP 8.3 or newer**; the commits from the "U3" hop on need it, the commits up to `3c8c434` (Laravel 12, groundwork) do not.
+The hop adds **no migration** and changes **no `.env` key** (the session cookie and cache names are pinned in `config/`). It can go in
+the same window as U0 to U2, or in a window of its own after them; the steps are the same, only step 0 differs.
+
+**Before the window (the owner's side, PHP only):**
+
+1. Install **PHP 8.3 (8.3.36 or newer; 8.4 and 8.5 also work)** in WampServer next to 8.2, with the same extensions as in section 2.3
+   (`pdo_mysql, mbstring, intl, gd, zip, fileinfo, openssl, sodium, curl`). Do not switch yet.
+2. **The firewall rule follows the program.** The startup script puts `php` from the Windows PATH (or WampServer's active PHP) on the
+   LAN firewall rule by its file path. A new PHP folder is a new `php.exe`: the old rule does not cover it, so other devices are blocked until the
+   script has added its rule. After the switch, start the script and check that the firewall line says `[ok]` and a second device opens the
+   page; if not, run it as administrator once.
+3. On the laptop, build the bundle for U3 from a clean clone of the tagged commit **with PHP 8.3** (`composer install --no-dev --optimize-autoloader`,
+   the front end is unchanged by U3: `npm ci` and `npm run prod` as in section 2.2). The U2 bundle (`laravel-12-37f5a62.zip`) has the
+   Laravel 12 `vendor\` and **cannot be used**. Check that the new bundle boots under PHP 8.3 (`php artisan --version` says 13.x, `route:list` has
+   about 505 routes) and write its SHA-256 next to it.
+
+**The window** is section 3 with these differences:
+
+| Step | Difference |
+|---|---|
+| 0 | If U0 to U2 are already there: `php artisan about --only=environment` says Laravel 12.71 and `php -v` 8.2.x. If not, it says what section 3 step 0 says. |
+| 4 | Copy the project folder to `<folder>-before-laravel-13`. |
+| 5.5 | **Switch the PC to PHP 8.3** (WampServer > PHP > Version, or the PATH) *before* step 6; `php -v` must say 8.3.x in the terminal that runs the next steps, and the web server must use it too. |
+| 6 | Vendor from the **U3 bundle**; delete `bootstrap\cache\packages.php` and `services.php`, then `php artisan package:discover`. |
+| 10 | `php artisan optimize:clear` is **required**, not optional: the cache files written by Laravel 12 hold Collection objects that Laravel 13 does not read back (lists on the dispensing and prescription forms would be empty or fail for up to 10 minutes). Then `php artisan permission:cache-reset`. |
+| 11 | The startup script must show web, Reverb, scheduler and **firewall** `[ok]` (see point 2 above). |
+| 12 | Smoke checklist of section 4, **plus**: open a dispensing form and a prescription form (patient, doctor and medicine lists are filled); sign in from the second device; every browser tab opened before the window is reloaded. |
+
+**Rollback** is section 5 with one more step: switch WampServer back to **PHP 8.2** before starting the old folder (the old `vendor\` needs it). The
+Laravel 13 `vendor\` does not run on 8.2 (Composer's platform check stops it with a clear message).
+
+**What is new for the people who run it:** nothing visible. The forgery check has a new name (`PreventRequestForgery`), a browser may
+send `Sec-Fetch-Site` on `localhost` pages (let through without a token) but never on plain `http://` LAN addresses (the token decides, as today).

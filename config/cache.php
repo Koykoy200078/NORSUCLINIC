@@ -125,4 +125,17 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | Laravel 13: the classes the cache may turn back into objects. Nothing in this application caches an object (the lists are
+    | plain arrays, see Laravel13ReadinessTest), so none is allowed: a cache file that somebody planted cannot start a
+    | deserialization chain. If the application ever has to cache an object, list its class here.
+    |
+    */
+
+    'serializable_classes' => false,
+
 ];

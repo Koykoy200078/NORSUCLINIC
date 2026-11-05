@@ -1,6 +1,6 @@
 ---
 name: livewire-development
-description: "Use for any task or question involving Livewire in this project (Livewire 3.8 on Laravel 12, with the project's own list base App\\Livewire\\Tables\\TableComponent). Activate if the user mentions Livewire, wire: directives (wire:model, wire:click, wire:poll), Livewire tables, lazy components, or a screen built from app/Livewire classes. Covers building and debugging class-based components, tables, tabbed screens, authorization inside actions, loading states and tests. Do not use for the jQuery / AJAX pages (e.g. patient queue) or standard Laravel forms without Livewire."
+description: "Use for any task or question involving Livewire in this project (Livewire 3.8 on Laravel 13, with the project's own list base App\\Livewire\\Tables\\TableComponent). Activate if the user mentions Livewire, wire: directives (wire:model, wire:click, wire:poll), Livewire tables, lazy components, or a screen built from app/Livewire classes. Covers building and debugging class-based components, tables, tabbed screens, authorization inside actions, loading states and tests. Do not use for the jQuery / AJAX pages (e.g. patient queue) or standard Laravel forms without Livewire."
 license: MIT
 metadata:
   author: laravel (adapted for Medical University Clinic / NORSUCLINIC, Livewire 3)
