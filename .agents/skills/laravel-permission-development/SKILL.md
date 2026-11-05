@@ -1,9 +1,9 @@
 ---
 name: laravel-permission-development
-description: Work with roles, permissions and access control in this project (spatie/laravel-permission 5.11 on Laravel 10) — role/permission middleware, the Manage User roles screen, RolePermissionsSeeder, Blade @can checks, role-aware routes and dashboards, and the Staff (Nurse) / Doctor / Clinic Admin model.
+description: Work with roles, permissions and access control in this project (spatie/laravel-permission 6.25 on Laravel 12) — role/permission middleware, the Manage User roles screen, RolePermissionsSeeder, Blade @can checks, role-aware routes and dashboards, and the Staff (Nurse) / Doctor / Clinic Admin model.
 ---
 
-# Laravel Permission Development (spatie 5.11 — this project)
+# Laravel Permission Development (spatie 6.25 — this project)
 
 ## When to use this skill
 
@@ -38,7 +38,7 @@ Settings › Manage User roles, seeders that grant permissions, and access tests
   designation / station maps) was removed in Phase 3; the `staff_profiles` designation / station / shift columns remain
   in the database, hidden and unused.
 
-## Laravel 11 classic structure (differs from newer docs)
+## Classic structure (differs from newer docs)
 
 Middleware aliases are in **`app/Http/Kernel.php`** (not `bootstrap/app.php`), and spatie **6.x** uses the singular
 namespace `Middleware` (5.x had `Middlewares`):

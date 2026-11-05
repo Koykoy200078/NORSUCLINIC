@@ -1,16 +1,19 @@
 ---
 name: laravel-best-practices
-description: "Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code in this project (Laravel 10.50, PHP 8.2 at the clinic / 8.3 on the dev laptop). This includes creating or modifying controllers, models, migrations, form requests, repositories, services, jobs, scheduled commands and Eloquent queries. Triggers for N+1 and query performance issues, caching, authorization and security, validation, error handling, route definitions and architectural decisions. Also use for Laravel code reviews and refactors."
+description: "Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code in this project (Laravel 12.x, PHP 8.2 at the clinic / 8.3 on the dev laptop). This includes creating or modifying controllers, models, migrations, form requests, repositories, services, jobs, scheduled commands and Eloquent queries. Triggers for N+1 and query performance issues, caching, authorization and security, validation, error handling, route definitions and architectural decisions. Also use for Laravel code reviews and refactors."
 license: MIT
 metadata:
-  author: laravel (adapted for Medical University Clinic / NORSUCLINIC, Laravel 10)
+  author: laravel (adapted for Medical University Clinic / NORSUCLINIC, Laravel 12 in the classic structure)
 ---
 
-# Laravel Best Practices (Laravel 10 — this project)
+# Laravel Best Practices (Laravel 12, classic structure — this project)
 
 Best practices for Laravel, prioritized by impact. Each rule teaches what to do and why. Adapted from the Laravel Boost
-skill (written for Laravel 13): every Laravel 11+ API in the rule files is marked and given its Laravel 10 equivalent.
-For exact API syntax, look up the **Laravel 10.x** docs (Context7 library `/laravel/docs`, branch `10.x`).
+skill (written for Laravel 13): every API of the slim application structure (Laravel 11+) in the rule files is marked and given the
+classic form this project keeps. The framework is Laravel 12, but the application keeps the Laravel 10 layout (`app/Http/Kernel.php`,
+`Handler.php`, `config/*.php`, `$casts`, `app/Console/Kernel.php`); where a rule file says "Laravel 10", read it as "this project's
+classic structure". Moving to the slim structure is a separate decision of the owner (plan stage U4).
+For exact API syntax, look up the **Laravel 12.x** docs (Context7 library `/laravel/docs`, branch `12.x`).
 
 ## Consistency First
 
@@ -86,7 +89,7 @@ worse than a suboptimal pattern. Check sibling files, related controllers, repos
 - Broadcast / real-time events after commit (`ShouldDispatchAfterCommit`)
 
 ### 13. Error Handling → `rules/error-handling.md`
-- `app/Exceptions/Handler.php` (Laravel 10)
+- `app/Exceptions/Handler.php` (classic structure)
 
 ### 14. Task Scheduling → `rules/scheduling.md`
 - `app/Console/Kernel.php`; only `db:backup` hourly today
@@ -113,4 +116,4 @@ Read the relevant rule file directly (do not delegate to sub-agents in this proj
 
 1. Identify the file type and select relevant sections (e.g. migration → §16, controller → §1, §3, §5, §6, §10).
 2. Check sibling files for existing patterns — follow those first per Consistency First.
-3. Verify API syntax against the **Laravel 10.x** docs.
+3. Verify API syntax against the **Laravel 12.x** docs.

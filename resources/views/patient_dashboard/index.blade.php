@@ -170,7 +170,7 @@
                                         @php
                                         $expiryDate = \Carbon\Carbon::parse($medicine->expiry_date);
                                         $isExpired = $expiryDate->isPast();
-                                        $isExpiringSoon = !$isExpired && $expiryDate->diffInDays(now()) <= 30;
+                                        $isExpiringSoon = !$isExpired && now()->diffInDays($expiryDate, false) <= 30;
                                             @endphp
                                             @if($isExpired)
                                             <span class="badge bg-danger">

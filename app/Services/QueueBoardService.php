@@ -63,7 +63,7 @@ class QueueBoardService
             return $data;
         };
 
-        return ['day' => today()->toDateString(), 'refresh_in' => now()->diffInSeconds(today()->addDay()),
+        return ['day' => today()->toDateString(), 'refresh_in' => (int) now()->diffInSeconds(today()->addDay()),
             'serving' => $queues->where('status', PatientQueue::STATUS_IN_PROGRESS)->map(fn ($q) => $row($q, true))->values()->all(),
             'next' => $queues->where('status', PatientQueue::STATUS_WAITING)->take(8)->map(fn ($q) => $row($q, false))->values()->all()];
     }

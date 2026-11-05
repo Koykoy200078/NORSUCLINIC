@@ -49,7 +49,7 @@ class BackupController extends Controller
                     'name' => $file->getFilename(),
                     'scheduled' => (bool) $scheduled,
                     'size' => $this->formatBytes($file->getSize()),
-                    'created_at' => Carbon::createFromTimestamp($file->getMTime())->toDayDateTimeString(),
+                    'created_at' => Carbon::createFromTimestamp($file->getMTime(), config('app.timezone'))->toDayDateTimeString(),
                     'raw_date' => $file->getMTime()
                 ];
             }

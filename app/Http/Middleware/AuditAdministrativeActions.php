@@ -87,8 +87,9 @@ class AuditAdministrativeActions
                     'path' => $request->path(),
                     'route' => $request->route()?->getName(),
                     'status' => $response->getStatusCode(),
-                    // names only, never values
-                    'fields' => array_values(array_diff(array_keys($request->except(['_token', '_method'])), [])),
+                    // names only, never values. Read from the raw bags: $request->all() / except() build the uploaded-file
+                    // objects again (Laravel 12), and by now the media library has moved the uploads out of the temp folder.
+                    'fields' => array_values(array_diff(array_keys($request->input() + $request->files->all()), ['_token', '_method'])),
                 ],
             ]);
         } catch (\Throwable $e) {

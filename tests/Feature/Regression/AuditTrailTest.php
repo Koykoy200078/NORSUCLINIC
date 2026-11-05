@@ -2,8 +2,13 @@
 
 namespace Tests\Feature\Regression;
 
+use App\Http\Middleware\AuditAdministrativeActions;
 use App\Models\ActivityLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
@@ -44,6 +49,36 @@ class AuditTrailTest extends TestCase
         $this->assertContains('clinic_name', $row->properties['fields']);
         $this->assertStringNotContainsString('Secret Clinic Name', json_encode($row->toArray()));
         $this->assertSame('POST', $row->properties['method']);
+    }
+
+    /**
+     * Laravel 12 builds the uploaded-file objects of a request again every time they are asked for. The trail is written
+     * after the answer was sent, when the media library has already moved the upload out of PHP's temp folder; reading
+     * the field names the old way then failed, the failure was swallowed, and the line for the change was lost.
+     */
+    public function test_a_change_that_carries_an_uploaded_file_is_still_logged_with_the_field_names(): void
+    {
+        $admin = $this->makeAdmin();
+        $this->actingAs($admin);
+
+        // A browser upload reaches PHP as Symfony's own UploadedFile (Laravel's fake() class is a subclass that is used as
+        // it is, so it never shows the problem, and a plain Symfony file is refused by a test request as "not uploaded"):
+        // so the middleware gets the request directly, holding such a file whose temp file the media library has moved away.
+        $picture = tempnam(sys_get_temp_dir(), 'logo');
+        $fake = UploadedFile::fake()->image('logo.png', 120, 120); // kept in a variable: the temp file lives as long as this object
+        copy($fake->getPathname(), $picture);
+        $request = Request::create('/admin/settings', 'POST', ['clinic_name' => 'Photo Clinic', '_token' => 'x'], [], [
+            'logo' => new SymfonyUploadedFile($picture, 'logo.png', 'image/png', null, true),
+        ]);
+        $request->setUserResolver(fn () => $admin);
+        unlink($picture);
+
+        (new AuditAdministrativeActions())->terminate($request, new Response('', 200));
+
+        $row = $this->rows('settings_changed')->first();
+        $this->assertNotNull($row, 'the change that carried a file left no line in the trail');
+        $this->assertContains('clinic_name', $row->properties['fields']);
+        $this->assertContains('logo', $row->properties['fields']);
     }
 
     public function test_reading_pages_and_failed_attempts_leave_nothing_behind(): void

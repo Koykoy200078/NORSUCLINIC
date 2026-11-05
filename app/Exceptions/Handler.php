@@ -72,7 +72,9 @@ class Handler extends ExceptionHandler
             $message = $exception->validator->errors()->first();
 
             if (! $wantsJson) {
-                return Redirect::back()->withInput($request->except($this->dontFlash))->withErrors($message);
+                // input() and not except(): Laravel 12 builds the uploaded-file objects again for except(), which fails when
+                // an earlier step has already moved the upload (files are never flashed to the session anyway).
+                return Redirect::back()->withInput(\Illuminate\Support\Arr::except($request->input(), $this->dontFlash))->withErrors($message);
             }
         } elseif ($exception instanceof TokenMismatchException) {
             $message = 'Your session expired. Please refresh the page and try again.';
