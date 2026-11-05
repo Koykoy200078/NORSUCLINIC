@@ -9,6 +9,7 @@ use App\Models\MedicineBatch;
 use App\Models\MedicineTransaction;
 use App\Models\Prescription;
 use App\Models\PrescriptionMedicine;
+use App\Support\ExpiryDate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -77,20 +78,28 @@ class MedicineInventoryService
 
             // Adding to an existing batch number must not silently move the expiry of the units
             // already on the shelf. A different expiry means a different batch. M-03.
-            if ($batch->exists
-                && ! empty($data['expiration_date'])
-                && $batch->expiration_date
-                && Carbon::parse($data['expiration_date'])->toDateString() !== $batch->expiration_date->toDateString()) {
-                throw new RuntimeException(
-                    'Batch number ' . $batchNumber . ' already exists for this medicine with expiry '
-                    . $batch->expiration_date->toDateString() . '. Use the same expiry date or a different batch number.'
-                );
+            if ($batch->exists && ! empty($data['expiration_date']) && $batch->expiration_date) {
+                $shelfExpiry = $batch->expiration_date->toDateString();
+
+                // A month-only value ("2027-02") also matches a batch entered on the 1st of that month, before the
+                // last-day rule: that is the same expiry, and the units already on the shelf keep their date.
+                if (! in_array($shelfExpiry, ExpiryDate::lookupDates((string) $data['expiration_date']), true)) {
+                    throw new RuntimeException(
+                        'Batch number ' . $batchNumber . ' already exists for this medicine with expiry '
+                        . $shelfExpiry . '. Use the same expiry date or a different batch number.'
+                    );
+                }
+
+                $resolvedExpirationDate = $shelfExpiry;
             }
 
             $resolvedDateReceived = $data['date_received'] ?? $batch->date_received ?? Carbon::today()->toDateString();
 
             $batch->manufacturing_date = $data['manufacturing_date'] ?? $batch->manufacturing_date;
-            $batch->expiration_date = Carbon::parse($resolvedExpirationDate)->toDateString();
+            // a month-only expiry ("2027-02") is the last day of that month
+            $batch->expiration_date = $resolvedExpirationDate instanceof \DateTimeInterface
+                ? Carbon::instance($resolvedExpirationDate)->toDateString()
+                : ExpiryDate::toDateString((string) $resolvedExpirationDate);
             $batch->supplier_name = $data['supplier_name'] ?? $batch->supplier_name;
             $batch->date_received = Carbon::parse($resolvedDateReceived)->toDateString();
             if ($resolvedDosage !== '') {
@@ -374,11 +383,12 @@ class MedicineInventoryService
             // recorded expiry, fall back to the "never expires" sentinel so the restore batch
             // is valid and stays available (matches the legacy opening-balance behavior).
             $normalizedExpiry = ! empty($expirationDate)
-                ? Carbon::parse($expirationDate)->toDateString()
+                ? ExpiryDate::toDateString($expirationDate)
                 : self::NO_EXPIRY_SENTINEL;
 
+            // a month-only value also matches stock entered on the 1st of its month, before that rule
             $batchQuery = MedicineBatch::where('medicine_id', $medicineId)
-                ->whereDate('expiration_date', $normalizedExpiry);
+                ->whereIn(DB::raw('DATE(expiration_date)'), ! empty($expirationDate) ? ExpiryDate::lookupDates($expirationDate) : [$normalizedExpiry]);
 
             if ($normalizedDosage !== '' && strcasecmp($normalizedDosage, 'N/A') !== 0) {
                 $batchQuery->where('dosage', $normalizedDosage);
@@ -626,7 +636,8 @@ class MedicineInventoryService
             if (! $batch && $expirationDate) {
                 $query = MedicineBatch::lockForUpdate()
                     ->where('medicine_id', $medicineId)
-                    ->whereDate('expiration_date', Carbon::parse($expirationDate)->toDateString());
+                    // a month-only value also matches stock entered on the 1st of its month, before that rule
+                    ->whereIn(DB::raw('DATE(expiration_date)'), ExpiryDate::lookupDates($expirationDate));
 
                 $normalizedDosage = trim((string) $dosage);
                 if ($normalizedDosage !== '' && strcasecmp($normalizedDosage, 'N/A') !== 0) {

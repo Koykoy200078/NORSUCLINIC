@@ -427,7 +427,8 @@ class MedicineAvailabilityRepository extends BaseRepository
         }
 
         try {
-            return \Carbon\Carbon::parse($left)->toDateString() === \Carbon\Carbon::parse($right)->toDateString();
+            // "2027-02" and "2027-02-28" are the same expiry (a month-only value is the last day of its month)
+            return \App\Support\ExpiryDate::toDateString($left) === \App\Support\ExpiryDate::toDateString($right);
         } catch (\Throwable $e) {
             return false;
         }
