@@ -20,6 +20,7 @@ use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Middleware\SetCacheHeaders;
@@ -28,8 +29,8 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Spatie\Permission\Middlewares\PermissionMiddleware;
-use Spatie\Permission\Middlewares\RoleMiddleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 class Kernel extends HttpKernel
 {
@@ -41,6 +42,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        // Laravel 11 runs `defer()` callbacks after the response; the classic Kernel has to list it (nothing defers today).
+        InvokeDeferredCallbacks::class,
         TrustProxies::class,
         HandleCors::class,
         PreventRequestsDuringMaintenance::class,

@@ -38,14 +38,14 @@ Settings › Manage User roles, seeders that grant permissions, and access tests
   designation / station maps) was removed in Phase 3; the `staff_profiles` designation / station / shift columns remain
   in the database, hidden and unused.
 
-## Laravel 10 specifics (differs from newer docs)
+## Laravel 11 classic structure (differs from newer docs)
 
-Middleware aliases are in **`app/Http/Kernel.php`** (not `bootstrap/app.php`), and spatie **5.x** uses the plural
-namespace `Middlewares`:
+Middleware aliases are in **`app/Http/Kernel.php`** (not `bootstrap/app.php`), and spatie **6.x** uses the singular
+namespace `Middleware` (5.x had `Middlewares`):
 
 ```php
-use Spatie\Permission\Middlewares\PermissionMiddleware;
-use Spatie\Permission\Middlewares\RoleMiddleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 protected $middlewareAliases = [
     'role' => RoleMiddleware::class,

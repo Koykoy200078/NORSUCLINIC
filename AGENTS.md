@@ -39,17 +39,17 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 | | |
 |---|---|
 | PHP | 8.2 at the clinic, 8.3 on the dev laptop (`composer.json` requires `^8.2`, platform pin 8.2.0, since Reverb) |
-| Laravel | **10.50** (no Laravel 11+ APIs: `casts()`, `once()`, `defer()`, `Context`, `bootstrap/app.php` …) |
+| Laravel | **11.57**, kept in the classic structure (`app/Http/Kernel.php`, `app/Exceptions/Handler.php`, `config/*.php`; no slim `bootstrap/app.php`). No Laravel 12+ APIs. The upgrade to 12.70 is in progress on the branch `upgrade/laravel-13` (see `docs/laravel-13-upgrade-plan.md`) |
 | Livewire | **3.8** (class-based components; no Livewire 4 features) |
 | Tables | the project's own list base `App\Livewire\Tables\TableComponent` on plain Livewire 3 (no table package; see the `livewire-development` skill) |
-| Permissions | spatie/laravel-permission **5.11** (middleware namespace `Spatie\Permission\Middlewares`, plural) |
+| Permissions | spatie/laravel-permission **6.25** (middleware namespace `Spatie\Permission\Middleware`, singular) |
 | Tests | **PHPUnit 10.5** (not Pest; data providers and `#[Test]` are attributes, not doc-comment annotations) |
 | Forms | spatie/laravel-html **3.13**: `html()->text('name', $value)->forgetAttribute('id')->attributes([...])` in Blade (no `Form::` / `Html::`; `laravelcollective/html` is gone and a test keeps it gone). spatie draws `id` = name by default; the views add `->forgetAttribute('id')` where the old builder drew none, so check an id before relying on it in JS |
 | Frontend | Bootstrap 5 (Metronic theme), jQuery, Select2, Laravel **Mix** (not Vite) |
 | PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel 3.1 |
 | Database | MySQL (strict mode, InnoDB) |
 
-Look up docs for **these** versions (Laravel 10.x, Livewire 3.x), e.g. through Context7 (`/laravel/docs` branch 10.x,
+Look up docs for **these** versions (Laravel 11.x, Livewire 3.x), e.g. through Context7 (`/laravel/docs` branch 11.x,
 `/livewire/livewire` branch 3.x).
 
 ## 4. Skills
@@ -61,7 +61,7 @@ Domain skills live in **`.agents/skills/`** (Codex) and **`.claude/skills/`** (C
 |---|---|
 | `laravel-best-practices` | any Laravel PHP code (adapted to Laravel 10 and this project's rules) |
 | `livewire-development` | Livewire components and the list base `TableComponent` (adapted to Livewire 3) |
-| `laravel-permission-development` | roles, permissions, menus / routes / buttons access (adapted to spatie 5.11 + this project's access model) |
+| `laravel-permission-development` | roles, permissions, menus / routes / buttons access (adapted to spatie 6.25 + this project's access model) |
 | `laravel-specialist`, `php-pro` | general Laravel / PHP work (their Laravel 11+/Pest examples do not apply — follow §3) |
 | `test-master` | test design (write PHPUnit, not Pest) |
 | `debugging-wizard` | errors, stack traces, root-cause work |

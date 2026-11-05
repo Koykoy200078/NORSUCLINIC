@@ -216,8 +216,14 @@ class ConsultationAccessTest extends TestCase
             Livewire::getPersistentMiddleware(),
             fn (string $class) => str_starts_with($class, 'App\\') || str_starts_with($class, 'Spatie\\')
         );
-        $this->assertContains(\Spatie\Permission\Middlewares\RoleMiddleware::class, $classes);
-        $this->assertContains(\Spatie\Permission\Middlewares\PermissionMiddleware::class, $classes);
+        // The classes the `role:` and `permission:` route aliases resolve to are the ones Livewire must re-apply
+        // (read from the router, so a package that moves its middleware to another namespace cannot go unnoticed).
+        $aliases = app('router')->getMiddleware();
+        foreach (['role', 'permission'] as $alias) {
+            $this->assertArrayHasKey($alias, $aliases);
+            $this->assertTrue(class_exists($aliases[$alias]), "The '{$alias}' route middleware {$aliases[$alias]} does not exist");
+            $this->assertContains($aliases[$alias], $classes, "Livewire does not re-apply the '{$alias}' route middleware on its update requests");
+        }
 
         foreach ($classes as $class) {
             $this->assertTrue(class_exists($class), "Livewire persistent middleware {$class} does not exist, so it is never re-applied");

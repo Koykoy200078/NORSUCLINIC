@@ -119,10 +119,11 @@ class AppServiceProvider extends ServiceProvider
         // inside the component instead.) P2-H3.
         Livewire::addPersistentMiddleware([
             \App\Http\Middleware\CheckUserStatus::class,
-            // The installed spatie/laravel-permission (5.x) keeps these in "Middlewares" (plural); the
-            // singular namespace does not exist, so they were never matched and never re-applied. R3-H6.
-            \Spatie\Permission\Middlewares\RoleMiddleware::class,
-            \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+            // spatie/laravel-permission 6 keeps these in "Middleware" (singular); version 5 used "Middlewares"
+            // (plural). A name that does not exist is never matched and never re-applied (R3-H6), so
+            // ConsultationAccessTest checks the list against the classes the `role` / `permission` aliases resolve to.
+            \Spatie\Permission\Middleware\RoleMiddleware::class,
+            \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
 
         // The Log Viewer package serves application logs (patient names, queries, errors) and can

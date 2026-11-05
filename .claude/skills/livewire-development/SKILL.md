@@ -39,8 +39,8 @@ no islands, no `Route::livewire()`, no `wire:sort`. Look up the **Livewire 3.x**
 ## Security inside components
 
 - Livewire re-applies only **persistent middleware** on `/livewire/update`. `AppServiceProvider` registers
-  `CheckUserStatus` and Spatie's `RoleMiddleware` / `PermissionMiddleware` (namespace `Spatie\Permission\Middlewares`,
-  plural, in spatie 5.x) as persistent.
+  `CheckUserStatus` and Spatie's `RoleMiddleware` / `PermissionMiddleware` (namespace `Spatie\Permission\Middleware`,
+  singular, in spatie 6.x) as persistent; `ConsultationAccessTest` checks the list against the `role` / `permission` aliases.
 - Query-string based checks are **not** re-run on updates. **Authorize inside every action** (`abort_unless(...)`) and
   scope every `builder()` to what the user may see.
 - Public properties are user-editable: validate them, never trust ids sent back from the browser.
