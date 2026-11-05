@@ -93,7 +93,9 @@ carry or overwrite `public\uploads` (the patients' photos and logos live there) 
 ### 2.3 Look at the clinic PC (5 minutes, nothing is changed)
 
 `php -v` (8.2.x), `php -m` (needs `pdo_mysql, mbstring, intl, gd, zip, fileinfo, openssl, sodium, curl`), free disk space (at least the size of the
-project folder, for the rollback copy), `.\startup-dev-environment.ps1 -CheckOnly`. If Composer is installed:
+project folder, for the rollback copy), `.\startup-dev-environment.ps1 -CheckOnly`, and the PC's own `.env`: it must not set
+`FILESYSTEM_DISK` or `MEDIA_DISK` to `s3` (the upgrade removed the unused `s3` disk, so such a line would break file storage):
+`Select-String .env -Pattern '^(FILESYSTEM_DISK|MEDIA_DISK|AWS_)'` should print nothing, or only `local` / `public`. If Composer is installed:
 `composer check-platform-reqs`.
 
 ### 2.4 Freeze and tell people
@@ -151,6 +153,6 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 ## 7. Not verified, and why
 
 - The upgrade has **not** been rehearsed on a copy of the clinic's real data (the dump is not on the laptop): section 2.1 is that rehearsal.
-- Nothing has been tested from a second LAN device or at phone / tablet widths; the runtime check of STATUS section 7 step 5b is part of the smoke checklist.
+- Nothing has been tested from a real second LAN device; the runtime check of STATUS section 7 step 5b is part of the smoke checklist. On the laptop, a page opened at the laptop's own LAN address could not open the live-updates connection in the embedded browser (it opens from `localhost`, and a direct protocol test of Reverb on the LAN address connects), so **smoke step 3 on the real second device is the deciding test**; if "Live updates off" shows there, check the firewall rule for TCP 8080 first. Phone and tablet widths were checked on the laptop (the wide lists overflow a phone screen exactly as before).
 - The clinic PC itself (PHP extensions, free disk, Windows firewall, Node, internet) has not been looked at: section 2.3.
 - Report exports were not compared file by file with the pre-upgrade output; their numbers are pinned by tests and the live check proved the files open.

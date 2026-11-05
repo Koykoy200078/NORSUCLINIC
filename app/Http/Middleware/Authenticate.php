@@ -24,7 +24,8 @@ class Authenticate extends Middleware
     {
         $this->authenticate($request, $guards);
 
-        App::setLocale(Auth::user()->language);
+        // users.language is nullable: an account without one uses the application's language, not "no language".
+        App::setLocale(Auth::user()->language ?: config('app.locale'));
 
         return $next($request);
     }

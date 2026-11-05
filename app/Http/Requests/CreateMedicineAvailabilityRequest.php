@@ -174,7 +174,9 @@ class CreateMedicineAvailabilityRequest extends FormRequest
         }
 
         if (preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $value) === 1) {
-            $date = Carbon::createFromFormat('Y-m', $value);
+            // "!" starts from the first day of the month: without it the missing day is TODAY's day, and on the 29th to 31st a
+            // shorter month spilled into the next one and a good date was refused.
+            $date = Carbon::createFromFormat('!Y-m', $value);
             if (! $date || $date->format('Y-m') !== $value) {
                 return null;
             }
@@ -185,7 +187,7 @@ class CreateMedicineAvailabilityRequest extends FormRequest
         }
 
         if (preg_match('/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/', $value) === 1) {
-            $date = Carbon::createFromFormat('Y-m-d', $value);
+            $date = Carbon::createFromFormat('!Y-m-d', $value);
             if (! $date || $date->format('Y-m-d') !== $value) {
                 return null;
             }

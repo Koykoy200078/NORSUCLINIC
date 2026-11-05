@@ -187,7 +187,7 @@ class InventoryPassATest extends TestCase
     {
         $admin = $this->makeAdmin();
         $this->actingAs($admin);
-        $add = function (int $i, string $name = null) {
+        $add = function (int $i, ?string $name = null) {
             $medicine = $this->makeMedicine($name ?? 'Stockmed ' . $i);
             $this->post(route('stock-in.store'), $this->stockInPayload($medicine))->assertSessionHasNoErrors();
         };
