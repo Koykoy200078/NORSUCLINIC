@@ -31,6 +31,7 @@ php artisan db:integrity
 | [`db:integrity`](#dbintegrity) | Checks that the database is what a correct installation looks like; prints one line per check; **exit code 1 if anything is an error** | **No** (read-only). `--compare-fresh` builds and then drops a throwaway schema of its own; it never touches the real one | after every `php artisan migrate`, after importing data, before and after an upgrade, whenever numbers on screen look wrong | Phase 1.5, 2026-10-09 |
 | [`db:restore-foreign-keys`](#dbrestore-foreign-keys) | Adds the foreign keys a correct installation has and this database lacks | Changes the **structure** (adds keys); **never changes a row** | after a foreign key was reported missing and you have fixed its cause by hand | Phase 1.4, 2026-10-09 |
 | [`inventory:recover-orphan-batches`](#inventoryrecover-orphan-batches) | Finds stock batches whose medicine was deleted. With `--apply` it re-creates the medicine as "Unknown medicine #N" under its old id, **writes its stock off through the ledger**, then adds the foreign key those batches were blocking | **Dry run by default.** With `--apply`: adds medicine rows and ledger rows (`disposal`); deletes nothing | **once** on the clinic copy, after `migrate`, if `db:integrity` reports `medicine_batches_medicine_id_foreign`; take a backup first | Phase 1 follow-up, 2026-10-09 |
+| [`inventory:month-only-expiry`](#inventorymonth-only-expiry) | Stock entered with the stock-in form's "Month Only" switch before 2026-11-05 sits on the **1st** of the month; a month-only expiry now means the **last day**. Lists the batches it would move; with `--apply` moves them and recalculates the available quantity of their medicines | **Dry run by default.** With `--apply`: changes `medicine_batches.expiration_date` of the listed batches and the derived `available_quantity` of their medicines; **no quantity moves, no ledger row, nothing deleted**; each move is logged | **once** on the clinic copy, if the owner wants the older stock corrected too (decision 2026-11-05, STATUS §6); take a backup first | Laravel 12 verification pass, 2026-11-05 |
 | `notifications:refresh` | Creates / resolves per-user low-stock, 30-day expiry, doctor queue and incomplete-consultation alerts; retains read state for active conditions and resolved history | Yes: notifications only; clinical records and stock quantities are unchanged | Every minute while the startup script's scheduler is running (it starts `php artisan schedule:work` in the server's terminal, see "Scheduled?" above); alerts also refresh after each inventory / queue / consultation write. May also be run manually after migration or permission changes on the intended server database. New alert fields require `php artisan migrate` | Phase 8.5, 2026-10-21 |
 | `cache:warmup` | Refreshes settings and warms the doctor list, excluding archived accounts | Cache only; no database row changes | Optional after deployment/cache clearing; uses this project folder's configured database | Existing command; archive handling verified 2026-10-20 |
 | `user:restore <email>` / `user:restore --id=<id>` | Restores an ordinary archived account (and its patient record when present); merged patient sources are refused with the retained patient ID. Doctor archives retain the complete profile, address, photo and specialization links | Yes: clears archive timestamps | When the owner wants an archived account back; run on the server using the intended database | Existing command; doctor restore verified 2026-10-20; merged-patient refusal verified 2026-10-21 |
@@ -173,6 +174,48 @@ If stock really was on the shelf, put it back with a normal Stock-In.
 runs it too. Phase 8.4 now provides **Inventory › Stock disposal and physical count** for ordinary per-batch disposal / count; both use the inventory service and ledger. The orphan-recovery command remains a separate one-time repair.
 
 **Code:** `app/Console/Commands/RecoverOrphanBatches.php`, `app/Services/OrphanBatchRecovery.php`.
+
+---
+
+## `inventory:month-only-expiry`
+
+```powershell
+php artisan db:backup                              # first, before --apply
+php artisan inventory:month-only-expiry            # dry run: lists what it would do
+php artisan inventory:month-only-expiry --apply
+```
+
+**Purpose.** The stock-in form has a "Month Only" switch: `2027-02` used to be stored as 2027-02-01, which marked a box printed
+"02/2027" as expired up to 27 days early. **Owner decision, 2026-11-05: a month-only expiry is the last day of the month**
+(2027-02-28, 2028-02-29). New stock-ins already do that; this command corrects the stock entered before.
+
+**Which batches it moves.** Only when it is certain how the date was typed: the batch sits on the 1st of a month **and every
+stock-in line that created or topped it up** (`purchased_medicines.batch_id`) says the same month-only value (`2027-02`).
+It leaves alone, and counts in the output:
+- batches with **no stock-in line** (opening balance, imported stock): nobody can tell how their date was typed;
+- batches whose lines **disagree** (a full date typed on purpose together with a month-only one, or another month).
+
+A batch whose lines were all typed as full dates is not touched and not mentioned.
+
+**What `--apply` does** (all or nothing, one medicine at a time under its stock lock):
+1. changes `medicine_batches.expiration_date` of each listed batch to the last day of its month;
+2. recalculates the medicine's `available_quantity` (it counts unexpired units only). **Units that count as expired today
+   because of the 1st, and are good until the last day, come back into the available figure**: the dry run says how many;
+3. writes one line per batch to the application log (`storage/logs`: batch id, batch number, old and new date).
+
+**Nothing else changes:** no quantity moves, so the stock ledger gets no row; the stock-in line keeps what was typed
+(`2027-02`); nothing is deleted. A second run finds nothing to do. To undo, restore the backup taken before `--apply`
+(or move a batch back by hand from the log lines).
+
+**Output.** A table (batch, medicine, batch number, units, now, would be, units that would be usable again); notes about the
+batches it leaves alone; then "Dry run: ..." or "Moved N batch(es) ...". **Exit code:** `0`.
+
+**Where it is used in the plan:** Laravel 12 verification pass (2026-11-05), owner decision in
+[STATUS §6](STATUS.md). Run it **once** on the clinic copy if the owner wants the older stock corrected too; it is not part of
+the deployment checklist.
+
+**Tests:** `tests/Feature/Regression/MonthOnlyExpiryCommandTest.php`.
+**Code:** `app/Console/Commands/MonthOnlyExpiry.php`, `app/Services/MonthOnlyExpiryCorrection.php`, `app/Support/ExpiryDate.php`.
 **Tests:** `tests/Feature/Regression/OrphanBatchRecoveryTest.php`.
 
 ---
@@ -250,6 +293,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-11-05 | Laravel 12 verification | New command `inventory:month-only-expiry [--apply]` (dry run by default): moves stock entered as a month-only expiry from the 1st to the last day of the month (owner decision, STATUS §6). Changes batch expiry dates and the derived available quantity only |
 | 2026-10-29 | 11 D | No new command. `db:integrity` and the foreign-key catalog now expect **57** keys (the five keys of the count-sheet tables). Migration `2026_10_29_150000_create_inventory_counts_tables` makes the two count-sheet tables (InnoDB, only when missing; its rollback refuses while any sheet exists); pending on the working database |
 | 2026-10-28 | 7 follow-up | New command `php artisan realtime:check` (read-only diagnosis of the real-time chain, see "Real-time updates"). The startup script runs it, replaces a stale Reverb, names another program on the Reverb port and checks the Windows Firewall for ports 8000 / 8080. `REVERB_APP_ID` / `KEY` / `SECRET` left empty in `.env` are now derived from `APP_KEY`; the firewall command in this file now covers both ports and every network profile |
 | 2026-10-22 | 10 | No new command. Final completeness check: every command in `app/Console/Commands` is listed in this file (`consultation-images:secure`, a 2026-09-30 one-off, was missing and is added); `db:backup` and `notifications:refresh` run only while Windows Task Scheduler runs `schedule:run` (the startup script does not start the scheduler) |

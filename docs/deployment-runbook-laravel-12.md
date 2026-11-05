@@ -148,6 +148,7 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 - Everybody signs in again if `APP_NAME` changed (the session cookie name follows it). Remind the doctors and staff still on `123456`.
 - Keep `<folder>-before-laravel-12` and the USB backup for 7 days, then tidy up.
 - Records: a Handover entry (what ran, times, warnings), STATUS section 7 ticked, then the pull request into `develop`.
+- Optional, **not part of the window**: older month-only stock sits on the 1st of its month. When the owner wants it corrected: `php artisan db:backup`, `php artisan inventory:month-only-expiry` (dry run: read the table and the units that "would be usable again"), then `--apply`, then `php artisan db:integrity`. See [commands.md](commands.md#inventorymonth-only-expiry).
 - **U3 (Laravel 13) is a separate window** and needs PHP 8.3 on the clinic PC first.
 
 ## 7. Not verified, and why
