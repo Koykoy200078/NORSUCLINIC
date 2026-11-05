@@ -9,6 +9,8 @@ clinic PC.** Everything below was checked on the development laptop only.
 - What gets deployed: branch `upgrade/laravel-13` at `f3acc02` (Laravel 12.71, Carbon 3, PHPUnit 11.5, in-house list tables,
   `spatie/laravel-html` forms, Livewire 3.8, permission 6, medialibrary 11). PHP stays **8.2**. The upgrade stages add **no migration**
   and change **no `.env` key**.
+- **Owner's answer, 2026-11-05: the clinic PC runs `changes_v2`, so this is Case A (code only).** Section 3 step 0 proves it on the PC before
+  anything is changed; if it says otherwise, stop and treat it as Case B. The text for Case B stays below only as the fallback.
 - **The size of the jump depends on what the clinic PC runs today, and the repository cannot say.** `develop` stopped on 2025-09-27
   (Laravel 10.42); `changes_v2` is 246 commits and 81 new migrations ahead of it, and STATUS section 7 still lists the clinic
   deployment of `changes_v2` as *to do*. So there are two cases:
@@ -30,11 +32,11 @@ clinic PC.** Everything below was checked on the development laptop only.
 
 | # | Question | Recommendation |
 |---|---|---|
-| 1 | What does the clinic PC run now? In its project folder: `git log -1 --format="%h %ad %s" --date=short` and `php artisan about --only=environment` | This decides Case A or B above. |
+| 1 | What does the clinic PC run now? | **Answered: `changes_v2` (Case A).** Proved again on the PC in section 3 step 0. |
 | 2 | Window: date, start time, who runs it, who is on the phone | After the 6:00 PM backup has run and the clinic is closed; Case B on a Friday evening or a weekend, so Monday is not the first test. |
 | 3 | How the code reaches the PC | Once the rehearsal passes, the owner approves: `git merge --ff-only upgrade/laravel-13` into `changes_v2` (it is 0 behind, so nothing is rewritten), push it, and tag `laravel-12-ready`. The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
 | 4 | Does the clinic PC have internet and Node 22 for the window? | Do not depend on it: build on the laptop and carry a bundle on a USB stick (section 2.2). |
-| 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | Yes (section 2.1). It is patient data: it goes into the laptop's `norsu_clinic` only, never into the repository or a document. |
+| 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | Recommended even in Case A: no migration runs, but it is the only way to see Laravel 12 working on the clinic's real records before the window (section 2.1). It is patient data: it goes into the laptop's `norsu_clinic` only, never into the repository or a document. If you skip it, the first run on real data is the window itself, so keep the rollback copy and the cut-off time strict. |
 
 ## 2. Before the window (on the laptop)
 
@@ -57,7 +59,8 @@ php artisan db:integrity --compare-fresh             # expected: 0 errors; the d
 php artisan inventory:reconcile
 ```
 
-Then sign in with the QA accounts (`storage/app/qa-accounts.json`, git-ignored; never print the passwords) as admin, Staff (Nurse) and
+In Case A `migrate` must say "Nothing to migrate" at once and `db:integrity --compare-fresh` must exit 0 (the structure equals a fresh Laravel 12
+install); if a migration is pending, the clinic is not on the `changes_v2` tip: stop and ask. Then sign in with the QA accounts (`storage/app/qa-accounts.json`, git-ignored; never print the passwords) as admin, Staff (Nurse) and
 Doctor and walk the smoke checklist of section 4. **Go only if:** `migrate` ran without an error, `db:integrity` exits 0, and the tour is clean.
 Write the `migrate` time here and size the window from it. Delete the imported data from the laptop afterwards.
 
@@ -92,6 +95,7 @@ Stop at the first step that fails. Times are for Case A; add the rehearsal `migr
 
 | Step | Do | Check |
 |---|---|---|
+| 0 | **Prove Case A, changing nothing:** `git log -1 --format="%h %ad %s" --date=short` ; `php artisan about --only=environment` ; `php artisan migrate:status --pending` ; `php -v` | tip `71e43ae` (or a commit of `changes_v2`), Laravel 10.50.x, **no pending migration**, PHP 8.2.x. Anything else: stop. |
 | 1 | Be sure the 6:00 PM backup exists in `storage\app\backups\scheduled` today. Everybody signed out. | file dated today |
 | 2 | In the server window press **Ctrl+C** (stops the web server, Reverb and the scheduler). | window closed |
 | 3 | `php artisan db:backup`, then **copy that `.sql` to a USB stick / another disk**. | size is not 0; copied |
