@@ -8,6 +8,7 @@ use App\Models\PatientQueue;
 use App\Services\QueueBoardService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
@@ -16,6 +17,9 @@ use Tests\TestCase;
  * Pins what the four live places that subtract dates show today (Laravel 10, Carbon 2). Carbon 3 (Laravel 12) makes
  * diffIn*() return SIGNED, FRACTIONAL numbers, so a call that was right for "days between" can silently change meaning;
  * these tests stay green on Laravel 10 and must stay green after the hop (docs/laravel-13-upgrade-plan.md, finding C3).
+ *
+ * U2 adds the other places a Carbon major can change what people read: the time of a backup file (createFromTimestamp
+ * decides the time zone), the "5 minutes ago" texts, and the age counted from a birth date.
  */
 class CarbonBehaviourTest extends TestCase
 {
@@ -106,5 +110,61 @@ class CarbonBehaviourTest extends TestCase
 
         $this->assertStringContainsString('15 min', $html);
         $this->assertStringNotContainsString('-15 min', $html);
+    }
+
+    public function test_the_backups_screen_shows_the_time_of_each_file_as_philippine_time(): void
+    {
+        $admin = $this->makeAdmin();
+        $directory = storage_path('app/backups');
+        File::ensureDirectoryExists($directory);
+        $probe = $directory . DIRECTORY_SEPARATOR . 'zz-u2-time-probe.sql';
+        file_put_contents($probe, "-- probe
+");
+        touch($probe, Carbon::parse('2026-03-01 08:30:00', 'Asia/Manila')->getTimestamp());
+
+        try {
+            $this->actingAs($admin)->get(route('backups.index'))->assertOk()->assertSee('Sun, Mar 1, 2026 8:30 AM');
+        } finally {
+            @unlink($probe);
+        }
+    }
+
+    #[DataProvider('relativeTimes')]
+    public function test_relative_times_read_the_same_everywhere_they_are_shown(int $secondsAgo, string $expected): void
+    {
+        $this->assertSame($expected, now()->subSeconds($secondsAgo)->diffForHumans());
+    }
+
+    /** @return array<string, array{int, string}> the "x ago" texts of the notification bell, queue and detail pages */
+    public static function relativeTimes(): array
+    {
+        return [
+            '30 seconds' => [30, '30 seconds ago'],
+            '5 minutes' => [5 * 60, '5 minutes ago'],
+            '90 minutes' => [90 * 60, '1 hour ago'],
+            '3 hours' => [3 * 3600, '3 hours ago'],
+            '2 days' => [2 * 86400, '2 days ago'],
+            '20 days' => [20 * 86400, '2 weeks ago'],
+            '40 days' => [40 * 86400, '1 month ago'],
+            '400 days' => [400 * 86400, '1 year ago'],
+        ];
+    }
+
+    #[DataProvider('ages')]
+    public function test_age_counts_completed_years_from_the_birth_date(string $dob, int $years): void
+    {
+        // the expression of the prescription page and print (PrescriptionController, show_fields_with_medicine)
+        $this->assertSame($years, Carbon::parse($dob)->diff(Carbon::now())->y);
+    }
+
+    /** @return array<string, array{string, int}> "now" is 2026-10-30 09:30 */
+    public static function ages(): array
+    {
+        return [
+            'birthday long ago' => ['2003-05-01', 23],
+            'birthday tomorrow' => ['2000-10-31', 25],
+            'birthday today' => ['2000-10-30', 26],
+            'born yesterday' => ['2026-10-29', 0],
+        ];
     }
 }
