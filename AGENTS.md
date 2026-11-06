@@ -55,12 +55,15 @@ Look up docs for **these** versions (Laravel 13.x, Livewire 3.x), e.g. through C
 ## 4. Skills
 
 Domain skills live in **`.agents/skills/`** (Codex) and **`.claude/skills/`** (Claude Code). The two folders hold the same
-16 skills; **when you change a skill, change both copies**. Activate the relevant skill whenever you work in its area.
+23 skills: the 16 below plus 7 that Laravel Boost added on 2026-11-06 (`debug-using-debugbar`, `deploying-laravel-cloud`,
+`deploying-to-cloud`, `infer-conventions`, `medialibrary-development`, `tailwindcss-development`, `testing-best-practices`;
+`.github/skills/` holds Boost's Copilot copies). **When you change a skill, change both copies.** Activate the relevant skill
+whenever you work in its area.
 
 | Skill | Use for |
 |---|---|
-| `laravel-best-practices` | any Laravel PHP code (adapted to this project: Laravel 13 in the classic structure) |
-| `livewire-development` | Livewire components and the list base `TableComponent` (adapted to Livewire 3) |
+| `laravel-best-practices` | any Laravel PHP code (Boost's generic version since 2026-11-06; the text adapted to this project is in git at `18d3a9f`) |
+| `livewire-development` | Livewire components and the list base `TableComponent` (Boost's generic Livewire 3 version since 2026-11-06; the text adapted to this project is at `18d3a9f`) |
 | `laravel-permission-development` | roles, permissions, menus / routes / buttons access (adapted to spatie 6.25 + this project's access model) |
 | `laravel-specialist`, `php-pro` | general Laravel / PHP work (their Laravel 11+/Pest examples do not apply — follow §3) |
 | `test-master` | test design (write PHPUnit, not Pest) |
@@ -73,8 +76,11 @@ Domain skills live in **`.agents/skills/`** (Codex) and **`.claude/skills/`** (C
 | `playwright-expert` | browser end-to-end checks |
 | `the-fool` | challenging a plan or decision before committing to it |
 
-**Deliberately not included** (wrong stack for this project): Pest, Flux UI, Tailwind, Fortify, Laravel Cloud deploy,
-PostgreSQL. Copies are in the owner's other project if the stack ever changes.
+**Deliberately not included** (wrong stack for this project): Pest, Flux UI, Fortify, PostgreSQL (the `pest-testing`,
+`fluxui-development`, `fortify-development` and `postgres-pro` folders came from the owner's other project and are not
+committed). Boost's `deploying-to-cloud`, `deploying-laravel-cloud` and `tailwindcss-development` are in the folders because
+`boost.json` lists them, but they do not apply here (no Laravel Cloud; the pages are Bootstrap 5 and Mix). Copies of the
+others are in the owner's other project if the stack ever changes.
 
 ## 5. How to work
 
@@ -95,6 +101,10 @@ PostgreSQL. Copies are in the owner's other project if the stack ever changes.
   audit plan and [docs/commands.md](docs/commands.md), the **log of new artisan commands** (what each does, whether it
   changes data, where and when to run it): add or update a row there in the same commit that adds or changes a command.
 - **Replies:** concise; say what was verified and how.
+- **Boost block:** the `<laravel-boost-guidelines>` section at the end of this file and of `CLAUDE.md` is generic Laravel
+  guidance written by `php artisan boost:install` and rewritten by `boost:update` (dev tool; off under `APP_ENV=production`).
+  Where it disagrees with this file (a test for every change, Vite / `npm run build` where this project uses Mix, Context7
+  for the versions in §3, Laravel Cloud), **this file wins**.
 
 ## 6. Data and secrets
 
