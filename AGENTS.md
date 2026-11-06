@@ -55,9 +55,10 @@ Look up docs for **these** versions (Laravel 13.x, Livewire 3.x), e.g. through C
 ## 4. Skills
 
 Domain skills live in **`.agents/skills/`** (Codex) and **`.claude/skills/`** (Claude Code). The two folders hold the same
-23 skills: the 16 below plus 7 that Laravel Boost added on 2026-11-06 (`debug-using-debugbar`, `deploying-laravel-cloud`,
-`deploying-to-cloud`, `infer-conventions`, `medialibrary-development`, `tailwindcss-development`, `testing-best-practices`;
-`.github/skills/` holds Boost's Copilot copies). **When you change a skill, change both copies.** Activate the relevant skill
+27 skills: the 16 below, 7 that Laravel Boost added on 2026-11-06 (`debug-using-debugbar`, `deploying-laravel-cloud`,
+`deploying-to-cloud`, `infer-conventions`, `medialibrary-development`, `tailwindcss-development`, `testing-best-practices`)
+and 4 from the owner's other project, committed at his request the same day (`fluxui-development`, `fortify-development`,
+`pest-testing`, `postgres-pro`); `.github/skills/` holds the Copilot copies. **When you change a skill, change both copies.** Activate the relevant skill
 whenever you work in its area.
 
 | Skill | Use for |
@@ -76,11 +77,10 @@ whenever you work in its area.
 | `playwright-expert` | browser end-to-end checks |
 | `the-fool` | challenging a plan or decision before committing to it |
 
-**Deliberately not included** (wrong stack for this project): Pest, Flux UI, Fortify, PostgreSQL (the `pest-testing`,
-`fluxui-development`, `fortify-development` and `postgres-pro` folders came from the owner's other project and are not
-committed). Boost's `deploying-to-cloud`, `deploying-laravel-cloud` and `tailwindcss-development` are in the folders because
-`boost.json` lists them, but they do not apply here (no Laravel Cloud; the pages are Bootstrap 5 and Mix). Copies of the
-others are in the owner's other project if the stack ever changes.
+**Wrong stack, in the folders but not to be used** (follow §3 instead): Pest (`pest-testing`; the tests are PHPUnit), Flux UI
+(`fluxui-development`), Fortify (`fortify-development`), PostgreSQL (`postgres-pro`): these four came from the owner's other
+project. Boost's `deploying-to-cloud`, `deploying-laravel-cloud` and `tailwindcss-development` are there because `boost.json`
+lists them, and they do not apply either (no Laravel Cloud; the pages are Bootstrap 5 and Mix).
 
 ## 5. How to work
 

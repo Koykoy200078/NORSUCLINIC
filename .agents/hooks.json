@@ -1,0 +1,15 @@
+{
+    "enabled": true,
+    "PreToolUse": [],
+    "PostToolUse": [
+        {
+            "type": "command",
+            "command": "node ./.agents/memory-guard.mjs",
+            "matcher": ".*",
+            "timeout": 30
+        }
+    ],
+    "PreInvocation": [],
+    "PostInvocation": [],
+    "Stop": []
+}
