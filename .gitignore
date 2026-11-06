@@ -46,5 +46,8 @@ Homestead.yaml
 /storage/debugbar/*
 /storage/logs/*
 
+# Personal assistant settings (a local permission list, e.g. an allowed `git push`): never commit
+.claude/settings.local.json
+
 # DEVSENSE-specific files
 /DEVSENSE/packages-cache/authorizenet

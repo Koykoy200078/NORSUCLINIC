@@ -111,7 +111,10 @@ finds no advisories, and every one of the 799 files named in `mix-manifest.json`
 dependencies require a PHP version >= 8.3.0". **Copy both files to the USB stick, and after copying check the hash on the PC:**
 `Get-FileHash <zip> -Algorithm SHA256`. It stays valid for any later commit that leaves `composer.lock`, `package-lock.json`, `webpack.mix.js`
 and `resources\` alone: `git diff --stat bce72ec..<tag> -- composer.lock package-lock.json webpack.mix.js resources` must print nothing,
-otherwise rebuild it (the commands are above).
+otherwise rebuild it (the commands are above). **One known exception:** the Boost commit (2026-11-06) added four `packages-dev` entries to `composer.lock`
+(`laravel/boost`, `laravel/mcp`, `laravel/roster`, `symfony/yaml`), so that diff is no longer empty, but the bundle is built with `--no-dev` and the
+`packages` block (118 packages) is identical to `bce72ec` (checked 2026-11-06): the bundle stays valid. Later `composer.lock` changes need the same check
+of the `packages` block, not of `packages-dev`.
 
 The Laravel 12 bundle `laravel-12-37f5a62.zip` (SHA-256 `A47BC0CFFB30621A10E3563739661CCA078B4AC1D838035050360DC5DF6716F5`) is **not** for this
 window: it holds Laravel 12 `vendor\`. Keep it only for the fallback commit `3c8c434` (section 8).
@@ -128,6 +131,12 @@ project folder, for the rollback copy), `.\startup-dev-environment.ps1 -CheckOnl
 `FILESYSTEM_DISK` or `MEDIA_DISK` to `s3` (the upgrade removed the unused `s3` disk, so such a line would break file storage):
 `Select-String .env -Pattern '^(FILESYSTEM_DISK|MEDIA_DISK|AWS_)'` should print nothing, or only `local` / `public`. If Composer is installed:
 `composer check-platform-reqs`.
+
+Also the password cost (found in the 2026-11-06 re-check, nothing is changed by looking): `Select-String .env -Pattern '^BCRYPT_ROUNDS'` should print nothing or
+`BCRYPT_ROUNDS=10` (the default in `config/hashing.php`), and the stored hashes should start with the same cost
+(`php artisan tinker --execute="echo DB::table('users')->selectRaw('SUBSTRING(password,1,7) p, COUNT(*) n')->groupBy('p')->get();"` prints only the first 7 characters,
+for example `$2y$10$`). If the two differ, nothing breaks: Laravel 11+ re-hashes each password at that user's next sign-in (the password stays valid, only
+`users.password` is rewritten). Align the `.env` value with the stored cost before the window if you want no such writes.
 
 ### 2.4 Freeze and tell people
 

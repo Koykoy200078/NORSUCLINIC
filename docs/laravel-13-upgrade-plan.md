@@ -115,7 +115,7 @@ U0.7 comes before U0.4 / U0.3 so that every later red test is attributable.
 
 | ID | Work | Notes |
 |---|---|---|
-| U0.1 | Baseline and safety: git tag `pre-laravel-13-upgrade` (local), `route:list --json` (515 routes), permission matrix (2,892 requests), `composer.json` / `composer.lock` copies, `db:integrity --compare-fresh` on the live DB (exit 0), numbers 1,039 / 10,089 | **done 2026-10-30**; reproducible from commit `71e43ae`; the rollback point of the whole upgrade |
+| U0.1 | Baseline and safety: git tag `pre-laravel-13-upgrade` (local when made; **pushed to origin since**, checked 2026-11-06), `route:list --json` (515 routes), permission matrix (2,892 requests), `composer.json` / `composer.lock` copies, `db:integrity --compare-fresh` on the live DB (exit 0), numbers 1,039 / 10,089 | **done 2026-10-30**; reproducible from commit `71e43ae`; the rollback point of the whole upgrade |
 | U0.2 | `laravel/framework` 10.50.3 → 10.50.4: `composer update laravel/framework --no-security-blocking` | patch release; proves the toolchain; suite on 8.3.31, changed tests on 8.2.31 |
 | U0.5 | PHPUnit 9.6 → 10.5 (+ `nunomaduro/collision` ^7): `phpunit --migrate-configuration` keeping the `_test` schema guard, 15 `@dataProvider` in 13 files → `#[DataProvider]` | 0 mocks, no other annotation, providers already static; 1,039 / 10,089 unchanged on both PHP versions |
 | U0.6 | **Remove proven-unused packages** that do not depend on tables or forms (section 13, part A) | one commit per group; suite + clean-room install / build + live browser smoke tour |
@@ -153,7 +153,7 @@ optional **U2c: PHPUnit 11.5** as its own commit. Live browser check: full tour.
 
 ### U3: Laravel 13.40 (PHP ≥ 8.3 on the clinic PC) — **done 2026-11-06 on the branch (the owner's go); not deployed: the clinic PC needs PHP 8.3 first (runbook section 8)**
 Prerequisite: PHP 8.3 (or 8.4) installed on the clinic PC with the same extensions (`pdo_mysql`, `mbstring`, `intl`, `gd`, `zip`, `fileinfo`, `openssl`, `sodium`, `curl`),
-`composer.json` `php` → `^8.3` and the platform pin → `8.3.0`. Then `laravel/framework ^13.39`, `laravel/tinker ^3.0`, `barryvdh/laravel-debugbar ^4`,
+`composer.json` `php` → `^8.3` and the platform pin → `8.3.0`. Then `laravel/framework ^13.39` (as built: `^13.0`, and `composer.lock` pins 13.40.0), `laravel/tinker ^3.0`, `barryvdh/laravel-debugbar ^4`,
 `spatie/laravel-ignition ^2.12`, `spatie/laravel-medialibrary ^11.23`, PHPUnit **^11.5.50 (PHP ≥ 8.2) or ^12.5.8 (PHP ≥ 8.3)**,
 CSRF rename (C6), cache prefix / cookie names pinned (C7), `serializable_classes` decision (C5), MySQL `DELETE JOIN` check (C11), the container now injects `null` for a nullable class parameter with a default (scanned: no such container-resolved parameter, so no expected effect), Bootstrap-3 pagination view names if referenced.
 
@@ -218,7 +218,7 @@ slim `bootstrap/app.php` structure; Livewire 4; Pest. The owner confirmed on 202
 
 | Stage | State |
 |---|---|
-| U0.1 baseline | **done 2026-10-30** (tag `pre-laravel-13-upgrade` local; `route:list`, matrix, lock-file copies; `db:integrity --compare-fresh` exit 0) |
+| U0.1 baseline | **done 2026-10-30** (tag `pre-laravel-13-upgrade`, on origin since; `route:list`, matrix, lock-file copies; `db:integrity --compare-fresh` exit 0) |
 | U0.2 Laravel 10.50.4 | **done 2026-10-30** (`b8fe202`): suite 1039 / 10,089 on PHP 8.3 with the link crawl; live tour of 3 roles on a scratch schema |
 | U0.5 PHPUnit 10.5 | **done** (`f741279`): PHPUnit 10.5.66, Collision 7.12; 15 `@dataProvider` + 14 `@test` → attributes |
 | U0.6 unused packages (part A) | **done 2026-11-02**. Composer side (checkpoint `72ed3e1`): old log viewer + provider line, S3 adapter + `s3` disk, breeze, sail, ide-helper + its 2 tracked stubs, query-detector, redundant guzzle / htmlpurifier requirements, tinker → dev, template `version` key; `turbo.js` and the datatables copy line. npm side: `@hotwired/turbo`, `handlebars`, `bootstrap-daterangepicker`, `datatables` uninstalled; **`flatpickr` stays** (the plan was wrong: `doctors/create-edit.js` and `patients/create-edit.js` import `flatpickr/dist/l10n`). Verified: Node 22.23 clean `npm ci && npm run prod` byte-identical (798 built files, SHA-256) to the build made before the removal; full suite with `LINK_CRAWL=1` **1051 tests / 10,122 assertions on PHP 8.3.36 and on PHP 8.2.35**, none skipped; live tour (admin, Staff (Nurse), doctor) on a freshly seeded scratch schema: no failed or external request, no console error, date pickers initialise on the patient / doctor / dispense / stock-in forms, `/log-viewer` open to the admin and 403 for the nurse and the doctor |

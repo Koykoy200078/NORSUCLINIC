@@ -23,6 +23,19 @@ class PasswordHashStabilityTest extends TestCase
         $this->assertStringContainsString("env('BCRYPT_ROUNDS', 10)", file_get_contents(config_path('hashing.php')));
     }
 
+    public function test_the_env_example_does_not_set_a_different_bcrypt_cost_than_the_default(): void
+    {
+        // A fresh install copies .env.example to .env. A BCRYPT_ROUNDS line there that differs from the default in
+        // config/hashing.php would make every password re-hash at its next sign-in (finding C15 re-check, 2026-11-06).
+        preg_match("/env\('BCRYPT_ROUNDS', (\d+)\)/", file_get_contents(config_path('hashing.php')), $default);
+        $this->assertNotEmpty($default, 'the default cost was not found in config/hashing.php');
+
+        $example = file_get_contents(base_path('.env.example'));
+        $hasLine = preg_match('/^BCRYPT_ROUNDS=(\d+)\s*$/m', $example, $set) === 1;
+
+        $this->assertTrue(! $hasLine || $set[1] === $default[1], '.env.example sets BCRYPT_ROUNDS to ' . ($set[1] ?? '-') . ', the default is ' . $default[1]);
+    }
+
     public function test_signing_in_does_not_change_the_stored_password_hash(): void
     {
         $this->seedAccessControl();
