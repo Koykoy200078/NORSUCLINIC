@@ -28,6 +28,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
         "fakerphp/faker": "^1.9.1",
+        "laravel/boost": "^2.2",
         "laravel/tinker": "^3.0",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
