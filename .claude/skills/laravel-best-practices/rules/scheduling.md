@@ -1,37 +1,61 @@
-# Task Scheduling Best Practices
+# Task scheduling best practices
 
-## Use `withoutOverlapping()` on Variable-Duration Tasks
+## Prevent unwanted overlap
 
-Without it, a long-running task spawns a second instance on the next tick, causing double-processing or resource exhaustion.
-
-## Use `onOneServer()` on Multi-Server Deployments
-
-Without it, every server runs the same task simultaneously. Requires a shared cache driver (Redis, database, Memcached).
-
-## Use `runInBackground()` for Concurrent Long Tasks
-
-By default, tasks at the same tick run sequentially. A slow first task delays all subsequent ones. `runInBackground()` runs them as separate processes.
-
-## Use `environments()` to Restrict Tasks
-
-Prevent accidental execution of production-only tasks on a development copy.
-
-In Laravel 10 tasks live in `app/Console/Kernel.php` (`Schedule::` in `routes/console.php` is Laravel 11+):
+Use `withoutOverlapping()` when a second run must not begin while the previous run holds the lock. Use it for variable-duration tasks that are not safe to run concurrently.
 
 ```php
-protected function schedule(Schedule $schedule): void
-{
-    $schedule->command('db:backup')->hourly()->withoutOverlapping();
-}
+Schedule::command('reports:generate')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(30);
 ```
 
-## Use `takeUntilTimeout()` for Time-Bounded Processing
+The optional value is the lock expiration time in minutes, not the task timeout. Choose the value carefully. The default is 24 hours, and an expiration that is too short can permit overlap while the first task still runs. Clear stale locks with `php artisan schedule:clear-cache`. The task itself should still tolerate retries and partial execution where practical.
 
-A task that processes an unbounded cursor can overlap with the next run. Bound execution time.
+## Run a task on one server
 
-## No Schedule Groups
+Use `onOneServer()` when only one scheduler node should run an eligible task. Scheduler nodes must use the same default cache store, and that store must support atomic locks. Supported stores include `database`, `memcached`, `dynamodb`, and `redis`.
 
-`Schedule::...->group()` is Laravel 11+. Repeat the few modifiers per task in `Kernel::schedule()`.
+```php
+Schedule::command('billing:charge')->daily()->onOneServer();
+```
 
-**This project:** the scheduler only runs when Windows Task Scheduler calls `php artisan schedule:run` every minute (see the
-startup script); there is one server, so `onOneServer()` is unnecessary.
+Name scheduled closures before applying `onOneServer()`, especially when scheduling the same closure with different parameters, so each task has a distinct lock identity.
+
+## Run eligible commands in the background
+
+Tasks due at the same time run sequentially by default. Use `runInBackground()` when an independent, long-running scheduled command should not delay later tasks.
+
+```php
+Schedule::command('analytics:process')->hourly()->runInBackground();
+```
+
+Laravel restricts `runInBackground()` to tasks scheduled with `command()` and `exec()`. It is not available for scheduled closures. Give background processes logging and failure monitoring.
+
+## Restrict tasks by environment
+
+Use `environments()` when a task should run only in named application environments. Treat `environments()` as an operational safeguard, not an authorization control.
+
+```php
+Schedule::command('billing:charge')
+    ->monthly()
+    ->environments(['production']);
+```
+
+## Group shared configuration
+
+Use schedule groups when several tasks share frequency or constraints.
+
+```php
+Schedule::daily()
+    ->onOneServer()
+    ->timezone('America/New_York')
+    ->group(function () {
+        Schedule::command('emails:send --force');
+        Schedule::command('emails:prune');
+    });
+```
+
+## Bound work inside the task
+
+The scheduler does not provide a `takeUntilTimeout()` event method or terminate arbitrary tasks at a deadline. Bound work in the command or job itself by processing finite chunks, checking a deadline, or dispatching queue jobs with suitable timeouts. Use operating-system or process controls when hard termination is required.

@@ -1,119 +1,59 @@
 ---
 name: laravel-best-practices
-description: "Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code in this project (Laravel 13.x, PHP 8.3). This includes creating or modifying controllers, models, migrations, form requests, repositories, services, jobs, scheduled commands and Eloquent queries. Triggers for N+1 and query performance issues, caching, authorization and security, validation, error handling, route definitions and architectural decisions. Also use for Laravel code reviews and refactors."
+description: "Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code. This includes creating or modifying controllers, models, migrations, form requests, policies, jobs, scheduled commands, service classes, and Eloquent queries. Triggers for N+1 and query performance issues, caching strategies, authorization and security patterns, validation, error handling, queue and job configuration, route definitions, and architectural decisions. Also use for Laravel code reviews and refactoring existing Laravel code to follow best practices. Covers any task involving Laravel backend PHP code patterns."
 license: MIT
 metadata:
-  author: laravel (adapted for Medical University Clinic / NORSUCLINIC, Laravel 13 in the classic structure)
+  author: laravel
 ---
 
-# Laravel Best Practices (Laravel 13, classic structure — this project)
+# Laravel best practices
 
-Best practices for Laravel, prioritized by impact. Each rule teaches what to do and why. Adapted from the Laravel Boost
-skill (written for Laravel 13): every API of the slim application structure (Laravel 11+) in the rule files is marked and given the
-classic form this project keeps. The framework is Laravel 13, but the application keeps the Laravel 10 layout (`app/Http/Kernel.php`,
-`Handler.php`, `config/*.php`, `$casts`, `app/Console/Kernel.php`); where a rule file says "Laravel 10", read it as "this project's
-classic structure". Moving to the slim structure is a separate decision of the owner (plan stage U5; stage U4 is Mix → Vite).
-For exact API syntax, look up the **Laravel 13.x** docs (Context7 library `/laravel/docs`, branch `13.x`).
+Best practices for Laravel, organized as an index of rule files. Each rule file teaches what to do and why. For exact API syntax, verify with `search-docs`.
 
-## Consistency First
+## Consistency first
 
-Before applying any rule, check what the application already does. Laravel offers multiple valid approaches — the best
-choice is the one the codebase already uses, even if another pattern would be theoretically better. Inconsistency is
-worse than a suboptimal pattern. Check sibling files, related controllers, repositories, models or tests first.
+Before applying any rule, check what the application already does. Laravel offers several valid approaches. The best choice is the one the codebase already uses, even if another pattern would be better in theory. Inconsistency is worse than a suboptimal pattern.
 
-## Project rules that override the generic rules
+Check sibling files and related controllers, models, or tests for established patterns. If one exists, follow it. Don't introduce a second way. These rules are defaults for when no pattern exists yet, not overrides.
 
-| Topic | Rule in this project |
-|---|---|
-| Version | Laravel **10**: `$casts` property (not `casts()`), middleware aliases in `app/Http/Kernel.php`, exceptions in `app/Exceptions/Handler.php`, schedule in `app/Console/Kernel.php`. No `once()`, `defer()`, `Context`, `Concurrency`, `Cache::flexible/memo`, `Uri`, `Exceptions::fake()` |
-| Write path | Controller → **Repository** (`app/Repositories/*`, extend `BaseRepository`) holds the business logic; services exist for inventory (`MedicineInventoryService`), settings (`SettingsService`) and reports (`app/Services/Reports/*`) |
-| Stock | **Never** change `medicine_batches.quantity` or `medicines.available_quantity` directly — always `MedicineInventoryService` (`recordStockIn`, `deductStockFefo`, `restoreStock*`, `syncMedicineTotals`) |
-| Class ≠ table | `DispenseRecord` → `medicine_bills`, `DispenseRecordItem` → `sale_medicines`, `StockIn` → `medicine_availabilities`, `PrescriptionMedicine` → `prescriptions_medicines` (FK column is `medicine`, not `medicine_id`), `StockOutView` → `used_medicines_view` (a view) |
-| Soft delete | `users` / `patients` use **`archived_at`**; consultations / certificates / lab requests use `deleted_at`. Raw queries must filter them |
-| Routes / URLs | Named routes only; role-aware helpers `getRouteByRole()`, `getDashboardURL()`, `getDashboardRouteName()`. Never hard-code `/admin/...` |
-| Passwords | `User` does **not** hash automatically: always `Hash::make()` |
-| Network | LAN app: no page may need the internet (no CDN, no third-party asset or API) |
-| Money | Free clinic: **no prices, amounts, currency or payment fields**, ever |
-| Database | MySQL strict mode; all tables InnoDB; tests on their own `norsu_clinic_test` schema, never on `norsu_clinic` |
-| Activity log | Use the `LogsActivity` trait helpers for audit rows; never log passwords or full patient records |
+## How to apply
 
-## Quick Reference
+1. Check the changed files, nearby code, project configuration, and relevant tests for established patterns. Deviate only for a correctness or security defect, and call the deviation out.
+2. Map every affected concern to the rule index below. Read each mapped rule file before editing. Skip unrelated rule files.
+3. Make the smallest coherent change. Keep the application's architecture and naming instead of introducing a second pattern for the same job.
+4. Verify version-sensitive Laravel APIs for the installed version with `search-docs`, or inspect the installed framework when `search-docs` is unavailable.
+5. Run the narrowest relevant tests first, then the project's formatting and static-analysis checks when the change warrants them.
+6. Re-read the diff against every mapped rule before finishing.
 
-### 1. Database Performance → `rules/db-performance.md`
-- Eager load with `with()` to prevent N+1 queries; `withCount()` instead of loading relations to count
-- Select only needed columns; `chunk()` / `chunkById()` / `cursor()` for large sets
-- Index columns used in `WHERE`, `ORDER BY`, `JOIN`
-- Never query in Blade templates (the sidebar badges are cached in `layouts/menu.blade.php` — keep it that way)
+## Rule index
 
-### 2. Advanced Query Patterns → `rules/advanced-queries.md`
-- `addSelect()` subqueries over eager-loading a whole has-many for one value
-- Conditional aggregates (`CASE WHEN` in `selectRaw`) over several count queries
-- `whereIn` + `pluck()` over `whereHas` for better index usage
+Cross-cutting changes often need more than one rule file.
 
-### 3. Security → `rules/security.md`
-- `$fillable` / `$guarded` on every model; authorize every action (role, permission, record)
-- No raw SQL with user input; `{{ }}` escaping; `@csrf` on every form
-- Validate MIME type, extension and size for uploads (consultation images are private — served through a route)
+| Concern | Read |
+| --- | --- |
+| Query count, eager loading, indexes, large datasets | [`rules/db-performance.md`](rules/db-performance.md) |
+| Subqueries, aggregates, complex ordering and query plans | [`rules/advanced-queries.md`](rules/advanced-queries.md) |
+| Models, relationships, scopes, casts | [`rules/eloquent.md`](rules/eloquent.md) |
+| Authentication, authorization, input safety, secrets, uploads | [`rules/security.md`](rules/security.md) |
+| Form Requests and validation rules | [`rules/validation.md`](rules/validation.md) |
+| Controllers, route binding, resources, middleware | [`rules/routing.md`](rules/routing.md) |
+| Schema changes, columns, foreign keys, indexes | [`rules/migrations.md`](rules/migrations.md) |
+| Jobs, retries, uniqueness, batches, Horizon | [`rules/queue-jobs.md`](rules/queue-jobs.md) |
+| Cache lifetime, invalidation, locks, memoization | [`rules/caching.md`](rules/caching.md) |
+| Outbound requests, retries, timeouts, fakes | [`rules/http-client.md`](rules/http-client.md) |
+| Exceptions, reporting, rendering, log context | [`rules/error-handling.md`](rules/error-handling.md) |
+| Events and notifications | [`rules/events-notifications.md`](rules/events-notifications.md) |
+| Mailables and mail assertions | [`rules/mail.md`](rules/mail.md) |
+| Scheduled tasks and overlap protection | [`rules/scheduling.md`](rules/scheduling.md) |
+| Collections, lazy iteration, bulk operations | [`rules/collections.md`](rules/collections.md) |
+| Blade components, attributes, composers | [`rules/blade-views.md`](rules/blade-views.md) |
+| Environment values and application configuration | [`rules/config.md`](rules/config.md) |
+| Tests: coverage, factories, fakes, and assertions | the `testing-best-practices` skill |
+| Naming, helpers, file boundaries, PHP style | [`rules/style.md`](rules/style.md) |
+| Actions, services, dependencies, application structure | [`rules/architecture.md`](rules/architecture.md) |
 
-### 4. Caching → `rules/caching.md`
-- `Cache::remember()`; explicit keys (the `file` store has no tags); `Cache::lock()` / `lockForUpdate()` for races
-- Settings: change through `SettingsService::set()` (clears its cache); writing the `Setting` model directly leaves it stale
+## Decision rules
 
-### 5. Eloquent Patterns → `rules/eloquent.md`
-- Correct relationship types with return types; local scopes; global scopes sparingly
-- `$casts` property; cast date columns; never hard-code table names
-
-### 6. Validation & Forms → `rules/validation.md`
-- Form Request classes; `$request->validated()` only — never `$request->all()` into `create()` / `update()`
-- Rules must match the column (length, nullability): MySQL strict mode rejects what used to be truncated
-
-### 7. Configuration → `rules/config.md`
-- `env()` only inside config files (this project's `.env` uses `CACHE_DRIVER`, not `CACHE_STORE`)
-
-### 8. Testing Patterns → `rules/testing.md`
-- **PHPUnit 12 classes** (attributes, static data providers), not Pest; fixtures in `tests/Concerns/BuildsClinicData.php`; one regression test per fixed bug
-- Write the failing test first; see it fail; then fix
-
-### 9. Queue & Job Patterns → `rules/queue-jobs.md`
-- Database queue, no always-on worker: keep work synchronous where possible
-
-### 10. Routing & Controllers → `rules/routing.md`
-- Each role has its own route file (`web.php` admin, `staff.php`, `doctor.php`) with the stack `auth`, `checkUserStatus`, `role:…`, `permission:…`
-- Implicit route model binding; Form Requests; thin controllers
-
-### 11. HTTP Client → `rules/http-client.md`
-- Not used (no outside APIs). Never add a call to an internet service
-
-### 12. Events, Notifications & Mail → `rules/events-notifications.md`, `rules/mail.md`
-- `MAIL_MAILER=log`: nothing is really e-mailed; do not build features that depend on mail delivery
-- Broadcast / real-time events after commit (`ShouldDispatchAfterCommit`)
-
-### 13. Error Handling → `rules/error-handling.md`
-- `app/Exceptions/Handler.php` (classic structure)
-
-### 14. Task Scheduling → `rules/scheduling.md`
-- `app/Console/Kernel.php`; only `db:backup` hourly today
-
-### 15. Architecture → `rules/architecture.md`
-- Dependency injection over `app()` where the class already uses DI; default `ORDER BY id DESC`; `mb_*` for UTF-8
-
-### 16. Migrations → `rules/migrations.md`
-- `php artisan make:migration`; `constrained()` for foreign keys; reversible `down()`
-- Migrations must also upgrade the **clinic's old data** (see `docs/audit-plan-2026-10-08.md` Phase 1): guard
-  `Schema::hasTable/hasColumn`, never lose rows, wrap table rebuilds in `App\Support\LegacyMysqlMigration::withoutZeroDateChecks()`
-
-### 17. Collections → `rules/collections.md`
-
-### 18. Blade & Views → `rules/blade-views.md`
-- Bootstrap 5 (Metronic) markup; page scripts go in `@push('scripts')` or `@section('page_js')` — **`@section('scripts')` is never output by `layouts/app.blade.php`**
-
-### 19. Conventions & Style → `rules/style.md`
-- Laravel naming; `Str` / `Arr` / `Number` helpers; no inline JS/CSS in new Blade code
-
-## How to Apply
-
-Read the relevant rule file directly (do not delegate to sub-agents in this project).
-
-1. Identify the file type and select relevant sections (e.g. migration → §16, controller → §1, §3, §5, §6, §10).
-2. Check sibling files for existing patterns — follow those first per Consistency First.
-3. Verify API syntax against the **Laravel 13.x** docs.
+- Prefer framework features and existing application abstractions over new helpers or dependencies.
+- Avoid speculative abstractions. Extract code when it creates a clear domain boundary, removes meaningful duplication, or makes behavior independently testable.
+- Keep database access out of Blade views and prevent hidden N+1 queries across controllers, resources, jobs, and serialization.
