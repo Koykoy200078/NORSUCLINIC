@@ -12,7 +12,7 @@ Best practices for Laravel, prioritized by impact. Each rule teaches what to do 
 skill (written for Laravel 13): every API of the slim application structure (Laravel 11+) in the rule files is marked and given the
 classic form this project keeps. The framework is Laravel 13, but the application keeps the Laravel 10 layout (`app/Http/Kernel.php`,
 `Handler.php`, `config/*.php`, `$casts`, `app/Console/Kernel.php`); where a rule file says "Laravel 10", read it as "this project's
-classic structure". Moving to the slim structure is a separate decision of the owner (plan stage U4).
+classic structure". Moving to the slim structure is a separate decision of the owner (plan stage U5; stage U4 is Mix → Vite).
 For exact API syntax, look up the **Laravel 13.x** docs (Context7 library `/laravel/docs`, branch `13.x`).
 
 ## Consistency First
