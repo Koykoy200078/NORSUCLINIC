@@ -186,7 +186,7 @@
 
                 <div class="form-row">
                     <span class="input-label">STUDENT'S NAME:</span>
-                    <span class="input-underline" style="width: 300px;">{{ strtoupper($requestDocument->name) }}</span>
+                    <span class="input-underline" style="width: 300px;">{{ strtoupper((string) $requestDocument->name) }}</span>
                 </div>
 
                 <div class="form-row">

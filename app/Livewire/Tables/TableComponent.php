@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\WithPagination;
 use LogicException;
 
@@ -95,6 +97,13 @@ abstract class TableComponent extends Component
 
     /** @var Collection<int, Column> */
     protected Collection $columns;
+
+    /**
+     * What the header of a list draws, set by the server only: the header @includes the views these name, so a browser that
+     * could change them could make the server draw any view (TableServerOwnedPropertiesTest). #[Locked] would say the same, but
+     * a list that declares the property again (most do) would lose it, so updating() refuses them for every list.
+     */
+    private const SERVER_OWNED_PROPERTIES = ['buttonComponent', 'FilterComponent', 'showButtonOnHeader', 'showFilterOnHeader', 'emptyMessage', 'tableName'];
 
     // ---- what a list declares -------------------------------------------------------------------------------
 
@@ -210,6 +219,14 @@ abstract class TableComponent extends Component
     public function placeholder(): string
     {
         return view('livewire.loading_skeleton')->render();
+    }
+
+    /** Livewire calls this before it applies a change the browser sent; the header's settings are refused (as #[Locked] does). */
+    public function updating(string $property, mixed $value): void
+    {
+        if (in_array(Str::before($property, '.'), self::SERVER_OWNED_PROPERTIES, true)) {
+            throw new CannotUpdateLockedPropertyException($property);
+        }
     }
 
     public function render()

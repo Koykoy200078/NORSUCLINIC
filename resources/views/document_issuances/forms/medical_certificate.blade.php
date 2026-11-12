@@ -117,7 +117,7 @@
                 <p class="font-semibold">complaints/diagnosis:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim($requestDocument->complaints_diagnosis) : '' }}</textarea>
+                        <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim((string) $requestDocument->complaints_diagnosis) : '' }}</textarea>
                     </div>
                 </div>
                 </p>
@@ -125,7 +125,7 @@
 
             <div class="grid grid-cols-6 grid-rows-1 gap-7 mb-2">
                 @php
-                $bp = isset($requestDocument) ? explode('/', $requestDocument->vital_signs_bp) : ['', ''];
+                $bp = isset($requestDocument) ? explode('/', (string) $requestDocument->vital_signs_bp) : ['', ''];
                 @endphp
                 <div>
                     <p class="font-semibold">BP<span class="text-red-500">*</span>: <input type="text" id="vital_signs_bp_2" name="vital_signs_bp_2" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_2', $bp[0] ?? '') }}" required> / <input type="text" id="vital_signs_bp_22" name="vital_signs_bp_22" style="width: 30px; text-align: center;" class="border-b border-black" value="{{ old('vital_signs_bp_22', $bp[1] ?? '') }}" required></p>
@@ -150,7 +150,7 @@
             <p class="font-semibold">Remark/s:</p>
             <div class="border border-gray-300 p-2 h-28 mb-4">
                 <div class="col-span-3">
-                    <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim($requestDocument->medical_cert_remarks) : '' }}</textarea>
+                    <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black" rows="4" required>{{ isset($requestDocument) ? trim((string) $requestDocument->medical_cert_remarks) : '' }}</textarea>
                 </div>
             </div>
 

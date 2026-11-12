@@ -114,7 +114,11 @@ and `resources\` alone: `git diff --stat bce72ec..<tag> -- composer.lock package
 otherwise rebuild it (the commands are above). **One known exception:** the Boost commit (2026-11-06) added four `packages-dev` entries to `composer.lock`
 (`laravel/boost`, `laravel/mcp`, `laravel/roster`, `symfony/yaml`), so that diff is no longer empty, but the bundle is built with `--no-dev` and the
 `packages` block (118 packages) is identical to `bce72ec` (checked 2026-11-06): the bundle stays valid. Later `composer.lock` changes need the same check
-of the `packages` block, not of `packages-dev`.
+of the `packages` block, not of `packages-dev`. **Second known exception (2026-11-12 re-verification):** seven Blade views under
+`resources\views\document_issuances\` gained `(string)` casts inside `{{ }}` expressions. No build input changed (`resources\assets`, `resources\js`,
+`resources\css`, `webpack.mix.js`, `package-lock.json`); the only part of the build that reads views is Tailwind (`@source "../views"` in
+`resources\css\app.css`), and Tailwind generates no CSS from the one new token `(string)` (checked with Tailwind 4.1.3 itself), so the built
+`css\app.css` in the bundle still covers the views: the bundle stays valid. Any later change under `resources\` needs a rebuild or the same proof.
 
 The Laravel 12 bundle `laravel-12-37f5a62.zip` (SHA-256 `A47BC0CFFB30621A10E3563739661CCA078B4AC1D838035050360DC5DF6716F5`) is **not** for this
 window: it holds Laravel 12 `vendor\`. Keep it only for the fallback commit `3c8c434` (section 8).
@@ -172,6 +176,8 @@ is step 5.5, and everything after it runs on 8.3.**
 2. One list per module opens and loads rows: patients, medicine inventory, dispensing, prescriptions. Search and sort one of them. **Open a dispensing form and a prescription form: the patient, doctor and medicine lists are filled** (they are the cached lists that Laravel 13 rebuilds after step 10).
 3. The header does **not** show "Live updates off". Add a patient to the queue on one device: it appears on the other with no reload (then remove it).
 4. Open a past consultation and export its PDF. In Report Generation download the Accomplishment report as PDF and as Excel; both open.
+   Export a medical certificate's PDF: **both logos (university and clinic) are at the top**. Before this upgrade they were missing from the
+   certificate and excuse-slip PDFs (DomPDF refused the embedded pictures; fixed 2026-11-12), so staff will see them for the first time.
 5. Change your own profile photo, then remove it. Activity logs then show "Changed own profile".
 6. Settings > Backups: take a backup; the list shows it at the right Philippine time; download works.
 7. Settings > Manage User roles opens. The nurse is refused (403) on an admin-only page.

@@ -201,7 +201,9 @@ A batch whose lines were all typed as full dates is not touched and not mentione
 1. changes `medicine_batches.expiration_date` of each listed batch to the last day of its month;
 2. recalculates the medicine's `available_quantity` (it counts unexpired units only). **Units that count as expired today
    because of the 1st, and are good until the last day, come back into the available figure**: the dry run says how many;
-3. writes one line per batch to the application log (`storage/logs`: batch id, batch number, old and new date).
+3. writes one line per batch to the application log (`storage/logs`: batch id, batch number, old and new date), at
+   **warning** level so the clinic's `LOG_LEVEL=warning` keeps it (until 2026-11-12 the line was written at info level, which that
+   setting drops; the command had not been run on the clinic copy).
 
 **Nothing else changes:** no quantity moves, so the stock ledger gets no row; the stock-in line keeps what was typed
 (`2027-02`); nothing is deleted. A second run finds nothing to do. To undo, restore the backup taken before `--apply`
@@ -293,6 +295,7 @@ One-time setup on the clinic server PC:
 
 | Date | Phase | Added or changed |
 |---|---|---|
+| 2026-11-12 | Laravel 13 re-verification | `inventory:month-only-expiry --apply` now logs each moved batch at **warning** level (it logged at info, so at the clinic's `LOG_LEVEL=warning` the log lines this file promised were never written). Same data changes as before; `MonthOnlyExpiryCommandTest` reads a real log file at warning level |
 | 2026-11-05 | Laravel 12 verification | New command `inventory:month-only-expiry [--apply]` (dry run by default): moves stock entered as a month-only expiry from the 1st to the last day of the month (owner decision, STATUS §6). Changes batch expiry dates and the derived available quantity only |
 | 2026-10-29 | 11 D | No new command. `db:integrity` and the foreign-key catalog now expect **57** keys (the five keys of the count-sheet tables). Migration `2026_10_29_150000_create_inventory_counts_tables` makes the two count-sheet tables (InnoDB, only when missing; its rollback refuses while any sheet exists); pending on the working database |
 | 2026-10-28 | 7 follow-up | New command `php artisan realtime:check` (read-only diagnosis of the real-time chain, see "Real-time updates"). The startup script runs it, replaces a stale Reverb, names another program on the Reverb port and checks the Windows Firewall for ports 8000 / 8080. `REVERB_APP_ID` / `KEY` / `SECRET` left empty in `.env` are now derived from `APP_KEY`; the firewall command in this file now covers both ports and every network profile |

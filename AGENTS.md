@@ -101,10 +101,12 @@ lists them, and they do not apply either (no Laravel Cloud; the pages are Bootst
   audit plan and [docs/commands.md](docs/commands.md), the **log of new artisan commands** (what each does, whether it
   changes data, where and when to run it): add or update a row there in the same commit that adds or changes a command.
 - **Replies:** concise; say what was verified and how.
-- **Boost block:** the `<laravel-boost-guidelines>` section at the end of this file and of `CLAUDE.md` is generic Laravel
+- **Boost block:** the Laravel Boost guidelines section at the end of this file and of `CLAUDE.md` is generic Laravel
   guidance written by `php artisan boost:install` and rewritten by `boost:update` (dev tool; off under `APP_ENV=production`).
   Where it disagrees with this file (a test for every change, Vite / `npm run build` where this project uses Mix, Context7
-  for the versions in §3, Laravel Cloud), **this file wins**.
+  for the versions in §3, Laravel Cloud), **this file wins**. **Never write Boost's opening tag (the word
+  laravel-boost-guidelines in angle brackets) anywhere above that section:** Boost replaces everything from the first
+  occurrence of the tag, and on 2026-11-12 a mention here made it delete §6 and §7 (`BoostGuidelinesBlockTest`).
 
 ## 6. Data and secrets
 

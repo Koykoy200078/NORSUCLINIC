@@ -66,6 +66,17 @@ class MedsOnlyScreensTest extends TestCase
         }
     }
 
+    public function test_the_recorded_by_name_is_escaped_once_so_an_apostrophe_reads_as_typed(): void
+    {
+        $this->nurse->update(['last_name' => "D'Souza & Co"]);
+
+        $html = Livewire::withoutLazyLoading()->test(MedsOnlyTable::class)->html();
+
+        $this->assertStringContainsString('Nora D&#039;Souza &amp; Co', $html, 'the name appears once, escaped once');
+        $this->assertStringNotContainsString('&amp;#039;', $html, 'escaped twice: the list would show "D&#039;Souza"');
+        $this->assertStringNotContainsString('&amp;amp;', $html, 'escaped twice: the list would show "&amp;"');
+    }
+
     public function test_the_list_never_shows_a_manual_dispense_record_or_a_prescription(): void
     {
         \App\Models\DispenseRecord::create(['history_number' => 'HIS777', 'patient_id' => $this->makePatient(['first_name' => 'Manual', 'last_name' => 'Person'])->id,

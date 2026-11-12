@@ -123,7 +123,9 @@ final class MonthOnlyExpiryCorrection
                     $batch->expiration_date = $move['to'];
                     $batch->save();
 
-                    Log::info('Stock batch moved: month-only expiry now on the last day of its month', [
+                    // warning, not info: the clinic logs at LOG_LEVEL=warning, and a data correction must leave a trace
+                    // there (as LegacySchemaUpgrade does).
+                    Log::warning('Stock batch moved: month-only expiry now on the last day of its month', [
                         'batch_id' => $move['batch_id'],
                         'medicine_id' => $move['medicine_id'],
                         'batch_number' => $move['batch_number'],

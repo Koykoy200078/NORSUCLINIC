@@ -72,8 +72,9 @@ class MedsOnlyTable extends TableComponent
                         fn ($group) => SearchTerm::wordInColumns($group, $word, ReportQueries::medicineSearchColumns())
                     ));
                 }),
+            // plain text: the list escapes it (an e() here as well showed "D&#039;Souza")
             Column::make('Recorded by')
-                ->label(fn ($row) => e($row->recorder?->full_name ?? 'N/A')),
+                ->label(fn ($row) => $row->recorder?->full_name ?? 'N/A'),
             Column::make(__('messages.common.action'))
                 ->label(fn ($row) => view('meds_only.columns.action', ['row' => $row]))
                 ->html(),

@@ -88,12 +88,15 @@ return [
          * for the protocols/wrappers specified
          * by this array.
          *
+         * This application: pictures embedded in the page (`data:`, the certificate and excuse-slip logos) and files on the
+         * clinic PC inside the chroot below (`file://`, the lab-request logo). No http:// or https://: nothing is fetched over
+         * the network (enable_remote is off too). PdfImageLoadingTest pins it.
+         *
          * @var array
          */
         'allowed_protocols' => [
+            'data://' => ['rules' => []],
             'file://' => ['rules' => []],
-            'http://' => ['rules' => []],
-            'https://' => ['rules' => []],
         ],
 
         /**
@@ -262,9 +265,12 @@ return [
          * tracing back appears to being downloaded by your server, or allows malicious php code
          * in remote html pages to be executed by your server with your account privileges.
          *
+         * This application: off (the owner's decision, 2026-11-12). Every picture a PDF needs is a data: URI or a file under
+         * public/, so no PDF makes the server request a URL.
+         *
          * @var bool
          */
-        'enable_remote' => true,
+        'enable_remote' => false,
 
         /**
          * A ratio applied to the fonts height to be more like browsers' line height

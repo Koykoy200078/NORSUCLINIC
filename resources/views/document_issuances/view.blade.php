@@ -437,7 +437,7 @@ $exportPdfUrl = $documentId
                     <p class="font-semibold">complaints/diagnosis:</p>
                     <div class="border border-gray-300 p-2 h-28 mb-4">
                         <div class="col-span-3">
-                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black view-textarea" rows="4" readonly>{{ trim($requestDocument->complaints_diagnosis) }}</textarea>
+                            <textarea id="complaints_diagnosis" name="complaints_diagnosis" class="w-full border-black view-textarea" rows="4" readonly>{{ trim((string) $requestDocument->complaints_diagnosis) }}</textarea>
                         </div>
                     </div>
                     </p>
@@ -467,7 +467,7 @@ $exportPdfUrl = $documentId
                 <p class="font-semibold">Remark/s:</p>
                 <div class="border border-gray-300 p-2 h-28 mb-4">
                     <div class="col-span-3">
-                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black view-textarea" rows="4" readonly>{{ trim($requestDocument->medical_cert_remarks) }}</textarea>
+                        <textarea id="medical_cert_remarks" name="medical_cert_remarks" class="w-full border-black view-textarea" rows="4" readonly>{{ trim((string) $requestDocument->medical_cert_remarks) }}</textarea>
                     </div>
                 </div>
 

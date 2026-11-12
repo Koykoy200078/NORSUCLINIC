@@ -155,9 +155,9 @@
                         <td style="width: 16%;">
                             <label class="font-bold">BP:</label>
                             <div class="inline-flex items-center">
-                                <input type="text" name="vital_signs_bp_2" class="w-6 bg-transparent border-none p-0 text-[9px] text-center focus:ring-0" value="{{ isset($requestDocument) ? explode('/', $requestDocument->vital_signs_bp)[0] : '' }}" required>
+                                <input type="text" name="vital_signs_bp_2" class="w-6 bg-transparent border-none p-0 text-[9px] text-center focus:ring-0" value="{{ isset($requestDocument) ? explode('/', (string) $requestDocument->vital_signs_bp)[0] : '' }}" required>
                                 <span>/</span>
-                                <input type="text" name="vital_signs_bp_22" class="w-6 bg-transparent border-none p-0 text-[9px] text-center focus:ring-0" value="{{ isset($requestDocument) ? (explode('/', $requestDocument->vital_signs_bp)[1] ?? '') : '' }}" required>
+                                <input type="text" name="vital_signs_bp_22" class="w-6 bg-transparent border-none p-0 text-[9px] text-center focus:ring-0" value="{{ isset($requestDocument) ? (explode('/', (string) $requestDocument->vital_signs_bp)[1] ?? '') : '' }}" required>
                             </div>
                         </td>
                         <td style="width: 16%;">

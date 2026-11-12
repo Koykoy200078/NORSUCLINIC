@@ -180,7 +180,7 @@
                 <span class="input-line" style="min-width: 60px"> {{ $requestDocument->examined_on ? formatExaminedOnForPDF($requestDocument->examined_on) : '' }} </span>
                 with the following <span class="font-bold">complaints/diagnosis:</span>
             </p>
-            <div class="underlined-area">{{ trim($requestDocument->complaints_diagnosis) }}</div>
+            <div class="underlined-area">{{ trim((string) $requestDocument->complaints_diagnosis) }}</div>
         </div>
 
         <div class="vital-signs mb-2" style="display: flex; flex-direction: row; flex-wrap: nowrap; gap: 6px;">
@@ -194,7 +194,7 @@
 
         <div class="section">
             <p class="font-bold mb-2">Remark/s:</p>
-            <div class="underlined-area">{{ trim($requestDocument->medical_cert_remarks) }}</div>
+            <div class="underlined-area">{{ trim((string) $requestDocument->medical_cert_remarks) }}</div>
         </div>
 
         <div class="section mb-2">

@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -204,14 +203,28 @@ class MonthOnlyExpiryCommandTest extends TestCase
         $this->seedAccessControl();
         $batch = $this->oldMonthOnlyBatch($this->makeMedicine('Logged'), '2027-02');
         Cache::put('expiring_medicines_count', 99, 3600);
-        Log::spy();
 
-        $this->artisan('inventory:month-only-expiry', ['--apply' => true])->assertSuccessful();
+        // The clinic logs at LOG_LEVEL=warning (.env.example): a line below that level is never written, so the move must be
+        // logged at warning or above. A real log file is read back (Log::spy() would see a line the clinic never keeps).
+        $logFile = storage_path('logs/month-only-expiry-test-' . getmypid() . '.log');
+        config([
+            'logging.channels.clinic_level' => ['driver' => 'single', 'path' => $logFile, 'level' => 'warning'],
+            'logging.default' => 'clinic_level',
+        ]);
 
-        $this->assertFalse(Cache::has('expiring_medicines_count'), 'the menu badge is recalculated');
-        Log::shouldHaveReceived('info')->withArgs(fn ($message, $context = []) => str_contains((string) $message, 'month-only expiry')
-            && ($context['batch_id'] ?? null) === $batch->id
-            && ($context['from'] ?? null) === '2027-02-01'
-            && ($context['to'] ?? null) === '2027-02-28')->once();
+        try {
+            $this->artisan('inventory:month-only-expiry', ['--apply' => true])->assertSuccessful();
+
+            $this->assertFalse(Cache::has('expiring_medicines_count'), 'the menu badge is recalculated');
+            $this->assertFileExists($logFile, 'the move was not written to the log at the clinic\'s log level');
+            $lines = array_values(array_filter(file($logFile), fn (string $line) => str_contains($line, 'month-only expiry')));
+            $this->assertCount(1, $lines, 'one log line per moved batch');
+            $this->assertStringContainsString('"batch_id":' . $batch->id . ',', $lines[0]);
+            $this->assertStringContainsString('"from":"2027-02-01"', $lines[0]);
+            $this->assertStringContainsString('"to":"2027-02-28"', $lines[0]);
+        } finally {
+            app('log')->forgetChannel('clinic_level');
+            @unlink($logFile);
+        }
     }
 }

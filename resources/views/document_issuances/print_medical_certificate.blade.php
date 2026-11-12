@@ -123,7 +123,7 @@
                     <span class="input-line min-w-[150px] text-center">{{ $requestDocument->examined_on ? formatExaminedOnForPDF($requestDocument->examined_on) : '' }}</span>
                     with the following <span class="font-bold uppercase tracking-tight">complaints/diagnosis:</span>
                 </p>
-                <div class="underlined-area mt-2 px-4">{{ trim($requestDocument->complaints_diagnosis) }}</div>
+                <div class="underlined-area mt-2 px-4">{{ trim((string) $requestDocument->complaints_diagnosis) }}</div>
             </div>
 
             <!-- Vital Signs -->
@@ -142,7 +142,7 @@
 
             <div class="mb-8">
                 <label class="font-bold text-lg block mb-2 uppercase tracking-tighter">Remark/s:</label>
-                <div class="underlined-area px-4">{{ trim($requestDocument->medical_cert_remarks) }}</div>
+                <div class="underlined-area px-4">{{ trim((string) $requestDocument->medical_cert_remarks) }}</div>
             </div>
 
             <div class="text-sm mb-6 italic leading-snug text-gray-700">

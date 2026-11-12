@@ -304,7 +304,7 @@
     <table class="info-table">
         <tr>
             <th>Consult Mode</th>
-            <td>{{ ucwords(strtolower($requestDocument->consult_mode)) }}</td>
+            <td>{{ ucwords(strtolower((string) $requestDocument->consult_mode)) }}</td>
             <th>Nursing In-Charge</th>
             <td>{{ $nursingInCharge }}</td>
         </tr>
