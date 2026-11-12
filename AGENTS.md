@@ -3,9 +3,15 @@
 This file is read by **OpenAI Codex** (and imported by `CLAUDE.md` for **Claude Code**). Both assistants work on this
 repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; display name: **Medical University Clinic**.
 
+> **Read this first (2026-11-12, the owner's decision): the working line is `changes_v3`, not this branch.**
+> `changes_v3` holds the Laravel 13 upgrade (tag `laravel-13-ready`; it needs PHP 8.3) and the current versions of this
+> file, `Handover.md` and the docs: `git fetch`, `git checkout changes_v3`, then follow **its** `AGENTS.md` and push there.
+> `changes_v2` stays at the code the clinic PC runs today (Laravel 10, PHP 8.2; commit `71e43ae`, tag
+> `pre-laravel-13-upgrade`, plus this note). Do not start new work here; touch it only for an urgent fix the owner asks for.
+
 ## 1. Sync between the two assistants — read first
 
-1. `git fetch`, then `git log --oneline -15 origin/changes_v2`.
+1. `git fetch`, then `git log --oneline -15 origin/changes_v3` (the working line since 2026-11-12, see the note above).
 2. Read [Handover.md](Handover.md) and follow its protocol:
    - add a **START** entry when you begin;
    - add the **END** part only when the work is committed and pushed;
@@ -14,8 +20,8 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 3. The work order is [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); the project record is
    [docs/STATUS.md](docs/STATUS.md).
 4. **Pushing:** the owner's standing go-ahead (2026-10-09, "always push it, don't ask again"): after every phase that is
-   verified (full suite green, docs updated) commit it and push `changes_v2`, then continue. Never force-push, never push
-   another branch, never merge into `develop` without asking.
+   verified (full suite green, docs updated) commit it and push `changes_v3` (`changes_v2` until 2026-11-12), then continue.
+   Never force-push, never push another branch, never merge into `develop` without asking.
 
 ## 2. What this system is and where it runs
 
