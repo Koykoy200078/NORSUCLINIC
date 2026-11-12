@@ -5,7 +5,9 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 
 ## 1. Sync between the two assistants — read first
 
-1. `git fetch`, then `git log --oneline -15 origin/changes_v2`.
+1. `git fetch`, then `git log --oneline -15 origin/changes_v3`. **`changes_v3` is the working line since 2026-11-12** (the
+   Laravel 13 code; the owner's decision). `changes_v2` stays at `71e43ae`, the clinic's Laravel 10 line: touch it only for an
+   urgent fix the owner asks for.
 2. Read [Handover.md](Handover.md) and follow its protocol:
    - add a **START** entry when you begin;
    - add the **END** part only when the work is committed and pushed;
@@ -14,8 +16,9 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 3. The work order is [docs/audit-plan-2026-10-08.md](docs/audit-plan-2026-10-08.md); the project record is
    [docs/STATUS.md](docs/STATUS.md).
 4. **Pushing:** the owner's standing go-ahead (2026-10-09, "always push it, don't ask again"): after every phase that is
-   verified (full suite green, docs updated) commit it and push `changes_v2`, then continue. Never force-push, never push
-   another branch, never merge into `develop` without asking.
+   verified (full suite green, docs updated) commit it and push `changes_v3`, then continue. Never force-push, never push
+   another branch, never merge into `develop` without asking. (One force-push was made on the owner's explicit go of
+   2026-11-12: `changes_v2` was put back to `71e43ae` after the Laravel 13 merge, which moved to `changes_v3`.)
 
 ## 2. What this system is and where it runs
 
@@ -38,8 +41,8 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 
 | | |
 |---|---|
-| PHP | **8.3** (`composer.json` requires `^8.3`, platform pin 8.3.0, because Laravel 13 needs it). The clinic PC still runs 8.2 until the owner installs 8.3 there. **Since 2026-11-12 `changes_v2` is Laravel 13 (tag `laravel-13-ready`) and does not run on 8.2: never `git pull` it on the clinic PC before PHP 8.3 is installed** (runbook section 8). The last code that runs on 8.2 is the Laravel 12 checkpoint `3c8c434`; the code the clinic runs today is tag `pre-laravel-13-upgrade` (`71e43ae`, Laravel 10) |
-| Laravel | **13.40**, kept in the classic structure (`app/Http/Kernel.php`, `app/Exceptions/Handler.php`, `config/*.php`; no slim `bootstrap/app.php`). Carbon **3**, Symfony **7.4** (Symfony 8 needs PHP 8.4). The forgery check is `App\Http\Middleware\PreventRequestForgery` (Laravel 13's name for `VerifyCsrfToken`). `config/cache.php` sets `serializable_classes` to `false`: cache only arrays and scalars, never a Collection or model. The upgrade (branch `upgrade/laravel-13`, see `docs/laravel-13-upgrade-plan.md`) was merged into `changes_v2` on 2026-11-12 (fast-forward, the owner's go; tag `laravel-13-ready`). Anything pushed to `changes_v2` before the deploy window must keep the offline bundle valid (runbook section 2.2), or the window deploys the tag |
+| PHP | **8.3** (`composer.json` requires `^8.3`, platform pin 8.3.0, because Laravel 13 needs it). The clinic PC still runs 8.2 until the owner installs 8.3 there. **`changes_v3` is Laravel 13 (tag `laravel-13-ready`) and does not run on 8.2: never check it out on the clinic PC before PHP 8.3 is installed** (runbook section 8). `changes_v2` (`71e43ae`, tag `pre-laravel-13-upgrade`, Laravel 10) is what the clinic runs today and still runs on 8.2; the last code with Laravel 12 that runs on 8.2 is `3c8c434` |
+| Laravel | **13.40**, kept in the classic structure (`app/Http/Kernel.php`, `app/Exceptions/Handler.php`, `config/*.php`; no slim `bootstrap/app.php`). Carbon **3**, Symfony **7.4** (Symfony 8 needs PHP 8.4). The forgery check is `App\Http\Middleware\PreventRequestForgery` (Laravel 13's name for `VerifyCsrfToken`). `config/cache.php` sets `serializable_classes` to `false`: cache only arrays and scalars, never a Collection or model. The upgrade (see `docs/laravel-13-upgrade-plan.md`) was built on the branch `upgrade/laravel-13`, which became `changes_v3` on 2026-11-12 (the owner's decision; the old branch name was deleted). Anything pushed to `changes_v3` before the deploy window must keep the offline bundle valid (runbook section 2.2), or the window deploys the tag `laravel-13-ready` |
 | Livewire | **3.8** (class-based components; no Livewire 4 features) |
 | Tables | the project's own list base `App\Livewire\Tables\TableComponent` on plain Livewire 3 (no table package; see the `livewire-development` skill) |
 | Permissions | spatie/laravel-permission **6.25** (middleware namespace `Spatie\Permission\Middleware`, singular) |

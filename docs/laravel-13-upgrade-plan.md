@@ -1,7 +1,7 @@
 # Upgrade plan: Laravel 10.50 → Laravel 13
 
 **Status: APPROVED by the owner on 2026-10-30** (answers in section 9). **Stop point (owner, later the same day): the work goes to Laravel 12.70 on PHP 8.2 and
-then STOPS; the owner will say when to continue to Laravel 13 (stage U3).** **The owner said "continue to Laravel 13" on 2026-11-06: U3 is done on the branch (see the progress table); the clinic PC still needs PHP 8.3 before it can run it.** **2026-11-12: the branch is merged into `changes_v2` (fast-forward, the owner's go) and tagged `laravel-13-ready`; still not deployed.** The work happens on the branch **`upgrade/laravel-13`** (created and pushed
+then STOPS; the owner will say when to continue to Laravel 13 (stage U3).** **The owner said "continue to Laravel 13" on 2026-11-06: U3 is done on the branch (see the progress table); the clinic PC still needs PHP 8.3 before it can run it.** **2026-11-12: tagged `laravel-13-ready` and, on the owner's decision, the branch became `changes_v3`, the working line (`upgrade/laravel-13` was deleted; it had been merged into `changes_v2` the same day, and `changes_v2` was put back to `71e43ae` on his word). Still not deployed.** The work happens on the branch **`upgrade/laravel-13`** (created and pushed
 with the owner's approval); `changes_v2` stays the clinic's line and is only touched for urgent fixes and for merging a finished, approved stage. Rules
 that still apply (AGENTS.md): test-first; **a live browser check on every change and every stage (section 12)**; `norsu_clinic` left alone (rehearse on scratch
 copies); no force-push; no merge into `develop`. Progress is recorded in the plan's stage table (section 5) and in Handover.md.
@@ -208,7 +208,7 @@ see.** Production keeps serving static built files; the clinic PC still never ru
 produced offline (`npm ci` from the lock file, no network once the packages are in the cache); (e) the unminified `dev` build and the `prod` build both load the full tour.
 
 **Order and branch (decided by the owner on 2026-11-06, decision 13).** **After** the U0 – U3 window, in its own later window. Reasons: the verified bundle `laravel-13-bce72ec.zip` is bound to `package-lock.json`, `webpack.mix.js` and `resources\`, which are exactly what this stage changes,
-so doing U4 first would void it and delay the window; one kind of change per window keeps a failure attributable; U4 touches no PHP, no database and no `.env`, so its own rollback is only the previous build folders. The window's commit is tagged first; the U4 commits follow on `upgrade/laravel-13` (no new branch is pushed without the owner's go). Size: **medium-large**; the build file is about 240 lines,
+so doing U4 first would void it and delay the window; one kind of change per window keeps a failure attributable; U4 touches no PHP, no database and no `.env`, so its own rollback is only the previous build folders. The window's commit is tagged first (`laravel-13-ready`, 2026-11-12); the U4 commits follow on `changes_v3`, the former `upgrade/laravel-13` (no new branch is pushed without the owner's go). Size: **medium-large**; the build file is about 240 lines,
 the proof is the long part.
 
 ### U5 (optional, separate decisions, not part of this upgrade)
