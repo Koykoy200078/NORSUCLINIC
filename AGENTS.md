@@ -6,7 +6,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 ## 1. Sync between the two assistants — read first
 
 1. `git fetch`, then `git log --oneline -15 origin/changes_v3`. **`changes_v3` is the working line since 2026-11-12** (the
-   Laravel 13 code; the owner's decision). `changes_v2` stays at `71e43ae`, the clinic's Laravel 10 line: touch it only for an
+   Laravel 13 code; the owner's decision). `changes_v2` stays the clinic's Laravel 10 line (code `71e43ae`, plus one docs commit `07aa585` that points here): touch it only for an
    urgent fix the owner asks for.
 2. Read [Handover.md](Handover.md) and follow its protocol:
    - add a **START** entry when you begin;
