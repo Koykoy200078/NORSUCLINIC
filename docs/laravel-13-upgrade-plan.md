@@ -1,7 +1,7 @@
 # Upgrade plan: Laravel 10.50 → Laravel 13
 
 **Status: APPROVED by the owner on 2026-10-30** (answers in section 9). **Stop point (owner, later the same day): the work goes to Laravel 12.70 on PHP 8.2 and
-then STOPS; the owner will say when to continue to Laravel 13 (stage U3).** **The owner said "continue to Laravel 13" on 2026-11-06: U3 is done on the branch (see the progress table); the clinic PC still needs PHP 8.3 before it can run it.** The work happens on the branch **`upgrade/laravel-13`** (created and pushed
+then STOPS; the owner will say when to continue to Laravel 13 (stage U3).** **The owner said "continue to Laravel 13" on 2026-11-06: U3 is done on the branch (see the progress table); the clinic PC still needs PHP 8.3 before it can run it.** **2026-11-12: the branch is merged into `changes_v2` (fast-forward, the owner's go) and tagged `laravel-13-ready`; still not deployed.** The work happens on the branch **`upgrade/laravel-13`** (created and pushed
 with the owner's approval); `changes_v2` stays the clinic's line and is only touched for urgent fixes and for merging a finished, approved stage. Rules
 that still apply (AGENTS.md): test-first; **a live browser check on every change and every stage (section 12)**; `norsu_clinic` left alone (rehearse on scratch
 copies); no force-push; no merge into `develop`. Progress is recorded in the plan's stage table (section 5) and in Handover.md.

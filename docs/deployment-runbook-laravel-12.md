@@ -7,7 +7,7 @@ clinic PC.** Everything below was checked on the development laptop only.
 
 ## 0. Read this first
 
-- What gets deployed: branch `upgrade/laravel-13` (tip `bce72ec` when this was written; the final commit is tagged before the window):
+- What gets deployed: tag **`laravel-13-ready`** on `changes_v2` (merged from branch `upgrade/laravel-13` on 2026-11-12; the tip was `bce72ec` when this was written):
   **Laravel 13.40**, Carbon 3, PHPUnit 12.5, Symfony 7.4, in-house list tables, `spatie/laravel-html` forms, Livewire 3.8, permission 6,
   medialibrary 11. **The clinic PC must run PHP 8.3 or newer** (the Laravel 13 `vendor\` refuses PHP 8.2 with a clear message): install it
   beforehand, section 2.0. The upgrade stages add **no migration** and change **no `.env` key**.
@@ -42,7 +42,7 @@ clinic PC.** Everything below was checked on the development laptop only.
 |---|---|---|
 | 1 | What does the clinic PC run now? | **Answered: `changes_v2` (Case A).** Proved again on the PC in section 3 step 0. |
 | 2 | Window: date, start time, who runs it, who is on the phone | After the 6:00 PM backup has run and the clinic is closed; Case B on a Friday evening or a weekend, so Monday is not the first test. |
-| 3 | How the code reaches the PC | When the owner approves (he said "not yet" on 2026-11-06): `git merge --ff-only upgrade/laravel-13` into `changes_v2` (it is 0 behind, so nothing is rewritten), push it, and tag `laravel-13-ready`. The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
+| 3 | How the code reaches the PC | **Done 2026-11-12 on the owner's go:** `git merge --ff-only upgrade/laravel-13` into `changes_v2` (it was 0 behind, so nothing was rewritten), pushed, and tagged `laravel-13-ready` (also pushed). Until the window, **nobody pulls `changes_v2` on the clinic PC** (it needs PHP 8.3). The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
 | 4 | Does the clinic PC have internet and Node 22 for the window? | Do not depend on it: build on the laptop and carry a bundle on a USB stick (section 2.2). |
 | 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | **Answered 2026-11-05: the owner skips the rehearsal.** The first run of Laravel 13 on the clinic's real records is therefore the window itself: keep the rollback copy (step 4) and the cut-off time (step 13) strict, and run the whole smoke checklist. Section 2.1 stays as the optional procedure if this changes. |
 | 6 | **U0 to U3 in one window, or U0 to U2 first?** | **Answered 2026-11-06: together, in one window.** So PHP 8.3 must be installed on the PC before the window (section 2.0), and the window is the first run of Laravel 13 on the clinic's real records. |
