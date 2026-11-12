@@ -55,7 +55,7 @@ class DatabaseBackupService
         }
 
         $stderr = '';
-        $process = new Process($args, null, ['MYSQL_PWD' => (string) ($connection['password'] ?? '')]);
+        $process = new Process($args, null, $this->childEnvironment((string) ($connection['password'] ?? '')));
         $process->setTimeout(900);
 
         try {
@@ -111,7 +111,7 @@ class DatabaseBackupService
             throw new RuntimeException('The backup file could not be read.');
         }
 
-        $process = new Process($args, null, ['MYSQL_PWD' => (string) ($connection['password'] ?? '')]);
+        $process = new Process($args, null, $this->childEnvironment((string) ($connection['password'] ?? '')));
         $process->setTimeout(1800);
         $process->setInput($input);
 
@@ -165,6 +165,36 @@ class DatabaseBackupService
     }
 
     /**
+     * The variables a mysqldump / mysql child process gets on top of what Symfony Process passes on.
+     *
+     * Symfony hands a child only the variables that also appear in $_SERVER. Under PHP's built-in server
+     * (`php artisan serve`) with no config cache, $_SERVER holds the request fields and the .env keys but none of the
+     * operating system's own variables, so the child started without SystemRoot / PATH and Windows refused it a
+     * network socket ("Can't create TCP/IP socket (10106)"). The variables a child needs to start are therefore read
+     * from the real process environment and passed explicitly; the password goes in MYSQL_PWD, never on the command
+     * line (where any user on the machine could read it in the process list).
+     *
+     * @return array<string, string>
+     */
+    public function childEnvironment(?string $password = null): array
+    {
+        $needed = ['SYSTEMROOT', 'WINDIR', 'COMSPEC', 'PATH', 'PATHEXT', 'TEMP', 'TMP', 'HOME', 'USERPROFILE', 'LANG'];
+        $environment = [];
+
+        foreach (getenv() as $name => $value) {
+            if (in_array(strtoupper((string) $name), $needed, true)) {
+                $environment[$name] = $value;
+            }
+        }
+
+        if ($password !== null) {
+            $environment['MYSQL_PWD'] = $password;
+        }
+
+        return $environment;
+    }
+
+    /**
      * MySQL 8 clients need --column-statistics=0 / --set-gtid-purged=OFF to dump older servers cleanly;
      * MariaDB and MySQL 5.x do not understand them and abort.
      *
@@ -172,7 +202,7 @@ class DatabaseBackupService
      */
     private function flavourArguments(string $binary): array
     {
-        $version = new Process([$binary, '--version']);
+        $version = new Process([$binary, '--version'], null, $this->childEnvironment());
         $version->run();
         $text = $version->getOutput() . $version->getErrorOutput();
 
@@ -197,7 +227,11 @@ class DatabaseBackupService
             return $configured;
         }
 
-        $locator = Process::fromShellCommandline(PHP_OS_FAMILY === 'Windows' ? "where {$name}" : "command -v {$name}");
+        $locator = Process::fromShellCommandline(
+            PHP_OS_FAMILY === 'Windows' ? "where {$name}" : "command -v {$name}",
+            null,
+            $this->childEnvironment()
+        );
         $locator->run();
 
         if ($locator->isSuccessful()) {

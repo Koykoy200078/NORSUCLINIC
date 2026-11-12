@@ -2,21 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\Accountant;
-use App\Models\Address;
 use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\MedicineAvailability;
 use App\Models\PurchasedMedicine;
 use App\Models\StockIn;
-use App\Models\User;
 use App\Services\MedicineInventoryService;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -458,47 +452,5 @@ class MedicineAvailabilityRepository extends BaseRepository
                 ],
             ]
         );
-    }
-
-    /**
-     * @return bool|Builder|Builder[]|Collection|Model
-     */
-    public function updateAccountant($accountant, $input)
-    {
-        try {
-            unset($input['password']);
-
-            /** @var User $user */
-            $user = User::find($accountant->user->id);
-            if (isset($input['image']) && ! empty($input['image'])) {
-                $mediaId = updateProfileImage($user, $input['image']);
-            }
-            if ($input['avatar_remove'] == 1 && isset($input['avatar_remove']) && ! empty($input['avatar_remove'])) {
-                removeFile($user, User::COLLECTION_PROFILE_PICTURES);
-            }
-
-            /** @var Accountant $accountant */
-            $input['phone'] = preparePhoneNumber($input, 'phone');
-            $input['dob'] = (! empty($input['dob'])) ? $input['dob'] : null;
-            $accountant->user->update($input);
-            $accountant->update($input);
-
-            if (! empty($accountant->address)) {
-                if (empty($address = Address::prepareAddressArray($input))) {
-                    $accountant->address->delete();
-                }
-                $accountant->address->update($input);
-            } else {
-                if (! empty($address = Address::prepareAddressArray($input)) && empty($accountant->address)) {
-                    $ownerId = $accountant->id;
-                    $ownerType = Accountant::class;
-                    Address::create(array_merge($address, ['owner_id' => $ownerId, 'owner_type' => $ownerType]));
-                }
-            }
-
-            return true;
-        } catch (Exception $e) {
-            throw new UnprocessableEntityHttpException($e->getMessage());
-        }
     }
 }

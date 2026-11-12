@@ -7,6 +7,7 @@ use App\Models\Patient;
 use App\Models\PatientType;
 use App\Models\Province;
 use App\Models\User;
+use App\Repositories\MedicineAvailabilityRepository;
 use App\Repositories\PrescriptionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -69,6 +70,16 @@ class PendingCleanupTest extends TestCase
     public function test_the_unused_medicines_api_is_gone(): void
     {
         $this->actingAs($this->makeAdmin())->getJson('/api/medicines')->assertNotFound();
+    }
+
+    /**
+     * MedicineAvailabilityRepository::updateAccountant() was a leftover of the template's accountant module: nothing
+     * called it, it named a class that does not exist (Accountant) and mass-assigned its whole input to a user
+     * (re-audit 2026-11-12). Stock-in itself is covered by the stock-in tests.
+     */
+    public function test_the_leftover_accountant_update_is_gone(): void
+    {
+        $this->assertFalse(method_exists(MedicineAvailabilityRepository::class, 'updateAccountant'));
     }
 
     /** The country edit form posts to countries/{id} without a PUT override, so that route must keep working. */

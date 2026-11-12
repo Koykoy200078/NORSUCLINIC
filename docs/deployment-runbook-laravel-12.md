@@ -119,6 +119,12 @@ of the `packages` block, not of `packages-dev`. **Second known exception (2026-1
 `resources\css`, `webpack.mix.js`, `package-lock.json`); the only part of the build that reads views is Tailwind (`@source "../views"` in
 `resources\css\app.css`), and Tailwind generates no CSS from the one new token `(string)` (checked with Tailwind 4.1.3 itself), so the built
 `css\app.css` in the bundle still covers the views: the bundle stays valid. Any later change under `resources\` needs a rebuild or the same proof.
+**2026-11-12 afternoon: the bundle no longer matches `changes_v3`.** The owner's `composer update --with-all-dependencies`
+(committed after the full suite and a live check) changed the `packages` block: Laravel 13.40 → **13.42**, Guzzle 7 → **8** (with
+`guzzlehttp/psr7` 3 and `promises` 3), Livewire 3.8.11, Reverb 1.13, medialibrary 11.23.12, PhpSpreadsheet 1.30.8, ZipStream 3.2.2 and
+a few more (19 packages; `package-lock.json`, `webpack.mix.js` and the build inputs are unchanged). The bundle `laravel-13-bce72ec.zip`
+is still right for the **tag `laravel-13-ready` (`cea3775`)**, which keeps Laravel 13.40. To deploy the newer `changes_v3` instead, build a
+new bundle from it with the commands above (it needs internet once) and tag that commit; otherwise the window deploys the tag as written.
 
 The Laravel 12 bundle `laravel-12-37f5a62.zip` (SHA-256 `A47BC0CFFB30621A10E3563739661CCA078B4AC1D838035050360DC5DF6716F5`) is **not** for this
 window: it holds Laravel 12 `vendor\`. Keep it only for the fallback commit `3c8c434` (section 8).
