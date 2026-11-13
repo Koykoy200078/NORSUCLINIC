@@ -36,6 +36,8 @@ Homestead.yaml
 /public/js/app.js
 /public/mix-manifest.json
 /public/messages.js
+# build-assets.mjs builds here and moves the result into public/ at the end (left only by an interrupted build)
+/.public-staging/
 
 # Storage and sensitive files
 /storage/*.key

@@ -4,6 +4,11 @@
 //   node build-assets.mjs --production     production build: the bundles, the CSS and the joined files minified (npm run prod)
 //   node build-assets.mjs --watch          development build, then again after every change under resources/ (npm run watch)
 //   ... --out=<folder>                     write into <folder> instead of public/ (to compare two builds)
+//   ... --simulate-failure                 for a test: stop with an error once everything is built, before it is put in place
+//
+// A build is written into a staging folder next to the output (public/ -> .public-staging/) and moved into place only when
+// all of it was built, so a build that fails halfway leaves the previous build working (re-audit 2026-11-14; before, the
+// output folders were emptied first and a failed build left the pages without scripts and stylesheets).
 //
 // What stays as it was under Mix (proven in the spike U4.0, see docs/laravel-13-upgrade-plan.md):
 // - every output keeps its path and is a CLASSIC script or stylesheet: the layouts load third-party.js, then pages.js, then
@@ -23,6 +28,9 @@ import tailwind from '@tailwindcss/postcss';
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 const outDir = (process.argv.find((argument) => argument.startsWith('--out=')) || '--out=public').slice('--out='.length);
+const simulateFailure = process.argv.includes('--simulate-failure');
+/** where a build is written before it is put in place: beside the output, so moving it there is a rename on the same disk */
+const stagingDir = path.join(path.dirname(path.resolve(outDir)), '.' + path.basename(path.resolve(outDir)) + '-staging');
 
 // Lightning CSS is the CSS minifier Vite itself uses; it is read through Vite so no package is added for it
 const { transform: lightningTransform } = createRequire(import.meta.resolve('vite'))('lightningcss');
@@ -154,7 +162,9 @@ const BUNDLES = {
     'js/queue-board.js': ['resources/assets/js/realtime/queue-board.js'],
 };
 
-const out = (file) => path.join(outDir, file);
+/** the folder the build writes into: the staging folder while it runs */
+let buildDir = outDir;
+const out = (file) => path.join(buildDir, file);
 
 /** @param {string} source */
 const sourcePath = (source) => (source.startsWith('@out/') ? out(source.slice('@out/'.length)) : source);
@@ -184,18 +194,72 @@ async function viteOutput(options) {
 }
 
 async function buildAll() {
+    fs.rmSync(stagingDir, { recursive: true, force: true });
+    fs.mkdirSync(stagingDir, { recursive: true });
+    buildDir = stagingDir;
+    try {
+        const count = await buildInto();
+        if (simulateFailure) {
+            throw new Error('--simulate-failure: stopped before the build was put in place');
+        }
+        swapIntoPlace();
+        console.log(`${production ? 'Production' : 'Development'} build into ${outDir}/: ${count.files} files in ${count.ms} ms`);
+    } finally {
+        buildDir = outDir;
+        fs.rmSync(stagingDir, { recursive: true, force: true });
+    }
+}
+
+/**
+ * Puts the finished build in place. Each folder the build replaces (CLEAN) is moved aside, the new one moved in, and the old
+ * one deleted with the staging folder; if a move fails, the entries already moved are put back, so the output is either the
+ * whole new build or the previous one. The files the build only overwrites (messages.js, webfonts: git keeps them in
+ * public/) are copied over, as before.
+ */
+function swapIntoPlace() {
+    const previous = path.join(stagingDir, '.previous');
+    fs.mkdirSync(previous, { recursive: true });
+    fs.mkdirSync(outDir, { recursive: true });
+    const moved = [];
+    try {
+        for (const name of CLEAN) {
+            const target = path.join(outDir, name);
+            const built = path.join(stagingDir, name);
+            const hadTarget = fs.existsSync(target);
+            if (hadTarget) {
+                fs.renameSync(target, path.join(previous, name));
+            }
+            moved.push({ name, hadTarget });
+            if (fs.existsSync(built)) {
+                fs.renameSync(built, target);
+            }
+        }
+    } catch (error) {
+        for (const { name, hadTarget } of moved.reverse()) {
+            fs.rmSync(path.join(outDir, name), { recursive: true, force: true });
+            if (hadTarget) {
+                fs.renameSync(path.join(previous, name), path.join(outDir, name));
+            }
+        }
+        throw error;
+    }
+    for (const name of fs.readdirSync(stagingDir)) {
+        if (name !== '.previous' && !CLEAN.includes(name)) {
+            fs.cpSync(path.join(stagingDir, name), path.join(outDir, name), { recursive: true, force: true });
+        }
+    }
+}
+
+/** The build itself, written into buildDir (the staging folder). */
+async function buildInto() {
     const started = performance.now();
     const written = new Set();
-
-    for (const target of CLEAN) {
-        fs.rmSync(out(target), { recursive: true, force: true });
-    }
 
     for (const [source, destination] of COPY_DIRECTORIES) {
         fs.cpSync(source, out(destination), { recursive: true });
         for (const entry of fs.readdirSync(out(destination), { recursive: true, withFileTypes: true })) {
             if (entry.isFile()) {
-                written.add(path.relative(outDir, path.join(entry.parentPath, entry.name)).replace(/\\/g, '/'));
+                written.add(path.relative(buildDir, path.join(entry.parentPath, entry.name)).replace(/\\/g, '/'));
             }
         }
     }
@@ -245,7 +309,7 @@ async function buildAll() {
     }
     fs.writeFileSync(out('mix-manifest.json'), JSON.stringify(manifest, null, 4));
 
-    console.log(`${production ? 'Production' : 'Development'} build into ${outDir}/: ${written.size} files in ${Math.round(performance.now() - started)} ms`);
+    return { files: written.size, ms: Math.round(performance.now() - started) };
 }
 
 /** CSS-only entries: every entry must give exactly one stylesheet, written under the entry's name (its destination). */
