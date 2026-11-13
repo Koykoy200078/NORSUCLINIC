@@ -290,6 +290,7 @@ clone of the tag with PHP 8.3.36 (`composer install --no-dev --optimize-autoload
 over a fresh clone of the tag it boots Laravel 13.42.0 with 505 routes, all 380 views compile, `check-platform-reqs` and `audit` are clean, all 799
 files named in `mix-manifest.json` exist and `mix()` resolves through it, no `public\hot`; PHP 8.2.35 refuses it. The same rule keeps it valid:
 `git diff --stat 32d49d8..<commit> -- composer.lock package-lock.json build-assets.mjs resources` must print nothing, otherwise rebuild.
+**2026-11-13 evening:** the module audit changed `package-lock.json` (`npm audit fix`) and `resources\` (views, scripts) after `32d49d8`, so `changes_v3` no longer fits this bundle: the tag `laravel-13.42-vite-ready` with it stays a valid pair; to deploy the newer code, rebuild and tag first.
 
 | Step | What | Check |
 |---|---|---|
