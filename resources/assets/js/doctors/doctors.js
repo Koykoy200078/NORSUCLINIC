@@ -25,52 +25,7 @@ listenClick(".doctor-delete-btn", function () {
 });
 
 listenClick(".doctor-reset-password-btn", function () {
-    let userId = $(this).attr("data-id");
-    let resetUrl = $(this).attr("data-reset-url");
-    swal({
-        title: "Are you sure?",
-        text: "This will reset the doctor's password to default (" + window.defaultPassword + ")",
-        icon: "warning",
-        buttons: {
-            cancel: {
-                text: "Cancel",
-                value: false,
-                visible: true,
-                className: "btn btn-secondary",
-                closeModal: true,
-            },
-            confirm: {
-                text: "Yes, reset it!",
-                value: true,
-                visible: true,
-                className: "btn btn-warning",
-                closeModal: true,
-            },
-        },
-        dangerMode: true,
-    }).then(function (willReset) {
-        if (willReset) {
-            $.ajax({
-                type: "POST",
-                url: resetUrl,
-                success: function (result) {
-                    if (result.success) {
-                        displaySuccessMessage(result.message);
-                    } else {
-                        displayErrorMessage(
-                            result.message || "Failed to reset password",
-                        );
-                    }
-                },
-                error: function (result) {
-                    displayErrorMessage(
-                        (result.responseJSON && result.responseJSON.message) ||
-                            "Failed to reset password",
-                    );
-                },
-            });
-        }
-    });
+    confirmPasswordReset($(this).attr("data-reset-url"), "doctor's");
 });
 
 listenClick(".add-qualification", function () {
@@ -162,18 +117,5 @@ listenClick("#qualificationSaveBtn", function () {
 });
 
 listenChange(".doctor-email-verified", function (e) {
-    let recordId = $(e.currentTarget).attr("data-id");
-    let value = $(this).is(":checked") ? 1 : 0;
-    $.ajax({
-        type: "POST",
-        url: panelRoute("emailVerified"),
-        data: {
-            id: recordId,
-            value: value,
-        },
-        success: function (result) {
-            Livewire.dispatch("refresh");
-            displaySuccessMessage(result.message);
-        },
-    });
+    setEmailVerified($(e.currentTarget).attr("data-id"), $(this).is(":checked"));
 });

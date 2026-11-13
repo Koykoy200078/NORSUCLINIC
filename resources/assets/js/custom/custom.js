@@ -4,6 +4,7 @@ require("./row-actions");
 require("./consultation-medicine-picker");
 require("./meds-only");
 require("./select2-widgets");
+require("./account-actions");
 
 let source = null;
 let jsrender = require("jsrender");
