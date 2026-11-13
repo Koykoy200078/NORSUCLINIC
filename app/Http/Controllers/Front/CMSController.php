@@ -25,16 +25,14 @@ class CMSController extends AppBaseController
     {
         $cmsData = Setting::pluck('value', 'key')->toArray();
 
-        if (isset($cmsData['about_image_1'])) {
-            $cmsData['about_image_1'] = normalizeLocalUrl($cmsData['about_image_1']);
-        }
-
-        if (isset($cmsData['about_image_2'])) {
-            $cmsData['about_image_2'] = normalizeLocalUrl($cmsData['about_image_2']);
-        }
-
-        if (isset($cmsData['about_image_3'])) {
-            $cmsData['about_image_3'] = normalizeLocalUrl($cmsData['about_image_3']);
+        // The seeded pictures are relative paths ("assets/front/images/about/pic-2.jpg"); this page lives under /admin/,
+        // where a relative path asks for /admin/assets/... (a 404). Give them from the site root; an uploaded picture is
+        // already a full address (re-audit 2026-11-13).
+        foreach (['about_image_1', 'about_image_2', 'about_image_3'] as $key) {
+            if (! empty($cmsData[$key])) {
+                $url = normalizeLocalUrl($cmsData[$key]);
+                $cmsData[$key] = parse_url((string) $url, PHP_URL_HOST) === null && ! str_starts_with((string) $url, '/') ? asset($url) : $url;
+            }
         }
 
         return view('fronts.cms.cms', compact('cmsData'));
