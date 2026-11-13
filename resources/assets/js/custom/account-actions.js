@@ -74,22 +74,3 @@ window.setEmailVerified = function (recordId, verified) {
         },
     });
 };
-
-// The doctor, staff and patient forms: without an uploaded picture, the avatar follows the chosen gender. (It was in each
-// form's create-edit.js; the three run in the same bundle, so every change ran it three times.)
-listenChange("input[type=radio][name=gender]", function () {
-    let file = $("#profilePicture").val();
-    if (isEmpty(file)) {
-        if (this.value == 1) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + manAvatar + ")",
-            );
-        } else if (this.value == 2) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + womanAvatar + ")",
-            );
-        }
-    }
-});
