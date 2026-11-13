@@ -14,12 +14,14 @@ clinic PC.** Everything below was checked on the development laptop only.
   **Laravel 13.42** (13.40 in the oldest pair), Laravel Excel 4 with PhpSpreadsheet 5 (3.1 / 1.30.8 in both earlier pairs), Guzzle 8, Carbon 3, PHPUnit 12.5, Symfony 7.4, in-house list tables, `spatie/laravel-html` forms, Livewire 3.8, permission 6,
   medialibrary 11. **The clinic PC must run PHP 8.3 or newer** (the Laravel 13 `vendor\` refuses PHP 8.2 with a clear message): install it
   beforehand, section 2.0. The upgrade stages add **no migration** and change **no `.env` key**.
-- **Later, in its own window: U4 (Laravel Mix → Vite).** Tag **`laravel-13.42-vite-audit-ready`** (`d67dc6f`, 2026-11-13 evening, the owner's
-  "Rebuild and tag" after the module audit) with the bundle `laravel-13-d67dc6f.zip`: the same code as `laravel-13.42-excel4-ready` plus the new
-  asset build (`build-assets.mjs` on Vite 8; Laravel Mix gone) plus the audit's fixes (theme switch POST only, the patient e-mail rule, the Front
-  CMS pictures, `npm audit fix`, DRY merges; no migration, no `.env` key, no package). Its `vendor\` has the same packages as
-  `laravel-13-bcf7ad7.zip`; what changes is the PHP code and the build output in `public\`. Fallback: tag `laravel-13.42-vite-ready` (`32d49d8`)
-  with `laravel-13-32d49d8.zip`, the same without the audit. **Not in the U0 – U3 window** (owner's decision 13): run section 9 on another day, after that window was kept.
+- **Later, in its own window: U4 (Laravel Mix → Vite).** Tag **`laravel-13.42-vite-dry-ready`** (`ae822d9`, 2026-11-14, the owner's
+  "Rebuild and tag" after the DRY pairs pass) with the bundle `laravel-13-ae822d9.zip`: the same code as `laravel-13.42-excel4-ready` plus the new
+  asset build (`build-assets.mjs` on Vite 8; Laravel Mix gone) plus the 2026-11-13 module audit (theme switch POST only, the patient e-mail rule,
+  the Front CMS pictures, `npm audit fix`) plus the DRY pairs pass (a nurse can save a generic edit, the dispense pages show their headings, a
+  failed password reset shows a generic error, shared views and helpers; no migration, no `.env` key, no package). Its `vendor\` has the same
+  packages as `laravel-13-bcf7ad7.zip`; what changes is the PHP code and the build output in `public\`. Fallbacks: tag
+  `laravel-13.42-vite-audit-ready` (`d67dc6f`) with `laravel-13-d67dc6f.zip` (without the DRY pairs pass), and tag `laravel-13.42-vite-ready`
+  (`32d49d8`) with `laravel-13-32d49d8.zip` (without the audit either). **Not in the U0 – U3 window** (owner's decision 13): run section 9 on another day, after that window was kept.
 - **Owner's decision, 2026-11-06: U0 to U3 go out together in one window** (not U0 to U2 first). The fallback if PHP 8.3 cannot be installed in
   time is the commit `3c8c434` (Laravel 12.71 with the Laravel 13 groundwork, runs on PHP 8.2); section 8 says how. The older bundle
   `laravel-12-37f5a62.zip` still fits that commit (`composer.lock`, `package-lock.json`, `webpack.mix.js` and `resources\` do not differ between
@@ -129,7 +131,7 @@ build-input proof below), otherwise rebuild.
 **2026-11-13: stage U4 (Laravel Mix → Vite) is on `changes_v3` after `a5d1e21`** (plan section 5, U4): `package-lock.json` changed (Mix and its
 725 packages out, `vite` 8.3.8 in) and `webpack.mix.js` was replaced by `build-assets.mjs`, so **the commits after `a5d1e21` no longer fit
 `laravel-13-bcf7ad7.zip`**. The U0 – U3 window deploys the tag `laravel-13.42-excel4-ready` with that bundle as planned; U4 gets its own bundle and
-tag in step U4.6 (done 2026-11-13: `laravel-13.42-vite-ready` + `laravel-13-32d49d8.zip`; after the module audit of the same evening rebuilt as `laravel-13.42-vite-audit-ready` + `laravel-13-d67dc6f.zip`, section 9) and its own later window. The commands do not change: `npm ci ; npm run prod` builds the same folders (`assets, backend, css,
+tag in step U4.6 (done 2026-11-13: `laravel-13.42-vite-ready` + `laravel-13-32d49d8.zip`; after the module audit of the same evening rebuilt as `laravel-13.42-vite-audit-ready` + `laravel-13-d67dc6f.zip`, and after the DRY pairs pass on 2026-11-14 as `laravel-13.42-vite-dry-ready` + `laravel-13-ae822d9.zip`, section 9) and its own later window. The commands do not change: `npm ci ; npm run prod` builds the same folders (`assets, backend, css,
 fonts, js, web`, `mix-manifest.json`; `public\vendor` is still cleared, so step 7 still republishes the log-viewer assets).
 
 **The first fallback bundle (built 2026-11-12, the owner's first "Rebuild and tag"):** `storage\app\deploy-bundle\laravel-13-a7d7f96.zip`
@@ -280,15 +282,20 @@ dispensing / prescription form check, rollback to PHP 8.2). What is left to know
 ## 9. The U4 window (Laravel Mix → Vite assets), on a later day than the U0 – U3 window
 
 **What it changes:** only the built files in `public\` (`assets`, `backend`, `css`, `fonts`, `js`, `web`, `mix-manifest.json`) and the code to the
-tag `laravel-13.42-vite-audit-ready`, which also holds the fixes of the 2026-11-13 module audit (PHP code, views and scripts: the theme switch
-is POST only, adding a patient checks the e-mail like editing does, Front CMS shows its about-us pictures; DRY merges that change no page). No
+tag `laravel-13.42-vite-dry-ready`, which also holds the fixes of the 2026-11-13 module audit (PHP code, views and scripts: the theme switch
+is POST only, adding a patient checks the e-mail like editing does, Front CMS shows its about-us pictures) and of the DRY pairs pass (a nurse can
+save a change to a medicine generic, the dispense-record edit and consultation-medicines pages show their headings, a failed password reset shows a
+generic error; shared views and helpers that change no page). No
 migration, no `.env` key, no new PHP package (`composer.lock` is the same as in `laravel-13.42-excel4-ready`). The pages look and work the same: on the laptop every page loads the same scripts and stylesheets in the same order
 (the link crawl, 1,367 pages, 15 kinds of user) and the Mix and Vite builds render every element of 13 pages identically, light and dark.
 
-**The bundle:** `storage\app\deploy-bundle\laravel-13-d67dc6f.zip` (50,268,051 bytes = 48 MB, 9,564 files; git ignores that folder) with
+**The bundle:** `storage\app\deploy-bundle\laravel-13-ae822d9.zip` (50,268,128 bytes = 48 MB, 9,564 files; git ignores that folder) with
+`laravel-13-ae822d9.zip.sha256` beside it (SHA-256 `60C551393ADB8CE572888757D1A03B6AF99F7BE0B0414B091AE86E1E47C15A3E`), built 2026-11-14 from a clean clone of the tag the same way as below.
+**Checked:** a second clean clone built byte-identical output (800 files, and the same `vendor\`); the zip hash (also after the copy into the bundle folder); all 9,563 `SHA256SUMS.txt` lines match, nothing unlisted, no `.env`, uploads, `storage\` or dev package; against `laravel-13-d67dc6f.zip` its `vendor\` differs only in `vendor\composer\` (the commit hash and the class map) and its `public\` only in `js\pages.js`, `js\front-pages.js`, `js\front-third-party.js` (the three bundles that hold `helper.js`) and `mix-manifest.json`; over a fresh clone of the tag it boots Laravel 13.42.0 with 505 routes, all 381 views compile, `check-platform-reqs` is clean, all 799 files named in `mix-manifest.json` exist and `mix()` resolves through it, no `public\hot`; PHP 8.2.35 refuses it; the Excel 4 code over this `vendor\` (the rollback) boots 13.42.0 with 505 routes and finds its own older classes. `composer audit` could not reach packagist.org (no internet on the laptop that morning); `composer.lock` is the same as at the last clean audit (2026-11-13). Rule: `git diff --stat ae822d9..<commit> -- composer.lock package-lock.json build-assets.mjs resources` must print nothing,
+otherwise rebuild. **First fallback pair** (without the DRY pairs pass): `laravel-13.42-vite-audit-ready` with `storage\app\deploy-bundle\laravel-13-d67dc6f.zip` (50,268,051 bytes = 48 MB, 9,564 files; git ignores that folder) with
 `laravel-13-d67dc6f.zip.sha256` beside it (SHA-256 `D6A7116C02EBF4356EDC6478403CDF58B9231765A4463777239681E572735287`), built 2026-11-13 evening from a clean clone of the tag the same way as below.
 **Checked:** a second clean clone built byte-identical output (800 files); the zip hash (also after the copy into the bundle folder); all 9,563 `SHA256SUMS.txt` lines match, nothing unlisted, no `.env`, uploads, `storage\` or dev package; its `vendor\` equals `laravel-13-32d49d8.zip`'s except `vendor\composer\` (the commit hash and the class map, which lists the audit's two new classes) and its `public\` only in `js\pages.js` and `mix-manifest.json` (the shared account actions, the POST theme switch); over a fresh clone of the tag it boots Laravel 13.42.0 with 505 routes, all 381 views compile, `check-platform-reqs` and `audit` are clean, all 799 files named in `mix-manifest.json` exist and `mix()` resolves through it, no `public\hot`; PHP 8.2.35 refuses it. Rule: `git diff --stat d67dc6f..<commit> -- composer.lock package-lock.json build-assets.mjs resources` must print nothing,
-otherwise rebuild. **Fallback pair** (without the audit's fixes): `laravel-13.42-vite-ready` with `storage\app\deploy-bundle\laravel-13-32d49d8.zip` (50,268,008 bytes = 48 MB, 9,564 files; git ignores that folder) with
+otherwise rebuild. **Second fallback pair** (without the audit's fixes either): `laravel-13.42-vite-ready` with `storage\app\deploy-bundle\laravel-13-32d49d8.zip` (50,268,008 bytes = 48 MB, 9,564 files; git ignores that folder) with
 `laravel-13-32d49d8.zip.sha256` beside it (SHA-256 `38ECBB5252F679F17BC90B244574052AB783BE00599A9BBC0D38D790B0EF5705`), built 2026-11-13 from a clean
 clone of the tag with PHP 8.3.36 (`composer install --no-dev --optimize-autoloader`: 119 packages = the lock's `packages` block) and Node 22.23.4
 (`npm ci ; npm run prod`, which now runs `build-assets.mjs`). **Checked:** a second clean clone built byte-identical output (800 files); the zip hash
@@ -296,7 +303,7 @@ clone of the tag with PHP 8.3.36 (`composer install --no-dev --optimize-autoload
 over a fresh clone of the tag it boots Laravel 13.42.0 with 505 routes, all 380 views compile, `check-platform-reqs` and `audit` are clean, all 799
 files named in `mix-manifest.json` exist and `mix()` resolves through it, no `public\hot`; PHP 8.2.35 refuses it. The same rule keeps it valid:
 `git diff --stat 32d49d8..<commit> -- composer.lock package-lock.json build-assets.mjs resources` must print nothing, otherwise rebuild.
-**2026-11-13 evening:** the module audit changed `package-lock.json` (`npm audit fix`) and `resources\` (views, scripts) after `32d49d8`, so the newer code needed its own bundle: the pair above (`laravel-13.42-vite-audit-ready` + `laravel-13-d67dc6f.zip`). For the fallback pair use its tag and `32d49d8` in steps 4 and 5. **2026-11-14:** the DRY pairs pass changed `resources\` after `d67dc6f`, so the newest `changes_v3` does not fit `laravel-13-d67dc6f.zip`: that tag with its bundle stays a valid pair; to deploy the newer code, rebuild and tag first.
+**2026-11-13 evening:** the module audit changed `package-lock.json` (`npm audit fix`) and `resources\` (views, scripts) after `32d49d8`, so the newer code needed its own bundle: the pair above (`laravel-13.42-vite-audit-ready` + `laravel-13-d67dc6f.zip`). For the fallback pair use its tag and `32d49d8` in steps 4 and 5. **2026-11-14:** the DRY pairs pass changed `resources\` after `d67dc6f`, so it got its own bundle too: the pair at the top of this section (`laravel-13.42-vite-dry-ready` + `laravel-13-ae822d9.zip`). For a fallback pair use its tag and commit (`d67dc6f` or `32d49d8`) in steps 4 and 5.
 
 | Step | What | Check |
 |---|---|---|
@@ -304,12 +311,12 @@ files named in `mix-manifest.json` exist and `mix()` resolves through it, no `pu
 | 1 | After the 6:00 PM backup, everybody signed out; in the server window **Ctrl+C**. | window closed |
 | 2 | Copy the build folders `public\assets, backend, css, fonts, js, web` and `public\mix-manifest.json` to `<folder>-public-before-u4` (this is the rollback). | the copy opens |
 | 3 | Check the zip hash (`Get-FileHash`), unzip it next to the project. | hash equals the `.sha256` line |
-| 4 | Code: `git fetch --tags` ; `git status` (must be clean) ; `git checkout laravel-13.42-vite-audit-ready`. | `git log -1` shows `d67dc6f` |
-| 5 | Delete `public\assets, backend, css, fonts, js, web` and `public\mix-manifest.json` (never `uploads`, `webfonts`, `messages.js`, `index.php`), then copy the bundle's `public\` folders in, then `php artisan vendor:publish --tag=log-viewer-assets --force`. Replace `vendor\` from this bundle too (same packages; its class map lists the audit's two new classes, which the old one would still find). | `public\mix-manifest.json` exists; `public\hot` does **not** |
+| 4 | Code: `git fetch --tags` ; `git status` (must be clean) ; `git checkout laravel-13.42-vite-dry-ready`. | `git log -1` shows `ae822d9` |
+| 5 | Delete `public\assets, backend, css, fonts, js, web` and `public\mix-manifest.json` (never `uploads`, `webfonts`, `messages.js`, `index.php`), then copy the bundle's `public\` folders in, then `php artisan vendor:publish --tag=log-viewer-assets --force`. Replace `vendor\` from this bundle too (same packages; its class map lists the new classes, which an older `vendor\` would still find by their path). | `public\mix-manifest.json` exists; `public\hot` does **not** |
 | 6 | `php artisan optimize:clear`, then start `startup-dev-environment.bat`. | web, Reverb, scheduler `[ok]` |
 | 7 | From a second device on the LAN address, every browser tab reloaded with **Ctrl+F5**: sign in; dashboard; a list with its search; the new-patient form (date picker, Select2, phone field); a consultation; Report Generation and one Excel and one PDF download; the queue board; dark mode for one user (switch it on and off); Front CMS shows the three about-us pictures; the Live updates badge. | no broken layout, no error message |
 | 8 | **Keep or roll back** within 30 minutes. | |
 
 **Rollback (U4 only):** Ctrl+C ; `git checkout laravel-13.42-excel4-ready` ; delete the six build folders and `mix-manifest.json` from `public\` and copy
 back the ones from `<folder>-public-before-u4` ; `php artisan vendor:publish --tag=log-viewer-assets --force` ; `php artisan optimize:clear` ; start. `vendor\` can stay (the same
-packages; its class map only adds the audit's two new classes, which the older code never asks for). No database step: U4 changes no data.
+packages; checked 2026-11-14: the Excel 4 code over this `vendor\` boots with all 505 routes and finds its older classes by their path; the newer classes in the class map are never asked for). No database step: U4 changes no data.
