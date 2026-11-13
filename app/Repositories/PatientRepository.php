@@ -13,6 +13,8 @@ use App\Models\InsuranceProvider;
 use App\Models\Patient;
 use App\Models\PatientType;
 use App\Models\User;
+use App\Support\ConsultationInput;
+use App\Support\ImmunizationRecord;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -119,17 +121,6 @@ class PatientRepository extends BaseRepository
         return null;
     }
 
-    private function normalizeNullableString($value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $value = trim((string) $value);
-
-        return $value === '' ? null : $value;
-    }
-
     private function resolveCovidVaccinationStatus(array $input): ?string
     {
         $vaccinationId = $input['vaccination_id'] ?? null;
@@ -137,56 +128,12 @@ class PatientRepository extends BaseRepository
         if ($vaccinationId !== null && $vaccinationId !== '' && is_numeric($vaccinationId)) {
             $status = Vaccination::query()->whereKey((int) $vaccinationId)->value('vaccination_status');
 
-            return $this->normalizeNullableString($status);
+            return ConsultationInput::nullableString($status);
         }
 
-        return $this->normalizeNullableString($input['covid_vaccination'] ?? null);
+        return ConsultationInput::nullableString($input['covid_vaccination'] ?? null);
     }
 
-    private function buildSyncedImmunizationRecord(?string $currentRecord, ?string $covidVaccination): ?string
-    {
-        $normalizedRecord = $this->normalizeNullableString($currentRecord);
-        $normalizedVaccination = $this->normalizeNullableString($covidVaccination);
-
-        if ($normalizedVaccination === null) {
-            return $normalizedRecord;
-        }
-
-        if (in_array(strtolower($normalizedVaccination), ['unknown vaccination', 'unknown', 'n/a', 'na'], true)) {
-            return $normalizedRecord;
-        }
-
-        $covidLine = 'COVID-19 Vaccination Status: ' . $normalizedVaccination;
-
-        $existingLines = preg_split('/\R+/', (string) ($normalizedRecord ?? '')) ?: [];
-        $existingLines = array_values(array_filter(array_map(function ($line) {
-            return trim((string) $line);
-        }, $existingLines), function ($line) {
-            return $line !== '';
-        }));
-
-        $updatedLines = [];
-        $hasCovidLine = false;
-
-        foreach ($existingLines as $line) {
-            if (preg_match('/^covid(?:-19)?\s+vaccination\s+status\s*:/i', $line)) {
-                if (! $hasCovidLine) {
-                    $updatedLines[] = $covidLine;
-                    $hasCovidLine = true;
-                }
-
-                continue;
-            }
-
-            $updatedLines[] = $line;
-        }
-
-        if (! $hasCovidLine) {
-            $updatedLines[] = $covidLine;
-        }
-
-        return implode(PHP_EOL, $updatedLines);
-    }
 
     private function syncImmunizationFromCovid(array &$input, $patient = null): void
     {
@@ -197,15 +144,15 @@ class PatientRepository extends BaseRepository
         if ($resolvedCovidVaccination !== null) {
             $input['covid_vaccination'] = $resolvedCovidVaccination;
         } elseif ($patientModel) {
-            $resolvedCovidVaccination = $this->normalizeNullableString($patientModel->covid_vaccination);
+            $resolvedCovidVaccination = ConsultationInput::nullableString($patientModel->covid_vaccination);
         }
 
-        $currentImmunizationRecord = $this->normalizeNullableString($input['immunization_record'] ?? null);
+        $currentImmunizationRecord = ConsultationInput::nullableString($input['immunization_record'] ?? null);
         if ($currentImmunizationRecord === null && $patientModel) {
-            $currentImmunizationRecord = $this->normalizeNullableString($patientModel->immunization_record);
+            $currentImmunizationRecord = ConsultationInput::nullableString($patientModel->immunization_record);
         }
 
-        $syncedImmunizationRecord = $this->buildSyncedImmunizationRecord(
+        $syncedImmunizationRecord = ImmunizationRecord::withCovidStatus(
             $currentImmunizationRecord,
             $resolvedCovidVaccination
         );

@@ -48,6 +48,11 @@ use Tests\TestCase;
  * kind of user is shown, the ordered list of scripts and stylesheets it loads (the ?id= / &v= cache-busting stripped);
  * ASSETS_COMPARE=<file.json> crawls again and fails on any page whose list differs. The clock is frozen for these runs too.
  *
+ * Optional, for refactors that must not change what a page shows (DRY merges of views, form requests, scripts): PAGES_BASELINE=<folder>
+ * writes every page every kind of user is shown, its HTML normalised (one tag per line; CSRF tokens, Livewire ids / snapshots and
+ * cache-busting queries stripped) into one file per page; PAGES_COMPARE=<folder> crawls again, fails on every page whose normalised
+ * HTML differs, and writes the new version beside it (<folder>-now) for a diff. The clock is frozen for these runs too.
+ *
  * What it cannot see: links created by JavaScript after load (JsRender templates, wire:click handlers), POST-only
  * buttons, rows that no fixture creates (add a fixture below when a new screen gets row-level links), and pages that
  * need a parameter nobody links to. Run it after touching any menu, list, or "back / cancel / view / edit" link.
@@ -80,6 +85,9 @@ class LinkCrawlTest extends TestCase
     /** @var array<string, array<string, list<string>>> actor => page => "script /js/pages.js" / "style /css/app.css" in page order (ASSETS_BASELINE / ASSETS_COMPARE) */
     private array $assetsSeen = [];
 
+    /** @var list<string> pages whose normalised HTML differs from the PAGES_COMPARE recording */
+    private array $pageDifferences = [];
+
     public function test_every_link_shown_to_every_kind_of_user_opens(): void
     {
         if (! getenv('LINK_CRAWL')) {
@@ -90,7 +98,7 @@ class LinkCrawlTest extends TestCase
         ini_set('memory_limit', '3G');
 
         $recordForms = getenv('FORMS_BASELINE') ?: (getenv('FORMS_COMPARE') ?: null);
-        if ($recordForms || getenv('ASSETS_BASELINE') || getenv('ASSETS_COMPARE')) {
+        if ($recordForms || getenv('ASSETS_BASELINE') || getenv('ASSETS_COMPARE') || getenv('PAGES_BASELINE') || getenv('PAGES_COMPARE')) {
             Carbon::setTestNow('2026-03-01 10:00:00');
             View::composer('*', function ($view) {
                 $this->viewsDrawn[$view->name()] = true;
@@ -196,7 +204,63 @@ class LinkCrawlTest extends TestCase
             }
         }
 
+        $problems = array_merge($problems, $this->pageDifferences);
+
         $this->assertSame([], $problems, "Links that do not open for the user they are shown to:\n" . implode("\n", $problems));
+    }
+
+    /** PAGES_BASELINE writes the page; PAGES_COMPARE compares it with the recording and keeps the new version for a diff. */
+    private function recordPage(string $page, string $html): void
+    {
+        $name = substr(preg_replace('/[^A-Za-z0-9._-]+/', '_', $this->actorLabel . '__' . $page), 0, 150) . '-' . substr(md5($this->actorLabel . $page), 0, 8) . '.html';
+        $normalised = $this->normalisedPage($html);
+
+        if ($folder = getenv('PAGES_BASELINE')) {
+            is_dir($folder) || mkdir($folder, 0777, true);
+            file_put_contents($folder . DIRECTORY_SEPARATOR . $name, $normalised);
+        }
+        if ($folder = getenv('PAGES_COMPARE')) {
+            $recorded = $folder . DIRECTORY_SEPARATOR . $name;
+            if (! is_file($recorded)) {
+                $this->pageDifferences[] = "[{$this->actorLabel}] {$page}: crawled now, not recorded before";
+            } elseif (file_get_contents($recorded) !== $normalised) {
+                $now = rtrim($folder, '\\/') . '-now';
+                is_dir($now) || mkdir($now, 0777, true);
+                file_put_contents($now . DIRECTORY_SEPARATOR . $name, $normalised);
+                $this->pageDifferences[] = "[{$this->actorLabel}] {$page}: the page differs (see {$name} in {$now})";
+            }
+        }
+    }
+
+    /**
+     * One tag per line, whitespace collapsed; the values that change on every request are stripped: the session's CSRF token
+     * wherever it is printed, random UUIDs (row-action menu ids), Livewire ids / snapshots and lazy-load payloads (encrypted).
+     */
+    private function normalisedPage(string $html): string
+    {
+        $token = (string) session()->token();
+        if ($token !== '') {
+            $html = str_replace($token, 'CSRF', $html);
+        }
+        $html = preg_replace([
+            '/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i',
+            '/(__lazyLoad\()[^)]*\)/',
+        ], ['UUID', '$1)'], $html);
+        $html = preg_replace([
+            '/(name="_token"\s+value=")[^"]*"/',
+            '/(<meta\s+name="csrf-token"\s+content=")[^"]*"/',
+            '/\b(wire:id|wire:snapshot|wire:effects|x-data-livewire-id)="[^"]*"/',
+            '/(["\']_token["\']\s*:\s*["\'])[^"\']*(["\'])/',
+            '/((?:[?&]|&amp;)(?:id|v)=)[A-Za-z0-9]+/',
+            '/(csrf[_-]?token["\']?\s*[:=]\s*["\'])[^"\']*(["\'])/i',
+        ], ['$1"', '$1"', '$1=""', '$1$2', '$1', '$1$2'], $html);
+        $html = preg_replace('/\s+/', ' ', $html);
+        // the list base prints its Livewire component id (random per render) in two places
+        $html = preg_replace('/\b(datatable-|empty-message-)[A-Za-z0-9]{20}\b/', '$1ID', $html);
+        // values encrypted by Laravel (a new IV every time), e.g. the patient-merge preview token
+        $html = preg_replace('/eyJpdiI6[A-Za-z0-9+\/=]+/', 'ENCRYPTED', $html);
+
+        return trim(str_replace('<', "\n<", $html)) . "\n";
     }
 
     /**
@@ -355,6 +419,9 @@ class LinkCrawlTest extends TestCase
                 if ($controls !== []) {
                     $this->formControlsSeen[$this->actorLabel][$r['final']] = $controls;
                 }
+            }
+            if ((getenv('PAGES_BASELINE') || getenv('PAGES_COMPARE')) && $r['status'] === 200 && $r['body'] !== '') {
+                $this->recordPage($r['final'], $r['body']);
             }
             if ((getenv('ASSETS_BASELINE') || getenv('ASSETS_COMPARE')) && $r['status'] === 200 && $r['body'] !== '') {
                 $assets = $this->assetReferences($r['body']);

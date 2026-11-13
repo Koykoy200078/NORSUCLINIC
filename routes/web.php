@@ -65,7 +65,8 @@ Route::get('/live/menu', fn () => response(view('layouts.menu')->render().view('
     ->name('live.menu');
 
 //Dark Mode
-Route::get('update-dark-mode', [UserController::class, 'updateDarkMode'])
+// A setting change: POST only, so no page can switch someone's theme with a link or an image (re-audit 2026-11-13)
+Route::post('update-dark-mode', [UserController::class, 'updateDarkMode'])
     ->middleware(['auth', 'checkUserStatus'])
     ->name('update-dark-mode');
 

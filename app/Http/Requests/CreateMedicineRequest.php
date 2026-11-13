@@ -32,7 +32,7 @@ class CreateMedicineRequest extends FormRequest
             'dosage' => ['required', 'string', 'max:100'],
             'uom' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string', 'max:10000'],
-            'sku' => ['nullable', 'string', 'max:100', Rule::unique('medicines', 'sku')],
+            'sku' => ['nullable', 'string', 'max:100', Rule::unique('medicines', 'sku')->ignore($this->editedMedicineId())],
             'reorder_level' => ['nullable', 'integer', 'min:0'],
             'minimum_stock_alert' => ['nullable', 'integer', 'min:0'],
             'stock_alert_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -58,7 +58,7 @@ class CreateMedicineRequest extends FormRequest
             'expiration_date.before' => 'The expiration date cannot be after the year 2100.',
             'category.required' => __('messages.common.category_required'),
             'generic_name.required' => __('messages.common.generic_required'),
-            'batch_number.required' => 'Batch number is required when initial stock is provided.',
+            'batch_number.required' => $this->batchNumberRequiredMessage(),
         ];
     }
 
@@ -66,5 +66,16 @@ class CreateMedicineRequest extends FormRequest
     {
         $input = $this->all();
         $this->replace($input);
+    }
+
+    /** The medicine being edited, left out of the SKU unique check; none when a medicine is created (UpdateMedicineRequest). */
+    protected function editedMedicineId(): mixed
+    {
+        return null;
+    }
+
+    protected function batchNumberRequiredMessage(): string
+    {
+        return 'Batch number is required when initial stock is provided.';
     }
 }

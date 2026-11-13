@@ -35,11 +35,11 @@ class CreateStaffRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:191',
             'last_name' => 'required|string|max:191',
-            'email' => ['required', 'email:filter', 'max:191', $this->uniqueAmongActiveUsers('email')],
-            'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id')],
+            'email' => ['required', 'email:filter', 'max:191', $this->uniqueAmongActiveUsers('email', $this->editedUserId())],
+            'employee_id' => ['required', 'string', 'max:100', $this->uniqueAmongActiveUsers('employee_id', $this->editedUserId())],
             'country_code' => ['nullable', 'in:'.PhilippinePhone::COUNTRY_CODE],
-            'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact')],
-            'password' => 'required|same:password_confirmation|min:6',
+            'contact' => ['nullable', new PhilippinePhoneNumber(), $this->uniqueAmongActiveUsers('contact', $this->editedUserId())],
+            'password' => $this->passwordRule(),
             'gender' => 'required|integer|in:1,2',
             'role' => ['sometimes', 'nullable', 'integer', Rule::exists('roles', 'id')->where('name', 'staff')],
             'profile' => 'nullable|mimes:jpeg,jpg,png|max:2000',
@@ -52,7 +52,7 @@ class CreateStaffRequest extends FormRequest
             'email' => 'email',
             'employee_id' => 'employee_id',
             'contact' => 'contact',
-        ]);
+        ], $this->editedUserId());
     }
 
     /**
@@ -63,5 +63,17 @@ class CreateStaffRequest extends FormRequest
         return [
             'profile.max' => __('messages.profile_size'),
         ];
+    }
+
+    /** The user being edited, left out of the unique checks; none when a staff account is created (UpdateStaffRequest). */
+    protected function editedUserId(): ?int
+    {
+        return null;
+    }
+
+    /** A new account needs a password; an edit may leave it blank to keep the current one (UpdateStaffRequest). */
+    protected function passwordRule(): string
+    {
+        return 'required|same:password_confirmation|min:6';
     }
 }

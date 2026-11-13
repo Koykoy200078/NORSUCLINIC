@@ -8,6 +8,7 @@ use App\Models\Staff;
 use App\Models\User;
 use App\Models\Vaccination;
 use App\Support\ConsultationInput;
+use App\Support\ImmunizationRecord;
 use App\Support\PhilippinePhone;
 use Illuminate\Support\Facades\Hash;
 
@@ -401,7 +402,7 @@ class ConsultationPatientService
             $patientPayload['covid_vaccination'] = $resolvedCovidVaccination;
         }
 
-        $syncedImmunizationRecord = $this->buildSyncedImmunizationRecord(
+        $syncedImmunizationRecord = ImmunizationRecord::withCovidStatus(
             $patient?->immunization_record,
             $resolvedCovidVaccination
         );
@@ -663,50 +664,6 @@ class ConsultationPatientService
         return ConsultationInput::nullableString($value);
     }
 
-    private function buildSyncedImmunizationRecord(?string $currentRecord, ?string $covidVaccination): ?string
-    {
-        $normalizedRecord = ConsultationInput::nullableString($currentRecord);
-        $normalizedVaccination = ConsultationInput::nullableString($covidVaccination);
-
-        if ($normalizedVaccination === null) {
-            return $normalizedRecord;
-        }
-
-        if (in_array(strtolower($normalizedVaccination), ['unknown vaccination', 'unknown', 'n/a', 'na'], true)) {
-            return $normalizedRecord;
-        }
-
-        $covidLine = 'COVID-19 Vaccination Status: ' . $normalizedVaccination;
-
-        $existingLines = preg_split('/\R+/', (string) ($normalizedRecord ?? '')) ?: [];
-        $existingLines = array_values(array_filter(array_map(function ($line) {
-            return trim((string) $line);
-        }, $existingLines), function ($line) {
-            return $line !== '';
-        }));
-
-        $updatedLines = [];
-        $hasCovidLine = false;
-
-        foreach ($existingLines as $line) {
-            if (preg_match('/^covid(?:-19)?\s+vaccination\s+status\s*:/i', $line)) {
-                if (! $hasCovidLine) {
-                    $updatedLines[] = $covidLine;
-                    $hasCovidLine = true;
-                }
-
-                continue;
-            }
-
-            $updatedLines[] = $line;
-        }
-
-        if (! $hasCovidLine) {
-            $updatedLines[] = $covidLine;
-        }
-
-        return implode(PHP_EOL, $updatedLines);
-    }
 
     public function ageFromDateOfBirth(?string $dateOfBirth, int $fallbackAge = 0): int
     {

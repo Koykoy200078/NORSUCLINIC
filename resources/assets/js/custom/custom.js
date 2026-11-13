@@ -613,7 +613,7 @@ listenClick(".apply-dark-mode", function (e) {
     e.preventDefault();
     $.ajax({
         url: route("update-dark-mode"),
-        type: "get",
+        type: "post",
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);

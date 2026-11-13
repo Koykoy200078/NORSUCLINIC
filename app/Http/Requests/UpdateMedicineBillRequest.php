@@ -2,39 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class UpdateMedicineBillRequest extends FormRequest
+/**
+ * Editing a dispense record is checked by the same rules as creating one (re-audit 2026-11-13, DRY: this class used to be
+ * a line-for-line copy of CreateMedicineBillRequest).
+ */
+class UpdateMedicineBillRequest extends CreateMedicineBillRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules(): array
-    {
-        return [
-            'patient_id' => 'required|integer|exists:patients,id',
-            'bill_date' => 'required|date_format:Y-m-d H:i:s,Y-m-d H:i,Y-m-d|after:1899-12-31|before_or_equal:+1 day',
-            'category_id' => 'required|array|min:1',
-            'category_id.*' => 'required|integer|exists:categories,id',
-            'medicine' => 'required|array|min:1',
-            'medicine.*' => 'required|integer|exists:medicines,id',
-            'dosage' => 'required|array|min:1',
-            'dosage.*' => 'required|string|max:100',
-            'quantity' => 'required|array|min:1',
-            'quantity.*' => 'required|integer|min:1',
-            'expiry_date' => 'nullable|array',
-            'expiry_date.*' => 'nullable|date',
-            'note' => 'nullable|string|max:2000',
-        ];
-    }
 }

@@ -2,72 +2,21 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class UpdateMedicineRequest extends FormRequest
+/**
+ * Editing a medicine: the rules of CreateMedicineRequest, with the medicine itself left out of the SKU unique check and the
+ * edit form's wording for the batch number (re-audit 2026-11-13, DRY: this class used to repeat every rule).
+ */
+class UpdateMedicineRequest extends CreateMedicineRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->sanitize();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     */
-    public function rules(): array
+    protected function editedMedicineId(): mixed
     {
         $medicine = $this->route('medicine');
-        $medicineId = is_object($medicine) ? $medicine->id : $medicine;
 
-        return [
-            'generic_name' => ['required', 'string', 'max:191'],
-            'brand_name' => ['nullable', 'string', 'max:191'],
-            'category' => ['required', 'string', 'max:191'],
-            'dosage' => ['required', 'string', 'max:100'],
-            'uom' => ['required', 'string', 'max:50'],
-            'description' => ['nullable', 'string', 'max:10000'],
-            'sku' => ['nullable', 'string', 'max:100', Rule::unique('medicines', 'sku')->ignore($medicineId)],
-            'reorder_level' => ['nullable', 'integer', 'min:0'],
-            'minimum_stock_alert' => ['nullable', 'integer', 'min:0'],
-            'stock_alert_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'initial_stock_quantity' => ['nullable', 'integer', 'min:0'],
-            'batch_number' => [
-                Rule::requiredIf(fn() => (int) $this->input('initial_stock_quantity', 0) > 0),
-                'nullable',
-                'string',
-                'max:100',
-            ],
-            'manufacturing_date' => ['nullable', 'date', 'after:1989-12-31', 'before_or_equal:today'],
-            'expiration_date' => ['nullable', 'date', 'after_or_equal:manufacturing_date', 'after:1989-12-31', 'before:2101-01-01'],
-            'supplier_name' => ['nullable', 'string', 'max:191'],
-        ];
+        return is_object($medicine) ? $medicine->id : $medicine;
     }
 
-    public function messages(): array
+    protected function batchNumberRequiredMessage(): string
     {
-        return [
-            'manufacturing_date.after' => 'The manufacturing date cannot be before 1990.',
-            'manufacturing_date.before_or_equal' => 'The manufacturing date cannot be in the future.',
-            'expiration_date.after' => 'The expiration date cannot be before 1990.',
-            'expiration_date.before' => 'The expiration date cannot be after the year 2100.',
-            'category.required' => __('messages.common.category_required'),
-            'generic_name.required' => __('messages.common.generic_required'),
-            'batch_number.required' => 'Batch number is required when stock quantity is provided.',
-        ];
-    }
-
-    public function sanitize()
-    {
-        $input = $this->all();
-        $this->replace($input);
+        return 'Batch number is required when stock quantity is provided.';
     }
 }
