@@ -284,23 +284,7 @@ listenSubmit("#addMedicineForm", function (e) {
                 $("#add_medicine_modal").modal("hide");
 
                 // Keep the table on page 1 and force refresh so newly-created rows appear immediately.
-                if (typeof window.Livewire !== "undefined") {
-                    if (typeof window.Livewire.dispatchTo === "function") {
-                        window.Livewire.dispatchTo(
-                            "medicine-table",
-                            "resetPage",
-                        );
-                        window.Livewire.dispatchTo("medicine-table", "refresh");
-                    } else if (typeof window.Livewire.dispatch === "function") {
-                        window.Livewire.dispatch("resetPage");
-                        window.Livewire.dispatch("refresh");
-                    } else {
-                        window.location.reload();
-                    }
-                } else {
-                    // Fallback for cases where Livewire global is not yet available.
-                    window.location.reload();
-                }
+                refreshLivewireTable("medicine-table", ["resetPage", "refresh"]);
             }
         },
         error: function (result) {

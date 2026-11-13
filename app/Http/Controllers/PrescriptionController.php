@@ -137,35 +137,7 @@ class PrescriptionController extends AppBaseController
             return Redirect::back()->withInput();
         }
 
-        $patient = Patient::findOrFail($input['patient_id']);
-        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
-        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
-
-        $doctor = Doctor::find($input['doctor_id']);
-        $doctorLicense = $input['doctor_license_s2_number']
-            ?? optional($doctor)->s2_license_number
-            ?? optional($doctor)->prc_license_number;
-
-        $prescriptionData = Arr::only($input, [
-            'patient_id',
-            'doctor_id',
-            'consultation_date',
-            'icd10_diagnosis_id',
-            'problem_description',
-            'advice',
-            'next_visit_days',
-            'weight_kg',
-            'pulse_rate',
-            'body_temperature',
-            'blood_pressure',
-            'height_cm',
-        ]);
-        $prescriptionData['doctor_license_s2_number'] = $doctorLicense;
-        $prescriptionData['weight_kg'] = $prescriptionData['weight_kg'] ?? $patientSummary['weight_kg'];
-        $prescriptionData['pulse_rate'] = $prescriptionData['pulse_rate'] ?? $patientSummary['pulse_rate'];
-        $prescriptionData['body_temperature'] = $prescriptionData['body_temperature'] ?? $patientSummary['body_temperature'];
-        $prescriptionData['blood_pressure'] = $prescriptionData['blood_pressure'] ?? $patientSummary['blood_pressure'];
-        $prescriptionData['height_cm'] = $prescriptionData['height_cm'] ?? $patientSummary['height_cm'];
+        $prescriptionData = $this->prescriptionFields($input);
         $prescriptionData['is_active'] = true;
         $prescriptionData['status'] = Prescription::DISPENSE_STATUS_PENDING;
 
@@ -387,35 +359,7 @@ class PrescriptionController extends AppBaseController
             return Redirect::back()->withInput();
         }
 
-        $patient = Patient::findOrFail($input['patient_id']);
-        $latestConsultation = $this->getLatestPatientConsultation($patient->user_id);
-        $patientSummary = $this->buildPatientSummary($patient, $latestConsultation);
-
-        $doctor = Doctor::find($input['doctor_id']);
-        $doctorLicense = $input['doctor_license_s2_number']
-            ?? optional($doctor)->s2_license_number
-            ?? optional($doctor)->prc_license_number;
-
-        $prescriptionData = Arr::only($input, [
-            'patient_id',
-            'doctor_id',
-            'consultation_date',
-            'icd10_diagnosis_id',
-            'problem_description',
-            'advice',
-            'next_visit_days',
-            'weight_kg',
-            'pulse_rate',
-            'body_temperature',
-            'blood_pressure',
-            'height_cm',
-        ]);
-        $prescriptionData['doctor_license_s2_number'] = $doctorLicense;
-        $prescriptionData['weight_kg'] = $prescriptionData['weight_kg'] ?? $patientSummary['weight_kg'];
-        $prescriptionData['pulse_rate'] = $prescriptionData['pulse_rate'] ?? $patientSummary['pulse_rate'];
-        $prescriptionData['body_temperature'] = $prescriptionData['body_temperature'] ?? $patientSummary['body_temperature'];
-        $prescriptionData['blood_pressure'] = $prescriptionData['blood_pressure'] ?? $patientSummary['blood_pressure'];
-        $prescriptionData['height_cm'] = $prescriptionData['height_cm'] ?? $patientSummary['height_cm'];
+        $prescriptionData = $this->prescriptionFields($input);
 
         DB::beginTransaction();
         try {
@@ -505,6 +449,44 @@ class PrescriptionController extends AppBaseController
             ->where('document_type', 'consultation_form')
             ->latest('id')
             ->first();
+    }
+
+    /**
+     * The prescription's own fields from the validated form: the doctor's licence (the one typed, else the doctor's S2,
+     * else the PRC number) and the vital signs left empty taken from the patient's latest consultation. Saving and
+     * editing a prescription both use it (re-audit 2026-11-13, DRY: each built it).
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
+    private function prescriptionFields(array $input): array
+    {
+        $patient = Patient::findOrFail($input['patient_id']);
+        $patientSummary = $this->buildPatientSummary($patient, $this->getLatestPatientConsultation($patient->user_id));
+        $doctor = Doctor::find($input['doctor_id']);
+
+        $fields = Arr::only($input, [
+            'patient_id',
+            'doctor_id',
+            'consultation_date',
+            'icd10_diagnosis_id',
+            'problem_description',
+            'advice',
+            'next_visit_days',
+            'weight_kg',
+            'pulse_rate',
+            'body_temperature',
+            'blood_pressure',
+            'height_cm',
+        ]);
+        $fields['doctor_license_s2_number'] = $input['doctor_license_s2_number']
+            ?? optional($doctor)->s2_license_number
+            ?? optional($doctor)->prc_license_number;
+        foreach (['weight_kg', 'pulse_rate', 'body_temperature', 'blood_pressure', 'height_cm'] as $vital) {
+            $fields[$vital] = $fields[$vital] ?? $patientSummary[$vital];
+        }
+
+        return $fields;
     }
 
     private function buildPatientSummary(Patient $patient, ?DocumentIssuance $consultation): array

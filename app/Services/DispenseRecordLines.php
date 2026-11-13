@@ -14,6 +14,22 @@ use App\Models\DispenseRecordItem;
 final class DispenseRecordLines
 {
     /**
+     * True when two lines of a dispense form name the same medicine, strength and expiry date (one line per batch).
+     * Saving and editing a dispense record both check it (re-audit 2026-11-13, DRY: each had a copy).
+     *
+     * @param  array<string, mixed>  $input  the form: medicine[], dosage[], expiry_date[]
+     */
+    public static function hasDuplicateLines(array $input): bool
+    {
+        return collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
+            $dosage = trim((string) ($input['dosage'][$key] ?? ''));
+            $expiry = trim((string) ($input['expiry_date'][$key] ?? ''));
+
+            return $medicineId . '|' . $dosage . '|' . $expiry;
+        })->duplicates()->isNotEmpty();
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $allocations  the engine's answer (MedicineInventoryService::deductStockFefo)
      */
     public static function fromAllocations(

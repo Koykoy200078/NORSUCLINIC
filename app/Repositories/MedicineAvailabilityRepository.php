@@ -55,36 +55,6 @@ class MedicineAvailabilityRepository extends BaseRepository
         return $data;
     }
 
-    public function getMedicineList()
-    {
-        $result = Medicine::all()->pluck('name', 'id')->toArray();
-
-        $medicines = [];
-        foreach ($result as $key => $item) {
-            $medicines[] = [
-                'key' => $key,
-                'value' => $item,
-            ];
-        }
-
-        return $medicines;
-    }
-
-    public function getCategoryList()
-    {
-        $result = Category::all()->pluck('name', 'id')->toArray();
-
-        $category = [];
-        foreach ($result as $key => $item) {
-            $medicines[] = [
-                'key' => $key,
-                'value' => $item,
-            ];
-        }
-
-        return $category;
-    }
-
     public function getCategory()
     {
         $data['categories'] = Category::all()->pluck('name', 'id')->toArray();

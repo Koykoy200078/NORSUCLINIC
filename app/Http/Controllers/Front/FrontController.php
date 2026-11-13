@@ -99,9 +99,7 @@ class FrontController extends AppBaseController
      */
     public function termsCondition(): \Illuminate\View\View
     {
-        $termConditions = SettingsService::get();
-
-        return view('fronts.terms_conditions', compact('termConditions'));
+        return view('fronts.policy_page', ['title' => __('messages.terms_conditions'), 'content' => SettingsService::get()['terms_conditions'] ?? '']);
     }
 
     /**
@@ -109,9 +107,7 @@ class FrontController extends AppBaseController
      */
     public function privacyPolicy(): \Illuminate\View\View
     {
-        $privacyPolicy = SettingsService::get();
-
-        return view('fronts.privacy_policy', compact('privacyPolicy'));
+        return view('fronts.policy_page', ['title' => __('messages.privacy_policy'), 'content' => SettingsService::get()['privacy_policy'] ?? '']);
     }
 
     /**

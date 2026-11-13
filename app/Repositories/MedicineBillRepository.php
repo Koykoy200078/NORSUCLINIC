@@ -58,14 +58,7 @@ class MedicineBillRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            $lineIdentifiers = collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
-                $dosage = trim((string) ($input['dosage'][$key] ?? ''));
-                $expiry = trim((string) ($input['expiry_date'][$key] ?? ''));
-
-                return $medicineId . '|' . $dosage . '|' . $expiry;
-            });
-
-            if ($lineIdentifiers->duplicates()->isNotEmpty()) {
+            if (\App\Services\DispenseRecordLines::hasDuplicateLines($input)) {
                 throw new UnprocessableEntityHttpException(__('messages.medicine_bills.duplicate_medicine'));
             }
 

@@ -87,14 +87,7 @@ class DispenseRecordController extends AppBaseController
             return redirectByRole('dispense-records.create');
         }
 
-        $lineIdentifiers = collect($input['medicine'])->map(function ($medicineId, $key) use ($input) {
-            $dosage = trim((string) ($input['dosage'][$key] ?? ''));
-            $expiry = trim((string) ($input['expiry_date'][$key] ?? ''));
-
-            return $medicineId . '|' . $dosage . '|' . $expiry;
-        });
-
-        if ($lineIdentifiers->duplicates()->isNotEmpty()) {
+        if (\App\Services\DispenseRecordLines::hasDuplicateLines($input)) {
             if ($request->ajax()) {
                 return $this->sendError(__('messages.medicine_bills.duplicate_medicine'));
             }

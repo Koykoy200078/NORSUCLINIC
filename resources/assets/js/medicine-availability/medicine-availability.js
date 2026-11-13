@@ -342,32 +342,11 @@ listenSubmit("#purchaseMedicineFormId", function (e) {
                     $("#add_stock_in_modal").modal("hide");
 
                     // Keep Stock-In table on page 1 and force a deterministic refresh.
-                    if (typeof window.Livewire !== "undefined") {
-                        if (typeof window.Livewire.dispatchTo === "function") {
-                            window.Livewire.dispatchTo(
-                                "stock-in-table",
-                                "clearSearch",
-                            );
-                            window.Livewire.dispatchTo(
-                                "stock-in-table",
-                                "resetPage",
-                            );
-                            window.Livewire.dispatchTo(
-                                "stock-in-table",
-                                "refresh",
-                            );
-                        } else if (
-                            typeof window.Livewire.dispatch === "function"
-                        ) {
-                            window.Livewire.dispatch("clearSearch");
-                            window.Livewire.dispatch("resetPage");
-                            window.Livewire.dispatch("refresh");
-                        } else {
-                            window.location.reload();
-                        }
-                    } else {
-                        window.location.reload();
-                    }
+                    refreshLivewireTable("stock-in-table", [
+                        "clearSearch",
+                        "resetPage",
+                        "refresh",
+                    ]);
                 }
             },
             error: function (result) {

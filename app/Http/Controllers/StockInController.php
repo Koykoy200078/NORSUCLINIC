@@ -43,11 +43,10 @@ class StockInController extends AppBaseController
     {
         $data           = $this->medicineRepository->getSyncList();
         $medicines      = $this->medicineAvailabilityRepository->getMedicine();
-        $medicineList   = $this->medicineAvailabilityRepository->getMedicineList();
+        $medicineList   = $this->medicineRepository->getMedicineList();
         $categories     = $this->medicineAvailabilityRepository->getCategory();
-        $categoriesList = $this->medicineAvailabilityRepository->getCategoryList();
 
-        return view('medicine-availabilities.create', compact('medicines', 'medicineList', 'categories', 'categoriesList'))->with($data);
+        return view('medicine-availabilities.create', compact('medicines', 'medicineList', 'categories'))->with($data);
     }
 
     public function store(CreateMedicineAvailabilityRequest $request): JsonResponse|RedirectResponse
@@ -98,12 +97,11 @@ class StockInController extends AppBaseController
     {
         $stockIn->load(['purchasedMedcines.medicines']);
         $medicines           = $this->medicineAvailabilityRepository->getMedicine();
-        $medicineList        = $this->medicineAvailabilityRepository->getMedicineList();
+        $medicineList        = $this->medicineRepository->getMedicineList();
         $categories          = $this->medicineAvailabilityRepository->getCategory();
-        $categoriesList      = $this->medicineAvailabilityRepository->getCategoryList();
         $medicineAvailability = $stockIn; // keep view-compat variable name
 
-        return view('medicine-availabilities.edit', compact('medicineAvailability', 'medicines', 'medicineList', 'categories', 'categoriesList'));
+        return view('medicine-availabilities.edit', compact('medicineAvailability', 'medicines', 'medicineList', 'categories'));
     }
 
     public function update(CreateMedicineAvailabilityRequest $request, StockIn $stockIn): RedirectResponse
