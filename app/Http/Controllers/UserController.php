@@ -15,6 +15,7 @@ use App\Models\Specialization;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Support\AuditLog;
+use App\Support\BloodType;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -76,7 +77,7 @@ class UserController extends AppBaseController
     {
         $specializations = Specialization::pluck('name', 'id')->toArray();
         $country = $this->userRepo->getCountries();
-        $bloodGroup = Doctor::BLOOD_TYPE_ARRAY;
+        $bloodGroup = BloodType::LABELS;
         $defaultCountryId = Country::where('name', 'Philippines')->value('id');
 
         return view('doctors.create', compact('specializations', 'country', 'bloodGroup', 'defaultCountryId'));
@@ -119,7 +120,7 @@ class UserController extends AppBaseController
         $user = $doctor->user()->first();
         $qualifications = $user->qualifications()->get();
         $data = $this->userRepo->getSpecializationsData($doctor);
-        $bloodGroup = Doctor::BLOOD_TYPE_ARRAY;
+        $bloodGroup = BloodType::LABELS;
         $countries = $this->userRepo->getCountries();
         $state = $cities = null;
         $years = [];
@@ -438,22 +439,6 @@ class UserController extends AppBaseController
         // reset). All account types share the `users` table, so without this a staff/nurse
         // holding manage_doctors could reset the clinic_admin's password to the default and
         // take over the admin account. CRUD-AUTH-1.
-        abort_unless((int) $user->type === User::DOCTOR, 403);
-
-        try {
-            $user->update([
-                'password' => Hash::make(User::DEFAULT_PASSWORD)
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.'
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return $this->resetToDefaultPassword($user, User::DOCTOR);
     }
 }

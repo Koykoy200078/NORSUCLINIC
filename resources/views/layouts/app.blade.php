@@ -149,7 +149,7 @@
 
     <!-- JavaScript Variables -->
     @php
-    $bloodGroupArr = json_encode(App\Models\Doctor::BLOOD_TYPE_ARRAY);
+    $bloodGroupArr = json_encode(App\Support\BloodType::LABELS);
     $bloodGroupArr = html_entity_decode($bloodGroupArr);
     @endphp
     <script>

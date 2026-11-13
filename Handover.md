@@ -74,6 +74,10 @@ Nothing is written while work is in progress, half-done or not started yet.
 
 ## 3. Log (newest on top)
 
+### 2026-11-13 22:30 +08:00 — Claude Code — START
+- **Branch / from:** `changes_v3` @ `652fe05` (pushed; clean).
+- **Work:** the owner chose "DRY: remaining pairs" (STATUS section 6, row "DRY, the rest"): for each duplicated pair, measure where the copies differ; merge the identical parts; where they have drifted, the owner picks the right behaviour first. Each merge proven unchanged with the `PAGES_COMPARE` / `FORMS_COMPARE` / `ASSETS_COMPARE` crawl (baselines in `storage/app/audit-2026-11-13/`) and the tests; live check in the browser; then push. Note: any change under `resources/` makes `changes_v3` stop fitting `laravel-13-d67dc6f.zip` again.
+
 ### 2026-11-13 18:35 +08:00 — Claude Code — START → END (pushed 2026-11-13)
 - **Branch / from:** `changes_v3` @ `d67dc6f` (pushed; clean).
 - **Work:** the owner's "Rebuild and tag" after the module audit: a new offline bundle for the U4 window from clean clones of `d67dc6f` (two builds must be identical), verified like the earlier bundles, tagged `laravel-13.42-vite-audit-ready`; runbook section 9 then deploys that pair (the U4 code plus the audit's fixes), `laravel-13.42-vite-ready` + `laravel-13-32d49d8.zip` becomes its fallback. The U0 – U3 window keeps `laravel-13.42-excel4-ready` + `laravel-13-bcf7ad7.zip`.

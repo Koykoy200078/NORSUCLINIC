@@ -142,9 +142,9 @@
     @endphp
 
     <div class="header">
-        <h2>Negros Oriental State University</h2>
-        <div>University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</div>
-        <div>Tel #: 225-9400, then Local # 188, 09263829484</div>
+        <h2>{{ \App\Support\Letterhead::UNIVERSITY }}</h2>
+        <div>{{ \App\Support\Letterhead::ADDRESS }}</div>
+        <div>{{ \App\Support\Letterhead::PHONE }}</div>
         <h3 style="margin-top: 12px;">CONSULTATION FORM</h3>
     </div>
 

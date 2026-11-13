@@ -3,19 +3,16 @@
 Consultation Medicines
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1"></h1>
-        <div class="text-end mt-4 mt-md-0">
-            @if ($canOpenConsultation)
-            <a class="btn btn-primary"
-                href="{{ getRouteByRole('document-issuances.show', [$consultation->id]) }}">View Consultation</a>
-            @endif
-            <a href="{{ getRouteByRole('medicine-dispensing.index', ['tab' => 'dispense-history']) }}"
-                class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
-        </div>
+<x-page-toolbar>
+    <div class="text-end mt-4 mt-md-0">
+        @if ($canOpenConsultation)
+        <a class="btn btn-primary"
+            href="{{ getRouteByRole('document-issuances.show', [$consultation->id]) }}">View Consultation</a>
+        @endif
+        <a href="{{ getRouteByRole('medicine-dispensing.index', ['tab' => 'dispense-history']) }}"
+            class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
     </div>
-</div>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

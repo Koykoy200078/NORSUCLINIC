@@ -104,7 +104,7 @@ class PrescriptionController extends AppBaseController
 
         $diagnosisOptions = Diagnose::query()->orderBy('diagnoses')->pluck('diagnoses', 'id')->toArray();
 
-        return view('prescriptions.create', compact(
+        return view('prescriptions.form', compact(
             'patient',
             'patientSummary',
             'doctors',
@@ -336,7 +336,7 @@ class PrescriptionController extends AppBaseController
             ->values()
             ->toArray();
 
-        return view('prescriptions.edit', compact(
+        return view('prescriptions.form', compact(
             'prescription',
             'patient',
             'patientSummary',

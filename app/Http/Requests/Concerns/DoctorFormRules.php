@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Concerns;
 
-use App\Models\Doctor;
+use App\Support\BloodType;
 use Illuminate\Validation\Rule;
 
 /**
@@ -17,7 +17,7 @@ trait DoctorFormRules
     {
         return [
             'gender' => ['required', 'integer', 'in:1,2'],
-            'blood_type' => ['nullable', 'string', 'max:191', Rule::in(array_keys(Doctor::BLOOD_TYPE_ARRAY))],
+            'blood_type' => ['nullable', 'string', 'max:191', Rule::in(array_keys(BloodType::LABELS))],
             'experience' => ['nullable', 'numeric', 'min:0', 'max:80'],
             'specializations' => ['required', 'array', 'min:1'],
             'specializations.*' => ['integer', Rule::exists('specializations', 'id')],

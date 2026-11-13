@@ -960,22 +960,7 @@ class DocumentIssuanceController extends Controller
         self::logActivity(
             'consultation_assessment_plan_override',
             'Staff override updated ' . implode(' and ', $changedFields) . " for consultation: {$requestDocument->name}",
-            [
-                'patient_name' => $requestDocument->name,
-                'patient_age' => $requestDocument->age,
-                'patient_gender' => $requestDocument->gender,
-                'college' => $requestDocument->college,
-                'address' => $requestDocument->address,
-                'contact_number' => $requestDocument->patient_contact,
-                'complaints' => $requestDocument->complaints,
-                'diagnosis' => $requestDocument->assessment,
-                'informant' => $requestDocument->informant,
-                'consult_mode' => $requestDocument->consult_mode,
-                'course' => $requestDocument->course,
-                'year_level' => $requestDocument->year_level,
-                'subject_type' => 'RequestDocuments',
-                'subject_id' => $requestDocument->id,
-                'date' => $requestDocument->requested_at ?? $now->toDateString(),
+            self::consultationLogFields($requestDocument) + [
                 'properties' => [
                     'staff_name' => $user->full_name ?? $user->name ?? 'Staff',
                     'changed_at' => $now->toDateTimeString(),

@@ -29,6 +29,7 @@ use App\Models\Setting;
 use App\Models\State;
 use App\Models\Vaccination;
 use App\Models\YearLevel;
+use App\Support\BloodType;
 
 /**
  * Class PatientRepository
@@ -62,7 +63,7 @@ class PatientRepository extends BaseRepository
     public function getData(): array
     {
         $data['countries'] = Country::toBase()->pluck('name', 'id');
-        $data['bloodGroupList'] = Patient::BLOOD_TYPE_ARRAY;
+        $data['bloodGroupList'] = BloodType::LABELS;
         $data['provinces'] = State::toBase()->pluck('name', 'id');
         $data['cities'] = [];  // Loaded dynamically via AJAX based on province selection
         $data['barangays'] = [];  // Loaded dynamically via AJAX based on city selection
@@ -76,27 +77,7 @@ class PatientRepository extends BaseRepository
 
         $data['vaccination_data'] = Vaccination::toBase()->pluck('vaccination_status', 'id');
         $data['comorbidities'] = Diagnose::toBase()->pluck('diagnoses', 'id');
-        $patientTypeSortOrder = [
-            'student' => User::STUDENT,
-            'faculty' => User::FACULTY,
-            'staff'   => User::EMPLOYEE,
-            'guest'   => User::GUEST
-        ];
-
-        $data['patient_types'] = PatientType::query()
-            ->get(['id', 'code', 'name'])
-            ->sortBy(function ($patientType) use ($patientTypeSortOrder) {
-                $normalizedCode = strtolower(trim((string) $patientType->code));
-
-                return $patientTypeSortOrder[$normalizedCode] ?? 99;
-            })
-            ->mapWithKeys(function ($patientType) {
-                $normalizedCode = strtolower(trim((string) $patientType->code));
-                $normalizedName = strtolower(trim((string) $patientType->name));
-                $displayName = ($normalizedCode === 'dependent' || $normalizedName === 'dependent') ? 'Guest' : $patientType->name;
-
-                return [$patientType->id => $displayName];
-            });
+        $data['patient_types'] = PatientType::selectOptions();
         $data['insurance_providers'] = InsuranceProvider::toBase()->pluck('name', 'id');
 
         return $data;

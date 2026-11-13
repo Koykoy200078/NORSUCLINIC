@@ -7,6 +7,7 @@ use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\MedicineTransaction;
 use App\Models\PatientQueue;
+use App\Support\SpreadsheetText;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -183,12 +184,6 @@ final class ReportCsv
      */
     private static function put($file, array $row): void
     {
-        fputcsv($file, array_map(function ($cell) {
-            if (is_string($cell) && $cell !== '' && in_array($cell[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
-                return "'" . $cell;
-            }
-
-            return $cell;
-        }, $row), ',', '"', '\\');
+        SpreadsheetText::putCsvRow($file, $row);
     }
 }

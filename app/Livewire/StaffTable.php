@@ -23,18 +23,7 @@ class StaffTable extends TableComponent
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc');
-
-        $this->setThAttributes(function (Column $column) {
-            if ($column->isField('id')) {
-                return [
-                    'class' => 'text-center',
-                ];
-            }
-
-            return [];
-        });
+        $this->sortNewestFirst();
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
             if ($column->isField('id')) {

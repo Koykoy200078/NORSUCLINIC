@@ -171,6 +171,17 @@ abstract class TableComponent extends Component
         return $this;
     }
 
+    /**
+     * The set-up most lists share: rows keyed by id, the newest first, the id column's header centred (re-audit
+     * 2026-11-13, DRY: nine lists wrote it out). A list adds its own settings after it.
+     */
+    protected function sortNewestFirst(): static
+    {
+        $this->setPrimaryKey('id')->setDefaultSort('created_at', 'desc');
+
+        return $this->setThAttributes(fn (Column $column) => $column->isField('id') ? ['class' => 'text-center'] : []);
+    }
+
     /** @param callable(Column, Model, int, int): array<string, mixed> $callback */
     protected function setTdAttributes(callable $callback): static
     {

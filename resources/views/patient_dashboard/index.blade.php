@@ -119,9 +119,9 @@
                 </div>
                 <div class="card-body py-3">
                     @php
-                    use App\Models\UsedMedicineView;
+                    use App\Models\StockOutView;
                     $patientName = Auth::user()->full_name;
-                    $medicineQuery = UsedMedicineView::where('patient_name', $patientName);
+                    $medicineQuery = StockOutView::where('patient_name', $patientName);
 
                     // Apply month filter if selected
                     if(request('medicine_month')) {

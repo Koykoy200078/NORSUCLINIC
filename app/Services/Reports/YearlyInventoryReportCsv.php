@@ -2,6 +2,7 @@
 
 namespace App\Services\Reports;
 
+use App\Support\SpreadsheetText;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -46,21 +47,6 @@ final class YearlyInventoryReportCsv
     {
         $filename = self::fileName($report, '.csv');
 
-        return response()->streamDownload(function () use ($report) {
-            $file = fopen('php://output', 'w');
-            fwrite($file, "\xEF\xBB\xBF");
-
-            foreach (self::rows($report) as $row) {
-                fputcsv($file, array_map(fn ($cell) => self::safe($cell), $row), ',', '"', '\\');
-            }
-
-            fclose($file);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
-    /** A cell that starts with = + - @ is read as a formula by Excel; an apostrophe makes it text. */
-    private static function safe(mixed $cell): mixed
-    {
-        return is_string($cell) && $cell !== '' && in_array($cell[0], ['=', '+', '-', '@', "\t", "\r"], true) ? "'" . $cell : $cell;
+        return SpreadsheetText::csvDownload($filename, fn () => self::rows($report));
     }
 }

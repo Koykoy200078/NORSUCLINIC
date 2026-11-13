@@ -5,15 +5,12 @@
 @section('page_css')
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">@yield('title')</h1>
-        <a href="{{ 
-                getRouteByRole('generics.index')
-            }}"
-            class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
-    </div>
-</div>
+<x-page-toolbar>
+    <a href="{{
+            getRouteByRole('generics.index')
+        }}"
+        class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -24,10 +21,16 @@
             </div>
         </div>
         <div class="card">
-            {{html()->hidden('isEdit', false)->forgetAttribute('id')->attributes(['class'=>'isEdit'])}}
+            {{-- One page for adding and editing (re-audit 2026-11-13, DRY): the edit form goes to the update route of the
+                 panel it was opened in (it used to post to the admin route, which refuses a Staff (Nurse)). --}}
+            {{html()->hidden('isEdit', isset($generic))->forgetAttribute('id')->attributes(['class'=>'isEdit'])}}
 
             <div class="card-body">
+                @isset($generic)
+                {{ html()->modelForm($generic, 'patch', route(getRouteNameByRole('generics.update'), [$generic->id]))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'editGenericForm'])->open() }}
+                @else
                 {{ html()->form('POST', route(getRouteNameByRole('generics.store')))->attribute('accept-charset', 'UTF-8')->attributes(['id' => 'createGenericForm'])->open() }}
+                @endisset
 
                 @include('generics.fields')
 

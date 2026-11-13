@@ -96,22 +96,6 @@ function loadPatientprofileCountry() {
     }, 1500);
 }
 
-listenChange("input[type=radio][name=gender]", function () {
-    let file = $("#profilePicture").val();
-    if (isEmpty(file)) {
-        if (this.value == 1) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + manAvatar + ")",
-            );
-        } else if (this.value == 2) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + womanAvatar + ")",
-            );
-        }
-    }
-});
 
 listenChange("#patientCountryId", function () {
     // Skip AJAX during initial page load - data is already loaded from server

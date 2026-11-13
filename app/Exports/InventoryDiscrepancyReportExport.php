@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Support\SpreadsheetText;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -21,13 +22,7 @@ class InventoryDiscrepancyReportExport implements FromView, ShouldAutoSize, With
     {
         // Names and notes are typed by people: a text that starts with = + - @ would be run as a formula when the sheet is
         // opened, so it is made plain text, as in the CSV. (Only text: the numbers of the report stay numbers.)
-        array_walk_recursive($report, function (&$value) {
-            if (is_string($value) && $value !== '' && in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
-                $value = "'" . $value;
-            }
-        });
-
-        $this->report = $report;
+        $this->report = SpreadsheetText::safeAll($report);
     }
 
     public function view(): View

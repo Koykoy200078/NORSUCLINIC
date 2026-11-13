@@ -1,1 +1,0 @@
-{{ $row->patient_name ?? 'N/A' }}

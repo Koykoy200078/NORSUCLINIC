@@ -228,22 +228,6 @@ listenSubmit("#editDoctorForm", function (e) {
     });
 });
 
-listenChange("input[type=radio][name=gender]", function () {
-    let file = $("#profilePicture").val();
-    if (isEmpty(file)) {
-        if (this.value == 1) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + manAvatar + ")",
-            );
-        } else if (this.value == 2) {
-            $(".image-input-wrapper").attr(
-                "style",
-                "background-image:url(" + womanAvatar + ")",
-            );
-        }
-    }
-});
 
 listenChange("#editDoctorCountryId", function () {
     let doctorIsEdit = $("#doctorIsEdit").val();

@@ -46,7 +46,7 @@ class GenericController extends AppBaseController
      */
     public function create(): View
     {
-        return view('generics.create');
+        return view('generics.form');
     }
 
     /**
@@ -85,7 +85,7 @@ class GenericController extends AppBaseController
      */
     public function edit(Generic $generic): View
     {
-        return view('generics.edit', compact('generic'));
+        return view('generics.form', compact('generic'));
     }
 
     /**

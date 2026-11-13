@@ -3,23 +3,20 @@
 {{ __('messages.medicine.medicine_generics')}}
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">{{__('messages.medicine.medicine_generics_details')}}</h1>
-        <div class="text-end mt-4 mt-md-0">
-            @unless(isRole('doctor'))
+<x-page-toolbar :title="__('messages.medicine.medicine_generics_details')">
+    <div class="text-end mt-4 mt-md-0">
+        @unless(isRole('doctor'))
 <a class="btn btn-primary edit-btn"
-                href="{{ 
-                       getRouteByRole('generics.edit', ['generic' => $generic->id])
-                   }}">{{ __('messages.common.edit') }}</a>
+            href="{{
+                   getRouteByRole('generics.edit', ['generic' => $generic->id])
+               }}">{{ __('messages.common.edit') }}</a>
 @endunless
-            <a href="{{ 
-                    getRouteByRole('generics.index')
-                }}"
-                class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
-        </div>
+        <a href="{{
+                getRouteByRole('generics.index')
+            }}"
+            class="btn btn-outline-primary ms-2">{{ __('messages.common.back') }}</a>
     </div>
-</div>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

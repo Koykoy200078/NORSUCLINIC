@@ -126,6 +126,33 @@ trait LogsActivity
     }
 
     /**
+     * The patient and visit fields every audit row of a consultation carries: its saving, its deletion and a staff
+     * override of its assessment / plan (re-audit 2026-11-13, DRY: the list was written out three times).
+     *
+     * @return array<string, mixed>
+     */
+    public static function consultationLogFields($requestDocument): array
+    {
+        return [
+            'patient_name' => $requestDocument->name,
+            'patient_age' => $requestDocument->age,
+            'patient_gender' => $requestDocument->gender,
+            'college' => $requestDocument->college,
+            'address' => $requestDocument->address,
+            'contact_number' => $requestDocument->patient_contact,
+            'complaints' => $requestDocument->complaints,
+            'diagnosis' => $requestDocument->assessment,
+            'informant' => $requestDocument->informant,
+            'consult_mode' => $requestDocument->consult_mode,
+            'course' => $requestDocument->course,
+            'year_level' => $requestDocument->year_level,
+            'subject_type' => 'RequestDocuments',
+            'subject_id' => $requestDocument->id,
+            'date' => $requestDocument->requested_at ?? now()->toDateString(),
+        ];
+    }
+
+    /**
      * Log consultation form creation or update
      */
     public static function logConsultationCreation($requestDocument)
@@ -133,23 +160,7 @@ trait LogsActivity
         return self::logActivity(
             'consultation_record', // Changed from 'created_consultation' to generic action
             "Consultation form: {$requestDocument->name}",
-            [
-                'patient_name' => $requestDocument->name,
-                'patient_age' => $requestDocument->age,
-                'patient_gender' => $requestDocument->gender,
-                'college' => $requestDocument->college,
-                'address' => $requestDocument->address,
-                'contact_number' => $requestDocument->patient_contact,
-                'complaints' => $requestDocument->complaints,
-                'diagnosis' => $requestDocument->assessment,
-                'informant' => $requestDocument->informant,
-                'consult_mode' => $requestDocument->consult_mode,
-                'course' => $requestDocument->course,
-                'year_level' => $requestDocument->year_level,
-                'subject_type' => 'RequestDocuments',
-                'subject_id' => $requestDocument->id,
-                'date' => $requestDocument->requested_at ?? now()->toDateString(),
-            ]
+            self::consultationLogFields($requestDocument)
         );
     }
 
@@ -237,22 +248,7 @@ trait LogsActivity
         return self::logActivity(
             'document_deleted',
             "Deleted {$label}: {$requestDocument->name}",
-            [
-                'patient_name' => $requestDocument->name,
-                'patient_age' => $requestDocument->age,
-                'patient_gender' => $requestDocument->gender,
-                'college' => $requestDocument->college,
-                'address' => $requestDocument->address,
-                'contact_number' => $requestDocument->patient_contact,
-                'complaints' => $requestDocument->complaints,
-                'diagnosis' => $requestDocument->assessment,
-                'informant' => $requestDocument->informant,
-                'consult_mode' => $requestDocument->consult_mode,
-                'course' => $requestDocument->course,
-                'year_level' => $requestDocument->year_level,
-                'subject_type' => 'RequestDocuments',
-                'subject_id' => $requestDocument->id,
-                'date' => $requestDocument->requested_at ?? now()->toDateString(),
+            self::consultationLogFields($requestDocument) + [
                 'properties' => [
                     'document_type' => $requestDocument->document_type,
                     'created_by' => $requestDocument->document_creator_id,

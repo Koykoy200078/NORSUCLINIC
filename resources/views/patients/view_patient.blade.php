@@ -3,16 +3,13 @@
 Patient Data
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">Patient Data</h1>
-        <div class="text-end mt-4 mt-md-0">
-            <a href="{{ getRouteByRole('patients.index') }}">
-                <button type="button" class="btn btn-outline-primary">{{ __('messages.common.back') }}</button>
-            </a>
-        </div>
+<x-page-toolbar title="Patient Data">
+    <div class="text-end mt-4 mt-md-0">
+        <a href="{{ getRouteByRole('patients.index') }}">
+            <button type="button" class="btn btn-outline-primary">{{ __('messages.common.back') }}</button>
+        </a>
     </div>
-</div>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container">

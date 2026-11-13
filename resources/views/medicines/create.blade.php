@@ -3,13 +3,10 @@
 {{ __('messages.medicine.new_medicine') }}
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">{{ __('messages.medicine.new_medicine') }}</h1>
-        <a href="{{ getRouteByRole('medicine-inventory.index') }}"
-            class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
-    </div>
-</div>
+<x-page-toolbar :title="__('messages.medicine.new_medicine')">
+    <a href="{{ getRouteByRole('medicine-inventory.index') }}"
+        class="btn btn-outline-primary">{{ __('messages.common.back') }}</a>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

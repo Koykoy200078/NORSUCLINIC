@@ -76,33 +76,6 @@ class Doctor extends Model
         'consultation_hours' => 'string',
     ];
 
-    const O_POSITIVE = 1;
-
-    const A_POSITIVE = 2;
-
-    const B_POSITIVE = 3;
-
-    const AB_POSITIVE = 4;
-
-    const O_NEGATIVE = 5;
-
-    const A_NEGATIVE = 6;
-
-    const B_NEGATIVE = 7;
-
-    const AB_NEGATIVE = 8;
-
-    const BLOOD_TYPE_ARRAY = [
-        self::O_POSITIVE => 'O+',
-        self::A_POSITIVE => 'A+',
-        self::B_POSITIVE => 'B+',
-        self::AB_POSITIVE => 'AB+',
-        self::O_NEGATIVE => 'O-',
-        self::A_NEGATIVE => 'A-',
-        self::B_NEGATIVE => 'B-',
-        self::AB_NEGATIVE => 'AB-',
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

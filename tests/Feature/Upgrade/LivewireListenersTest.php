@@ -59,7 +59,7 @@ class LivewireListenersTest extends TestCase
         $expected = [];
         foreach ([
             'BarangayTable', 'CityTable', 'CountriesTable', 'StateTable', 'SpecializationTable', 'SliderTable', 'RoleTable',
-            'MedicineTable', 'StockOutTable', 'UsedMedicineTable', 'MedicineDispenseTable', 'StaffTable',
+            'MedicineTable', 'StockOutTable', 'MedicineDispenseTable', 'StaffTable',
             'PrescriptionTable', 'PrescriptionVerificationTable', 'MedsOnlyTable',
             // these four named `changeFilter` (and StockIn `clearSearch`) without a method to handle it
             'MedicineCategoryDetailsTable', 'MedicineGenericTable', 'MedicineGenericDetailsTable', 'StockInTable',

@@ -6,15 +6,12 @@
     <link rel="stylesheet" href="{{ asset('css/flatpickr-month-select.css') }}">
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">{{ __('messages.medicine_availability.medicine_availability') }}</h1>
-        <a href="{{ 
-            getRouteByRole('stock-in.index')
-        }}"
-            class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
-    </div>
-</div>
+<x-page-toolbar :title="__('messages.medicine_availability.medicine_availability')">
+    <a href="{{
+        getRouteByRole('stock-in.index')
+    }}"
+        class="btn btn-outline-primary mt-3">{{ __('messages.common.back') }}</a>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

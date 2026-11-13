@@ -3,28 +3,25 @@
 {{ __('messages.prescription.prescription_details') }}
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1"> @yield('title') </h1>
-        <div class="text-end mt-4 mt-md-0">
-            @php
-            $pdfRoute = getRouteNameByRole('prescriptions.pdf');
-            $editRoute = getRouteNameByRole('prescriptions.edit');
-            $backRoute = isRole('patient') ? 'patients.dashboard' : getRouteNameByRole('prescriptions.index');
-            @endphp
-            <a href="{{ route($pdfRoute, $prescription['prescription']) }}"
-                target="_blank"
-                class="btn btn-success me-2 edit-btn mt-3">{{ __('auth.app.print').' '.__('messages.prescription.prescription') }}
-            </a>
-            <a class="btn btn-primary edit-btn mt-3"
-                href="{{ route($editRoute, $prescription['prescription']->id) }}">
-                {{ __('messages.common.edit') }}
-            </a>
-            <a href="{{ route($backRoute) }}"
-                class="btn btn-outline-primary ms-2 mt-3">{{ __('messages.common.back') }}</a>
-        </div>
+<x-page-toolbar>
+    <div class="text-end mt-4 mt-md-0">
+        @php
+        $pdfRoute = getRouteNameByRole('prescriptions.pdf');
+        $editRoute = getRouteNameByRole('prescriptions.edit');
+        $backRoute = isRole('patient') ? 'patients.dashboard' : getRouteNameByRole('prescriptions.index');
+        @endphp
+        <a href="{{ route($pdfRoute, $prescription['prescription']) }}"
+            target="_blank"
+            class="btn btn-success me-2 edit-btn mt-3">{{ __('auth.app.print').' '.__('messages.prescription.prescription') }}
+        </a>
+        <a class="btn btn-primary edit-btn mt-3"
+            href="{{ route($editRoute, $prescription['prescription']->id) }}">
+            {{ __('messages.common.edit') }}
+        </a>
+        <a href="{{ route($backRoute) }}"
+            class="btn btn-outline-primary ms-2 mt-3">{{ __('messages.common.back') }}</a>
     </div>
-</div>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

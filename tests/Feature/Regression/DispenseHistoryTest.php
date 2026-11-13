@@ -363,12 +363,14 @@ class DispenseHistoryTest extends TestCase
         $ibuprofen = $this->stockedMedicine('Ibuprofen');
         $document = $this->consultationBy($this->doctor, [$this->row($paracetamol, 2)], [$this->row($ibuprofen, 3)]);
 
-        $this->actingAs($this->admin)
+        $page = $this->actingAs($this->admin)
             ->get(route('dispense-records.consultation', $document->id))
             ->assertOk()
             ->assertSee('Paracetamol')->assertSee('Ibuprofen')
             ->assertSee('Juan Dela Cruz')
             ->assertSee(route('document-issuances.show', $document->id), false);
+        // its heading shows the page title (it was an empty <h1>; the owner's choice for the dispense pages, 2026-11-13)
+        $this->assertMatchesRegularExpression('/<h1 class="mb-0 me-1">\s*Consultation Medicines\s*<\/h1>/', $page->getContent());
 
         $this->actingAs($this->doctor)
             ->get(route('doctors.dispense-records.consultation', $document->id))

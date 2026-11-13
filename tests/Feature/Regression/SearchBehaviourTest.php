@@ -13,7 +13,6 @@ use App\Livewire\RoleTable;
 use App\Livewire\SpecializationTable;
 use App\Livewire\StateTable;
 use App\Livewire\StockInTable;
-use App\Livewire\UsedMedicineTable;
 use App\Livewire\DocumentIssuanceTable;
 use App\Livewire\DoctorTable;
 use App\Livewire\LabRequestTable;
@@ -328,7 +327,6 @@ class SearchBehaviourTest extends TestCase
             [MedicineCategoryTable::class, []],
             [MedicineGenericTable::class, []],
             [StockInTable::class, []],
-            [UsedMedicineTable::class, []],
             [MedicineCategoryDetailsTable::class, ['categoryDetails' => '1']],
             [MedicineGenericDetailsTable::class, ['genericDetails' => '1']],
         ];

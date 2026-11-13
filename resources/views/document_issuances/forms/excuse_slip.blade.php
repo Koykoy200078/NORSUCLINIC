@@ -33,21 +33,7 @@
     <!-- Main Excuse Slip Form -->
     <div class="mx-auto bg-white shadow-2xl rounded-sm p-12 mb-10 border border-gray-200" style="width: 10in; min-width: 10in; min-height: 11in; font-family: 'Arial', sans-serif; color: #000; box-sizing: border-box; position: relative;">
         <!-- Header -->
-        <table class="w-full mb-10" style="border-collapse: collapse; table-layout: auto;">
-            <tr>
-                <td style="width: 100px; text-align: left; vertical-align: middle;">
-                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
-                </td>
-                <td style="text-align: center; vertical-align: middle;">
-                    <h1 class="text-2xl font-bold uppercase tracking-wider leading-tight" style="margin: 0;">Negros Oriental State University</h1>
-                    <h2 class="text-xs font-medium" style="margin: 2px 0;">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
-                    <p class="text-[10px] text-gray-600" style="margin: 0;">Tel #: 225-9400, then Local # 188, 09263829484</p>
-                </td>
-                <td style="width: 100px; text-align: right; vertical-align: middle;">
-                    <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
-                </td>
-            </tr>
-        </table>
+        @include('document_issuances.letterhead', ['margin' => 'mb-10'])
 
         <div class="text-center mb-10 border-t border-b border-black py-4">
             <h3 class="text-3xl font-black tracking-widest" style="margin: 0;">STUDENT EXCUSE SLIP</h3>

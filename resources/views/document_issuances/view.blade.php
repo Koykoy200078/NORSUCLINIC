@@ -402,24 +402,7 @@ $exportPdfUrl = $documentId
     @elseif ($requestDocument->document_type == 'medical_certificate')
     <div class="flex justify-center items-center">
         <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
-            <div class="flex items-center my-4">
-                <!-- Left Logo -->
-                <div>
-                    <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-28 h-28">
-                </div>
-
-                <!-- Text Content -->
-                <div class="text-center flex-1">
-                    <h1 class="text-xl font-bold">Negros Oriental State University</h1>
-                    <h2 class="text-md">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
-                    <p class="text-sm">Tel #: 225-9400, then Local # 188, 09263829484</p>
-                </div>
-
-                <!-- Right Logo -->
-                <div class="ml-4">
-                    <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" class="w-28 h-28">
-                </div>
-            </div>
+            @include('document_issuances.letterhead_flex')
 
             <h3 class="text-lg text-center font-semibold mb-8">
                 MEDICAL CERTIFICATE
@@ -486,21 +469,7 @@ $exportPdfUrl = $documentId
     <div class="flex justify-center items-center mb-10">
         <div class="bg-white shadow-2xl rounded-sm p-12 border border-gray-200" style="width: 10in; min-width: 10in; font-family: 'Arial', sans-serif; color: #000;">
             <!-- Header -->
-            <table class="w-full mb-10" style="border-collapse: collapse; table-layout: auto;">
-                <tr>
-                    <td style="width: 100px; text-align: left; vertical-align: middle;">
-                        <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        <h1 class="text-2xl font-bold uppercase tracking-wider leading-tight" style="margin: 0;">Negros Oriental State University</h1>
-                        <h2 class="text-xs font-medium" style="margin: 2px 0;">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
-                        <p class="text-[10px] text-gray-600" style="margin: 0;">Tel #: 225-9400, then Local # 188, 09263829484</p>
-                    </td>
-                    <td style="width: 100px; text-align: right; vertical-align: middle;">
-                        <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
-                    </td>
-                </tr>
-            </table>
+            @include('document_issuances.letterhead', ['margin' => 'mb-10'])
 
             <div class="text-center mb-10 border-t border-b border-black py-4">
                 <h3 class="text-3xl font-black tracking-widest" style="margin: 0;">STUDENT EXCUSE SLIP</h3>

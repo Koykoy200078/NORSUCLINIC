@@ -206,7 +206,7 @@
 
         <div class="footer">
             <p><strong>{{ getSettingValue('clinic_name') ?: 'Medical University Clinic' }}</strong> - Negros Oriental State University</p>
-            <p>{{ getSettingValue('address_one') ?: 'University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City' }}</p>
+            <p>{{ getSettingValue('address_one') ?: \App\Support\Letterhead::ADDRESS }}</p>
             <p>📞 {{ getSettingValue('landline_no') ?: '225-9400 (Local # 188)' }} | 📱 {{ getSettingValue('contact_no') ?: '09263829484' }}</p>
             @if(getSettingValue('email'))
             <p>📧 {{ getSettingValue('email') }}</p>

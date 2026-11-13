@@ -126,13 +126,6 @@ trait SeedsClinicTableLists
         return $this->seeded();
     }
 
-    protected function seedUsedMedicineTable(): array
-    {
-        $this->dispensedRecords();
-
-        return $this->seeded();
-    }
-
     protected function seedMedicineDispenseTable(): array
     {
         $this->dispensedRecords();

@@ -59,7 +59,7 @@ class TableGoldenMasterTest extends TestCase
             'BarangayTable', 'CityTable', 'CountriesTable', 'StateTable', 'SpecializationTable', 'SliderTable', 'RoleTable',
             'MedicineCategoryTable', 'MedicineCategoryDetailsTable', 'MedicineGenericTable', 'MedicineGenericDetailsTable',
             // inventory
-            'MedicineTable', 'StockInTable', 'StockOutTable', 'UsedMedicineTable', 'MedicineDispenseTable',
+            'MedicineTable', 'StockInTable', 'StockOutTable', 'MedicineDispenseTable',
             // people
             'StaffTable', 'DoctorTable', 'PatientTable',
             // clinical

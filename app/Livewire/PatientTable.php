@@ -50,20 +50,9 @@ class PatientTable extends TableComponent
     {
         $this->showButtonOnHeader = ! $this->isPrescriptionModule();
 
-        $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc');
+        $this->sortNewestFirst();
 
         $this->syncEmptyMessage();
-
-        $this->setThAttributes(function (Column $column) {
-            if ($column->isField('id')) {
-                return [
-                    'class' => 'text-center',
-                ];
-            }
-
-            return [];
-        });
     }
 
     /**

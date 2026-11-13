@@ -3,23 +3,20 @@
 {{ __('messages.patients') }}
 @endsection
 @section('header_toolbar')
-<div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-7">
-        <h1 class="mb-0 me-1">{{__('messages.patient.details')}}</h1>
-        <div class="text-end mt-4 mt-md-0">
-            @if(!getLogInUser()->hasRole('doctor'))
-            <a href="{{ 
-                getRouteByRole('patients.edit', [$patient->id])
-            }}">
-                <button type="button" class="btn btn-primary me-4">{{ __('messages.common.edit') }}</button>
-            </a>
-            @endif
-            <a href="{{ url()->previous() }}">
-                <button type="button" class="btn btn-outline-primary float-end">{{ __('messages.common.back') }}</button>
-            </a>
-        </div>
+<x-page-toolbar :title="__('messages.patient.details')">
+    <div class="text-end mt-4 mt-md-0">
+        @if(!getLogInUser()->hasRole('doctor'))
+        <a href="{{
+            getRouteByRole('patients.edit', [$patient->id])
+        }}">
+            <button type="button" class="btn btn-primary me-4">{{ __('messages.common.edit') }}</button>
+        </a>
+        @endif
+        <a href="{{ url()->previous() }}">
+            <button type="button" class="btn btn-outline-primary float-end">{{ __('messages.common.back') }}</button>
+        </a>
     </div>
-</div>
+</x-page-toolbar>
 @endsection
 @section('content')
 <div class="container-fluid">

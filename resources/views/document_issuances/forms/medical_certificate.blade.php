@@ -39,24 +39,7 @@
     @endphp
 
     <div class="bg-white p-6 rounded-lg shadow-lg" style="width: 1065px;">
-        <div class="flex items-center my-4">
-            <!-- Left Logo -->
-            <div>
-                <img src="{{ asset('assets/image/norsu_logo.png') }}" alt="Logo" class="w-28 h-28">
-            </div>
-
-            <!-- Text Content -->
-            <div class="text-center flex-1">
-                <h1 class="text-xl font-bold">Negros Oriental State University</h1>
-                <h2 class="text-md">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</h2>
-                <p class="text-sm">Tel #: 225-9400, then Local # 188, 09263829484</p>
-            </div>
-
-            <!-- Right Logo -->
-            <div class="ml-4">
-                <img src="{{ asset('assets/image/norsu_clinic_logo.png') }}" alt="Logo" class="w-28 h-28">
-            </div>
-        </div>
+        @include('document_issuances.letterhead_flex')
 
         <h3 class="text-lg text-center font-semibold mb-8">MEDICAL CERTIFICATE</h3>
         <form action="{{ 

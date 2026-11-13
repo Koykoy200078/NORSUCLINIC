@@ -199,14 +199,7 @@
     </div>
 
     @php
-    $patientTypeLookup = collect($data['patient_types'] ?? [])->mapWithKeys(function ($name, $id) {
-    $normalized = strtolower(trim((string) $name));
-    if ($normalized === 'dependent') {
-    $normalized = 'guest';
-    }
-
-    return [(string) $id => $normalized];
-    })->toArray();
+    $patientTypeLookup = \App\Models\PatientType::scriptKeys($data['patient_types'] ?? []);
     @endphp
 
     {{ html()->hidden('all_year_levels', json_encode($data['year_levels']))->attributes(['id' => 'allYearLevels']) }}
@@ -214,165 +207,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const patientTypeSelect = document.getElementById('patientTypeSelect');
-            const campusFieldContainer = document.getElementById('campusFieldContainer');
-            const collegeFieldContainer = document.getElementById('collegeFieldContainer');
-            const courseFieldContainer = document.getElementById('courseFieldContainer');
-            const departmentFieldContainer = document.getElementById('departmentFieldContainer');
-            const officeFieldContainer = document.getElementById('officeFieldContainer');
-            const yearLevelFieldContainer = document.getElementById('yearLevelFieldContainer');
-            const universityIdFieldContainer = document.getElementById('universityIdFieldContainer');
-            const patientInformationHeadingContainer = document.getElementById('patientInformationHeadingContainer');
-            const universityIdInput = document.querySelector('#universityIdFieldContainer input[name="university_id_number"]');
+            @include('patients.patient-type-script', ['idSuffix' => ''])
 
-            const campusSelect = document.getElementById('campusSelect');
-            const collegeSelect = document.getElementById('collegeSelect');
-            const courseSelect = document.getElementById('courseSelect');
-            const departmentSelect = document.getElementById('departmentSelect');
-            const officeSelect = document.getElementById('officeSelect');
-            const yearLevelSelect = document.getElementById('yearLevelSelect');
             const vaccinationStatusSelect = document.querySelector('select[name="vaccination_id"]');
             const immunizationRecordTextarea = document.querySelector('textarea[name="immunization_record"]');
-
-            const allYearLevels = JSON.parse(document.getElementById('allYearLevels').value || '{}');
-            const patientTypeLookup = JSON.parse(document.getElementById('patientTypeLookup').value || '{}');
-
-            const studentYearLevels = {};
-            let facultyYearLevelId = null;
-            let staffYearLevelId = null;
-            let guestYearLevelId = null;
-
-            Object.entries(allYearLevels).forEach(([id, name]) => {
-                const normalized = String(name).trim().toLowerCase();
-                if (normalized.includes('faculty')) {
-                    facultyYearLevelId = id;
-                } else if (normalized.includes('staff')) {
-                    staffYearLevelId = id;
-                } else if (normalized.includes('guest')) {
-                    guestYearLevelId = id;
-                } else {
-                    studentYearLevels[id] = name;
-                }
-            });
-
-            function setVisible(container, visible) {
-                if (!container) {
-                    return;
-                }
-
-                container.style.display = visible ? 'block' : 'none';
-            }
-
-            function clearSelectValue(selectElement) {
-                if (!selectElement) {
-                    return;
-                }
-
-                $(selectElement).val(null).trigger('change');
-            }
-
-            function setSingleYearLevel(yearLevelId) {
-                if (!yearLevelSelect) {
-                    return;
-                }
-
-                $(yearLevelSelect).empty();
-
-                if (yearLevelId && allYearLevels[yearLevelId]) {
-                    const option = new Option(allYearLevels[yearLevelId], yearLevelId, true, true);
-                    $(yearLevelSelect).append(option);
-                    $(yearLevelSelect).val(yearLevelId).trigger('change');
-                    return;
-                }
-
-                $(yearLevelSelect).append(new Option('{{ __("messages.student.select_year_level") }}', '', true, true));
-                $(yearLevelSelect).val('').trigger('change');
-            }
-
-            function setStudentYearLevels(currentValue) {
-                if (!yearLevelSelect) {
-                    return;
-                }
-
-                const normalizedCurrentValue = Array.isArray(currentValue) ? currentValue[0] : currentValue;
-                $(yearLevelSelect).empty();
-                $(yearLevelSelect).append(new Option('{{ __("messages.student.select_year_level") }}', '', false, false));
-
-                Object.entries(studentYearLevels).forEach(([value, text]) => {
-                    const option = new Option(text, value, false, value == normalizedCurrentValue);
-                    $(yearLevelSelect).append(option);
-                });
-
-                if (normalizedCurrentValue && studentYearLevels[normalizedCurrentValue]) {
-                    $(yearLevelSelect).val(normalizedCurrentValue).trigger('change');
-                    return;
-                }
-
-                $(yearLevelSelect).val('').trigger('change');
-            }
-
-            function updateFieldsDisplay() {
-                const selectedPatientTypeId = String($(patientTypeSelect).val() || '');
-                const selectedPatientType = String(patientTypeLookup[selectedPatientTypeId] || '').toLowerCase();
-
-                const isStudent = selectedPatientType === 'student';
-                const isFaculty = selectedPatientType === 'faculty';
-                const isStaff = selectedPatientType === 'staff';
-                const isGuest = selectedPatientType === 'guest';
-
-                setVisible(campusFieldContainer, isStudent);
-                setVisible(collegeFieldContainer, isStudent || isFaculty);
-                setVisible(courseFieldContainer, isStudent);
-                setVisible(departmentFieldContainer, isFaculty);
-                setVisible(officeFieldContainer, isStaff);
-                setVisible(yearLevelFieldContainer, isStudent);
-                setVisible(universityIdFieldContainer, !isGuest);
-                setVisible(patientInformationHeadingContainer, selectedPatientTypeId !== '' && !isGuest);
-
-                if (universityIdInput) {
-                    if (isGuest) {
-                        universityIdInput.removeAttribute('required');
-                        universityIdInput.value = '';
-                    } else {
-                        universityIdInput.setAttribute('required', 'required');
-                    }
-                }
-
-                if (!isStudent) {
-                    clearSelectValue(campusSelect);
-                    clearSelectValue(courseSelect);
-                }
-
-                if (!(isStudent || isFaculty)) {
-                    clearSelectValue(collegeSelect);
-                }
-
-                if (!isFaculty) {
-                    clearSelectValue(departmentSelect);
-                }
-
-                if (!isStaff) {
-                    clearSelectValue(officeSelect);
-                }
-
-                const currentYearLevel = $(yearLevelSelect).val();
-
-                if (isStudent) {
-                    setStudentYearLevels(currentYearLevel);
-                } else if (isFaculty) {
-                    setSingleYearLevel(facultyYearLevelId);
-                } else if (isStaff) {
-                    setSingleYearLevel(staffYearLevelId);
-                } else if (isGuest) {
-                    setSingleYearLevel(guestYearLevelId);
-                } else {
-                    setSingleYearLevel(null);
-                }
-            }
-
-            window.updateFieldsDisplay = updateFieldsDisplay;
-            updateFieldsDisplay();
-            $(patientTypeSelect).off('change.patientType').on('change.patientType', updateFieldsDisplay);
 
             function syncVaccinationStatusToImmunizationRecord() {
                 if (!vaccinationStatusSelect || !immunizationRecordTextarea) {

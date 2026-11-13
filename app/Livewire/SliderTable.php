@@ -20,19 +20,8 @@ class SliderTable extends TableComponent
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id')
-            ->setDefaultSort('created_at', 'desc')
+        $this->sortNewestFirst()
             ->setSearchDisabled();
-
-        $this->setThAttributes(function (Column $column) {
-            if ($column->isField('id')) {
-                return [
-                    'class' => 'text-center',
-                ];
-            }
-
-            return [];
-        });
     }
 
     public function builder(): Builder

@@ -160,9 +160,9 @@
                         <img src="{{ $norsuLogoBase64 }}" class="logo" />
                     </td>
                     <td width="60%" class="text-center">
-                        <h2 class="font-bold">Negros Oriental State University</h2>
-                        <div style="font-size: 10px">University Medical Clinic, CNPAHS Bldg., Kagawasan Ave., Dumaguete City</div>
-                        <div style="font-size: 10px">Tel #: 225-9400, then Local # 188, 09263829484</div>
+                        <h2 class="font-bold">{{ \App\Support\Letterhead::UNIVERSITY }}</h2>
+                        <div style="font-size: 10px">{{ \App\Support\Letterhead::ADDRESS }}</div>
+                        <div style="font-size: 10px">{{ \App\Support\Letterhead::PHONE }}</div>
                     </td>
                     <td width="20%" class="text-center">
                         <img src="{{ $clinicLogoBase64 }}" class="logo" />

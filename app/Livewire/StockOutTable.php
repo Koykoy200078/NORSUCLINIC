@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Renamed from UsedMedicineTable → StockOutTable.
- * Displays stock-out records from the used_medicines_view DB view.
+ * Displays stock-out records from the used_medicines_view DB view, on the Stock-out tab of the Medicine Dispensing screen
+ * (the old Used Medicine address redirects there). Its copy UsedMedicineTable, without the Dosage column, was mounted only
+ * by a view no route rendered any more; it was removed in the 2026-11-13 DRY pass (the owner: Dosage everywhere).
  */
 #[Lazy]
 class StockOutTable extends TableComponent

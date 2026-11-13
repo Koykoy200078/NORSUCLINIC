@@ -14,7 +14,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
@@ -290,22 +289,6 @@ class PatientController extends AppBaseController
     {
         // Only PATIENT accounts may be reset here — otherwise a doctor/staff with
         // manage_patients could reset the clinic_admin's password and take over. CRUD-AUTH-4.
-        abort_unless((int) $user->type === User::PATIENT, 403);
-
-        try {
-            $user->update([
-                'password' => Hash::make(User::DEFAULT_PASSWORD)
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.'
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return $this->resetToDefaultPassword($user, User::PATIENT);
     }
 }

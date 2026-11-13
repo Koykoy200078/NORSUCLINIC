@@ -6,7 +6,6 @@ use App\Http\Requests\CreateStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
 use App\Models\User;
 use App\Repositories\StaffRepository;
-use Illuminate\Support\Facades\Hash;
 use Laracasts\Flash\Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -120,12 +119,7 @@ class StaffController extends AppBaseController
     {
         // The route is staffs/{user}/reset-password: the parameter must be named $user, otherwise
         // implicit binding hands over an empty model and every reset failed (500).
-        $staff = $user;
-        abort_unless((int) $staff->type === User::STAFF, 403);
-
-        $staff->update(['password' => Hash::make(User::DEFAULT_PASSWORD)]);
-
-        return $this->sendSuccess('Password has been reset to default ('.User::DEFAULT_PASSWORD.') successfully.');
+        return $this->resetToDefaultPassword($user, User::STAFF);
     }
 
     /**
