@@ -245,7 +245,9 @@ class LinkCrawlTest extends TestCase
         $html = preg_replace([
             '/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i',
             '/(__lazyLoad\()[^)]*\)/',
-        ], ['UUID', '$1)'], $html);
+            // a flashed toast belongs to the request before, not to the page (it depends on the order of the crawl)
+            '/<script>\s*\(function \(toasts\)[\s\S]*?<\/script>/',
+        ], ['UUID', '$1)', ''], $html);
         $html = preg_replace([
             '/(name="_token"\s+value=")[^"]*"/',
             '/(<meta\s+name="csrf-token"\s+content=")[^"]*"/',
