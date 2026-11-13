@@ -49,7 +49,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 | Tests | **PHPUnit 12.5** (not Pest; data providers and `#[Test]` are attributes, not doc-comment annotations) |
 | Forms | spatie/laravel-html **3.13**: `html()->text('name', $value)->forgetAttribute('id')->attributes([...])` in Blade (no `Form::` / `Html::`; `laravelcollective/html` is gone and a test keeps it gone). spatie draws `id` = name by default; the views add `->forgetAttribute('id')` where the old builder drew none, so check an id before relying on it in JS |
 | Frontend | Bootstrap 5 (Metronic theme), jQuery, Select2, Laravel **Mix** (not Vite) |
-| PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel 3.1 |
+| PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel **4** with PhpSpreadsheet **5** (since 2026-11-13, the owner's request; the tag `laravel-13.42-ready` still holds Excel 3.1). Excel 4 only exports a class that implements `Maatwebsite\Excel\Concerns\Export`: every `From*` concern extends it, `WithMultipleSheets` does not |
 | Database | MySQL (strict mode, InnoDB) |
 
 Look up docs for **these** versions (Laravel 13.x, Livewire 3.x), e.g. through Context7 (`/laravel/docs` branch 13.x,

@@ -117,6 +117,11 @@ exist; **PHP 8.2.35 refuses it** with "Your Composer dependencies require a PHP 
 later commits: `git diff --stat a7d7f96..<commit> -- composer.lock package-lock.json webpack.mix.js resources` must print nothing (or the
 `packages` block / build-input proof below), otherwise rebuild.
 
+**2026-11-13: `changes_v3` after `a7d7f96` no longer fits this bundle.** On the owner's request `maatwebsite/excel` 3.1.70 → **4.0.6**
+with `phpoffice/phpspreadsheet` 1.30.8 → **5.11.0** (and the new `phpoffice/wmf` 0.2.1, no new PHP extension) changed the lock's `packages`
+block. The tag `laravel-13.42-ready` with `laravel-13-a7d7f96.zip` stays a valid pair (it holds Excel 3.1); to deploy the Excel 4 code, build a
+new bundle from that commit with the recipe above and tag it, and never lay `laravel-13-a7d7f96.zip` over it.
+
 **The earlier bundle (fallback), built 2026-11-06:** `storage\app\deploy-bundle\laravel-13-bce72ec.zip` on the laptop
 (49,220,893 bytes = 47 MB, 9,329 files; git ignores that folder), with `laravel-13-bce72ec.zip.sha256` beside it (SHA-256
 `53E1B828557DE946DE7E26547636CF3122BC9264ED4CFA0EB624E03B718F1832`). It was made from a clean clone of `bce72ec` with PHP 8.3.36

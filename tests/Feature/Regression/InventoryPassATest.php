@@ -12,6 +12,7 @@ use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
 use Livewire\Livewire;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\Concerns\BuildsClinicData;
 use Tests\TestCase;
 
@@ -226,6 +227,14 @@ class InventoryPassATest extends TestCase
         ob_start(); // the export controller closes one output buffer, like a real request does
         $response = $this->get(route('stock-in.excel'))->assertOk();
         $this->assertStringContainsString('spreadsheetml', (string) $response->headers->get('Content-Type'));
+
+        // the file opens and holds one sheet per stock-in date with that day's stock-ins on it
+        $stockIn = StockIn::latest('id')->firstOrFail();
+        $workbook = IOFactory::load($response->baseResponse->getFile()->getPathname());
+        $this->assertSame(['Report - ' . $stockIn->created_at->format('Y-m-d')], $workbook->getSheetNames());
+        $cells = collect($workbook->getActiveSheet()->toArray())->flatten()->filter()->all();
+        $this->assertContains('#' . $stockIn->availability_no, $cells);
+        $this->assertContains($stockIn->created_at->format('m/d/Y'), $cells);
     }
 
     public function test_every_way_of_changing_the_inventory_needs_the_medicines_permission(): void

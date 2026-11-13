@@ -4,14 +4,17 @@ namespace App\Exports;
 
 use App\Models\StockIn;
 use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\Export;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Events\AfterSheet;
 
-class MedicineAvailabilityExport implements WithMultipleSheets
+/**
+ * The stock-in list as an Excel file, one sheet per stock-in date. Laravel Excel 4 only downloads a class that
+ * implements its Export marker, and WithMultipleSheets alone does not extend it, so the class names it.
+ */
+class MedicineAvailabilityExport implements Export, WithMultipleSheets
 {
     /**
      * Generate multiple sheets for the Excel file.
