@@ -2,78 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class UsedMedicineView extends Model
+/**
+ * The old name of StockOutView (the `used_medicines_view` database view), kept for the Used Medicine list and the patient
+ * dashboard that still use it (re-audit 2026-11-13, DRY: it used to repeat the model; it is read-only, so gaining the
+ * `dosage` attribute changes nothing that is shown).
+ */
+class UsedMedicineView extends StockOutView
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'used_medicines_view';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'id',
-        'medicine_id',
-        'medicine_name',
-        'quantity',
-        'source',
-        'patient_name',
-        'nurse_incharged',
-        'used_for',
-        'expiry_date',
-        'created_at',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'expiry_date' => 'datetime',
-    ];
-
-    /**
-     * Get the medicine that was used.
-     */
-    public function medicine()
-    {
-        return $this->belongsTo(Medicine::class, 'medicine_id');
-    }
 }
