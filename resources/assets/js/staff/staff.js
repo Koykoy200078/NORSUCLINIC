@@ -9,10 +9,6 @@ listenClick(".staff-reset-password-btn", function () {
     confirmPasswordReset($(this).attr("data-reset-url"), "staff's");
 });
 
-listenChange(".staff-email-verified", function (e) {
-    setEmailVerified($(e.currentTarget).attr("data-id"), $(this).is(":checked"));
-});
-
 listenClick(".staff-email-verification", function (event) {
     let staffVerifyId = $(event.currentTarget).attr("data-id");
     $.ajax({

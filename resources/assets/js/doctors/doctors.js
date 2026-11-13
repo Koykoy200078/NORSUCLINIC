@@ -115,7 +115,3 @@ listenClick(".doctor-email-verification", function (event) {
 listenClick("#qualificationSaveBtn", function () {
     $("#qualificationForm").trigger("submit");
 });
-
-listenChange(".doctor-email-verified", function (e) {
-    setEmailVerified($(e.currentTarget).attr("data-id"), $(this).is(":checked"));
-});

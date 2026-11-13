@@ -50,10 +50,6 @@ class StaffTable extends TableComponent
                 ->searchable(),
             Column::make(__('messages.common.email'), 'email')->hideIf(1),
             Column::make(__('messages.staff.role'), 'email')->view('staffs.components.role'),
-            // Column::make(
-            //     __('messages.common.email_verified'),
-            //     'email_verified_at'
-            // )->view('staffs.components.email_verified')->sortable(),
             Column::make(__('messages.common.action'), 'id')->view('staffs.components.action'),
         ];
     }

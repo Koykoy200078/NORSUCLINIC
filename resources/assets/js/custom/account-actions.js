@@ -54,23 +54,3 @@ window.confirmPasswordReset = function (resetUrl, whose) {
         }
     });
 };
-
-/**
- * The "email verified" switch of a list row.
- * @param {string} recordId the row's data-id
- * @param {boolean} verified whether the switch is now on
- */
-window.setEmailVerified = function (recordId, verified) {
-    $.ajax({
-        type: "POST",
-        url: panelRoute("emailVerified"),
-        data: {
-            id: recordId,
-            value: verified ? 1 : 0,
-        },
-        success: function (result) {
-            Livewire.dispatch("refresh");
-            displaySuccessMessage(result.message);
-        },
-    });
-};

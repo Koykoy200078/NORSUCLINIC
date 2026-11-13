@@ -210,10 +210,6 @@ listenClick(".patient-reset-password-btn", function () {
     confirmPasswordReset($(this).attr("data-reset-url"), "patient's");
 });
 
-listenChange(".patient-email-verified", function (e) {
-    setEmailVerified($(e.currentTarget).attr("data-id"), $(this).is(":checked"));
-});
-
 listenClick(".patient-email-verification", function (event) {
     let userId = $(event.currentTarget).attr("data-id");
     let verificationUrl = $(event.currentTarget).attr("data-verification-url");
