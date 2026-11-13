@@ -7,10 +7,11 @@ clinic PC.** Everything below was checked on the development laptop only.
 
 ## 0. Read this first
 
-- What gets deployed: tag **`laravel-13.42-ready`** (`a7d7f96`, since 2026-11-12, the owner's "Rebuild and tag") with the bundle
-  `laravel-13-a7d7f96.zip`, on the branch **`changes_v3`** (the former `upgrade/laravel-13`, renamed on 2026-11-12; `changes_v2` stays at the clinic's current code, `71e43ae`, plus a docs-only commit `07aa585` pointing to `changes_v3`). The earlier pair, tag
-  `laravel-13-ready` (`cea3775`, Laravel 13.40) with `laravel-13-bce72ec.zip`, still works and is the fallback if the new bundle is not on the stick:
-  **Laravel 13.42** (13.40 in the earlier pair), Guzzle 8, Carbon 3, PHPUnit 12.5, Symfony 7.4, in-house list tables, `spatie/laravel-html` forms, Livewire 3.8, permission 6,
+- What gets deployed: tag **`laravel-13.42-excel4-ready`** (`bcf7ad7`, since 2026-11-13, the owner's second "Rebuild and tag", after the
+  Laravel Excel 4 upgrade) with the bundle `laravel-13-bcf7ad7.zip`, on the branch **`changes_v3`** (the former `upgrade/laravel-13`, renamed on 2026-11-12; `changes_v2` stays at the clinic's current code, `71e43ae`, plus a docs-only commit `07aa585` pointing to `changes_v3`). The earlier pairs still work and are the fallbacks if the new bundle is not on the stick:
+  tag `laravel-13.42-ready` (`a7d7f96`, the same but with Laravel Excel 3.1 / PhpSpreadsheet 1.30.8) with `laravel-13-a7d7f96.zip`, and tag
+  `laravel-13-ready` (`cea3775`, Laravel 13.40) with `laravel-13-bce72ec.zip`:
+  **Laravel 13.42** (13.40 in the oldest pair), Laravel Excel 4 with PhpSpreadsheet 5 (3.1 / 1.30.8 in both earlier pairs), Guzzle 8, Carbon 3, PHPUnit 12.5, Symfony 7.4, in-house list tables, `spatie/laravel-html` forms, Livewire 3.8, permission 6,
   medialibrary 11. **The clinic PC must run PHP 8.3 or newer** (the Laravel 13 `vendor\` refuses PHP 8.2 with a clear message): install it
   beforehand, section 2.0. The upgrade stages add **no migration** and change **no `.env` key**.
 - **Owner's decision, 2026-11-06: U0 to U3 go out together in one window** (not U0 to U2 first). The fallback if PHP 8.3 cannot be installed in
@@ -44,7 +45,7 @@ clinic PC.** Everything below was checked on the development laptop only.
 |---|---|---|
 | 1 | What does the clinic PC run now? | **Answered: `changes_v2` (Case A).** Proved again on the PC in section 3 step 0. |
 | 2 | Window: date, start time, who runs it, who is on the phone | After the 6:00 PM backup has run and the clinic is closed; Case B on a Friday evening or a weekend, so Monday is not the first test. |
-| 3 | How the code reaches the PC | **Decided 2026-11-12 by the owner:** the code is on the branch **`changes_v3`** with the tag `laravel-13.42-ready` (since the afternoon; `laravel-13-ready` is the earlier, still valid pair) (all pushed); `changes_v2` stays at the clinic's code `71e43ae` plus a docs-only pointer commit `07aa585` (it was merged that day and put back on his word). In the window the PC checks out the tag (step 5); until then **nobody checks out `changes_v3` on the clinic PC** (it needs PHP 8.3). The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
+| 3 | How the code reaches the PC | **Decided 2026-11-12 by the owner:** the code is on the branch **`changes_v3`** with the tag `laravel-13.42-excel4-ready` (since 2026-11-13, with Laravel Excel 4; `laravel-13.42-ready` and `laravel-13-ready` are the earlier, still valid pairs) (all pushed); `changes_v2` stays at the clinic's code `71e43ae` plus a docs-only pointer commit `07aa585` (it was merged that day and put back on his word). In the window the PC checks out the tag (step 5); until then **nobody checks out `changes_v3` on the clinic PC** (it needs PHP 8.3). The PC then runs `git pull --ff-only` on `changes_v2`. Merging into `develop` stays a separate pull request (STATUS section 6). |
 | 4 | Does the clinic PC have internet and Node 22 for the window? | Do not depend on it: build on the laptop and carry a bundle on a USB stick (section 2.2). |
 | 5 | A fresh backup of the clinic database on the laptop, for the rehearsal | **Answered 2026-11-05: the owner skips the rehearsal.** The first run of Laravel 13 on the clinic's real records is therefore the window itself: keep the rollback copy (step 4) and the cut-off time (step 13) strict, and run the whole smoke checklist. Section 2.1 stays as the optional procedure if this changes. |
 | 6 | **U0 to U3 in one window, or U0 to U2 first?** | **Answered 2026-11-06: together, in one window.** So PHP 8.3 must be installed on the PC before the window (section 2.0), and the window is the first run of Laravel 13 on the clinic's real records. |
@@ -77,7 +78,7 @@ backup taken on the clinic PC (`php artisan db:backup`, or Settings > Backups > 
 # in the project folder on the laptop; mysql.exe is in C:\Program Files\MySQL\MySQL Server 9.7\bin
 mysql -u root -p -e "CREATE DATABASE norsu_clinic CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"   # fails if it exists: stop and look
 cmd /c "mysql -u root -p norsu_clinic < C:\path\to\clinic-backup.sql"      # asks for the password; nothing is printed
-git checkout laravel-13.42-ready       # the tag on branch changes_v3
+git checkout laravel-13.42-excel4-ready   # the tag on branch changes_v3
 composer install                       # normal install, no --no-scripts
 php artisan db:backup                  # safety copy of the imported data
 Measure-Command { php artisan migrate --force }      # write down the time and every warning line
@@ -103,7 +104,23 @@ npm ci ; npm run prod
 git checkout -- public/messages.js     # the build rewrites this tracked file
 ```
 
-**The bundle for the window (built 2026-11-12, the owner's "Rebuild and tag"):** `storage\app\deploy-bundle\laravel-13-a7d7f96.zip`
+**The bundle for the window (built 2026-11-13, the owner's second "Rebuild and tag", after the Laravel Excel 4 upgrade):**
+`storage\app\deploy-bundle\laravel-13-bcf7ad7.zip` (50,287,578 bytes = 48 MB, 9,568 files; git ignores that folder), with
+`laravel-13-bcf7ad7.zip.sha256` beside it (SHA-256 `CC02B8920A8479C38EF758BFD9DFB6325BE068429BA605EDCCBBFA6388ED10F3`), for the tag
+**`laravel-13.42-excel4-ready`** (`bcf7ad7`). Same layout and recipe as the bundle below (one folder `laravel-13-bcf7ad7\` with `README.txt`,
+`SHA256SUMS.txt`, `vendor\` and the `public\` build output; forward slashes inside the zip; no `.env`, `public\uploads`, `storage\` or dev
+package). Made from a clean clone of the tag with PHP 8.3.36 (`composer install --no-dev --optimize-autoloader`: **119** packages, exactly the
+lock's `packages` block, with `maatwebsite/excel` 4.0.6, `phpoffice/phpspreadsheet` 5.11.0 and `phpoffice/wmf` 0.2.1) and Node 22.23.4 (`npm ci`,
+`npm run prod`; only `public/messages.js` changed and was put back). **Checked:** the zip hash matches the `.sha256` file (also after copying it
+into the bundle folder); the 9,567 files listed in `SHA256SUMS.txt` all match and nothing in the zip is unlisted (unzipped with `Expand-Archive`);
+laid over a fresh clone of `laravel-13.42-excel4-ready` it boots **Laravel 13.42.0** on PHP 8.3.36 with **505 routes**, all views compile (380),
+`composer check-platform-reqs --no-dev` is clean, `composer audit --locked --no-dev` finds no advisories, all 799 files named in
+`mix-manifest.json` exist, and its `vendor\` writes and reads back a two-sheet xlsx (Excel 4.0.6 / PhpSpreadsheet 5.11.0); **PHP 8.2.35
+refuses it** with "Your Composer dependencies require a PHP version >= 8.3.0". It stays valid for later commits while
+`git diff --stat bcf7ad7..<commit> -- composer.lock package-lock.json webpack.mix.js resources` prints nothing (or the `packages` block /
+build-input proof below), otherwise rebuild.
+
+**The first fallback bundle (built 2026-11-12, the owner's first "Rebuild and tag"):** `storage\app\deploy-bundle\laravel-13-a7d7f96.zip`
 (49,583,793 bytes = 47 MB, 9,387 files; git ignores that folder), with `laravel-13-a7d7f96.zip.sha256` beside it (SHA-256
 `2BC0C3297FB4FD442CB39E9C2A4022C3419BC37393390B4BEABF9BBA3F426B82`), for the tag **`laravel-13.42-ready`** (`a7d7f96`). Same layout as before
 (one folder `laravel-13-a7d7f96\` with `README.txt`, `SHA256SUMS.txt`, `vendor\` and the `public\` build output; the paths inside the zip use
@@ -119,10 +136,10 @@ later commits: `git diff --stat a7d7f96..<commit> -- composer.lock package-lock.
 
 **2026-11-13: `changes_v3` after `a7d7f96` no longer fits this bundle.** On the owner's request `maatwebsite/excel` 3.1.70 → **4.0.6**
 with `phpoffice/phpspreadsheet` 1.30.8 → **5.11.0** (and the new `phpoffice/wmf` 0.2.1, no new PHP extension) changed the lock's `packages`
-block. The tag `laravel-13.42-ready` with `laravel-13-a7d7f96.zip` stays a valid pair (it holds Excel 3.1); to deploy the Excel 4 code, build a
-new bundle from that commit with the recipe above and tag it, and never lay `laravel-13-a7d7f96.zip` over it.
+block. The tag `laravel-13.42-ready` with `laravel-13-a7d7f96.zip` stays a valid pair (it holds Excel 3.1); the Excel 4 code has its own pair
+above (`laravel-13.42-excel4-ready` + `laravel-13-bcf7ad7.zip`). Never lay `laravel-13-a7d7f96.zip` over the Excel 4 tag, or the reverse.
 
-**The earlier bundle (fallback), built 2026-11-06:** `storage\app\deploy-bundle\laravel-13-bce72ec.zip` on the laptop
+**The oldest bundle (second fallback), built 2026-11-06:** `storage\app\deploy-bundle\laravel-13-bce72ec.zip` on the laptop
 (49,220,893 bytes = 47 MB, 9,329 files; git ignores that folder), with `laravel-13-bce72ec.zip.sha256` beside it (SHA-256
 `53E1B828557DE946DE7E26547636CF3122BC9264ED4CFA0EB624E03B718F1832`). It was made from a clean clone of `bce72ec` with PHP 8.3.36
 (`composer install --no-dev --optimize-autoloader`) and Node 22.23.4 (`npm ci`, `npm run prod`). **Checked:** the zip hash matches the
@@ -144,7 +161,7 @@ of the `packages` block, not of `packages-dev`. **Second known exception (2026-1
 (committed after the full suite and a live check) changed the `packages` block: Laravel 13.40 → **13.42**, Guzzle 7 → **8** (with
 `guzzlehttp/psr7` 3 and `promises` 3), Livewire 3.8.11, Reverb 1.13, medialibrary 11.23.12, PhpSpreadsheet 1.30.8, ZipStream 3.2.2 and
 a few more (19 packages; `package-lock.json`, `webpack.mix.js` and the build inputs are unchanged). `laravel-13-bce72ec.zip` stays right
-**only for the tag `laravel-13-ready` (`cea3775`, Laravel 13.40)**: use that pair together, never this zip with `laravel-13.42-ready`.
+**only for the tag `laravel-13-ready` (`cea3775`, Laravel 13.40)**: use that pair together, never this zip with `laravel-13.42-ready` or `laravel-13.42-excel4-ready`.
 
 The Laravel 12 bundle `laravel-12-37f5a62.zip` (SHA-256 `A47BC0CFFB30621A10E3563739661CCA078B4AC1D838035050360DC5DF6716F5`) is **not** for this
 window: it holds Laravel 12 `vendor\`. Keep it only for the fallback commit `3c8c434` (section 8).
@@ -185,9 +202,9 @@ is step 5.5, and everything after it runs on 8.3.**
 | 2 | In the server window press **Ctrl+C** (stops the web server, Reverb and the scheduler). | window closed |
 | 3 | `php artisan db:backup`, then **copy that `.sql` to a USB stick / another disk**. | size is not 0; copied |
 | 4 | Copy the whole project folder (with `vendor`, `.env`, `storage`) to `<folder>-before-laravel-13`. | the copy opens |
-| 5 | Code: `git fetch --tags` ; `git status` (must be clean) ; `git checkout laravel-13.42-ready` (the tag on `changes_v3`; since 2026-11-12 the Laravel 13 code is NOT on `changes_v2`; with the fallback bundle `laravel-13-bce72ec.zip`, check out `laravel-13-ready` instead: tag and bundle always go together). | `git log -1` shows `a7d7f96` (`cea3775` for the fallback pair) |
+| 5 | Code: `git fetch --tags` ; `git status` (must be clean) ; `git checkout laravel-13.42-excel4-ready` (the tag on `changes_v3`; since 2026-11-12 the Laravel 13 code is NOT on `changes_v2`; with a fallback bundle check out its own tag instead, `laravel-13.42-ready` for `laravel-13-a7d7f96.zip` or `laravel-13-ready` for `laravel-13-bce72ec.zip`: tag and bundle always go together). | `git log -1` shows `bcf7ad7` (`a7d7f96` / `cea3775` for the fallback pairs) |
 | 5.5 | **Switch the PC to PHP 8.3** (WampServer > PHP > Version, or the PATH entry; section 2.0). Open a **new** terminal. | `php -v` says 8.3.x there, and the web server uses it too. Do not run `artisan` between steps 5 and 6: the new code sits on the old `vendor\`. |
-| 6 | Vendor: check the zip hash, unzip it next to the project, then copy `vendor\` from the **Laravel 13 bundle that belongs to the checked-out tag** (`laravel-13-a7d7f96.zip` for `laravel-13.42-ready`) over a deleted old `vendor\` (the Laravel 12 bundle cannot be used; or `composer install --no-dev --optimize-autoloader` with internet on PHP 8.3; **never `--no-scripts`**). Delete `bootstrap\cache\packages.php` and `services.php`, then `php artisan package:discover`. | no "Class ... not found"; `php artisan --version` says Laravel Framework 13.42.0 (13.40.0 for the fallback pair) |
+| 6 | Vendor: check the zip hash, unzip it next to the project, then copy `vendor\` from the **Laravel 13 bundle that belongs to the checked-out tag** (`laravel-13-bcf7ad7.zip` for `laravel-13.42-excel4-ready`, `laravel-13-a7d7f96.zip` for `laravel-13.42-ready`) over a deleted old `vendor\` (the Laravel 12 bundle cannot be used; or `composer install --no-dev --optimize-autoloader` with internet on PHP 8.3; **never `--no-scripts`**). Delete `bootstrap\cache\packages.php` and `services.php`, then `php artisan package:discover`. | no "Class ... not found"; `php artisan --version` says Laravel Framework 13.42.0 (13.40.0 for the oldest pair) |
 | 7 | Front end: copy the build folders of the bundle into `public\` (not `uploads`), then `php artisan vendor:publish --tag=log-viewer-assets --force`. | `public\mix-manifest.json` exists |
 | 8 | `.env`: Case A nothing. Case B: STATUS section 7 steps 3d and 4 (`BROADCAST_DRIVER=reverb`, `REVERB_HOST=127.0.0.1`, `REVERB_PORT=8080`, `REVERB_SCHEME=http`, `APP_NAME="Medical University Clinic"`; leave `REVERB_APP_ID/KEY/SECRET` empty). | |
 | 9 | Case B only: `php artisan migrate --force` and watch every line; then STATUS 3a (`inventory:recover-orphan-batches`, dry run, then `--apply`). Case A: `php artisan migrate --force` must print "Nothing to migrate". **Never run `migrate:rollback`, `migrate:fresh`, `migrate:refresh`, `migrate:reset` or `db:wipe`.** | |
@@ -238,7 +255,7 @@ is step 5.5, and everything after it runs on 8.3.**
 The steps above already include the U3 differences (PHP 8.3 installed first, switch at step 5.5, Laravel 13 bundle, `optimize:clear`, firewall,
 dispensing / prescription form check, rollback to PHP 8.2). What is left to know:
 
-- Laravel 13 (13.42 in `laravel-13.42-ready`, 13.40 in `laravel-13-ready`) needs **PHP 8.3 or newer**; the commits from the U3 hop (`315894a`) on need it, the commits up to `3c8c434` (Laravel 12.71, groundwork) do not.
+- Laravel 13 (13.42 in `laravel-13.42-excel4-ready` and `laravel-13.42-ready`, 13.40 in `laravel-13-ready`) needs **PHP 8.3 or newer**; the commits from the U3 hop (`315894a`) on need it, the commits up to `3c8c434` (Laravel 12.71, groundwork) do not.
   The hop adds **no migration** and changes **no `.env` key** (the session cookie and cache names are pinned in `config/`).
 - **What is new for the people who run it:** nothing visible. The forgery check has a new name (`PreventRequestForgery`). A browser may send
   `Sec-Fetch-Site: same-origin` on `localhost` pages (Laravel 13 lets that through without a token); Chromium sends no such header on a plain `http://`
