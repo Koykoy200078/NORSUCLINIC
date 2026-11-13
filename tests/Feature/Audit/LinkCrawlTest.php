@@ -44,6 +44,10 @@ use Tests\TestCase;
  * every kind of user is shown (ReadsFormControls) and the view files that were drawn; FORMS_COMPARE=<file.json> crawls again
  * and fails on any page whose controls differ from that recording. The clock is frozen for these two runs so dates match.
  *
+ * Optional, for the asset-build swap (upgrade plan U4, Mix -> Vite): ASSETS_BASELINE=<file.json> records, for every page every
+ * kind of user is shown, the ordered list of scripts and stylesheets it loads (the ?id= / &v= cache-busting stripped);
+ * ASSETS_COMPARE=<file.json> crawls again and fails on any page whose list differs. The clock is frozen for these runs too.
+ *
  * What it cannot see: links created by JavaScript after load (JsRender templates, wire:click handlers), POST-only
  * buttons, rows that no fixture creates (add a fixture below when a new screen gets row-level links), and pages that
  * need a parameter nobody links to. Run it after touching any menu, list, or "back / cancel / view / edit" link.
@@ -73,6 +77,9 @@ class LinkCrawlTest extends TestCase
     /** @var array<string, true> */
     private array $viewsDrawn = [];
 
+    /** @var array<string, array<string, list<string>>> actor => page => "script /js/pages.js" / "style /css/app.css" in page order (ASSETS_BASELINE / ASSETS_COMPARE) */
+    private array $assetsSeen = [];
+
     public function test_every_link_shown_to_every_kind_of_user_opens(): void
     {
         if (! getenv('LINK_CRAWL')) {
@@ -83,7 +90,7 @@ class LinkCrawlTest extends TestCase
         ini_set('memory_limit', '3G');
 
         $recordForms = getenv('FORMS_BASELINE') ?: (getenv('FORMS_COMPARE') ?: null);
-        if ($recordForms) {
+        if ($recordForms || getenv('ASSETS_BASELINE') || getenv('ASSETS_COMPARE')) {
             Carbon::setTestNow('2026-03-01 10:00:00');
             View::composer('*', function ($view) {
                 $this->viewsDrawn[$view->name()] = true;
@@ -167,7 +174,59 @@ class LinkCrawlTest extends TestCase
             }
         }
 
+        if ($file = getenv('ASSETS_BASELINE')) {
+            file_put_contents($file, json_encode($this->assetsSeen, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+        if ($file = getenv('ASSETS_COMPARE')) {
+            $baseline = json_decode(file_get_contents($file), true);
+            foreach ($baseline as $actor => $pages) {
+                foreach ($pages as $page => $assets) {
+                    $now = $this->assetsSeen[$actor][$page] ?? null;
+                    if ($now === null) {
+                        $problems[] = "[{$actor}] {$page}: recorded before, not crawled this time";
+                    } elseif ($now !== $assets) {
+                        $problems[] = "[{$actor}] {$page}: scripts / styles differ\n    was: " . implode(' ', $assets) . "\n    now: " . implode(' ', $now);
+                    }
+                }
+            }
+            foreach ($this->assetsSeen as $actor => $pages) {
+                foreach (array_diff_key($pages, $baseline[$actor] ?? []) as $page => $assets) {
+                    $problems[] = "[{$actor}] {$page}: crawled now, not recorded before";
+                }
+            }
+        }
+
         $this->assertSame([], $problems, "Links that do not open for the user they are shown to:\n" . implode("\n", $problems));
+    }
+
+    /**
+     * The scripts and stylesheets a page loads, in page order, as "script <path>" / "style <path>"; local files only, the
+     * host and the cache-busting query (?id= from mix(), &v= on third-party.js) stripped.
+     *
+     * @return list<string>
+     */
+    private function assetReferences(string $html): array
+    {
+        $html = preg_replace('/<!--.*?-->/s', '', $html);
+        preg_match_all('/<(script|link)\b([^>]*)>/i', $html, $tags, PREG_SET_ORDER);
+        $assets = [];
+        foreach ($tags as [, $tag, $attributes]) {
+            $isScript = strtolower($tag) === 'script';
+            if (! $isScript && ! preg_match('/\brel\s*=\s*(["\'])stylesheet\1/i', $attributes)) {
+                continue;
+            }
+            if (! preg_match('/\b' . ($isScript ? 'src' : 'href') . '\s*=\s*(["\'])(.*?)\1/i', $attributes, $url)) {
+                continue;
+            }
+            $path = parse_url(html_entity_decode($url[2]), PHP_URL_PATH);
+            $host = parse_url(html_entity_decode($url[2]), PHP_URL_HOST);
+            if (! is_string($path) || ($host !== null && $host !== parse_url((string) config('app.url'), PHP_URL_HOST))) {
+                continue;
+            }
+            $assets[] = ($isScript ? 'script ' : 'style ') . $path;
+        }
+
+        return $assets;
     }
 
     // ---- fixtures ----------------------------------------------------------------------------------------------
@@ -295,6 +354,12 @@ class LinkCrawlTest extends TestCase
                 $controls = $this->formControls($r['body']);
                 if ($controls !== []) {
                     $this->formControlsSeen[$this->actorLabel][$r['final']] = $controls;
+                }
+            }
+            if ((getenv('ASSETS_BASELINE') || getenv('ASSETS_COMPARE')) && $r['status'] === 200 && $r['body'] !== '') {
+                $assets = $this->assetReferences($r['body']);
+                if ($assets !== []) {
+                    $this->assetsSeen[$this->actorLabel][$r['final']] = $assets;
                 }
             }
             if (str_contains($r['body'], 'LAZY-FAILED')) {

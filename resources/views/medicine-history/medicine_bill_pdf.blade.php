@@ -3,7 +3,6 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="icon" href="{{ asset('web/img/hms-saas-favicon.ico') }}" type="image/png">
     <title>{{ __('messages.medicine_bills.medicine_bill') }}</title>
     <link href="{{ asset('assets/css/bill-pdf.css') }}" rel="stylesheet" type="text/css" />
     <style>
