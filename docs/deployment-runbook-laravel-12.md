@@ -14,6 +14,10 @@ clinic PC.** Everything below was checked on the development laptop only.
   **Laravel 13.42** (13.40 in the oldest pair), Laravel Excel 4 with PhpSpreadsheet 5 (3.1 / 1.30.8 in both earlier pairs), Guzzle 8, Carbon 3, PHPUnit 12.5, Symfony 7.4, in-house list tables, `spatie/laravel-html` forms, Livewire 3.8, permission 6,
   medialibrary 11. **The clinic PC must run PHP 8.3 or newer** (the Laravel 13 `vendor\` refuses PHP 8.2 with a clear message): install it
   beforehand, section 2.0. The upgrade stages add **no migration** and change **no `.env` key**.
+- **Later, in its own window: U4 (Laravel Mix → Vite).** Tag **`laravel-13.42-vite-ready`** (`32d49d8`, 2026-11-13) with the bundle
+  `laravel-13-32d49d8.zip`: the same code as `laravel-13.42-excel4-ready` plus the new asset build (`build-assets.mjs` on Vite 8; Laravel Mix gone).
+  Its `vendor\` is the same as `laravel-13-bcf7ad7.zip`'s (only `vendor\composer\installed.php` names another commit); what changes is the build
+  output in `public\`. **Not in the U0 – U3 window** (owner's decision 13): run section 9 on another day, after that window was kept.
 - **Owner's decision, 2026-11-06: U0 to U3 go out together in one window** (not U0 to U2 first). The fallback if PHP 8.3 cannot be installed in
   time is the commit `3c8c434` (Laravel 12.71 with the Laravel 13 groundwork, runs on PHP 8.2); section 8 says how. The older bundle
   `laravel-12-37f5a62.zip` still fits that commit (`composer.lock`, `package-lock.json`, `webpack.mix.js` and `resources\` do not differ between
@@ -123,7 +127,7 @@ build-input proof below), otherwise rebuild.
 **2026-11-13: stage U4 (Laravel Mix → Vite) is on `changes_v3` after `a5d1e21`** (plan section 5, U4): `package-lock.json` changed (Mix and its
 725 packages out, `vite` 8.3.8 in) and `webpack.mix.js` was replaced by `build-assets.mjs`, so **the commits after `a5d1e21` no longer fit
 `laravel-13-bcf7ad7.zip`**. The U0 – U3 window deploys the tag `laravel-13.42-excel4-ready` with that bundle as planned; U4 gets its own bundle and
-tag in step U4.6 and its own later window. The commands do not change: `npm ci ; npm run prod` builds the same folders (`assets, backend, css,
+tag in step U4.6 (done 2026-11-13: `laravel-13.42-vite-ready` + `laravel-13-32d49d8.zip`, section 9) and its own later window. The commands do not change: `npm ci ; npm run prod` builds the same folders (`assets, backend, css,
 fonts, js, web`, `mix-manifest.json`; `publicendor` is still cleared, so step 7 still republishes the log-viewer assets).
 
 **The first fallback bundle (built 2026-11-12, the owner's first "Rebuild and tag"):** `storage\app\deploy-bundle\laravel-13-a7d7f96.zip`
@@ -270,3 +274,35 @@ dispensing / prescription form check, rollback to PHP 8.2). What is left to know
   deployment). Use the older bundle `laravel-12-37f5a62.zip` (still valid for it, section 0), skip section 2.0 and step 5.5, name the rollback copy
   `<folder>-before-laravel-12`, and note that step 10's `optimize:clear` is then still a good idea but not required. U3 would then be a second, smaller
   window later: PHP 8.3 first, then section 3 from step 4 with the Laravel 13 bundle.
+
+## 9. The U4 window (Laravel Mix → Vite assets), on a later day than the U0 – U3 window
+
+**What it changes:** only the built files in `public\` (`assets`, `backend`, `css`, `fonts`, `js`, `web`, `mix-manifest.json`) and the code to the
+tag `laravel-13.42-vite-ready`. No migration, no `.env` key, no PHP change, no new PHP package (`composer.lock` is the same as in
+`laravel-13.42-excel4-ready`). The pages look and work the same: on the laptop every page loads the same scripts and stylesheets in the same order
+(the link crawl, 1,367 pages, 15 kinds of user) and the Mix and Vite builds render every element of 13 pages identically, light and dark.
+
+**The bundle:** `storage\app\deploy-bundle\laravel-13-32d49d8.zip` (50,268,008 bytes = 48 MB, 9,564 files; git ignores that folder) with
+`laravel-13-32d49d8.zip.sha256` beside it (SHA-256 `38ECBB5252F679F17BC90B244574052AB783BE00599A9BBC0D38D790B0EF5705`), built 2026-11-13 from a clean
+clone of the tag with PHP 8.3.36 (`composer install --no-dev --optimize-autoloader`: 119 packages = the lock's `packages` block) and Node 22.23.4
+(`npm ci ; npm run prod`, which now runs `build-assets.mjs`). **Checked:** a second clean clone built byte-identical output (800 files); the zip hash
+(also after the copy into the bundle folder); all 9,563 `SHA256SUMS.txt` lines match, nothing unlisted, no `.env`, uploads, `storage\` or dev package;
+over a fresh clone of the tag it boots Laravel 13.42.0 with 505 routes, all 380 views compile, `check-platform-reqs` and `audit` are clean, all 799
+files named in `mix-manifest.json` exist and `mix()` resolves through it, no `public\hot`; PHP 8.2.35 refuses it. The same rule keeps it valid:
+`git diff --stat 32d49d8..<commit> -- composer.lock package-lock.json build-assets.mjs resources` must print nothing, otherwise rebuild.
+
+| Step | What | Check |
+|---|---|---|
+| 0 | The U0 – U3 window was kept (section 3 step 13) and the clinic has worked on it for at least a few days. The PC runs PHP 8.3 and the tag `laravel-13.42-excel4-ready` (`git log -1` shows `bcf7ad7`). | as stated |
+| 1 | After the 6:00 PM backup, everybody signed out; in the server window **Ctrl+C**. | window closed |
+| 2 | Copy the build folders `public\assets, backend, css, fonts, js, web` and `public\mix-manifest.json` to `<folder>-public-before-u4` (this is the rollback). | the copy opens |
+| 3 | Check the zip hash (`Get-FileHash`), unzip it next to the project. | hash equals the `.sha256` line |
+| 4 | Code: `git fetch --tags` ; `git status` (must be clean) ; `git checkout laravel-13.42-vite-ready`. | `git log -1` shows `32d49d8` |
+| 5 | Delete `public\assets, backend, css, fonts, js, web` and `public\mix-manifest.json` (never `uploads`, `webfonts`, `messages.js`, `index.php`), then copy the bundle's `public\` folders in, then `php artisan vendor:publish --tag=log-viewer-assets --force`. `vendor\` may stay as it is (same packages) or be replaced from this bundle. | `public\mix-manifest.json` exists; `public\hot` does **not** |
+| 6 | `php artisan optimize:clear`, then start `startup-dev-environment.bat`. | web, Reverb, scheduler `[ok]` |
+| 7 | From a second device on the LAN address, every browser tab reloaded with **Ctrl+F5**: sign in; dashboard; a list with its search; the new-patient form (date picker, Select2, phone field); a consultation; Report Generation and one Excel and one PDF download; the queue board; dark mode for one user; the Live updates badge. | no broken layout, no error message |
+| 8 | **Keep or roll back** within 30 minutes. | |
+
+**Rollback (U4 only):** Ctrl+C ; `git checkout laravel-13.42-excel4-ready` ; delete the six build folders and `mix-manifest.json` from `public\` and copy
+back the ones from `<folder>-public-before-u4` ; `php artisan vendor:publish --tag=log-viewer-assets --force` ; `php artisan optimize:clear` ; start. No
+database step: U4 changes no data.
