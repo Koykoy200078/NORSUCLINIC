@@ -2,18 +2,16 @@
     "private": true,
     "scripts": {
         "dev": "npm run development",
-        "development": "mix --no-progress",
-        "watch": "mix watch --no-progress",
+        "development": "node build-assets.mjs",
+        "watch": "node build-assets.mjs --watch",
         "prod": "npm run production",
-        "production": "mix --production --no-progress"
+        "production": "node build-assets.mjs --production",
+        "build": "npm run production"
     },
     "devDependencies": {
         "flatpickr": "^4.6.13",
         "jsrender": "^1.0.15",
-        "laravel-mix": "^6.0.49",
-        "resolve-url-loader": "^5.0.0",
         "sass": "^1.36.0",
-        "sass-loader": "^12.1.0",
         "vite": "^8.3.8"
     },
     "dependencies": {
@@ -25,10 +23,5 @@
         "pusher-js": "^8.6.0",
         "quill": "^2.0.3",
         "tailwindcss": "^4.1.3"
-    },
-    "overrides": {
-        "webpack": "5.99.5",
-        "webpack-cli": "4.10.0",
-        "webpackbar": "5.0.0-3"
     }
 }

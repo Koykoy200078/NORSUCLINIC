@@ -74,6 +74,33 @@ class AssetBuildContractTest extends TestCase
         }
     }
 
+    public function test_the_build_is_vite_through_build_assets_and_mix_is_gone(): void
+    {
+        // U4.5: the npm script names stay (AGENTS.md, the runbook and the bundle recipe use them), the build behind them changed
+        $this->assertFileDoesNotExist(base_path('webpack.mix.js'));
+        $this->assertFileExists(base_path('build-assets.mjs'));
+
+        $package = json_decode((string) file_get_contents(base_path('package.json')), true);
+        $all = ($package['dependencies'] ?? []) + ($package['devDependencies'] ?? []);
+        foreach (['laravel-mix', 'sass-loader', 'resolve-url-loader', 'laravel-vite-plugin'] as $gone) {
+            $this->assertArrayNotHasKey($gone, $all, "{$gone} is not part of the build");
+        }
+        $this->assertArrayHasKey('vite', $package['devDependencies']);
+        $this->assertArrayNotHasKey('overrides', $package, 'the webpack pins went with Mix');
+
+        $scripts = $package['scripts'];
+        $this->assertSame('node build-assets.mjs', $scripts['development']);
+        $this->assertSame('node build-assets.mjs --production', $scripts['production']);
+        $this->assertSame('node build-assets.mjs --watch', $scripts['watch']);
+        $this->assertSame('npm run development', $scripts['dev']);
+        $this->assertSame('npm run production', $scripts['prod']);
+        $this->assertSame('npm run production', $scripts['build']);
+        foreach ($scripts as $name => $command) {
+            $this->assertStringNotContainsString('vite dev', $command, "{$name}: no development server");
+            $this->assertStringNotContainsString('mix', $command, "{$name}: Mix is gone");
+        }
+    }
+
     public function test_no_page_is_pointed_at_a_development_server(): void
     {
         // mix() serves every asset from the URL in public/hot when that file exists (a hot-reload server on the laptop)

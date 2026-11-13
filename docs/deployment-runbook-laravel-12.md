@@ -117,8 +117,14 @@ laid over a fresh clone of `laravel-13.42-excel4-ready` it boots **Laravel 13.42
 `composer check-platform-reqs --no-dev` is clean, `composer audit --locked --no-dev` finds no advisories, all 799 files named in
 `mix-manifest.json` exist, and its `vendor\` writes and reads back a two-sheet xlsx (Excel 4.0.6 / PhpSpreadsheet 5.11.0); **PHP 8.2.35
 refuses it** with "Your Composer dependencies require a PHP version >= 8.3.0". It stays valid for later commits while
-`git diff --stat bcf7ad7..<commit> -- composer.lock package-lock.json webpack.mix.js resources` prints nothing (or the `packages` block /
+`git diff --stat bcf7ad7..<commit> -- composer.lock package-lock.json webpack.mix.js build-assets.mjs resources` prints nothing (or the `packages` block /
 build-input proof below), otherwise rebuild.
+
+**2026-11-13: stage U4 (Laravel Mix → Vite) is on `changes_v3` after `a5d1e21`** (plan section 5, U4): `package-lock.json` changed (Mix and its
+725 packages out, `vite` 8.3.8 in) and `webpack.mix.js` was replaced by `build-assets.mjs`, so **the commits after `a5d1e21` no longer fit
+`laravel-13-bcf7ad7.zip`**. The U0 – U3 window deploys the tag `laravel-13.42-excel4-ready` with that bundle as planned; U4 gets its own bundle and
+tag in step U4.6 and its own later window. The commands do not change: `npm ci ; npm run prod` builds the same folders (`assets, backend, css,
+fonts, js, web`, `mix-manifest.json`; `publicendor` is still cleared, so step 7 still republishes the log-viewer assets).
 
 **The first fallback bundle (built 2026-11-12, the owner's first "Rebuild and tag"):** `storage\app\deploy-bundle\laravel-13-a7d7f96.zip`
 (49,583,793 bytes = 47 MB, 9,387 files; git ignores that folder), with `laravel-13-a7d7f96.zip.sha256` beside it (SHA-256

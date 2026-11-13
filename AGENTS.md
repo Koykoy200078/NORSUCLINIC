@@ -34,7 +34,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
   - Every link and asset must work from any LAN address (never only `localhost`).
   - The database stays on the server PC.
 - **No page may need the internet to load**: no CDN, no third-party script / style / font / image / API. Every library is
-  packaged locally (npm + Laravel Mix into `public/`, or `public/assets` / `public/vendor`). The LAN itself is fine.
+  packaged locally (npm + the Vite build `build-assets.mjs` into `public/`, or `public/assets` / `public/vendor`). The LAN itself is fine.
 - The development laptop is separate: `norsu_clinic` there is experimental data (the clinic dump is imported into it).
 
 ## 3. Stack (respect these exact versions)
@@ -48,7 +48,7 @@ repository and follow the same rules. Repository / folder name: `NORSUCLINIC`; d
 | Permissions | spatie/laravel-permission **6.25** (middleware namespace `Spatie\Permission\Middleware`, singular) |
 | Tests | **PHPUnit 12.5** (not Pest; data providers and `#[Test]` are attributes, not doc-comment annotations) |
 | Forms | spatie/laravel-html **3.13**: `html()->text('name', $value)->forgetAttribute('id')->attributes([...])` in Blade (no `Form::` / `Html::`; `laravelcollective/html` is gone and a test keeps it gone). spatie draws `id` = name by default; the views add `->forgetAttribute('id')` where the old builder drew none, so check an id before relying on it in JS |
-| Frontend | Bootstrap 5 (Metronic theme), jQuery, Select2, Laravel **Mix** (not Vite) |
+| Frontend | Bootstrap 5 (Metronic theme), jQuery, Select2. Assets built by **Vite 8** through `build-assets.mjs` (stage U4, 2026-11-13; Laravel Mix before, gone): classic IIFE scripts with the same names and paths as under Mix, a Mix-format `public/mix-manifest.json` so `mix()` and the views stay as they are, no dev server and no `public/hot` (`npm run dev` / `prod` / `watch` are builds). No `@vite()`, no `laravel-vite-plugin` |
 | PDF / Excel | barryvdh/laravel-dompdf 3, maatwebsite/excel **4** with PhpSpreadsheet **5** (since 2026-11-13, the owner's request; in the deploy tag `laravel-13.42-excel4-ready`, while the fallback tags hold Excel 3.1). Excel 4 only exports a class that implements `Maatwebsite\Excel\Concerns\Export`: every `From*` concern extends it, `WithMultipleSheets` does not |
 | Database | MySQL (strict mode, InnoDB) |
 
@@ -106,7 +106,7 @@ lists them, and they do not apply either (no Laravel Cloud; the pages are Bootst
 - **Replies:** concise; say what was verified and how.
 - **Boost block:** the Laravel Boost guidelines section at the end of this file and of `CLAUDE.md` is generic Laravel
   guidance written by `php artisan boost:install` and rewritten by `boost:update` (dev tool; off under `APP_ENV=production`).
-  Where it disagrees with this file (a test for every change, Vite / `npm run build` where this project uses Mix, Context7
+  Where it disagrees with this file (a test for every change, `@vite()` and a Vite dev server where this project uses its own `build-assets.mjs` with classic scripts and none, Context7
   for the versions in §3, Laravel Cloud), **this file wins**. **Never write Boost's opening tag (the word
   laravel-boost-guidelines in angle brackets) anywhere above that section:** Boost replaces everything from the first
   occurrence of the tag, and on 2026-11-12 a mention here made it delete §6 and §7 (`BoostGuidelinesBlockTest`).

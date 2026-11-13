@@ -24,7 +24,7 @@ class OldTableLibraryRemovedTest extends TestCase
                 }
             }
         }
-        foreach (['webpack.mix.js', 'package.json', 'composer.json'] as $file) {
+        foreach (['build-assets.mjs', 'package.json', 'composer.json'] as $file) {
             $files[] = str_replace('\\', '/', base_path($file));
         }
 

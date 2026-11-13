@@ -86,7 +86,7 @@ class LegacyLeftoversRemovedTest extends TestCase
         $package = json_decode(file_get_contents(base_path('package.json')), true);
         $this->assertArrayHasKey('tailwindcss', $package['dependencies']);
         $this->assertArrayHasKey('@tailwindcss/postcss', $package['dependencies']);
-        $this->assertStringContainsString('@tailwindcss/postcss', file_get_contents(base_path('webpack.mix.js')));
+        $this->assertStringContainsString('@tailwindcss/postcss', file_get_contents(base_path('build-assets.mjs')));
         $this->assertStringContainsString('css/app.css', file_get_contents(resource_path('views/layouts/app.blade.php')));
     }
 

@@ -105,7 +105,7 @@ Backup & Restore
                                     @empty
                                     <tr>
                                         <td colspan="4" class="text-center py-10">
-                                            <i class="fas fa-database fs-3x text-muted mb-4" aria-hidden="true"></i>
+                                            <i class="fas fa-database fa-3x text-muted mb-4" aria-hidden="true"></i>
                                             <p class="text-muted">No backups found. Click "Create New Backup" to get started.</p>
                                         </td>
                                     </tr>
