@@ -128,7 +128,7 @@ class ReportsPassATest extends TestCase
 
         foreach ([$nurse, $doctor] as $user) {
             $this->actingAs($user);
-            foreach (['logs', 'visits', 'inventory', 'dispensing', 'appointments'] as $tab) {
+            foreach (['logs', 'visits', 'inventory', 'dispensing'] as $tab) {
                 $route = $user->hasRole('doctor') ? 'doctors.activity-logs.export' : 'staff.activity-logs.export';
                 $this->get(route($route, ['tab' => $tab]))->assertOk();
             }

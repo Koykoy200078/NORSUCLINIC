@@ -70,10 +70,7 @@ class ReportGenerationTest extends TestCase
             ->assertSee('Medicine Inventory')
             ->call('setTab', 'dispensing')
             ->assertSet('tab', 'dispensing')
-            ->assertSee('Dispensing Reports')
-            ->call('setTab', 'appointments')
-            ->assertSet('tab', 'appointments')
-            ->assertSee('Schedules');
+            ->assertSee('Dispensing Reports');
     }
 
     #[Test]
@@ -214,42 +211,6 @@ class ReportGenerationTest extends TestCase
             ->set('status', 'low_stock')
             ->assertSee('Low Stock Pill')
             ->assertDontSee('Healthy Pill');
-    }
-
-    #[Test]
-    public function it_can_filter_appointments_by_date()
-    {
-        $this->actingAs($this->admin);
-
-        $patientUser = User::create([
-            'first_name' => 'Patient',
-            'last_name' => 'One',
-            'email' => 'patient@test.com',
-            'password' => bcrypt('password'),
-            'type' => User::PATIENT,
-        ]);
-        $p = Patient::create(['user_id' => $patientUser->id, 'patient_unique_id' => 'P001']);
-
-        PatientQueue::create([
-            'patient_id' => $p->id,
-            'scheduled_at' => '2026-05-01 10:00:00',
-            'added_by' => $this->admin->id,
-            'status' => PatientQueue::STATUS_WAITING,
-        ]);
-
-        PatientQueue::create([
-            'patient_id' => $p->id,
-            'scheduled_at' => '2026-06-01 10:00:00',
-            'added_by' => $this->admin->id,
-            'status' => PatientQueue::STATUS_WAITING,
-        ]);
-
-        Livewire::test(ReportGeneration::class)
-            ->set('tab', 'appointments')
-            ->set('date_from', '2026-05-01')
-            ->set('date_to', '2026-05-15')
-            ->assertSee('May 01, 2026')
-            ->assertDontSee('Jun 01, 2026');
     }
 
     #[Test]

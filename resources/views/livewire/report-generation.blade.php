@@ -66,12 +66,6 @@
                         </a>
                     </li>
                     <li class="nav-item position-relative">
-                        <a class="nav-link text-active-primary py-4 {{ $tab === 'appointments' ? 'active' : '' }}" 
-                           href="javascript:void(0)" wire:click="setTab('appointments')">
-                           <i class="fas fa-calendar-check me-2"></i>Schedules
-                        </a>
-                    </li>
-                    <li class="nav-item position-relative">
                         <a class="nav-link text-active-primary py-4 {{ $tab === 'global_search' ? 'active' : '' }}" 
                            href="javascript:void(0)" wire:click="setTab('global_search')">
                            <i class="fas fa-search-plus me-2"></i>Global Search

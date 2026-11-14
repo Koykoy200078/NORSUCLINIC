@@ -6,7 +6,6 @@ use App\Models\ActivityLog;
 use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\MedicineTransaction;
-use App\Models\PatientQueue;
 use App\Support\SpreadsheetText;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -61,7 +60,6 @@ final class ReportCsv
             ],
             'inventory' => ['Medicine Name', 'Category', 'Generic', 'Current Quantity', 'Reorder At', 'Nearest Expiry', 'Status'],
             'dispensing' => ['Date', 'Medicine', 'Dosage', 'Batch', 'Quantity', 'Associated Record', 'Patient Name', 'Dispensed By'],
-            'appointments' => ['Scheduled At', 'Patient Name', 'Added By', 'Status', 'Notes'],
             'meds_only' => ['Date', 'Name', 'Patient Type', 'Campus', 'College', 'Course', 'Year Level', 'Drugs', 'Recorded By', 'Note'],
             default => [],
         };
@@ -77,7 +75,6 @@ final class ReportCsv
             'visits' => self::visitRow($record),
             'inventory' => self::inventoryRow($record),
             'dispensing' => self::dispensingRow($record),
-            'appointments' => self::appointmentRow($record),
             'meds_only' => array_values(array_diff_key(MedsOnlyReportBuilder::row($record), ['id' => 1])),
             default => [],
         };
@@ -159,18 +156,6 @@ final class ReportCsv
             ReportQueries::referenceLabel($entry),
             ReportQueries::referencePatientName($entry) ?? 'N/A',
             $entry->user?->full_name ?? 'N/A',
-        ];
-    }
-
-    /** @return array<int, mixed> */
-    private static function appointmentRow(PatientQueue $appointment): array
-    {
-        return [
-            $appointment->scheduled_at->format('Y-m-d H:i'),
-            $appointment->patient?->user?->full_name ?? 'Unknown',
-            $appointment->addedBy?->full_name ?? 'System',
-            $appointment->status,
-            $appointment->notes,
         ];
     }
 

@@ -7,7 +7,6 @@ use App\Models\DispenseRecord;
 use App\Models\DocumentIssuance;
 use App\Models\Medicine;
 use App\Models\MedicineTransaction;
-use App\Models\PatientQueue;
 use App\Models\Prescription;
 use App\Models\RequestDocuments;
 use App\Support\SearchTerm;
@@ -21,7 +20,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 final class ReportQueries
 {
-    public const TABS = ['logs', 'visits', 'inventory', 'dispensing', 'appointments', 'meds_only'];
+    public const TABS = ['logs', 'visits', 'inventory', 'dispensing', 'meds_only'];
 
     /** The Patient Visits tab with a "Visit type" other than Consultations is a plain query on both kinds (VisitFeed), not a model query. */
     public static function forTab(string $tab, ReportFilters $filters): Builder|QueryBuilder|null
@@ -31,7 +30,6 @@ final class ReportQueries
             'visits' => $filters->visitType === ReportFilters::VISIT_TYPES[0] ? self::visits($filters) : VisitFeed::query($filters),
             'inventory' => self::inventory($filters),
             'dispensing' => self::dispensing($filters),
-            'appointments' => self::appointments($filters),
             'meds_only' => self::medsOnly($filters),
             default => null,
         };
@@ -220,26 +218,6 @@ final class ReportQueries
         return $query;
     }
 
-    public static function appointments(ReportFilters $filters): Builder
-    {
-        $query = PatientQueue::query()
-            ->with(['patient.user', 'addedBy'])
-            ->whereNotNull('scheduled_at')
-            ->orderBy('scheduled_at', 'asc')
-            ->orderBy('id', 'asc');
-
-        if ($filters->dateFrom) {
-            $query->whereDate('scheduled_at', '>=', $filters->dateFrom);
-        }
-        if ($filters->dateTo) {
-            $query->whereDate('scheduled_at', '<=', $filters->dateTo);
-        }
-
-        return SearchTerm::whereAllWords($query, $filters->search, [
-            fn ($inner, $word) => $inner->whereHas('patient.user', fn ($q) => $q->where(fn ($person) => SearchTerm::wordInColumns($person, $word, SearchTerm::PERSON_COLUMNS))),
-            'notes',
-        ]);
-    }
 
     /**
      * "Consultation #12", "Prescription #7", ... - what a stock-out was issued for.

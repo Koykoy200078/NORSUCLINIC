@@ -42,6 +42,9 @@ class ReportGeneration extends Component
     /** The tabs that describe the patient and the visit (they share the second group of filters). */
     private const CONSULTATION_TABS = ['visits', 'accomplishment'];
 
+    /** the tabs the screen has; any other name (an old link, or a value sent by the browser) opens the activity log */
+    private const TABS = ['logs', 'visits', 'accomplishment', 'inventory', 'dispensing', 'meds_only', 'global_search'];
+
     public $tab = 'logs';
     public $search = '';
     public $user_type = 'all';
@@ -171,7 +174,7 @@ class ReportGeneration extends Component
      */
     private function permittedTab(?string $tab): string
     {
-        $tab = $tab ?: 'logs';
+        $tab = in_array($tab, self::TABS, true) ? $tab : 'logs';
 
         if (canViewActivityLogTab($tab)) {
             return $tab;
@@ -194,6 +197,12 @@ class ReportGeneration extends Component
     }
 
     /** A hand-picked consult mode is the user's own choice and stays when the tab changes. */
+    /** A tab set by the browser goes through the same check as setTab(): only a tab the screen has and the user may see. */
+    public function updatedTab($value): void
+    {
+        $this->tab = $this->permittedTab(is_string($value) ? $value : null);
+    }
+
     public function updatedConsultMode()
     {
         $this->consult_mode_auto = false;
@@ -342,7 +351,6 @@ class ReportGeneration extends Component
 
             case 'visits':
             case 'dispensing':
-            case 'appointments':
             case 'meds_only':
                 $data['reports'] = ReportQueries::forTab($this->tab, $filters)->paginate(20);
                 if ($this->tab === 'visits' && $filters->visitType !== ReportFilters::VISIT_TYPES[0]) {

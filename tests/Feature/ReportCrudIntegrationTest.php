@@ -52,6 +52,12 @@ class ReportCrudIntegrationTest extends TestCase
             'type' => User::DOCTOR,
         ]);
         Doctor::create(['user_id' => $this->doctor->id]);
+
+        // Report Generation shows a tab only to a clinic role that may use it (and since 2026-11-14 also when the tab is
+        // set straight from the browser), so the administrator here is a real one.
+        $this->seedAccessControl();
+        $this->admin->assignRole('clinic_admin');
+        $this->admin = $this->admin->fresh();
     }
 
     #[Test]
@@ -160,36 +166,10 @@ class ReportCrudIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_verifies_schedules_reporting_after_crud()
-    {
-        $this->actingAs($this->admin);
-
-        // 1. Setup Patient
-        $user = User::create(['first_name' => 'Bob', 'last_name' => 'Builder', 'type' => User::PATIENT]);
-        $patient = Patient::create(['user_id' => $user->id, 'patient_unique_id' => 'STU-003']);
-
-        // 2. Create Appointment/Queue
-        $queue = PatientQueue::create([
-            'patient_id' => $patient->id,
-            'added_by' => $this->admin->id,
-            'status' => PatientQueue::STATUS_WAITING,
-            'scheduled_at' => Carbon::tomorrow(),
-        ]);
-
-        // 3. Verify in Report
-        Livewire::test(ReportGeneration::class)
-            ->set('tab', 'appointments')
-            ->assertSee('Bob Builder');
-    }
-
-    #[Test]
     public function it_verifies_global_search_across_all_modules()
     {
-        // The global search only returns what the signed-in role may use, so this administrator must be a real one
-        // (the setUp account has no role at all).
-        $this->seedAccessControl();
-        $this->admin->assignRole('clinic_admin');
-        $this->actingAs($this->admin->fresh());
+        // The global search only returns what the signed-in role may use (the setUp administrator is a real one).
+        $this->actingAs($this->admin);
 
         // 1. Create a unique target
         $user = User::create(['first_name' => 'Xylophone', 'last_name' => 'Player', 'type' => User::PATIENT]);

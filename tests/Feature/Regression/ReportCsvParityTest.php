@@ -190,26 +190,6 @@ class ReportCsvParityTest extends TestCase
         $screen->set('search', 'carlo cruz')->assertSee('Carlo Dela Cruz', false)->assertDontSee('Ana Maria Peña', false);
     }
 
-    public function test_appointments_csv_matches_the_screen_for_a_name_search(): void
-    {
-        foreach ([$this->ana, $this->carlo] as $patient) {
-            $queue = new PatientQueue();
-            $queue->forceFill([
-                'patient_id' => $patient->id, 'added_by' => $this->admin->id, 'status' => PatientQueue::STATUS_WAITING,
-                'scheduled_at' => now()->addDay(),
-            ])->save();
-        }
-
-        [$header, $rows] = $this->downloadCsv('appointments');
-        $this->assertEqualsCanonicalizing(['Ana Maria Peña', 'Carlo Dela Cruz'], $this->column($header, $rows, 'Patient Name'));
-
-        [$header, $rows] = $this->downloadCsv('appointments', ['search' => 'Peña, Ana']);
-        $this->assertSame(['Ana Maria Peña'], $this->column($header, $rows, 'Patient Name'));
-
-        $screen = Livewire::test(ReportGeneration::class)->call('setTab', 'appointments')->set('search', 'Peña, Ana');
-        $screen->assertSee('Ana Maria Peña', false)->assertDontSee('Carlo Dela Cruz', false);
-    }
-
     public function test_formulas_in_free_text_are_neutralised_and_unknown_tabs_are_refused(): void
     {
         $this->consultation($this->ana, '=HYPERLINK("http://evil")');
