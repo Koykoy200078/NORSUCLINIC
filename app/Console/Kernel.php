@@ -39,6 +39,13 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping(30)
             ->appendOutputTo(storage_path('logs/backup.log'))
             ->onFailure(fn () => Log::error('The scheduled database backup failed: see storage/logs/backup.log. Take one by hand: php artisan db:backup'));
+
+        // Failed sign-ins and lockouts are kept in the activity log for 90 days (the owner's decision, 2026-11-14). Noon,
+        // when the clinic's server is surely running; a day it is off is caught up at the next run.
+        $schedule->command('activity-log:prune-failed-sign-ins')
+            ->dailyAt('12:00')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/activity-log.log'));
     }
 
     /**

@@ -82,7 +82,8 @@ class AppServiceProvider extends ServiceProvider
         // Real-time updates: every write to a clinic table tells the open screens of that module to ask again (Phase 7).
         \App\Support\Realtime::listen();
 
-        // Who signed in and out, and from where. (Failed attempts are rate limited and not stored.) R3-M5.
+        // Who signed in and out, and from where; failed attempts and lockouts too (kept 90 days, then removed by the daily
+        // activity-log:prune-failed-sign-ins). R3-M5.
         Event::listen(Login::class, fn (Login $event) => $this->recordSession('login', 'Signed in', $event));
         Event::listen(Logout::class, fn (Logout $event) => $this->recordSession('logout', 'Signed out', $event));
         Event::listen(Failed::class, function (Failed $event) {
