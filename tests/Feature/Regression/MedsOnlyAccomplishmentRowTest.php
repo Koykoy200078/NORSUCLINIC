@@ -147,15 +147,23 @@ class MedsOnlyAccomplishmentRowTest extends TestCase
         $this->assertContains(AccomplishmentReportBuilder::UNSPECIFIED, array_column($report['columns'], 'key'));
     }
 
-    public function test_the_line_is_not_part_of_the_consultation_illness_or_service_totals(): void
+    /** The owner's decision of 2026-11-14: the line is a section of the services, so the services TOTAL counts it, and the visits add up. */
+    public function test_the_line_is_a_services_section_counted_in_the_services_total_and_the_visits(): void
     {
         $this->scenario();
         $report = $this->build(self::MARCH);
 
+        $section = collect($report['service_sections'])->last();
+        $this->assertSame(AccomplishmentReportBuilder::MEDICINE_ONLY_SECTION, $section['name'], 'after the service categories');
+        $this->assertSame([self::LABEL], array_column($section['rows'], 'name'));
+        $this->assertSame(6, $section['total']);
+        $this->assertSame(6, $report['service_total']['total'], 'Medicine assistance is recognised from consultations only; the 6 are the Meds Only visits');
+        $this->assertSame(2, $report['service_total']['counts']['c' . $this->ctx->id]);
+
         $this->assertSame(1, $report['consultations'], 'only the consultation');
-        $this->assertSame(1, $report['illness_total']['total']);
+        $this->assertSame(7, $report['visits'], 'the consultation and the six Meds Only visits');
+        $this->assertSame(1, $report['illness_total']['total'], 'a Meds Only visit has no illness');
         $this->assertSame(0, $report['unclassified'], 'the consultation has an illness, and the Meds Only visits are not consultations to classify');
-        $this->assertSame(0, $report['service_total']['total'], 'Medicine assistance is recognised from consultations only');
         $this->assertArrayNotHasKey(AccomplishmentReportBuilder::UNSPECIFIED, $report['illness_total']['counts']);
     }
 
@@ -188,6 +196,8 @@ class MedsOnlyAccomplishmentRowTest extends TestCase
 
         $report = $this->build(self::MARCH);
         $this->assertNull($report['medicine_only']);
+        $this->assertNotContains(AccomplishmentReportBuilder::MEDICINE_ONLY_SECTION, array_column($report['service_sections'], 'name'));
+        $this->assertSame($report['consultations'], $report['visits']);
         $this->assertArrayNotHasKey(AccomplishmentReportBuilder::UNSPECIFIED, array_flip(array_column($report['columns'], 'key')), 'no Unspecified column from a line that is not there');
     }
 
@@ -284,17 +294,20 @@ class MedsOnlyAccomplishmentRowTest extends TestCase
         $expected = array_map(fn (array $column) => (int) ($report['medicine_only']['counts'][$column['key']] ?? 0), $report['columns']);
         $expected[] = 6;
 
-        // Screen
+        // Screen: the line is a section of the services table (no table of its own), and the visits add up
         $screen = Livewire::withQueryParams(['tab' => 'accomplishment'] + self::MARCH)->test(ReportGeneration::class)
-            ->assertSee('MEDICINE ONLY')
-            ->assertSee(self::LABEL);
+            ->assertSee(self::LABEL)
+            ->assertSee('Total ' . AccomplishmentReportBuilder::MEDICINE_ONLY_SECTION)
+            ->assertSee('Visits in this report: 7 (1 consultation + 6 medicine only)');
         $html = $screen->html();
-        $this->assertSame(3, substr_count($html, '<th class="num">TOTAL</th>'), 'illness table, services table and the Meds Only table');
+        $this->assertSame(2, substr_count($html, '<th class="num">TOTAL</th>'), 'illness table and services table');
+        $this->assertStringNotContainsString('MEDICINE ONLY', $html);
 
         // PDF and Excel are rendered from the same Blade tables as the screen.
         $pdfHtml = view('activity_logs.reports.accomplishment_pdf', ['report' => $report])->render();
         $this->assertStringContainsString(self::LABEL, $pdfHtml);
-        $this->assertSame(3, substr_count($pdfHtml, '<th class="num">TOTAL</th>'));
+        $this->assertStringContainsString('Visits in this report: 7 (1 consultation + 6 medicine only)', $pdfHtml);
+        $this->assertSame(2, substr_count($pdfHtml, '<th class="num">TOTAL</th>'));
         $pdf = $this->get(route('activity-logs.accomplishment', ['format' => 'pdf'] + self::MARCH))->assertOk();
         $this->assertStringStartsWith('%PDF', $pdf->getContent());
 
@@ -304,15 +317,17 @@ class MedsOnlyAccomplishmentRowTest extends TestCase
         $this->assertNotNull($row, 'the line is in the Excel sheet');
         $this->assertSame($expected, array_map('intval', array_slice($row, 1, count($expected))));
 
-        // CSV: after the services, before the summary; the same numbers; the header is the one of the other lines.
+        // CSV: a line of the services, the last before their TOTAL, which counts it; the visits in the summary.
         $csv = $this->get(route('activity-logs.accomplishment', ['format' => 'csv'] + self::MARCH))->assertOk()->streamedContent();
         $lines = array_map('str_getcsv', preg_split('/\r\n|\n/', trim(substr($csv, 3))));
         $line = collect($lines)->first(fn ($candidate) => ($candidate[3] ?? null) === self::LABEL);
-        $this->assertSame(['Medicine only', 'No consultation', ''], array_slice($line, 0, 3));
+        $this->assertSame(['Other services', AccomplishmentReportBuilder::MEDICINE_ONLY_SECTION, ''], array_slice($line, 0, 3));
         $this->assertSame($expected, array_map('intval', array_slice($line, 4)));
         $index = array_search($line, $lines, true);
-        $this->assertSame('Other services', $lines[$index - 1][0], 'right after the services total');
-        $this->assertSame('Summary', $lines[$index + 1][0]);
+        $this->assertSame(['Other services', 'TOTAL'], array_slice($lines[$index + 1], 0, 2), 'right before the services total');
+        $this->assertSame($expected, array_map('intval', array_slice($lines[$index + 1], 4)), 'the services total is the line: no consultation service in March');
+        $visits = collect($lines)->first(fn ($candidate) => ($candidate[0] ?? null) === 'Summary' && str_starts_with($candidate[1] ?? '', 'Visits'));
+        $this->assertSame('7', end($visits));
 
         // The same rows come out of the CSV class itself.
         $this->assertContains(self::LABEL, array_column(AccomplishmentReportCsv::rows($report), 3));
@@ -326,7 +341,7 @@ class MedsOnlyAccomplishmentRowTest extends TestCase
         $this->assertSame(['q1' => 6, 'q2' => 1], $this->counts($report));
 
         $screen = Livewire::withQueryParams(['tab' => 'accomplishment'])->test(ReportGeneration::class)->set('year', '2026')->assertSee(self::LABEL);
-        $this->assertSame(3, substr_count($screen->html(), '<th class="num">YEAR TOTAL</th>'));
+        $this->assertSame(2, substr_count($screen->html(), '<th class="num">YEAR TOTAL</th>'), 'illness table and services table');
 
         $excel = $this->get(route('activity-logs.accomplishment', ['format' => 'xlsx', 'year' => 2026]))->assertOk();
         $sheet = IOFactory::load($excel->baseResponse->getFile()->getPathname())->getActiveSheet();

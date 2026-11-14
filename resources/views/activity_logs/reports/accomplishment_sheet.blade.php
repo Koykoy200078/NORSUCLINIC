@@ -12,7 +12,7 @@
 @include('activity_logs.reports.accomplishment_matrix', ['report' => $report])
 
 <table>
-    <tr><td colspan="{{ $width }}">Consultations in this report: {{ $report['consultations'] }}. Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.</td></tr>
+    <tr><td colspan="{{ $width }}">Consultations in this report: {{ $report['consultations'] }}. @include('activity_logs.reports.accomplishment_visits', ['report' => $report]) Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.</td></tr>
     <tr><td></td></tr>
     <tr>
         <td>Prepared by:</td>

@@ -41,6 +41,7 @@
     <a href="{{ $accomplishmentLink('csv') }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-csv"></i> Download CSV</a>
     <span class="text-muted fs-7 ms-2">
         {{ $report['consultations'] }} consultation{{ $report['consultations'] === 1 ? '' : 's' }} in this report.
+        @include('activity_logs.reports.accomplishment_visits', ['report' => $report])
         <span class="{{ $report['unclassified'] > 0 ? 'text-warning' : '' }}">
             Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.
         </span>
@@ -59,6 +60,7 @@
 
     <div class="text-muted fs-7">
         Consultations in this report: {{ $report['consultations'] }}.
+        @include('activity_logs.reports.accomplishment_visits', ['report' => $report])
         Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.
         A consultation with two illnesses is counted in both rows, so the illness total can be higher than the number of consultations.
     </div>

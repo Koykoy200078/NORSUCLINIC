@@ -35,11 +35,12 @@ use Illuminate\Support\Collection;
  * column; names that differ only by case, extra spaces or end punctuation are one sub-row (OtherName). The sub-rows add
  * up to the "Others" row, which is what the section and grand totals count, so they are never counted twice.
  *
- * Under the services comes one more line of its own, "Medicine only (no consultation)": the patients who only came for medicine
- * (Meds Only records). It counts one per visit, in the same columns (by the college, F&S, Guest, Unspecified or quarter of the
- * record, by its date), follows the filters that fit such a record (ReportQueries::medsOnlyFiltered), is left out when a filter
- * that cannot match it is on or when nobody took medicine only in the selection, and is never part of the consultation, illness
- * or service totals.
+ * The last section of the services is "Medicine only", with one line, "Medicine only (no consultation)": the patients who only
+ * came for medicine (Meds Only records). It counts one per visit, in the same columns (by the college, F&S, Guest, Unspecified or
+ * quarter of the record, by its date), follows the filters that fit such a record (ReportQueries::medsOnlyFiltered), and is left
+ * out when a filter that cannot match it is on or when nobody took medicine only in the selection. The services TOTAL counts it,
+ * and 'visits' is the consultations plus those visits (the owner's decision, 2026-11-14: the line used to stand apart from every
+ * total). A Meds Only visit has no illness, so the illness rows and their total stay consultations only.
  *
  * The result is plain arrays so the screen, the PDF, the Excel file and the CSV all render the same data.
  */
@@ -56,6 +57,9 @@ final class AccomplishmentReportBuilder
 
     /** The name of the extra line for the patients who only took medicine. */
     public const MEDICINE_ONLY = 'Medicine only (no consultation)';
+
+    /** The services section that holds that line. */
+    public const MEDICINE_ONLY_SECTION = 'Medicine only';
 
     /**
      * @return array<string, mixed>
@@ -83,9 +87,18 @@ final class AccomplishmentReportBuilder
         $illnessSections = $this->illnessSections($filters, $illnessCounts, $this->illnessOtherNames($filters, $known, $bucketSql));
         $serviceSections = $this->serviceSections($filters, $serviceCounts, $this->serviceOtherNames($filters, $known, $bucketSql));
 
+        $medicineOnly = $this->medicineOnly($filters, $known, $yearly);
+        if ($medicineOnly !== null) {
+            $serviceSections[] = [
+                'name' => self::MEDICINE_ONLY_SECTION,
+                'rows' => [['name' => $medicineOnly['name'], 'is_other' => false, 'auto' => false, 'counts' => $medicineOnly['counts'], 'total' => $medicineOnly['total']]],
+                'counts' => $medicineOnly['counts'],
+                'total' => $medicineOnly['total'],
+            ];
+        }
+
         $illnessTotals = $this->sumRows(collect($illnessSections)->pluck('counts'));
         $serviceTotals = $this->sumRows(collect($serviceSections)->pluck('counts'));
-        $medicineOnly = $this->medicineOnly($filters, $known, $yearly);
 
         if (! $yearly) {
             $columns[] = ['key' => self::FACULTY_STAFF, 'label' => 'F&S', 'name' => 'Faculty and staff'];
@@ -94,7 +107,7 @@ final class AccomplishmentReportBuilder
             $columns[] = ['key' => self::GUEST, 'label' => 'Guest', 'name' => 'Guests and others'];
 
             // Visits whose college was not recorded only get a column when the report has someone in it.
-            if (($illnessTotals[self::UNSPECIFIED] ?? 0) + ($serviceTotals[self::UNSPECIFIED] ?? 0) + ($medicineOnly['counts'][self::UNSPECIFIED] ?? 0) > 0) {
+            if (($illnessTotals[self::UNSPECIFIED] ?? 0) + ($serviceTotals[self::UNSPECIFIED] ?? 0) > 0) {
                 $columns[] = ['key' => self::UNSPECIFIED, 'label' => 'Unspecified', 'name' => 'College not recorded'];
             }
         }
@@ -112,6 +125,7 @@ final class AccomplishmentReportBuilder
             'service_total' => $this->total($serviceTotals),
             'medicine_only' => $medicineOnly,
             'consultations' => $consultations,
+            'visits' => $consultations + ($medicineOnly['total'] ?? 0),
             'unclassified' => $this->base($filters)->whereRaw('NOT ' . ServiceRules::hasIllness())->count(),
             'period' => $yearly ? 'for the year ' . $filters->year : $this->periodLabel($filters),
             'filter_summary' => $this->filterSummary($filters),

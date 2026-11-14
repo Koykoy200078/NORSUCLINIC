@@ -35,6 +35,7 @@
     @include('activity_logs.reports.accomplishment_matrix', ['report' => $report, 'zeroAs' => '-'])
     <div class="acc-note">
         Consultations in this report: {{ $report['consultations'] }}.
+        @include('activity_logs.reports.accomplishment_visits', ['report' => $report])
         Unclassified consultations (no illness picked): {{ $report['unclassified'] }}.
         Generated {{ $report['generated_at']->format('M d, Y h:i A') }}.
     </div>
