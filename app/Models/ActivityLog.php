@@ -147,6 +147,12 @@ class ActivityLog extends Model
             'procured_medicine' => 'Stock In',
             'used_medicine' => 'Medicine Dispensed',
             'medicine_quantity_updated' => 'Stock Adjusted',
+            // the queue actions (2026-11-14)
+            'queue_added' => 'Added to Queue',
+            'queue_called' => 'Queue Patient Called',
+            'queue_completed' => 'Queue Completed',
+            'queue_cancelled' => 'Queue Cancelled',
+            'queue_removed' => 'Removed from Queue',
         ];
 
         return $labelMap[$this->action] ?? ucwords(str_replace('_', ' ', $this->action));

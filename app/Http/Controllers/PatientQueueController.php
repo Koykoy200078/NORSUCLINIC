@@ -6,6 +6,7 @@ use App\Http\Requests\StorePatientQueueRequest;
 use App\Http\Requests\UpdatePatientQueueRequest;
 use App\Models\Patient;
 use App\Models\PatientQueue;
+use App\Support\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,31 @@ class PatientQueueController extends Controller
             ->whereIn('status', PatientQueue::OPEN_STATUSES)
             ->orderByQueue()
             ->get();
+    }
+
+    /**
+     * One audit row per queue action (the owner's decision, 2026-11-14, STATUS section 6): who added, called, completed,
+     * cancelled or removed which patient, and when. Actions: queue_added, queue_called, queue_completed, queue_cancelled,
+     * queue_removed.
+     *
+     * @param  array<string, mixed>  $properties
+     */
+    private function auditQueue(string $action, PatientQueue $entry, string $what, array $properties = []): void
+    {
+        $entry->loadMissing('patient.user');
+        $name = $entry->patient?->user?->full_name;
+
+        AuditLog::record($action, $what . ': ' . ($name ?? 'an archived patient'), [
+            'patient_name' => $name,
+            'subject_type' => PatientQueue::class,
+            'subject_id' => $entry->id,
+            'properties' => array_merge([
+                'ticket_number' => $entry->ticket_number,
+                'status' => $entry->status,
+                'room_number' => $entry->room_number,
+                'is_priority' => (bool) $entry->is_priority,
+            ], $properties),
+        ]);
     }
 
     private function todayPatients()
@@ -110,7 +136,7 @@ class PatientQueueController extends Controller
                 $validated['has_consultation_attachment'] = true;
             }
 
-            PatientQueue::create($validated);
+            $this->auditQueue('queue_added', PatientQueue::create($validated), 'Added to the queue');
         });
 
         if ($alreadyQueued) {
@@ -169,7 +195,19 @@ class PatientQueueController extends Controller
                 $validated['completed_at'] = now();
             }
 
+            $before = $current->status;
             $current->update($validated);
+
+            // a change of status through the edit form is one of the queue actions; a room / priority / note edit is not
+            $action = $before === $current->status ? null : match ($current->status) {
+                PatientQueue::STATUS_IN_PROGRESS => ['queue_called', 'Called from the queue'],
+                PatientQueue::STATUS_COMPLETED => ['queue_completed', 'Queue entry completed'],
+                PatientQueue::STATUS_CANCELLED => ['queue_cancelled', 'Queue entry cancelled'],
+                default => null,
+            };
+            if ($action) {
+                $this->auditQueue($action[0], $current, $action[1], ['from_status' => $before, 'by' => 'edit form']);
+            }
 
             return true;
         });
@@ -184,14 +222,41 @@ class PatientQueueController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Take an entry off the queue. Only an entry that was never called is deleted; an entry already called is kept and
+     * marked cancelled, and a finished one (completed or cancelled) is history and stays as it is (the owner's decision,
+     * 2026-11-14: a delete used to remove the entry for good in any status). Each change leaves an audit row.
      */
     public function destroy(PatientQueue $patientQueue)
     {
-        $patientQueue->delete();
+        $outcome = DB::transaction(function () use ($patientQueue) {
+            $entry = PatientQueue::whereKey($patientQueue->getKey())->lockForUpdate()->first();
+            if (! $entry) {
+                return 'gone';
+            }
 
-        return redirectByRole('patient-queue.index')
-            ->with('success', 'Patient removed from queue.');
+            if ($entry->status === PatientQueue::STATUS_WAITING && $entry->called_at === null) {
+                $this->auditQueue('queue_removed', $entry, 'Removed from the queue');
+                $entry->delete();
+
+                return 'removed';
+            }
+
+            if (in_array($entry->status, PatientQueue::OPEN_STATUSES, true)) {
+                $before = $entry->status;
+                $entry->update(['status' => PatientQueue::STATUS_CANCELLED, 'completed_at' => $entry->completed_at ?? now()]);
+                $this->auditQueue('queue_cancelled', $entry, 'Queue entry cancelled (it was already called, so it is kept)', ['from_status' => $before, 'by' => 'remove button']);
+
+                return 'cancelled';
+            }
+
+            return 'closed';
+        });
+
+        return match ($outcome) {
+            'removed', 'gone' => redirectByRole('patient-queue.index')->with('success', 'Patient removed from queue.'),
+            'cancelled' => redirectByRole('patient-queue.index')->with('success', 'The patient was already called, so the queue entry is kept and marked cancelled.'),
+            default => redirectByRole('patient-queue.index')->with('error', 'This queue entry is finished and is kept as part of the record.'),
+        };
     }
 
 
@@ -236,6 +301,8 @@ class PatientQueueController extends Controller
                 ->with('error', 'This patient is no longer waiting in the queue.');
         }
 
+        $this->auditQueue('queue_called', $patientQueue->fresh(), 'Called from the queue');
+
         return redirect()->back()
             ->with('success', 'Patient called successfully.');
     }
@@ -261,6 +328,8 @@ class PatientQueueController extends Controller
             return redirect()->back()
                 ->with('error', 'This queue entry is already closed.');
         }
+
+        $this->auditQueue('queue_completed', $patientQueue->fresh(), 'Queue entry completed');
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['success' => true, 'message' => 'Patient consultation completed.']);
