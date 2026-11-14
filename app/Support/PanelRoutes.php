@@ -40,13 +40,9 @@ class PanelRoutes
 
     public static function emailVerification(string $panel): void
     {
-        if ($panel === 'admin') {
-            Route::post('email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
-        }
+        // (The email-verified switch endpoint, POST email-verified, was removed on 2026-11-14 with the switches no list
+        // showed: nothing should change an account's verification by hand.)
         Route::post('/email/verification-notification/{userId}', [UserController::class, 'resendEmailVerification'])->name('resend.email.verification');
-        if ($panel !== 'admin') {
-            Route::post('/email-verified', [UserController::class, 'emailVerified'])->name('emailVerified');
-        }
     }
 
     public static function doctors(string $panel): void

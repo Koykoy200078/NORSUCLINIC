@@ -376,23 +376,6 @@ class UserController extends AppBaseController
         return redirect(getDashboardURL());
     }
 
-    public function emailVerified(Request $request): JsonResponse
-    {
-        // Only doctor/patient accounts (the ones these pages manage) — never admin/staff. CRUD-AUTH-3.
-        $user = User::whereIn('type', [User::DOCTOR, User::PATIENT])->findOrFail($request->id);
-        if ($request->value) {
-            $user->update([
-                'email_verified_at' => Carbon::now(),
-            ]);
-        } else {
-            $user->update([
-                'email_verified_at' => null,
-            ]);
-        }
-
-        return $this->sendResponse($user, __('messages.flash.verified_email'));
-    }
-
     public function emailNotification(Request $request): JsonResponse
     {
         $input = $request->all();
@@ -406,7 +389,7 @@ class UserController extends AppBaseController
 
     public function resendEmailVerification($userId): JsonResponse
     {
-        // Only the accounts the patient and doctor pages manage (as emailVerified() does), never admin or staff accounts.
+        // Only the accounts the patient and doctor pages manage (CRUD-AUTH-3), never admin or staff accounts.
         $user = User::whereIn('type', [User::DOCTOR, User::PATIENT])->findOrFail($userId);
         if ($user->hasVerifiedEmail()) {
             return $this->sendError(__('messages.flash.user_already_verified'));
