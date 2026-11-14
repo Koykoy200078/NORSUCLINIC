@@ -834,7 +834,7 @@ return [
         'testimonial_update' => 'Front Patient Testimonial update successfully.',
         'testimonial_use' => 'Front Patient Testimonial used successfully.',
         'testimonial_delete' => 'Front Patient Testimonial delete successfully.',
-        'email_send' => 'Email send successfully.',
+        'password_reset_requested' => 'If an account uses this e-mail, a password reset link has been sent to it. If no e-mail arrives, ask the clinic administrator to reset your password.',
         'faq_creat' => 'FAQ created successfully.',
         'valid_twitter' => 'Please enter a valid Twitter Url',
         'valid_linkedin' => 'Please enter a valid Linkedin Url',

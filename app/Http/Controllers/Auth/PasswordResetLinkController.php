@@ -20,8 +20,10 @@ class PasswordResetLinkController extends Controller
     }
 
     /**
-     * Handle an incoming password reset link request.
-     *
+     * Handle an incoming password reset link request. The link is sent when the address has an account, but the reply
+     * is the same for every address (the owner's decision, 2026-11-14, STATUS R3-L15): it used to say "We cannot find a
+     * user with that email address" or "Please wait before retrying", which told anyone which e-mails have an account.
+     * On the clinic PC the mail goes to the log, so the reply also points to the clinic administrator.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -31,17 +33,11 @@ class PasswordResetLinkController extends Controller
             'email' => 'required|email',
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-        Flash::success(__('messages.flash.email_send'));
+        Password::sendResetLink($request->only('email'));
 
-        return $status == Password::RESET_LINK_SENT
-            ? back()->with('status', __($status))
-            : back()->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+        $reply = __('messages.flash.password_reset_requested');
+        Flash::success($reply);
+
+        return back()->with('status', $reply);
     }
 }
