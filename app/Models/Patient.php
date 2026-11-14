@@ -240,7 +240,12 @@ class Patient extends Model implements HasMedia
     }
 
     /**
-     * Boot the model and set up event listeners for cascade delete
+     * Boot the model: lookup caches, and what archiving a patient does.
+     *
+     * A patient is archived (archived_at), never deleted for good: a direct force delete is refused. It used to run a
+     * cascade that also deleted the person's queue entries, prescriptions, dispense records, documents, activity-log rows,
+     * user account and addresses; nothing in the app force-deletes a patient, so that path could only ever lose clinical
+     * records (removed on the owner's decision, 2026-11-14, STATUS section 6).
      */
     protected static function boot()
     {
@@ -250,72 +255,30 @@ class Patient extends Model implements HasMedia
         static::deleted(fn () => static::flushLookupCaches());
         static::restored(fn () => static::flushLookupCaches());
 
-        // When a patient is being deleted, delete all related data
+        static::forceDeleting(function () {
+            throw new \LogicException('A patient is archived, never deleted for good: their clinical records must be kept.');
+        });
+
+        // Archiving a patient
         static::deleting(function ($patient) {
-
-            if (!$patient->isForceDeleting()) {
-                // An archived patient can no longer be seen by a doctor, so any place still held in
-                // the queue is closed (the queue pages cannot show a patient that is not there).
-                $patient->queueEntries()
-                    ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
-                    ->update([
-                        'status' => PatientQueue::STATUS_CANCELLED,
-                        'completed_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-
-                // If soft deleting, we also soft delete the user
-                if ($patient->user) {
-                    $patient->user->delete();
-                }
+            if ($patient->isForceDeleting()) {
                 return;
             }
 
-            // Force Deleting cascade operations:
-            // Delete all patient queue entries
-            $patient->queueEntries()->delete();
+            // An archived patient can no longer be seen by a doctor, so any place still held in
+            // the queue is closed (the queue pages cannot show a patient that is not there).
+            $patient->queueEntries()
+                ->whereIn('status', [PatientQueue::STATUS_WAITING, PatientQueue::STATUS_IN_PROGRESS])
+                ->update([
+                    'status' => PatientQueue::STATUS_CANCELLED,
+                    'completed_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            // Delete all prescriptions
-            $patient->prescriptions()->delete();
-
-            // Delete all medicine bills
-            $patient->medicineBills()->delete();
-
-            // Delete all document issuances (consultation forms, medical certificates)
-            $patient->documentIssuances()->get()->each(function ($document) {
-                // Force delete the document
-                $document->delete();
-            });
-
-            // Delete activity logs related to this patient
-            \App\Models\ActivityLog::where('subject_type', 'App\Models\Patient')
-                ->where('subject_id', $patient->id)
-                ->delete();
-
-            // Delete activity logs related to the patient's user account
+            // The patient's user account is archived with them
             if ($patient->user) {
-                \App\Models\ActivityLog::where('subject_type', 'App\Models\User')
-                    ->where('subject_id', $patient->user->id)
-                    ->delete();
-
-                \App\Models\ActivityLog::where('user_id', $patient->user->id)->delete();
-
-                // Delete user's address
-                if ($patient->user->address) {
-                    $patient->user->address->delete();
-                }
-
-                // Delete the user
-                $patient->user->forceDelete();
+                $patient->user->delete();
             }
-
-            // Delete patient's address if exists
-            if ($patient->address) {
-                $patient->address->delete();
-            }
-
-            // Delete media files (profile images, etc.)
-            $patient->clearMediaCollection(self::PROFILE);
         });
 
         static::restoring(function ($patient) {
