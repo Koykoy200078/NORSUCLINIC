@@ -9,9 +9,7 @@ Meds Only record
     <div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
         <h1 class="fs-3 mb-0">Meds Only record</h1>
         <div class="d-flex gap-2">
-            @unless(isRole('doctor'))
-                <a class="btn btn-outline-primary" href="{{ getRouteByRole('meds-only.edit', [$record->id]) }}"><i class="fa-solid fa-pen-to-square me-2"></i>{{ __('messages.common.edit') }}</a>
-            @endunless
+            <a class="btn btn-outline-primary" href="{{ getRouteByRole('meds-only.edit', [$record->id]) }}"><i class="fa-solid fa-pen-to-square me-2"></i>{{ __('messages.common.edit') }}</a>
             <a class="btn btn-secondary" href="{{ getRouteByRole('meds-only.index') }}">Back to Meds Only</a>
         </div>
     </div>

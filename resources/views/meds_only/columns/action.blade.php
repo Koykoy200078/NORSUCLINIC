@@ -1,10 +1,9 @@
-{{-- A doctor reads; the staff who dispense (and the admin) also change and delete. --}}
+{{-- Everyone who may open Meds Only reads, changes and deletes (doctors too since the owner's decision of 2026-11-14). --}}
 <x-row-actions module="meds_only">
     <a href="{{ getRouteByRole('meds-only.show', [$row->id]) }}" title="{{ __('messages.common.view') }}"
         class="dropdown-item px-2 text-primary fs-3 ps-0" role="menuitem" tabindex="-1">
         <i class="fas fa-eye text-success"></i> <span>{{ __('messages.common.view') }}</span>
     </a>
-    @unless(isRole('doctor'))
     <a href="{{ getRouteByRole('meds-only.edit', [$row->id]) }}" title="{{ __('messages.common.edit') }}"
         class="dropdown-item px-2 text-primary fs-3 py-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i> <span>{{ __('messages.common.edit') }}</span>
@@ -17,5 +16,4 @@
             <i class="fa-solid fa-trash"></i> <span>{{ __('messages.common.delete') }}</span>
         </button>
     </form>
-    @endunless
 </x-row-actions>

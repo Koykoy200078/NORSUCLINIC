@@ -150,7 +150,7 @@ class MedsOnlyScreensTest extends TestCase
             $this->assertStringContainsString('badge bg-light-info">Meds Only</span>', $html);
         }
 
-        // a doctor cannot use the new form, so keeps the older pop-up
+        // a doctor keeps the older pop-up here (the owner kept doctors' dispense-record buttons) and records Meds Only from its own page
         $this->actingAs($this->makeDoctor());
         $html = Livewire::withoutLazyLoading()->test(MedicineDispenseTable::class)->html();
         $this->assertStringContainsString('add_dispense_modal', $html);

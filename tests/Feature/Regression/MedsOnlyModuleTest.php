@@ -333,12 +333,19 @@ class MedsOnlyModuleTest extends TestCase
         $this->post(route('meds-only.store'), $this->payload(['patient_name' => 'By Admin']))->assertRedirect(route('meds-only.index'));
         $this->assertSame('By Admin', $this->record()->patient_name);
 
-        // a doctor reads the list and a record, and cannot write
-        $this->actingAs($doctor)->get(route('doctors.meds-only.index'))->assertOk()->assertSee('Juan Typed');
-        $this->get(route('doctors.meds-only.show', $record))->assertOk();
-        $this->post('/doctors/meds-only', $this->payload())->assertStatus(405);
-        $this->put('/doctors/meds-only/'.$record->id, $this->payload())->assertStatus(405);
-        $this->delete('/doctors/meds-only/'.$record->id)->assertStatus(405);
+        // a doctor records, changes and deletes too (the owner's decision, 2026-11-14; it was read-only)
+        $this->actingAs($doctor)->get(route('doctors.meds-only.index'))->assertOk()->assertSee('Juan Typed')
+            ->assertSee(route('doctors.meds-only.create'));
+        $this->get(route('doctors.meds-only.show', $record))->assertOk()->assertSee(route('doctors.meds-only.edit', $record));
+        $this->get(route('doctors.meds-only.create'))->assertOk();
+        $this->get(route('doctors.meds-only.patients', ['term' => 'x']))->assertOk();
+        $this->post(route('doctors.meds-only.store'), $this->payload(['patient_name' => 'By Doctor']))->assertRedirect(route('doctors.meds-only.index'));
+        $byDoctor = $this->record();
+        $this->assertSame(['By Doctor', $doctor->id], [$byDoctor->patient_name, (int) $byDoctor->recorded_by]);
+        $this->get(route('doctors.meds-only.edit', $byDoctor))->assertOk();
+        $this->put(route('doctors.meds-only.update', $byDoctor), $this->payload(['patient_name' => 'By Doctor, changed']))->assertRedirect(route('doctors.meds-only.index'));
+        $this->assertSame('By Doctor, changed', $byDoctor->fresh()->patient_name);
+        $this->delete(route('doctors.meds-only.destroy', $byDoctor))->assertRedirect(route('doctors.meds-only.index'));
         $this->assertSame(2, DispenseRecord::medsOnly()->count());
 
         // a staff account whose role lost the medicines permission is refused everywhere

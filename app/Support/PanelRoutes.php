@@ -246,17 +246,12 @@ class PanelRoutes
     }
 
     /**
-     * Meds Only (2026-10-29): patients who only come for medicine. Same permission as Dispensing, which it feeds; a doctor
-     * reads the list and a record, and cannot record, change or delete one.
+     * Meds Only (2026-10-29): patients who only come for medicine. Same permission as Dispensing, which it feeds; every panel
+     * records, changes and deletes (a doctor too, since the owner's decision of 2026-11-14: it was read-only for doctors).
      */
     public static function medsOnly(string $panel): void
     {
-        Route::middleware('permission:manage_medicines')->group(function () use ($panel) {
-            if ($panel === 'doctor') {
-                Route::resource('meds-only', MedsOnlyController::class)->parameters(['meds-only' => 'record'])->only(['index', 'show']);
-
-                return;
-            }
+        Route::middleware('permission:manage_medicines')->group(function () {
             // Before the resource: "patients" would otherwise be read as a record id.
             Route::get('meds-only/patients', [MedsOnlyController::class, 'searchPatients'])->name('meds-only.patients');
             Route::resource('meds-only', MedsOnlyController::class)->parameters(['meds-only' => 'record']);

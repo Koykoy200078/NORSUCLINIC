@@ -22,7 +22,7 @@ use Laracasts\Flash\Flash;
 /**
  * Meds Only: patients who only come for medicine (no consultation). The work is MedsOnlyService; this class opens the
  * pages, finds a registered patient and answers where to go next. Everything sits behind the `manage_medicines` permission
- * (routes); a doctor only has the list and the record page.
+ * (routes); every panel records, changes and deletes (doctors too since the owner's decision of 2026-11-14).
  */
 class MedsOnlyController extends AppBaseController
 {
