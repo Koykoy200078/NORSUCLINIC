@@ -40,7 +40,9 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // never "remember me": its cookie would keep a shared clinic PC signed in after the browser is closed (the
+        // owner's decision, 2026-11-14, STATUS R3-L17; no sign-in page offers it)
+        if (! Auth::attempt($this->only('email', 'password'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

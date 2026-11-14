@@ -33,7 +33,9 @@ return [
 
     'lifetime' => env('SESSION_LIFETIME', 120),
 
-    'expire_on_close' => false,
+    // On the shared clinic PCs a sign-in ends when the browser is closed (the owner's decision, 2026-11-14, STATUS
+    // R3-L17); it used to survive for the idle lifetime, so the next person at the PC was signed in as the last user.
+    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', true),
 
     /*
     |--------------------------------------------------------------------------
