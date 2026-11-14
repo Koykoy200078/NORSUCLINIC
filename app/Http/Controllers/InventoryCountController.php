@@ -64,6 +64,10 @@ class InventoryCountController extends Controller
 
         $all = $count->lines()->get();
         $canWrite = ! isRole('doctor');
+        // Why the shelf cannot be corrected from a line (null = it can); only a finalized sheet, only for staff and admin.
+        $corrections = $canWrite && $count->isFinalized()
+            ? $all->mapWithKeys(fn (InventoryCountLine $line) => [$line->id => $this->service->correctionBlockedReason($line->setRelation('sheet', $count))])->all()
+            : [];
 
         return view('inventory_counts.show', [
             'count' => $count->load(['creator', 'finalizer']),
@@ -73,11 +77,24 @@ class InventoryCountController extends Controller
             'canWrite' => $canWrite,
             'editable' => $canWrite && $count->isDraft(),
             'totals' => ['medicines' => $all->count(), 'counted' => $all->filter->isCounted()->count(), 'with_difference' => $all->filter->hasDifference()->count()],
-            // Why the shelf cannot be corrected from a line (null = it can); only a finalized sheet, only for staff and admin.
-            'corrections' => $canWrite && $count->isFinalized()
-                ? $lines->mapWithKeys(fn (InventoryCountLine $line) => [$line->id => $this->service->correctionBlockedReason($line)])->all()
-                : [],
+            'corrections' => array_intersect_key($corrections, $lines->keyBy('id')->all()),
+            // How many lines "Correct all differences" would correct (the owner's decision, 2026-11-14).
+            'correctableAtOnce' => $all->filter(fn (InventoryCountLine $line) => array_key_exists($line->id, $corrections) && $corrections[$line->id] === null
+                && $this->service->atOnceBlockedReason($line) === null)->count(),
         ]);
+    }
+
+    /** Every difference of a finalized sheet that can be applied at once; the others are listed for the per-batch screen. */
+    public function correctAll(Request $request, InventoryCount $count): RedirectResponse
+    {
+        $result = $this->service->correctAll($count, $request->user());
+        $corrected = count($result['corrected']);
+
+        return $this->back($request, $count)
+            ->with('success', $corrected > 0
+                ? $corrected . ' line(s) corrected at once: the stock now matches the count.'
+                : 'Nothing was corrected: no line can be corrected at once.')
+            ->with('skipped', $result['skipped']);
     }
 
     public function update(Request $request, InventoryCount $count): RedirectResponse

@@ -237,6 +237,7 @@ class PanelRoutes
         Route::put('inventory-counts/{count}', [InventoryCountController::class, 'update'])->name('inventory-counts.update');
         Route::post('inventory-counts/{count}/refresh', [InventoryCountController::class, 'refresh'])->name('inventory-counts.refresh');
         Route::post('inventory-counts/{count}/finalize', [InventoryCountController::class, 'finalize'])->name('inventory-counts.finalize');
+        Route::post('inventory-counts/{count}/correct-all', [InventoryCountController::class, 'correctAll'])->name('inventory-counts.correct-all');
         Route::delete('inventory-counts/{count}', [InventoryCountController::class, 'destroy'])->name('inventory-counts.destroy');
     }
 

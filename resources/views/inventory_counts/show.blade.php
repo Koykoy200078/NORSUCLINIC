@@ -21,6 +21,10 @@
     </div>
 
     @if(session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
+    @if(session('skipped'))
+        <div class="alert alert-warning" role="status">Left for <strong>Correct stock</strong> (one line at a time):
+            <ul class="mb-0">@foreach(session('skipped') as $medicine => $why)<li><strong>{{ $medicine }}</strong>: {{ $why }}</li>@endforeach</ul></div>
+    @endif
     @if($errors->any())
         <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
@@ -47,6 +51,13 @@
             <form method="post" action="{{ getRouteByRole('inventory-counts.destroy', ['count' => $count->id]) }}" onsubmit="return confirm('Delete this draft count sheet and everything typed on it?');">@csrf @method('DELETE')
                 <button class="btn btn-outline-danger" type="submit">Delete sheet</button></form>
         </div>
+        @endif
+        @if($correctableAtOnce > 0)
+            {{-- The owner's decision, 2026-11-14: apply the differences in one go; what cannot be done at once keeps its own button. --}}
+            <form method="post" action="{{ getRouteByRole('inventory-counts.correct-all', ['count' => $count->id]) }}"
+                onsubmit="return confirm('Correct the stock of {{ $correctableAtOnce }} line(s) at once? Missing units are taken from the batches that expire first; extra units are added to the batch that expires first. Each change goes into the stock ledger.');">@csrf
+                @if($filter !== 'all')<input type="hidden" name="filter" value="{{ $filter }}">@endif
+                <button class="btn btn-warning" type="submit" title="Lines with more than one strength, or extra units with no batch, keep their own button on the line">Correct all differences ({{ $correctableAtOnce }})</button></form>
         @endif
     </div>
 

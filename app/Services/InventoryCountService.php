@@ -181,6 +181,112 @@ class InventoryCountService
     }
 
     /**
+     * Applies every difference of a finalized sheet that can be applied at once (the owner's decision, 2026-11-14): a shortage
+     * leaves the batches that expire first (as a dispense would), extra units join the batch that expires first. Each change is
+     * a batch count in the stock ledger with its audit row, written as the per-batch Correct stock screen writes it, and the
+     * line is marked corrected. A line that cannot be done at once is left for that screen, with the reason.
+     *
+     * @return array{corrected: array<int, string>, skipped: array<string, string>}  medicine names; skipped: name => why
+     */
+    public function correctAll(InventoryCount $sheet, User $actor): array
+    {
+        $this->authorize($actor);
+
+        return DB::transaction(function () use ($sheet, $actor): array {
+            $sheet = InventoryCount::whereKey($sheet->getKey())->lockForUpdate()->firstOrFail();
+            if (! $sheet->isFinalized()) {
+                throw ValidationException::withMessages(['correct_all' => 'Finalize the sheet first.']);
+            }
+
+            $result = ['corrected' => [], 'skipped' => []];
+            $lines = $sheet->lines()->getQuery()->whereNotNull('difference')->where('difference', '!=', 0)->whereNull('adjusted_at')
+                ->orderBy('medicine_name')->orderBy('id')->lockForUpdate()->get();
+
+            foreach ($lines as $line) {
+                $line->setRelation('sheet', $sheet);
+                // the shelf of this medicine cannot move while it is checked and corrected
+                Medicine::whereKey($line->medicine_id)->lockForUpdate()->first();
+                $batches = MedicineBatch::where('medicine_id', $line->medicine_id)->lockForUpdate()->get();
+
+                $why = $this->correctionBlockedReason($line) ?? $this->atOnceBlockedReason($line, $batches);
+                if ($why !== null) {
+                    $result['skipped'][$line->medicine_name] = $why;
+
+                    continue;
+                }
+
+                $this->applyAtOnce($sheet, $line, $batches, $actor);
+                $result['corrected'][] = $line->medicine_name;
+            }
+
+            return $result;
+        });
+    }
+
+    /**
+     * Why a line that the per-line rule allows still cannot be corrected at once, or null: a medicine with more than one strength
+     * (which strength is short is for the person who counted to say), or extra units with no batch to add them to.
+     *
+     * @param  Collection<int, MedicineBatch>|null  $batches  the medicine's batches, when they are already loaded (and locked)
+     */
+    public function atOnceBlockedReason(InventoryCountLine $line, ?Collection $batches = null): ?string
+    {
+        $batches ??= MedicineBatch::where('medicine_id', $line->medicine_id)->get();
+
+        if ($batches->map(fn (MedicineBatch $batch) => preg_replace('/\s+/', '', mb_strtolower((string) $batch->dosage)))->unique()->count() > 1) {
+            return 'It has more than one strength: use Correct stock to say which batches changed.';
+        }
+        if ($line->difference > 0 && $batches->isEmpty()) {
+            return 'There is no batch to add the extra units to: stock them in instead.';
+        }
+
+        return null;
+    }
+
+    /** @param  Collection<int, MedicineBatch>  $batches */
+    private function applyAtOnce(InventoryCount $sheet, InventoryCountLine $line, Collection $batches, User $actor): void
+    {
+        // the batch that expires first comes first (a batch without an expiry date last), then the older one
+        $ordered = $batches->sortBy(fn (MedicineBatch $batch) => ($batch->expiration_date?->format('Y-m-d') ?? '9999-12-31') . sprintf('%012d', $batch->id))->values();
+
+        $changes = [];
+        if ($line->difference > 0) {
+            $changes[] = $this->batchChange($ordered->first(), $ordered->first()->quantity + $line->difference);
+        } else {
+            $missing = -$line->difference;
+            foreach ($ordered as $batch) {
+                $taken = min($batch->quantity, $missing);
+                if ($taken > 0) {
+                    $changes[] = $this->batchChange($batch, $batch->quantity - $taken);
+                    $missing -= $taken;
+                }
+            }
+        }
+
+        $reason = 'Count sheet ' . $sheet->label() . ': ' . ($line->reasonLabel() ?? 'difference') . ' (all differences corrected at once)';
+        $audit = self::logActivity('stock_count', 'Batch count for medicine #' . $line->medicine_id, [
+            'subject_type' => Medicine::class, 'subject_id' => $line->medicine_id,
+            'properties' => ['mode' => 'count', 'reason' => $reason, 'changes' => $changes, 'count_line_id' => $line->id,
+                'count_sheet' => $sheet->label(), 'all_at_once' => true],
+        ]);
+        if (! $audit || ! $audit->exists) {
+            throw new \RuntimeException('The audit could not be recorded.');
+        }
+
+        foreach ($changes as $change) {
+            app(MedicineInventoryService::class)->recordBatchCount($change['batch_id'], $change['after'], $actor->id, 'count: ' . $reason, $audit);
+        }
+        $line->forceFill(['adjusted_at' => now(), 'adjusted_by' => $actor->id, 'adjusted_audit_id' => $audit->id])->save();
+    }
+
+    /** @return array{batch_id: int, batch: ?string, dosage: ?string, expiry: ?string, before: int, after: int, difference: int} */
+    private function batchChange(MedicineBatch $batch, int $after): array
+    {
+        return ['batch_id' => $batch->id, 'batch' => $batch->batch_number, 'dosage' => $batch->dosage, 'expiry' => $batch->expiration_date?->toDateString(),
+            'before' => (int) $batch->quantity, 'after' => $after, 'difference' => $after - (int) $batch->quantity];
+    }
+
+    /**
      * The system amount of every medicine: the ledger's remaining stock at the end of the quarter (the quarter in progress: today),
      * or, for a count of everything, the units on the shelf now. A medicine that is not in the result has none.
      *
