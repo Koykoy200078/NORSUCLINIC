@@ -77,15 +77,18 @@ class MedsOnlyScreensTest extends TestCase
         $this->assertStringNotContainsString('&amp;amp;', $html, 'escaped twice: the list would show "&amp;"');
     }
 
-    public function test_the_list_never_shows_a_manual_dispense_record_or_a_prescription(): void
+    /** Since the owner's decision of 2026-11-14 the manual dispense records are listed too (MedsOnlyListManualRecordsTest); a prescription's never. */
+    public function test_the_list_shows_a_manual_dispense_record_too_but_never_a_prescription(): void
     {
-        \App\Models\DispenseRecord::create(['history_number' => 'HIS777', 'patient_id' => $this->makePatient(['first_name' => 'Manual', 'last_name' => 'Person'])->id,
+        $manual = \App\Models\DispenseRecord::create(['history_number' => 'HIS777', 'patient_id' => $this->makePatient(['first_name' => 'Manual', 'last_name' => 'Person'])->id,
             'model_type' => \App\Models\DispenseRecord::class, 'bill_date' => now()]);
+        \App\Models\DispenseRecord::create(['history_number' => 'HIS778', 'patient_id' => $this->makePatient(['first_name' => 'Rx', 'last_name' => 'Person'])->id,
+            'model_type' => \App\Models\Prescription::class, 'model_id' => 999, 'bill_date' => now()]);
 
-        // A legacy record has no stored name, so its row would print blank cells: the records the table queries are what proves it.
+        // the records the table queries are what proves it
         $queried = Livewire::withoutLazyLoading()->test(MedsOnlyTable::class)->instance()->builder()->pluck('medicine_bills.id')->all();
-        $this->assertSame([(int) \App\Models\DispenseRecord::medsOnly()->value('id')], array_map('intval', $queried));
-        Livewire::withoutLazyLoading()->test(MedsOnlyTable::class)->assertSee('Juan Typed')->assertDontSee('Manual Person');
+        $this->assertEqualsCanonicalizing([(int) \App\Models\DispenseRecord::medsOnly()->value('id'), $manual->id], array_map('intval', $queried));
+        Livewire::withoutLazyLoading()->test(MedsOnlyTable::class)->assertSee('Juan Typed')->assertSee('Manual Person')->assertDontSee('Rx Person');
     }
 
     /** The shared last sort key (`TableComponent::applySorting()`) makes records of one date list newest first and stay put between pages. */

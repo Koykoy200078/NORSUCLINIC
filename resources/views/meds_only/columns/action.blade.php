@@ -1,5 +1,12 @@
-{{-- Everyone who may open Meds Only reads, changes and deletes (doctors too since the owner's decision of 2026-11-14). --}}
+{{-- Everyone who may open Meds Only reads, changes and deletes (doctors too since the owner's decision of 2026-11-14). A manual
+     dispense record listed here is managed in Dispense History, so it only opens there. --}}
 <x-row-actions module="meds_only">
+    @if($row->isManual())
+    <a href="{{ getRouteByRole('dispense-records.show', [$row->id]) }}" title="{{ __('messages.common.view') }}"
+        class="dropdown-item px-2 text-primary fs-3 ps-0" role="menuitem" tabindex="-1">
+        <i class="fas fa-eye text-success"></i> <span>{{ __('messages.common.view') }}</span>
+    </a>
+    @else
     <a href="{{ getRouteByRole('meds-only.show', [$row->id]) }}" title="{{ __('messages.common.view') }}"
         class="dropdown-item px-2 text-primary fs-3 ps-0" role="menuitem" tabindex="-1">
         <i class="fas fa-eye text-success"></i> <span>{{ __('messages.common.view') }}</span>
@@ -20,4 +27,5 @@
             <i class="fa-solid fa-trash"></i> <span>{{ __('messages.common.delete') }}</span>
         </button>
     </form>
+    @endif
 </x-row-actions>

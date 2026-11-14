@@ -51,6 +51,25 @@ class DispenseRecord extends Model
         return $query->where($query->getModel()->getTable().'.meds_only', true);
     }
 
+    /** Only the manual dispense records: the older "Add Dispense Record" pop-up of Dispense History (not Meds Only, no prescription). */
+    public function scopeManual($query)
+    {
+        $table = $query->getModel()->getTable();
+
+        return $query->where($table.'.model_type', self::class)->where($table.'.meds_only', false);
+    }
+
+    /** What the Meds Only list shows: its own records and the manual dispense records (the owner's decision, 2026-11-14). */
+    public function scopeInMedsOnlyList($query)
+    {
+        return $query->where(fn ($records) => $records->medsOnly()->orWhere(fn ($manual) => $manual->manual()));
+    }
+
+    public function isManual(): bool
+    {
+        return ! $this->meds_only && $this->model_type === self::class;
+    }
+
     /**
      * What was handed out as one line of words: "Paracetamol 500mg x 4, Cetirizine 10mg x 2" (one entry per medicine and
      * strength; the stock engine may have taken one entry from several batches).
