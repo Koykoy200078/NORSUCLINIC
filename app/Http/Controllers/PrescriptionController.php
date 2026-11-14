@@ -453,16 +453,18 @@ class PrescriptionController extends AppBaseController
 
     /**
      * The prescription's own fields from the validated form: the doctor's licence (the one typed, else the doctor's S2,
-     * else the PRC number) and the vital signs left empty taken from the patient's latest consultation. Saving and
-     * editing a prescription both use it (re-audit 2026-11-13, DRY: each built it).
+     * else the PRC number) and the vital signs as typed. A vital sign left blank stays blank (the owner's decision,
+     * 2026-11-14): the new-prescription form opens with the latest consultation's values, but the save no longer fills
+     * an empty one from that consultation again. Saving and editing a prescription both use it (re-audit 2026-11-13,
+     * DRY: each built it).
      *
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      */
     private function prescriptionFields(array $input): array
     {
-        $patient = Patient::findOrFail($input['patient_id']);
-        $patientSummary = $this->buildPatientSummary($patient, $this->getLatestPatientConsultation($patient->user_id));
+        // an archived patient's record is closed: the `exists` rule does not see the archive, this lookup does (404)
+        Patient::findOrFail($input['patient_id']);
         $doctor = Doctor::find($input['doctor_id']);
 
         $fields = Arr::only($input, [
@@ -482,9 +484,6 @@ class PrescriptionController extends AppBaseController
         $fields['doctor_license_s2_number'] = $input['doctor_license_s2_number']
             ?? optional($doctor)->s2_license_number
             ?? optional($doctor)->prc_license_number;
-        foreach (['weight_kg', 'pulse_rate', 'body_temperature', 'blood_pressure', 'height_cm'] as $vital) {
-            $fields[$vital] = $fields[$vital] ?? $patientSummary[$vital];
-        }
 
         return $fields;
     }
