@@ -4,6 +4,10 @@
         class="dropdown-item px-2 text-primary fs-3 ps-0" role="menuitem" tabindex="-1">
         <i class="fas fa-eye text-success"></i> <span>{{ __('messages.common.view') }}</span>
     </a>
+    <a href="{{ getRouteByRole('meds-only.pdf', [$row->id]) }}" title="PDF" target="_blank" rel="noopener"
+        class="dropdown-item px-2 text-primary fs-3 py-2" role="menuitem" tabindex="-1">
+        <i class="fas fa-file-pdf text-danger"></i> <span>PDF</span>
+    </a>
     <a href="{{ getRouteByRole('meds-only.edit', [$row->id]) }}" title="{{ __('messages.common.edit') }}"
         class="dropdown-item px-2 text-primary fs-3 py-2" role="menuitem" tabindex="-1">
         <i class="fa-solid fa-pen-to-square"></i> <span>{{ __('messages.common.edit') }}</span>

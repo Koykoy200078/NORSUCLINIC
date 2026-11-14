@@ -256,6 +256,8 @@ class PanelRoutes
             // Before the resource: "patients" would otherwise be read as a record id.
             Route::get('meds-only/patients', [MedsOnlyController::class, 'searchPatients'])->name('meds-only.patients');
             Route::resource('meds-only', MedsOnlyController::class)->parameters(['meds-only' => 'record']);
+            // a printable PDF of one record (the owner's decision, 2026-11-14)
+            Route::get('meds-only/{record}/pdf', [MedsOnlyController::class, 'pdf'])->name('meds-only.pdf');
         });
     }
 

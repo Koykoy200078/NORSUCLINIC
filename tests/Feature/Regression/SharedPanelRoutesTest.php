@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class SharedPanelRoutesTest extends TestCase
 {
-    // Captured before Phase 6.1 from af66ff0; Phases 8.2-8.4 add their approved merge and stock-control routes, Phase 11 the Meds Only routes, the count-sheet routes and the Meds Only report downloads. Laravel 13 (U3) adds the HTTP QUERY verb to Route::any(), so the six legacy medicine-history redirects list it too (they sit behind the same auth and permission middleware). On 2026-11-14 the owner had the unused email-verified switch endpoint removed (three routes, one per panel), and the same day let doctors record Meds Only (the doctor panel gets the six write routes the staff panel has) and correct all of a count sheet's differences at once (one route for staff and one for admin).
+    // Captured before Phase 6.1 from af66ff0; Phases 8.2-8.4 add their approved merge and stock-control routes, Phase 11 the Meds Only routes, the count-sheet routes and the Meds Only report downloads. Laravel 13 (U3) adds the HTTP QUERY verb to Route::any(), so the six legacy medicine-history redirects list it too (they sit behind the same auth and permission middleware). On 2026-11-14 the owner had the unused email-verified switch endpoint removed (three routes, one per panel), and the same day let doctors record Meds Only (the doctor panel gets the six write routes the staff panel has) and correct all of a count sheet's differences at once (one route for staff and one for admin), and print one Meds Only record as a PDF (one route per panel).
     public function test_panel_route_contract_is_unchanged_including_registration_order(): void
     {
         $expected = json_decode(file_get_contents(__DIR__.'/panel-routes.json'), true, 512, JSON_THROW_ON_ERROR);
@@ -27,7 +27,7 @@ class SharedPanelRoutesTest extends TestCase
             ];
         }
 
-        $this->assertCount(453, $expected);
+        $this->assertCount(456, $expected);
         $this->assertSame($expected, $actual);
     }
 

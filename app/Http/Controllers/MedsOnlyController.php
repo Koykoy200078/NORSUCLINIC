@@ -13,9 +13,11 @@ use App\Models\User;
 use App\Models\YearLevel;
 use App\Services\MedsOnlyService;
 use App\Support\SearchTerm;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 use Laracasts\Flash\Flash;
 
@@ -57,6 +59,17 @@ class MedsOnlyController extends AppBaseController
         $this->mustBeMedsOnly($record);
 
         return view('meds_only.show', ['record' => $record->load(['dispenseItems.medicine', 'recorder', 'patient.user'])]);
+    }
+
+    /** One record as a printable PDF: the letterhead, who got the medicine, the drugs and who gave them (the owner's decision, 2026-11-14). */
+    public function pdf(DispenseRecord $record): Response
+    {
+        $this->mustBeMedsOnly($record);
+
+        return Pdf::loadView('meds_only.pdf', ['record' => $record->load(['dispenseItems.medicine', 'recorder', 'patientType']), 'generatedAt' => now()])
+            ->setPaper([0, 0, 396, 612], 'portrait') // 5.5" x 8.5", the clinic's slip size
+            ->setWarnings(false)
+            ->stream('meds_only_' . $record->history_number . '.pdf');
     }
 
     public function edit(DispenseRecord $record): View
